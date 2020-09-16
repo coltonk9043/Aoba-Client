@@ -18,7 +18,7 @@ public class Alt {
 	}
 
 	public void setPassword(String password) {
-		this.password = username;
+		this.password = password;
 	}
 
 	public String getUsername() {
