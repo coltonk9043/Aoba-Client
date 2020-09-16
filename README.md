@@ -8,4 +8,4 @@ A custom hacked client for Minecraft 1.16.3. A personal project I've been workin
 - Plenty of hacks.
 
 ## License
-This code is licensed under the GNU General Public License v3.
+This code is licensed under the GNU General Public License v3. You may use code published here in your own clients under the same license.
