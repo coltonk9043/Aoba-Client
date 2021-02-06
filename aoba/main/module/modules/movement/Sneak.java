@@ -35,8 +35,8 @@ public class Sneak extends Module {
 
 	@Override
 	public void onUpdate() {
-		ClientPlayerEntity player = mc.player;
-		player.connection.sendPacket(new CEntityActionPacket(player, Action.PRESS_SHIFT_KEY));
+		mc.player.connection.sendPacket(new CEntityActionPacket(mc.player, Action.PRESS_SHIFT_KEY));
+		mc.player.connection.sendPacket(new CEntityActionPacket(mc.player, Action.RELEASE_SHIFT_KEY));
 	}
 
 	@Override

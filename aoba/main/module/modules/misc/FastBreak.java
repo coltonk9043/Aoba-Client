@@ -22,39 +22,36 @@ public class FastBreak extends Module {
 		this.multiplier = multiplier;
 	}
 	
+	public float getMultiplier() {
+		return this.multiplier;
+	}
+	
 	@Override
 	public void onDisable() {
-		Block.disableFastbreak();
 	}
 
 	@Override
 	public void onEnable() {
-		Block.enableFastbreak(multiplier);
 	}
 
 	@Override
 	public void onToggle() {
-		
+	
 	}
 
 	@Override
 	public void onUpdate() {
-
 	}
 
 	@Override
 	public void onRender() {
-		
 	}
 
 	@Override
 	public void onSendPacket(IPacket<?> packet) {
-		
 	}
 
 	@Override
 	public void onReceivePacket(IPacket<?> packet) {
-		
-		
 	}
 }

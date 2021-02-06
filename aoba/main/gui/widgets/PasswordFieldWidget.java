@@ -49,9 +49,8 @@ public class PasswordFieldWidget extends Widget implements IRenderable, IGuiEven
     private String suggestion;
     private Consumer<String> guiResponder;
     private Predicate<String> validator = Objects::nonNull;
-    private BiFunction<String, Integer, IReorderingProcessor> textFormatter = (p_195610_0_, p_195610_1_) ->
-    {
-        return IReorderingProcessor.func_242239_a(p_195610_0_, Style.EMPTY);
+    private BiFunction<String, Integer, IReorderingProcessor> textFormatter = (p_195610_0_, p_195610_1_) -> {
+        return IReorderingProcessor.fromString(p_195610_0_, Style.EMPTY);
     };
 
     public PasswordFieldWidget(FontRenderer p_i232260_1_, int p_i232260_2_, int p_i232260_3_, int p_i232260_4_, int p_i232260_5_, ITextComponent p_i232260_6_)

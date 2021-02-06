@@ -68,6 +68,10 @@ public class SliderComponent extends Component {
 		return this.currentSliderPosition;
 	}
 	
+	public void setSliderPosition(float pos) {
+		this.currentSliderPosition = pos;
+	}
+	
 	public void setText(String text) {
 		this.text = text;
 	}

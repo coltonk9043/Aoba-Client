@@ -1,17 +1,19 @@
-package aoba.main.module.modules.movement;
+package aoba.main.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
+
 import aoba.main.module.Module;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
+import aoba.main.module.Module.Category;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.network.IPacket;
 
-public class Jesus extends Module {
-	public Jesus() {
-		this.setName("Jesus");
-		this.setBind(new KeyBinding("key.jesus", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
-		this.setCategory(Category.Movement);
-		this.setDescription("Allows the player to walk on water.");
+public class AntiCactus extends Module {
+	
+	public AntiCactus() {
+		this.setName("AntiCactus");
+		this.setBind(new KeyBinding("key.anticactus", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
+		this.setCategory(Category.Misc);
+		this.setDescription("Prevents blocks from hurting you.");
 	}
 
 	@Override
@@ -20,31 +22,25 @@ public class Jesus extends Module {
 
 	@Override
 	public void onEnable() {
-
 	}
 
 	@Override
 	public void onToggle() {
-
 	}
 
 	@Override
 	public void onUpdate() {
-		
 	}
 
 	@Override
 	public void onRender() {
-
 	}
 
 	@Override
 	public void onSendPacket(IPacket<?> packet) {
-
 	}
 
 	@Override
 	public void onReceivePacket(IPacket<?> packet) {
-
 	}
 }

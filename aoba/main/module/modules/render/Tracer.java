@@ -41,8 +41,8 @@ public class Tracer extends Module {
 	@Override
 	public void onRender() {
 		for (Entity entity : mc.world.getAllEntities()) {
-			if(entity instanceof LivingEntity && (entity != Minecraft.getInstance().player)) {
-				this.getRenderUtils().tracerLine(mc.player, entity);
+			if(entity instanceof LivingEntity && (entity != mc.player)) {
+				this.getRenderUtils().drawLine3D(mc.player, entity);
 			}
 		}
 	}

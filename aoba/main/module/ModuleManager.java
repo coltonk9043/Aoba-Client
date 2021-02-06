@@ -15,9 +15,13 @@ public class ModuleManager {
 	
 	//Modules
 	public Module aimbot = new Aimbot();
+	public Module anticactus = new AntiCactus();
 	public Module antiinvis = new AntiInvis();
+	public Module antiknockback = new AntiKnockback();
 	public Module autoeat = new AutoEat();
+	public Module autofarm = new AutoFarm();
 	public Module autofish = new AutoFish();
+	public Module autosign = new AutoSign();
 	public Module autosoup = new AutoSoup();
 	public Module autorespawn = new AutoRespawn();
 	public Module autowalk = new AutoWalk();
@@ -54,9 +58,13 @@ public class ModuleManager {
 	public ModuleManager() {
 		// Look at all these modules!
 		addModule(aimbot);
+		addModule(anticactus);
 		addModule(antiinvis);
+		addModule(antiknockback);
 		addModule(autoeat);
+		addModule(autofarm);
 		addModule(autofish);
+		addModule(autosign);
 		addModule(autosoup);
 		addModule(autorespawn);
 		addModule(autowalk);

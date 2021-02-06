@@ -48,6 +48,7 @@ public class Freecam extends Module {
 	public void onUpdate() {
 		ClientPlayerEntity player = mc.player;
 		player.noClip = true;
+		player.setOnGround(false);
 		if (mc.gameSettings.keyBindSprint.isKeyDown()) {
 			this.flySpeed *= 1.5;
 		}

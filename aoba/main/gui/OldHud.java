@@ -18,7 +18,7 @@ public class OldHud {
 	private RenderUtils renderUtils = new RenderUtils();
 
 	public int x = 0;
-	public int y = 18;
+	public int y = 16;
 	public int width = 75;
 	public int height = 15;
 
@@ -86,7 +86,8 @@ public class OldHud {
 	public void draw(int scaledWidth, int scaledHeight) {
 		Minecraft mc = Minecraft.getInstance();
 		renderUtils.drawOutlinedBox(0, 0, width, 14, 0.3f, 0.3f, 0.3f, 0.65f);
-		mc.fontRenderer.drawStringWithShadow(Aoba.NAME + " " + Aoba.VERSION, 8, 4, mc.aoba.hm.getColor(), false);
+		
+		mc.fontRenderer.drawStringWithShadow("§l" + Aoba.NAME + " " + Aoba.VERSION, 4, 4, mc.aoba.hm.getColor(), false);
 		renderUtils.drawOutlinedBox(x, y, width, height * this.categories.length, 0.3f, 0.3f, 0.3f, 0.65f);
 		for (int i = 0; i < this.categories.length; i++) {
 			mc.fontRenderer.drawStringWithShadow(">>", x + width - 12, y + (height * i) + 5,

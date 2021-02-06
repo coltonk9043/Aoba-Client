@@ -8,12 +8,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.IPacket;
 
 public class POV extends Module {
 	private FakePlayerEntity fakePlayer;
 	private String povString = null;
 	private Entity povEntity = null;
+	
 	private boolean fakePlayerSpawned = false;
 	public POV() {
 		this.setName("POV");
@@ -95,4 +97,15 @@ public class POV extends Module {
 		this.povString = entity;
 	}
 
+	public Entity getEntity() {
+		return this.povEntity;
+	}
+	
+	public PlayerEntity getEntityAsPlayer() {
+		if(this.povEntity instanceof PlayerEntity) {
+			return (PlayerEntity) this.povEntity;
+		}else {
+			return null;
+		}
+	}
 }

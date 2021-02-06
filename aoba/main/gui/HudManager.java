@@ -22,9 +22,12 @@ public class HudManager {
 	private RenderUtils renderUtils = new RenderUtils();
 	public static Tab currentGrabbed = null;
 
-	private double lastMouseX = 0;
-	private double lastMouseY = 0;
-
+	private int lastMouseX = 0;
+	private int lastMouseY = 0;
+	
+	public InfoTab infoTab = new InfoTab("InfoTab", 100, 200);
+	public OptionsTab optionsTab = new OptionsTab("Options", 300, 250);
+	
 	int color;
 
 	public HudManager() {
@@ -60,15 +63,19 @@ public class HudManager {
 			tabs.put(category.name(), tab);
 			xOffset += 100;
 		}
-		InfoTab infoTab = new InfoTab("InfoTab", 100, 200);
-		OptionsTab optionsTab = new OptionsTab("Options", 300, 250);
+		
 		tabs.put(infoTab.getTitle(), infoTab);
 		tabs.put(optionsTab.getTitle(), optionsTab);
 	}
 
 	public void update() {
-		double mouseX = mc.mouseHelper.getMouseX();
-		double mouseY = mc.mouseHelper.getMouseY();
+		int mouseX = (int) Math.ceil(mc.mouseHelper.getMouseX());
+		int mouseY = (int) Math.ceil(mc.mouseHelper.getMouseY());
+
+		int dx = (int) Math.ceil(mouseX * (double)this.mc.getMainWindow().getScaledWidth() / (double)this.mc.getMainWindow().getWidth());
+		int dy = (int) Math.ceil(mouseY * (double)this.mc.getMainWindow().getScaledHeight() / (double)this.mc.getMainWindow().getHeight());
+		
+		
 		boolean mouseClicked = mc.mouseHelper.isLeftDown();
 		if (this.clickGuiButton.isPressed()) {
 			this.clickGuiOpen = !this.clickGuiOpen;
@@ -78,7 +85,7 @@ public class HudManager {
 			currentGrabbed = null;
 		}
 		if (currentGrabbed != null) {
-			currentGrabbed.moveWindow((lastMouseX - mc.mouseHelper.getMouseX()) / 2, (lastMouseY - mc.mouseHelper.getMouseY()) / 2);
+			currentGrabbed.moveWindow((lastMouseX - dx), (lastMouseY - dy));
 		}
 		for (Tab tab : tabs.values()) {
 			if (clickGuiOpen || tab.getPinned())
@@ -86,8 +93,8 @@ public class HudManager {
 				tab.update(mouseX, mouseY, mouseClicked);
 				tab.postupdate();
 		}
-		this.lastMouseX = mouseX;
-		this.lastMouseY = mouseY;
+		this.lastMouseX = dx;
+		this.lastMouseY = dy;
 	}
 
 	public void draw() {

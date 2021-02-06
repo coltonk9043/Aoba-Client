@@ -7,19 +7,19 @@ import aoba.main.misc.RenderUtils;
 import net.minecraft.client.Minecraft;
 
 public class Tab {
-	private Minecraft mc;
+	protected Minecraft mc;
 
-	private String title;
-	private int x;
-	private int y;
-	private int width;
-	private int height;
-	private RenderUtils renderUtils = new RenderUtils();
+	protected String title;
+	protected int x;
+	protected int y;
+	protected int width;
+	protected int height;
+	protected RenderUtils renderUtils = new RenderUtils();
 
-	private boolean isPinned = false;
-	private boolean pinWasClicked = false;
+	protected boolean isPinned = false;
+	protected boolean pinWasClicked = false;
 
-	private ArrayList<Component> children = new ArrayList<>();
+	protected ArrayList<Component> children = new ArrayList<>();
 
 	public Tab(String title, int x, int y) {
 		this.title = title;
@@ -105,29 +105,29 @@ public class Tab {
 
 	public void update(double mouseX, double mouseY, boolean mouseClicked) {
 		if (mc.aoba.hm.isClickGuiOpen()) {
-			if (mouseX >= (x * 2) && mouseX <= (x + width) * 2) {
-				if (mouseY >= (y * 2) && mouseY <= (y + 14) * 2) {
-					if (mouseClicked) {
-						boolean isInsidePinButton = false;
-						if (mouseX >= (x + width - 12) * 2 && mouseX <= (x + width - 2) * 2) {
-							if (mouseY >= (y + 2) * 2 && mouseY <= (y + 10) * 2) {
-								isInsidePinButton = true;
+			if (HudManager.currentGrabbed == null) {
+				if (mouseX >= (x * 2) && mouseX <= (x + width) * 2) {
+					if (mouseY >= (y * 2) && mouseY <= (y + 14) * 2) {
+						if (mouseClicked) {
+							boolean isInsidePinButton = false;
+							if (mouseX >= (x + width - 12) * 2 && mouseX <= (x + width - 2) * 2) {
+								if (mouseY >= (y + 2) * 2 && mouseY <= (y + 10) * 2) {
+									isInsidePinButton = true;
+								}
 							}
-						}
-						if (isInsidePinButton) {
-							if (!this.pinWasClicked) {
-								this.isPinned = !this.isPinned;
-								this.pinWasClicked = true;
-								return;
-							}
-						} else {
-							if (HudManager.currentGrabbed == null) {
+							if (isInsidePinButton) {
+								if (!this.pinWasClicked) {
+									this.isPinned = !this.isPinned;
+									this.pinWasClicked = true;
+									return;
+								}
+							} else {
 								HudManager.currentGrabbed = this;
 							}
-						}
-					} else {
-						if (this.pinWasClicked) {
-							this.pinWasClicked = false;
+						} else {
+							if (this.pinWasClicked) {
+								this.pinWasClicked = false;
+							}
 						}
 					}
 				}
@@ -156,7 +156,7 @@ public class Tab {
 		}
 	}
 
-	public void moveWindow(double x, double y) {
+	public void moveWindow(int x, int y) {
 		this.x = (int) (this.x - x);
 		this.y = (int) (this.y - y);
 	}

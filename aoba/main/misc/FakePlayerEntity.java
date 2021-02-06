@@ -1,10 +1,10 @@
 package aoba.main.misc;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.entity.player.RemoteClientPlayerEntity;
 
-public class FakePlayerEntity extends RemoteClientPlayerEntity {
+public class FakePlayerEntity extends AbstractClientPlayerEntity {
 
 	public FakePlayerEntity() {
 		super(Minecraft.getInstance().world, Minecraft.getInstance().player.getGameProfile());

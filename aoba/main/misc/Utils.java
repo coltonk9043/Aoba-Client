@@ -18,5 +18,4 @@ public class Utils {
 		String string = strr + strg + strb;
 	    return Integer.parseInt(string,16);
 	}
-	
 }

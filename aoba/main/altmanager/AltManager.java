@@ -171,13 +171,16 @@ public class AltManager {
 			throw new APIErrorException(responseObject.get("errorMessage").getAsString());
 		}
 		JsonObject resultObject = responseObject.get("result").getAsJsonObject();
-		Session session = new Session(resultObject.get("mcname").getAsString(), response, Minecraft.getInstance().session.getPlayerID(), resultObject.get("session").getAsString());
+		
+		Session session = new Session(resultObject.get("mcname").getAsString(), resultObject.get("session").getAsString(), token, "mojang");
 		Minecraft.getInstance().session = session;
 	}
 	
 	public void joinServer(Session session, final String server, final String serverHash) throws APIDownException, InvalidResponseException, APIErrorException {
 		Gson gson = new GsonBuilder().create();
 		JsonObject requestObject = new JsonObject();
+		Minecraft.LOGGER.info(serverHash);
+		Minecraft.LOGGER.info(server);
 		requestObject.add("session", gson.toJsonTree(session.getSessionID()));
 		requestObject.add("mcname", gson.toJsonTree(session.getUsername()));
 		requestObject.add("serverhash", gson.toJsonTree(serverHash));

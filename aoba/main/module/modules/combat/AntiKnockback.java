@@ -1,26 +1,27 @@
-package aoba.main.module.modules.movement;
+package aoba.main.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 import aoba.main.module.Module;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.network.IPacket;
 
-public class Jesus extends Module {
-	public Jesus() {
-		this.setName("Jesus");
-		this.setBind(new KeyBinding("key.jesus", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
-		this.setCategory(Category.Movement);
-		this.setDescription("Allows the player to walk on water.");
+public class AntiKnockback extends Module {
+	
+	public AntiKnockback() {
+		this.setName("AntiKnockback");
+		this.setBind(new KeyBinding("key.antiknockback", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
+		this.setCategory(Category.Combat);
+		this.setDescription("Prevents knockback.");
 	}
 
 	@Override
 	public void onDisable() {
+		
 	}
 
 	@Override
 	public void onEnable() {
-
+		
 	}
 
 	@Override
@@ -35,16 +36,16 @@ public class Jesus extends Module {
 
 	@Override
 	public void onRender() {
-
+		
 	}
 
 	@Override
 	public void onSendPacket(IPacket<?> packet) {
-
+		
 	}
-
+	
 	@Override
 	public void onReceivePacket(IPacket<?> packet) {
-
+		
 	}
 }

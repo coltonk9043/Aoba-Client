@@ -41,6 +41,7 @@ public class Fly extends Module {
 	@Override
 	public void onUpdate() {
 		ClientPlayerEntity player = mc.player;
+		
 		if (mc.gameSettings.keyBindSprint.isKeyDown()) {
 			this.flySpeed *= 1.5;
 		}

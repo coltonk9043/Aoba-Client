@@ -8,6 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 
 import org.lwjgl.opengl.GL11;
 
@@ -502,10 +503,9 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 	}
 
-	public void tracerLine(Entity player, Entity entity) {
+	public void drawLine3D(Entity player, Entity entity) {
 		GL11.glPushMatrix();
 		float partialRenderTicks = Minecraft.getInstance().getRenderPartialTicks();
-		Quaternion cameraPos = Minecraft.getInstance().getRenderManager().getCameraOrientation();
 		double x = entity.prevPosX
 				+ (entity.getPosX() - entity.prevPosX) * partialRenderTicks;
 		double y = entity.prevPosY
@@ -521,7 +521,35 @@ public class RenderUtils {
 		GL11.glBegin(GL11.GL_LINES);
 		GL11.glColor3f(0f, 0f, 1f);
 		{
-			GL11.glVertex2d(0,0);
+			GL11.glVertex3d(player.getPosX(), player.getPosY(), player.getPosZ());
+			GL11.glVertex3d(x, y, z);
+		}
+		GL11.glEnd();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthMask(true);
+		GL11.glPopMatrix();
+	}
+	
+	public void drawLine3D(Vector3d pos, Entity entity) {
+		GL11.glPushMatrix();
+		float partialRenderTicks = Minecraft.getInstance().getRenderPartialTicks();
+		double x = entity.prevPosX
+				+ (entity.getPosX() - entity.prevPosX) * partialRenderTicks;
+		double y = entity.prevPosY
+				+ (entity.getPosY() - entity.prevPosY) * partialRenderTicks;
+		double z = entity.prevPosZ
+				+ (entity.getPosZ() - entity.prevPosZ) * partialRenderTicks;
+
+		GL11.glBlendFunc(770, 771);
+		GL11.glLineWidth(2.0F);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthMask(false);
+		GL11.glBegin(GL11.GL_LINES);
+		GL11.glColor3f(0f, 0f, 1f);
+		{
+			GL11.glVertex3d(pos.x, pos.y, pos.z);
 			GL11.glVertex3d(x, y, z);
 		}
 		GL11.glEnd();
