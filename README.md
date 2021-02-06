@@ -1,8 +1,7 @@
 # Aoba Hacked Client (1.16.5)
 A custom hacked client for Minecraft 1.16.5. A personal project I've been working on for awhile.
 
-!!! Currently there is no downloadable version of this client for you to run. Source code is provided for others to make
-their own clients! :)
+!!! Currently there is no downloadable version of this client for you to run. There is a working JAR file but I cannot distribute it under compliance with Mojang's EULA. Source code is provided for others to make their own clients! :)
 
 ## Features
 - Fully featured Alt Manager with MCLeaks integration.
