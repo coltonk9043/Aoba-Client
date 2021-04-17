@@ -1,15 +1,14 @@
 package aoba.main.gui.tabs;
 
-import aoba.main.gui.Tab;
-import aoba.main.gui.elements.SliderComponent;
+import aoba.main.gui.ClickGuiTab;
 import aoba.main.gui.elements.StringComponent;
 import net.minecraft.client.Minecraft;
 
-public class InfoTab extends Tab {
+public class InfoTab extends ClickGuiTab {
 
-	private StringComponent positionComponent = new StringComponent(0, "X: Y: Z:", this);
-	private StringComponent timeComponent = new StringComponent(1, "Time:", this);
-	private StringComponent fpsDayComponent = new StringComponent(2, "FPS: Day:", this);
+	private StringComponent positionComponent = new StringComponent("X: Y: Z:", this);
+	private StringComponent timeComponent = new StringComponent("Time:", this);
+	private StringComponent fpsDayComponent = new StringComponent("FPS: Day:", this);
 
 	// 
 	public InfoTab(String title, int x, int y) {

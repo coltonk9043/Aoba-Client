@@ -11,7 +11,7 @@ public class FastPlace extends Module {
 
 	public FastPlace() {
 		this.setName("FastPlace");
-		this.setBind(new KeyBinding("key.fastplace", GLFW.GLFW_KEY_UP, "key.categories.aoba"));
+		this.setBind(new KeyBinding("key.fastplace", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Misc);
 		this.setDescription("Places blocks exceptionally fast");
 	}

@@ -2,10 +2,19 @@ package aoba.main.module;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.lwjgl.glfw.GLFW;
+
+import com.ibm.icu.impl.ICUService.Key;
 
 import aoba.main.misc.RenderUtils;
+import aoba.main.settings.Setting;
+import aoba.main.settings.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.network.IPacket;
 
 public abstract class Module {
@@ -15,7 +24,8 @@ public abstract class Module {
 	private KeyBinding keybind;
 	private boolean state;
 	private RenderUtils renderUtils = new RenderUtils();
-	public boolean hasSettings;
+
+	private List<Setting> settings = new ArrayList<Setting>();
 	
 	public Minecraft mc = Minecraft.getInstance();
 	
@@ -47,9 +57,6 @@ public abstract class Module {
 		return this.keybind;
 	}
 
-	public void setBind(KeyBinding bind) {
-		this.keybind = bind;
-	}
 
 	public boolean getState() {
 		return this.state;
@@ -57,6 +64,7 @@ public abstract class Module {
 
 	public void setState(boolean state) {
 		this.onToggle();
+		if(this.state = state) return;
 		if (state) {
 			this.onEnable();
 			this.state = true;
@@ -66,9 +74,31 @@ public abstract class Module {
 		}
 
 	}
+
+	public void setBind(KeyBinding bind) {
+		try {
+			this.keybind = new KeyBinding(bind.getKeyDescription(), InputMappings.getInputByName(Settings.getSettingString(bind.getKeyDescription())).getKeyCode(), bind.getKeyCategory());
+		} catch (Exception e) {
+			this.keybind = bind;
+			return;
+		}
+	
+	}
+
+	public void addSetting(Setting setting) {
+		this.settings.add(setting);
+	}
+	
+	public List<Setting> getSettings() {
+		return this.settings;
+	}
 	
 	public RenderUtils getRenderUtils() {
 		return this.renderUtils;
+	}
+	
+	public boolean hasSettings() {
+		return !this.settings.isEmpty();
 	}
 
 	public abstract void onDisable();
@@ -85,6 +115,11 @@ public abstract class Module {
 	public abstract void onReceivePacket(IPacket<?> packet);
 	
 	public void toggle() {
+		if(this.state) {
+			this.onDisable();
+		}else {
+			this.onEnable();
+		}
 		this.setState(!this.getState());
 	}
 

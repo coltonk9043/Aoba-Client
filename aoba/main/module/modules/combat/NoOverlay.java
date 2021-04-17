@@ -1,18 +1,18 @@
-package aoba.main.module.modules.movement;
+package aoba.main.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
+
 import aoba.main.module.Module;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.network.IPacket;
-import net.minecraft.network.play.client.CPlayerPacket;;
 
-public class NoFall extends Module {
+public class NoOverlay extends Module {
 
-	public NoFall() {
-		this.setName("No-Fall");
-		this.setBind(new KeyBinding("key.nofall", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
-		this.setCategory(Category.Movement);
-		this.setDescription("Prevents fall damage.");
+	public NoOverlay() {
+		this.setName("NoOverlay");
+		this.setBind(new KeyBinding("key.nooverlay", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
+		this.setCategory(Category.Combat);
+		this.setDescription("Makes all attacks into critical strikes.");
 	}
 
 	@Override
@@ -32,24 +32,21 @@ public class NoFall extends Module {
 
 	@Override
 	public void onUpdate() {
-		if(mc.player.fallDistance > 2f) {
-			mc.player.connection.sendPacket(new CPlayerPacket(true));
-		}
+
 	}
 
 	@Override
 	public void onRender() {
-		
+
 	}
 
 	@Override
 	public void onSendPacket(IPacket<?> packet) {
-		
+
 	}
 
 	@Override
 	public void onReceivePacket(IPacket<?> packet) {
-		
-		
+
 	}
 }

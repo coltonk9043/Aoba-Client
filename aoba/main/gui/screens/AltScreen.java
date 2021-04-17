@@ -78,7 +78,7 @@ public class AltScreen extends Screen {
 		AltSelectionList.Entry altselectionlist$entry = this.altListSelector.getSelected();
 		Alt alt = ((AltSelectionList.NormalEntry) altselectionlist$entry).getAltData();
 		if (alt.isCracked()) {
-			Minecraft.getInstance().aoba.am.loginCracked(alt.getUsername());
+			Minecraft.getInstance().aoba.am.loginCracked(alt.getEmail());
 		} else {
 			Minecraft.getInstance().aoba.am.login(alt);
 		}

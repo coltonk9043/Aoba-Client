@@ -38,7 +38,7 @@ public class AddAltScreen extends Screen {
 	      this.textFieldAltUsername = new TextFieldWidget(this.font, this.width / 2 - 100, 166, 200, 20, new TranslationTextComponent("Enter Name"));
 	      this.textFieldAltUsername.setFocused2(true);
 	      
-	      this.textFieldAltUsername.setText(this.alt == null ? "" : alt.getUsername());
+	      this.textFieldAltUsername.setText(this.alt == null ? "" : alt.getEmail());
 	      this.textFieldAltUsername.setResponder(this::func_213028_a);
 	      this.children.add(this.textFieldAltUsername);
 	      this.textFieldAltPassword = new PasswordFieldWidget(this.font, this.width / 2 - 100, 206, 200, 20, new TranslationTextComponent("Enter Password"));
@@ -79,7 +79,7 @@ public class AddAltScreen extends Screen {
 			      this.booleanConsumer.accept(true);
 			      this.parent.refreshAltList();
 		   }else {
-			   alt.setUsername(this.textFieldAltUsername.getText());
+			   alt.setEmail(this.textFieldAltUsername.getText());
 			   alt.setPassword(this.textFieldAltPassword.getText());
 			   Minecraft.getInstance().aoba.am.saveAlts();
 			   this.booleanConsumer.accept(true);

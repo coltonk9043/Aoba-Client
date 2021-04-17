@@ -2,6 +2,7 @@ package aoba.main.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 import aoba.main.module.Module;
+import aoba.main.settings.BooleanSetting;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
@@ -9,22 +10,22 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.IPacket;
 
 public class Aimbot extends Module {
-	public enum Mode {
-		PLAYER, ENTITY, BOTH
-	}
 	
-	private Mode mode = Mode.ENTITY;
 	private LivingEntity temp = null;
+	
+	private BooleanSetting targetAnimals;
+	private BooleanSetting targetPlayers;
 	
 	public Aimbot() {
 		this.setName("Aimbot");
 		this.setBind(new KeyBinding("key.aimbot", GLFW.GLFW_KEY_K, "key.categories.aoba"));
+		
 		this.setCategory(Category.Combat);
 		this.setDescription("Locks your crosshair towards a desire player or entity.");
-	}
-
-	public void changeMode(Mode mode) {
-		this.mode = mode;
+		targetAnimals = new BooleanSetting("Trgt Mobs", "aimbot_target_mobs");
+		targetPlayers = new BooleanSetting("Trgt Players", "aimbot_target_players");
+		this.addSetting(targetAnimals);
+		this.addSetting(targetPlayers);
 	}
 
 	@Override
@@ -45,8 +46,7 @@ public class Aimbot extends Module {
 	@Override
 	public void onUpdate() {
 	
-		switch (this.mode) {
-		case PLAYER:
+		if(this.targetPlayers.getValue()) {
 			if (mc.world.getPlayers().size() == 2) {
 				temp = mc.world.getPlayers().get(1);
 			} else if (mc.world.getPlayers().size() > 2) {
@@ -60,8 +60,8 @@ public class Aimbot extends Module {
 					}
 				}
 			}
-			break;
-		case ENTITY:
+		}
+		if(this.targetAnimals.getValue()) {
 			LivingEntity tempEntity = null;
 			for(Entity entity : mc.world.getAllEntities()) {
 				if(!(entity instanceof LivingEntity)) continue;
@@ -75,9 +75,6 @@ public class Aimbot extends Module {
 				}
 			}
 			temp = tempEntity;
-			break;
-		case BOTH:
-			break;
 		}
 	}
 

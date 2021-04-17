@@ -54,8 +54,6 @@ public class Noclip extends Module {
 		if (mc.gameSettings.keyBindSneak.isKeyDown()) {
 			vec.y = -flySpeed * 0.2f;
 		}
-		if (!player.isOnGround())
-			player.connection.sendPacket(new CPlayerPacket(true));
 		if (mc.gameSettings.keyBindSprint.isKeyDown()) {
 			this.flySpeed /= 1.5;
 		}

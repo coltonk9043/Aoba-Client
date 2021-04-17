@@ -3,6 +3,7 @@ package aoba.main.module.modules.world;
 import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 import aoba.main.module.Module;
+import aoba.main.settings.SliderSetting;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -15,19 +16,21 @@ import net.minecraft.util.math.BlockPos;
 
 public class TileBreaker extends Module {
 	private Minecraft mc;
-	private int radius = 5;
 	private ArrayList<Block> blocks = new ArrayList<Block>();
+	private SliderSetting radius;
 	
 	public TileBreaker() {
 		this.setName("TileBreaker");
-		this.setBind(new KeyBinding("key.tilebreaker", GLFW.GLFW_KEY_RIGHT, "key.categories.aoba"));
+		this.setBind(new KeyBinding("key.tilebreaker", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
 		this.loadTileBreakerBlocks();
+		this.radius = new SliderSetting("Radius", "tilebreaker_radius", 5f, 0f, 15f, 1f);
+		this.addSetting(radius);
 	}
 
 	public void setRadius(int radius) {
-		this.radius = radius;
+		this.radius.setValue(radius);
 	}
 	
 	@Override
@@ -45,9 +48,10 @@ public class TileBreaker extends Module {
 	@Override
 	public void onUpdate() {
 		mc = Minecraft.getInstance();
-		for (int x = -radius; x < radius; x++) {
-			for (int y = radius; y > -radius; y--) {
-				for (int z = -radius; z < radius; z++) {
+		int rad = this.radius.getValueInt();
+		for (int x = -rad; x < rad; x++) {
+			for (int y = rad; y > -rad; y--) {
+				for (int z = -rad; z < rad; z++) {
 					BlockPos blockpos = new BlockPos((int) mc.player.getPosX() + x,
 							(int) mc.player.getPosY() + y,
 							(int) mc.player.getPosZ() + z);
@@ -66,9 +70,10 @@ public class TileBreaker extends Module {
 	@Override
 	public void onRender() {
 		mc = Minecraft.getInstance();
-		for (int x = -radius; x < radius; x++) {
-			for (int y = radius; y > -radius; y--) {
-				for (int z = -radius; z < radius; z++) {
+		int rad = this.radius.getValueInt();
+		for (int x = -rad; x < rad; x++) {
+			for (int y = rad; y > -rad; y--) {
+				for (int z = -rad; z < rad; z++) {
 					BlockPos blockpos = new BlockPos((int) mc.player.getPosX() + x,
 							(int) mc.player.getPosY() + y,
 							(int) mc.player.getPosZ() + z);

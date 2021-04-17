@@ -67,6 +67,7 @@ public class XRay extends Module {
 		blocks.add(Blocks.OAK_PLANKS);
 	}
 
+
 	public static boolean isXRayBlock(Block b) {
 		if (XRay.blocks.contains(b)) {
 			return true;

@@ -2,18 +2,22 @@ package aoba.main.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 import aoba.main.module.Module;
+import aoba.main.settings.SliderSetting;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.network.IPacket;
 
 public class Step extends Module {
 
-	private float stepHeight = 1f;
+	private SliderSetting stepHeight;
 	
 	public Step() {
 		this.setName("Step");
 		this.setBind(new KeyBinding("key.step", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Steps up blocks.");
+		
+		stepHeight = new SliderSetting("Height", "step_height", 1f, 0.0f, 2f, 0.5f);
+		this.addSetting(stepHeight);
 	}
 
 	@Override
@@ -25,7 +29,7 @@ public class Step extends Module {
 
 	@Override
 	public void onEnable() {
-		mc.player.stepHeight = stepHeight;
+		mc.player.stepHeight = stepHeight.getValueFloat();
 	}
 
 	@Override
@@ -55,6 +59,6 @@ public class Step extends Module {
 	}
 	
 	public void setStepHeight(float height) {
-		this.stepHeight = height;
+		this.stepHeight.setValue(height);
 	}
 }

@@ -2,28 +2,31 @@ package aoba.main.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
 import aoba.main.module.Module;
+import aoba.main.settings.SliderSetting;
 import net.minecraft.block.Block;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.network.IPacket;
 
 public class FastBreak extends Module {
 
-	private float multiplier = 1.25f;
+	private SliderSetting multiplier;
 	
 	public FastBreak() {
 		this.setName("FastBreak");
-		this.setBind(new KeyBinding("key.fastbreak", GLFW.GLFW_KEY_DOWN, "key.categories.aoba"));
+		this.setBind(new KeyBinding("key.fastbreak", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Misc);
 		this.setDescription("Breaks blocks quicker based on a multiplier.");
-		this.hasSettings = true;
+		
+		multiplier = new SliderSetting("Multiplier", "fastbreak_multiplier", 1.25f, 1f, 3f, 0.05f);
+		this.addSetting(multiplier);
 	}
 
 	public void setMultiplier(float multiplier) {
-		this.multiplier = multiplier;
+		this.multiplier.setValue(multiplier);
 	}
 	
 	public float getMultiplier() {
-		return this.multiplier;
+		return this.multiplier.getValueFloat();
 	}
 	
 	@Override

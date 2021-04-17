@@ -10,7 +10,7 @@ public class PlayerESP extends Module {
 
 	public PlayerESP() {
 		this.setName("PlayerESP");
-		this.setBind(new KeyBinding("key.playeresp", GLFW.GLFW_KEY_LEFT, "key.categories.aoba"));
+		this.setBind(new KeyBinding("key.playeresp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see other players with an ESP.");
 

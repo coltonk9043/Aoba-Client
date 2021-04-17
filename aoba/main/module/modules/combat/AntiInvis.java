@@ -10,6 +10,7 @@ public class AntiInvis extends Module {
 	public AntiInvis() {
 		this.setName("AntiInvis");
 		this.setBind(new KeyBinding("key.antiinvis", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
+		
 		this.setCategory(Category.Combat);
 		this.setDescription("Reveals players who are invisible.");
 	}

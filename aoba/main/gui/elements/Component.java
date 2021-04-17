@@ -1,17 +1,17 @@
 package aoba.main.gui.elements;
 
-import aoba.main.gui.Tab;
+import aoba.main.gui.ClickGuiTab;
+import aoba.main.gui.Color;
 import aoba.main.misc.RenderUtils;
 
 public abstract class Component {
 	protected RenderUtils renderUtils = new RenderUtils();
 	
 	private int height = 14;
-	private Tab parent;
-	private int id;
+	protected ClickGuiTab parent;
 	
-	public Component(int id) {
-		this.id = id;
+	public Component() {
+
 	}
 	
 	public int getHeight()
@@ -24,24 +24,16 @@ public abstract class Component {
 		this.height = height;
 	}
 	
-	public Tab getParent()
+	public ClickGuiTab getParent()
 	{
 		return parent;
 	}
 	
-	public void setParent(Tab parent)
+	public void setParent(ClickGuiTab parent)
 	{
 		this.parent = parent;
 	}
-	
-	public void setId(int id) {
-		this.id = id;
-	}
-	
-	public int getId() {
-		return this.id;
-	}
 
-	public abstract void update(double mouseX, double mouseY, boolean mouseClicked);
-	public abstract void draw();
+	public abstract void update(int offset, double mouseX, double mouseY, boolean mouseClicked);
+	public abstract void draw(int offset, int scaledWidth, int scaledHeight, Color color);
 }

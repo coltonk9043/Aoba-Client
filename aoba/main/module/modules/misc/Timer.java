@@ -10,7 +10,7 @@ public class Timer extends Module {
 	
 	public Timer() {
 		this.setName("Timer");
-		this.setBind(new KeyBinding("key.timer", GLFW.GLFW_KEY_LEFT, "key.categories.aoba"));
+		this.setBind(new KeyBinding("key.timer", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Misc);
 		this.setDescription("Increases the speed of Minecraft.");
 	}

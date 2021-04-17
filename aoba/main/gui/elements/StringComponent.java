@@ -1,29 +1,38 @@
 package aoba.main.gui.elements;
 
-import aoba.main.gui.Tab;
+import aoba.main.gui.ClickGuiTab;
 import net.minecraft.client.Minecraft;
+import aoba.main.gui.Color;
 
 public class StringComponent extends Component {
 
 	private String text;
-	private Tab parent;
+	private boolean bold;
 	
-	public StringComponent(int id, String text, Tab parent) {
-		super(id);
+	public StringComponent(String text, ClickGuiTab parent) {
+		super();
 		this.text = text;
+		this.bold = false;
+		this.parent = parent;
+	}
+	
+	public StringComponent(String text, ClickGuiTab parent, boolean bold) {
+		super();
+		this.text = text;
+		this.bold = bold;
 		this.parent = parent;
 	}
 
-	public void update(double mouseX, double mouseY, boolean mouseClicked) {
+	public void update(int offset, double mouseX, double mouseY, boolean mouseClicked) {
 		
 	}
 
 	@Override
-	public void draw() {
-		int parentX = parent.getX();
-		int parentY = parent.getY();
-		Minecraft.getInstance().fontRenderer.drawStringWithShadow(this.text, parentX + 5,
-				parentY + 19 + (this.getId() * 15), 0xFFFFFF, true);
+	public void draw(int offset, int scaledWidth, int scaledHeight, Color color) {
+		int parentX = this.parent.getX();
+		int parentY = this.parent.getY();
+		Minecraft.getInstance().fontRenderer.drawStringWithShadow((this.bold ? "§l" : "") + this.text, parentX + 5,
+				parentY + 4 + offset, 0xFFFFFF, true);
 	}
 	
 	public void setText(String text) {
