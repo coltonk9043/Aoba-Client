@@ -1,3 +1,5 @@
+#DISCLAIMER: THIS VERSION OF THE CLIENT IS OUTDATED AND WILL NOT BE SUPPORTED. PLEASE USE FABRIC FOR FUTURE RELEASES
+
 # Aoba Hacked Client (1.16.5)
 A custom hacked client for Minecraft 1.16.5. A personal project I've been working on for awhile.
 
