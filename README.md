@@ -1,7 +1,9 @@
-# Aoba Hacked Client (1.17.1)
+# Aoba Hacked Client (1.17.1) (ALPHA ASF)
 A custom hacked client for Minecraft 1.17.1. 
 
 THIS IS THE FABRIC PORT OF AOBA HACKED CLIENT. FUTURE RELEASES WILL BE RELEASED USING FABRIC.
+BE AWARE THIS EARLY VERSION OF THE FABRIC PORT IS BROKEN. HACKS WORK BUT THE MENU AND CLIENT WILL
+OFTEN CRASH.
 
 ## Features
 - Fully featured Alt Manager with MCLeaks integration.
