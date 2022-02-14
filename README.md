@@ -1,4 +1,4 @@
-# Aoba Hacked Client (1.17.1) (ALPHA ASF)
+# Aoba Hacked Client (1.17.1) (Dead for now)
 A custom hacked client for Minecraft 1.17.1. 
 
 THIS IS THE FABRIC PORT OF AOBA HACKED CLIENT. FUTURE RELEASES WILL BE RELEASED USING FABRIC.
