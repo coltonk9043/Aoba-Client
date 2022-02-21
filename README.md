@@ -11,5 +11,9 @@ OFTEN CRASH OR NOT FUNCTION CORRECTLY.
 - ClickGui with moveable/pinnable windows and customization.
 - Plenty of hacks.
 
+## Screenshots
+![image](https://user-images.githubusercontent.com/56643581/155033953-08f9ed72-f79f-46e4-b8ce-80d45d981d7a.png)
+![image](https://user-images.githubusercontent.com/56643581/155034033-49970900-802e-4314-9c3a-425abf105a26.png)
+
 ## License
 This code is licensed under the GNU General Public License v3. You may use code published here in your own clients under the same license.
