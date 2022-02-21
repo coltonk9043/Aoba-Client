@@ -11,6 +11,20 @@ OFTEN CRASH OR NOT FUNCTION CORRECTLY.
 - ClickGui with moveable/pinnable windows and customization.
 - Plenty of hacks.
 
+## Default Keybinds:
+~ - Toggle ClickGUI
+↑ - Move menu 'cursor' up.
+↓ - Move menu 'cursor' down.
+← - Leave current 'mod' menu.
+→ - Enter currently selected 'mod' menu.
+K - Toggle Aimbot
+N - Toggle AutoEat
+V - Toggle Fly
+Z - Toggle NoSlowdown
+G - Toggle Sprint
+F - Toggle Fullbright
+X - Toggle XRay
+
 ## Screenshots
 ![image](https://user-images.githubusercontent.com/56643581/155033953-08f9ed72-f79f-46e4-b8ce-80d45d981d7a.png)
 ![image](https://user-images.githubusercontent.com/56643581/155034033-49970900-802e-4314-9c3a-425abf105a26.png)
