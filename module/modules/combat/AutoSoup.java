@@ -5,7 +5,7 @@ import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
-import net.minecraft.item.MushroomStewItem;
+import net.minecraft.item.StewItem;
 import net.minecraft.network.Packet;
 
 public class AutoSoup extends Module {
@@ -39,7 +39,7 @@ public class AutoSoup extends Module {
 			for(int i = 0; i< 9; i++) {
 				Item item = mc.player.getInventory().getStack(i).getItem();
 				
-				if(!(item instanceof MushroomStewItem)) {
+				if(!(item instanceof StewItem)) {
 					continue;
 				}
 			    mc.player.getInventory().selectedSlot = foodSlot;

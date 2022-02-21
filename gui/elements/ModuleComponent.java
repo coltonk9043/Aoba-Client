@@ -9,7 +9,6 @@ import net.aoba.gui.HudManager;
 import net.aoba.settings.Setting;
 import net.aoba.settings.*;
 import net.aoba.settings.SliderSetting;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class ModuleComponent extends Component {
@@ -46,16 +45,15 @@ public class ModuleComponent extends Component {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
-		MinecraftClient mc = MinecraftClient.getInstance();
 		if (this.popped) {
-			this.setHeight(15 + (this.settingsList.size() * 15));
-			int i = offset + 15;
+			this.setHeight(30 + (this.settingsList.size() * 30));
+			int i = offset + 30;
 			for (Component children : this.settingsList) {
 				children.update(i, mouseX, mouseY, mouseClicked);
 				i += children.getHeight();
 			}
 		} else {
-			this.setHeight(15);
+			this.setHeight(30);
 		}
 
 		if (HudManager.currentGrabbed == null) {
@@ -93,10 +91,10 @@ public class ModuleComponent extends Component {
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
 
-		renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset, parentWidth - 4, this.getHeight() - 2, new Color(0.5f,0.5f,0.5f), 0.2f);
+		renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset, parentWidth - 4, this.getHeight() - 2, new Color(128,128,128), 0.2f);
 		
 		if(this.popped) {
-			int i = offset + 15;
+			int i = offset + 30;
 			for(Component children : this.settingsList) {
 				if(children.isVisible()) {
 					children.draw(i, matrixStack, partialTicks, color);
@@ -105,11 +103,11 @@ public class ModuleComponent extends Component {
 			}
 		}
 		
-		MinecraftClient.getInstance().textRenderer.drawWithShadow(matrixStack, this.text, parentX + 5,
-				parentY + 4 + offset, module.getState() ? 0x00FF00 : 0xFFFFFF);
+		renderUtils.drawStringWithScale(matrixStack, this.text, parentX + 8,
+				parentY + 8 + offset, module.getState() ? 0x00FF00 : 0xFFFFFF);
 		if(module.hasSettings()) {
-			MinecraftClient.getInstance().textRenderer.drawWithShadow(matrixStack, this.popped ? "<<" : ">>", parentX + parentWidth - 15,
-					parentY + 4 + offset, color.getColorAsInt());
+			renderUtils.drawStringWithScale(matrixStack, this.popped ? "<<" : ">>", parentX + parentWidth - 30,
+					parentY + 8 + offset, color.getColorAsInt());
 		}
 	}
 

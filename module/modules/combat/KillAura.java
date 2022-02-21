@@ -27,7 +27,7 @@ public class KillAura extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything within your personal space.");
 		
-		radius = new SliderSetting("Radius", "killaura_radius", 2f, 0.1f, 10f, 0.1f);
+		radius = new SliderSetting("Radius", "killaura_radius", 5f, 0.1f, 10f, 0.1f);
 		targetAnimals = new BooleanSetting("Trgt Mobs", "killaura_target_mobs");
 		targetPlayers = new BooleanSetting("Trgt Players", "killaura_target_players");
 		this.addSetting(radius);

@@ -10,7 +10,7 @@ public abstract class Tab {
 	protected int width;
 	protected int height;
 	protected RenderUtils renderUtils = new RenderUtils();
-	MinecraftClient mc = MinecraftClient.getInstance();
+	protected MinecraftClient mc = MinecraftClient.getInstance();
 	
 	public abstract void update(double mouseX, double mouseY, boolean mouseClicked) ;
 	
@@ -52,4 +52,5 @@ public abstract class Tab {
 	public void setHeight(int height) {
 		this.height = height;
 	}
+
 }

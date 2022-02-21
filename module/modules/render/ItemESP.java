@@ -1,6 +1,8 @@
 package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -42,7 +44,7 @@ public class ItemESP extends Module {
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
 		for (Entity entity : mc.world.getEntities()) {
 			if(entity instanceof ItemEntity) {
-				this.getRenderUtils().EntityESPBox(entity, 255, 0, 255);
+				this.getRenderUtils().draw3DBox(matrixStack, entity.getBoundingBox(), new Color(255, 0, 0), 0.2f);
 			}
 		}
 	}

@@ -72,7 +72,7 @@ public class Breadcrumbs extends Module{
 	@Override
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
 		for(int i = 0; i < this.positions.size() - 1; i++) {
-			this.getRenderUtils().drawLine3D(this.positions.get(i), this.positions.get(i + 1), this.currentColor);
+			this.getRenderUtils().drawLine3D(matrixStack, this.positions.get(i), this.positions.get(i + 1), this.currentColor);
 		}
 	}
 

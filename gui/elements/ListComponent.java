@@ -35,12 +35,11 @@ public class ListComponent extends Component {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
-		MinecraftClient mc = MinecraftClient.getInstance();
 		if (HudManager.currentGrabbed == null) {
 			if (mouseClicked) {
-				if (mouseY >= (((parentY + offset + 2))) && mouseY <= (parentY + offset + 22)) {
+				if (mouseY >= (((parentY + offset + 4))) && mouseY <= (parentY + offset + 22)) {
 					// If Left arrow clicked.
-					if (mouseX >= ((parentX + 5)) && mouseX <= ((parentX + 32))) {
+					if (mouseX >= ((parentX + 4)) && mouseX <= ((parentX + 64))) {
 						if (!this.wasClicked) {
 							list.decrement();
 							this.wasClicked = true;
@@ -48,7 +47,7 @@ public class ListComponent extends Component {
 						}
 					}
 					// If Right arrow clicked.
-					if (mouseX >= ((parentX + parent.getWidth() - 32)) && mouseX <= ((parentX + parentWidth - 8))) {
+					if (mouseX >= ((parentX + parentWidth - 64)) && mouseX <= ((parentX + parentWidth - 4))) {
 						if (!this.wasClicked) {
 							list.increment();
 							this.wasClicked = true;
@@ -70,10 +69,10 @@ public class ListComponent extends Component {
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
 		int length = MinecraftClient.getInstance().textRenderer.getWidth(list.getValue()); 
-		renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset, parentWidth - 8, 11, new Color(0.1f,0.1f,0.1f),
+		renderUtils.drawOutlinedBox(matrixStack, parentX + 4, parentY + offset, parentWidth - 8, 22, new Color(25,25,25),
 				0.3f);
-		MinecraftClient.getInstance().textRenderer.drawWithShadow(matrixStack, list.getValue(), (parentX + (parentWidth / 2)) - length , parentY + offset + 2, 0xFFFFFF);
-		MinecraftClient.getInstance().textRenderer.drawWithShadow(matrixStack,">>", parentX + 4, parentY + offset + 2, 0xFFFFFF);
-		MinecraftClient.getInstance().textRenderer.drawWithShadow(matrixStack,"<<", parentX + 4 + (parentWidth - 17), parentY + offset + 2, 0xFFFFFF);
+		renderUtils.drawStringWithScale(matrixStack, list.getValue(), (parentX + (parentWidth / 2)) - length , parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawStringWithScale(matrixStack,"<<", parentX + 8, parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawStringWithScale(matrixStack,">>", parentX + 8 + (parentWidth - 34), parentY + offset + 4, 0xFFFFFF);
 	}
 }

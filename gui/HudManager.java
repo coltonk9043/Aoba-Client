@@ -3,10 +3,8 @@ package net.aoba.gui;
 import java.util.Hashtable;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-
 import net.aoba.module.Module;
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.aoba.gui.elements.ModuleComponent;
 import net.aoba.gui.tabs.*;
 import net.aoba.misc.RainbowColor;
@@ -25,7 +23,7 @@ public class HudManager {
 	private KeyBinding clickGuiButton = new KeyBinding("key.clickgui", GLFW.GLFW_KEY_GRAVE_ACCENT,
 			"key.categories.aoba");
 	private boolean clickGuiOpen = false;
-	private RenderUtils renderUtils = new RenderUtils();
+	private RenderUtils renderUtils;;
 
 	public IngameGUI hud;
 	public ArmorHUD armorHud;
@@ -33,7 +31,8 @@ public class HudManager {
 
 	private int lastMouseX = 0;
 	private int lastMouseY = 0;
-
+	private boolean wasTildaPressed = false;
+	
 	public InfoTab infoTab;
 	public OptionsTab optionsTab;
 
@@ -50,7 +49,7 @@ public class HudManager {
 		mc = MinecraftClient.getInstance();
 		hud = new IngameGUI();
 		armorHud = new ArmorHUD();
-		
+		renderUtils = Aoba.getInstance().renderUtils;
 		color = new Color(hue.getValueFloat());
 		currentColor = color;
 		rainbowColor = new RainbowColor();
@@ -86,14 +85,15 @@ public class HudManager {
 	public void update() {
 		if (!Aoba.getInstance().isGhosted()) {
 			boolean mouseClicked = mc.mouse.wasLeftButtonClicked();
-			if (this.clickGuiButton.isPressed()) {
+			if (this.clickGuiButton.isPressed() && !wasTildaPressed) {
+				wasTildaPressed = true;
 				this.clickGuiOpen = !this.clickGuiOpen;
-				this.clickGuiButton.setPressed(false);
-				// TODO FIX TOGGLE MOUSE WITH MIXIN
 				this.toggleMouse();
+			}else if (!this.clickGuiButton.isPressed()) {
+				wasTildaPressed = false;
 			}
-			int mouseX = (int) Math.ceil(mc.mouse.getX());
-			int mouseY = (int) Math.ceil(mc.mouse.getY());
+			int mouseX = (int) Math.ceil(mc.mouse.getX()) ;
+			int mouseY = (int) Math.ceil(mc.mouse.getY()) ;
 			hud.update(mouseX, mouseY, mouseClicked);
 			if (this.clickGuiOpen) {
 				int dx = (int) Math.ceil(mouseX);
@@ -125,11 +125,12 @@ public class HudManager {
 
 	public void draw(MatrixStack matrixStack, float partialTicks) {
 		GL11.glDisable(GL11.GL_CULL_FACE);
-		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		Window window = mc.getWindow();
 		matrixStack.push();
+		matrixStack.scale(1.0f/mc.options.guiScale, 1.0f/mc.options.guiScale, 1.0f);
+		Window window = mc.getWindow();
+		
 		if (this.clickGuiOpen) {
 			renderUtils.drawBox(matrixStack, 0, 0, window.getWidth(), window.getHeight(), 0.1f, 0.1f, 0.1f, 0.4f);
 		}
@@ -140,7 +141,6 @@ public class HudManager {
 			}
 		}
 		
-		GL11.glEnable(GL11.GL_BLEND);
 		matrixStack.pop();
 		GL11.glEnable(GL11.GL_CULL_FACE);
 	}

@@ -57,8 +57,8 @@ public class Fly extends Module {
 				speed *= 1.5;
 			}
 			player.setVelocity(new Vec3d(0, 0, 0));
-			//player.setAIMoveSpeed(speed * 0.2f);
-			//player.jumpMovementFactor = speed * 0.2f;
+			player.setMovementSpeed(speed * 0.2f);
+			player.airStrafingSpeed = speed * 0.2f;
 
 			Vec3d vec = new Vec3d(0, 0, 0);
 			if (mc.options.keyJump.isPressed()) {

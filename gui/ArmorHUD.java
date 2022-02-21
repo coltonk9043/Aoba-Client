@@ -1,7 +1,6 @@
 package net.aoba.gui;
 
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;

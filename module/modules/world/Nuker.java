@@ -1,6 +1,8 @@
 package net.aoba.module.modules.world;
 
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.aoba.settings.SliderSetting;
 import net.minecraft.block.Block;
@@ -12,6 +14,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 
 public class Nuker extends Module {
@@ -80,7 +83,7 @@ public class Nuker extends Module {
 					if (block == Blocks.AIR || block == Blocks.WATER || block == Blocks.LAVA)
 						continue;
 
-					this.getRenderUtils().BlockESPBox(blockpos, 1f, 0, 0);
+					this.getRenderUtils().draw3DBox(matrixStack, new Box(blockpos), new Color(255,0,0), 0.2f);
 				}
 			}
 		}

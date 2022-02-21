@@ -16,10 +16,7 @@ import net.minecraft.item.Items;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 
 public class CrystalAura extends Module {
 	private float radius = 10.0f;

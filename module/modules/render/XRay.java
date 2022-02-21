@@ -3,11 +3,9 @@ package net.aoba.module.modules.render;
 import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.Packet;
 

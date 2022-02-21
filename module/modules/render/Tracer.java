@@ -42,7 +42,7 @@ public class Tracer extends Module {
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
 		for (Entity entity : mc.world.getEntities()) {
 			if(entity instanceof LivingEntity && (entity != mc.player)) {
-				this.getRenderUtils().drawLine3D(mc.player, entity);
+				//this.getRenderUtils().drawLine3D(mc.player, entity);
 			}
 		}
 	}

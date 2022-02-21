@@ -1,6 +1,8 @@
 package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
@@ -41,7 +43,7 @@ public class PlayerESP extends Module {
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
 		for (AbstractClientPlayerEntity entity : mc.world.getPlayers()) {
 			if(entity != mc.player) {
-				this.getRenderUtils().EntityESPBox(entity, 255,255,0);
+				this.getRenderUtils().draw3DBox(matrixStack, entity.getBoundingBox(), new Color(255, 0, 0), 0.2f);
 			}
 		}
 	}

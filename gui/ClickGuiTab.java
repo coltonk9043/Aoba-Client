@@ -1,17 +1,13 @@
 package net.aoba.gui;
 
 import java.util.ArrayList;
-
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.aoba.gui.elements.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 
 
 public class ClickGuiTab extends Tab {
-
-	protected MinecraftClient mc;
 	protected String title;
 	protected boolean isPinned = false;
 	protected boolean pinWasClicked = false;
@@ -22,7 +18,7 @@ public class ClickGuiTab extends Tab {
 		this.title = title;
 		this.x = x;
 		this.y = y;
-		this.width = 90;
+		this.width = 180;
 		this.mc = MinecraftClient.getInstance();
 	}
 
@@ -149,16 +145,16 @@ public class ClickGuiTab extends Tab {
 	public void draw(MatrixStack matrixStack, float partialTicks, Color color) {
 		if(drawBorder) {
 			// Draws background depending on components width and height
-			renderUtils.drawOutlinedBox(matrixStack, x, y, width, 14, new Color(0.3f,0.3f,0.3f), 0.4f);
-			mc.textRenderer.drawWithShadow(matrixStack, this.title, x + 4, y + 4, Aoba.getInstance().hm.getColor().getColorAsInt());
-			renderUtils.drawOutlinedBox(matrixStack, x, y + 14, width, height, new Color(0.3f,0.3f,0.3f), 0.4f);
+			renderUtils.drawOutlinedBox(matrixStack, x, y, width, 29, new Color(30,30,30), 0.4f);
+			renderUtils.drawStringWithScale(matrixStack, this.title, x + 8, y + 8, Aoba.getInstance().hm.getColor());
+			renderUtils.drawOutlinedBox(matrixStack, x, y + 29, width, height, new Color(30,30,30), 0.4f);
 			if (this.isPinned) {
-				renderUtils.drawOutlinedBox(matrixStack, x + width - 12, y + 2, 10, 10, new Color(0.6f,0.0f,0.0f), 0.8f);
+				renderUtils.drawOutlinedBox(matrixStack, x + width - 24, y + 4, 20, 20, new Color(154,0,0), 0.8f);
 			} else {
-				renderUtils.drawOutlinedBox(matrixStack, x + width - 12, y + 2, 10, 10, new Color(0.5f,0.5f,0.5f), 0.2f);
+				renderUtils.drawOutlinedBox(matrixStack, x + width - 24, y + 4, 20, 20, new Color(128,128,128), 0.2f);
 			}
 		}
-		int i = 15;
+		int i = 30;
 		for (Component child : children) {
 			child.draw(i, matrixStack, partialTicks, color);
 			i += child.getHeight();

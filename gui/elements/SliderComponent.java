@@ -4,7 +4,6 @@ import net.aoba.gui.ClickGuiTab;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.settings.SliderSetting;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class SliderComponent extends Component {
@@ -38,7 +37,6 @@ public class SliderComponent extends Component {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
-		MinecraftClient mc = MinecraftClient.getInstance();
 		if (HudManager.currentGrabbed == null) {
 			if (mouseClicked) {
 				if (mouseX >= ((parentX + 2)) && mouseX <= (((parentX)) + parentWidth - 2)) {
@@ -59,14 +57,14 @@ public class SliderComponent extends Component {
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
 
-		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 12, 0.5f, 0.5f, 0.5f,
+		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24, 0.5f, 0.5f, 0.5f,
 				0.3f);
 		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset,
-				(int) Math.floor((parentWidth - 6) * this.currentSliderPosition), 12, color, 1f);
-		renderUtils.drawOutline(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 12);
+				(int) Math.floor((parentWidth - 6) * this.currentSliderPosition), 24, color, 1f);
+		renderUtils.drawOutline(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24);
 		if(this.slider == null) return;
-		MinecraftClient.getInstance().textRenderer.drawWithShadow(matrixStack, this.text + ": " + this.slider.getValueFloat(), parentX + 5,
-				parentY + 3 + offset, 0xFFFFFF);
+		renderUtils.drawStringWithScale(matrixStack, this.text + ": " + this.slider.getValueFloat(), parentX + 10,
+				parentY + 6 + offset, 0xFFFFFF);
 	}
 
 	public float getSliderPosition() {

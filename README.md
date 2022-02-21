@@ -1,14 +1,14 @@
-# Aoba Hacked Client (1.17.1) (Dead for now)
-A custom hacked client for Minecraft 1.17.1. 
+# Aoba Hacked Client (1.18.1)
+A custom hacked client for Minecraft 1.18.1 using Fabric. 
 
 THIS IS THE FABRIC PORT OF AOBA HACKED CLIENT. FUTURE RELEASES WILL BE RELEASED USING FABRIC.
 BE AWARE THIS EARLY VERSION OF THE FABRIC PORT IS BROKEN. HACKS WORK BUT THE MENU AND CLIENT WILL
-OFTEN CRASH.
+OFTEN CRASH OR NOT FUNCTION CORRECTLY.
 
 ## Features
-- Fully featured Alt Manager with MCLeaks integration.
+- (Somewhat WIP) Fully featured Alt Manager with MCLeaks integration.
 - Working Command System.
-- ClickGui with moveable/pinnable windows.
+- ClickGui with moveable/pinnable windows and customization.
 - Plenty of hacks.
 
 ## License

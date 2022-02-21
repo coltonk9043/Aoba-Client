@@ -4,7 +4,6 @@ import org.lwjgl.glfw.GLFW;
 
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
-import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.ListSetting;
 import net.aoba.settings.SliderSetting;
@@ -13,9 +12,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.LivingEntity;
-
+import net.minecraft.entity.mob.Monster;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.network.Packet;
-import net.minecraft.util.math.BlockPos;
 
 public class EntityESP extends Module {
 
@@ -72,13 +71,13 @@ public class EntityESP extends Module {
 	public void onRender(MatrixStack matrixStack, float partialTicks) {		
 		for (Entity entity : mc.world.getEntities()) {
 			if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
-				//if (entity instanceof MobEntity) {
-				//	this.getRenderUtils().EntityESPBox((Entity) entity, 0, 1f, 0);
-				//} else if (entity instanceof Monster) {
-				//	this.getRenderUtils().EntityESPBox((Entity) entity, 1f, 0, 0);
-				//} else {
-					this.getRenderUtils().draw3DBox(matrixStack, entity.getBoundingBox(), new Color(1f, 0f, 0f));
-				//}
+				if (entity instanceof AnimalEntity) {
+					this.getRenderUtils().draw3DBox(matrixStack, entity.getBoundingBox(), new Color(0, 255, 0), 0.2f);
+				} else if (entity instanceof Monster) {
+					this.getRenderUtils().draw3DBox(matrixStack, entity.getBoundingBox(), new Color(255, 0, 0), 0.2f);
+				} else {
+					this.getRenderUtils().draw3DBox(matrixStack, entity.getBoundingBox(), new Color(0, 0, 255), 0.2f);
+				}
 			}
 		}
 	}

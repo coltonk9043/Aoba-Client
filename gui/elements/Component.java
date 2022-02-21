@@ -1,19 +1,19 @@
 package net.aoba.gui.elements;
 
+import net.aoba.Aoba;
 import net.aoba.gui.ClickGuiTab;
 import net.aoba.gui.Color;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class Component {
-	protected RenderUtils renderUtils = new RenderUtils();
-	
-	private int height = 15;
+	protected RenderUtils renderUtils;
+	private int height = 30;
 	protected ClickGuiTab parent;
 	private boolean visible = true;
 	
 	public Component() {
-
+		this.renderUtils = Aoba.getInstance().renderUtils;
 	}
 	
 	public void setVisible(boolean bool) {

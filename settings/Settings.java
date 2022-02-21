@@ -7,8 +7,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Dictionary;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +16,6 @@ import net.aoba.module.Module;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
 
 public class Settings {
 	private File aobaOptions;

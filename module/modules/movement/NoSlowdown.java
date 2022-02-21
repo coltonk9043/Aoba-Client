@@ -4,9 +4,7 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.network.Packet;
-import net.minecraft.util.math.Vec3d;
 
 public class NoSlowdown extends Module {
 

@@ -1,36 +1,33 @@
 package net.aoba;
 
-import java.nio.file.Path;
-
 import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
 import net.aoba.gui.HudManager;
+import net.aoba.misc.RenderUtils;
 import net.aoba.module.ModuleManager;
 import net.aoba.settings.Settings;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class AobaClient {
 	
 	public static final String NAME = "Aoba";
-	public static final String VERSION = "1.17.1";
+	public static final String VERSION = "1.18.1";
 	public static final String PREFIX = ".aoba";
 
 	public ModuleManager mm;
 	public CommandManager cm;
 	public Settings settings;
 	public AltManager am;
-	
+	public RenderUtils renderUtils;
 	public HudManager hm;
 	private boolean ghostMode;
 	
 	public AobaClient() {
-	
+		System.out.println("[Aoba] Starting Client");
 	}
 	
 	public void Init() {
-		System.out.println("[Aoba] Starting Client");
+		renderUtils = new RenderUtils();
 		System.out.println("[Aoba] Reading Settings");
 		settings = new Settings();
 		System.out.println("[Aoba] Initializing Modules");
@@ -42,6 +39,7 @@ public class AobaClient {
 		System.out.println("[Aoba] Loading Alts");
 		am = new AltManager();
 		System.out.println("[Aoba] Aoba-chan initialized and ready to play!");
+		
 	}
 	
 	public void update() {

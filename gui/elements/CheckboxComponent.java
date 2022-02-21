@@ -4,7 +4,6 @@ import net.aoba.gui.ClickGuiTab;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.settings.BooleanSetting;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class CheckboxComponent extends Component {
@@ -25,7 +24,6 @@ public class CheckboxComponent extends Component {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
-		MinecraftClient mc = MinecraftClient.getInstance();
 		if (HudManager.currentGrabbed == null) {
 			if (mouseClicked) {
 				if (mouseX >= ((parentX + parent.getWidth() - 28))
@@ -52,12 +50,12 @@ public class CheckboxComponent extends Component {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
-		MinecraftClient.getInstance().textRenderer.drawWithShadow(matrixStack, this.text, parentX + 5,
-				parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawStringWithScale(matrixStack, this.text, parentX + 10,
+				parentY + offset + 8, 0xFFFFFF);
 		if(this.checkbox.getValue()) {
-			renderUtils.drawOutlinedBox(matrixStack, parentX + parentWidth - 14, parentY + 1 + offset, 10, 10, new Color(0.0f,0.6f,0.0f), 0.8f);
+			renderUtils.drawOutlinedBox(matrixStack, parentX + parentWidth - 24, parentY + 1 + offset, 20, 20, new Color(0,154,0), 0.8f);
 		}else {
-			renderUtils.drawOutlinedBox(matrixStack, parentX + parentWidth - 14, parentY + 1 + offset, 10, 10, new Color(0.6f,0.0f,0.0f), 0.8f);
+			renderUtils.drawOutlinedBox(matrixStack, parentX + parentWidth - 24, parentY + 1 + offset, 20, 20, new Color(154,0,0), 0.8f);
 		}
 	}
 }

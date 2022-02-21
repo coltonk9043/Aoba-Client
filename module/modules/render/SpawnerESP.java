@@ -1,11 +1,17 @@
 package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.gui.Color;
+import net.aoba.interfaces.IWorld;
 import net.aoba.module.Module;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.Packet;
+import net.minecraft.util.math.Box;
+import net.minecraft.world.chunk.BlockEntityTickInvoker;
 
 public class SpawnerESP extends Module {
 
@@ -38,11 +44,13 @@ public class SpawnerESP extends Module {
 
 	@Override
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		//for (BlockEntity entity : mc.world.loadedTileEntityList) {
-		//	if(entity instanceof MobSpawnerBlockEntity) {
-		//		this.getRenderUtils().TileEntityESPBox(entity, 0.0f, 1.0f, 0.0f);
-		//	}
-		//}
+		for (BlockEntityTickInvoker tickInvolker : ((IWorld)mc.world).getBlockEntityTickers()) {
+			BlockEntity blockEntity = mc.world.getBlockEntity(tickInvolker.getPos());
+			if(blockEntity instanceof MobSpawnerBlockEntity) {
+				Box box = new Box(blockEntity.getPos());
+				this.getRenderUtils().draw3DBox(matrixStack, box, new Color(255,255,0), 0.2f);
+			}
+		}
 	}
 
 	@Override

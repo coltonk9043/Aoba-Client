@@ -1,7 +1,6 @@
 package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
-
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.Module;
 import net.aoba.settings.SliderSetting;
@@ -32,7 +31,7 @@ public class Freecam extends Module {
 		player.setVelocity(0, 0, 0);
 		player.copyFrom(fakePlayer);
 		fakePlayer.despawn();
-		mc.world.removeEntity(-3, null);
+		//mc.world.removeEntity(-3, RemovalReason.DISCARDED);
 	}
 
 	@Override
@@ -42,7 +41,6 @@ public class Freecam extends Module {
 		fakePlayer.copyFrom(player);
 		fakePlayer.headYaw = player.headYaw;
 		mc.world.addEntity(-3, fakePlayer);
-		System.out.println(fakePlayer);
 	}
 
 	@Override
@@ -60,8 +58,8 @@ public class Freecam extends Module {
 			speed *= 1.5;
 		}
 		player.setVelocity(new Vec3d(0,0,0));
-		//player.setAIMoveSpeed(speed * 0.2f);
-		//player.jumpMovementFactor = speed * 0.2f;
+		player.setMovementSpeed(speed * 0.2f);
+		player.airStrafingSpeed = speed * 0.2f;
 		
 		Vec3d vec = new Vec3d(0,0,0);
 		if (mc.options.keyJump.isPressed()) {

@@ -4,8 +4,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
-import org.lwjgl.glfw.GLFW;
-import com.ibm.icu.impl.ICUService.Key;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.Setting;
 import net.minecraft.client.MinecraftClient;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.aoba.settings.SliderSetting;
 import net.minecraft.block.Block;
@@ -13,6 +14,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.Packet;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
@@ -81,7 +83,7 @@ public class TileBreaker extends Module {
 							 mc.player.getBlockZ() + z);
 					Block block = mc.world.getBlockState(blockpos).getBlock();
 					if (this.isTileBreakerBlock(block)) {
-						this.getRenderUtils().BlockESPBox(blockpos, 1f, 0, 0);
+						this.getRenderUtils().draw3DBox(matrixStack, new Box(blockpos), new Color(255,0,0), 0.2f);
 					}
 				}
 			}
