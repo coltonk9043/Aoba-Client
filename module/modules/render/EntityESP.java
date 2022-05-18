@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
 import net.aoba.module.Module;
+import net.aoba.settings.BooleanSetting;
 import net.aoba.settings.ListSetting;
 import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
@@ -18,13 +19,12 @@ import net.minecraft.network.Packet;
 
 public class EntityESP extends Module {
 
-	private Color currentColor;
 	private Color color;
 	private RainbowColor rainbowColor;
 
 	
-	public ListSetting colorEffect = new ListSetting("Color Effect", "entityesp_coloreffect", new String[]{"Fixed Color", "Rainbow"});
 	public SliderSetting hue = new SliderSetting("Hue", "chestesp_hue", 4, 0, 360, 1);
+	public BooleanSetting rainbow = new BooleanSetting("Rainbow", "chestesp_rainbow");
 	public SliderSetting effectSpeed = new SliderSetting("Effect Spd", "chestesp_effectspeed", 4, 1, 20, 0.1);
 	
 	public EntityESP() {
@@ -33,11 +33,10 @@ public class EntityESP extends Module {
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see entities with an ESP.");
 		color = new Color(255, 0, 0);
-		currentColor = color;
 		rainbowColor = new RainbowColor();
-		this.addSetting(colorEffect);
 		
 		this.addSetting(hue);
+		this.addSetting(rainbow);
 		this.addSetting(effectSpeed);
 	}
 
@@ -58,12 +57,10 @@ public class EntityESP extends Module {
 
 	@Override
 	public void onUpdate() {
-		if(this.colorEffect.getValue().equalsIgnoreCase("Fixed Color")) {
-			this.color.setHSV(hue.getValueFloat(), 1f, 1f);
-			this.currentColor = color;
-		}else if (this.colorEffect.getValue().equalsIgnoreCase("Rainbow")) {
+		if(this.rainbow.getValue()) {
 			this.rainbowColor.update(this.effectSpeed.getValueFloat());
-			this.currentColor = this.rainbowColor.getColor();
+		}else {
+			this.color.setHSV(hue.getValueFloat(), 1f, 1f);
 		}
 	}
 

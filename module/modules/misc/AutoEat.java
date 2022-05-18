@@ -59,7 +59,7 @@ public class AutoEat extends Module {
 			
 		    if(bestFood != null) {
 		    	mc.player.getInventory().selectedSlot = foodSlot;
-		    	mc.options.keyUse.setPressed(true);
+		    	mc.options.useKey.setPressed(true);
 		    }
 		}
 	}

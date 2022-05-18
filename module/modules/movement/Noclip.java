@@ -40,7 +40,7 @@ public class Noclip extends Module {
 	public void onUpdate() {
 		ClientPlayerEntity player = mc.player;
 		player.noClip = true;
-		if (mc.options.keySprint.isPressed()) {
+		if (mc.options.sprintKey.isPressed()) {
 			this.flySpeed *= 1.5;
 		}
 		player.setVelocity(new Vec3d(0,0,0));
@@ -48,13 +48,13 @@ public class Noclip extends Module {
 		//player.jumpMovementFactor = flySpeed * 0.2f;
 
 		Vec3d vec = new Vec3d(0,0,0);
-		if (mc.options.keyJump.isPressed()) {
+		if (mc.options.jumpKey.isPressed()) {
 			vec = new Vec3d(0,flySpeed * 0.2f,0);
 		}
-		if (mc.options.keySneak.isPressed()) {
+		if (mc.options.sneakKey.isPressed()) {
 			vec = new Vec3d(0,-flySpeed * 0.2f,0);
 		}
-		if (mc.options.keySprint.isPressed()) {
+		if (mc.options.sprintKey.isPressed()) {
 			this.flySpeed /= 1.5;
 		}
 		player.setVelocity(vec);

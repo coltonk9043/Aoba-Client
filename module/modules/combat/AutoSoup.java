@@ -43,7 +43,7 @@ public class AutoSoup extends Module {
 					continue;
 				}
 			    mc.player.getInventory().selectedSlot = foodSlot;
-			    mc.options.keyUse.setPressed(true);
+			    mc.options.useKey.setPressed(true);
 			    break;
 			}
 		}

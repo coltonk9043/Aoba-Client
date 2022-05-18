@@ -9,18 +9,19 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
-public class AddAltScreen extends Screen {
+public class EditAltScreen extends Screen {
 
 	private final AltScreen parent;
 	private Alt alt;
 
-	private ButtonWidget buttonAddAlt;
+	private ButtonWidget buttonSaveAlt;
 	private TextFieldWidget textFieldAltUsername;
 	private TextFieldWidget textFieldAltPassword;
 
-	public AddAltScreen(AltScreen parentScreen) {
+	public EditAltScreen(AltScreen parentScreen, Alt alt) {
 		super(new TranslatableText("Alt Manager"));
 		this.parent = parentScreen;
+		this.alt = alt;
 	}
 
 	public void init() {
@@ -29,17 +30,17 @@ public class AddAltScreen extends Screen {
 
 		this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 76, 200, 20,
 				new LiteralText("Enter Name"));
-		this.textFieldAltUsername.setText("");
+		this.textFieldAltUsername.setText(this.alt == null ? "" : alt.getEmail());
 		this.addDrawableChild(this.textFieldAltUsername);
 
 		this.textFieldAltPassword = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20,
 				new LiteralText("Enter Password"));
-		this.textFieldAltPassword.setText("");
+		this.textFieldAltPassword.setText(this.alt == null ? "" : alt.getPassword());
 		this.addDrawableChild(this.textFieldAltPassword);
 
-		this.buttonAddAlt = new ButtonWidget(this.width / 2 - 100, this.height / 2 + 6, 200, 20,
-				new LiteralText("Add Alt"), b -> this.onButtonAltAddPressed());
-		this.addDrawableChild(this.buttonAddAlt);
+		this.buttonSaveAlt = new ButtonWidget(this.width / 2 - 100, this.height / 2 + 6, 200, 20,
+				new LiteralText("Save Alt"), b -> this.onButtonAltEditPressed());
+		this.addDrawableChild(this.buttonSaveAlt);
 
 		this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height / 2 + 30, 200, 20,
 				new LiteralText("Cancel"), b -> this.onButtonCancelPressed()));
@@ -54,15 +55,16 @@ public class AddAltScreen extends Screen {
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		renderBackground(matrixStack);
-		drawCenteredText(matrixStack, textRenderer, "Add Alternate Account", this.width / 2, 20, 16777215);
+		drawCenteredText(matrixStack, textRenderer, "Edit Alternate Account", this.width / 2, 20, 16777215);
 		drawStringWithShadow(matrixStack, textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
 		drawStringWithShadow(matrixStack, textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 	}
 
-	private void onButtonAltAddPressed() {
-		Alt alt = new Alt(this.textFieldAltUsername.getText(), this.textFieldAltPassword.getText());
-		Aoba.getInstance().am.addAlt(alt);
+	private void onButtonAltEditPressed() {
+		alt.setEmail(this.textFieldAltUsername.getText());
+		alt.setPassword(this.textFieldAltPassword.getText());
+		Aoba.getInstance().am.saveAlts();
 		this.parent.refreshAltList();
 	}
 

@@ -16,7 +16,7 @@ public class AutoWalk extends Module {
 
 	@Override
 	public void onDisable() {
-		mc.options.keyForward.setPressed(false);
+		mc.options.forwardKey.setPressed(false);
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class AutoWalk extends Module {
 
 	@Override
 	public void onUpdate() {
-		mc.options.keyForward.setPressed(true);
+		mc.options.forwardKey.setPressed(true);
 	}
 
 	@Override

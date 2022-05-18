@@ -27,16 +27,16 @@ public class DirectLoginAltScreen extends Screen{
 		super.init();
 		this.client.keyboard.setRepeatEvents(true);
 
-		this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, 166, 200, 20, new LiteralText("Enter Name"));
+		this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 76, 200, 20, new LiteralText("Enter Name"));
 		this.addDrawableChild(this.textFieldAltUsername);
 		
-		this.textFieldAltPassword = new TextFieldWidget(textRenderer, this.width / 2 - 100, 206, 200, 20, new LiteralText("Enter Password"));
+		this.textFieldAltPassword = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20, new LiteralText("Enter Password"));
 		this.addDrawableChild(this.textFieldAltPassword);
 		
-		this.buttonLoginAlt = new ButtonWidget(this.width / 2 - 100, this.height / 4 + 96 + 18, 200, 20, new LiteralText("Login"), b ->  this.onButtonLoginPressed());
+		this.buttonLoginAlt = new ButtonWidget(this.width / 2 - 100, this.height / 2 + 6, 200, 20, new LiteralText("Login"), b ->  this.onButtonLoginPressed());
 		this.addDrawableChild(this.buttonLoginAlt);
 		
-		this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height / 4 + 120 + 18, 200, 20, new LiteralText("Cancel"), b -> client.setScreen(this.parent)));
+		this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height / 2 + 30, 200, 20, new LiteralText("Cancel"), b -> client.setScreen(this.parent)));
 	}
 	
 	@Override
@@ -48,7 +48,9 @@ public class DirectLoginAltScreen extends Screen{
 	private void onButtonLoginPressed() {
 		boolean loggedIn = false;
 		if(this.textFieldAltPassword.getText().isEmpty()) {
-			loggedIn = Aoba.getInstance().am.loginCracked(this.textFieldAltUsername.getText());
+			Aoba.getInstance().am.loginCracked(this.textFieldAltUsername.getText());
+			client.setScreen(this.parent);
+			return;
 		}else {
 			Alt alt = new Alt(this.textFieldAltUsername.getText(), this.textFieldAltPassword.getText());
 			loggedIn = Aoba.getInstance().am.login(alt);
@@ -56,6 +58,8 @@ public class DirectLoginAltScreen extends Screen{
 
 		if(!loggedIn) {
 			didLoginError = true;
+		}else {
+			client.setScreen(this.parent);
 		}
 	}
 	
@@ -63,10 +67,10 @@ public class DirectLoginAltScreen extends Screen{
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY,
 			float partialTicks) {
 		this.renderBackground(matrixStack);
-		drawCenteredText(matrixStack, textRenderer, this.title.getString(), this.width / 2, 17, 16777215);
-		drawStringWithShadow(matrixStack, textRenderer, this.textFieldAltPassword.getText().isEmpty() ? "Cracked Account" : "Premium Account", this.width / 2 - 100, 138, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
-		drawStringWithShadow(matrixStack,textRenderer, "Enter Username", this.width / 2 - 100, 153, 10526880);
-		drawStringWithShadow(matrixStack,textRenderer, "Enter Password", this.width / 2 - 100, 194, 10526880);
+		drawCenteredText(matrixStack, textRenderer, this.title.getString(), this.width / 2, 20, 16777215);
+		drawStringWithShadow(matrixStack, textRenderer, this.textFieldAltPassword.getText().isEmpty() ? "Cracked Account" : "Premium Account", this.width / 2 - 100, height / 2 - 106, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
+		drawStringWithShadow(matrixStack,textRenderer, "Enter Username", this.width / 2 - 100, height / 2 - 90, 16777215);
+		drawStringWithShadow(matrixStack,textRenderer, "Enter Password", this.width / 2 - 100, height / 2 - 50, 16777215);
 		this.textFieldAltUsername.render(matrixStack,mouseX, mouseY, partialTicks);
 		this.textFieldAltPassword.render(matrixStack,mouseX, mouseY, partialTicks);
 		if (didLoginError) {

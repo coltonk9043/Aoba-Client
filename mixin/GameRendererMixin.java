@@ -14,13 +14,6 @@ import net.minecraft.util.math.MathHelper;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 
-	@Inject(at = {
-			@At(value = "FIELD", target = "Lnet/minecraft/client/render/GameRenderer;renderHand:Z", opcode = Opcodes.GETFIELD, ordinal = 0) }, method = {
-					"renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V" })
-	private void onRenderWorld(float partialTicks, long finishTimeNano, MatrixStack matrixStack, CallbackInfo ci) {
-		// Aoba.getInstance().mm.render(matrixStack, partialTicks);
-	}
-
 	@Inject(at = { @At("HEAD") }, method = {
 			"bobViewWhenHurt(Lnet/minecraft/client/util/math/MatrixStack;F)V" }, cancellable = true)
 	private void onBobViewWhenHurt(MatrixStack matrixStack, float f, CallbackInfo ci) {
@@ -31,7 +24,7 @@ public class GameRendererMixin {
 
 	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F", ordinal = 0), method = {
 			"renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V" })
-	private float wurstNauseaLerp(float delta, float first, float second) {
+	private float nauseaLerp(float delta, float first, float second) {
 		if (Aoba.getInstance().mm.nooverlay.getState())
 			return 0;
 		

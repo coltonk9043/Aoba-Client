@@ -154,9 +154,8 @@ public class AltManager {
 		auth.setPassword(password);
 		try {
 			auth.logIn();
-			
-			//MinecraftClient.getInstance().session = new Session(auth.getSelectedProfile().getName(),
-			//		auth.getSelectedProfile().getId().toString(), auth.getAuthenticatedToken(), "mojang");
+			IMinecraftClient iMC = (IMinecraftClient) this.mc;
+			iMC.setSession(new Session(auth.getSelectedProfile().getName(), auth.getSelectedProfile().getId().toString(), auth.getAuthenticatedToken(), Optional.empty(), Optional.empty(), AccountType.MOJANG));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

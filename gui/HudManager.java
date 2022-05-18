@@ -31,6 +31,9 @@ public class HudManager {
 
 	private int lastMouseX = 0;
 	private int lastMouseY = 0;
+	private int mouseX;
+	private int mouseY;
+	
 	private boolean wasTildaPressed = false;
 	
 	public InfoTab infoTab;
@@ -83,34 +86,23 @@ public class HudManager {
 	}
 
 	public void update() {
-		if (!Aoba.getInstance().isGhosted()) {
-			boolean mouseClicked = mc.mouse.wasLeftButtonClicked();
-			if (this.clickGuiButton.isPressed() && !wasTildaPressed) {
-				wasTildaPressed = true;
-				this.clickGuiOpen = !this.clickGuiOpen;
-				this.toggleMouse();
-			}else if (!this.clickGuiButton.isPressed()) {
-				wasTildaPressed = false;
-			}
-			int mouseX = (int) Math.ceil(mc.mouse.getX()) ;
-			int mouseY = (int) Math.ceil(mc.mouse.getY()) ;
-			hud.update(mouseX, mouseY, mouseClicked);
-			if (this.clickGuiOpen) {
-				int dx = (int) Math.ceil(mouseX);
-				int dy = (int) Math.ceil(mouseY);
-				if (!mc.mouse.wasLeftButtonClicked())
-					currentGrabbed = null;
-				if (currentGrabbed != null)
-					currentGrabbed.moveWindow((lastMouseX - dx), (lastMouseY - dy));
-				this.lastMouseX = dx;
-				this.lastMouseY = dy;
-			}
+		boolean mouseClicked = mc.mouse.wasLeftButtonClicked();
+		
+		if(!Aoba.getInstance().isGhosted()){
 			for (ClickGuiTab tab : tabs.values()) {
 				if (clickGuiOpen || tab.getPinned()) {
 					tab.preupdate();
 					tab.update(mouseX, mouseY, mouseClicked);
 					tab.postupdate();
 				}
+			}
+			
+			if (this.clickGuiButton.isPressed() && !wasTildaPressed) {
+				wasTildaPressed = true;
+				this.clickGuiOpen = !this.clickGuiOpen;
+				this.toggleMouse();
+			}else if (!this.clickGuiButton.isPressed()) {
+				wasTildaPressed = false;
 			}
 		}
 		if(this.rainbow.getValue()) {
@@ -124,6 +116,24 @@ public class HudManager {
 	}
 
 	public void draw(MatrixStack matrixStack, float partialTicks) {
+		if (!Aoba.getInstance().isGhosted()) {
+			boolean mouseClicked = mc.mouse.wasLeftButtonClicked();
+			mouseX = (int) Math.ceil(mc.mouse.getX()) ;
+			mouseY = (int) Math.ceil(mc.mouse.getY()) ;
+			hud.update(mouseX, mouseY, mouseClicked);
+			if (this.clickGuiOpen) {
+				int dx = (int) Math.ceil(mouseX);
+				int dy = (int) Math.ceil(mouseY);
+				if (!mc.mouse.wasLeftButtonClicked())
+					currentGrabbed = null;
+				if (currentGrabbed != null)
+					currentGrabbed.moveWindow((lastMouseX - dx), (lastMouseY - dy));
+				this.lastMouseX = dx;
+				this.lastMouseY = dy;
+			}
+			
+		}
+		
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		

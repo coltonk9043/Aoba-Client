@@ -1,5 +1,7 @@
 package net.aoba.module.modules.combat;
 
+import java.util.ArrayList;
+
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.aoba.settings.BooleanSetting;
@@ -53,76 +55,56 @@ public class KillAura extends Module {
 	@Override
 	public void onUpdate() {
 		if(mc.player.getAttackCooldownProgress(0) == 1) {
+			ArrayList<Entity> hitList = new ArrayList<Entity>();
+			LivingEntity entityToAttack = null;
+			boolean found = false;
+			
+			// Add all potential entities to the 'hitlist'
 			if(this.targetAnimals.getValue()) {
-				attackEntities();
+				for (Entity entity : mc.world.getEntities()) {
+					if (entity == mc.player
+							|| mc.player.distanceTo(entity) > this.radius.getValue() || !(entity instanceof LivingEntity)) {
+						continue;
+					}
+					hitList.add(entity);
+				}
 			}
+			
+			// Add all potential players to the 'hitlist'
 			if(this.targetPlayers.getValue()) {
-				attackPlayers();
-			}
-		}
-	}
-
-	public void attackPlayers() {
-		PlayerEntity entityToAttack = null;
-		boolean found = false;
-
-		for (PlayerEntity player : mc.world.getPlayers()) {
-			if (player == mc.player
-					|| mc.player.distanceTo(player) > this.radius.getValue()) {
-				continue;
-			}
-			if (entityToAttack == null) {
-				entityToAttack = player;
-			} else {
-				if (this.priority == Priority.LOWESTHP) {
-					if (player.getHealth() <= entityToAttack.getHealth()) {
-						entityToAttack = player;
-						found = true;
+				for (PlayerEntity player : mc.world.getPlayers()) {
+					if (player == mc.player || mc.player.distanceTo(player) > this.radius.getValue()) {
+						continue;
 					}
-				} else if (this.priority == Priority.CLOSEST) {
-					if (mc.player.distanceTo(player) <= mc.player
-							.distanceTo(entityToAttack)) {
-						entityToAttack = player;
-						found = true;
-					}
+					hitList.add(player);
 				}
-
 			}
-		}
-
-		if (found && (mc.player.canSee(entityToAttack)
-				&& entityToAttack instanceof LivingEntity)) {
-			mc.player.attack(entityToAttack);
-		}
-	}
-
-	public void attackEntities() {
-		LivingEntity entityToAttack = null;
-
-		for (Entity entity : mc.world.getEntities()) {
-			if (entity == mc.player
-					|| mc.player.distanceTo(entity) > this.radius.getValue() || !(entity instanceof LivingEntity)) {
-				continue;
-			}
-			LivingEntity entityLiving = (LivingEntity) entity;
-			if(entityToAttack == null) {
-				entityToAttack = entityLiving;
-			}else {
-				if(this.priority == Priority.CLOSEST) {
-					if(mc.player.distanceTo(entityToAttack) >= mc.player.distanceTo(entityLiving)) {
-						entityToAttack = entityLiving;
-					}
-				}else if(this.priority == Priority.LOWESTHP){
-					if(entityToAttack.getHealth() <= entityLiving.getHealth()) {
-						entityToAttack = entityLiving;
+			
+			for (Entity entity : hitList) {
+				LivingEntity le = (LivingEntity) entity;
+				if (entityToAttack == null) {
+					entityToAttack = le;
+				} else {
+					if (this.priority == Priority.LOWESTHP) {
+						if (le.getHealth() <= entityToAttack.getHealth()) {
+							entityToAttack = le;
+							found = true;
+						}
+					} else if (this.priority == Priority.CLOSEST) {
+						if (mc.player.distanceTo(le) <= mc.player.distanceTo(entityToAttack)) {
+							entityToAttack = le;
+							found = true;
+						}
 					}
 				}
 			}
-		}
-		if (entityToAttack != null && entityToAttack instanceof LivingEntity) {
-			mc.player.attack(entityToAttack);
+			
+			if (found) {
+				mc.player.attack(entityToAttack);
+			}
 		}
 	}
+
 
 	@Override
 	public void onRender(MatrixStack matrixStack, float partialTicks) {

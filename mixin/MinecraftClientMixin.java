@@ -54,10 +54,11 @@ public class MinecraftClientMixin implements IMinecraftClient{
 			return session;
 		}
 	
-	@Inject(at = {@At(value = "HEAD") }, method = {"doAttack()V"}, cancellable = true)
-	private void onDoAttack(CallbackInfo ci) {
+	@Inject(at = {@At(value = "HEAD") }, method = {"doAttack()Z"}, cancellable = true)
+	private void onDoAttack(CallbackInfoReturnable<Boolean> cir) {
 		if (Aoba.getInstance().hm.isClickGuiOpen()) {
-			ci.cancel();
+			cir.setReturnValue(false);
+			cir.cancel();
 		}
 	}
 	

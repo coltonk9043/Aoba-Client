@@ -31,7 +31,7 @@ public class StringComponent extends Component {
 	public void draw(int offset, MatrixStack matrixStack, float partialTicks, Color color) {
 		int parentX = this.parent.getX();
 		int parentY = this.parent.getY();
-		renderUtils.drawStringWithScale(matrixStack, (this.bold ? "§l" : "") + this.text, parentX + 10,
+		renderUtils.drawStringWithScale(matrixStack, this.text, parentX + 10,
 				parentY + 8 + offset, 0xFFFFFF);
 	}
 	

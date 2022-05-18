@@ -1,14 +1,30 @@
 package net.aoba.gui.screens;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.aoba.altmanager.Alt;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.resource.Resource;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.Util;
+import net.minecraft.world.GameMode;
 
 public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> {
 	private final AltScreen owner;
@@ -32,6 +48,17 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 		this.altList.forEach(this::addEntry);
 	}
 
+	public void setSelected(@Nullable AltSelectionList.Entry entry) {
+		super.setSelected(entry);
+	}
+	
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers)
+    {
+        AltSelectionList.Entry AltSelectionList$entry = this.getSelectedOrNull();
+        return AltSelectionList$entry != null && AltSelectionList$entry.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
+    }
+	
 	public abstract static class Entry extends ElementListWidget.Entry<AltSelectionList.Entry> {
 	}
 
@@ -39,14 +66,26 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 		private final AltScreen owner;
 		private final MinecraftClient mc;
 		private final Alt alt;
-		private Resource icon;
 		private long lastClickTime;
-
+		private PlayerListEntry entry;
+		
 		protected NormalEntry(AltScreen ownerIn, Alt alt) {
 			this.owner = ownerIn;
 			this.alt = alt;
 			this.mc = MinecraftClient.getInstance();
-			this.icon = null;
+			
+			try {
+				String name = alt.getUsername();
+				if(name.isEmpty()) {
+					name = "Steve";
+				}
+				
+				UUID uuid = PlayerEntity.getUuidFromProfile(new GameProfile(null, name));
+				entry = new PlayerListEntry(new PlayerListS2CPacket.Entry(new GameProfile(uuid, name), 0, GameMode.CREATIVE, new LiteralText(name)));
+
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		public void getAltList() {
@@ -55,18 +94,6 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 
 		public Alt getAltData() {
 			return this.alt;
-		}
-
-		@Override
-		public List<? extends Element> children() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public List<? extends Selectable> selectableChildren() {
-			// TODO Auto-generated method stub
-			return null;
 		}
 
 		@Override
@@ -83,7 +110,63 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 			this.mc.textRenderer.drawWithShadow(matrixStack,
 					this.alt.isCracked() ? "Cracked Account" : "Premium Account", (float) (x + 32 + 3),
 					(float) (y + 22), this.alt.isCracked() ? 0xFF0000 : 0x00FF00);
+			
+			this.drawHead(matrixStack, x + 4, y + 4);
+		}
 
+		private void drawHead(MatrixStack matrixStack, int x, int y) {
+			RenderSystem.setShaderTexture(0, entry.getSkinTexture());
+			
+			GL11.glEnable(GL11.GL_BLEND);
+			RenderSystem.setShaderColor(1, 1, 1, 1);
+		
+			// Face
+			int fw = 192;
+			int fh = 192;
+			float u = 24;
+			float v = 24;
+			DrawableHelper.drawTexture(matrixStack, x, y, u, v, 24, 24, fw, fh);
+			
+			// Hat
+			fw = 192;
+			fh = 192;
+			u = 120;
+			v = 24;
+			DrawableHelper.drawTexture(matrixStack, x, y, u, v, 24, 24, fw, fh);
+			
+			GL11.glDisable(GL11.GL_BLEND);
+		}
+		
+		@Override
+		public List<? extends Element> children() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public List<? extends Selectable> selectableChildren() {
+			return Collections.emptyList();
+		}
+		
+		@Override
+		public boolean mouseClicked(double mouseX, double mouseY, int button) {
+			double d0 = mouseX - (double)AltSelectionList.this.getRowLeft();
+
+            if (d0 <= 32.0D)
+            {
+                if (d0 < 32.0D && d0 > 16.0D)
+                {
+                	this.owner.setSelected(this);
+                    this.owner.loginToSelected();
+                    return true;
+                }
+            }
+            this.owner.setSelected(this);
+            if (Util.getMeasuringTimeMs() - this.lastClickTime < 250L)
+            {
+                this.owner.loginToSelected();
+            }
+            this.lastClickTime = Util.getMeasuringTimeMs();
+            return false;
 		}
 	}
 }

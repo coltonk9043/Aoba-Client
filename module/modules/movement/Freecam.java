@@ -54,7 +54,7 @@ public class Freecam extends Module {
 		player.noClip = true;
 		player.setOnGround(false);
 		float speed = this.flySpeed.getValueFloat();
-		if (mc.options.keySprint.isPressed()) {
+		if (mc.options.sprintKey.isPressed()) {
 			speed *= 1.5;
 		}
 		player.setVelocity(new Vec3d(0,0,0));
@@ -62,10 +62,10 @@ public class Freecam extends Module {
 		player.airStrafingSpeed = speed * 0.2f;
 		
 		Vec3d vec = new Vec3d(0,0,0);
-		if (mc.options.keyJump.isPressed()) {
+		if (mc.options.jumpKey.isPressed()) {
 			vec = new Vec3d(0,speed * 0.2f,0);
 		}
-		if (mc.options.keySneak.isPressed()) {
+		if (mc.options.sneakKey.isPressed()) {
 			vec = new Vec3d(0,-speed * 0.2f,0);
 		}
 
