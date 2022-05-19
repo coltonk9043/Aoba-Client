@@ -1,5 +1,6 @@
 package net.aoba.gui.screens;
 
+import net.aoba.Aoba;
 import net.aoba.altmanager.AltManager;
 import net.aoba.altmanager.exceptions.APIDownException;
 import net.aoba.altmanager.exceptions.APIErrorException;
@@ -45,7 +46,7 @@ public class MCLeaksLoginScreen extends Screen{
 	
 	private void onButtonLoginPressed() {
 		try {
-			AltManager.loginMCLeaks(this.textFieldToken.getText());
+			Aoba.getInstance().am.loginMCLeaks(this.textFieldToken.getText());
 			client.setScreen(this.parent);
 		} catch (APIDownException | APIErrorException | InvalidResponseException | InvalidTokenException e) {
 			didLoginError = true;

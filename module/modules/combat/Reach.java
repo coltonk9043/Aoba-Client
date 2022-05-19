@@ -60,4 +60,8 @@ public class Reach extends Module {
 		
 		
 	}
+	
+	public void setReachLength(float reach) {
+		this.distance.setValue(reach);
+	}
 }

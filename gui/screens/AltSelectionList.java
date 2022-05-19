@@ -105,10 +105,20 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 			for (char i : this.alt.getPassword().toCharArray()) {
 				s = s + "*";
 			}
-			this.mc.textRenderer.drawWithShadow(matrixStack, "Password: " + s, (float) (x + 32 + 3), (float) (y + 12),
-					16777215);
+			this.mc.textRenderer.drawWithShadow(matrixStack, "Password: " + s, (float) (x + 32 + 3), (float) (y + 12), 16777215);
+			
+			String description;
+			if(this.alt.isCracked()) {
+				description = "Cracked Account";
+			}else {
+				if(this.alt.isMicrosoft()) {
+					description = "Microsoft Account";
+				}else {
+					description = "Mojang Account";
+				}
+			}
 			this.mc.textRenderer.drawWithShadow(matrixStack,
-					this.alt.isCracked() ? "Cracked Account" : "Premium Account", (float) (x + 32 + 3),
+					description, (float) (x + 32 + 3),
 					(float) (y + 22), this.alt.isCracked() ? 0xFF0000 : 0x00FF00);
 			
 			this.drawHead(matrixStack, x + 4, y + 4);

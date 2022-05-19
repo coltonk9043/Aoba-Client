@@ -22,6 +22,7 @@ public class CommandManager {
 	int nuker = addCommand(new CmdNuker());
 	int pov = addCommand(new CmdPOV());
 	int playeresp = addCommand(new CmdPlayerESP());
+	int reach = addCommand(new CmdReach());
 	int spam = addCommand(new CmdSpam());
 	int sprint = addCommand(new CmdSprint());
 	int step = addCommand(new CmdStep());
@@ -65,11 +66,11 @@ public class CommandManager {
 			}catch(Exception e){
 				// If anyone ever sees this, I got lazy and didn't bother making a command for the
 				// default syntax... 
-				sendChatMessage("§l═════════════=═════════════");
-				sendChatMessage("§r                    Aoba Client " + net.aoba.AobaClient.VERSION);
-				sendChatMessage("§r                  Created By: coltonk9043   ");
-				sendChatMessage("§5              For help, please type .aoba help");
-				sendChatMessage("§l═════════════=═════════════");
+				sendChatMessage("Â§lâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�=â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�");
+				sendChatMessage("Â§r                    Aoba Client " + net.aoba.AobaClient.VERSION);
+				sendChatMessage("Â§r                  Created By: coltonk9043   ");
+				sendChatMessage("Â§5              For help, please type .aoba help");
+				sendChatMessage("Â§lâ•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�=â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�â•�");
 				return;
 			}
 		}
@@ -78,6 +79,6 @@ public class CommandManager {
 
 	public static void sendChatMessage(String message) {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		mc.inGameHud.getChatHud().addMessage(new TranslatableText("§5[Aoba] §f" + message));
+		mc.inGameHud.getChatHud().addMessage(new TranslatableText("Â§5[Aoba] Â§f" + message));
 	}
 }

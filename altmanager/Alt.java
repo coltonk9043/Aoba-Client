@@ -4,20 +4,24 @@ public class Alt {
 	private String email;
 	private String username;
 	private String password;
+	private boolean microsoft = false;
 	private boolean isCracked = false;
-
-	public Alt(String email, String password) {
+	
+	
+	public Alt(String email, String password, boolean microsoft) {
 		this.email = email;
 		this.password = password;
+		this.microsoft = microsoft;
 		if(this.password.isEmpty()) {
 			this.isCracked = true;
 		}
 	}
 	
-	public Alt(String email, String password, String username) {
+	public Alt(String email, String password, String username, boolean microsoft) {
 		this.email = email;
 		this.password = password;
 		this.username = username;
+		this.microsoft = microsoft;
 		if(this.password.isEmpty()) {
 			this.isCracked = true;
 		}
@@ -52,5 +56,9 @@ public class Alt {
 	
 	public boolean isCracked() {
 		return this.isCracked;
+	}
+	
+	public boolean isMicrosoft() {
+		return this.microsoft;
 	}
 }

@@ -4,6 +4,7 @@ import net.aoba.Aoba;
 import net.aoba.altmanager.Alt;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
@@ -15,6 +16,7 @@ public class AddAltScreen extends Screen {
 	private Alt alt;
 
 	private ButtonWidget buttonAddAlt;
+	private CheckboxWidget toggleMicrosoft;
 	private TextFieldWidget textFieldAltUsername;
 	private TextFieldWidget textFieldAltPassword;
 
@@ -37,11 +39,14 @@ public class AddAltScreen extends Screen {
 		this.textFieldAltPassword.setText("");
 		this.addDrawableChild(this.textFieldAltPassword);
 
-		this.buttonAddAlt = new ButtonWidget(this.width / 2 - 100, this.height / 2 + 6, 200, 20,
+		this.toggleMicrosoft = new CheckboxWidget(this.width / 2 - 100, height / 2 + - 12, 20, 20, new LiteralText("Microsoft Account?"), false);
+		this.addDrawableChild(this.toggleMicrosoft);
+		
+		this.buttonAddAlt = new ButtonWidget(this.width / 2 - 100, this.height / 2 + 24, 200, 20,
 				new LiteralText("Add Alt"), b -> this.onButtonAltAddPressed());
 		this.addDrawableChild(this.buttonAddAlt);
 
-		this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height / 2 + 30, 200, 20,
+		this.addDrawableChild(new ButtonWidget(this.width / 2 - 100, this.height / 2 + 46, 200, 20,
 				new LiteralText("Cancel"), b -> this.onButtonCancelPressed()));
 	}
 
@@ -61,7 +66,7 @@ public class AddAltScreen extends Screen {
 	}
 
 	private void onButtonAltAddPressed() {
-		Alt alt = new Alt(this.textFieldAltUsername.getText(), this.textFieldAltPassword.getText());
+		Alt alt = new Alt(this.textFieldAltUsername.getText(), this.textFieldAltPassword.getText(), this.toggleMicrosoft.isChecked());
 		Aoba.getInstance().am.addAlt(alt);
 		this.parent.refreshAltList();
 	}
