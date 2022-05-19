@@ -2,7 +2,7 @@
 A custom hacked client for Minecraft 1.18.2 using Fabric. 
 
 ## Features
-- (Somewhat WIP) Fully featured Alt Manager with MCLeaks integration.
+- Fully featured Alt Manager with MCLeaks integration.
 - Working Command System.
 - ClickGui with moveable/pinnable windows and customization.
 - Plenty of hacks.
