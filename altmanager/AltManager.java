@@ -65,7 +65,7 @@ public class AltManager {
 
 	public String MCLeaksSession;
 
-	// Big thanks to Wurst for the URLs and REGEX. Fuck Microsoft.
+	// Big thanks to Wurst for the URLs and REGEX. What are you doing Microsoft?
 	private final String CLIENT_ID = "00000000402b5328";
 	private final String SCOPE_ENCODED = "service%3A%3Auser.auth.xboxlive.com%3A%3AMBI_SSL";
 	private final String SCOPE_UNENCODED = "service::user.auth.xboxlive.com::MBI_SSL";
