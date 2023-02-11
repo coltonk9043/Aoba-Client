@@ -1,9 +1,29 @@
-# Fabric Example Mod
+# Aoba Hacked Client (1.19.3)
+A custom hacked client for Minecraft 1.19.3 using Fabric . 
 
-## Setup
+## Features
+- Fully featured Alt Manager with MCLeaks integration.
+- Working Command System.
+- ClickGui with moveable/pinnable windows and customization.
+- Plenty of hacks.
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+## Default Keybinds:
+~ - Toggle ClickGUI.\
+↑ - Move menu 'cursor' up.\
+↓ - Move menu 'cursor' down.\
+← - Leave current 'mod' menu.\
+→ - Enter currently selected 'mod' menu.\
+K - Toggle Aimbot.\
+N - Toggle AutoEat.\
+V - Toggle Fly.\
+Z - Toggle NoSlowdown.\
+G - Toggle Sprint.\
+F - Toggle Fullbright.\
+X - Toggle XRay.\
+
+## Screenshots
+![image](https://user-images.githubusercontent.com/56643581/155033953-08f9ed72-f79f-46e4-b8ce-80d45d981d7a.png)
+![image](https://user-images.githubusercontent.com/56643581/155034033-49970900-802e-4314-9c3a-425abf105a26.png)
 
 ## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This code is licensed under the GNU General Public License v3. You may use code published here in your own clients under the same license.
