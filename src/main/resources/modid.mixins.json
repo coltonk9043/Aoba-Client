@@ -1,0 +1,33 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.aoba.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "client": [
+	"AbstractBlockStateMixin",
+	"BlockMixin",
+	"BlockModelRendererMixin",
+	
+	"ChatScreenMixin",
+	"ClientPlayerEntityMixin",
+	"ClientPlayerInteractionManagerMixin",
+	"ClientPlayNetworkHandlerMixin",
+	"EntityMixin",
+	"EntityRendererMixin",
+	
+	"GameRendererMixin",
+	"IngameHudMixin",
+	"MouseMixin",
+	"MultiplayerScreenMixin",
+	"RenderTickCounterMixin",
+	"SignEditScreenMixin",
+	"SimpleOptionMixin",
+	"WorldRendererMixin",
+	"MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
