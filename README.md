@@ -1,5 +1,5 @@
-# Aoba Hacked Client (1.19.2)
-A custom hacked client for Minecraft 1.19.2 using Fabric . 
+# Aoba Hacked Client (1.19.3)
+A custom hacked client for Minecraft 1.19.3 using Fabric . 
 
 ## Features
 - Fully featured Alt Manager with MCLeaks integration.
