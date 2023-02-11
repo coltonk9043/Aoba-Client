@@ -8,7 +8,6 @@ import net.aoba.module.modules.movement.Freecam;
 public class CmdFreecam extends Command {
 
 	public CmdFreecam() {
-		this.command = "freecam";
 		this.description = "Disables fall damage for the player";
 	}
 

@@ -1,3 +1,24 @@
+/*
+* Aoba Hacked Client
+* Copyright (C) 2019-2023 coltonk9043
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * A class to represent a system to manage Alt accounts.
+ */
 package net.aoba.altmanager;
 
 import java.io.BufferedReader;
@@ -44,6 +65,8 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
+
+import net.aoba.AobaClient;
 import net.aoba.altmanager.exceptions.APIDownException;
 import net.aoba.altmanager.exceptions.APIErrorException;
 import net.aoba.altmanager.exceptions.InvalidResponseException;
@@ -54,13 +77,12 @@ import net.minecraft.client.util.Session;
 import net.minecraft.client.util.Session.AccountType;
 
 public class AltManager {
-	private File altFiles;
-	private MinecraftClient mc;
+	private final MinecraftClient mc;
+	private final String apiURL = "https://auth.mcleaks.net/v1/";
+
 	private ArrayList<Alt> alts = new ArrayList<Alt>();
 	private String encryptKey = "B&E)H@McQeThWmZq";
-	private static final String apiURL = "https://auth.mcleaks.net/v1/";
-
-	public String MCLeaksSession;
+	private String MCLeaksSession;
 
 	// Big thanks to Wurst for the URLs and REGEX. What are you doing Microsoft?
 	private final String CLIENT_ID = "00000000402b5328";
@@ -78,17 +100,26 @@ public class AltManager {
 	private final Pattern URLPOST_REGEX = Pattern.compile("urlPost:[ ]?'(.+?(?='))");
 	private final Pattern AUTHCODE_REGEX = Pattern.compile("[?|&]code=([\\w.-]+)");
 
+	/**
+	 * Constructor for the Alt Manager system.
+	 */
 	public AltManager() {
-		mc = MinecraftClient.getInstance();
-		altFiles = new File(mc.runDirectory, "aoba_alts.txt");
+		mc = AobaClient.MC;
 		readAlts();
 	}
 
+	/**
+	 * Reads the Alts from a file.
+	 */
 	public void readAlts() {
 		try {
-			if (!this.altFiles.exists()) throw new IOException("File not found! Could not load alts...");
-			
-			List<String> list = IOUtils.readLines(new FileInputStream(this.altFiles), StandardCharsets.UTF_8);
+			// Finds the file and opens it.
+			File altFile = new File(mc.runDirectory, "aoba_alts.txt");
+			if (!altFile.exists())
+				throw new IOException("File not found! Could not load alts...");
+			List<String> list = IOUtils.readLines(new FileInputStream(altFile), StandardCharsets.UTF_8);
+
+			// For every line in the file, decrypt and read the account information.
 			for (String s : list) {
 				String str = decrypt(s);
 				String[] alt = str.split(":");
@@ -104,12 +135,19 @@ public class AltManager {
 		}
 	}
 
+	/**
+	 * Saves the Alts to a file.
+	 */
 	public void saveAlts() {
 		PrintWriter printwriter = null;
 		try {
+			// Finds the file and opens it.
+			File altFile = new File(mc.runDirectory, "aoba_alts.txt");
 			System.out.println("[Aoba] Saving Alts");
 			printwriter = new PrintWriter(
-					new OutputStreamWriter(new FileOutputStream(this.altFiles), StandardCharsets.UTF_8));
+					new OutputStreamWriter(new FileOutputStream(altFile), StandardCharsets.UTF_8));
+
+			// For every Alt in the current Alt list, print it to the file and encrypt it.
 			for (Alt alt : alts) {
 				String str = alt.getEmail() + ":" + alt.getPassword() + ":" + alt.getUsername() + ":"
 						+ alt.isMicrosoft();
@@ -121,6 +159,12 @@ public class AltManager {
 		printwriter.close();
 	}
 
+	/**
+	 * Encrypts a string using a defined encryption key.
+	 * 
+	 * @param strToEncrypt The string to by encrypted.
+	 * @return The encrypted string.
+	 */
 	public String encrypt(String strToEncrypt) {
 		try {
 			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -132,6 +176,12 @@ public class AltManager {
 		return strToEncrypt;
 	}
 
+	/**
+	 * Decrypts a string using a defined encryption key.
+	 * 
+	 * @param strToEncrypt The encrypted string to by decrypted.
+	 * @return The decrypted string.
+	 */
 	public String decrypt(String strToDecrypt) {
 		try {
 			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -143,19 +193,40 @@ public class AltManager {
 		return strToDecrypt;
 	}
 
+	/**
+	 * Adds an Alt account to the Alt list.
+	 * 
+	 * @param alt The Alt to be added.
+	 */
 	public void addAlt(Alt alt) {
 		alts.add(alt);
 	}
 
+	/**
+	 * Removes an Alt account from the Alt list.
+	 * 
+	 * @param alt The Alt to be removed.
+	 */
 	public void removeAlt(Alt alt) {
 		alts.remove(alt);
 	}
 
+	/**
+	 * Gets the Alt list.
+	 * 
+	 * @return The Alt list.
+	 */
 	public ArrayList<Alt> getAlts() {
 		return this.alts;
 	}
 
+	/**
+	 * 
+	 * @param alt
+	 * @return
+	 */
 	public boolean login(Alt alt) {
+		// Log in to the correct service depending on the Alt type.
 		if (alt.isMicrosoft()) {
 			return loginMicrosoft(alt);
 		} else {
@@ -163,28 +234,36 @@ public class AltManager {
 		}
 	}
 
-	public boolean loginMicrosoft(Alt alt) {
+	/**
+	 * Logs in to a Microsoft Account.
+	 * @param alt The Alt to be signed into.
+	 * @return A boolean signifying that the operation has completed.
+	 */
+	private boolean loginMicrosoft(Alt alt) {
 		try {
 			IMinecraftClient iMC = (IMinecraftClient) this.mc;
-
 			UUID uuid;
 			String name;
 
+			// Grabs login information from Microsoft's Servers.
 			String authCode = getAuthCode(alt);
 			String msftAccessToken = getMicrosoftAccessToken(authCode);
 			XboxLiveToken xblToken = getXBLToken(msftAccessToken);
 			String xstsToken = getXSTSToken(xblToken.getToken());
+			String mcAccessToken = getMinecraftAccessToken(xblToken.getHash(), xstsToken);
 
-			String mcAccessToken = getMinecraftAccessToken(xblToken.getUHS(), xstsToken);
-
+			// Creates a connection to the login server.
 			URLConnection connection = PROFILE_URL.openConnection();
 			connection.setRequestProperty("Authorization", "Bearer " + mcAccessToken);
 
+			// Retrieves the JsonObject from the login server.
 			JsonObject json = parseConnectionToObject(connection);
 
+			// Throw an error is the JsonObject contains an error.
 			if (json.has("error"))
 				throw new LoginException("Error message from api.minecraftservices.com:\n" + json.get("error"));
 
+			// Otherwise, create a Session and log in.
 			uuid = uuidFromJson(json.get("id").getAsString());
 			name = json.get("name").getAsString();
 
@@ -199,6 +278,12 @@ public class AltManager {
 		}
 	}
 
+	/**
+	 * Gets the Authentication Code from Microsoft's servers,
+	 * @param alt The Alt to fetch the Auth code from.
+	 * @return The Auth Code.
+	 * @throws LoginException If the login has failed.
+	 */
 	private String getAuthCode(Alt alt) throws LoginException {
 		String cookie;
 		String loginWebpage;
@@ -208,7 +293,7 @@ public class AltManager {
 			try (InputStream input = connection.getInputStream()) {
 				InputStreamReader reader = new InputStreamReader(input);
 				BufferedReader bufferedReader = new BufferedReader(reader);
-				loginWebpage =  bufferedReader.lines().collect(Collectors.joining("\n"));
+				loginWebpage = bufferedReader.lines().collect(Collectors.joining("\n"));
 			}
 		} catch (Exception e) {
 			throw new LoginException("Failed login");
@@ -274,7 +359,7 @@ public class AltManager {
 		}
 	}
 
-	public boolean loginMinecraft(Alt alt) {
+	private boolean loginMinecraft(Alt alt) {
 		YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(
 				Proxy.NO_PROXY, "").createUserAuthentication(Agent.MINECRAFT);
 		auth.setUsername(alt.getEmail());
@@ -501,7 +586,7 @@ public class AltManager {
 		}
 	}
 
-	public String postJson(final String urlString, final String content) throws Exception {
+	private String postJson(final String urlString, final String content) throws Exception {
 		URL url = new URL(urlString);
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 		connection.setDoInput(true);

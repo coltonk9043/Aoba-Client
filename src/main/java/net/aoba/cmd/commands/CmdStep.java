@@ -8,7 +8,6 @@ import net.aoba.module.modules.movement.Step;
 public class CmdStep extends Command {
 
 	public CmdStep() {
-		this.command = "step";
 		this.description = "Allows the player to step up blocks";
 	}
 

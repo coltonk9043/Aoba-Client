@@ -8,7 +8,6 @@ import net.aoba.module.modules.world.Nuker;
 public class CmdNuker extends Command {
 
 	public CmdNuker() {
-		this.command = "nuker";
 		this.description = "Destroys blocks within a certain distance";
 	}
 

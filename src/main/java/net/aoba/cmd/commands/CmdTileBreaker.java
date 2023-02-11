@@ -8,7 +8,6 @@ import net.aoba.module.modules.world.TileBreaker;
 public class CmdTileBreaker extends Command {
 
 	public CmdTileBreaker() {
-		this.command = "tilebreaker";
 		this.description = "Breaks insta-break blocks within a certain radius";
 	}
 

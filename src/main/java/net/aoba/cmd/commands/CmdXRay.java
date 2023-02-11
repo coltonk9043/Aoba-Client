@@ -10,7 +10,6 @@ import net.minecraft.block.Blocks;
 public class CmdXRay extends Command {
 
 	public CmdXRay() {
-		this.command = "xray";
 		this.description = "Allows the player to see certain blocks through walls";
 	}
 

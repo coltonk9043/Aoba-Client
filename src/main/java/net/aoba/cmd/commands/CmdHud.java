@@ -6,7 +6,6 @@ import net.aoba.cmd.CommandManager;
 public class CmdHud extends Command {
 
 	public CmdHud() {
-		this.command = "hud";
 		this.description = "Allows you to customize the hud using commands.";
 	}
 

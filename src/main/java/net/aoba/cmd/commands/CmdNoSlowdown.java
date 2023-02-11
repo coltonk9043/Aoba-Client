@@ -8,7 +8,6 @@ import net.aoba.module.modules.movement.NoSlowdown;
 public class CmdNoSlowdown extends Command {
 
 	public CmdNoSlowdown() {
-		this.command = "noslowdown";
 		this.description = "Disables webs from slowing the player down";
 	}
 

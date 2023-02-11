@@ -8,7 +8,6 @@ import net.aoba.module.modules.render.Tracer;
 public class CmdTracer extends Command {
 
 	public CmdTracer() {
-		this.command = "tracer";
 		this.description = "Draws a tracer that points towards players";
 	}
 

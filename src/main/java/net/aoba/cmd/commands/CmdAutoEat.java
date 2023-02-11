@@ -8,7 +8,6 @@ import net.aoba.module.modules.misc.AutoEat;
 public class CmdAutoEat extends Command {
 
 	public CmdAutoEat() {
-		this.command = "autoeat";
 		this.description = "Allows the player to see chest locations through ESP";
 	}
 

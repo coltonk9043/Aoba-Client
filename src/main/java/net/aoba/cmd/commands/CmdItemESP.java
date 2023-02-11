@@ -8,7 +8,6 @@ import net.aoba.module.modules.render.ItemESP;
 public class CmdItemESP extends Command {
 
 	public CmdItemESP() {
-		this.command = "itemesp";
 		this.description = "Allows the player to see items through ESP";
 	}
 

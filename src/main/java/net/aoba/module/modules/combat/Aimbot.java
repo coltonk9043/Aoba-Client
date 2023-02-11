@@ -84,7 +84,6 @@ public class Aimbot extends Module {
 	@Override
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
 		if (temp != null) {
-
 			MC.player.lookAt(EntityAnchor.EYES, temp.getEyePos());
 		}
 	}

@@ -6,7 +6,6 @@ import net.aoba.cmd.CommandManager;
 public class CmdTP extends Command {
 
 	public CmdTP() {
-		this.command = "tp";
 		this.description = "Teleports the player certain blocks away (Vanilla only)";
 	}
 

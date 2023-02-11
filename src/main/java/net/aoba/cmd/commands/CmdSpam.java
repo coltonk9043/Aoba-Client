@@ -6,7 +6,6 @@ import net.aoba.cmd.CommandManager;
 public class CmdSpam extends Command {
 
 	public CmdSpam() {
-		this.command = "spam";
 		this.description = "Spams the chat with a certain message";
 	}
 

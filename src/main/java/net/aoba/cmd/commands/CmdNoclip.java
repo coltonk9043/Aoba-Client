@@ -8,7 +8,6 @@ import net.aoba.module.modules.movement.Noclip;
 public class CmdNoclip extends Command {
 
 	public CmdNoclip() {
-		this.command = "noclip";
 		this.description = "Allows the player to phase through blocks.";
 	}
 

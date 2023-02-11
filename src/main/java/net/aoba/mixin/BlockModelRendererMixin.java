@@ -32,16 +32,5 @@ public abstract class BlockModelRendererMixin {
 				return;
 			}
 		}
-		
-		renderSmooth(world, model, state, pos, matrices, vertexConsumer, false, random, seed, overlay);
-	}
-	
-	@Shadow
-	public void renderSmooth(BlockRenderView world, BakedModel model,
-		BlockState state, BlockPos pos, MatrixStack matrices,
-		VertexConsumer vertexConsumer, boolean cull, Random random, long seed,
-		int overlay)
-	{
-		
 	}
 }

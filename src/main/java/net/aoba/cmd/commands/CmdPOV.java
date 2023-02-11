@@ -8,7 +8,6 @@ import net.aoba.module.modules.render.POV;
 public class CmdPOV extends Command {
 
 	public CmdPOV() {
-		this.command = "pov";
 		this.description = "Decreases the time it takes to break blocks";
 	}
 

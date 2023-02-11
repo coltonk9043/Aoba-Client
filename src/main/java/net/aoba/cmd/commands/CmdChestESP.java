@@ -8,7 +8,6 @@ import net.aoba.module.modules.render.ChestESP;
 public class CmdChestESP extends Command {
 
 	public CmdChestESP() {
-		this.command = "chestesp";
 		this.description = "Allows the player to see chest locations through ESP";
 	}
 

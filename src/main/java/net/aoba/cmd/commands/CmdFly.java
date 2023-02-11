@@ -8,12 +8,14 @@ import net.aoba.module.modules.movement.Fly;
 public class CmdFly extends Command {
 
 	public CmdFly() {
-		this.command = "fly";
 		this.description = "Allows the player to fly";
 	}
 
 	@Override
 	public void command(String[] parameters) {
+		for(int i = 0; i < parameters.length; i++) {
+			System.out.println(parameters[i]);
+		}
 		Fly module = (Fly) Aoba.getInstance().mm.fly;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {

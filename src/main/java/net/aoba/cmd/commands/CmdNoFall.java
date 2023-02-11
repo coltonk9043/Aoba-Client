@@ -8,7 +8,6 @@ import net.aoba.module.modules.movement.NoFall;
 public class CmdNoFall extends Command {
 
 	public CmdNoFall() {
-		this.command = "nofall";
 		this.description = "Disables fall damage for the player";
 	}
 

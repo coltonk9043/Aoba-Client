@@ -8,7 +8,6 @@ import net.aoba.module.modules.misc.Timer;
 public class CmdTimer extends Command {
 
 	public CmdTimer() {
-		this.command = "timer";
 		this.description = "Disables fall damage for the player";
 	}
 

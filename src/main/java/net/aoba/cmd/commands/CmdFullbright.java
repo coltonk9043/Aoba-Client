@@ -8,7 +8,6 @@ import net.aoba.module.modules.render.Fullbright;
 public class CmdFullbright extends Command {
 
 	public CmdFullbright() {
-		this.command = "fullbright";
 		this.description = "Brightens up the world!";
 	}
 

@@ -22,9 +22,6 @@ public abstract class BlockMixin implements ItemConvertible {
 			BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
 		if (Aoba.getInstance().mm.xray.getState()) {
 			boolean isXray = XRay.isXRayBlock(state.getBlock());
-			if(isXray) {
-				System.out.println("XRAY BLOCK FOUND: " + state.getBlock().getName().toString());
-			}
 			cir.setReturnValue(isXray);
 		}
 	}

@@ -8,7 +8,6 @@ import net.aoba.module.modules.misc.FastBreak;
 public class CmdFastBreak extends Command {
 
 	public CmdFastBreak() {
-		this.command = "fastbreak";
 		this.description = "Decreases the time it takes to break blocks";
 	}
 

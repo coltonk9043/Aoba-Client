@@ -8,7 +8,6 @@ import net.aoba.module.modules.movement.Sprint;
 public class CmdSprint extends Command {
 
 	public CmdSprint() {
-		this.command = "sprint";
 		this.description = "Forces the player to constantly sprint";
 	}
 

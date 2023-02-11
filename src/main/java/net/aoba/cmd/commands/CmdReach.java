@@ -8,7 +8,6 @@ import net.aoba.module.modules.combat.Reach;
 public class CmdReach extends Command {
 
 	public CmdReach() {
-		this.command = "reach";
 		this.description = "Allows the player to reach further.";
 	}
 

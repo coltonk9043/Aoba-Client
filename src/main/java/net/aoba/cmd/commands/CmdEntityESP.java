@@ -8,7 +8,6 @@ import net.aoba.module.modules.render.EntityESP;
 public class CmdEntityESP extends Command {
 
 	public CmdEntityESP() {
-		this.command = "entityesp";
 		this.description = "Allows the player to see mobs through ESP.";
 	}
 

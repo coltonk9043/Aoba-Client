@@ -8,7 +8,6 @@ import net.aoba.module.modules.render.PlayerESP;
 public class CmdPlayerESP extends Command {
 
 	public CmdPlayerESP() {
-		this.command = "playeresp";
 		this.description = "Allows the player to see other players through ESP";
 	}
 

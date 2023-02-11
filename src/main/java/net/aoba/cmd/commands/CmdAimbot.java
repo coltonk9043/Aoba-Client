@@ -8,7 +8,6 @@ import net.aoba.module.modules.combat.Aimbot;
 public class CmdAimbot extends Command {
 
 	public CmdAimbot() {
-		this.command = "aimbot";
 		this.description = "Allows the player to see chest locations through ESP";
 	}
 
