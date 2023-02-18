@@ -53,7 +53,7 @@ public class HudManager {
 		hud = new IngameGUI();
 		armorHud = new ArmorHUD();
 		renderUtils = Aoba.getInstance().renderUtils;
-		color = new Color(hue.getValueFloat());
+		color = new Color(hue.getValueFloat(), 1f, 1f);
 		currentColor = color;
 		rainbowColor = new RainbowColor();
 		this.rainbow.setValue(Settings.getSettingBoolean("rainbowUI"));

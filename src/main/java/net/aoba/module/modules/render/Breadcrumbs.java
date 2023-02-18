@@ -31,7 +31,7 @@ public class Breadcrumbs extends Module{
 		this.setBind(new KeyBinding("key.breadcrumbs", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Shows breadcrumbs of where you last stepped;");
-		color = new Color(hue.getValueFloat());
+		color = new Color(hue.getValueFloat(), 1f, 1f);
 		currentColor = color;
 		rainbowColor = new RainbowColor();
 		this.addSetting(hue);
@@ -41,7 +41,7 @@ public class Breadcrumbs extends Module{
 	
 	@Override
 	public void onDisable() {
-		this.positions.clear();
+		
 	}
 
 	@Override

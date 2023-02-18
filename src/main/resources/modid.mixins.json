@@ -7,22 +7,20 @@
   ],
   "client": [
 	"AbstractBlockStateMixin",
+	"AbstractSignEditScreenMixin",
 	"BlockMixin",
 	"BlockModelRendererMixin",
-	
 	"ChatScreenMixin",
 	"ClientPlayerEntityMixin",
 	"ClientPlayerInteractionManagerMixin",
 	"ClientPlayNetworkHandlerMixin",
 	"EntityMixin",
 	"EntityRendererMixin",
-	
 	"GameRendererMixin",
 	"IngameHudMixin",
 	"MouseMixin",
 	"MultiplayerScreenMixin",
 	"RenderTickCounterMixin",
-	"SignEditScreenMixin",
 	"SimpleOptionMixin",
 	"WorldRendererMixin",
 	"MinecraftClientMixin"

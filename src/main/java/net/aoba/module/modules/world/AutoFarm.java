@@ -26,7 +26,6 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 
 public class AutoFarm extends Module {
-	private MinecraftClient mc;
 	private SliderSetting radius;
 
 	public AutoFarm() {
@@ -36,7 +35,6 @@ public class AutoFarm extends Module {
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
 		this.radius = new SliderSetting("Radius", "autofarm_radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
-		mc = MinecraftClient.getInstance();
 	}
 
 	public void setRadius(int radius) {
@@ -61,21 +59,21 @@ public class AutoFarm extends Module {
 		for (int x = -rad; x < rad; x++) {
 			for (int y = -1; y <= 1; y++) {
 				for (int z = -rad; z < rad; z++) {
-					BlockPos blockpos = new BlockPos(mc.player.getBlockPos().getX() + x, mc.player.getBlockPos().getY() + y,
-							mc.player.getBlockPos().getZ() + z);
-					Block block = mc.world.getBlockState(blockpos).getBlock();
-					BlockState blockstate = mc.world.getBlockState(blockpos);
+					BlockPos blockpos = new BlockPos(MC.player.getBlockPos().getX() + x, MC.player.getBlockPos().getY() + y,
+							MC.player.getBlockPos().getZ() + z);
+					Block block = MC.world.getBlockState(blockpos).getBlock();
+					BlockState blockstate = MC.world.getBlockState(blockpos);
 					if (block instanceof CropBlock) {
 						CropBlock crop = (CropBlock) block;
-						if (!crop.canGrow(mc.world, null, blockpos, blockstate)) {
-							mc.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK,blockpos, Direction.NORTH));
-							mc.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockpos, Direction.NORTH));
+						if (!crop.canGrow(MC.world, null, blockpos, blockstate)) {
+							MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK,blockpos, Direction.NORTH));
+							MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockpos, Direction.NORTH));
 						}else {
 							boolean b = false;
 							for(int i = 0; i< 9; i++) {
-								ItemStack stack = mc.player.getInventory().getStack(i);
+								ItemStack stack = MC.player.getInventory().getStack(i);
 								if(stack.getItem() == Items.BONE_MEAL) {
-							    	mc.player.getInventory().selectedSlot = i;
+							    	MC.player.getInventory().selectedSlot = i;
 							    	b = true;
 							    	break;
 							    }
@@ -83,26 +81,26 @@ public class AutoFarm extends Module {
 							if(b) {
 								BlockHitResult rayTrace = new BlockHitResult(new Vec3d(0,0,0), Direction.UP, blockpos, false);
 								
-								this.mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
+								this.MC.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
 							}
 						}
 					}else if (block instanceof FarmlandBlock) {
-						BlockPos blockAbovePos = new BlockPos((int) mc.player.getBlockPos().getX() + x, (int) mc.player.getBlockPos().getY() + y + 1,
-								(int) mc.player.getBlockPos().getZ() + z);
-						Block blockAbove = mc.world.getBlockState(blockAbovePos).getBlock();
+						BlockPos blockAbovePos = new BlockPos((int) MC.player.getBlockPos().getX() + x, (int) MC.player.getBlockPos().getY() + y + 1,
+								(int) MC.player.getBlockPos().getZ() + z);
+						Block blockAbove = MC.world.getBlockState(blockAbovePos).getBlock();
 						if(blockAbove == Blocks.AIR) {
 							boolean b = false;
 							for(int i = 0; i< 9; i++) {
-								ItemStack stack = mc.player.getInventory().getStack(i);
+								ItemStack stack = MC.player.getInventory().getStack(i);
 								if(ModuleUtils.isPlantable(stack)) {
-							    	mc.player.getInventory().selectedSlot = i;
+							    	MC.player.getInventory().selectedSlot = i;
 							    	b = true;
 							    	break;
 							    }
 							}
 							if(b) {
 								BlockHitResult rayTrace = new BlockHitResult(new Vec3d(0,0,0), Direction.UP, blockpos, false);
-								this.mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
+								this.MC.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
 							}
 						}
 					}

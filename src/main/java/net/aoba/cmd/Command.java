@@ -26,7 +26,7 @@ import net.minecraft.client.MinecraftClient;
 
 public abstract class Command {
 	protected String description;
-	protected MinecraftClient mc = AobaClient.MC;
+	protected static final MinecraftClient mc = AobaClient.MC;
 	
 	/**
 	 * Runs the intended action of the command.

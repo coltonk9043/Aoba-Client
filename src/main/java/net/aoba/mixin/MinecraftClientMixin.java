@@ -89,16 +89,4 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	{
 		this.itemUseCooldown = delay;
 	}
-
-	@Override
-	public void rightClick() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public IWorld getWorld() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

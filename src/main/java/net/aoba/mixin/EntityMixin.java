@@ -11,10 +11,10 @@ import net.minecraft.entity.player.PlayerEntity;
 @Mixin(Entity.class)
 public class EntityMixin{
 	
-	//@Inject(at = { @At("HEAD") }, method = "isInvisibleTo(Lnet/minecraft/entity/player/PlayerEntity;)V", cancellable = true)
-	//private void onIsInvisibleCheck(PlayerEntity message, CallbackInfoReturnable<Boolean> cir) {
-	//	if(Aoba.getInstance().mm.antiinvis.getState()) {
-	//		cir.setReturnValue(false);
-	//	}
-	//}
+	@Inject(at = { @At("HEAD") }, method = "isInvisibleTo(Lnet/minecraft/entity/player/PlayerEntity;)Z", cancellable = true)
+	private void onIsInvisibleCheck(PlayerEntity message, CallbackInfoReturnable<Boolean> cir) {
+		if(Aoba.getInstance().mm.antiinvis.getState()) {
+			cir.setReturnValue(false);
+		}
+	}
 }

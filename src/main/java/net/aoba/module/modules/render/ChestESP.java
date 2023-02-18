@@ -31,7 +31,7 @@ public class ChestESP extends Module {
 		this.setBind(new KeyBinding("key.chestesp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see Chests with an ESP.");
-		color = new Color(hue.getValueFloat());
+		color = new Color(hue.getValueFloat(), 1f, 1f);
 		currentColor = color;
 		rainbowColor = new RainbowColor();
 		this.addSetting(hue);

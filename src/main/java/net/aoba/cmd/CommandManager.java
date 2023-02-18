@@ -21,16 +21,14 @@
  */
 package net.aoba.cmd;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-
 import net.aoba.cmd.commands.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
 public class CommandManager {
-	private HashMap<String, Command> commands = new HashMap <String, Command>();
-	
+	private HashMap<String, Command> commands = new HashMap<String, Command>();
+
 	/**
 	 * Constructor for Command Manager. Initializes all commands.
 	 */
@@ -62,40 +60,68 @@ public class CommandManager {
 		commands.put("tracer", new CmdTracer());
 		commands.put("xray", new CmdXRay());
 	}
-	
+
+	/**
+	 * Gets the command by a given syntax.
+	 * 
+	 * @param string The syntax (command) as a string.
+	 * @return The Command Object associated with that syntax.
+	 */
 	public Command getCommandBySyntax(String string) {
 		return this.commands.get(string);
 	}
 
-	public HashMap<String, Command> getCommands(){
+	/**
+	 * Gets all of the Commands currently registered.
+	 * 
+	 * @return List of registered Command Objects.
+	 */
+	public HashMap<String, Command> getCommands() {
 		return this.commands;
 	}
-	
+
+	/**
+	 * Gets the total number of Commands.
+	 * @return The number of registered Commands.
+	 */
 	public int getNumOfCommands() {
 		return this.commands.size();
 	}
-	
+
+	/**
+	 * Runs a command.
+	 * @param commandIn A list of Command Parameters given by a "split" message.
+	 */
 	public void command(String[] commandIn) {
 		try {
+			// Get the command from the user's message. (Index 0 is Username)
 			Command command = commands.get(commandIn[1]);
-			
-			if(command == null) 
-				sendChatMessage("Invalid Command! Type .aoba help for a list of commands.");	
+
+			// If the command does not exist, throw an error.
+			if (command == null)
+				sendChatMessage("Invalid Command! Type .aoba help for a list of commands.");
 			else {
+				// Otherwise, create a new parameter list.
 				String[] parameterList = new String[commandIn.length - 2];
-				if(commandIn.length > 1) {
-					for(int i=2; i < commandIn.length; i++) {
-						parameterList[i-2]= commandIn[i];
+				if (commandIn.length > 1) {
+					for (int i = 2; i < commandIn.length; i++) {
+						parameterList[i - 2] = commandIn[i];
 					}
 				}
+				
+				// Runs the command.
 				command.command(parameterList);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			sendChatMessage("Error occured whilst running command. Please try again.");
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Prints a message into the Minecraft Chat.
+	 * @param message The message to be printed.
+	 */
 	public static void sendChatMessage(String message) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		mc.inGameHud.getChatHud().addMessage(Text.of("§5[Aoba] §f" + message));
