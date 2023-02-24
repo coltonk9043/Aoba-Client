@@ -16,7 +16,10 @@ import net.minecraft.item.Items;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 
 public class CrystalAura extends Module {
 	private float radius = 10.0f;
@@ -64,7 +67,7 @@ public class CrystalAura extends Module {
 					break;
 				}
 			}
-			//BlockHitResult rayTrace = new BlockHitResult(new Vec3d(0,0,0), Direction.UP, check, false);
+			BlockHitResult rayTrace = new BlockHitResult(new Vec3d(0,0,0), Direction.UP, check, false);
 			this.MC.player.networkHandler.sendPacket(new PlayerInteractItemC2SPacket(Hand.MAIN_HAND, 0));
 		}
 
@@ -72,7 +75,7 @@ public class CrystalAura extends Module {
 		for (Entity entity : MC.world.getEntities()) {
 			if (MC.player.distanceTo(entity) < radius) {
 				if (entity instanceof EndCrystalEntity) {
-					MC.player.attack(entity);
+					MC.player.tryAttack(entity);
 				}
 			}
 		}

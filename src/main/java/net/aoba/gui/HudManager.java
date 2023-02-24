@@ -38,6 +38,7 @@ public class HudManager {
 	
 	public InfoTab infoTab;
 	public OptionsTab optionsTab;
+	public RadarTab radarTab;
 
 	public SliderSetting hue = new SliderSetting("Hue", "color_hue", 4, 0, 360, 1);
 	public SliderSetting effectSpeed = new SliderSetting("Effect Spd", "color_speed", 4, 1, 20, 0.1);
@@ -56,10 +57,11 @@ public class HudManager {
 		color = new Color(hue.getValueFloat(), 1f, 1f);
 		currentColor = color;
 		rainbowColor = new RainbowColor();
-		this.rainbow.setValue(Settings.getSettingBoolean("rainbowUI"));
+		rainbow.setValue(Settings.getSettingBoolean("rainbowUI"));
 		
 		infoTab = new InfoTab("InfoTab", 100, 200);
 		optionsTab = new OptionsTab("Options", 300, 250, hue, rainbow, ah, effectSpeed);
+		radarTab = new RadarTab("Radar", 500, 250);
 		
 		int xOffset = 320;
 		for (Category category : Module.Category.values()) {
@@ -71,10 +73,11 @@ public class HudManager {
 				}
 			}
 			tabs.put(category.name(), tab);
-			xOffset += tab.width;
+			xOffset += tab.getWidth();
 		}
 		tabs.put(infoTab.getTitle(), infoTab);
 		tabs.put(optionsTab.getTitle(), optionsTab);
+		tabs.put(radarTab.getTitle(), radarTab);
 	}
 	
 	public Color getColor() {

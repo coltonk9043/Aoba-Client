@@ -1,5 +1,6 @@
-package net.aoba.gui;
+package net.aoba.gui.tabs;
 
+import net.aoba.gui.Color;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;

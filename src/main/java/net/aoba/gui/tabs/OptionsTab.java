@@ -1,6 +1,5 @@
 package net.aoba.gui.tabs;
 
-import net.aoba.gui.ClickGuiTab;
 import net.aoba.gui.elements.CheckboxComponent;
 import net.aoba.gui.elements.SliderComponent;
 import net.aoba.gui.elements.StringComponent;

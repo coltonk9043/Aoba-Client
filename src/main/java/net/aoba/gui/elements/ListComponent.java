@@ -3,9 +3,9 @@ package net.aoba.gui.elements;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.aoba.gui.ClickGuiTab;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
+import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.ListSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
@@ -71,8 +71,8 @@ public class ListComponent extends Component {
 		int length = MinecraftClient.getInstance().textRenderer.getWidth(list.getValue()); 
 		renderUtils.drawOutlinedBox(matrixStack, parentX + 4, parentY + offset, parentWidth - 8, 22, new Color(25,25,25),
 				0.3f);
-		renderUtils.drawStringWithScale(matrixStack, list.getValue(), (parentX + (parentWidth / 2)) - length , parentY + offset + 4, 0xFFFFFF);
-		renderUtils.drawStringWithScale(matrixStack,"<<", parentX + 8, parentY + offset + 4, 0xFFFFFF);
-		renderUtils.drawStringWithScale(matrixStack,">>", parentX + 8 + (parentWidth - 34), parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawString(matrixStack, list.getValue(), (parentX + (parentWidth / 2)) - length , parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawString(matrixStack,"<<", parentX + 8, parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawString(matrixStack,">>", parentX + 8 + (parentWidth - 34), parentY + offset + 4, 0xFFFFFF);
 	}
 }

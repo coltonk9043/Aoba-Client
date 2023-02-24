@@ -1,8 +1,8 @@
 package net.aoba.gui.elements;
 
-import net.aoba.gui.ClickGuiTab;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
+import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.SliderSetting;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -63,7 +63,7 @@ public class SliderComponent extends Component {
 				(int) Math.floor((parentWidth - 6) * this.currentSliderPosition), 24, color, 1f);
 		renderUtils.drawOutline(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24);
 		if(this.slider == null) return;
-		renderUtils.drawStringWithScale(matrixStack, this.text + ": " + this.slider.getValueFloat(), parentX + 10,
+		renderUtils.drawString(matrixStack, this.text + ": " + this.slider.getValueFloat(), parentX + 10,
 				parentY + 6 + offset, 0xFFFFFF);
 	}
 

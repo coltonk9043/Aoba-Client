@@ -227,19 +227,47 @@ public class RenderUtils {
 		BufferRenderer.drawWithGlobalProgram(buffer);
 	}
 
-	public void drawStringWithScale(MatrixStack matrixStack, String text, float x, float y, Color color) {
+	public void drawString(MatrixStack matrixStack, String text, float x, float y, Color color) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		matrixStack.push();
-		matrixStack.scale(2, 2, 1.0f);
-		mc.textRenderer.drawWithShadow(matrixStack, text, x / 2, y / 2, color.getColorAsInt(), false);
+		matrixStack.scale(2.0f, 2.0f, 1.0f);
+		matrixStack.translate(-x / 2, -y / 2, 0.0f);
+		mc.textRenderer.drawWithShadow(matrixStack, text, x, y, color.getColorAsInt(), false);
+		matrixStack.pop();
+	}
+	
+	public void drawString(MatrixStack matrixStack, String text, float x, float y, int color) {
+		MinecraftClient mc = MinecraftClient.getInstance();
+		matrixStack.push();
+		matrixStack.scale(2.0f, 2.0f, 1.0f);
+		matrixStack.translate(-x / 2, -y / 2, 0.0f);
+		mc.textRenderer.drawWithShadow(matrixStack, text, x, y, color, false);
+		matrixStack.pop();
+	}
+	
+	public void drawStringWithScale(MatrixStack matrixStack, String text, float x, float y, Color color, float scale) {
+		MinecraftClient mc = MinecraftClient.getInstance();
+		matrixStack.push();
+		matrixStack.scale(scale, scale, 1.0f);
+		if(scale > 1.0f) {
+			matrixStack.translate(-x / scale, -y / scale, 0.0f);
+		}else {
+			matrixStack.translate((x / scale) - x, (y * scale) - y, 0.0f);
+		}
+		mc.textRenderer.drawWithShadow(matrixStack, text, x, y, color.getColorAsInt(), false);
 		matrixStack.pop();
 	}
 
-	public void drawStringWithScale(MatrixStack matrixStack, String text, float x, float y, int color) {
+	public void drawStringWithScale(MatrixStack matrixStack, String text, float x, float y, int color, float scale) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		matrixStack.push();
-		matrixStack.scale(2, 2, 1.0f);
-		mc.textRenderer.drawWithShadow(matrixStack, text, x / 2, y / 2, color, false);
+		matrixStack.scale(scale, scale, 1.0f);
+		if(scale > 1.0f) {
+			matrixStack.translate(-x / scale, -y / scale, 0.0f);
+		}else {
+			matrixStack.translate(x / scale, y * scale, 0.0f);
+		}
+		mc.textRenderer.drawWithShadow(matrixStack, text, x, y, color, false);
 		matrixStack.pop();
 	}
 

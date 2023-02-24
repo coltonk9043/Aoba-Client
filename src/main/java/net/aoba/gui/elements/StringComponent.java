@@ -1,7 +1,7 @@
 package net.aoba.gui.elements;
 
-import net.aoba.gui.ClickGuiTab;
 import net.aoba.gui.Color;
+import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class StringComponent extends Component {
@@ -31,7 +31,7 @@ public class StringComponent extends Component {
 	public void draw(int offset, MatrixStack matrixStack, float partialTicks, Color color) {
 		int parentX = this.parent.getX();
 		int parentY = this.parent.getY();
-		renderUtils.drawStringWithScale(matrixStack, this.text, parentX + 10,
+		renderUtils.drawString(matrixStack, this.text, parentX + 10,
 				parentY + 8 + offset, 0xFFFFFF);
 	}
 	

@@ -20,10 +20,12 @@
  * A class to represent a ClickGui Tab that contains different Components.
  */
 
-package net.aoba.gui;
+package net.aoba.gui.tabs;
 
 import java.util.ArrayList;
 import net.aoba.Aoba;
+import net.aoba.gui.Color;
+import net.aoba.gui.HudManager;
 import net.aoba.gui.elements.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
@@ -34,6 +36,8 @@ public class ClickGuiTab extends Tab {
 	protected boolean isPinned = false;
 	protected boolean pinWasClicked = false;
 	protected boolean drawBorder = true;
+	protected boolean inheritHeightFromChildren = true;
+	
 	protected ArrayList<Component> children = new ArrayList<>();
 
 	public ClickGuiTab(String title, int x, int y) {
@@ -115,11 +119,13 @@ public class ClickGuiTab extends Tab {
 
 	@Override
 	public void update(double mouseX, double mouseY, boolean mouseClicked) {
-		int tempHeight = 1;
-		for (Component child : children) {
-			tempHeight += (child.getHeight());
+		if(this.inheritHeightFromChildren) {
+			int tempHeight = 1;
+			for (Component child : children) {
+				tempHeight += (child.getHeight());
+			}
+			this.height = tempHeight;
 		}
-		this.height = tempHeight;
 		
 		if (Aoba.getInstance().hm.isClickGuiOpen()) {
 			if (HudManager.currentGrabbed == null) {
@@ -168,7 +174,7 @@ public class ClickGuiTab extends Tab {
 		if(drawBorder) {
 			// Draws background depending on components width and height
 			renderUtils.drawOutlinedBox(matrixStack, x, y, width, 29, new Color(30,30,30), 0.4f);
-			renderUtils.drawStringWithScale(matrixStack, this.title, x + 8, y + 8, Aoba.getInstance().hm.getColor());
+			renderUtils.drawString(matrixStack, this.title, x + 8, y + 8, Aoba.getInstance().hm.getColor());
 			renderUtils.drawOutlinedBox(matrixStack, x, y + 29, width, height, new Color(30,30,30), 0.4f);
 			if (this.isPinned) {
 				renderUtils.drawOutlinedBox(matrixStack, x + width - 24, y + 4, 20, 20, new Color(154,0,0), 0.8f);

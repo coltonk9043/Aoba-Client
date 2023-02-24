@@ -1,8 +1,8 @@
 package net.aoba.gui.elements;
 
-import net.aoba.gui.ClickGuiTab;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
+import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.BooleanSetting;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -50,7 +50,7 @@ public class CheckboxComponent extends Component {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
-		renderUtils.drawStringWithScale(matrixStack, this.text, parentX + 10,
+		renderUtils.drawString(matrixStack, this.text, parentX + 10,
 				parentY + offset + 8, 0xFFFFFF);
 		if(this.checkbox.getValue()) {
 			renderUtils.drawOutlinedBox(matrixStack, parentX + parentWidth - 24, parentY + 1 + offset, 20, 20, new Color(0,154,0), 0.8f);

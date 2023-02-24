@@ -3,9 +3,9 @@ package net.aoba.gui.elements;
 import java.util.ArrayList;
 import java.util.List;
 import net.aoba.module.Module;
-import net.aoba.gui.ClickGuiTab;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
+import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.Setting;
 import net.aoba.settings.*;
 import net.aoba.settings.SliderSetting;
@@ -103,10 +103,10 @@ public class ModuleComponent extends Component {
 			}
 		}
 		
-		renderUtils.drawStringWithScale(matrixStack, this.text, parentX + 8,
+		renderUtils.drawString(matrixStack, this.text, parentX + 8,
 				parentY + 8 + offset, module.getState() ? 0x00FF00 : 0xFFFFFF);
 		if(module.hasSettings()) {
-			renderUtils.drawStringWithScale(matrixStack, this.popped ? "<<" : ">>", parentX + parentWidth - 30,
+			renderUtils.drawString(matrixStack, this.popped ? "<<" : ">>", parentX + parentWidth - 30,
 					parentY + 8 + offset, color.getColorAsInt());
 		}
 	}
