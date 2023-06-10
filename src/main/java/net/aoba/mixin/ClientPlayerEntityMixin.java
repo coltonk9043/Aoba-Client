@@ -5,10 +5,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import com.mojang.authlib.GameProfile;
 import net.aoba.Aoba;
 import net.aoba.interfaces.IClientPlayerEntity;
 import net.aoba.misc.FakePlayerEntity;
+import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -17,7 +20,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 
 @Mixin(ClientPlayerEntity.class)
-public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements IClientPlayerEntity{
+public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 	@Shadow
 	private ClientPlayNetworkHandler networkHandler;
 
@@ -41,8 +44,13 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implemen
 	}
 	
 	@Override
-	public void setNoclip(boolean state)
+	protected float getOffGroundSpeed()
 	{
-		this.noClip = state;
+		float speed = super.getOffGroundSpeed();
+		if(Aoba.getInstance().mm.fly.getState()) {
+			Fly fly = (Fly)Aoba.getInstance().mm.fly;
+			return (float)fly.getSpeed();
+		}
+		return speed;
 	}
 }

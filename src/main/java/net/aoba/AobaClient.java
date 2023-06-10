@@ -51,14 +51,6 @@ public class AobaClient {
 	private boolean ghostMode;
 	
 	/**
-	 * Constructor for Aoba Client.
-	 */
-	public AobaClient() {
-		System.out.println("[Aoba] Starting Client");
-		
-	}
-	
-	/**
 	 * Initializes Aoba Client and creates sub-systems.
 	 */
 	public void Initialize() {
@@ -66,6 +58,7 @@ public class AobaClient {
 		MC = MinecraftClient.getInstance();
 		IMC = (IMinecraftClient)MC;
 		
+		System.out.println("[Aoba] Starting Client");
 		renderUtils = new RenderUtils();
 		System.out.println("[Aoba] Reading Settings");
 		settings = new Settings();
