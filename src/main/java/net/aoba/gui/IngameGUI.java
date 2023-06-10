@@ -9,6 +9,7 @@ import net.aoba.gui.tabs.Tab;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
@@ -108,24 +109,25 @@ public class IngameGUI extends Tab {
 	}
 
 	@Override
-	public void draw(MatrixStack matrixStack, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		// Gets the client and window.
 		MinecraftClient mc = MinecraftClient.getInstance();
+		MatrixStack matrixStack = drawContext.getMatrices();
 		Window window = mc.getWindow();
 		
 		// Draws the top bar including "Aoba x.x"
-		renderUtils.drawString(matrixStack, "Aoba " + AobaClient.VERSION, 8, 8, color);
+		renderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, color);
 
 		// Draws the table including all of the categories.
 		renderUtils.drawOutlinedBox(matrixStack, x, y, width, height * this.categories.length, new Color(30,30,30), 0.4f);
 		// For every category, draw a cell for it.
 		for (int i = 0; i < this.categories.length; i++) {
-			renderUtils.drawString(matrixStack, ">>", x + width - 24, y + (height * i) + 8, color);
+			renderUtils.drawString(drawContext, ">>", x + width - 24, y + (height * i) + 8, color);
 			// Draws the name of the category dependent on whether it is selected.
 			if (this.index == i) {
-				renderUtils.drawString(matrixStack, "> " + this.categories[i].name(), x + 8, y + (height * i) + 8, color);
+				renderUtils.drawString(drawContext, "> " + this.categories[i].name(), x + 8, y + (height * i) + 8, color);
 			} else {
-				renderUtils.drawString(matrixStack, this.categories[i].name(), x + 8, y + (height * i) + 8, 0xFFFFFF);
+				renderUtils.drawString(drawContext, this.categories[i].name(), x + 8, y + (height * i) + 8, 0xFFFFFF);
 			}
 		}
 		
@@ -136,11 +138,11 @@ public class IngameGUI extends Tab {
 			// For every mod, draw a cell for it.
 			for (int i = 0; i < modules.size(); i++) {
 				if (this.indexMods == i) {
-					renderUtils.drawString(matrixStack, "> " + modules.get(i).getName(), x + width + 5,
+					renderUtils.drawString(drawContext, "> " + modules.get(i).getName(), x + width + 5,
 							y + (i * height) + (this.index * height) + 8,
 							modules.get(i).getState() ? 0x00FF00 : color.getColorAsInt());
 				} else {
-					renderUtils.drawString(matrixStack, modules.get(i).getName(), x + width + 5,
+					renderUtils.drawString(drawContext, modules.get(i).getName(), x + width + 5,
 							y + (i * height) + (this.index * height) + 8,
 							modules.get(i).getState() ? 0x00FF00 : 0xFFFFFF);
 				}
@@ -152,7 +154,7 @@ public class IngameGUI extends Tab {
 		for(int i = 0; i < aoba.mm.modules.size(); i++) {
 			Module mod = aoba.mm.modules.get(i);
 			if(mod.getState()) {
-				renderUtils.drawString(matrixStack, mod.getName(),
+				renderUtils.drawString(drawContext, mod.getName(),
 						(float) (window.getWidth() - ((mc.textRenderer.getWidth(mod.getName()) + 5) * 2)), 10 + (iteration*20),
 						color.getColorAsInt());
 				iteration++;

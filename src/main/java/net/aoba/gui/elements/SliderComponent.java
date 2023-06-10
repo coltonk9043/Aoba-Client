@@ -4,6 +4,7 @@ import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.SliderSetting;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class SliderComponent extends Component {
@@ -52,18 +53,18 @@ public class SliderComponent extends Component {
 	}
 
 	@Override
-	public void draw(int offset, MatrixStack matrixStack, float partialTicks, Color color) {
+	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
-
+		MatrixStack matrixStack = drawContext.getMatrices();
 		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24, 0.5f, 0.5f, 0.5f,
 				0.3f);
 		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset,
 				(int) Math.floor((parentWidth - 6) * this.currentSliderPosition), 24, color, 1f);
 		renderUtils.drawOutline(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24);
 		if(this.slider == null) return;
-		renderUtils.drawString(matrixStack, this.text + ": " + this.slider.getValueFloat(), parentX + 10,
+		renderUtils.drawString(drawContext, this.text + ": " + this.slider.getValueFloat(), parentX + 10,
 				parentY + 6 + offset, 0xFFFFFF);
 	}
 

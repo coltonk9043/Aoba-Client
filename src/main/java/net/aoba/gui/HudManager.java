@@ -12,6 +12,7 @@ import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module.Category;
 import net.aoba.settings.*;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
@@ -118,7 +119,7 @@ public class HudManager {
 		
 	}
 
-	public void draw(MatrixStack matrixStack, float partialTicks) {
+	public void draw(DrawContext drawContext, float tickDelta) {
 		if (!Aoba.getInstance().isGhosted()) {
 			boolean mouseClicked = mc.mouse.wasLeftButtonClicked();
 			mouseX = (int) Math.ceil(mc.mouse.getX()) ;
@@ -140,6 +141,7 @@ public class HudManager {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
+		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.scale(1.0f/mc.options.getGuiScale().getValue(), 1.0f/mc.options.getGuiScale().getValue(), 1.0f);
 		
@@ -148,10 +150,10 @@ public class HudManager {
 		if (this.clickGuiOpen) {
 			renderUtils.drawBox(matrixStack, 0, 0, window.getWidth(), window.getHeight(), 0.1f, 0.1f, 0.1f, 0.4f);
 		}
-		this.hud.draw(matrixStack, partialTicks, this.currentColor);
+		this.hud.draw(drawContext, tickDelta, this.currentColor);
 		for (ClickGuiTab tab : tabs.values()) {
 			if (clickGuiOpen || tab.getPinned()) {
-				tab.draw(matrixStack, partialTicks, this.currentColor);
+				tab.draw(drawContext, tickDelta, this.currentColor);
 			}
 		}
 		

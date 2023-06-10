@@ -17,7 +17,7 @@ import net.minecraft.text.Text;
 public abstract class AbstractSignEditScreenMixin extends Screen  {
 	@Shadow
 	@Final
-	private String[] text;
+	private String[] messages;
 	
 	protected AbstractSignEditScreenMixin(Text title) {
 		super(title);
@@ -30,7 +30,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen  {
 		String[] newText = mod.getText();
 		if(newText != null) {
 			for(int i = 0; i < 4; i++)
-				text[i] = newText[i];
+				messages[i] = newText[i];
 			finishEditing();
 		}
 	}
@@ -40,7 +40,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen  {
 		AutoSign mod = (AutoSign) Aoba.getInstance().mm.autosign;
 		if(mod.getState()) {
 			if(mod.getText() == null) {
-				mod.setText(text);
+				mod.setText(messages);
 				CommandManager.sendChatMessage("Sign text set!");
 			}
 		}

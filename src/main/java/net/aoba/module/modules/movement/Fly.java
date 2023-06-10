@@ -77,9 +77,9 @@ public class Fly extends Module {
 			if (MC.options.sprintKey.isPressed()) {
 				speed *= 1.5;
 			}
+			player.getAbilities().flying = false;
 			player.setVelocity(new Vec3d(0, 0, 0));
-			player.setMovementSpeed(speed * 0.2f);
-
+			
 			Vec3d vec = new Vec3d(0, 0, 0);
 			if (MC.options.jumpKey.isPressed()) {
 				vec = new Vec3d(0, speed * 0.2f, 0);

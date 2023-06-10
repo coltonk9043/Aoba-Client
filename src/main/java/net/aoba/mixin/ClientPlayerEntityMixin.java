@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.mojang.authlib.GameProfile;
 import net.aoba.Aoba;
+import net.aoba.interfaces.IClientPlayerEntity;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.modules.movement.Freecam;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -16,7 +17,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 
 @Mixin(ClientPlayerEntity.class)
-public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity{
+public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity implements IClientPlayerEntity{
 	@Shadow
 	private ClientPlayNetworkHandler networkHandler;
 
@@ -37,5 +38,11 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity{
 			}
 			ci.cancel();
 		}
+	}
+	
+	@Override
+	public void setNoclip(boolean state)
+	{
+		this.noClip = state;
 	}
 }

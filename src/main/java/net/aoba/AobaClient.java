@@ -29,6 +29,7 @@ import net.aoba.misc.RenderUtils;
 import net.aoba.module.ModuleManager;
 import net.aoba.settings.Settings;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class AobaClient {
@@ -89,13 +90,13 @@ public class AobaClient {
 
 	/**
 	 * Renders the HUD every frame
-	 * @param matrixStack The current Matrix Stack
+	 * @param context The current Matrix Stack
 	 * @param partialTicks Delta between ticks
 	 */
-	public void drawHUD(MatrixStack matrixStack, float partialTicks) {
+	public void drawHUD(DrawContext context, float partialTicks) {
 		// If the program is not in Ghost Mode, draw UI.
 		if (!ghostMode) {
-			hm.draw(matrixStack, partialTicks);
+			hm.draw(context, partialTicks);
 		}
 	}
 

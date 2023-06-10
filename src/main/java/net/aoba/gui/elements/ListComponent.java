@@ -8,6 +8,7 @@ import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.ListSetting;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class ListComponent extends Component {
@@ -64,15 +65,16 @@ public class ListComponent extends Component {
 	}
 
 	@Override
-	public void draw(int offset, MatrixStack matrixStack, float partialTicks, Color color) {
+	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
 		int length = MinecraftClient.getInstance().textRenderer.getWidth(list.getValue()); 
+		MatrixStack matrixStack = drawContext.getMatrices();
 		renderUtils.drawOutlinedBox(matrixStack, parentX + 4, parentY + offset, parentWidth - 8, 22, new Color(25,25,25),
 				0.3f);
-		renderUtils.drawString(matrixStack, list.getValue(), (parentX + (parentWidth / 2)) - length , parentY + offset + 4, 0xFFFFFF);
-		renderUtils.drawString(matrixStack,"<<", parentX + 8, parentY + offset + 4, 0xFFFFFF);
-		renderUtils.drawString(matrixStack,">>", parentX + 8 + (parentWidth - 34), parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawString(drawContext, list.getValue(), (parentX + (parentWidth / 2)) - length , parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawString(drawContext,"<<", parentX + 8, parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawString(drawContext,">>", parentX + 8 + (parentWidth - 34), parentY + offset + 4, 0xFFFFFF);
 	}
 }

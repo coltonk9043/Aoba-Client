@@ -24,6 +24,7 @@ package net.aoba.gui;
 
 import net.aoba.Aoba;
 import net.aoba.gui.tabs.Tab;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -58,20 +59,14 @@ public class ArmorHUD extends Tab{
 	}
 
 	@Override
-	public void draw(MatrixStack matrixStack, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
 		int yOff = 16;
 		System.out.println(armors.get(0).getName().getString());
 		for(ItemStack armor : armors) {
 			if(armor.getItem() == Items.AIR) continue;
-			drawItemStack(matrixStack, armor, this.x, this.y + this.height - yOff);
+			drawContext.drawItem(armor, this.x, this.y + this.height - yOff);
 			yOff += 16;
 		}
 	}
-
-    private void drawItemStack(MatrixStack matrixStack,ItemStack stack, int x, int y)
-    {
-    	this.itemRenderer.renderGuiItemIcon(matrixStack, stack, x, y);
-    	this.itemRenderer.renderGuiItemOverlay(matrixStack, mc.textRenderer, stack, x, y);
-    }
 }

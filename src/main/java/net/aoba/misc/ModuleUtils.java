@@ -83,9 +83,9 @@ public class ModuleUtils {
 			
 			return new ChunkPos(x, z);
 
-		}).limit(diameter^2)
+		}).limit(diameter * diameter)
 			.filter(c -> AobaClient.MC.world.isChunkLoaded(c.x, c.z))
-			.map(c -> AobaClient.MC.world.getChunk(c.x, c.z)).filter(Objects::nonNull);
+			.map(c -> AobaClient.MC.world.getChunk(c.x, c.z));
 		
 		return stream;
 	}

@@ -2,6 +2,7 @@ package net.aoba.gui.screens;
 
 import net.aoba.Aoba;
 import net.aoba.altmanager.Alt;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
@@ -78,19 +79,19 @@ public class DirectLoginAltScreen extends Screen{
 	}
 	
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY,
+	public void render(DrawContext drawContext, int mouseX, int mouseY,
 			float partialTicks) {
-		this.renderBackground(matrixStack);
-		drawCenteredTextWithShadow(matrixStack, textRenderer, this.title.getString(), this.width / 2, 20, 16777215);
-		drawTextWithShadow(matrixStack, textRenderer, this.textFieldAltPassword.getText().isEmpty() ? "Cracked Account" : "Premium Account", this.width / 2 - 100, height / 2 - 106, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
-		drawTextWithShadow(matrixStack,textRenderer, "Enter Username", this.width / 2 - 100, height / 2 - 90, 16777215);
-		drawTextWithShadow(matrixStack,textRenderer, "Enter Password", this.width / 2 - 100, height / 2 - 50, 16777215);
+		this.renderBackground(drawContext);
+		drawContext.drawCenteredTextWithShadow(textRenderer, this.title.getString(), this.width / 2, 20, 16777215);
+		drawContext.drawTextWithShadow(textRenderer, this.textFieldAltPassword.getText().isEmpty() ? "Cracked Account" : "Premium Account", this.width / 2 - 100, height / 2 - 106, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
+		drawContext.drawTextWithShadow(textRenderer, "Enter Username", this.width / 2 - 100, height / 2 - 90, 16777215);
+		drawContext.drawTextWithShadow(textRenderer, "Enter Password", this.width / 2 - 100, height / 2 - 50, 16777215);
 		//drawStringWithShadow(matrixStack,textRenderer, "Microsoft: ", this.width / 2 - 100, height / 2 - 10, 16777215);
-		this.textFieldAltUsername.render(matrixStack,mouseX, mouseY, partialTicks);
-		this.textFieldAltPassword.render(matrixStack,mouseX, mouseY, partialTicks);
+		this.textFieldAltUsername.render(drawContext,mouseX, mouseY, partialTicks);
+		this.textFieldAltPassword.render(drawContext,mouseX, mouseY, partialTicks);
 		if (didLoginError) {
-			drawTextWithShadow(matrixStack, textRenderer, "Incorrect Login (Try using Email rather than Username)", this.width / 2 - 140, 116, 0xFF0000);
+			drawContext.drawTextWithShadow(textRenderer, "Incorrect Login (Try using Email rather than Username)", this.width / 2 - 140, 116, 0xFF0000);
 		}
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
+		super.render(drawContext, mouseX, mouseY, partialTicks);
 	}
 }
