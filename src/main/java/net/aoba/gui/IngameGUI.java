@@ -45,7 +45,6 @@ public class IngameGUI extends Tab {
 	@Override
 	public void update(double mouseX, double mouseY, boolean mouseClicked) {
 		{
-			
 			// If the click GUI is open, and the 
 			if (aoba.hm.isClickGuiOpen()) {
 				if (HudManager.currentGrabbed == null) {
@@ -116,7 +115,7 @@ public class IngameGUI extends Tab {
 		
 		// Draws the top bar including "Aoba x.x"
 		renderUtils.drawString(matrixStack, "Aoba " + AobaClient.VERSION, 8, 8, color);
-		
+
 		// Draws the table including all of the categories.
 		renderUtils.drawOutlinedBox(matrixStack, x, y, width, height * this.categories.length, new Color(30,30,30), 0.4f);
 		// For every category, draw a cell for it.

@@ -26,7 +26,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 
 public class Step extends Module {
 
@@ -45,13 +45,13 @@ public class Step extends Module {
 	@Override
 	public void onDisable() {
 		if(MC.world != null) {
-			MC.player.stepHeight = .5f;
+			MC.player.setStepHeight(.5f);
 		}
 	}
 
 	@Override
 	public void onEnable() {
-		MC.player.stepHeight = stepHeight.getValueFloat();
+		MC.player.setStepHeight(stepHeight.getValueFloat());
 	}
 
 	@Override

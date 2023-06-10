@@ -29,7 +29,7 @@ import net.aoba.settings.BooleanSetting;
 import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;

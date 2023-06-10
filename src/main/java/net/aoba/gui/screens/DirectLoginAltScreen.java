@@ -81,15 +81,15 @@ public class DirectLoginAltScreen extends Screen{
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY,
 			float partialTicks) {
 		this.renderBackground(matrixStack);
-		drawCenteredText(matrixStack, textRenderer, this.title.getString(), this.width / 2, 20, 16777215);
-		drawStringWithShadow(matrixStack, textRenderer, this.textFieldAltPassword.getText().isEmpty() ? "Cracked Account" : "Premium Account", this.width / 2 - 100, height / 2 - 106, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
-		drawStringWithShadow(matrixStack,textRenderer, "Enter Username", this.width / 2 - 100, height / 2 - 90, 16777215);
-		drawStringWithShadow(matrixStack,textRenderer, "Enter Password", this.width / 2 - 100, height / 2 - 50, 16777215);
+		drawCenteredTextWithShadow(matrixStack, textRenderer, this.title.getString(), this.width / 2, 20, 16777215);
+		drawTextWithShadow(matrixStack, textRenderer, this.textFieldAltPassword.getText().isEmpty() ? "Cracked Account" : "Premium Account", this.width / 2 - 100, height / 2 - 106, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
+		drawTextWithShadow(matrixStack,textRenderer, "Enter Username", this.width / 2 - 100, height / 2 - 90, 16777215);
+		drawTextWithShadow(matrixStack,textRenderer, "Enter Password", this.width / 2 - 100, height / 2 - 50, 16777215);
 		//drawStringWithShadow(matrixStack,textRenderer, "Microsoft: ", this.width / 2 - 100, height / 2 - 10, 16777215);
 		this.textFieldAltUsername.render(matrixStack,mouseX, mouseY, partialTicks);
 		this.textFieldAltPassword.render(matrixStack,mouseX, mouseY, partialTicks);
 		if (didLoginError) {
-			drawStringWithShadow(matrixStack, textRenderer, "Incorrect Login (Try using Email rather than Username)", this.width / 2 - 140, 116, 0xFF0000);
+			drawTextWithShadow(matrixStack, textRenderer, "Incorrect Login (Try using Email rather than Username)", this.width / 2 - 140, 116, 0xFF0000);
 		}
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 	}

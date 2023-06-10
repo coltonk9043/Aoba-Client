@@ -29,7 +29,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 
 public class ItemESP extends Module {
 

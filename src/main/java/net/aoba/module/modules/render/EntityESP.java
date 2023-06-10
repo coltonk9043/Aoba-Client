@@ -34,7 +34,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 
 public class EntityESP extends Module {
 

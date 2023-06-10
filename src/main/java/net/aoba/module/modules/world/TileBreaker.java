@@ -22,9 +22,7 @@
 package net.aoba.module.modules.world;
 
 import java.util.ArrayList;
-
 import org.lwjgl.glfw.GLFW;
-
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.aoba.settings.SliderSetting;
@@ -33,7 +31,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;

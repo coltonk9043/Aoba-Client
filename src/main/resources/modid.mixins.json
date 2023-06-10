@@ -15,7 +15,6 @@
 	"ClientPlayerInteractionManagerMixin",
 	"ClientPlayNetworkHandlerMixin",
 	"EntityMixin",
-	"EntityRendererMixin",
 	"GameRendererMixin",
 	"IngameHudMixin",
 	"MouseMixin",

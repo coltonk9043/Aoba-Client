@@ -59,11 +59,11 @@ public class MCLeaksLoginScreen extends Screen{
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY,
 			float partialTicks) {
 		this.renderBackground(matrixStack);
-		drawCenteredText(matrixStack, textRenderer, this.title.getString(), this.width / 2, 17, 16777215);
-		drawStringWithShadow(matrixStack,textRenderer, "Enter Token", this.width / 2 - 100, 194, 10526880);
+		drawCenteredTextWithShadow(matrixStack, textRenderer, this.title.getString(), this.width / 2, 17, 16777215);
+		drawTextWithShadow(matrixStack,textRenderer, "Enter Token", this.width / 2 - 100, 194, 10526880);
 		this.textFieldToken.render(matrixStack,mouseX, mouseY, partialTicks);
 		if (didLoginError) {
-			drawStringWithShadow(matrixStack, textRenderer, "Incorrect Token", this.width / 2 - 140, 116, 0xFF0000);
+			drawTextWithShadow(matrixStack, textRenderer, "Incorrect Token", this.width / 2 - 140, 116, 0xFF0000);
 		}
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 	}

@@ -69,7 +69,7 @@ public class AltScreen extends Screen {
 		this.altListSelector.render(matrixStack, mouseX, mouseY, partialTicks);
 
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
-		drawCenteredText(matrixStack, textRenderer,"Currently Logged Into: " + MinecraftClient.getInstance().getSession().getUsername(),
+		drawCenteredTextWithShadow(matrixStack, textRenderer,"Currently Logged Into: " + MinecraftClient.getInstance().getSession().getUsername(),
 				this.width / 2, 20, 16777215);
 	}
 

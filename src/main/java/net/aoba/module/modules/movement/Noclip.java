@@ -26,7 +26,7 @@ import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
 
 public class Noclip extends Module {
@@ -65,8 +65,6 @@ public class Noclip extends Module {
 			this.flySpeed *= 1.5;
 		}
 		player.setVelocity(new Vec3d(0,0,0));
-		//player.setAIMoveSpeed(flySpeed * 0.2f);
-		//player.jumpMovementFactor = flySpeed * 0.2f;
 
 		Vec3d vec = new Vec3d(0,0,0);
 		if (MC.options.jumpKey.isPressed()) {
