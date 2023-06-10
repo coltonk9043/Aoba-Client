@@ -63,9 +63,9 @@ public class AddAltScreen extends Screen {
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		renderBackground(matrixStack);
-		drawCenteredText(matrixStack, textRenderer, "Add Alternate Account", this.width / 2, 20, 16777215);
-		drawStringWithShadow(matrixStack, textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
-		drawStringWithShadow(matrixStack, textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);
+		drawCenteredTextWithShadow(matrixStack, textRenderer, "Add Alternate Account", this.width / 2, 20, 16777215);
+		drawCenteredTextWithShadow(matrixStack, textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
+		drawCenteredTextWithShadow(matrixStack, textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 	}
 

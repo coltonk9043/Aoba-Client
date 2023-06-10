@@ -142,6 +142,7 @@ public class HudManager {
 		
 		matrixStack.push();
 		matrixStack.scale(1.0f/mc.options.getGuiScale().getValue(), 1.0f/mc.options.getGuiScale().getValue(), 1.0f);
+		
 		Window window = mc.getWindow();
 		
 		if (this.clickGuiOpen) {

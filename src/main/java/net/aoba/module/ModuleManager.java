@@ -32,7 +32,7 @@ import net.aoba.module.modules.render.*;
 import net.aoba.module.modules.world.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 
 public class ModuleManager {
 	public ArrayList<Module> modules = new ArrayList<Module>();

@@ -13,7 +13,7 @@ import net.minecraft.util.math.MathHelper;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 
-	@Inject(at = {@At("HEAD")}, method = { "bobViewWhenHurt(Lnet/minecraft/client/util/math/MatrixStack;F)V"}, cancellable = true)
+	@Inject(at = {@At("HEAD")}, method = { "bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"}, cancellable = true)
 	private void onBobViewWhenHurt(MatrixStack matrixStack, float f, CallbackInfo ci) {
 		if (Aoba.getInstance().mm.nooverlay.getState()) {
 			ci.cancel();

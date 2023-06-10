@@ -64,14 +64,14 @@ public class ArmorHUD extends Tab{
 		System.out.println(armors.get(0).getName().getString());
 		for(ItemStack armor : armors) {
 			if(armor.getItem() == Items.AIR) continue;
-			drawItemStack(armor, this.x, this.y + this.height - yOff);
+			drawItemStack(matrixStack, armor, this.x, this.y + this.height - yOff);
 			yOff += 16;
 		}
 	}
 
-    private void drawItemStack(ItemStack stack, int x, int y)
+    private void drawItemStack(MatrixStack matrixStack,ItemStack stack, int x, int y)
     {
-    	this.itemRenderer.renderGuiItemIcon(stack, x, y);
-    	this.itemRenderer.renderGuiItemOverlay(mc.textRenderer, stack, x, y);
+    	this.itemRenderer.renderGuiItemIcon(matrixStack, stack, x, y);
+    	this.itemRenderer.renderGuiItemOverlay(matrixStack, mc.textRenderer, stack, x, y);
     }
 }

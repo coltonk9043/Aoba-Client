@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InGameHud.class)
 public class IngameHudMixin extends DrawableHelper {
 
-	@Inject(at = {@At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V", remap = false,ordinal = 4) }, method = {"render(Lnet/minecraft/client/util/math/MatrixStack;F)V" })
+	@Inject(at = {@At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V", remap = false,ordinal = 3) }, method = {"render(Lnet/minecraft/client/util/math/MatrixStack;F)V" })
 	private void onRender(MatrixStack matrixStack, float partialTicks, CallbackInfo ci) {
 		if (MinecraftClient.getInstance().options.debugEnabled)
 			return;

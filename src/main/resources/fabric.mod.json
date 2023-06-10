@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "id": "aoba",
-  "version": "1.0",
+  "version": "1.2A",
 
   "name": "Aoba Hacked Client",
-  "description": "Custom hacked client running on Fabric 1.19.3",
+  "description": "Custom hacked client running on Fabric 1.19.4",
   "authors": [
     "Cocolots"
   ],
@@ -29,7 +29,7 @@
   "depends": {
     "fabricloader": ">=0.14.10",
     "fabric-api": ">=0.68.0",
-    "minecraft": "1.19.3",
+    "minecraft": "1.19.4",
     "java": ">=16"
   },
   "suggests": {

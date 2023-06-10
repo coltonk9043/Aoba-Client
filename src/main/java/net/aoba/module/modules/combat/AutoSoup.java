@@ -27,7 +27,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.StewItem;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 
 public class AutoSoup extends Module {
 

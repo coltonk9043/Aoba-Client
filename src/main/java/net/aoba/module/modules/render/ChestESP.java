@@ -35,7 +35,7 @@ import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.entity.TrappedChestBlockEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Box;
 
 public class ChestESP extends Module {
@@ -89,8 +89,8 @@ public class ChestESP extends Module {
 	@Override
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
 		ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities().collect(Collectors.toCollection(ArrayList::new));
-		
 		for(BlockEntity blockEntity : blockEntities) {
+			System.out.println("BOX ENTITY");
 			if(blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity) {
 				Box box = new Box(blockEntity.getPos());
 				this.getRenderUtils().draw3DBox(matrixStack, box, currentColor, 0.2f);
