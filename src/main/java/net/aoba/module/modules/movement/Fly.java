@@ -49,6 +49,10 @@ public class Fly extends Module {
 		this.flySpeed.setValue(speed);
 	}
 
+	public double getSpeed() {
+		return this.flySpeed.getValue();
+	}
+	
 	@Override
 	public void onDisable() {
 

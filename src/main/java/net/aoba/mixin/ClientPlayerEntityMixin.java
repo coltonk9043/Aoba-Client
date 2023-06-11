@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.mojang.authlib.GameProfile;
 import net.aoba.Aoba;
 import net.aoba.misc.FakePlayerEntity;
+import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -37,5 +38,16 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity{
 			}
 			ci.cancel();
 		}
+	}
+	
+	@Override
+	protected float getOffGroundSpeed()
+	{
+		float speed = super.getOffGroundSpeed();
+		if(Aoba.getInstance().mm.fly.getState()) {
+			Fly fly = (Fly)Aoba.getInstance().mm.fly;
+			return (float)fly.getSpeed();
+		}
+		return speed;
 	}
 }
