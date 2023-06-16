@@ -39,12 +39,12 @@ public class CmdHelp extends Command {
 			CommandManager.sendChatMessage("Use .aoba help [n] to get page n of help.");
 			
 			// Fetch the commands.
-			String[] commands = (String[])Aoba.getInstance().cm.getCommands().values().toArray();
+			String[] commands = (String[])Aoba.getInstance().commandManager.getCommands().values().toArray();
 			for (int i = (Integer.parseInt(parameters[0]) - 1)
 					* indexesPerPage; i <= (Integer.parseInt(parameters[0]) * indexesPerPage
 							+ indexesPerPage); i++) {
 				try {
-					if (!(i > Aoba.getInstance().cm.getNumOfCommands())) {
+					if (!(i > Aoba.getInstance().commandManager.getNumOfCommands())) {
 						CommandManager.sendChatMessage(" .aoba " + commands[i]);
 					}
 				}catch(Exception e) {
@@ -52,7 +52,7 @@ public class CmdHelp extends Command {
 				}
 			}
 		} else {
-			Module module = Aoba.getInstance().mm.getModuleByName(parameters[0]);
+			Module module = Aoba.getInstance().moduleManager.getModuleByName(parameters[0]);
 			if (module == null) {
 				CommandManager.sendChatMessage("Could not find Module '" + parameters[0] + "'.");
 			} else {

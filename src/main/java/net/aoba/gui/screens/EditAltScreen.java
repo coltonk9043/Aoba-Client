@@ -2,6 +2,7 @@ package net.aoba.gui.screens;
 
 import net.aoba.Aoba;
 import net.aoba.altmanager.Alt;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
@@ -64,18 +65,18 @@ public class EditAltScreen extends Screen {
 	}
 
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(matrixStack);
-		drawCenteredTextWithShadow(matrixStack, textRenderer, "Edit Alternate Account", this.width / 2, 20, 16777215);
-		drawTextWithShadow(matrixStack, textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
-		drawTextWithShadow(matrixStack, textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
+	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+		renderBackground(drawContext);
+		drawContext.drawCenteredTextWithShadow(textRenderer, "Edit Alternate Account", this.width / 2, 20, 16777215);
+		drawContext.drawTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
+		drawContext.drawTextWithShadow(textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);
+		super.render(drawContext, mouseX, mouseY, partialTicks);
 	}
 
 	private void onButtonAltEditPressed() {
 		alt.setEmail(this.textFieldAltUsername.getText());
 		alt.setPassword(this.textFieldAltPassword.getText());
-		Aoba.getInstance().am.saveAlts();
+		Aoba.getInstance().altManager.saveAlts();
 		this.parent.refreshAltList();
 	}
 

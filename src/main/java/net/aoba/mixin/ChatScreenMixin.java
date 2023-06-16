@@ -14,7 +14,7 @@ public class ChatScreenMixin {
 	@Inject(at = @At("HEAD"), method = "sendMessage(Ljava/lang/String;Z)Z", cancellable = true)
 	public void onSendMessage(String message, boolean addToHistory, CallbackInfoReturnable<Boolean> cir) {
 		if (message.startsWith(AobaClient.PREFIX)) {
-			Aoba.getInstance().cm.command(message.split(" "));
+			Aoba.getInstance().commandManager.command(message.split(" "));
 			cir.setReturnValue(true);
 		}
 	}

@@ -25,7 +25,7 @@ public abstract class BlockModelRendererMixin {
 			BlockState state, BlockPos pos, MatrixStack matrices,
 			VertexConsumer vertexConsumer, boolean cull, Random random, long seed,
 			int overlay, CallbackInfo ci) {
-		if (Aoba.getInstance().mm.xray.getState()) {
+		if (Aoba.getInstance().moduleManager.xray.getState()) {
 			if (XRay.isXRayBlock(state.getBlock())) {
 				ci.cancel();
 				return;

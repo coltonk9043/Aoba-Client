@@ -29,33 +29,26 @@ import net.aoba.misc.RenderUtils;
 import net.aoba.module.ModuleManager;
 import net.aoba.settings.Settings;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class AobaClient {
 	public static final String NAME = "Aoba";
-	public static final String VERSION = "1.19.4";
+	public static final String VERSION = "1.20";
 	public static final String PREFIX = ".aoba";
 
 	public static MinecraftClient MC;
 	public static IMinecraftClient IMC;
 	
 	// Systems
-	public ModuleManager mm;
-	public CommandManager cm;
-	public AltManager am;
-	public HudManager hm;
+	public ModuleManager moduleManager;
+	public CommandManager commandManager;
+	public AltManager altManager;
+	public HudManager hudManager;
 	public Settings settings;
 	public RenderUtils renderUtils;
 	
 	private boolean ghostMode;
-	
-	/**
-	 * Constructor for Aoba Client.
-	 */
-	public AobaClient() {
-		System.out.println("[Aoba] Starting Client");
-		
-	}
 	
 	/**
 	 * Initializes Aoba Client and creates sub-systems.
@@ -65,17 +58,18 @@ public class AobaClient {
 		MC = MinecraftClient.getInstance();
 		IMC = (IMinecraftClient)MC;
 		
+		System.out.println("[Aoba] Starting Client");
 		renderUtils = new RenderUtils();
 		System.out.println("[Aoba] Reading Settings");
 		settings = new Settings();
 		System.out.println("[Aoba] Initializing Modules");
-		mm = new ModuleManager();
+		moduleManager = new ModuleManager();
 		System.out.println("[Aoba] Initializing Commands");
-		cm = new CommandManager();
+		commandManager = new CommandManager();
 		System.out.println("[Aoba] Initializing GUI");
-		hm = new HudManager();
+		hudManager = new HudManager();
 		System.out.println("[Aoba] Loading Alts");
-		am = new AltManager();
+		altManager = new AltManager();
 		System.out.println("[Aoba] Aoba-chan initialized and ready to play!");
 	}
 	
@@ -83,19 +77,19 @@ public class AobaClient {
 	 * Updates Aoba on a per-tick basis.
 	 */
 	public void update() {
-		mm.update();
-		hm.update();
+		moduleManager.update();
+		hudManager.update();
 	}
 
 	/**
 	 * Renders the HUD every frame
-	 * @param matrixStack The current Matrix Stack
+	 * @param context The current Matrix Stack
 	 * @param partialTicks Delta between ticks
 	 */
-	public void drawHUD(MatrixStack matrixStack, float partialTicks) {
+	public void drawHUD(DrawContext context, float partialTicks) {
 		// If the program is not in Ghost Mode, draw UI.
 		if (!ghostMode) {
-			hm.draw(matrixStack, partialTicks);
+			hudManager.draw(context, partialTicks);
 		}
 	}
 
@@ -119,7 +113,7 @@ public class AobaClient {
 	 */
 	public void endClient() {
 		settings.saveSettings();
-		am.saveAlts();
+		altManager.saveAlts();
 		System.out.println("[Aoba] Shutting down...");
 	}
 }

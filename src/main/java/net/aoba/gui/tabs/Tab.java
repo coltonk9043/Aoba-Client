@@ -3,6 +3,7 @@ package net.aoba.gui.tabs;
 import net.aoba.gui.Color;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class Tab {
@@ -15,7 +16,7 @@ public abstract class Tab {
 	
 	public abstract void update(double mouseX, double mouseY, boolean mouseClicked) ;
 	
-	public abstract void draw(MatrixStack matrixStack, float partialTicks, Color color);
+	public abstract void draw(DrawContext drawContext, float partialTicks, Color color);
 	
 	public void moveWindow(int x, int y) {
 		this.x = (int) (this.x - x);

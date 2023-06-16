@@ -9,6 +9,7 @@ import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.Setting;
 import net.aoba.settings.*;
 import net.aoba.settings.SliderSetting;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class ModuleComponent extends Component {
@@ -86,27 +87,27 @@ public class ModuleComponent extends Component {
 	}
 
 	@Override
-	public void draw(int offset, MatrixStack matrixStack, float partialTicks, Color color) {
+	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
-
+		MatrixStack matrixStack = drawContext.getMatrices();
 		renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset, parentWidth - 4, this.getHeight() - 2, new Color(128,128,128), 0.2f);
 		
 		if(this.popped) {
 			int i = offset + 30;
 			for(Component children : this.settingsList) {
 				if(children.isVisible()) {
-					children.draw(i, matrixStack, partialTicks, color);
+					children.draw(i, drawContext, partialTicks, color);
 					i += children.getHeight();
 				}
 			}
 		}
 		
-		renderUtils.drawString(matrixStack, this.text, parentX + 8,
+		renderUtils.drawString(drawContext, this.text, parentX + 8,
 				parentY + 8 + offset, module.getState() ? 0x00FF00 : 0xFFFFFF);
 		if(module.hasSettings()) {
-			renderUtils.drawString(matrixStack, this.popped ? "<<" : ">>", parentX + parentWidth - 30,
+			renderUtils.drawString(drawContext, this.popped ? "<<" : ">>", parentX + parentWidth - 30,
 					parentY + 8 + offset, color.getColorAsInt());
 		}
 	}

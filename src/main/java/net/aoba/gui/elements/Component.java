@@ -4,6 +4,7 @@ import net.aoba.Aoba;
 import net.aoba.gui.Color;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.misc.RenderUtils;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class Component {
@@ -45,5 +46,5 @@ public abstract class Component {
 	}
 
 	public abstract void update(int offset, double mouseX, double mouseY, boolean mouseClicked);
-	public abstract void draw(int offset, MatrixStack matrixStack, float partialTicks, Color color);
+	public abstract void draw(int offset, DrawContext drawContext, float partialTicks, Color color);
 }

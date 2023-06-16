@@ -21,7 +21,11 @@
  */
 package net.aoba.module.modules.movement;
 
+import java.util.UUID;
+
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.Aoba;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.Module;
 import net.aoba.settings.SliderSetting;
@@ -45,6 +49,14 @@ public class Freecam extends Module {
 		this.addSetting(flySpeed);
 	}
 
+	public void setSpeed(float speed) {
+		this.flySpeed.setValue(speed);
+	}
+	
+	public double getSpeed() {
+		return this.flySpeed.getValue();
+	}
+	
 	@Override
 	public void onDisable() {
 		if(MC.world == null || fakePlayer == null) return;
@@ -61,8 +73,12 @@ public class Freecam extends Module {
 		ClientPlayerEntity player = MC.player;
 		fakePlayer = new FakePlayerEntity();
 		fakePlayer.copyFrom(player);
+		fakePlayer.setUuid(UUID.randomUUID());
 		fakePlayer.headYaw = player.headYaw;
 		MC.world.addEntity(-3, fakePlayer);
+		
+		Aoba.getInstance().moduleManager.fly.setState(false);
+		Aoba.getInstance().moduleManager.noclip.setState(false);
 	}
 
 	@Override
@@ -79,10 +95,9 @@ public class Freecam extends Module {
 		if (MC.options.sprintKey.isPressed()) {
 			speed *= 1.5;
 		}
-		player.setVelocity(new Vec3d(0,0,0));
-		player.setMovementSpeed(speed * 0.2f);
-		player.strideDistance = speed * 0.2f;
 		
+		player.getAbilities().flying = false;
+		player.setVelocity(new Vec3d(0, 0, 0));
 		Vec3d vec = new Vec3d(0,0,0);
 		if (MC.options.jumpKey.isPressed()) {
 			vec = new Vec3d(0,speed * 0.2f,0);

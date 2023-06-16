@@ -31,7 +31,7 @@ public class CmdTimer extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		Timer module = (Timer) Aoba.getInstance().mm.timer;
+		Timer module = (Timer) Aoba.getInstance().moduleManager.timer;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

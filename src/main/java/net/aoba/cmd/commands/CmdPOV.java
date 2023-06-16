@@ -31,7 +31,7 @@ public class CmdPOV extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		POV module = (POV) Aoba.getInstance().mm.pov;
+		POV module = (POV) Aoba.getInstance().moduleManager.pov;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "set":

@@ -28,6 +28,7 @@ import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.elements.Component;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 
@@ -127,7 +128,7 @@ public class ClickGuiTab extends Tab {
 			this.height = tempHeight;
 		}
 		
-		if (Aoba.getInstance().hm.isClickGuiOpen()) {
+		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			if (HudManager.currentGrabbed == null) {
 				if (mouseX >= (x) && mouseX <= (x + width)) {
 					if (mouseY >= (y) && mouseY <= (y + 28)) {
@@ -170,11 +171,12 @@ public class ClickGuiTab extends Tab {
 	}
 
 	@Override
-	public void draw(MatrixStack matrixStack, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+		MatrixStack matrixStack = drawContext.getMatrices();
 		if(drawBorder) {
 			// Draws background depending on components width and height
 			renderUtils.drawOutlinedBox(matrixStack, x, y, width, 29, new Color(30,30,30), 0.4f);
-			renderUtils.drawString(matrixStack, this.title, x + 8, y + 8, Aoba.getInstance().hm.getColor());
+			renderUtils.drawString(drawContext, this.title, x + 8, y + 8, Aoba.getInstance().hudManager.getColor());
 			renderUtils.drawOutlinedBox(matrixStack, x, y + 29, width, height, new Color(30,30,30), 0.4f);
 			if (this.isPinned) {
 				renderUtils.drawOutlinedBox(matrixStack, x + width - 24, y + 4, 20, 20, new Color(154,0,0), 0.8f);
@@ -184,7 +186,7 @@ public class ClickGuiTab extends Tab {
 		}
 		int i = 30;
 		for (Component child : children) {
-			child.draw(i, matrixStack, partialTicks, color);
+			child.draw(i, drawContext, partialTicks, color);
 			i += child.getHeight();
 		}
 	}

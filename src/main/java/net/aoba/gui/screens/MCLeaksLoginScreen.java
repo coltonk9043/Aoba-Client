@@ -5,6 +5,7 @@ import net.aoba.altmanager.exceptions.APIDownException;
 import net.aoba.altmanager.exceptions.APIErrorException;
 import net.aoba.altmanager.exceptions.InvalidResponseException;
 import net.aoba.altmanager.exceptions.InvalidTokenException;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -47,7 +48,7 @@ public class MCLeaksLoginScreen extends Screen{
 	
 	private void onButtonLoginPressed() {
 		try {
-			Aoba.getInstance().am.loginMCLeaks(this.textFieldToken.getText());
+			Aoba.getInstance().altManager.loginMCLeaks(this.textFieldToken.getText());
 			client.setScreen(this.parent);
 		} catch (APIDownException | APIErrorException | InvalidResponseException | InvalidTokenException e) {
 			didLoginError = true;
@@ -56,15 +57,15 @@ public class MCLeaksLoginScreen extends Screen{
 	}
 	
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY,
+	public void render(DrawContext drawContext, int mouseX, int mouseY,
 			float partialTicks) {
-		this.renderBackground(matrixStack);
-		drawCenteredTextWithShadow(matrixStack, textRenderer, this.title.getString(), this.width / 2, 17, 16777215);
-		drawTextWithShadow(matrixStack,textRenderer, "Enter Token", this.width / 2 - 100, 194, 10526880);
-		this.textFieldToken.render(matrixStack,mouseX, mouseY, partialTicks);
+		this.renderBackground(drawContext);
+		drawContext.drawCenteredTextWithShadow(textRenderer, this.title.getString(), this.width / 2, 17, 16777215);
+		drawContext.drawTextWithShadow(textRenderer, "Enter Token", this.width / 2 - 100, 194, 10526880);
+		this.textFieldToken.render(drawContext, mouseX, mouseY, partialTicks);
 		if (didLoginError) {
-			drawTextWithShadow(matrixStack, textRenderer, "Incorrect Token", this.width / 2 - 140, 116, 0xFF0000);
+			drawContext.drawTextWithShadow(textRenderer, "Incorrect Token", this.width / 2 - 140, 116, 0xFF0000);
 		}
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
+		super.render(drawContext, mouseX, mouseY, partialTicks);
 	}
 }

@@ -63,7 +63,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	
 	@Inject(at = {@At(value = "HEAD") }, method = {"doAttack()Z"}, cancellable = true)
 	private void onDoAttack(CallbackInfoReturnable<Boolean> cir) {
-		if (Aoba.getInstance().hm.isClickGuiOpen()) {
+		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			cir.setReturnValue(false);
 			cir.cancel();
 		}

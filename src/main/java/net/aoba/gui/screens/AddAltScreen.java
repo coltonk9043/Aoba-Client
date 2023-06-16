@@ -2,6 +2,7 @@ package net.aoba.gui.screens;
 
 import net.aoba.Aoba;
 import net.aoba.altmanager.Alt;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
@@ -61,17 +62,17 @@ public class AddAltScreen extends Screen {
 	}
 
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(matrixStack);
-		drawCenteredTextWithShadow(matrixStack, textRenderer, "Add Alternate Account", this.width / 2, 20, 16777215);
-		drawCenteredTextWithShadow(matrixStack, textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
-		drawCenteredTextWithShadow(matrixStack, textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
+	public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+		renderBackground(drawContext);
+		drawContext.drawCenteredTextWithShadow(textRenderer, "Add Alternate Account", this.width / 2, 20, 16777215);
+		drawContext.drawCenteredTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
+		drawContext.drawCenteredTextWithShadow(textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);
+		super.render(drawContext, mouseX, mouseY, delta);
 	}
 
 	private void onButtonAltAddPressed() {
 		Alt alt = new Alt(this.textFieldAltUsername.getText(), this.textFieldAltPassword.getText(), this.toggleMicrosoft.isChecked());
-		Aoba.getInstance().am.addAlt(alt);
+		Aoba.getInstance().altManager.addAlt(alt);
 		this.parent.refreshAltList();
 	}
 

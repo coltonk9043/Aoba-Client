@@ -31,7 +31,7 @@ public class CmdItemESP extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		ItemESP module = (ItemESP) Aoba.getInstance().mm.itemesp;
+		ItemESP module = (ItemESP) Aoba.getInstance().moduleManager.itemesp;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

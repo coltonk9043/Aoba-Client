@@ -58,15 +58,15 @@ public class Settings {
 			printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(aobaOptions), StandardCharsets.UTF_8));
 
 			// Write HUD information and 'other' settings.
-			printwriter.println("x:" + aoba.hm.hud.getX());
-			printwriter.println("y:" + aoba.hm.hud.getY());
-			printwriter.println("color_hue:" + aoba.hm.getOriginalColor().hue);
-			printwriter.println("rainbowUI:" + aoba.hm.rainbow.getValue());
-			printwriter.println("armor_x:" + aoba.hm.armorHud.getX());
-			printwriter.println("armor_y:" + aoba.hm.armorHud.getY());
+			printwriter.println("x:" + aoba.hudManager.hud.getX());
+			printwriter.println("y:" + aoba.hudManager.hud.getY());
+			printwriter.println("color_hue:" + aoba.hudManager.getOriginalColor().hue);
+			printwriter.println("rainbowUI:" + aoba.hudManager.rainbow.getValue());
+			printwriter.println("armor_x:" + aoba.hudManager.armorHud.getX());
+			printwriter.println("armor_y:" + aoba.hudManager.armorHud.getY());
 			
 			// Write Module Settings
-			for (Module module : aoba.mm.modules) {
+			for (Module module : aoba.moduleManager.modules) {
 				for (Setting setting : module.getSettings()) {
 					if(setting instanceof BooleanSetting) {
 						BooleanSetting bs = (BooleanSetting)setting;
@@ -80,7 +80,7 @@ public class Settings {
 			}
 			
 			// Write Module Keybinds
-			for (Module module : aoba.mm.modules) {
+			for (Module module : aoba.moduleManager.modules) {
 				printwriter.println(
 						module.getBind().getCategory() + ":" + module.getBind().getBoundKeyTranslationKey());
 			}

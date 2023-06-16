@@ -31,7 +31,7 @@ public class CmdStep extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		Step module = (Step) Aoba.getInstance().mm.step;
+		Step module = (Step) Aoba.getInstance().moduleManager.step;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "height":

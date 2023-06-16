@@ -48,6 +48,10 @@ public class Fly extends Module {
 	public void setSpeed(float speed) {
 		this.flySpeed.setValue(speed);
 	}
+	
+	public double getSpeed() {
+		return this.flySpeed.getValue();
+	}
 
 	public double getSpeed() {
 		return this.flySpeed.getValue();
@@ -81,9 +85,9 @@ public class Fly extends Module {
 			if (MC.options.sprintKey.isPressed()) {
 				speed *= 1.5;
 			}
+			player.getAbilities().flying = false;
 			player.setVelocity(new Vec3d(0, 0, 0));
-			player.setMovementSpeed(speed * 0.2f);
-
+			
 			Vec3d vec = new Vec3d(0, 0, 0);
 			if (MC.options.jumpKey.isPressed()) {
 				vec = new Vec3d(0, speed * 0.2f, 0);

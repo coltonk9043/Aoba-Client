@@ -4,6 +4,7 @@ import java.util.List;
 import net.aoba.Aoba;
 import net.aoba.altmanager.Alt;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -64,17 +65,17 @@ public class AltScreen extends Screen {
 	}
 	
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(matrixStack);
-		this.altListSelector.render(matrixStack, mouseX, mouseY, partialTicks);
+	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+		renderBackground(drawContext);
+		this.altListSelector.render(drawContext, mouseX, mouseY, partialTicks);
 
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
-		drawCenteredTextWithShadow(matrixStack, textRenderer,"Currently Logged Into: " + MinecraftClient.getInstance().getSession().getUsername(),
+		super.render(drawContext, mouseX, mouseY, partialTicks);
+		drawContext.drawCenteredTextWithShadow(textRenderer,"Currently Logged Into: " + MinecraftClient.getInstance().getSession().getUsername(),
 				this.width / 2, 20, 16777215);
 	}
 
 	public List<Alt> getAltList() {
-		return Aoba.getInstance().am.getAlts();
+		return Aoba.getInstance().altManager.getAlts();
 	}
 
 	public void refreshAltList() {
@@ -99,9 +100,9 @@ public class AltScreen extends Screen {
 			
 		Alt alt = ((AltSelectionList.NormalEntry) altselectionlist$entry).getAltData();
 		if (alt.isCracked()) {
-			Aoba.getInstance().am.loginCracked(alt.getEmail());
+			Aoba.getInstance().altManager.loginCracked(alt.getEmail());
 		} else {
-			Aoba.getInstance().am.login(alt);
+			Aoba.getInstance().altManager.login(alt);
 		}
 	}
 	
@@ -118,7 +119,7 @@ public class AltScreen extends Screen {
 		if (alt == null) {
 			return;
 		}
-		Aoba.getInstance().am.removeAlt(alt);
+		Aoba.getInstance().altManager.removeAlt(alt);
 		this.refreshAltList();
 	}
 }

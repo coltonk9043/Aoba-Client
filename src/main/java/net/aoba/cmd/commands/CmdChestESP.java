@@ -31,7 +31,7 @@ public class CmdChestESP extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		ChestESP module = (ChestESP) Aoba.getInstance().mm.chestesp;
+		ChestESP module = (ChestESP) Aoba.getInstance().moduleManager.chestesp;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

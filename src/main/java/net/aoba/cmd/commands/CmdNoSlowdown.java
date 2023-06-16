@@ -31,7 +31,7 @@ public class CmdNoSlowdown extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		NoSlowdown module = (NoSlowdown) Aoba.getInstance().mm.noslowdown;
+		NoSlowdown module = (NoSlowdown) Aoba.getInstance().moduleManager.noslowdown;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

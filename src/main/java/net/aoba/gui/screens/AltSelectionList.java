@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.altmanager.Alt;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Util;
 import net.minecraft.util.Uuids;
 
@@ -91,7 +90,7 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 		}
 
 		@Override
-		public void render(MatrixStack matrixStack, int index, int y, int x, int entryWidth, int entryHeight,
+		public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight,
 				int mouseX, int mouseY, boolean hovered, float tickDelta) {
 			
 			String password = "";
@@ -118,20 +117,21 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 			}
 			
 			// Draws the strings onto the screen.
-			this.mc.textRenderer.drawWithShadow(matrixStack, "Username: " + this.alt.getEmail(), (float) (x + 32 + 3),
-					(float) (y + 2), 16777215);
-			this.mc.textRenderer.drawWithShadow(matrixStack, "Password: " + password, (float) (x + 32 + 3), (float) (y + 12),
+			TextRenderer textRenderer = this.mc.textRenderer;
+			drawContext.drawTextWithShadow(textRenderer, "Username: " + this.alt.getEmail(), (x + 32 + 3),
+					(y + 2), 16777215);
+			drawContext.drawTextWithShadow(textRenderer, "Username: " + this.alt.getEmail(), (x + 32 + 3),
+					(y + 2), 16777215);
+			drawContext.drawTextWithShadow(textRenderer, "Password: " + password, (x + 32 + 3), (y + 12),
 					16777215);
-			this.mc.textRenderer.drawWithShadow(matrixStack, description, (float) (x + 32 + 3), (float) (y + 22),
-					this.alt.isCracked() ? 0xFF0000 : 0x00FF00);
+			drawContext.drawText(textRenderer, description, (x + 32 + 3), (y + 22),
+					this.alt.isCracked() ? 0xFF0000 : 0x00FF00, true);
 			
 			// Draws the respective player head.
-			this.drawHead(matrixStack, x + 4, y + 4);
+			this.drawHead(drawContext, x + 4, y + 4);
 		}
 
-		private void drawHead(MatrixStack matrixStack, int x, int y) {
-			RenderSystem.setShaderTexture(0, entry.getSkinTexture());
-
+		private void drawHead(DrawContext drawContext, int x, int y) {
 			GL11.glEnable(GL11.GL_BLEND);
 			RenderSystem.setShaderColor(1, 1, 1, 1);
 
@@ -140,14 +140,14 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 			int fh = 192;
 			float u = 24;
 			float v = 24;
-			DrawableHelper.drawTexture(matrixStack, x, y, u, v, 24, 24, fw, fh);
+			drawContext.drawTexture(entry.getSkinTexture(), x, y, y, u, v, 24, 24, fw, fh);
 
 			// Hat
 			fw = 192;
 			fh = 192;
 			u = 120;
 			v = 24;
-			DrawableHelper.drawTexture(matrixStack, x, y, u, v, 24, 24, fw, fh);
+			drawContext.drawTexture(entry.getSkinTexture(), x, y, y, u, v, 24, 24, fw, fh);
 
 			GL11.glDisable(GL11.GL_BLEND);
 		}

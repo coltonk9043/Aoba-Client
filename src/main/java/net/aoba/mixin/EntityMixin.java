@@ -13,7 +13,7 @@ public class EntityMixin{
 	
 	@Inject(at = { @At("HEAD") }, method = "isInvisibleTo(Lnet/minecraft/entity/player/PlayerEntity;)Z", cancellable = true)
 	private void onIsInvisibleCheck(PlayerEntity message, CallbackInfoReturnable<Boolean> cir) {
-		if(Aoba.getInstance().mm.antiinvis.getState()) {
+		if(Aoba.getInstance().moduleManager.antiinvis.getState()) {
 			cir.setReturnValue(false);
 		}
 	}

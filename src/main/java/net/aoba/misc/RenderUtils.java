@@ -23,6 +23,7 @@ package net.aoba.misc;
 
 import net.aoba.gui.Color;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
@@ -271,26 +272,29 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	public void drawString(MatrixStack matrixStack, String text, float x, float y, Color color) {
+	public void drawString(DrawContext drawContext, String text, float x, float y, Color color) {
 		MinecraftClient mc = MinecraftClient.getInstance();
+		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.scale(2.0f, 2.0f, 1.0f);
 		matrixStack.translate(-x / 2, -y / 2, 0.0f);
-		mc.textRenderer.draw(matrixStack, text, x, y, color.getColorAsInt());
+		drawContext.drawText(mc.textRenderer, text, (int)x, (int)y, color.getColorAsInt(), false);
 		matrixStack.pop();
 	}
 
-	public void drawString(MatrixStack matrixStack, String text, float x, float y, int color) {
+	public void drawString(DrawContext drawContext, String text, float x, float y, int color) {
 		MinecraftClient mc = MinecraftClient.getInstance();
+		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.scale(2.0f, 2.0f, 1.0f);
 		matrixStack.translate(-x / 2, -y / 2, 0.0f);
-		mc.textRenderer.draw(matrixStack, text, x, y, color);
+		drawContext.drawText(mc.textRenderer, text, (int)x, (int)y, color, false);
 		matrixStack.pop();
 	}
 
-	public void drawStringWithScale(MatrixStack matrixStack, String text, float x, float y, Color color, float scale) {
+	public void drawStringWithScale(DrawContext drawContext, String text, float x, float y, Color color, float scale) {
 		MinecraftClient mc = MinecraftClient.getInstance();
+		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.scale(scale, scale, 1.0f);
 		if (scale > 1.0f) {
@@ -298,12 +302,13 @@ public class RenderUtils {
 		} else {
 			matrixStack.translate((x / scale) - x, (y * scale) - y, 0.0f);
 		}
-		mc.textRenderer.draw(matrixStack, text, x, y, color.getColorAsInt());
+		drawContext.drawText(mc.textRenderer, text, (int)x, (int)y, color.getColorAsInt(), false);
 		matrixStack.pop();
 	}
 
-	public void drawStringWithScale(MatrixStack matrixStack, String text, float x, float y, int color, float scale) {
+	public void drawStringWithScale(DrawContext drawContext, String text, float x, float y, int color, float scale) {
 		MinecraftClient mc = MinecraftClient.getInstance();
+		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.scale(scale, scale, 1.0f);
 		if (scale > 1.0f) {
@@ -311,7 +316,7 @@ public class RenderUtils {
 		} else {
 			matrixStack.translate(x / scale, y * scale, 0.0f);
 		}
-		mc.textRenderer.draw(matrixStack, text, x, y, color);
+		drawContext.drawText(mc.textRenderer, text, (int)x, (int)y, color, false);
 		matrixStack.pop();
 	}
 

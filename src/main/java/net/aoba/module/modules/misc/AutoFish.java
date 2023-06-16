@@ -71,15 +71,16 @@ public class AutoFish extends Module {
 	
 	@Override
 	public void onReceivePacket(Packet<?> packet) {
-		if(packet instanceof PlaySoundS2CPacket) {
+		if(packet instanceof PlaySoundS2CPacket ) {
 			PlaySoundS2CPacket soundPacket = (PlaySoundS2CPacket)packet;
-			if(soundPacket.getSound() == SoundEvents.ENTITY_FISHING_BOBBER_SPLASH) {
+			if(soundPacket.getSound().value().equals(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH)) {
 				recastRod();
 			}
 		}
 	}
 	
 	private void recastRod() {
+		
 		PlayerInteractItemC2SPacket packetTryUse = new PlayerInteractItemC2SPacket(Hand.MAIN_HAND, 0);
 		MC.player.networkHandler.sendPacket(packetTryUse);
 		MC.player.networkHandler.sendPacket(packetTryUse);
