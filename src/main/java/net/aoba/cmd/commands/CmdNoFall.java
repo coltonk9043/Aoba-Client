@@ -31,7 +31,7 @@ public class CmdNoFall extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		NoFall module = (NoFall) Aoba.getInstance().mm.nofall;
+		NoFall module = (NoFall) Aoba.getInstance().moduleManager.nofall;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

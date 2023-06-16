@@ -72,7 +72,7 @@ public class AddAltScreen extends Screen {
 
 	private void onButtonAltAddPressed() {
 		Alt alt = new Alt(this.textFieldAltUsername.getText(), this.textFieldAltPassword.getText(), this.toggleMicrosoft.isChecked());
-		Aoba.getInstance().am.addAlt(alt);
+		Aoba.getInstance().altManager.addAlt(alt);
 		this.parent.refreshAltList();
 	}
 

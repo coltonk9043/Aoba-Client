@@ -31,7 +31,7 @@ public class CmdTileBreaker extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		TileBreaker module = (TileBreaker) Aoba.getInstance().mm.tilebreaker;
+		TileBreaker module = (TileBreaker) Aoba.getInstance().moduleManager.tilebreaker;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "radius":

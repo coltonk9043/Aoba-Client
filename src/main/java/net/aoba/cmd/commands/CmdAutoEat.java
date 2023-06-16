@@ -31,7 +31,7 @@ public class CmdAutoEat extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		AutoEat module = (AutoEat) Aoba.getInstance().mm.autoeat;
+		AutoEat module = (AutoEat) Aoba.getInstance().moduleManager.autoeat;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

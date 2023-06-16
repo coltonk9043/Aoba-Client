@@ -41,10 +41,10 @@ public class AobaClient {
 	public static IMinecraftClient IMC;
 	
 	// Systems
-	public ModuleManager mm;
-	public CommandManager cm;
-	public AltManager am;
-	public HudManager hm;
+	public ModuleManager moduleManager;
+	public CommandManager commandManager;
+	public AltManager altManager;
+	public HudManager hudManager;
 	public Settings settings;
 	public RenderUtils renderUtils;
 	
@@ -63,13 +63,13 @@ public class AobaClient {
 		System.out.println("[Aoba] Reading Settings");
 		settings = new Settings();
 		System.out.println("[Aoba] Initializing Modules");
-		mm = new ModuleManager();
+		moduleManager = new ModuleManager();
 		System.out.println("[Aoba] Initializing Commands");
-		cm = new CommandManager();
+		commandManager = new CommandManager();
 		System.out.println("[Aoba] Initializing GUI");
-		hm = new HudManager();
+		hudManager = new HudManager();
 		System.out.println("[Aoba] Loading Alts");
-		am = new AltManager();
+		altManager = new AltManager();
 		System.out.println("[Aoba] Aoba-chan initialized and ready to play!");
 	}
 	
@@ -77,8 +77,8 @@ public class AobaClient {
 	 * Updates Aoba on a per-tick basis.
 	 */
 	public void update() {
-		mm.update();
-		hm.update();
+		moduleManager.update();
+		hudManager.update();
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class AobaClient {
 	public void drawHUD(DrawContext context, float partialTicks) {
 		// If the program is not in Ghost Mode, draw UI.
 		if (!ghostMode) {
-			hm.draw(context, partialTicks);
+			hudManager.draw(context, partialTicks);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class AobaClient {
 	 */
 	public void endClient() {
 		settings.saveSettings();
-		am.saveAlts();
+		altManager.saveAlts();
 		System.out.println("[Aoba] Shutting down...");
 	}
 }

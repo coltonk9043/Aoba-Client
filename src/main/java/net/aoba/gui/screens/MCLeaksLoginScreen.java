@@ -48,7 +48,7 @@ public class MCLeaksLoginScreen extends Screen{
 	
 	private void onButtonLoginPressed() {
 		try {
-			Aoba.getInstance().am.loginMCLeaks(this.textFieldToken.getText());
+			Aoba.getInstance().altManager.loginMCLeaks(this.textFieldToken.getText());
 			client.setScreen(this.parent);
 		} catch (APIDownException | APIErrorException | InvalidResponseException | InvalidTokenException e) {
 			didLoginError = true;

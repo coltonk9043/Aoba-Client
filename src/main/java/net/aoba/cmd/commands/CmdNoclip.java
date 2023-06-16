@@ -31,7 +31,7 @@ public class CmdNoclip extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		Noclip module = (Noclip) Aoba.getInstance().mm.noclip;
+		Noclip module = (Noclip) Aoba.getInstance().moduleManager.noclip;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "speed":

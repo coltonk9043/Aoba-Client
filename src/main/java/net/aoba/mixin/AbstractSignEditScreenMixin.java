@@ -26,7 +26,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen  {
 	@Inject(at = {@At("HEAD")}, method = {"init()V"})
 	private void onInit(CallbackInfo ci)
 	{
-		AutoSign mod = (AutoSign) Aoba.getInstance().mm.autosign;
+		AutoSign mod = (AutoSign) Aoba.getInstance().moduleManager.autosign;
 		String[] newText = mod.getText();
 		if(newText != null) {
 			for(int i = 0; i < 4; i++)
@@ -37,7 +37,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen  {
 	
 	@Inject(at = { @At("HEAD") }, method = "finishEditing()V")
 	private void onEditorClose(CallbackInfo ci) {
-		AutoSign mod = (AutoSign) Aoba.getInstance().mm.autosign;
+		AutoSign mod = (AutoSign) Aoba.getInstance().moduleManager.autosign;
 		if(mod.getState()) {
 			if(mod.getText() == null) {
 				mod.setText(messages);

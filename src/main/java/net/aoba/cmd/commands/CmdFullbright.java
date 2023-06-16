@@ -31,7 +31,7 @@ public class CmdFullbright extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		Fullbright module = (Fullbright) Aoba.getInstance().mm.fullbright;
+		Fullbright module = (Fullbright) Aoba.getInstance().moduleManager.fullbright;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

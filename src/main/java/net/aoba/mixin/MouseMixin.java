@@ -13,7 +13,7 @@ public class MouseMixin
 	@Inject(at = {@At("HEAD")}, method = {"lockCursor()V"}, cancellable = true)
 	private void onLockCursor(CallbackInfo ci)
 	{
-		if(Aoba.getInstance().hm.isClickGuiOpen()) 	ci.cancel();
+		if(Aoba.getInstance().hudManager.isClickGuiOpen()) 	ci.cancel();
 	}
 	
 }

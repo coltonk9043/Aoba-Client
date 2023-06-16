@@ -31,7 +31,7 @@ public class CmdAimbot extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		Aimbot module = (Aimbot) Aoba.getInstance().mm.aimbot;
+		Aimbot module = (Aimbot) Aoba.getInstance().moduleManager.aimbot;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

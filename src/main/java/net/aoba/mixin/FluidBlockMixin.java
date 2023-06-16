@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 import net.aoba.Aoba;
+import net.aoba.module.modules.movement.Jesus;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FluidBlock;
@@ -25,9 +26,13 @@ public abstract class FluidBlockMixin extends Block implements FluidDrainable {
 	@Inject(method = "getCollisionShape", at = @At(value = "HEAD"), cancellable = true)
 	private void getCollisionShape(BlockState blockState_1, BlockView blockView_1, BlockPos blockPos_1,
 			ShapeContext entityContext_1, CallbackInfoReturnable<VoxelShape> cir) {
-		if (Aoba.getInstance().mm.jesus.getState()) {
-			cir.setReturnValue(VoxelShapes.fullCube());
-			cir.cancel();
+		// If Aoba exists and Jesus is toggled (and NOT in legit mode)
+		if(Aoba.getInstance() != null) {
+			Jesus jesus = (Jesus) Aoba.getInstance().moduleManager.jesus;
+			if (jesus.getState() && !jesus.legit.getValue()) {
+				cir.setReturnValue(VoxelShapes.fullCube());
+				cir.cancel();
+			}
 		}
 	}
 }

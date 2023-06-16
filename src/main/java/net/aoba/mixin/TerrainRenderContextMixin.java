@@ -17,7 +17,7 @@ public class TerrainRenderContextMixin {
 	@Inject(at = { @At("HEAD") }, method = { "tessellateBlock" }, cancellable = true, remap = false)
 	private void tesselateBlock(BlockState blockState, BlockPos blockPos, final BakedModel model,
 			MatrixStack matrixStack, CallbackInfo ci) {
-		if (Aoba.getInstance().mm.xray.getState()) {
+		if (Aoba.getInstance().moduleManager.xray.getState()) {
 			if (XRay.isXRayBlock(blockState.getBlock())) {
 				ci.cancel();
 				return;

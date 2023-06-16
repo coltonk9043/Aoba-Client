@@ -45,7 +45,7 @@ public class ArmorHUD extends Tab{
 	
 	@Override
 	public void update(double mouseX, double mouseY, boolean mouseClicked) {
-		if (Aoba.getInstance().hm.isClickGuiOpen()) {
+		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			if (HudManager.currentGrabbed == null) {
 				if (mouseX >= (x) && mouseX <= (x + width)) {
 					if (mouseY >= (y) && mouseY <= (y + height)) {

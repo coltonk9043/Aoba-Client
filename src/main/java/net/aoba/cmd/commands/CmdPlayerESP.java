@@ -31,7 +31,7 @@ public class CmdPlayerESP extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		PlayerESP module = (PlayerESP) Aoba.getInstance().mm.playeresp;
+		PlayerESP module = (PlayerESP) Aoba.getInstance().moduleManager.playeresp;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

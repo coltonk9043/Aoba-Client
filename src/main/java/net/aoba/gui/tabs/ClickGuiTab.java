@@ -128,7 +128,7 @@ public class ClickGuiTab extends Tab {
 			this.height = tempHeight;
 		}
 		
-		if (Aoba.getInstance().hm.isClickGuiOpen()) {
+		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			if (HudManager.currentGrabbed == null) {
 				if (mouseX >= (x) && mouseX <= (x + width)) {
 					if (mouseY >= (y) && mouseY <= (y + 28)) {
@@ -176,7 +176,7 @@ public class ClickGuiTab extends Tab {
 		if(drawBorder) {
 			// Draws background depending on components width and height
 			renderUtils.drawOutlinedBox(matrixStack, x, y, width, 29, new Color(30,30,30), 0.4f);
-			renderUtils.drawString(drawContext, this.title, x + 8, y + 8, Aoba.getInstance().hm.getColor());
+			renderUtils.drawString(drawContext, this.title, x + 8, y + 8, Aoba.getInstance().hudManager.getColor());
 			renderUtils.drawOutlinedBox(matrixStack, x, y + 29, width, height, new Color(30,30,30), 0.4f);
 			if (this.isPinned) {
 				renderUtils.drawOutlinedBox(matrixStack, x + width - 24, y + 4, 20, 20, new Color(154,0,0), 0.8f);

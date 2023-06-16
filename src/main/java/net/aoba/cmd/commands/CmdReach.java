@@ -31,7 +31,7 @@ public class CmdReach extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		Reach module = (Reach) Aoba.getInstance().mm.reach;
+		Reach module = (Reach) Aoba.getInstance().moduleManager.reach;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "distance":

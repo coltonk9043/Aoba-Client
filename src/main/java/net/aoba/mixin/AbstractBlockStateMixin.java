@@ -26,7 +26,7 @@ public abstract class AbstractBlockStateMixin extends State<Block, BlockState> {
 	@Inject(at = @At("TAIL"), method = { "getAmbientOcclusionLightLevel(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F"}, cancellable = true)
 	private void onGetAmbientOcclusionLightLevel(BlockView blockView, BlockPos blockPos, CallbackInfoReturnable<Float> cir)
 	{
-		if (!Aoba.getInstance().mm.xray.getState())
+		if (!Aoba.getInstance().moduleManager.xray.getState())
 			return;
 		cir.setReturnValue(1F);
 	}

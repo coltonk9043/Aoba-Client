@@ -67,7 +67,7 @@ public class HudManager {
 		int xOffset = 320;
 		for (Category category : Module.Category.values()) {
 			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 1);
-			for (Module module : Aoba.getInstance().mm.modules) {
+			for (Module module : Aoba.getInstance().moduleManager.modules) {
 				if (module.getCategory() == category) {
 					ModuleComponent button = new ModuleComponent(module.getName(), tab, module);
 					tab.addChild(button);

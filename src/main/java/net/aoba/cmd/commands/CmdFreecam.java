@@ -31,7 +31,7 @@ public class CmdFreecam extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		Freecam module = (Freecam) Aoba.getInstance().mm.freecam;
+		Freecam module = (Freecam) Aoba.getInstance().moduleManager.freecam;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

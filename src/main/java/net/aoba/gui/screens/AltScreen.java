@@ -75,7 +75,7 @@ public class AltScreen extends Screen {
 	}
 
 	public List<Alt> getAltList() {
-		return Aoba.getInstance().am.getAlts();
+		return Aoba.getInstance().altManager.getAlts();
 	}
 
 	public void refreshAltList() {
@@ -100,9 +100,9 @@ public class AltScreen extends Screen {
 			
 		Alt alt = ((AltSelectionList.NormalEntry) altselectionlist$entry).getAltData();
 		if (alt.isCracked()) {
-			Aoba.getInstance().am.loginCracked(alt.getEmail());
+			Aoba.getInstance().altManager.loginCracked(alt.getEmail());
 		} else {
-			Aoba.getInstance().am.login(alt);
+			Aoba.getInstance().altManager.login(alt);
 		}
 	}
 	
@@ -119,7 +119,7 @@ public class AltScreen extends Screen {
 		if (alt == null) {
 			return;
 		}
-		Aoba.getInstance().am.removeAlt(alt);
+		Aoba.getInstance().altManager.removeAlt(alt);
 		this.refreshAltList();
 	}
 }

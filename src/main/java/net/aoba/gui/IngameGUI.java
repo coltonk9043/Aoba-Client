@@ -47,7 +47,7 @@ public class IngameGUI extends Tab {
 	public void update(double mouseX, double mouseY, boolean mouseClicked) {
 		{
 			// If the click GUI is open, and the 
-			if (aoba.hm.isClickGuiOpen()) {
+			if (aoba.hudManager.isClickGuiOpen()) {
 				if (HudManager.currentGrabbed == null) {
 					if (mouseX >= (x) && mouseX <= (x + width)) {
 						if (mouseY >= (y) && mouseY <= (y + height)) {
@@ -86,7 +86,7 @@ public class IngameGUI extends Tab {
 					if (!isCategoryMenuOpen && x != -width) {
 						isCategoryMenuOpen = !isCategoryMenuOpen;
 						if (modules.isEmpty()) {
-							for (Module module : aoba.mm.modules) {
+							for (Module module : aoba.moduleManager.modules) {
 								if (module.isCategory(this.categories[this.index])) {
 									modules.add(module);
 								}
@@ -151,8 +151,8 @@ public class IngameGUI extends Tab {
 		
 		// Draws the active mods in the top right of the screen.
 		int iteration = 0;
-		for(int i = 0; i < aoba.mm.modules.size(); i++) {
-			Module mod = aoba.mm.modules.get(i);
+		for(int i = 0; i < aoba.moduleManager.modules.size(); i++) {
+			Module mod = aoba.moduleManager.modules.get(i);
 			if(mod.getState()) {
 				renderUtils.drawString(drawContext, mod.getName(),
 						(float) (window.getWidth() - ((mc.textRenderer.getWidth(mod.getName()) + 5) * 2)), 10 + (iteration*20),

@@ -28,14 +28,14 @@ public class RadarTab extends ClickGuiTab {
 		if(drawBorder) {
 			// Draws background depending on components width and height
 		    renderUtils.drawOutlinedBox(matrixStack, x, y, width, 29, new Color(30,30,30), 0.4f);
-			renderUtils.drawString(drawContext, this.title, x + 8, y + 8, Aoba.getInstance().hm.getColor());
+			renderUtils.drawString(drawContext, this.title, x + 8, y + 8, Aoba.getInstance().hudManager.getColor());
 			renderUtils.drawOutlinedBox(matrixStack, x, y + 29, width, height, new Color(30,30,30), 0.4f);
 		
 			
 			// Draw the 'Radar'
 			renderUtils.drawBox(matrixStack, x , y + 30 + (height / 2), width - 1, 1, new Color(128,128,128), 1.0f);
 			renderUtils.drawBox(matrixStack, x + (width / 2), y + 30, 1, height, new Color(128,128,128), 1.0f);
-			renderUtils.drawBox(matrixStack, x + (width / 2) - 2, y + 30 + (height / 2) - 2, 5, 5, Aoba.getInstance().hm.getColor(), 1.0f);
+			renderUtils.drawBox(matrixStack, x + (width / 2) - 2, y + 30 + (height / 2) - 2, 5, 5, Aoba.getInstance().hudManager.getColor(), 1.0f);
 			
 			float sin_theta = (float) Math.sin(Math.toRadians(-mc.player.getRotationClient().y));
 			float cos_theta = (float) Math.cos(Math.toRadians(-mc.player.getRotationClient().y));

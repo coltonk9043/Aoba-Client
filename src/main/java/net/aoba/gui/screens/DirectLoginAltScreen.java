@@ -63,12 +63,12 @@ public class DirectLoginAltScreen extends Screen{
 	private void onButtonLoginPressed() {
 		boolean loggedIn = false;
 		if(this.textFieldAltPassword.getText().isEmpty()) {
-			Aoba.getInstance().am.loginCracked(this.textFieldAltUsername.getText());
+			Aoba.getInstance().altManager.loginCracked(this.textFieldAltUsername.getText());
 			client.setScreen(this.parent);
 			return;
 		}else {
 			Alt alt = new Alt(this.textFieldAltUsername.getText(), this.textFieldAltPassword.getText(), this.toggleMicrosoft.isChecked());
-			loggedIn = Aoba.getInstance().am.login(alt);
+			loggedIn = Aoba.getInstance().altManager.login(alt);
 		}
 
 		if(!loggedIn) {

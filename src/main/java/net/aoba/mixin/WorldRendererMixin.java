@@ -18,6 +18,6 @@ public class WorldRendererMixin {
 	private void onRenderWorld(MatrixStack matrixStack, float tickDelta, long limitTime, boolean renderBlockOutline,
 			Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f,
 			CallbackInfo info) {
-		Aoba.getInstance().mm.render(matrixStack);
+		Aoba.getInstance().moduleManager.render(matrixStack);
 	}
 }

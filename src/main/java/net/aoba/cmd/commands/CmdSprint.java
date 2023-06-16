@@ -31,7 +31,7 @@ public class CmdSprint extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		Sprint module = (Sprint) Aoba.getInstance().mm.sprint;
+		Sprint module = (Sprint) Aoba.getInstance().moduleManager.sprint;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

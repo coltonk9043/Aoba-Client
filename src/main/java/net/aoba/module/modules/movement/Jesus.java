@@ -23,16 +23,24 @@ package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
+import net.aoba.settings.BooleanSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.Packet;
 
 public class Jesus extends Module {
+	
+	public BooleanSetting legit;
+	
 	public Jesus() {
 		this.setName("Jesus");
 		this.setBind(new KeyBinding("key.jesus", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to walk on water.");
+		
+		// Add Settings
+		legit = new BooleanSetting("Legit", "jesus_legit");
+		this.addSetting(legit);
 	}
 
 	@Override
@@ -51,7 +59,12 @@ public class Jesus extends Module {
 
 	@Override
 	public void onUpdate() {
-		
+		// If Legit is enabled, simply swim.
+		if(this.legit.getValue()) {
+			if(MC.player.isInLava() || MC.player.isTouchingWater()){
+				MC.options.jumpKey.setPressed(true);
+			}
+		}
 	}
 
 	@Override

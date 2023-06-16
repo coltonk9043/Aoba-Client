@@ -34,7 +34,7 @@ public class CmdFly extends Command {
 		for(int i = 0; i < parameters.length; i++) {
 			System.out.println(parameters[i]);
 		}
-		Fly module = (Fly) Aoba.getInstance().mm.fly;
+		Fly module = (Fly) Aoba.getInstance().moduleManager.fly;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "speed":

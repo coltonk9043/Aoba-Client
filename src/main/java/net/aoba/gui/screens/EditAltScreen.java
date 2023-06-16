@@ -76,7 +76,7 @@ public class EditAltScreen extends Screen {
 	private void onButtonAltEditPressed() {
 		alt.setEmail(this.textFieldAltUsername.getText());
 		alt.setPassword(this.textFieldAltPassword.getText());
-		Aoba.getInstance().am.saveAlts();
+		Aoba.getInstance().altManager.saveAlts();
 		this.parent.refreshAltList();
 	}
 

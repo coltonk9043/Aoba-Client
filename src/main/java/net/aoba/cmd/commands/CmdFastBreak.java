@@ -31,7 +31,7 @@ public class CmdFastBreak extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		FastBreak module = (FastBreak) Aoba.getInstance().mm.fastbreak;
+		FastBreak module = (FastBreak) Aoba.getInstance().moduleManager.fastbreak;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "multiplier":

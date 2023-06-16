@@ -31,7 +31,7 @@ public class CmdTracer extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		Tracer module = (Tracer) Aoba.getInstance().mm.tracer;
+		Tracer module = (Tracer) Aoba.getInstance().moduleManager.tracer;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":

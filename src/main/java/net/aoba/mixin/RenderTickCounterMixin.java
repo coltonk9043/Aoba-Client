@@ -20,7 +20,7 @@ public class RenderTickCounterMixin {
 	@Inject(at = {@At(value = "FIELD", target = "Lnet/minecraft/client/render/RenderTickCounter;prevTimeMillis:J", 
 			opcode = Opcodes.PUTFIELD, ordinal = 0) }, method = {"beginRenderTick(J)I" })
 	public void onBeginRenderTick(long long_1, CallbackInfoReturnable<Integer> cir) {
-		Timer timer = (Timer) Aoba.getInstance().mm.timer;
+		Timer timer = (Timer) Aoba.getInstance().moduleManager.timer;
 		if(timer.getState()) {
 			lastFrameDuration *= timer.getMultiplier();
 		}

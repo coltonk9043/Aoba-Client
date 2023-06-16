@@ -31,7 +31,7 @@ public class CmdEntityESP extends Command {
 
 	@Override
 	public void command(String[] parameters) {
-		EntityESP module = (EntityESP) Aoba.getInstance().mm.entityesp;
+		EntityESP module = (EntityESP) Aoba.getInstance().moduleManager.entityesp;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			case "toggle":
