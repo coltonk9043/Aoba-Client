@@ -53,6 +53,7 @@ public class Fly extends Module {
 		return this.flySpeed.getValue();
 	}
 
+	
 	@Override
 	public void onDisable() {
 
