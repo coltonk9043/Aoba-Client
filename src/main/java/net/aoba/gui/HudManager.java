@@ -23,6 +23,9 @@ public class HudManager {
 	public Hashtable<String, ClickGuiTab> tabs = new Hashtable<String, ClickGuiTab>();
 	private KeyBinding clickGuiButton = new KeyBinding("key.clickgui", GLFW.GLFW_KEY_GRAVE_ACCENT,
 			"key.categories.aoba");
+	private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE,
+			"key.categories.aoba");
+
 	private boolean clickGuiOpen = false;
 	private RenderUtils renderUtils;;
 
@@ -91,7 +94,7 @@ public class HudManager {
 
 	public void update() {
 		boolean mouseClicked = mc.mouse.wasLeftButtonClicked();
-		
+
 		if(!Aoba.getInstance().isGhosted()){
 			for (ClickGuiTab tab : tabs.values()) {
 				if (clickGuiOpen || tab.getPinned()) {
@@ -107,6 +110,11 @@ public class HudManager {
 				this.toggleMouse();
 			}else if (!this.clickGuiButton.isPressed()) {
 				wasTildaPressed = false;
+			}
+
+			if (this.esc.isPressed() && this.clickGuiOpen) {
+				this.clickGuiOpen = !this.clickGuiOpen;
+				this.toggleMouse();
 			}
 		}
 		if(this.rainbow.getValue()) {
