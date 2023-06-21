@@ -12,6 +12,7 @@
 	"BlockModelRendererMixin",
 	"CactusBlockMixin",
 	"ChatScreenMixin",
+	"ChatInputSuggestorMixin",
 	"ClientPlayerEntityMixin",
 	"ClientPlayerInteractionManagerMixin",
 	"ClientConnectionMixin",
