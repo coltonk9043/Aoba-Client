@@ -26,11 +26,11 @@ import net.aoba.module.modules.combat.Reach;
 public class CmdReach extends Command {
 
 	public CmdReach() {
-		this.description = "Allows the player to reach further.";
+		super("reach", "Allows the player to reach further.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Reach module = (Reach) Aoba.getInstance().moduleManager.reach;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -63,5 +63,11 @@ public class CmdReach extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba reach [toggle/distance] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

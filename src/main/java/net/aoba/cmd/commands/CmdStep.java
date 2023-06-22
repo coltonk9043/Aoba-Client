@@ -26,11 +26,11 @@ import net.aoba.module.modules.movement.Step;
 public class CmdStep extends Command {
 
 	public CmdStep() {
-		this.description = "Allows the player to step up blocks";
+		super("step", "Allows the player to step up blocks");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Step module = (Step) Aoba.getInstance().moduleManager.step;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -63,5 +63,11 @@ public class CmdStep extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba step [toggle/height] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

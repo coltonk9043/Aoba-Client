@@ -26,11 +26,11 @@ import net.aoba.module.modules.misc.AutoEat;
 public class CmdAutoEat extends Command {
 
 	public CmdAutoEat() {
-		this.description = "Allows the player to see chest locations through ESP";
+		super("autoeat", "Automatically eats when the player is hungry.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		AutoEat module = (AutoEat) Aoba.getInstance().moduleManager.autoeat;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -62,5 +62,11 @@ public class CmdAutoEat extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba autoeat [toggle/set] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

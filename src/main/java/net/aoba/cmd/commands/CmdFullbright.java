@@ -26,11 +26,11 @@ import net.aoba.module.modules.render.Fullbright;
 public class CmdFullbright extends Command {
 
 	public CmdFullbright() {
-		this.description = "Brightens up the world!";
+		super("fullbright", "Brightens up the world!");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Fullbright module = (Fullbright) Aoba.getInstance().moduleManager.fullbright;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,5 +53,11 @@ public class CmdFullbright extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba fullbright [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

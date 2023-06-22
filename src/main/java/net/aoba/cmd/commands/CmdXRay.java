@@ -18,21 +18,27 @@
 
 package net.aoba.cmd.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.aoba.Aoba;
 import net.aoba.cmd.Command;
 import net.aoba.cmd.CommandManager;
 import net.aoba.module.modules.render.XRay;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
 
 public class CmdXRay extends Command {
 
 	public CmdXRay() {
-		this.description = "Allows the player to see certain blocks through walls";
+		super("xray", "Allows the player to see certain blocks through walls");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		XRay module = (XRay) Aoba.getInstance().moduleManager.xray;
 		if (parameters.length >= 2 && parameters.length <= 3) {
 			switch (parameters[0]) {
@@ -52,16 +58,30 @@ public class CmdXRay extends Command {
 				switch (parameters[1]) {
 				case "add":
 					String block1 = parameters[2].toLowerCase();
-					// TODO MIXIN FIX FIND BLOCK BY NAME
-					//Block tempBlock1 = Blocks.getBlockByName(block1);
+					Block tempBlock1;
+					try
+					{
+						tempBlock1 = Registries.BLOCK.get(new Identifier(block1));
+					}catch(InvalidIdentifierException e)
+					{
+						tempBlock1= Blocks.AIR;
+					}
 					
-					XRay.blocks.add(Blocks.AIR);
+					XRay.blocks.add(tempBlock1);
 					mc.worldRenderer.reload();
 					break;
 				case "remove":
 					String block2 = parameters[2].toLowerCase();
-					//Block tempBlock2 = Blocks.getBlockByName(block2);
-					XRay.blocks.remove(Blocks.AIR);
+					Block tempBlock2;
+					try
+					{
+						tempBlock2 = Registries.BLOCK.get(new Identifier(block2));
+					}catch(InvalidIdentifierException e)
+					{
+						tempBlock2= Blocks.AIR;
+					}
+					
+					XRay.blocks.remove(tempBlock2);
 					mc.worldRenderer.reload();
 					break;
 				case "list":
@@ -75,11 +95,31 @@ public class CmdXRay extends Command {
 				}
 				break;
 			default:
-				CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba xray [toggle] [value]");
+				CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba xray [toggle/block] [value]");
 				break;
 			}
 		} else {
-			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba xray [toggle] [value]");
+			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba xray [toggle/block] [value]");
+		}
+	}
+	
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		switch (previousParameter) {
+			case "toggle":
+				return new String[] {"on", "off"};
+			case "block":
+				return new String[] {"add", "remove"};
+			case "add":
+				String[] blockNames = new String[Registries.BLOCK.size()];
+				for(int i = 0; i < Registries.BLOCK.size(); i++) {
+					blockNames[i] = Registries.BLOCK.get(i).getTranslationKey();
+				}
+				return blockNames;
+			case "remove":
+				return new String[] { "xray", "delete" };
+			default:
+				return new String[] { "toggle", "block"};
 		}
 	}
 }

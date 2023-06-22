@@ -21,7 +21,10 @@
  */
 package net.aoba.cmd;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+
+import net.aoba.Aoba;
 import net.aoba.cmd.commands.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
@@ -29,36 +32,51 @@ import net.minecraft.text.Text;
 public class CommandManager {
 	private HashMap<String, Command> commands = new HashMap<String, Command>();
 
+	public final CmdAimbot aimbot = new CmdAimbot();
+	public final CmdAutoEat autoeat = new CmdAutoEat();
+	public final CmdChestESP chestesp = new CmdChestESP();
+	public final CmdEntityESP entityesp = new CmdEntityESP();
+	public final CmdFastBreak fastbreak = new CmdFastBreak();
+	public final CmdFly fly = new CmdFly();
+	public final CmdFreecam freecam = new CmdFreecam();
+	public final CmdFullbright fullbright = new CmdFullbright();
+	public final CmdHelp help = new CmdHelp();
+	public final CmdHud hud = new CmdHud();
+	public final CmdItemESP itemesp = new CmdItemESP();
+	public final CmdNoclip noclip = new CmdNoclip();
+	public final CmdNoFall nofall = new CmdNoFall();
+	public final CmdNoSlowdown noslowdown = new CmdNoSlowdown();
+	public final CmdNuker nuker = new CmdNuker();
+	public final CmdPlayerESP playeresp = new CmdPlayerESP();
+	public final CmdPOV pov = new CmdPOV();
+	public final CmdReach reach = new CmdReach();
+	public final CmdSpam spam = new CmdSpam();
+	public final CmdSprint sprint = new CmdSprint();
+	public final CmdStep step = new CmdStep();
+	public final CmdTileBreaker tilebreaker = new CmdTileBreaker();
+	public final CmdTimer timer = new CmdTimer();
+	public final CmdTP tp = new CmdTP();
+	public final CmdTracer tracer = new CmdTracer();
+	public final CmdXRay xray = new CmdXRay();
+	
 	/**
 	 * Constructor for Command Manager. Initializes all commands.
 	 */
 	public CommandManager() {
-		commands.put("aimbot", new CmdAimbot());
-		commands.put("autoeat", new CmdAutoEat());
-		commands.put("chestesp", new CmdChestESP());
-		commands.put("entityesp", new CmdEntityESP());
-		commands.put("fastbreak", new CmdFastBreak());
-		commands.put("fly", new CmdFly());
-		commands.put("freecam", new CmdFreecam());
-		commands.put("fullbright", new CmdFullbright());
-		commands.put("help", new CmdHelp());
-		commands.put("hud", new CmdHud());
-		commands.put("itemesp", new CmdItemESP());
-		commands.put("noclip", new CmdNoclip());
-		commands.put("nofall", new CmdNoFall());
-		commands.put("noslowdown", new CmdNoSlowdown());
-		commands.put("nuker", new CmdNuker());
-		commands.put("playeresp", new CmdPlayerESP());
-		commands.put("pov", new CmdPOV());
-		commands.put("reach", new CmdReach());
-		commands.put("spam", new CmdSpam());
-		commands.put("sprint", new CmdSprint());
-		commands.put("step", new CmdStep());
-		commands.put("tilebreaker", new CmdTileBreaker());
-		commands.put("timer", new CmdTimer());
-		commands.put("tp", new CmdTP());
-		commands.put("tracer", new CmdTracer());
-		commands.put("xray", new CmdXRay());
+		try
+		{
+			for(Field field : CommandManager.class.getDeclaredFields())
+			{
+				if (!Command.class.isAssignableFrom(field.getType())) 
+					continue;
+				Command cmd = (Command)field.get(this);
+				commands.put(cmd.getName(), cmd);
+			}
+		}catch(Exception e)
+		{
+			System.out.println("Error initializing Aoba commands.");
+			System.out.println(e.getStackTrace().toString());
+		}
 	}
 
 	/**
@@ -94,6 +112,7 @@ public class CommandManager {
 	 */
 	public void command(String[] commandIn) {
 		try {
+			
 			// Get the command from the user's message. (Index 0 is Username)
 			Command command = commands.get(commandIn[1]);
 
@@ -110,10 +129,10 @@ public class CommandManager {
 				}
 				
 				// Runs the command.
-				command.command(parameterList);
+				command.runCommand(parameterList);
 			}
 		} catch (Exception e) {
-			sendChatMessage("Error occured whilst running command. Please try again.");
+			System.out.println("Error occured whilst running command. Please try again.");
 			e.printStackTrace();
 		}
 	}
@@ -124,6 +143,6 @@ public class CommandManager {
 	 */
 	public static void sendChatMessage(String message) {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		mc.inGameHud.getChatHud().addMessage(Text.of("ยง5[Aoba] ยงf" + message));
+		mc.inGameHud.getChatHud().addMessage(Text.of("ง5[Aoba]งf " + message));
 	}
 }

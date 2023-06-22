@@ -26,11 +26,11 @@ import net.aoba.module.modules.render.Tracer;
 public class CmdTracer extends Command {
 
 	public CmdTracer() {
-		this.description = "Draws a tracer that points towards players";
+		super("tracer", "Draws a tracer that points towards players.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Tracer module = (Tracer) Aoba.getInstance().moduleManager.tracer;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,5 +53,11 @@ public class CmdTracer extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba tracer [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

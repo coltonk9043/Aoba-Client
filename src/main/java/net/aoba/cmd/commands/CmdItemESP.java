@@ -26,11 +26,11 @@ import net.aoba.module.modules.render.ItemESP;
 public class CmdItemESP extends Command {
 
 	public CmdItemESP() {
-		this.description = "Allows the player to see items through ESP";
+		super("itemesp", "Allows the player to see items through walls.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		ItemESP module = (ItemESP) Aoba.getInstance().moduleManager.itemesp;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,5 +53,11 @@ public class CmdItemESP extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba itemesp [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

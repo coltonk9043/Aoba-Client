@@ -26,11 +26,11 @@ import net.aoba.module.modules.misc.FastBreak;
 public class CmdFastBreak extends Command {
 
 	public CmdFastBreak() {
-		this.description = "Decreases the time it takes to break blocks";
+		super("fastbreak", "Decreases the time it takes to break blocks");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		FastBreak module = (FastBreak) Aoba.getInstance().moduleManager.fastbreak;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -64,5 +64,11 @@ public class CmdFastBreak extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba fastbreak [multiplier, toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

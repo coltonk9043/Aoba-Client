@@ -26,11 +26,11 @@ import net.aoba.module.modules.render.EntityESP;
 public class CmdEntityESP extends Command {
 
 	public CmdEntityESP() {
-		this.description = "Allows the player to see mobs through ESP.";
+		super("entityesp", "Allows the player to see mobs through ESP.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		EntityESP module = (EntityESP) Aoba.getInstance().moduleManager.entityesp;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,5 +53,11 @@ public class CmdEntityESP extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba entityesp [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

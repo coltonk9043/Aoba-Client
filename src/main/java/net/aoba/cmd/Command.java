@@ -21,18 +21,29 @@
  */
 package net.aoba.cmd;
 
+import java.util.Objects;
+
 import net.aoba.AobaClient;
 import net.minecraft.client.MinecraftClient;
 
 public abstract class Command {
-	protected String description;
+	protected final String name;
+	protected final String description;
+	
 	protected static final MinecraftClient mc = AobaClient.MC;
 	
+	public Command(String name, String description) {
+		this.name = Objects.requireNonNull(name);
+		this.description = Objects.requireNonNull(description);
+	}
+	
 	/**
-	 * Runs the intended action of the command.
-	 * @param parameters The parameters being passed.
+	 * Gets the name of the command.
+	 * @return The name of the command.
 	 */
-	public abstract void command(String[] parameters);
+	public String getName() {
+		return this.name;
+	}
 	
 	/**
 	 * Gets the description of the command.
@@ -41,4 +52,16 @@ public abstract class Command {
 	public String getDescription() {
 		return this.description;
 	}
+	
+	/**
+	 * Runs the intended action of the command.
+	 * @param parameters The parameters being passed.
+	 */
+	public abstract void runCommand(String[] parameters);
+	
+	/**
+	 * Gets the next Autocorrect suggestions given the last typed parameter.
+	 * @param previousParameter
+	 */
+	public abstract String[] getAutocorrect(String previousParameter);
 }

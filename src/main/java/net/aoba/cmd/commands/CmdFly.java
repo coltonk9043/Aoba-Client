@@ -26,16 +26,13 @@ import net.aoba.module.modules.movement.Fly;
 public class CmdFly extends Command {
 
 	public CmdFly() {
-		this.description = "Allows the player to fly";
+		super("fly", "Allows the player to fly");
 	}
 
 	@Override
-	public void command(String[] parameters) {
-		for(int i = 0; i < parameters.length; i++) {
-			System.out.println(parameters[i]);
-		}
-		Fly module = (Fly) Aoba.getInstance().moduleManager.fly;
+	public void runCommand(String[] parameters) {
 		if (parameters.length == 2) {
+			Fly module = (Fly) Aoba.getInstance().moduleManager.fly;
 			switch (parameters[0]) {
 			case "speed":
 				try {
@@ -65,6 +62,18 @@ public class CmdFly extends Command {
 			}
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba fly [speed, toggle] [value]");
+		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		switch(previousParameter) {
+			case "toggle":
+				return new String[] {"on", "off"};
+			case "speed":
+				return new String[] {"0.0", "1.0", "5.0", "10.0"};
+			default:
+				return new String[] {"speed", "toggle"};
 		}
 	}
 }

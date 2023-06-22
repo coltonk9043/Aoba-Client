@@ -26,11 +26,11 @@ import net.aoba.module.modules.render.POV;
 public class CmdPOV extends Command {
 
 	public CmdPOV() {
-		this.description = "Decreases the time it takes to break blocks";
+		super("pov", "Allows the player to see through someone else's POV.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		POV module = (POV) Aoba.getInstance().moduleManager.pov;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -62,5 +62,11 @@ public class CmdPOV extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba pov [set, toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

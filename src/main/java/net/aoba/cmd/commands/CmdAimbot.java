@@ -26,11 +26,11 @@ import net.aoba.module.modules.combat.Aimbot;
 public class CmdAimbot extends Command {
 
 	public CmdAimbot() {
-		this.description = "Allows the player to see chest locations through ESP";
+		super("aimbot", "Allows the player to see chest locations through ESP");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Aimbot module = (Aimbot) Aoba.getInstance().moduleManager.aimbot;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,5 +53,11 @@ public class CmdAimbot extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba aimbot [toggle/mode] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -24,11 +24,11 @@ import net.aoba.cmd.CommandManager;
 public class CmdHud extends Command {
 
 	public CmdHud() {
-		this.description = "Allows you to customize the hud using commands.";
+		super("hud", "Allows you to customize the hud using commands.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
 			
@@ -39,5 +39,11 @@ public class CmdHud extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba hud");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

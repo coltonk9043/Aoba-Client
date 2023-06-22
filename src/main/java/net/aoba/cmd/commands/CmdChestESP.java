@@ -26,11 +26,11 @@ import net.aoba.module.modules.render.ChestESP;
 public class CmdChestESP extends Command {
 
 	public CmdChestESP() {
-		this.description = "Allows the player to see chest locations through ESP";
+		super("chestesp", "Allows the player to see chest locations through ESP");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		ChestESP module = (ChestESP) Aoba.getInstance().moduleManager.chestesp;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,5 +53,11 @@ public class CmdChestESP extends Command {
 		} else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba chestesp [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

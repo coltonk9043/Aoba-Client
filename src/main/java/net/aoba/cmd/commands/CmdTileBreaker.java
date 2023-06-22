@@ -26,11 +26,11 @@ import net.aoba.module.modules.world.TileBreaker;
 public class CmdTileBreaker extends Command {
 
 	public CmdTileBreaker() {
-		this.description = "Breaks insta-break blocks within a certain radius";
+		super("tilebreaker", "Breaks insta-break blocks within a certain radius");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		TileBreaker module = (TileBreaker) Aoba.getInstance().moduleManager.tilebreaker;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -68,5 +68,11 @@ public class CmdTileBreaker extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba tilebreaker [radius, toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

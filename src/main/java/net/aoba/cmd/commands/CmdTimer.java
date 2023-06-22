@@ -26,11 +26,11 @@ import net.aoba.module.modules.misc.Timer;
 public class CmdTimer extends Command {
 
 	public CmdTimer() {
-		this.description = "Disables fall damage for the player";
+		super("timer", "Speeds up the game.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Timer module = (Timer) Aoba.getInstance().moduleManager.timer;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -65,6 +65,12 @@ public class CmdTimer extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba timer [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

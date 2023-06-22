@@ -26,11 +26,11 @@ import net.aoba.module.modules.movement.NoSlowdown;
 public class CmdNoSlowdown extends Command {
 
 	public CmdNoSlowdown() {
-		this.description = "Disables webs from slowing the player down";
+		super("noslowdown", "Disables webs from slowing the player down");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		NoSlowdown module = (NoSlowdown) Aoba.getInstance().moduleManager.noslowdown;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,6 +53,12 @@ public class CmdNoSlowdown extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba noslowdown [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

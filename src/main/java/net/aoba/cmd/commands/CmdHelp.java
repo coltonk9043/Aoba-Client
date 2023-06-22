@@ -18,6 +18,10 @@
 
 package net.aoba.cmd.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import net.aoba.module.Module;
 import net.aoba.Aoba;
@@ -29,28 +33,16 @@ public class CmdHelp extends Command {
 	int indexesPerPage = 5;
 
 	public CmdHelp() {
-		this.description = "Shows the avaiable commands.";
+		super("help", "Shows the avaiable commands.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
-		if (StringUtils.isNumeric(parameters[0])) {
-			CommandManager.sendChatMessage("------------ Help [Page " + parameters[0] + " of 4] ------------");
-			CommandManager.sendChatMessage("Use .aoba help [n] to get page n of help.");
-			
-			// Fetch the commands.
-			String[] commands = (String[])Aoba.getInstance().commandManager.getCommands().values().toArray();
-			for (int i = (Integer.parseInt(parameters[0]) - 1)
-					* indexesPerPage; i <= (Integer.parseInt(parameters[0]) * indexesPerPage
-							+ indexesPerPage); i++) {
-				try {
-					if (!(i > Aoba.getInstance().commandManager.getNumOfCommands())) {
-						CommandManager.sendChatMessage(" .aoba " + commands[i]);
-					}
-				}catch(Exception e) {
-					
-				}
-			}
+	public void runCommand(String[] parameters) {
+		if (parameters.length <= 0) {
+			ShowCommands(0);
+		} else if (StringUtils.isNumeric(parameters[0])) {
+			int page = Integer.parseInt(parameters[0]);
+			ShowCommands(page);
 		} else {
 			Module module = Aoba.getInstance().moduleManager.getModuleByName(parameters[0]);
 			if (module == null) {
@@ -63,6 +55,34 @@ public class CmdHelp extends Command {
 			}
 		}
 
+	}
+
+	private void ShowCommands(int page) {
+		CommandManager.sendChatMessage("------------ Help [Page " + page + " of 4] ------------");
+		CommandManager.sendChatMessage("Use .aoba help [n] to get page n of help.");
+
+		// Fetch the commands.
+		String[] commands = (String[]) Aoba.getInstance().commandManager.getCommands().values().toArray();
+		for (int i = (page - 1) * indexesPerPage; i <= (page * indexesPerPage + indexesPerPage); i++) {
+			if (!(i > Aoba.getInstance().commandManager.getNumOfCommands())) {
+				CommandManager.sendChatMessage(" .aoba " + commands[i]);
+			}
+		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		CommandManager cm = Aoba.getInstance().commandManager;
+		int numCmds = cm.getNumOfCommands();
+		String[] commands = new String[numCmds];
+
+		Set<String> cmds = Aoba.getInstance().commandManager.getCommands().keySet();
+		int i = 0;
+        for (String x : cmds)
+        	commands[i++] = x;
+		
+		return commands;
 	}
 
 }

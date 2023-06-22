@@ -24,11 +24,11 @@ import net.aoba.cmd.CommandManager;
 public class CmdSpam extends Command {
 
 	public CmdSpam() {
-		this.description = "Spams the chat with a certain message";
+		super("spam", "Spams the chat with a certain message.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		if (parameters.length > 1) {
 			String message = "";
 			for(int msg = 1; msg < parameters.length; msg++) {
@@ -40,5 +40,11 @@ public class CmdSpam extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Use format '.aoba spam [Times] [Message]'");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

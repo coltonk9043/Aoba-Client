@@ -26,11 +26,11 @@ import net.aoba.module.modules.movement.Noclip;
 public class CmdNoclip extends Command {
 
 	public CmdNoclip() {
-		this.description = "Allows the player to phase through blocks.";
+		super("noclip", "Allows the player to phase through blocks.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Noclip module = (Noclip) Aoba.getInstance().moduleManager.noclip;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -63,6 +63,12 @@ public class CmdNoclip extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba noclip [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

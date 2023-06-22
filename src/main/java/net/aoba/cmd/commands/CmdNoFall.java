@@ -26,11 +26,11 @@ import net.aoba.module.modules.movement.NoFall;
 public class CmdNoFall extends Command {
 
 	public CmdNoFall() {
-		this.description = "Disables fall damage for the player";
+		super("nofall", "Disables fall damage for the player");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		NoFall module = (NoFall) Aoba.getInstance().moduleManager.nofall;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,6 +53,12 @@ public class CmdNoFall extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba nofall [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

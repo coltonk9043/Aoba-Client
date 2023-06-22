@@ -26,11 +26,11 @@ import net.aoba.module.modules.movement.Freecam;
 public class CmdFreecam extends Command {
 
 	public CmdFreecam() {
-		this.description = "Disables fall damage for the player";
+		super("freecam", "Disables fall damage for the player");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Freecam module = (Freecam) Aoba.getInstance().moduleManager.freecam;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,6 +53,12 @@ public class CmdFreecam extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba freecam [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

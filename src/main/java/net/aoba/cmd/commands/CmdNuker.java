@@ -26,11 +26,11 @@ import net.aoba.module.modules.world.Nuker;
 public class CmdNuker extends Command {
 
 	public CmdNuker() {
-		this.description = "Destroys blocks within a certain distance";
+		super("nuker", "Destroys blocks within a certain distance of the player.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Nuker module = (Nuker) Aoba.getInstance().moduleManager.nuker;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -68,5 +68,11 @@ public class CmdNuker extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba nuker [radius, toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

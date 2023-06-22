@@ -26,11 +26,11 @@ import net.aoba.module.modules.movement.Sprint;
 public class CmdSprint extends Command {
 
 	public CmdSprint() {
-		this.description = "Forces the player to constantly sprint";
+		super("sprint", "Forces the player to constantly sprint.");
 	}
 
 	@Override
-	public void command(String[] parameters) {
+	public void runCommand(String[] parameters) {
 		Sprint module = (Sprint) Aoba.getInstance().moduleManager.sprint;
 		if (parameters.length == 2) {
 			switch (parameters[0]) {
@@ -53,5 +53,11 @@ public class CmdSprint extends Command {
 		}else {
 			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba sprint [toggle] [value]");
 		}
+	}
+
+	@Override
+	public String[] getAutocorrect(String previousParameter) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
