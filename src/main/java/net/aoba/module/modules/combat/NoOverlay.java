@@ -33,7 +33,7 @@ public class NoOverlay extends Module {
 		this.setName("NoOverlay");
 		this.setBind(new KeyBinding("key.nooverlay", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
-		this.setDescription("Makes all attacks into critical strikes.");
+		this.setDescription("Disables all overlays and potion effects.");
 	}
 
 	@Override

@@ -43,7 +43,8 @@ public class HudManager {
 	public InfoTab infoTab;
 	public OptionsTab optionsTab;
 	public RadarTab radarTab;
-
+	public AuthCrackerTab authCrackerTab;
+	
 	public SliderSetting hue = new SliderSetting("Hue", "color_hue", 4, 0, 360, 1);
 	public SliderSetting effectSpeed = new SliderSetting("Effect Spd", "color_speed", 4, 1, 20, 0.1);
 	public BooleanSetting rainbow = new BooleanSetting("Rainbow", "rainbow_mode");
@@ -63,9 +64,10 @@ public class HudManager {
 		rainbowColor = new RainbowColor();
 		rainbow.setValue(Settings.getSettingBoolean("rainbowUI"));
 		
-		infoTab = new InfoTab("InfoTab", 100, 200);
-		optionsTab = new OptionsTab("Options", 300, 250, hue, rainbow, ah, effectSpeed);
-		radarTab = new RadarTab("Radar", 500, 250);
+		infoTab = new InfoTab("InfoTab", 100, 500);
+		optionsTab = new OptionsTab("Options", 350, 500, hue, rainbow, ah, effectSpeed);
+		radarTab = new RadarTab("Radar", 550, 500);
+		authCrackerTab = new AuthCrackerTab("Auth Cracker", 750, 500);
 		
 		int xOffset = 320;
 		for (Category category : Module.Category.values()) {
@@ -82,6 +84,7 @@ public class HudManager {
 		tabs.put(infoTab.getTitle(), infoTab);
 		tabs.put(optionsTab.getTitle(), optionsTab);
 		tabs.put(radarTab.getTitle(), radarTab);
+		tabs.put(authCrackerTab.getTitle(), authCrackerTab);
 	}
 	
 	public Color getColor() {
@@ -124,7 +127,6 @@ public class HudManager {
 			this.color.setHSV(hue.getValueFloat(), 1f, 1f);
 			this.currentColor = color;
 		}
-		
 	}
 
 	public void draw(DrawContext drawContext, float tickDelta) {

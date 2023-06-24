@@ -4,7 +4,6 @@ import net.aoba.gui.Color;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class Tab {
 	protected int x;

@@ -43,6 +43,10 @@ public class Timer extends Module {
 		return this.multiplier.getValueFloat();
 	}
 	
+	public void setMultipler(float multiplier) {
+		this.multiplier.setValue(multiplier);
+	}
+	
 	@Override
 	public void onDisable() {
 	}

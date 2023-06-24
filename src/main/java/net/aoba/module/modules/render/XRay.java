@@ -91,6 +91,11 @@ public class XRay extends Module {
 		blocks.add(Blocks.COBBLESTONE);
 		blocks.add(Blocks.STONE_BRICKS);
 		blocks.add(Blocks.OAK_PLANKS);
+		blocks.add(Blocks.DEEPSLATE_EMERALD_ORE);
+		blocks.add(Blocks.DEEPSLATE_DIAMOND_ORE);
+		blocks.add(Blocks.DEEPSLATE_GOLD_ORE);
+		blocks.add(Blocks.DEEPSLATE_IRON_ORE);
+		blocks.add(Blocks.DEEPSLATE_COAL_ORE);
 	}
 
 

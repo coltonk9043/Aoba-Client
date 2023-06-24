@@ -25,7 +25,9 @@
 	"RenderTickCounterMixin",
 	"SimpleOptionMixin",
 	"WorldRendererMixin",
-	"MinecraftClientMixin"
+	"MinecraftClientMixin",
+	"BackgroundRendererMixin",
+	"LightmapTextureManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
