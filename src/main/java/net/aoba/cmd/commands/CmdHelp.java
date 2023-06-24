@@ -18,10 +18,7 @@
 
 package net.aoba.cmd.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
 import net.aoba.module.Module;
 import net.aoba.Aoba;
@@ -33,7 +30,7 @@ public class CmdHelp extends Command {
 	int indexesPerPage = 5;
 
 	public CmdHelp() {
-		super("help", "Shows the avaiable commands.");
+		super("help", "Shows the avaiable commands.", "[page, module]");
 	}
 
 	@Override

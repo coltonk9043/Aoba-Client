@@ -131,9 +131,8 @@ public class CommandManager {
 				// Runs the command.
 				command.runCommand(parameterList);
 			}
-		} catch (Exception e) {
-			System.out.println("Error occured whilst running command. Please try again.");
-			e.printStackTrace();
+		} catch (InvalidSyntaxException e) {
+			e.PrintToChat();
 		}
 	}
 

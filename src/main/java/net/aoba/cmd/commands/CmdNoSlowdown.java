@@ -21,44 +21,48 @@ package net.aoba.cmd.commands;
 import net.aoba.Aoba;
 import net.aoba.cmd.Command;
 import net.aoba.cmd.CommandManager;
+import net.aoba.cmd.InvalidSyntaxException;
 import net.aoba.module.modules.movement.NoSlowdown;
 
 public class CmdNoSlowdown extends Command {
 
 	public CmdNoSlowdown() {
-		super("noslowdown", "Disables webs from slowing the player down");
+		super("noslowdown", "Disables webs from slowing the player down", "[toggle] [value]");
 	}
 
 	@Override
-	public void runCommand(String[] parameters) {
+	public void runCommand(String[] parameters) throws InvalidSyntaxException {
+		if (parameters.length != 2)
+			throw new InvalidSyntaxException(this);
+
 		NoSlowdown module = (NoSlowdown) Aoba.getInstance().moduleManager.noslowdown;
-		if (parameters.length == 2) {
-			switch (parameters[0]) {
-			case "toggle":
-				String state = parameters[1].toLowerCase();
-				if (state.equals("on")) {
-					module.setState(true);
-					CommandManager.sendChatMessage("NoSlowDown toggled ON");
-				} else if (state.equals("off")) {
-					module.setState(false);
-					CommandManager.sendChatMessage("NoSlowDown toggled OFF");
-				} else {
-					CommandManager.sendChatMessage("Invalid value. [ON/OFF]");
-				}
-				break;
-			default:
-				CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba noslowdown [toggle] [value]");
-				break;
+
+		switch (parameters[0]) {
+		case "toggle":
+			String state = parameters[1].toLowerCase();
+			if (state.equals("on")) {
+				module.setState(true);
+				CommandManager.sendChatMessage("NoSlowDown toggled ON");
+			} else if (state.equals("off")) {
+				module.setState(false);
+				CommandManager.sendChatMessage("NoSlowDown toggled OFF");
+			} else {
+				CommandManager.sendChatMessage("Invalid value. [ON/OFF]");
 			}
-		}else {
-			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba noslowdown [toggle] [value]");
+			break;
+		default:
+			throw new InvalidSyntaxException(this);
 		}
 	}
 
 	@Override
 	public String[] getAutocorrect(String previousParameter) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (previousParameter) {
+		case "toggle":
+			return new String[] { "on", "off" };
+		default:
+			return new String[] { "toggle" };
+		}
 	}
 
 }

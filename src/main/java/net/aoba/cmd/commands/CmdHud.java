@@ -20,30 +20,32 @@ package net.aoba.cmd.commands;
 
 import net.aoba.cmd.Command;
 import net.aoba.cmd.CommandManager;
+import net.aoba.cmd.InvalidSyntaxException;
 
 public class CmdHud extends Command {
 
 	public CmdHud() {
-		super("hud", "Allows you to customize the hud using commands.");
+		super("hud", "Allows you to customize the hud using commands.", "[toggle] [value]");
 	}
 
 	@Override
-	public void runCommand(String[] parameters) {
-		if (parameters.length == 2) {
-			switch (parameters[0]) {
-			
-			default:
-				CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba hud");
-				break;
-			}
-		} else {
-			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba hud");
+	public void runCommand(String[] parameters) throws InvalidSyntaxException {
+		if (parameters.length != 2)
+			throw new InvalidSyntaxException(this);
+
+		switch (parameters[0]) {
+		default:
+			throw new InvalidSyntaxException(this);
 		}
 	}
 
 	@Override
 	public String[] getAutocorrect(String previousParameter) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (previousParameter) {
+		case "toggle":
+			return new String[] { "on", "off" };
+		default:
+			return new String[] { "toggle" };
+		}
 	}
 }

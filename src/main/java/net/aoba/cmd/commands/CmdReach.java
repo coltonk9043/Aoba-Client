@@ -21,53 +21,59 @@ package net.aoba.cmd.commands;
 import net.aoba.Aoba;
 import net.aoba.cmd.Command;
 import net.aoba.cmd.CommandManager;
+import net.aoba.cmd.InvalidSyntaxException;
 import net.aoba.module.modules.combat.Reach;
 
 public class CmdReach extends Command {
 
 	public CmdReach() {
-		super("reach", "Allows the player to reach further.");
+		super("reach", "Allows the player to reach further.", "[toggle/distance] [value]");
 	}
 
 	@Override
-	public void runCommand(String[] parameters) {
-		Reach module = (Reach) Aoba.getInstance().moduleManager.reach;
-		if (parameters.length == 2) {
-			switch (parameters[0]) {
-			case "distance":
-				try {
-					float distance = Float.parseFloat(parameters[1]);
-					module.setReachLength(distance);
-					CommandManager.sendChatMessage("Reach distance set to " + distance);
+	public void runCommand(String[] parameters) throws InvalidSyntaxException {
+		if (parameters.length != 2)
+			throw new InvalidSyntaxException(this);
 
-				} catch (Exception e) {
-					CommandManager.sendChatMessage("Invalid value.");
-				}
-				break;
-			case "toggle":
-				String state = parameters[1].toLowerCase();
-				if (state.equals("on")) {
-					module.setState(true);
-					CommandManager.sendChatMessage("Reach toggled ON");
-				} else if (state.equals("off")) {
-					module.setState(false);
-					CommandManager.sendChatMessage("Reach toggled OFF");
-				} else {
-					CommandManager.sendChatMessage("Invalid value. [ON/OFF]");
-				}
-				break;
-			default:
-				CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba reach [toggle/distance] [value]");
-				break;
+		Reach module = (Reach) Aoba.getInstance().moduleManager.reach;
+
+		switch (parameters[0]) {
+		case "distance":
+			try {
+				float distance = Float.parseFloat(parameters[1]);
+				module.setReachLength(distance);
+				CommandManager.sendChatMessage("Reach distance set to " + distance);
+
+			} catch (Exception e) {
+				CommandManager.sendChatMessage("Invalid value.");
 			}
-		} else {
-			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba reach [toggle/distance] [value]");
+			break;
+		case "toggle":
+			String state = parameters[1].toLowerCase();
+			if (state.equals("on")) {
+				module.setState(true);
+				CommandManager.sendChatMessage("Reach toggled ON");
+			} else if (state.equals("off")) {
+				module.setState(false);
+				CommandManager.sendChatMessage("Reach toggled OFF");
+			} else {
+				CommandManager.sendChatMessage("Invalid value. [ON/OFF]");
+			}
+			break;
+		default:
+			throw new InvalidSyntaxException(this);
 		}
 	}
 
 	@Override
 	public String[] getAutocorrect(String previousParameter) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (previousParameter) {
+		case "toggle":
+			return new String[] { "on", "off" };
+		case "distance:":
+			return new String[] { "1.0", "2.0", "3.0", "4.0", "5.0", "6.0", "7.0", "8.0" };
+		default:
+			return new String[] { "toggle" };
+		}
 	}
 }

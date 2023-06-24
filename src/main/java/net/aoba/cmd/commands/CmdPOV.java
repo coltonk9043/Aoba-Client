@@ -18,55 +18,73 @@
 
 package net.aoba.cmd.commands;
 
+import java.util.List;
+import java.util.Set;
+
 import net.aoba.Aoba;
 import net.aoba.cmd.Command;
 import net.aoba.cmd.CommandManager;
+import net.aoba.cmd.InvalidSyntaxException;
 import net.aoba.module.modules.render.POV;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 
 public class CmdPOV extends Command {
 
 	public CmdPOV() {
-		super("pov", "Allows the player to see through someone else's POV.");
+		super("pov", "Allows the player to see through someone else's POV.", "[set, toggle] [value]");
 	}
 
 	@Override
-	public void runCommand(String[] parameters) {
+	public void runCommand(String[] parameters) throws InvalidSyntaxException {
+		if (parameters.length != 2)
+			throw new InvalidSyntaxException(this);
+
 		POV module = (POV) Aoba.getInstance().moduleManager.pov;
-		if (parameters.length == 2) {
-			switch (parameters[0]) {
-			case "set":
-				try {
-					String player = parameters[1];
-					CommandManager.sendChatMessage("Setting POV Player Name to " + player);
-					module.setEntityPOV(player);
-				} catch (Exception e) {
-					CommandManager.sendChatMessage("Invalid value.");
-				}
-				break;
-			case "toggle":
-				String state = parameters[1].toLowerCase();
-				if (state.equals("on")) {
-					module.setState(true);
-					CommandManager.sendChatMessage("POV toggled ON");
-				} else if (state.equals("off")) {
-					module.setState(false);
-					CommandManager.sendChatMessage("POV toggled OFF");
-				} else {
-					CommandManager.sendChatMessage("Invalid value. [ON/OFF]");
-				}
-				break;
-			default:
-				CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba pov [set, toggle] [value]");
-				break;
+
+		switch (parameters[0]) {
+		case "set":
+			try {
+				String player = parameters[1];
+				CommandManager.sendChatMessage("Setting POV Player Name to " + player);
+				module.setEntityPOV(player);
+			} catch (Exception e) {
+				CommandManager.sendChatMessage("Invalid value.");
 			}
-		}else {
-			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba pov [set, toggle] [value]");
+			break;
+		case "toggle":
+			String state = parameters[1].toLowerCase();
+			if (state.equals("on")) {
+				module.setState(true);
+				CommandManager.sendChatMessage("POV toggled ON");
+			} else if (state.equals("off")) {
+				module.setState(false);
+				CommandManager.sendChatMessage("POV toggled OFF");
+			} else {
+				CommandManager.sendChatMessage("Invalid value. [ON/OFF]");
+			}
+			break;
+		default:
+			throw new InvalidSyntaxException(this);
 		}
 	}
 
 	@Override
 	public String[] getAutocorrect(String previousParameter) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (previousParameter) {
+		case "toggle":
+			return new String[] { "on", "off" };
+		case "set":
+			List<AbstractClientPlayerEntity> players = mc.world.getPlayers();
+			int numPlayers = players.size();
+			String[] suggestions = new String[numPlayers];
+
+			int i = 0;
+			for (AbstractClientPlayerEntity x : players)
+				suggestions[i++] = x.getName().getString();
+
+			return suggestions;
+		default:
+			return new String[] { "toggle" };
+		}
 	}
 }

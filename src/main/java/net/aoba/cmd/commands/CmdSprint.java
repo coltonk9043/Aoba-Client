@@ -21,43 +21,48 @@ package net.aoba.cmd.commands;
 import net.aoba.Aoba;
 import net.aoba.cmd.Command;
 import net.aoba.cmd.CommandManager;
+import net.aoba.cmd.InvalidSyntaxException;
 import net.aoba.module.modules.movement.Sprint;
 
 public class CmdSprint extends Command {
 
 	public CmdSprint() {
-		super("sprint", "Forces the player to constantly sprint.");
+		super("sprint", "Forces the player to constantly sprint.", "[toggle] [value]");
 	}
 
 	@Override
-	public void runCommand(String[] parameters) {
+	public void runCommand(String[] parameters) throws InvalidSyntaxException {
+		if (parameters.length != 2)
+			throw new InvalidSyntaxException(this);
+
 		Sprint module = (Sprint) Aoba.getInstance().moduleManager.sprint;
-		if (parameters.length == 2) {
-			switch (parameters[0]) {
-			case "toggle":
-				String state = parameters[1].toLowerCase();
-				if (state.equals("on")) {
-					module.setState(true);
-					CommandManager.sendChatMessage("Sprint toggled ON");
-				} else if (state.equals("off")) {
-					module.setState(false);
-					CommandManager.sendChatMessage("Sprint toggled OFF");
-				} else {
-					CommandManager.sendChatMessage("Invalid value. [ON/OFF]");
-				}
-				break;
-			default:
-				CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba sprint [toggle] [value]");
-				break;
+
+		switch (parameters[0]) {
+		case "toggle":
+			String state = parameters[1].toLowerCase();
+			if (state.equals("on")) {
+				module.setState(true);
+				CommandManager.sendChatMessage("Sprint toggled ON");
+			} else if (state.equals("off")) {
+				module.setState(false);
+				CommandManager.sendChatMessage("Sprint toggled OFF");
+			} else {
+				CommandManager.sendChatMessage("Invalid value. [ON/OFF]");
 			}
-		}else {
-			CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba sprint [toggle] [value]");
+			break;
+		default:
+			throw new InvalidSyntaxException(this);
 		}
+
 	}
 
 	@Override
 	public String[] getAutocorrect(String previousParameter) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (previousParameter) {
+		case "toggle":
+			return new String[] { "on", "off" };
+		default:
+			return new String[] { "toggle" };
+		}
 	}
 }
