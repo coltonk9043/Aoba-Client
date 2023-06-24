@@ -84,7 +84,7 @@ public class CmdPOV extends Command {
 
 			return suggestions;
 		default:
-			return new String[] { "toggle" };
+			return new String[] { "toggle", "set" };
 		}
 	}
 }
