@@ -23,19 +23,32 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
+import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.StewItem;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.Hand;
 
 public class AutoSoup extends Module {
 
+	private SliderSetting health;
+	
+	private int previousSlot = -1;
+	
 	public AutoSoup() {
 		this.setName("AutoSoup");
 		this.setBind(new KeyBinding("key.autosoup", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
-		this.setDescription("Automatically consumes soup when health is low (PvP only).");
+		this.setDescription("Automatically consumes soup when health is low. (KitPVP)");
+		
+		health = new SliderSetting("Health", "autosoup_health", 6f, 1f, 20f, 1f);
+		this.addSetting(health);
 	}
 
 	@Override
@@ -55,21 +68,66 @@ public class AutoSoup extends Module {
 
 	@Override
 	public void onUpdate() {
-		if(MC.player.getHealth() < 6) {
+		// If the players HP is below the given threshold.
+		if(MC.player.getHealth() < health.getValue()) {
+			
+			// Find the first item in the hotbar that is a Stew item.
 			int foodSlot= -1;
-			for(int i = 0; i< 9; i++) {
+			for(int i = 0; i< PlayerInventory.getHotbarSize(); i++) {
 				Item item = MC.player.getInventory().getStack(i).getItem();
 				
-				if(!(item instanceof StewItem)) {
-					continue;
+				if(item instanceof StewItem) {
+					foodSlot = i;
+					break;
 				}
-			    MC.player.getInventory().selectedSlot = foodSlot;
+			}
+			
+			// If a Stew item was found, switch to it and use it.
+			if(foodSlot >= 0) {
+				previousSlot = MC.player.getInventory().selectedSlot;
+				
+				MC.player.getInventory().selectedSlot = foodSlot;
 			    MC.options.useKey.setPressed(true);
-			    break;
+			    MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+			    
+			    // Return the player's selected slot back to the previous slot.
+				if(previousSlot != -1) {
+					MC.options.useKey.setPressed(false);
+					MC.player.getInventory().selectedSlot = previousSlot;
+					previousSlot = -1;
+				}
+			}else {
+			// Otherwise, sort the inventory to try and find some.
+				sortInventory();
 			}
 		}
 	}
 
+	public void sortInventory() {
+		for(int i = 0; i < PlayerInventory.getHotbarSize(); i++) {
+			ItemStack stack = MC.player.getInventory().getStack(i);
+			if(stack == null || stack.getItem() == Items.BOWL) {
+				System.out.println("New Slot: " + i);
+				int nextSoup = findSoup();
+				if(nextSoup >= 0) {
+					MC.interactionManager.clickSlot(0, nextSoup, 0, SlotActionType.PICKUP, MC.player);
+					MC.interactionManager.clickSlot(0, i, 0, SlotActionType.PICKUP, MC.player);
+				}
+			}
+		}
+	}
+	
+	public int findSoup() {
+		for(int i = 0; i < 36; i++)
+		{
+			ItemStack stack = MC.player.getInventory().getStack(i);
+			if(stack != null && stack.getItem() == Items.MUSHROOM_STEW) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	@Override
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
 		
