@@ -18,6 +18,8 @@
 
 package net.aoba.cmd.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import net.aoba.module.Module;
@@ -36,7 +38,7 @@ public class CmdHelp extends Command {
 	@Override
 	public void runCommand(String[] parameters) {
 		if (parameters.length <= 0) {
-			ShowCommands(0);
+			ShowCommands(1);
 		} else if (StringUtils.isNumeric(parameters[0])) {
 			int page = Integer.parseInt(parameters[0]);
 			ShowCommands(page);
@@ -55,14 +57,17 @@ public class CmdHelp extends Command {
 	}
 
 	private void ShowCommands(int page) {
-		CommandManager.sendChatMessage("------------ Help [Page " + page + " of 4] ------------");
+		CommandManager.sendChatMessage("------------ Help [Page " + page + " of 5] ------------");
 		CommandManager.sendChatMessage("Use .aoba help [n] to get page n of help.");
 
-		// Fetch the commands.
-		String[] commands = (String[]) Aoba.getInstance().commandManager.getCommands().values().toArray();
-		for (int i = (page - 1) * indexesPerPage; i <= (page * indexesPerPage + indexesPerPage); i++) {
-			if (!(i > Aoba.getInstance().commandManager.getNumOfCommands())) {
-				CommandManager.sendChatMessage(" .aoba " + commands[i]);
+		// Fetch the commands and dislays their syntax on the screen.
+		HashMap<String, Command> commands = Aoba.getInstance().commandManager.getCommands();
+		Set<String> keySet = commands.keySet();
+		ArrayList<String> listOfCommands = new ArrayList<String>(keySet);
+		 
+		for (int i = (page - 1) * indexesPerPage; i <= (page * indexesPerPage); i++) {
+			if (i >= 0 && i < Aoba.getInstance().commandManager.getNumOfCommands()) {
+				CommandManager.sendChatMessage(" .aoba " + listOfCommands.get(i));
 			}
 		}
 	}

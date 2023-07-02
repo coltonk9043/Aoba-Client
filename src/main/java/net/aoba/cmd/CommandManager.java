@@ -131,6 +131,8 @@ public class CommandManager {
 				// Runs the command.
 				command.runCommand(parameterList);
 			}
+		} catch(ArrayIndexOutOfBoundsException e) {
+			sendChatMessage("Invalid Command! Type .aoba help for a list of commands.");
 		} catch (InvalidSyntaxException e) {
 			e.PrintToChat();
 		}
