@@ -22,12 +22,14 @@
 package net.aoba.cmd;
 
 import java.lang.reflect.Field;
+import java.text.Format;
 import java.util.HashMap;
 
 import net.aoba.Aoba;
 import net.aoba.cmd.commands.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 public class CommandManager {
 	private HashMap<String, Command> commands = new HashMap<String, Command>();
@@ -144,6 +146,6 @@ public class CommandManager {
 	 */
 	public static void sendChatMessage(String message) {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		mc.inGameHud.getChatHud().addMessage(Text.of("§5[Aoba]§f " + message));
+		mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "Aoba" + Formatting.DARK_PURPLE +  "] " + Formatting.RESET + message));
 	}
 }
