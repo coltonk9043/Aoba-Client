@@ -120,7 +120,7 @@ public class CommandManager {
 
 			// If the command does not exist, throw an error.
 			if (command == null)
-				sendChatMessage("Invalid Command! Type .aoba help for a list of commands.");
+				sendChatMessage("Invalid Command! Type " + Formatting.LIGHT_PURPLE + ".aoba help" + Formatting.RESET + " for a list of commands.");
 			else {
 				// Otherwise, create a new parameter list.
 				String[] parameterList = new String[commandIn.length - 2];
@@ -134,7 +134,7 @@ public class CommandManager {
 				command.runCommand(parameterList);
 			}
 		} catch(ArrayIndexOutOfBoundsException e) {
-			sendChatMessage("Invalid Command! Type .aoba help for a list of commands.");
+			sendChatMessage("Invalid Command! Type " + Formatting.LIGHT_PURPLE + ".aoba help" + Formatting.RESET + " for a list of commands.");
 		} catch (InvalidSyntaxException e) {
 			e.PrintToChat();
 		}
