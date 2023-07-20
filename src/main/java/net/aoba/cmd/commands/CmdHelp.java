@@ -21,6 +21,8 @@ package net.aoba.cmd.commands;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+
+import net.minecraft.util.Formatting;
 import org.apache.commons.lang3.StringUtils;
 import net.aoba.module.Module;
 import net.aoba.Aoba;
@@ -47,18 +49,22 @@ public class CmdHelp extends Command {
 			if (module == null) {
 				CommandManager.sendChatMessage("Could not find Module '" + parameters[0] + "'.");
 			} else {
-				CommandManager.sendChatMessage("------------ " + module.getName() + "Help ------------");
-				CommandManager.sendChatMessage("Name: " + module.getName());
-				CommandManager.sendChatMessage("Description: " + module.getDescription());
-				CommandManager.sendChatMessage("Keybind: " + module.getBind().getTranslationKey());
+				String title = "------------ " + Formatting.LIGHT_PURPLE + module.getName() + " Help" + Formatting.RESET + " ------------";
+				String unformatted_title = "------------ " + module.getName() + " Help ------------";
+				CommandManager.sendChatMessage(title);
+				CommandManager.sendChatMessage("Name: " + Formatting.LIGHT_PURPLE + module.getName() + Formatting.RESET);
+				CommandManager.sendChatMessage("Description: " + Formatting.LIGHT_PURPLE + module.getDescription() + Formatting.RESET);
+				CommandManager.sendChatMessage("Keybind: " + Formatting.LIGHT_PURPLE + module.getBind().getTranslationKey() + Formatting.RESET);
+				CommandManager.sendChatMessage("-".repeat(unformatted_title.length() - 2)); // mc font characters are not the same width but eh..
 			}
 		}
 
 	}
 
 	private void ShowCommands(int page) {
-		CommandManager.sendChatMessage("------------ Help [Page " + page + " of 5] ------------");
-		CommandManager.sendChatMessage("Use .aoba help [n] to get page n of help.");
+		String title = "------------ Help [Page " + page + " of 5] ------------";  // TODO: remove hardcoded page length
+		CommandManager.sendChatMessage(title);
+		CommandManager.sendChatMessage("Use " + Formatting.LIGHT_PURPLE + ".aoba help [n]" + Formatting.RESET + " to get page n of help.");
 
 		// Fetch the commands and dislays their syntax on the screen.
 		HashMap<String, Command> commands = Aoba.getInstance().commandManager.getCommands();
@@ -70,6 +76,7 @@ public class CmdHelp extends Command {
 				CommandManager.sendChatMessage(" .aoba " + listOfCommands.get(i));
 			}
 		}
+		CommandManager.sendChatMessage("-".repeat(title.length() - 2)); // mc font characters are not the same width but eh..
 	}
 
 	@Override

@@ -21,6 +21,8 @@
  */
 package net.aoba.cmd;
 
+import net.minecraft.util.Formatting;
+
 public class InvalidSyntaxException extends CommandException {
 	private static final long serialVersionUID = 1L;
 	
@@ -30,6 +32,6 @@ public class InvalidSyntaxException extends CommandException {
 
 	@Override
 	public void PrintToChat() {
-		CommandManager.sendChatMessage("Invalid Usage! Usage: .aoba " + cmd.getName() + " " + cmd.getSyntax());
+		CommandManager.sendChatMessage("Invalid Usage! Usage: " + Formatting.LIGHT_PURPLE + ".aoba " + cmd.getName() + " " + cmd.getSyntax() + Formatting.RESET);
 	}
 }
