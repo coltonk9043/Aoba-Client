@@ -115,8 +115,7 @@ public class ModuleComponent extends Component {
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
 		MatrixStack matrixStack = drawContext.getMatrices();
-		renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset, parentWidth - 4, this.getHeight() - 2,
-				backgroundColor, 0.2f);
+		//renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset, parentWidth - 4, this.getHeight() - 2, backgroundColor, 0.2f);
 
 		if (this.popped) {
 			int i = offset + 30;

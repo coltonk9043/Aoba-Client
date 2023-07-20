@@ -65,11 +65,11 @@ public class HudManager {
 		rainbow.setValue(Settings.getSettingBoolean("rainbowUI"));
 		
 		infoTab = new InfoTab("InfoTab", 100, 500);
-		optionsTab = new OptionsTab("Options", 350, 500, hue, rainbow, ah, effectSpeed);
-		radarTab = new RadarTab("Radar", 550, 500);
-		authCrackerTab = new AuthCrackerTab("Auth Cracker", 750, 500);
+		optionsTab = new OptionsTab("Options", 370, 500, hue, rainbow, ah, effectSpeed);
+		radarTab = new RadarTab("Radar", 590, 500);
+		authCrackerTab = new AuthCrackerTab("Auth Cracker", 810, 500);
 		
-		int xOffset = 320;
+		int xOffset = 335;
 		for (Category category : Module.Category.values()) {
 			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 1);
 			for (Module module : Aoba.getInstance().moduleManager.modules) {
@@ -79,7 +79,7 @@ public class HudManager {
 				}
 			}
 			tabs.put(category.name(), tab);
-			xOffset += tab.getWidth();
+			xOffset += tab.getWidth() + 10;
 		}
 		tabs.put(infoTab.getTitle(), infoTab);
 		tabs.put(optionsTab.getTitle(), optionsTab);

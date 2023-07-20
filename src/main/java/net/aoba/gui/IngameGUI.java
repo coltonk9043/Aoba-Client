@@ -119,7 +119,9 @@ public class IngameGUI extends Tab {
 		renderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, color);
 
 		// Draws the table including all of the categories.
-		renderUtils.drawOutlinedBox(matrixStack, x, y, width, height * this.categories.length, new Color(30,30,30), 0.4f);
+		renderUtils.drawRoundedBox(matrixStack, x, y, width, height * this.categories.length, 6f, new Color(30,30,30), 0.4f);
+		renderUtils.drawRoundedOutline(matrixStack, x, y, width, height * this.categories.length, 6f, new Color(0,0,0), 0.8f);
+		
 		// For every category, draw a cell for it.
 		for (int i = 0; i < this.categories.length; i++) {
 			renderUtils.drawString(drawContext, ">>", x + width - 24, y + (height * i) + 8, color);
@@ -134,7 +136,9 @@ public class IngameGUI extends Tab {
 		// If any particular category menu is open.
 		if (isCategoryMenuOpen) {
 			// Draw the table underneath
-			renderUtils.drawOutlinedBox(matrixStack, x + width, y + (height * this.index), 165, height * modules.size() , new Color(30,30,30), 0.4f);
+			renderUtils.drawRoundedBox(matrixStack, x + width, y + (height * this.index), 165, height * modules.size(), 6f, new Color(30,30,30), 0.4f);
+			renderUtils.drawRoundedOutline(matrixStack, x + width, y + (height * this.index), 165, height * modules.size(), 6f, new Color(0,0,0), 0.8f);
+			
 			// For every mod, draw a cell for it.
 			for (int i = 0; i < modules.size(); i++) {
 				if (this.indexMods == i) {

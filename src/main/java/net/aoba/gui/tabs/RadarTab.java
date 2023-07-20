@@ -27,10 +27,11 @@ public class RadarTab extends ClickGuiTab {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		if(drawBorder) {
 			// Draws background depending on components width and height
-		    renderUtils.drawOutlinedBox(matrixStack, x, y, width, 29, new Color(30,30,30), 0.4f);
+			renderUtils.drawRoundedBox(matrixStack, x, y, width, height + 30, 12, new Color(30,30,30), 0.4f);
+			renderUtils.drawRoundedOutline(matrixStack, x, y, width, height + 30, 12, new Color(0,0,0), 0.8f);
 			renderUtils.drawString(drawContext, this.title, x + 8, y + 8, Aoba.getInstance().hudManager.getColor());
-			renderUtils.drawOutlinedBox(matrixStack, x, y + 29, width, height, new Color(30,30,30), 0.4f);
-		
+			renderUtils.drawLine(matrixStack, x, y + 30, x + width, y + 30, new Color(0,0,0), 0.4f);
+			
 			
 			// Draw the 'Radar'
 			renderUtils.drawBox(matrixStack, x , y + 30 + (height / 2), width - 1, 1, new Color(128,128,128), 1.0f);
@@ -88,9 +89,11 @@ public class RadarTab extends ClickGuiTab {
 			}
 			
 			if (this.isPinned) {
-				renderUtils.drawOutlinedBox(matrixStack, x + width - 24, y + 4, 20, 20, new Color(154,0,0), 0.8f);
+				renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(154,0,0), 0.8f);
+				renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.8f);
 			} else {
-				renderUtils.drawOutlinedBox(matrixStack, x + width - 24, y + 4, 20, 20, new Color(128,128,128), 0.2f);
+				renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(128,128,128), 0.2f);
+				renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.2f);
 			}
 		}
 	}

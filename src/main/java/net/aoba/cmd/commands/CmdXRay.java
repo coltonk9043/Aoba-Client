@@ -69,9 +69,10 @@ public class CmdXRay extends Command {
 				try {
 					tempBlock1 = Registries.BLOCK.get(new Identifier(block1));
 				} catch (InvalidIdentifierException e) {
-					tempBlock1 = Blocks.AIR;
+					CommandManager.sendChatMessage("Block " +  parameters[2] + " could not be found.");
+					return;
 				}
-
+				
 				XRay.blocks.add(tempBlock1);
 				mc.worldRenderer.reload();
 				break;
@@ -81,7 +82,8 @@ public class CmdXRay extends Command {
 				try {
 					tempBlock2 = Registries.BLOCK.get(new Identifier(block2));
 				} catch (InvalidIdentifierException e) {
-					tempBlock2 = Blocks.AIR;
+					CommandManager.sendChatMessage("Block " +  parameters[2] + " could not be found.");
+					return;
 				}
 
 				XRay.blocks.remove(tempBlock2);

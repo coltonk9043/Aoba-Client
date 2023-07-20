@@ -39,34 +39,15 @@ import net.minecraft.client.render.VertexFormats;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 public class RenderUtils {
-	public void drawBox(MatrixStack matrixStack, int x, int y, int width, int height, float r, float g, float b,
-			float alpha) {
-		
-		RenderSystem.setShaderColor(r, g, b, alpha);
-		
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		
-		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
-		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
-		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
-
-		bufferBuilder.vertex(matrix, x, y, 0).next();
-		bufferBuilder.vertex(matrix, x + width, y, 0).next();
-		bufferBuilder.vertex(matrix, x + width, y + height, 0).next();
-		bufferBuilder.vertex(matrix, x, y + height, 0).next();
-
-		tessellator.draw();
-		
-		RenderSystem.setShaderColor(1, 1, 1, 1);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDisable(GL11.GL_BLEND);
+	final float ROUND_QUALITY = 10;
+	
+	public void drawBox(MatrixStack matrixStack, float x, float y, float width, float height, float r, float g, float b, float alpha) {
+		Color c = new Color(r,g, b);
+		drawBox(matrixStack, x, y,width, height, c, alpha);
 	}
-
-	public void drawBox(MatrixStack matrixStack, int x, int y, int width, int height, Color color, float alpha) {
+	
+	public void drawBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color, float alpha) {
 
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
 		
@@ -91,7 +72,131 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	public void drawOutlinedBox(MatrixStack matrixStack, int x, int y, int width, int height, Color color,
+	public void drawRoundedBox(MatrixStack matrixStack, float x, float y, float width, float height, float radius, int r, int g, int b, float alpha) {
+		Color c= new Color(r,g,b);
+		drawRoundedBox(matrixStack, x, y, width, height, radius, c, alpha);
+	}
+	
+	public void drawRoundedBox(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color, float alpha) {
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+		
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_LINE_SMOOTH);
+		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+		Tessellator tessellator = RenderSystem.renderThreadTesselator();
+		BufferBuilder bufferBuilder = tessellator.getBuffer();
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		
+		bufferBuilder.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
+		
+		buildFilledArc(bufferBuilder, matrix, x + radius, y + radius, radius, 180.0f, 90.0f);
+		buildFilledArc(bufferBuilder, matrix, x + width - radius, y + radius, radius, 270.0f, 90.0f);
+		buildFilledArc(bufferBuilder, matrix, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
+		buildFilledArc(bufferBuilder, matrix, x + radius, y + height - radius, radius, 90.0f, 90.0f);
+		
+		// |---
+		bufferBuilder.vertex(matrix, x + radius, y, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius, y, 0).next();
+		bufferBuilder.vertex(matrix, x + radius, y + radius, 0).next();
+		
+		// ---|
+		bufferBuilder.vertex(matrix, x + radius, y + radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius, y, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius, y + radius, 0).next();
+		
+		// _||
+		bufferBuilder.vertex(matrix, x + width - radius, y + radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width, y + radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius, y + height - radius, 0).next();
+		
+		// |||
+		bufferBuilder.vertex(matrix, x + width, y + radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius, y + height - radius, 0).next();
+		
+		/// __|
+		bufferBuilder.vertex(matrix, x + width - radius, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius, y + height, 0).next();
+		bufferBuilder.vertex(matrix, x + radius, y + height - radius, 0).next();
+		
+		// |__
+		bufferBuilder.vertex(matrix, x + radius, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix, x + radius, y + height, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius, y + height, 0).next();
+		
+		// |||
+		bufferBuilder.vertex(matrix, x + radius, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix, x, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix, x , y + radius, 0).next();
+		
+		/// ||-
+		bufferBuilder.vertex(matrix, x , y + radius, 0).next();
+		bufferBuilder.vertex(matrix, x + radius , y + radius, 0).next();
+		bufferBuilder.vertex(matrix, x + radius, y + height - radius, 0).next();
+
+		/// |-/
+		bufferBuilder.vertex(matrix, x + radius , y + radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius , y + radius, 0).next();
+		bufferBuilder.vertex(matrix, x + radius , y + height - radius, 0).next();
+		
+		/// /_|
+		bufferBuilder.vertex(matrix, x + radius , y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius , y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius , y + radius, 0).next();
+		
+		tessellator.draw();
+		
+		RenderSystem.setShaderColor(1, 1, 1, 1);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
+	}
+	
+	public void drawRoundedOutline(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color, float alpha) {
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+		
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+		Tessellator tessellator = RenderSystem.renderThreadTesselator();
+		BufferBuilder bufferBuilder = tessellator.getBuffer();
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		
+		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+		
+		// Top Left Arc and Top
+		buildArc(bufferBuilder, matrix, x + radius, y + radius, radius, 180.0f, 90.0f);
+		bufferBuilder.vertex(matrix, x + radius, y, 0).next();
+		bufferBuilder.vertex(matrix, x + width - radius, y, 0).next();
+		
+		// Top Right Arc and Right
+		buildArc(bufferBuilder, matrix, x + width - radius, y + radius, radius, 270.0f, 90.0f);
+		bufferBuilder.vertex(matrix, x + width, y + radius, 0).next();
+		bufferBuilder.vertex(matrix, x + width, y + height - radius, 0).next();
+		
+		// Bottom Right
+		buildArc(bufferBuilder, matrix, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
+		bufferBuilder.vertex(matrix, x + width - radius, y + height, 0).next();
+		bufferBuilder.vertex(matrix, x + radius, y + height, 0).next();
+		
+		// Bottom Left
+		buildArc(bufferBuilder, matrix, x + radius, y + height - radius, radius, 90.0f, 90.0f);
+		bufferBuilder.vertex(matrix, x, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix, x, y + radius, 0).next();
+		
+		tessellator.draw();
+		
+		RenderSystem.setShaderColor(1, 1, 1, 1);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+	}
+
+	public void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, int r, int g, int b, float alpha) {
+		Color c = new Color(r, g, b);
+		drawOutlinedBox(matrixStack, x, y, width, height, c, alpha);
+	}
+	
+	public void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color,
 			float alpha) {
 
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
@@ -130,7 +235,30 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	public void drawOutline(MatrixStack matrixStack, int x, int y, int width, int height) {
+	public void drawLine(MatrixStack matrixStack, float x1, float y1, float x2, float y2, Color color, float alpha) {
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+		
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		
+		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+		Tessellator tessellator = RenderSystem.renderThreadTesselator();
+		BufferBuilder bufferBuilder = tessellator.getBuffer();
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
+
+		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
+
+		bufferBuilder.vertex(matrix, x1, y1, 0).next();
+		bufferBuilder.vertex(matrix, x2, y2, 0).next();
+
+		tessellator.draw();
+		RenderSystem.setShaderColor(1, 1, 1, 1);
+		
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
+	}
+	
+	public void drawOutline(MatrixStack matrixStack, float x, float y, float width, float height) {
 
 		RenderSystem.setShaderColor(0, 0, 0, 1);
 		
@@ -320,12 +448,41 @@ public class RenderUtils {
 		matrixStack.pop();
 	}
 
+	private void buildFilledArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius, float startAngle, float sweepAngle) {
+		double roundedInterval = (sweepAngle / ROUND_QUALITY);
+		
+				for(int i = 0; i < ROUND_QUALITY; i++) {
+					double angle = Math.toRadians(startAngle + (i * roundedInterval));
+					double angle2 = Math.toRadians(startAngle + ((i + 1) * roundedInterval));
+					float radiusX1 = (float)(Math.cos(angle) * radius);
+					float radiusY1 = (float)Math.sin(angle) * radius;
+					float radiusX2 = (float)Math.cos(angle2) * radius;
+					float radiusY2 = (float)Math.sin(angle2) * radius;
+					
+					bufferBuilder.vertex(matrix, x, y, 0).next();
+					bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).next();
+					bufferBuilder.vertex(matrix, x + radiusX2, y + radiusY2, 0).next();
+				}
+	}
+	
+	private void buildArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius, float startAngle, float sweepAngle) {
+		double roundedInterval = (sweepAngle / ROUND_QUALITY);
+		
+		for(int i = 0; i < ROUND_QUALITY; i++) {
+			double angle = Math.toRadians(startAngle + (i * roundedInterval));
+			float radiusX1 = (float) (Math.cos(angle) * radius);
+			float radiusY1 = (float)Math.sin(angle) * radius;
+
+			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).next();
+		}
+}
+	
 	public static void applyRenderOffset(MatrixStack matrixStack) {
 		Vec3d camPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getPos();
 		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 	}
 
-	public static void applyRegionalRenderOffset(MatrixStack matrixStack) {
+	public void applyRegionalRenderOffset(MatrixStack matrixStack) {
 		Vec3d camPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getPos();
 		BlockPos camBlockPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getBlockPos();
 

@@ -18,8 +18,8 @@ public abstract class Tab {
 	public abstract void draw(DrawContext drawContext, float partialTicks, Color color);
 	
 	public void moveWindow(int x, int y) {
-		this.x = (int) (this.x - x);
-		this.y = (int) (this.y - y);
+		this.x = (int) Math.max(width, (this.x - x));
+		this.y = (int) Math.max(width,(this.y - y));
 	}
 	
 	public int getX() {
