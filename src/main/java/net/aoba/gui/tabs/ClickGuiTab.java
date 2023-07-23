@@ -36,9 +36,6 @@ import net.minecraft.client.util.math.MatrixStack;
 public class ClickGuiTab extends AbstractHud{
 	protected String title;
 	
-	protected boolean pinnable = false;
-	protected boolean isPinned = false;
-	protected boolean pinWasClicked = false;
 	protected boolean drawBorder = true;
 	protected boolean inheritHeightFromChildren = true;
 	
@@ -52,34 +49,10 @@ public class ClickGuiTab extends AbstractHud{
 		this.width = 180;
 		this.mc = MinecraftClient.getInstance();
 	}
-	
-	public ClickGuiTab(String title, int x, int y, boolean pinnable) {
-		super(x, y, 180, 0);
-		this.x = x;
-		this.y = y;
-		this.width = 180;
-		this.mc = MinecraftClient.getInstance();
-		this.pinnable = pinnable;
-	}
+
 
 	public final String getTitle() {
 		return title;
-	}
-
-	public final boolean isPinned() {
-		return this.isPinned;
-	}
-
-	public final void setPinned(boolean pin) {
-		this.isPinned = pin;
-	}
-
-	public final boolean getPinClicked() {
-		return this.pinWasClicked;
-	}
-
-	public final void setPinClicked(boolean pin) {
-		this.pinWasClicked = pin;
 	}
 
 	public final void setTitle(String title) {
@@ -119,10 +92,6 @@ public class ClickGuiTab extends AbstractHud{
 		this.height = height;
 	}
 
-	public final boolean getPinned() {
-		return this.isPinned;
-	}
-
 	public final boolean isGrabbed() {
 		return (HudManager.currentGrabbed == this);
 	}
@@ -146,27 +115,7 @@ public class ClickGuiTab extends AbstractHud{
 				if (mouseX >= (x) && mouseX <= (x + width)) {
 					if (mouseY >= (y) && mouseY <= (y + 28)) {
 						if (mouseClicked) {
-							boolean isInsidePinButton = false;
-							if(this.pinnable) {
-								if (mouseX >= (x + width - 24) && mouseX <= (x + width - 2)) {
-									if (mouseY >= (y + 4) && mouseY <= (y + 20)) {
-										isInsidePinButton = true;
-									}
-								}
-							}
-							if (isInsidePinButton) {
-								if (!this.pinWasClicked) {
-									this.isPinned = !this.isPinned;
-									this.pinWasClicked = true;
-									return;
-								}
-							} else {
-								HudManager.currentGrabbed = this;
-							}
-						} else {
-							if (this.pinWasClicked) {
-								this.pinWasClicked = false;
-							}
+							HudManager.currentGrabbed = this;
 						}
 					}
 				}
@@ -194,16 +143,6 @@ public class ClickGuiTab extends AbstractHud{
 			renderUtils.drawRoundedOutline(matrixStack, x, y, width, height + 30, 6, new Color(0,0,0), 0.8f);
 			renderUtils.drawString(drawContext, this.title, x + 8, y + 8, Aoba.getInstance().hudManager.getColor());
 			renderUtils.drawLine(matrixStack, x, y + 30, x + width, y + 30, new Color(0,0,0), 0.4f);
-			
-			if(this.pinnable) {
-				if (this.isPinned) {
-					renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(154,0,0), 0.8f);
-					renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.8f);
-				} else {
-					renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(128,128,128), 0.2f);
-					renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.2f);
-				}
-			}
 		}
 		int i = 30;
 		for (Component child : children) {
