@@ -84,19 +84,19 @@ public class HudManager {
 		// TODO: Dumb workaround but I would like to be able to add HUDs through the pane found on the NavBar
 		this.activeHuds.add(moduleSelector);
 		this.activeHuds.add(armorHud);
-		this.activeHuds.add(infoHud);
+		this.activeHuds.add(radarHud);
 		this.activeHuds.add(infoHud);
 		
 		hudPane.AddHud(moduleSelector);
 		hudPane.AddHud(armorHud);
-		hudPane.AddHud(infoHud);
+		hudPane.AddHud(radarHud);
 		hudPane.AddHud(infoHud);
 		
 		settingsPane.AddHud(new OptionsTab("Options", 370, 500, hue, rainbow, ah, effectSpeed));
 		
 		int xOffset = 335;
 		for (Category category : Module.Category.values()) {
-			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75, true);
+			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75);
 			for (Module module : Aoba.getInstance().moduleManager.modules) {
 				if (module.getCategory() == category) {
 					ModuleComponent button = new ModuleComponent(module.getName(), tab, module);
