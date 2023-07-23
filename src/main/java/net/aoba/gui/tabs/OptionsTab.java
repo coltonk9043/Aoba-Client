@@ -15,7 +15,7 @@ public class OptionsTab extends ClickGuiTab {
 	private CheckboxComponent armorHud;
 	
 	public OptionsTab(String title, int x, int y, SliderSetting hue, BooleanSetting rainbow, BooleanSetting ah, SliderSetting es) {
-		super(title, x, y);
+		super(title, x, y, false);
 		this.setWidth(180);
 		this.addChild(uiSettingsString);
 		this.hueSlider = new SliderComponent( this, hue);

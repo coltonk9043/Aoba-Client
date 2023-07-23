@@ -25,7 +25,7 @@ public class AuthCrackerTab extends ClickGuiTab {
 	Runnable endRunnable;
 	
 	public AuthCrackerTab(String title, int x, int y){
-		super(title, x, y);
+		super(title, x, y, false);
 		
 		this.information = new StringComponent("This panel can be used to break Auth passwords used in cracked servers.", this);
 		this.addChild(information);
