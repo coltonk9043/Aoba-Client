@@ -5,11 +5,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import com.mojang.authlib.GameProfile;
 import net.aoba.Aoba;
-import net.aoba.interfaces.IClientPlayerEntity;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;

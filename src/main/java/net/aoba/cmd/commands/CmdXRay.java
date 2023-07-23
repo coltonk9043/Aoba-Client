@@ -18,16 +18,12 @@
 
 package net.aoba.cmd.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.aoba.Aoba;
 import net.aoba.cmd.Command;
 import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.InvalidSyntaxException;
 import net.aoba.module.modules.render.XRay;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;

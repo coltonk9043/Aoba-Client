@@ -30,7 +30,6 @@ import net.aoba.module.ModuleManager;
 import net.aoba.settings.Settings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class AobaClient {
 	public static final String NAME = "Aoba";

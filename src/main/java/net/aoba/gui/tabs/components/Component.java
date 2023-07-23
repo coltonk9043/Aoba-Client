@@ -5,7 +5,6 @@ import net.aoba.gui.Color;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class Component {
 	protected RenderUtils renderUtils;

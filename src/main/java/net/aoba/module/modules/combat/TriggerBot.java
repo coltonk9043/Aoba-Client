@@ -1,6 +1,5 @@
 package net.aoba.module.modules.combat;
 
-import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.aoba.settings.BooleanSetting;

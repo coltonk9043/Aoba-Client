@@ -2,12 +2,10 @@ package net.aoba.mixin;
 
 import net.aoba.Aoba;
 import net.aoba.interfaces.IMinecraftClient;
-import net.aoba.interfaces.IWorld;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.Session;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
-
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

@@ -22,10 +22,7 @@
 package net.aoba.cmd;
 
 import java.lang.reflect.Field;
-import java.text.Format;
 import java.util.HashMap;
-
-import net.aoba.Aoba;
 import net.aoba.cmd.commands.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;

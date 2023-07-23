@@ -3,7 +3,6 @@ package net.aoba.gui.tabs.components;
 import net.aoba.gui.Color;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class StringComponent extends Component {
 

@@ -19,7 +19,6 @@
 package net.aoba.cmd.commands;
 
 import net.aoba.cmd.Command;
-import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.InvalidSyntaxException;
 
 public class CmdHud extends Command {
