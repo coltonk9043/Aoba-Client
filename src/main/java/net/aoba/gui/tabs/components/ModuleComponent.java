@@ -1,4 +1,4 @@
-package net.aoba.gui.elements;
+package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +51,8 @@ public class ModuleComponent extends Component {
 		
 		RecalculateExpandedHeight();
 	}
+	
+	
 
 	public void update(int offset, double mouseX, double mouseY, boolean mouseClicked) {
 		int parentX = parent.getX();

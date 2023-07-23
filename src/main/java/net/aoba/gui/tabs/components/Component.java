@@ -1,4 +1,4 @@
-package net.aoba.gui.elements;
+package net.aoba.gui.tabs.components;
 
 import net.aoba.Aoba;
 import net.aoba.gui.Color;

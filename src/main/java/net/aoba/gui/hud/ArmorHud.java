@@ -20,49 +20,32 @@
  * A class to represent a Tab containing Armor Information
  */
 
-package net.aoba.gui;
+package net.aoba.gui.hud;
 
-import net.aoba.Aoba;
-import net.aoba.gui.tabs.Tab;
+import net.aoba.gui.Color;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.collection.DefaultedList;
 
-public class ArmorHUD extends Tab{
+public class ArmorHud extends AbstractHud{
 
 	private ItemRenderer itemRenderer; 
 	
-	public ArmorHUD() {
+	public ArmorHud(int x, int y, int width, int height) {
+		super(x,y,width,height);
 		itemRenderer = mc.getItemRenderer();
 		this.x = 300;
 		this.y = 300;
 		this.width = 64;
 		this.height = 256;
 	}
-	
-	@Override
-	public void update(double mouseX, double mouseY, boolean mouseClicked) {
-		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			if (HudManager.currentGrabbed == null) {
-				if (mouseX >= (x) && mouseX <= (x + width)) {
-					if (mouseY >= (y) && mouseY <= (y + height)) {
-						if (mouseClicked) {
-							HudManager.currentGrabbed = this;
-						}
-					}
-				}
-			}
-		}
-	}
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
 		int yOff = 16;
-		System.out.println(armors.get(0).getName().getString());
 		for(ItemStack armor : armors) {
 			if(armor.getItem() == Items.AIR) continue;
 			drawContext.drawItem(armor, this.x, this.y + this.height - yOff);

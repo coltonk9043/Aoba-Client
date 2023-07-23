@@ -58,12 +58,8 @@ public class Settings {
 			printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(aobaOptions), StandardCharsets.UTF_8));
 
 			// Write HUD information and 'other' settings.
-			printwriter.println("x:" + aoba.hudManager.hud.getX());
-			printwriter.println("y:" + aoba.hudManager.hud.getY());
 			printwriter.println("color_hue:" + aoba.hudManager.getOriginalColor().hue);
 			printwriter.println("rainbowUI:" + aoba.hudManager.rainbow.getValue());
-			printwriter.println("armor_x:" + aoba.hudManager.armorHud.getX());
-			printwriter.println("armor_y:" + aoba.hudManager.armorHud.getY());
 			
 			// Write Module Settings
 			for (Module module : aoba.moduleManager.modules) {

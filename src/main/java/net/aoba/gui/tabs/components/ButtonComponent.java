@@ -1,4 +1,4 @@
-package net.aoba.gui.elements;
+package net.aoba.gui.tabs.components;
 
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;

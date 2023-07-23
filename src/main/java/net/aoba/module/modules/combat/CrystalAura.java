@@ -80,7 +80,6 @@ public class CrystalAura extends Module {
 			if (block != Blocks.OBSIDIAN && block != Blocks.BEDROCK)
 				continue;
 
-			System.out.println(player.getName().getString() + ": " + bs.getBlock().getName().getString());
 			for (int slot = 0; slot < 9; slot++) {
 				Item item = MC.player.getInventory().getStack(slot).getItem();
 				if (item == Items.END_CRYSTAL) {

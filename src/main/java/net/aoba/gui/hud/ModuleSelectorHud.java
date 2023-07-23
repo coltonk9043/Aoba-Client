@@ -1,11 +1,11 @@
-package net.aoba.gui;
+package net.aoba.gui.hud;
 
 import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.settings.Settings;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.gui.tabs.Tab;
+import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
 import net.minecraft.client.MinecraftClient;
@@ -14,7 +14,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class IngameGUI extends Tab {
+public class ModuleSelectorHud extends AbstractHud {
 	private KeyBinding keybindUp;
 	private KeyBinding keybindDown;
 	private KeyBinding keybindLeft;
@@ -29,35 +29,21 @@ public class IngameGUI extends Tab {
 	Category[] categories;
 	ArrayList<Module> modules = new ArrayList<Module>();
 
-	public IngameGUI() {
+	public ModuleSelectorHud() {
+		super(Settings.getSettingInt("x"), Settings.getSettingInt("y"), 150, 30);
 		this.keybindUp = new KeyBinding("key.tabup", GLFW.GLFW_KEY_UP, "key.categories.aoba");
 		this.keybindDown = new KeyBinding("key.tabdown", GLFW.GLFW_KEY_DOWN, "key.categories.aoba");
 		this.keybindLeft = new KeyBinding("key.tableft", GLFW.GLFW_KEY_LEFT, "key.categories.aoba");
 		this.keybindRight = new KeyBinding("key.tabright", GLFW.GLFW_KEY_RIGHT, "key.categories.aoba");
 
 		categories = Module.Category.values();
-		this.x = Settings.getSettingInt("x");
-		this.y = Settings.getSettingInt("y");
-		this.width = 150;
-		this.height = 30;
 		this.aoba = Aoba.getInstance();
 	}
 
 	@Override
 	public void update(double mouseX, double mouseY, boolean mouseClicked) {
-		{
-			// If the click GUI is open, and the 
-			if (aoba.hudManager.isClickGuiOpen()) {
-				if (HudManager.currentGrabbed == null) {
-					if (mouseX >= (x) && mouseX <= (x + width)) {
-						if (mouseY >= (y) && mouseY <= (y + height)) {
-							if (mouseClicked) {
-								HudManager.currentGrabbed = this;
-							}
-						}
-					}
-				}
-			}
+		
+			super.update(mouseX, mouseY, mouseClicked);
 			
 			if (!aoba.isGhosted()) {
 				if (this.keybindUp.isPressed()) {
@@ -105,7 +91,7 @@ public class IngameGUI extends Tab {
 					this.keybindLeft.setPressed(false);
 				}
 			}
-		}
+		
 	}
 
 	@Override

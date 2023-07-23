@@ -32,7 +32,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
@@ -433,7 +432,7 @@ public class RenderUtils {
 		drawContext.drawText(mc.textRenderer, text, (int)x, (int)y, color.getColorAsInt(), false);
 		matrixStack.pop();
 	}
-
+	
 	public void drawStringWithScale(DrawContext drawContext, String text, float x, float y, int color, float scale) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();

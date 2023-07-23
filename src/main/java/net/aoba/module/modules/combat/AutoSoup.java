@@ -107,7 +107,6 @@ public class AutoSoup extends Module {
 		for(int i = 0; i < PlayerInventory.getHotbarSize(); i++) {
 			ItemStack stack = MC.player.getInventory().getStack(i);
 			if(stack == null || stack.getItem() == Items.BOWL) {
-				System.out.println("New Slot: " + i);
 				int nextSoup = findSoup();
 				if(nextSoup >= 0) {
 					MC.interactionManager.clickSlot(0, nextSoup, 0, SlotActionType.PICKUP, MC.player);

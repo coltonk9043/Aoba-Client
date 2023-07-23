@@ -1,4 +1,4 @@
-package net.aoba.gui.elements;
+package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
 import java.util.List;

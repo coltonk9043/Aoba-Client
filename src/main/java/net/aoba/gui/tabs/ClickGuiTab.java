@@ -26,14 +26,17 @@ import java.util.ArrayList;
 import net.aoba.Aoba;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
-import net.aoba.gui.elements.Component;
+import net.aoba.gui.hud.AbstractHud;
+import net.aoba.gui.tabs.components.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 
-public class ClickGuiTab extends Tab {
+public class ClickGuiTab extends AbstractHud{
 	protected String title;
+	
+	protected boolean pinnable = false;
 	protected boolean isPinned = false;
 	protected boolean pinWasClicked = false;
 	protected boolean drawBorder = true;
@@ -42,11 +45,21 @@ public class ClickGuiTab extends Tab {
 	protected ArrayList<Component> children = new ArrayList<>();
 
 	public ClickGuiTab(String title, int x, int y) {
+		super(x, y, 180, 0);
 		this.title = title;
 		this.x = x;
 		this.y = y;
 		this.width = 180;
 		this.mc = MinecraftClient.getInstance();
+	}
+	
+	public ClickGuiTab(String title, int x, int y, boolean pinnable) {
+		super(x, y, 180, 0);
+		this.x = x;
+		this.y = y;
+		this.width = 180;
+		this.mc = MinecraftClient.getInstance();
+		this.pinnable = pinnable;
 	}
 
 	public final String getTitle() {
@@ -134,9 +147,11 @@ public class ClickGuiTab extends Tab {
 					if (mouseY >= (y) && mouseY <= (y + 28)) {
 						if (mouseClicked) {
 							boolean isInsidePinButton = false;
-							if (mouseX >= (x + width - 24) && mouseX <= (x + width - 2)) {
-								if (mouseY >= (y + 4) && mouseY <= (y + 20)) {
-									isInsidePinButton = true;
+							if(this.pinnable) {
+								if (mouseX >= (x + width - 24) && mouseX <= (x + width - 2)) {
+									if (mouseY >= (y + 4) && mouseY <= (y + 20)) {
+										isInsidePinButton = true;
+									}
 								}
 							}
 							if (isInsidePinButton) {
@@ -175,20 +190,19 @@ public class ClickGuiTab extends Tab {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		if(drawBorder) {
 			// Draws background depending on components width and height
-			//renderUtils.drawRoundedBox(matrixStack, x, y, width, 29, 50, new Color(30,30,30), 0.4f);
-			//renderUtils.drawRoundedBox(matrixStack, x, y + 29, width, height, 50, new Color(30,30,30), 0.4f);
-			
-			renderUtils.drawRoundedBox(matrixStack, x, y, width, height + 30, 12, new Color(30,30,30), 0.4f);
-			renderUtils.drawRoundedOutline(matrixStack, x, y, width, height + 30, 12, new Color(0,0,0), 0.8f);
+			renderUtils.drawRoundedBox(matrixStack, x, y, width, height + 30, 6, new Color(30,30,30), 0.4f);
+			renderUtils.drawRoundedOutline(matrixStack, x, y, width, height + 30, 6, new Color(0,0,0), 0.8f);
 			renderUtils.drawString(drawContext, this.title, x + 8, y + 8, Aoba.getInstance().hudManager.getColor());
 			renderUtils.drawLine(matrixStack, x, y + 30, x + width, y + 30, new Color(0,0,0), 0.4f);
 			
-			if (this.isPinned) {
-				renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(154,0,0), 0.8f);
-				renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.8f);
-			} else {
-				renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(128,128,128), 0.2f);
-				renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.2f);
+			if(this.pinnable) {
+				if (this.isPinned) {
+					renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(154,0,0), 0.8f);
+					renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.8f);
+				} else {
+					renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(128,128,128), 0.2f);
+					renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.2f);
+				}
 			}
 		}
 		int i = 30;

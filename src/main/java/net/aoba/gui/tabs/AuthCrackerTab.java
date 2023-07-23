@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-import net.aoba.gui.elements.ButtonComponent;
-import net.aoba.gui.elements.SliderComponent;
-import net.aoba.gui.elements.StringComponent;
+
+import net.aoba.gui.tabs.components.ButtonComponent;
+import net.aoba.gui.tabs.components.SliderComponent;
+import net.aoba.gui.tabs.components.StringComponent;
 import net.aoba.settings.SliderSetting;
 import net.minecraft.client.MinecraftClient;
 

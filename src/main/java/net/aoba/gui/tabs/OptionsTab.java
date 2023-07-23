@@ -1,8 +1,8 @@
 package net.aoba.gui.tabs;
 
-import net.aoba.gui.elements.CheckboxComponent;
-import net.aoba.gui.elements.SliderComponent;
-import net.aoba.gui.elements.StringComponent;
+import net.aoba.gui.tabs.components.CheckboxComponent;
+import net.aoba.gui.tabs.components.SliderComponent;
+import net.aoba.gui.tabs.components.StringComponent;
 import net.aoba.settings.BooleanSetting;
 import net.aoba.settings.SliderSetting;
 
