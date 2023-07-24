@@ -21,11 +21,11 @@
  */
 package net.aoba.module.modules.world;
 
+import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -41,20 +41,20 @@ import net.minecraft.util.math.Direction;
 public class Nuker extends Module {
 	private MinecraftClient mc;
 	
-	private SliderSetting radius;
+	private DoubleOSetting radius;
 
 	public Nuker() {
 		this.setName("Nuker");
 		this.setBind(new KeyBinding("key.nuker", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks around the player.");
-		this.radius = new SliderSetting("Radius", "nuker_radius", 5f, 0f, 15f, 1f);
+		this.radius = new DoubleOSetting("nuker_radius", "Radius", 5f, null, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
 	}
 
 	public void setRadius(int radius) {
-		this.radius.setValue(radius);
+		this.radius.setValue((double)radius);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class Nuker extends Module {
 	@Override
 	public void onUpdate() {
 		
-		int rad = radius.getValueInt();
+		int rad = radius.getValue().intValue();
 		for (int x = -rad; x < rad; x++) {
 			for (int y = rad; y > -rad; y--) {
 				for (int z = -rad; z < rad; z++) {
@@ -93,7 +93,7 @@ public class Nuker extends Module {
 
 	@Override
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		int rad = radius.getValueInt();
+		int rad = radius.getValue().intValue();
 		for (int x = -rad; x < rad; x++) {
 			for (int y = rad; y > -rad; y--) {
 				for (int z = -rad; z < rad; z++) {

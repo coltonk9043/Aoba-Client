@@ -21,12 +21,12 @@
  */
 package net.aoba.module.modules.render;
 
+import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
+import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
 import net.aoba.module.Module;
-import net.aoba.settings.BooleanSetting;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -37,14 +37,12 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.network.packet.Packet;
 
 public class EntityESP extends Module {
-
 	private Color color;
 	private RainbowColor rainbowColor;
 
-	
-	public SliderSetting hue = new SliderSetting("Hue", "chestesp_hue", 4, 0, 360, 1);
-	public BooleanSetting rainbow = new BooleanSetting("Rainbow", "chestesp_rainbow");
-	public SliderSetting effectSpeed = new SliderSetting("Effect Spd", "chestesp_effectspeed", 4, 1, 20, 0.1);
+	public DoubleOSetting hue = new DoubleOSetting("entitysp_hue", "Hue", 4, null, 0, 360, 1);
+	public BooleanOSetting rainbow = new BooleanOSetting("entityesp_rainbow", "Rainbow", false, null);
+	public DoubleOSetting effectSpeed = new DoubleOSetting("entityesp_effectspeed", "Effect Speed", 4, null, 1, 20, 0.1);
 	
 	public EntityESP() {
 		this.setName("EntityESP");
@@ -77,9 +75,9 @@ public class EntityESP extends Module {
 	@Override
 	public void onUpdate() {
 		if(this.rainbow.getValue()) {
-			this.rainbowColor.update(this.effectSpeed.getValueFloat());
+			this.rainbowColor.update(this.effectSpeed.getValue().floatValue());
 		}else {
-			this.color.setHSV(hue.getValueFloat(), 1f, 1f);
+			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
 		}
 	}
 

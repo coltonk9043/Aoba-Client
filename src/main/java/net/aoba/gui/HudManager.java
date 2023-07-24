@@ -2,6 +2,9 @@ package net.aoba.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
+import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import net.aoba.module.Module;
@@ -16,7 +19,6 @@ import net.aoba.gui.tabs.components.ModuleComponent;
 import net.aoba.misc.RainbowColor;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module.Category;
-import net.aoba.settings.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
@@ -49,10 +51,10 @@ public class HudManager {
 
 	public NavigationBar clickGuiNavBar;
 
-	public SliderSetting hue = new SliderSetting("Hue", "color_hue", 4, 0, 360, 1);
-	public SliderSetting effectSpeed = new SliderSetting("Effect Spd", "color_speed", 4, 1, 20, 0.1);
-	public BooleanSetting rainbow = new BooleanSetting("Rainbow", "rainbow_mode");
-	public BooleanSetting ah = new BooleanSetting("ArmorHUD", "armorhud_toggle");
+	public DoubleOSetting hue = new DoubleOSetting("color_hue", "Hue", 4, null, 0, 360, 1);
+	public DoubleOSetting effectSpeed = new DoubleOSetting("color_speed", "Effect Spd", 4, null, 1, 20, 0.1);
+	public BooleanOSetting rainbow = new BooleanOSetting("rainbow_mode", "Rainbow", false, null);
+	public BooleanOSetting ah = new BooleanOSetting("armorhud_toggle", "ArmorHUD", false, null);
 
 	private Color currentColor;
 	private Color color;
@@ -62,10 +64,11 @@ public class HudManager {
 		mc = MinecraftClient.getInstance();
 		
 		renderUtils = Aoba.getInstance().renderUtils;
-		color = new Color(hue.getValueFloat(), 1f, 1f);
+		color = new Color(hue.getValue().floatValue(), 1f, 1f);
 		currentColor = color;
 		rainbowColor = new RainbowColor();
-		rainbow.setValue(Settings.getSettingBoolean("rainbowUI"));
+		// rainbow.setValue(Settings.getSettingBoolean("rainbowUI"));
+		// TODO: ^^^^^^^^^^^^^^
 
 		clickGuiNavBar = new NavigationBar();
 		
@@ -182,10 +185,10 @@ public class HudManager {
 		 * TODO: Remove this and move to event-based.
 		 */
 		if(this.rainbow.getValue()) {
-			rainbowColor.update(this.effectSpeed.getValueFloat());
+			rainbowColor.update(this.effectSpeed.getValue().floatValue());
 			this.currentColor = rainbowColor.getColor();
 		}else {
-			this.color.setHSV(hue.getValueFloat(), 1f, 1f);
+			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
 			this.currentColor = color;
 		}
 	}

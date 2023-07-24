@@ -1,9 +1,9 @@
 package net.aoba.module.modules.combat;
 
+import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
+import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
-import net.aoba.settings.BooleanSetting;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -16,10 +16,10 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 
 public class TriggerBot extends Module {
-	private SliderSetting radius;
-	private BooleanSetting targetAnimals;
-	private BooleanSetting targetMonsters;
-	private BooleanSetting targetPlayers;
+	private DoubleOSetting radius;
+	private BooleanOSetting targetAnimals;
+	private BooleanOSetting targetMonsters;
+	private BooleanOSetting targetPlayers;
 
 	
 	public TriggerBot() {
@@ -28,10 +28,10 @@ public class TriggerBot extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything you are looking at.");
 
-		radius = new SliderSetting("Radius", "triggerbot_radius", 5f, 0.1f, 10f, 0.1f);
-		targetAnimals = new BooleanSetting("Trgt Animals", "triggerbot_target_animals");
-		targetMonsters = new BooleanSetting("Trgt Monsters", "triggerbot_target_monsters");
-		targetPlayers = new BooleanSetting("Trgt Players", "triggerbot_target_players");
+		radius = new DoubleOSetting("triggerbot_radius", "Radius", 5f, null, 0.1f, 10f, 0.1f);
+		targetAnimals = new BooleanOSetting("triggerbot_target_animals", "Target animals.", false, null);
+		targetMonsters = new BooleanOSetting("triggerbot_target_monsters", "Target monsters.", true, null);
+		targetPlayers = new BooleanOSetting("triggerbot_target_players", "Target players.", true, null);
 		this.addSetting(radius);
 		this.addSetting(targetAnimals);
 		this.addSetting(targetMonsters);

@@ -1,21 +1,21 @@
 package net.aoba.gui.tabs.components;
 
+import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
-import net.aoba.settings.BooleanSetting;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class CheckboxComponent extends Component {
 	private String text;
 	private boolean wasClicked = false;
+
+	BooleanOSetting checkbox;
 	
-	BooleanSetting checkbox;
-	
-	public CheckboxComponent(ClickGuiTab parent, BooleanSetting checkbox) {
+	public CheckboxComponent(ClickGuiTab parent, BooleanOSetting checkbox) {
 		super();
-		this.text = checkbox.getName();
+		this.text = checkbox.name;
 		this.parent = parent;
 		this.checkbox = checkbox;
 	}
@@ -32,7 +32,7 @@ public class CheckboxComponent extends Component {
 					if (mouseY >= (((parentY + offset + 2)))
 							&& mouseY <= (parentY + offset + 22)) {
 						if (!this.wasClicked) {
-							checkbox.toggleValue();
+							checkbox.toggle();
 							this.wasClicked = true;
 							return;
 						}

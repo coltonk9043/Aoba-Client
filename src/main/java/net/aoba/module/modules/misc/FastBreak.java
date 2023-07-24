@@ -21,16 +21,16 @@
  */
 package net.aoba.module.modules.misc;
 
+import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.Packet;
 
 public class FastBreak extends Module {
 
-	private SliderSetting multiplier;
+	private DoubleOSetting multiplier;
 	
 	public FastBreak() {
 		this.setName("FastBreak");
@@ -38,16 +38,14 @@ public class FastBreak extends Module {
 		this.setCategory(Category.Misc);
 		this.setDescription("Breaks blocks quicker based on a multiplier.");
 		
-		multiplier = new SliderSetting("Multiplier", "fastbreak_multiplier", 1.25f, 1f, 3f, 0.05f);
+		multiplier = new DoubleOSetting("fastbreak_multiplier", "Multiplier", 1.25f, null, 1f, 3f, 0.05f);
 		this.addSetting(multiplier);
 	}
 
-	public void setMultiplier(float multiplier) {
-		this.multiplier.setValue(multiplier);
-	}
+	public void setMultiplier(float multiplier) { this.multiplier.setValue((double)multiplier); }
 	
 	public float getMultiplier() {
-		return this.multiplier.getValueFloat();
+		return this.multiplier.getValue().floatValue();
 	}
 	
 	@Override

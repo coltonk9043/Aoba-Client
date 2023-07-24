@@ -3,10 +3,10 @@ package net.aoba.gui.tabs.components;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.aoba.core.osettings.osettingtypes.IndexedStringListOSetting;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
-import net.aoba.settings.ListSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -15,7 +15,7 @@ public class ListComponent extends Component {
 
 	private String text;
 	private boolean wasClicked = false;
-	private ListSetting list;
+	private IndexedStringListOSetting list;
 	private List<Component> settingsList = new ArrayList<Component>();
 	
 	public ListComponent(String text, ClickGuiTab parent) {
@@ -24,9 +24,9 @@ public class ListComponent extends Component {
 		this.parent = parent;
 	}
 
-	public ListComponent(ClickGuiTab parent, ListSetting list) {
+	public ListComponent(ClickGuiTab parent, IndexedStringListOSetting list) {
 		super();
-		this.text = list.getName();
+		this.text = list.name;
 		this.parent = parent;
 		this.list = list;
 	}
@@ -69,11 +69,11 @@ public class ListComponent extends Component {
 		int parentX = parent.getX();
 		int parentY = parent.getY();
 		int parentWidth = parent.getWidth();
-		int length = MinecraftClient.getInstance().textRenderer.getWidth(list.getValue()); 
+		int length = MinecraftClient.getInstance().textRenderer.getWidth(list.getIndexValue());
 		MatrixStack matrixStack = drawContext.getMatrices();
 		renderUtils.drawOutlinedBox(matrixStack, parentX + 4, parentY + offset, parentWidth - 8, 22, new Color(25,25,25),
 				0.3f);
-		renderUtils.drawString(drawContext, list.getValue(), (parentX + (parentWidth / 2)) - length , parentY + offset + 4, 0xFFFFFF);
+		renderUtils.drawString(drawContext, list.getIndexValue(), (parentX + (parentWidth / 2)) - length , parentY + offset + 4, 0xFFFFFF);
 		renderUtils.drawString(drawContext,"<<", parentX + 8, parentY + offset + 4, 0xFFFFFF);
 		renderUtils.drawString(drawContext,">>", parentX + 8 + (parentWidth - 34), parentY + offset + 4, 0xFFFFFF);
 	}

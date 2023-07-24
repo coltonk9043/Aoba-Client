@@ -23,13 +23,14 @@ package net.aoba.module.modules.render;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+
+import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
+import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.gui.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RainbowColor;
 import net.aoba.module.Module;
-import net.aoba.settings.BooleanSetting;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.entity.TrappedChestBlockEntity;
@@ -43,16 +44,16 @@ public class ChestESP extends Module {
 	private Color color;
 	private RainbowColor rainbowColor;
 
-	public SliderSetting hue = new SliderSetting("Hue", "chestesp_hue", 4, 0, 360, 1);
-	public BooleanSetting rainbow = new BooleanSetting("Rainbow", "chestesp_rainbow");
-	public SliderSetting effectSpeed = new SliderSetting("Effect Spd", "chestesp_effectspeed", 4, 1, 20, 0.1);
+	public DoubleOSetting hue = new DoubleOSetting("chestesp_hue", "Hue", 4, null, 0, 360, 1);
+	public BooleanOSetting rainbow = new BooleanOSetting("chestesp_rainbow", "Rainbow", false, null);
+	public DoubleOSetting effectSpeed = new DoubleOSetting("chestesp_effectspeed", "Effect Speed", 4, null, 1, 20, 0.1);
 	
 	public ChestESP() {
 		this.setName("ChestESP");
 		this.setBind(new KeyBinding("key.chestesp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see Chests with an ESP.");
-		color = new Color(hue.getValueFloat(), 1f, 1f);
+		color = new Color(hue.getValue().floatValue(), 1f, 1f);
 		currentColor = color;
 		rainbowColor = new RainbowColor();
 		this.addSetting(hue);
@@ -78,10 +79,10 @@ public class ChestESP extends Module {
 	@Override
 	public void onUpdate() {
 		if(this.rainbow.getValue()) {
-			this.rainbowColor.update(this.effectSpeed.getValueFloat());
+			this.rainbowColor.update(this.effectSpeed.getValue().floatValue());
 			this.currentColor = this.rainbowColor.getColor();
 		}else {
-			this.color.setHSV(hue.getValueFloat(), 1f, 1f);
+			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
 			this.currentColor = color;
 		}
 	}

@@ -21,30 +21,30 @@
  */
 package net.aoba.module.modules.misc;
 
+import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.Packet;
 public class Timer extends Module {
-	private SliderSetting multiplier;
+	private DoubleOSetting multiplier;
 	
 	public Timer() {
 		this.setName("Timer");
 		this.setBind(new KeyBinding("key.timer", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Misc);
 		this.setDescription("Increases the speed of Minecraft.");
-		this.multiplier = new SliderSetting("Multiplier", "timer_multiplier", 1f, 0.1f, 15f, 0.1f);
+		this.multiplier = new DoubleOSetting("timer_multiplier", "Multiplier", 1f, null, 0.1f, 15f, 0.1f);
 		this.addSetting(multiplier);
 	}
 
 	public float getMultiplier() {
-		return this.multiplier.getValueFloat();
+		return this.multiplier.getValue().floatValue();
 	}
 	
 	public void setMultipler(float multiplier) {
-		this.multiplier.setValue(multiplier);
+		this.multiplier.setValue((double)multiplier);
 	}
 	
 	@Override

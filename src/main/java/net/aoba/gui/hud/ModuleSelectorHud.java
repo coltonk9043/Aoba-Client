@@ -2,7 +2,6 @@ package net.aoba.gui.hud;
 
 import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
-import net.aoba.settings.Settings;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.Color;
@@ -30,7 +29,8 @@ public class ModuleSelectorHud extends AbstractHud {
 	ArrayList<Module> modules = new ArrayList<Module>();
 
 	public ModuleSelectorHud() {
-		super(Settings.getSettingInt("x"), Settings.getSettingInt("y"), 150, 30);
+		// super(Settings.getSettingInt("x"), Settings.getSettingInt("y"), 150, 30);
+		super(0, 0, 150, 30);
 		this.keybindUp = new KeyBinding("key.tabup", GLFW.GLFW_KEY_UP, "key.categories.aoba");
 		this.keybindDown = new KeyBinding("key.tabdown", GLFW.GLFW_KEY_DOWN, "key.categories.aoba");
 		this.keybindLeft = new KeyBinding("key.tableft", GLFW.GLFW_KEY_LEFT, "key.categories.aoba");

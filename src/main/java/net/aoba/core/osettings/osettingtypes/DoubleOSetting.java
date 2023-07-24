@@ -5,9 +5,9 @@ import net.aoba.core.osettings.OSetting;
 import java.util.function.Consumer;
 
 public class DoubleOSetting extends OSetting<Double> {
-    private final double min_value;
-    private final double max_value;
-    private final double step;
+    public final double min_value;
+    public final double max_value;
+    public final double step;
 
     public DoubleOSetting(
             String ID,

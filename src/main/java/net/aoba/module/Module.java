@@ -27,9 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.aoba.AobaClient;
+import net.aoba.core.osettings.OSetting;
 import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.misc.RenderUtils;
-import net.aoba.settings.Setting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -43,7 +43,7 @@ public abstract class Module {
 	private boolean state;
 	private RenderUtils renderUtils = new RenderUtils();
 
-	private List<Setting> settings = new ArrayList<Setting>();
+	private List<OSetting> settings = new ArrayList<OSetting>();
 	
 	protected static final MinecraftClient MC = AobaClient.MC;
 	protected static final IMinecraftClient IMC = AobaClient.IMC;
@@ -103,11 +103,11 @@ public abstract class Module {
 		}
 	}
 
-	public void addSetting(Setting setting) {
+	public void addSetting(OSetting setting) {
 		this.settings.add(setting);
 	}
 	
-	public List<Setting> getSettings() {
+	public List<OSetting> getSettings() {
 		return this.settings;
 	}
 	
