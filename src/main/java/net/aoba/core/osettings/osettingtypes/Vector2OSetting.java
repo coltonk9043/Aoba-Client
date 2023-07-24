@@ -16,6 +16,24 @@ public class Vector2OSetting extends OSetting<Vector2> {
         type = TYPE.VECTOR2;
     }
 
+    public void setX(double x) {
+        value.x = x;
+        update();
+    }
+
+    public void setY(double y) {
+        value.y = y;
+        update();
+    }
+
+    public void silentSetX(double x) {
+        value.x = x;
+    }
+
+    public void silentSetY(double y) {
+        value.y = y;
+    }
+
     @Override
     protected boolean isValueValid(Vector2 value) {
         return true;

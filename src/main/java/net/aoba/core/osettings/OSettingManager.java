@@ -3,6 +3,8 @@ package net.aoba.core.osettings;
 import net.aoba.core.osettings.OSetting;
 import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
 import net.aoba.core.osettings.osettingtypes.IntegerOSetting;
+import net.aoba.core.osettings.osettingtypes.Vector2OSetting;
+import net.aoba.core.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 
 import java.io.File;
@@ -51,7 +53,16 @@ public class OSettingManager {
             System.out.println("Saving config " + name + ".");
             prepare(name);
             for (OSetting setting : setting_list) {
-                config.setProperty(setting.ID, String.valueOf(setting.getValue()));
+                switch (setting.type) {
+                    case DOUBLE, INTEGER, BOOLEAN, STRING -> {
+                        config.setProperty(setting.ID, String.valueOf(setting.getValue()));
+                    }
+                    case VECTOR2 -> {
+                        config.setProperty(setting.ID + "_x", String.valueOf(((Vector2)setting.getValue()).x));
+                        config.setProperty(setting.ID + "_y", String.valueOf(((Vector2)setting.getValue()).y));
+                    }
+                }
+                // config.setProperty(setting.ID, String.valueOf(setting.getValue()));
             }
             config.storeToXML(new FileOutputStream(configFile), null);
         } catch (Exception ignored) {}
@@ -63,29 +74,40 @@ public class OSettingManager {
             prepare(name);
             config.loadFromXML(new FileInputStream(configFile));
             for (OSetting setting : setting_list) {
-                String value = config.getProperty(setting.ID, null);
-                if (value != null) {
-                    switch (setting.type) {
-                        case DOUBLE -> {
-                            if (((DoubleOSetting) setting).min_value <= Double.parseDouble(value) && ((DoubleOSetting) setting).max_value >= Double.parseDouble(value)) {
-                                if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Double.parseDouble(value));
-                                setting.setValue(Double.parseDouble(value));
+                switch (setting.type) {
+                    case DOUBLE, INTEGER, BOOLEAN, STRING -> {
+                        String value = config.getProperty(setting.ID, null);
+                        if (value == null) break;
+                        switch (setting.type) {
+                            case DOUBLE -> {
+                                if (((DoubleOSetting) setting).min_value <= Double.parseDouble(value) && ((DoubleOSetting) setting).max_value >= Double.parseDouble(value)) {
+                                    if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Double.parseDouble(value));
+                                    setting.setValue(Double.parseDouble(value));
+                                }
+                            }
+                            case INTEGER -> {
+                                if ((int) ((IntegerOSetting) setting).min_value <= Integer.parseInt(value) && (int) ((IntegerOSetting) setting).max_value >= Integer.parseInt(value)) {
+                                    if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Integer.parseInt(value));
+                                    setting.setValue(Integer.parseInt(value));
+                                }
+                            }
+                            case BOOLEAN -> {
+                                if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Boolean.parseBoolean(value));
+                                setting.setValue(Boolean.parseBoolean(value));
+                            }
+                            case STRING -> {
+                                if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + value);
+                                setting.setValue(value);
                             }
                         }
-                        case INTEGER -> {
-                            if ((int) ((IntegerOSetting) setting).min_value <= Integer.parseInt(value) && (int) ((IntegerOSetting) setting).max_value >= Integer.parseInt(value)) {
-                                if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Integer.parseInt(value));
-                                setting.setValue(Integer.parseInt(value));
-                            }
-                        }
-                        case BOOLEAN -> {
-                            if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Boolean.parseBoolean(value));
-                            setting.setValue(Boolean.parseBoolean(value));
-                        }
-                        case STRING -> {
-                            if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + value);
-                            setting.setValue(value);
-                        }
+                    }
+
+                    case VECTOR2 -> {
+                        String value_x = config.getProperty(setting.ID + "_x", null);
+                        String value_y = config.getProperty(setting.ID + "_y", null);
+                        if (value_x == null || value_y == null) break;
+                        /* if (DEBUG_STUFF) */ System.out.println(setting.name + " " + ((Vector2)setting.value).x + " " + ((Vector2)setting.value).y + " " + value_x + " " + value_y);
+                        setting.setValue(new Vector2(Double.parseDouble(value_x), Double.parseDouble(value_y)));
                     }
                 }
             }

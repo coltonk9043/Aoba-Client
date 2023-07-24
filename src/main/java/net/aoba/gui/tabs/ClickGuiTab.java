@@ -23,7 +23,13 @@
 package net.aoba.gui.tabs;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
+
 import net.aoba.Aoba;
+import net.aoba.core.osettings.OSettingManager;
+import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
+import net.aoba.core.osettings.osettingtypes.Vector2OSetting;
+import net.aoba.core.utils.types.Vector2;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.hud.AbstractHud;
@@ -44,6 +50,11 @@ public class ClickGuiTab extends AbstractHud{
 	
 	protected ArrayList<Component> children = new ArrayList<>();
 
+	private Consumer<Vector2> update_pos;
+	private Vector2OSetting position;
+	private Consumer<Boolean> update_pinned;
+	private BooleanOSetting pinned_setting;
+
 	public ClickGuiTab(String title, int x, int y, boolean pinnable) {
 		super(x, y, 180, 0);
 		this.title = title;
@@ -52,6 +63,26 @@ public class ClickGuiTab extends AbstractHud{
 		this.width = 180;
 		this.mc = MinecraftClient.getInstance();
 		this.pinnable = pinnable;
+
+		update_pos = new Consumer<Vector2>() {
+			@Override
+			public void accept(Vector2 vector2) {
+				setX((int)vector2.x);
+				setY((int)vector2.y);
+			}
+		};
+
+		update_pinned = new Consumer<Boolean>() {
+			@Override
+			public void accept(Boolean aBoolean) {
+				isPinned = aBoolean;
+			}
+		};
+
+		position = new Vector2OSetting(title + "_position", "GUI POS", new Vector2(x, y), update_pos);
+		pinned_setting = new BooleanOSetting(title + "_pinned", "IS PINNED", false, update_pinned);
+		OSettingManager.register_setting(position, Aoba.getInstance().settingManager.hidden_category);
+		OSettingManager.register_setting(pinned_setting, Aoba.getInstance().settingManager.hidden_category);
 	}
 
 
@@ -165,12 +196,17 @@ public class ClickGuiTab extends AbstractHud{
 					}
 				}
 			}
+
 			int i = 30;
 			for (Component child : this.children) {
 				child.update(i, mouseX, mouseY, mouseClicked);
 				i += child.getHeight();
 			}
 		}
+
+		position.silentSetX(x);
+		position.silentSetY(y);
+		pinned_setting.silentSetValue(isPinned);
 	}
 
 	public void preupdate() {

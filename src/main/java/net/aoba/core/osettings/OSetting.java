@@ -46,6 +46,12 @@ public abstract class OSetting <T> {
         update();
     }
 
+    public void silentSetValue(T value) {
+        if (isValueValid(value)) {
+            this.value = value;
+        }
+    }
+
     public void resetValue() {
         setValue(default_value);
     }
