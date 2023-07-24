@@ -17,6 +17,8 @@ public abstract class OSetting <T> {
     protected final T default_value;
     protected T value;
 
+    public TYPE type;
+
     private final Consumer<T> onUpdate;
 
     public OSetting (
@@ -54,5 +56,19 @@ public abstract class OSetting <T> {
         }
     }
 
+    public T getDefaultValue() {
+        return default_value;
+    }
+
     protected abstract boolean isValueValid(T value);
+
+    public enum TYPE {
+        BOOLEAN,
+        DOUBLE,
+        STRING,
+        INTEGER,
+        STRINGLIST,
+        INDEXEDSTRINGLIST,
+        VECTOR2
+    }
 }

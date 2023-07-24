@@ -5,9 +5,9 @@ import net.aoba.core.osettings.OSetting;
 import java.util.function.Consumer;
 
 public class IntegerOSetting extends OSetting<Integer> {
-    private final int min_value;
-    private final int max_value;
-    private final int step;
+    public final int min_value;
+    public final int max_value;
+    public final int step;
 
     public IntegerOSetting (
             String ID,
@@ -22,6 +22,7 @@ public class IntegerOSetting extends OSetting<Integer> {
         this.min_value = min_value;
         this.max_value = max_value;
         this.step = step;
+        type = TYPE.INTEGER;
     }
 
     public void increment() {

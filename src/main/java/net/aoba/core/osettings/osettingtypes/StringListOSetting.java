@@ -13,6 +13,7 @@ public class StringListOSetting extends OSetting<List<String>> {
             Consumer<List<String>> onUpdate
     ) {
         super(ID, description, default_value, onUpdate);
+        type = TYPE.STRINGLIST;
     }
 
     public void appendString(String value) {

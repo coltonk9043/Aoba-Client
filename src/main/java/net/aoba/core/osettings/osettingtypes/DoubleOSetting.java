@@ -22,6 +22,7 @@ public class DoubleOSetting extends OSetting<Double> {
         this.min_value = min_value;
         this.max_value = max_value;
         this.step = step;
+        type = TYPE.DOUBLE;
     }
 
     public void increment() {

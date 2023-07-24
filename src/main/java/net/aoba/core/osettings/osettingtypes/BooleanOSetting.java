@@ -12,6 +12,7 @@ public class BooleanOSetting extends OSetting<Boolean> {
             Consumer<Boolean> onUpdate
     ) {
         super(ID, description, default_value, onUpdate);
+        type = TYPE.BOOLEAN;
     }
 
     public void toggle() {

@@ -8,6 +8,7 @@ public class IndexedStringListOSetting extends StringListOSetting {
 
     public IndexedStringListOSetting(String ID, String description, List<String> default_value, Consumer<List<String>> onUpdate) {
         super(ID, description, default_value, onUpdate);
+        type = TYPE.INDEXEDSTRINGLIST;
     }
 
     public String getIndexValue() {

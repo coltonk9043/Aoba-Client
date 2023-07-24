@@ -12,6 +12,7 @@ public class StringOSetting extends OSetting<String> {
             Consumer<String> onUpdate
     ) {
         super(ID, description, default_value, onUpdate);
+        type = TYPE.STRING;
     }
 
     @Override

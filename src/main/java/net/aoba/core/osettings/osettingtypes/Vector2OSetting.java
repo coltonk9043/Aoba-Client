@@ -13,6 +13,7 @@ public class Vector2OSetting extends OSetting<Vector2> {
             Consumer<Vector2> onUpdate
     ) {
         super(ID, description, default_value, onUpdate);
+        type = TYPE.VECTOR2;
     }
 
     @Override
