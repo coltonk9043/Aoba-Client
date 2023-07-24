@@ -1,15 +1,15 @@
-package net.aoba.core.osettings.osettingtypes;
+package net.aoba.core.settings.osettingtypes;
 
-import net.aoba.core.osettings.OSetting;
+import net.aoba.core.settings.Setting;
 
 import java.util.function.Consumer;
 
-public class IntegerOSetting extends OSetting<Integer> {
+public class IntegerSetting extends Setting<Integer> {
     public final int min_value;
     public final int max_value;
     public final int step;
 
-    public IntegerOSetting (
+    public IntegerSetting(
             String ID,
             String description,
             int default_value,

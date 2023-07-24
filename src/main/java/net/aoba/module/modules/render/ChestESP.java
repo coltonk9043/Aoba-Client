@@ -24,8 +24,8 @@ package net.aoba.module.modules.render;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.gui.Color;
 import net.aoba.misc.ModuleUtils;
@@ -44,9 +44,9 @@ public class ChestESP extends Module {
 	private Color color;
 	private RainbowColor rainbowColor;
 
-	public DoubleOSetting hue = new DoubleOSetting("chestesp_hue", "Hue", 4, null, 0, 360, 1);
-	public BooleanOSetting rainbow = new BooleanOSetting("chestesp_rainbow", "Rainbow", false, null);
-	public DoubleOSetting effectSpeed = new DoubleOSetting("chestesp_effectspeed", "Effect Speed", 4, null, 1, 20, 0.1);
+	public DoubleSetting hue = new DoubleSetting("chestesp_hue", "Hue", 4, null, 0, 360, 1);
+	public BooleanSetting rainbow = new BooleanSetting("chestesp_rainbow", "Rainbow", false, null);
+	public DoubleSetting effectSpeed = new DoubleSetting("chestesp_effectspeed", "Effect Speed", 4, null, 1, 20, 0.1);
 	
 	public ChestESP() {
 		this.setName("ChestESP");

@@ -24,8 +24,8 @@ package net.aoba.module.modules.render;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
@@ -40,9 +40,9 @@ public class Breadcrumbs extends Module{
 	private Color color;
 	private RainbowColor rainbowColor;
 
-	public DoubleOSetting hue = new DoubleOSetting("breadcrumbs_hue", "Hue", 4, null, 0, 360, 1);
-	public BooleanOSetting rainbow = new BooleanOSetting("breadcrumbs_rainbow", "Rainbow", false, null);
-	public DoubleOSetting effectSpeed = new DoubleOSetting("breadcrumbs_effectspeed", "Effect Spd", 4, null, 1, 20, 0.1);
+	public DoubleSetting hue = new DoubleSetting("breadcrumbs_hue", "Hue", 4, null, 0, 360, 1);
+	public BooleanSetting rainbow = new BooleanSetting("breadcrumbs_rainbow", "Rainbow", false, null);
+	public DoubleSetting effectSpeed = new DoubleSetting("breadcrumbs_effectspeed", "Effect Spd", 4, null, 1, 20, 0.1);
 	
 	private float timer = 10;
 	private float currentTick = 0;

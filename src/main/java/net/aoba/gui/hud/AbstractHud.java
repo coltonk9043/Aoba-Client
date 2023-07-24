@@ -1,8 +1,8 @@
 package net.aoba.gui.hud;
 
 import net.aoba.Aoba;
-import net.aoba.core.osettings.OSettingManager;
-import net.aoba.core.osettings.osettingtypes.Vector2OSetting;
+import net.aoba.core.settings.SettingManager;
+import net.aoba.core.settings.osettingtypes.Vector2Setting;
 import net.aoba.core.utils.types.Vector2;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
@@ -22,7 +22,7 @@ public abstract class AbstractHud implements IMoveable {
 	protected RenderUtils renderUtils = new RenderUtils();
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 
-	private Vector2OSetting position_setting;
+	private Vector2Setting position_setting;
 	private Consumer<Vector2> position_setting_update;
 
 	public AbstractHud(String ID, int x, int y, int width, int height) {
@@ -39,8 +39,8 @@ public abstract class AbstractHud implements IMoveable {
 			}
 		};
 
-		position_setting = new Vector2OSetting(ID + "_position", "Position", new Vector2(x, y), position_setting_update);
-		OSettingManager.register_setting(position_setting, Aoba.getInstance().settingManager.hidden_category);
+		position_setting = new Vector2Setting(ID + "_position", "Position", new Vector2(x, y), position_setting_update);
+		SettingManager.register_setting(position_setting, Aoba.getInstance().settingManager.hidden_category);
 	}
 	
 	public int getX() {

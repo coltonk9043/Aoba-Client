@@ -1,9 +1,7 @@
-package net.aoba.core.osettings;
+package net.aoba.core.settings;
 
-import net.aoba.core.osettings.OSetting;
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
-import net.aoba.core.osettings.osettingtypes.IntegerOSetting;
-import net.aoba.core.osettings.osettingtypes.Vector2OSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
+import net.aoba.core.settings.osettingtypes.IntegerSetting;
 import net.aoba.core.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 
@@ -14,19 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class OSettingManager {
+public class SettingManager {
     private static boolean DEBUG_STUFF = false;
 
-    public List<OSetting> config_category = new ArrayList<>();
-    public List<OSetting> modules_category = new ArrayList<>();
-    public List<OSetting> hidden_category = new ArrayList<>();
+    public List<Setting> config_category = new ArrayList<>();
+    public List<Setting> modules_category = new ArrayList<>();
+    public List<Setting> hidden_category = new ArrayList<>();
 
-    public static void register_setting (OSetting p_setting, List<OSetting> p_category) {
+    public static void register_setting (Setting p_setting, List<Setting> p_category) {
         p_category.add(p_setting);
     }
 
-    public static OSetting get_setting_in_category (String p_setting_id, List<OSetting> p_category) {
-        for (OSetting setting : p_category) {
+    public static Setting get_setting_in_category (String p_setting_id, List<Setting> p_category) {
+        for (Setting setting : p_category) {
             if (setting.ID.equals(p_setting_id)) {
                 return setting;
             }
@@ -48,11 +46,11 @@ public class OSettingManager {
         } catch (Exception ignored) {}
     }
 
-    public static void saveSettings(String name, List<OSetting> setting_list) {
+    public static void saveSettings(String name, List<Setting> setting_list) {
         try {
             System.out.println("Saving config " + name + ".");
             prepare(name);
-            for (OSetting setting : setting_list) {
+            for (Setting setting : setting_list) {
                 switch (setting.type) {
                     case DOUBLE, INTEGER, BOOLEAN, STRING -> {
                         config.setProperty(setting.ID, String.valueOf(setting.getValue()));
@@ -68,25 +66,25 @@ public class OSettingManager {
         } catch (Exception ignored) {}
     }
 
-    public static void loadSettings(String name, List<OSetting> setting_list) {
+    public static void loadSettings(String name, List<Setting> setting_list) {
         try {
             System.out.println("Loading config " + name + ".");
             prepare(name);
             config.loadFromXML(new FileInputStream(configFile));
-            for (OSetting setting : setting_list) {
+            for (Setting setting : setting_list) {
                 switch (setting.type) {
                     case DOUBLE, INTEGER, BOOLEAN, STRING -> {
                         String value = config.getProperty(setting.ID, null);
                         if (value == null) break;
                         switch (setting.type) {
                             case DOUBLE -> {
-                                if (((DoubleOSetting) setting).min_value <= Double.parseDouble(value) && ((DoubleOSetting) setting).max_value >= Double.parseDouble(value)) {
+                                if (((DoubleSetting) setting).min_value <= Double.parseDouble(value) && ((DoubleSetting) setting).max_value >= Double.parseDouble(value)) {
                                     if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Double.parseDouble(value));
                                     setting.setValue(Double.parseDouble(value));
                                 }
                             }
                             case INTEGER -> {
-                                if ((int) ((IntegerOSetting) setting).min_value <= Integer.parseInt(value) && (int) ((IntegerOSetting) setting).max_value >= Integer.parseInt(value)) {
+                                if ((int) ((IntegerSetting) setting).min_value <= Integer.parseInt(value) && (int) ((IntegerSetting) setting).max_value >= Integer.parseInt(value)) {
                                     if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Integer.parseInt(value));
                                     setting.setValue(Integer.parseInt(value));
                                 }

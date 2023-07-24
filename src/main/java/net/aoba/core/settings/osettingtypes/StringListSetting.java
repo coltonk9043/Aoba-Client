@@ -1,12 +1,12 @@
-package net.aoba.core.osettings.osettingtypes;
+package net.aoba.core.settings.osettingtypes;
 
-import net.aoba.core.osettings.OSetting;
+import net.aoba.core.settings.Setting;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public class StringListOSetting extends OSetting<List<String>> {
-    public StringListOSetting (
+public class StringListSetting extends Setting<List<String>> {
+    public StringListSetting(
             String ID,
             String description,
             List<String> default_value,

@@ -1,12 +1,12 @@
-package net.aoba.core.osettings.osettingtypes;
+package net.aoba.core.settings.osettingtypes;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public class IndexedStringListOSetting extends StringListOSetting {
+public class IndexedStringListSetting extends StringListSetting {
     public int index = 0;
 
-    public IndexedStringListOSetting(String ID, String description, List<String> default_value, Consumer<List<String>> onUpdate) {
+    public IndexedStringListSetting(String ID, String description, List<String> default_value, Consumer<List<String>> onUpdate) {
         super(ID, description, default_value, onUpdate);
         type = TYPE.INDEXEDSTRINGLIST;
     }

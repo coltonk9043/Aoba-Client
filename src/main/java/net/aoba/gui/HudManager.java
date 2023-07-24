@@ -3,9 +3,9 @@ package net.aoba.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.aoba.core.osettings.OSettingManager;
-import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
+import net.aoba.core.settings.SettingManager;
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import net.aoba.module.Module;
@@ -52,10 +52,10 @@ public class HudManager {
 
 	public NavigationBar clickGuiNavBar;
 
-	public DoubleOSetting hue = new DoubleOSetting("color_hue", "Hue", 4, null, 0, 360, 1);
-	public DoubleOSetting effectSpeed = new DoubleOSetting("color_speed", "Effect Spd", 4, null, 1, 20, 0.1);
-	public BooleanOSetting rainbow = new BooleanOSetting("rainbow_mode", "Rainbow", false, null);
-	public BooleanOSetting ah = new BooleanOSetting("armorhud_toggle", "ArmorHUD", false, null);
+	public DoubleSetting hue = new DoubleSetting("color_hue", "Hue", 4, null, 0, 360, 1);
+	public DoubleSetting effectSpeed = new DoubleSetting("color_speed", "Effect Spd", 4, null, 1, 20, 0.1);
+	public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
+	public BooleanSetting ah = new BooleanSetting("armorhud_toggle", "ArmorHUD", false, null);
 
 	private Color currentColor;
 	private Color color;
@@ -116,10 +116,10 @@ public class HudManager {
 		clickGuiNavBar.addPane(hudPane);
 		clickGuiNavBar.addPane(settingsPane);
 
-		OSettingManager.register_setting(hue, Aoba.getInstance().settingManager.config_category);
-		OSettingManager.register_setting(effectSpeed, Aoba.getInstance().settingManager.config_category);
-		OSettingManager.register_setting(rainbow, Aoba.getInstance().settingManager.config_category);
-		OSettingManager.register_setting(ah, Aoba.getInstance().settingManager.config_category);
+		SettingManager.register_setting(hue, Aoba.getInstance().settingManager.config_category);
+		SettingManager.register_setting(effectSpeed, Aoba.getInstance().settingManager.config_category);
+		SettingManager.register_setting(rainbow, Aoba.getInstance().settingManager.config_category);
+		SettingManager.register_setting(ah, Aoba.getInstance().settingManager.config_category);
 	}
 
 	/**

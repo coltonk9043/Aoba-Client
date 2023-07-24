@@ -3,13 +3,13 @@ Starts with an O as to not be confused with the legacy setting
 Partially skidded from balkan hack
 */
 
-package net.aoba.core.osettings;
+package net.aoba.core.settings;
 
 import net.aoba.core.utils.TextUtils;
 
 import java.util.function.Consumer;
 
-public abstract class OSetting <T> {
+public abstract class Setting<T> {
     public final String ID;
     public final String name;
     public final String description;
@@ -21,7 +21,7 @@ public abstract class OSetting <T> {
 
     private final Consumer<T> onUpdate;
 
-    public OSetting (
+    public Setting(
             String ID,
             String description,
             T default_value,

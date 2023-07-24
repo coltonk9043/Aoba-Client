@@ -23,7 +23,7 @@ package net.aoba;
 
 import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
-import net.aoba.core.osettings.OSettingManager;
+import net.aoba.core.settings.SettingManager;
 import net.aoba.gui.HudManager;
 import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.misc.RenderUtils;
@@ -45,7 +45,7 @@ public class AobaClient {
 	public AltManager altManager;
 	public HudManager hudManager;
 	// public Settings settings;
-	public OSettingManager settingManager;
+	public SettingManager settingManager;
 	public RenderUtils renderUtils;
 	
 	private boolean ghostMode;
@@ -63,7 +63,7 @@ public class AobaClient {
 		// System.out.println("[Aoba] Reading Settings");
 		// settings = new Settings();
 		// ^ legacy settings
-		settingManager = new OSettingManager();
+		settingManager = new SettingManager();
 		System.out.println("[Aoba] Initializing Modules");
 		moduleManager = new ModuleManager();
 		System.out.println("[Aoba] Initializing Commands");
@@ -74,9 +74,9 @@ public class AobaClient {
 		altManager = new AltManager();
 		System.out.println("[Aoba] Aoba-chan initialized and ready to play!");
 
-		OSettingManager.loadSettings("config_category", settingManager.config_category);
-		OSettingManager.loadSettings("modules_category", settingManager.modules_category);
-		OSettingManager.loadSettings("hidden_category", settingManager.hidden_category);
+		SettingManager.loadSettings("config_category", settingManager.config_category);
+		SettingManager.loadSettings("modules_category", settingManager.modules_category);
+		SettingManager.loadSettings("hidden_category", settingManager.hidden_category);
 	}
 	
 	/**
@@ -118,9 +118,9 @@ public class AobaClient {
 	 * Called when the client is shutting down.
 	 */
 	public void endClient() {
-		OSettingManager.saveSettings("config_category", settingManager.config_category);
-		OSettingManager.saveSettings("modules_category", settingManager.modules_category);
-		OSettingManager.saveSettings("hidden_category", settingManager.hidden_category);
+		SettingManager.saveSettings("config_category", settingManager.config_category);
+		SettingManager.saveSettings("modules_category", settingManager.modules_category);
+		SettingManager.saveSettings("hidden_category", settingManager.hidden_category);
 		altManager.saveAlts();
 		System.out.println("[Aoba] Shutting down...");
 	}

@@ -3,11 +3,11 @@ package net.aoba.gui.tabs.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.aoba.core.osettings.OSetting;
-import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
-import net.aoba.core.osettings.osettingtypes.IndexedStringListOSetting;
-import net.aoba.core.osettings.osettingtypes.StringListOSetting;
+import net.aoba.core.settings.Setting;
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
+import net.aoba.core.settings.osettingtypes.IndexedStringListSetting;
+import net.aoba.core.settings.osettingtypes.StringListSetting;
 import net.aoba.module.Module;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
@@ -38,14 +38,14 @@ public class ModuleComponent extends Component {
 		this.text = text;
 		this.parent = parent;
 		this.module = module;
-		for (OSetting setting : this.module.getSettings()) {
+		for (Setting setting : this.module.getSettings()) {
 			Component c;
-			if (setting instanceof DoubleOSetting) {
-				c = new SliderComponent(this.parent, (DoubleOSetting) setting);
-			} else if (setting instanceof BooleanOSetting) {
-				c = new CheckboxComponent(this.parent, (BooleanOSetting) setting);
-			} else if (setting instanceof StringListOSetting) {
-				c = new ListComponent(this.parent, (IndexedStringListOSetting) setting);
+			if (setting instanceof DoubleSetting) {
+				c = new SliderComponent(this.parent, (DoubleSetting) setting);
+			} else if (setting instanceof BooleanSetting) {
+				c = new CheckboxComponent(this.parent, (BooleanSetting) setting);
+			} else if (setting instanceof StringListSetting) {
+				c = new ListComponent(this.parent, (IndexedStringListSetting) setting);
 			} else {
 				c = null;
 			}

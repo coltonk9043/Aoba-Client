@@ -23,7 +23,7 @@ package net.aoba.module.modules.movement;
 
 import java.util.UUID;
 
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
@@ -38,14 +38,14 @@ import net.minecraft.util.math.Vec3d;
 
 public class Freecam extends Module {
 	private FakePlayerEntity fakePlayer;
-	private DoubleOSetting flySpeed;
+	private DoubleSetting flySpeed;
 	
 	public Freecam() {
 		this.setName("Freecam");
 		this.setBind(new KeyBinding("key.freecam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to clip through blocks (Only work clientside).");
-		flySpeed = new DoubleOSetting("freecam_speed", "Speed", 2f, null, 0.1f, 15f, 0.5f);
+		flySpeed = new DoubleSetting("freecam_speed", "Speed", 2f, null, 0.1f, 15f, 0.5f);
 		this.addSetting(flySpeed);
 	}
 

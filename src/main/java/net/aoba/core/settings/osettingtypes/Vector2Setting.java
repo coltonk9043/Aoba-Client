@@ -1,12 +1,12 @@
-package net.aoba.core.osettings.osettingtypes;
+package net.aoba.core.settings.osettingtypes;
 
-import net.aoba.core.osettings.OSetting;
+import net.aoba.core.settings.Setting;
 import net.aoba.core.utils.types.Vector2;
 
 import java.util.function.Consumer;
 
-public class Vector2OSetting extends OSetting<Vector2> {
-    public Vector2OSetting (
+public class Vector2Setting extends Setting<Vector2> {
+    public Vector2Setting(
             String ID,
             String description,
             Vector2 default_value,

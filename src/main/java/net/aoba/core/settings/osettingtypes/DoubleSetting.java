@@ -1,15 +1,15 @@
-package net.aoba.core.osettings.osettingtypes;
+package net.aoba.core.settings.osettingtypes;
 
-import net.aoba.core.osettings.OSetting;
+import net.aoba.core.settings.Setting;
 
 import java.util.function.Consumer;
 
-public class DoubleOSetting extends OSetting<Double> {
+public class DoubleSetting extends Setting<Double> {
     public final double min_value;
     public final double max_value;
     public final double step;
 
-    public DoubleOSetting(
+    public DoubleSetting(
             String ID,
             String description,
             double default_value,

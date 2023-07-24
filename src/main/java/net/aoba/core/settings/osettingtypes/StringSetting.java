@@ -1,11 +1,11 @@
-package net.aoba.core.osettings.osettingtypes;
+package net.aoba.core.settings.osettingtypes;
 
-import net.aoba.core.osettings.OSetting;
+import net.aoba.core.settings.Setting;
 
 import java.util.function.Consumer;
 
-public class StringOSetting extends OSetting<String> {
-    public StringOSetting (
+public class StringSetting extends Setting<String> {
+    public StringSetting(
             String ID,
             String description,
             String default_value,

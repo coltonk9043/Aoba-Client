@@ -24,8 +24,8 @@ package net.aoba.module;
 import java.util.ArrayList;
 
 import net.aoba.Aoba;
-import net.aoba.core.osettings.OSetting;
-import net.aoba.core.osettings.OSettingManager;
+import net.aoba.core.settings.Setting;
+import net.aoba.core.settings.SettingManager;
 import org.lwjgl.opengl.GL11;
 
 import net.aoba.misc.RenderUtils;
@@ -139,8 +139,8 @@ public class ModuleManager {
 		addModule(xray);
 
 		for(Module module : modules) {
-			for(OSetting setting : module.getSettings()) {
-				OSettingManager.register_setting(setting, Aoba.getInstance().settingManager.modules_category);
+			for(Setting setting : module.getSettings()) {
+				SettingManager.register_setting(setting, Aoba.getInstance().settingManager.modules_category);
 			}
 		}
 	}

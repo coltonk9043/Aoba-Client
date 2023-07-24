@@ -23,8 +23,8 @@ package net.aoba.module.modules.combat;
 
 import java.util.ArrayList;
 
-import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
@@ -43,10 +43,10 @@ public class KillAura extends Module {
 	}
 
 	private Priority priority = Priority.LOWESTHP;
-	private DoubleOSetting radius;
-	private BooleanOSetting targetAnimals;
-	private BooleanOSetting targetMonsters;
-	private BooleanOSetting targetPlayers;
+	private DoubleSetting radius;
+	private BooleanSetting targetAnimals;
+	private BooleanSetting targetMonsters;
+	private BooleanSetting targetPlayers;
 	
 	public KillAura() {
 		this.setName("KillAura");
@@ -54,10 +54,10 @@ public class KillAura extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything within your personal space.");
 		
-		radius = new DoubleOSetting("killaura_radius", "Radius", 5f, null, 0.1f, 10f, 0.1f);
-		targetAnimals = new BooleanOSetting("killaura_target_animals", "Target animals.", false, null);
-		targetMonsters = new BooleanOSetting("killaura_target_monsters", "Target monsters.", true, null);
-		targetPlayers = new BooleanOSetting("killaura_target_players", "Target pplayers.", true, null);
+		radius = new DoubleSetting("killaura_radius", "Radius", 5f, null, 0.1f, 10f, 0.1f);
+		targetAnimals = new BooleanSetting("killaura_target_animals", "Target animals.", false, null);
+		targetMonsters = new BooleanSetting("killaura_target_monsters", "Target monsters.", true, null);
+		targetPlayers = new BooleanSetting("killaura_target_players", "Target pplayers.", true, null);
 		this.addSetting(radius);
 		this.addSetting(targetAnimals);
 		this.addSetting(targetMonsters);

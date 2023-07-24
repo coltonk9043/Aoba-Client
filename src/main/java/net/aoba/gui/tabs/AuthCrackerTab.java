@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import net.aoba.gui.tabs.components.ButtonComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StringComponent;
@@ -17,7 +17,7 @@ public class AuthCrackerTab extends ClickGuiTab {
 	private SliderComponent delaySlider;
 	private ButtonComponent start;
 
-	private DoubleOSetting delay = new DoubleOSetting("authcracker_delay", "Delay", 100, null, 50, 50000, 1);
+	private DoubleSetting delay = new DoubleSetting("authcracker_delay", "Delay", 100, null, 50, 50000, 1);
 
 	private AuthCracker authCracker;
 	
@@ -63,9 +63,9 @@ class AuthCracker{
 	private Thread curThread;
 	private boolean shouldContinue = true;
 	private MinecraftClient mc = MinecraftClient.getInstance();
-	private DoubleOSetting delay;
+	private DoubleSetting delay;
 	
-	public AuthCracker(DoubleOSetting delay) {
+	public AuthCracker(DoubleSetting delay) {
 		this.delay = delay;
 	}
 	

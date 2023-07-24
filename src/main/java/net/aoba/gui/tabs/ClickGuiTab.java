@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import net.aoba.Aoba;
-import net.aoba.core.osettings.OSettingManager;
-import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
-import net.aoba.core.osettings.osettingtypes.Vector2OSetting;
+import net.aoba.core.settings.SettingManager;
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
+import net.aoba.core.settings.osettingtypes.Vector2Setting;
 import net.aoba.core.utils.types.Vector2;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
@@ -51,9 +51,9 @@ public class ClickGuiTab extends AbstractHud{
 	protected ArrayList<Component> children = new ArrayList<>();
 
 	private Consumer<Vector2> update_pos;
-	private Vector2OSetting position;
+	private Vector2Setting position;
 	private Consumer<Boolean> update_pinned;
-	private BooleanOSetting pinned_setting;
+	private BooleanSetting pinned_setting;
 
 	public ClickGuiTab(String title, int x, int y, boolean pinnable) {
 		super(title + "_tab", x, y, 180, 0);
@@ -79,10 +79,10 @@ public class ClickGuiTab extends AbstractHud{
 			}
 		};
 
-		position = new Vector2OSetting(title + "_position", "GUI POS", new Vector2(x, y), update_pos);
-		pinned_setting = new BooleanOSetting(title + "_pinned", "IS PINNED", false, update_pinned);
-		OSettingManager.register_setting(position, Aoba.getInstance().settingManager.hidden_category);
-		OSettingManager.register_setting(pinned_setting, Aoba.getInstance().settingManager.hidden_category);
+		position = new Vector2Setting(title + "_position", "GUI POS", new Vector2(x, y), update_pos);
+		pinned_setting = new BooleanSetting(title + "_pinned", "IS PINNED", false, update_pinned);
+		SettingManager.register_setting(position, Aoba.getInstance().settingManager.hidden_category);
+		SettingManager.register_setting(pinned_setting, Aoba.getInstance().settingManager.hidden_category);
 	}
 
 

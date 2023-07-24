@@ -1,11 +1,11 @@
-package net.aoba.core.osettings.osettingtypes;
+package net.aoba.core.settings.osettingtypes;
 
-import net.aoba.core.osettings.OSetting;
+import net.aoba.core.settings.Setting;
 
 import java.util.function.Consumer;
 
-public class BooleanOSetting extends OSetting<Boolean> {
-    public BooleanOSetting (
+public class BooleanSetting extends Setting<Boolean> {
+    public BooleanSetting(
             String ID,
             String description,
             boolean default_value,

@@ -1,6 +1,6 @@
 package net.aoba.gui.tabs.components;
 
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
@@ -16,7 +16,7 @@ public class SliderComponent extends Component {
 	float g;
 	float b;
 	
-	DoubleOSetting slider;
+	DoubleSetting slider;
 
 	public SliderComponent(String text, ClickGuiTab parent) {
 		super();
@@ -25,7 +25,7 @@ public class SliderComponent extends Component {
 		this.slider = null;
 	}
 
-	public SliderComponent(ClickGuiTab parent, DoubleOSetting slider) {
+	public SliderComponent(ClickGuiTab parent, DoubleSetting slider) {
 		super();
 		this.text = slider.name;
 		this.parent = parent;

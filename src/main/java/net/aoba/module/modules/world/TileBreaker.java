@@ -23,7 +23,7 @@ package net.aoba.module.modules.world;
 
 import java.util.ArrayList;
 
-import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
@@ -42,7 +42,7 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
 public class TileBreaker extends Module {
 	private MinecraftClient mc;
 	private ArrayList<Block> blocks = new ArrayList<Block>();
-	private DoubleOSetting radius;
+	private DoubleSetting radius;
 	
 	public TileBreaker() {
 		this.setName("TileBreaker");
@@ -50,7 +50,7 @@ public class TileBreaker extends Module {
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
 		this.loadTileBreakerBlocks();
-		this.radius = new DoubleOSetting("tilebreaker_radius", "Radius", 5f, null, 0f, 15f, 1f);
+		this.radius = new DoubleSetting("tilebreaker_radius", "Radius", 5f, null, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
 	}

@@ -1,6 +1,6 @@
 package net.aoba.gui.tabs.components;
 
-import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
@@ -11,9 +11,9 @@ public class CheckboxComponent extends Component {
 	private String text;
 	private boolean wasClicked = false;
 
-	BooleanOSetting checkbox;
+	BooleanSetting checkbox;
 	
-	public CheckboxComponent(ClickGuiTab parent, BooleanOSetting checkbox) {
+	public CheckboxComponent(ClickGuiTab parent, BooleanSetting checkbox) {
 		super();
 		this.text = checkbox.name;
 		this.parent = parent;

@@ -3,7 +3,7 @@ package net.aoba.gui.tabs.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.aoba.core.osettings.osettingtypes.IndexedStringListOSetting;
+import net.aoba.core.settings.osettingtypes.IndexedStringListSetting;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
@@ -15,7 +15,7 @@ public class ListComponent extends Component {
 
 	private String text;
 	private boolean wasClicked = false;
-	private IndexedStringListOSetting list;
+	private IndexedStringListSetting list;
 	private List<Component> settingsList = new ArrayList<Component>();
 	
 	public ListComponent(String text, ClickGuiTab parent) {
@@ -24,7 +24,7 @@ public class ListComponent extends Component {
 		this.parent = parent;
 	}
 
-	public ListComponent(ClickGuiTab parent, IndexedStringListOSetting list) {
+	public ListComponent(ClickGuiTab parent, IndexedStringListSetting list) {
 		super();
 		this.text = list.name;
 		this.parent = parent;
