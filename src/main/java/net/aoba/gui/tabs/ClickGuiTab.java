@@ -56,7 +56,7 @@ public class ClickGuiTab extends AbstractHud{
 	private BooleanOSetting pinned_setting;
 
 	public ClickGuiTab(String title, int x, int y, boolean pinnable) {
-		super(x, y, 180, 0);
+		super(title + "_tab", x, y, 180, 0);
 		this.title = title;
 		this.x = x;
 		this.y = y;

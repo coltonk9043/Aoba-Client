@@ -3,6 +3,7 @@ package net.aoba.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.aoba.core.osettings.OSettingManager;
 import net.aoba.core.osettings.osettingtypes.BooleanOSetting;
 import net.aoba.core.osettings.osettingtypes.DoubleOSetting;
 import org.lwjgl.glfw.GLFW;
@@ -114,6 +115,11 @@ public class HudManager {
 		clickGuiNavBar.addPane(toolsPane);
 		clickGuiNavBar.addPane(hudPane);
 		clickGuiNavBar.addPane(settingsPane);
+
+		OSettingManager.register_setting(hue, Aoba.getInstance().settingManager.config_category);
+		OSettingManager.register_setting(effectSpeed, Aoba.getInstance().settingManager.config_category);
+		OSettingManager.register_setting(rainbow, Aoba.getInstance().settingManager.config_category);
+		OSettingManager.register_setting(ah, Aoba.getInstance().settingManager.config_category);
 	}
 
 	/**
