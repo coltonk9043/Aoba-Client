@@ -1,9 +1,9 @@
 package net.aoba.gui.tabs.components;
 
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -16,7 +16,7 @@ public class SliderComponent extends Component {
 	float g;
 	float b;
 	
-	SliderSetting slider;
+	DoubleSetting slider;
 
 	public SliderComponent(String text, ClickGuiTab parent) {
 		super();
@@ -25,12 +25,12 @@ public class SliderComponent extends Component {
 		this.slider = null;
 	}
 
-	public SliderComponent(ClickGuiTab parent, SliderSetting slider) {
+	public SliderComponent(ClickGuiTab parent, DoubleSetting slider) {
 		super();
-		this.text = slider.getName();
+		this.text = slider.name;
 		this.parent = parent;
 		this.slider = slider;
-		this.currentSliderPosition = (float) ((slider.getValue() - slider.getMinimum()) / slider.getRange());
+		this.currentSliderPosition = (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value));
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class SliderComponent extends Component {
 							&& mouseY <= ((parentY + offset) + 24)) {
 						this.currentSliderPosition = (float) Math.min((((mouseX - ((parentX + 4))) - 1) / ((parentWidth - 12))), 1f);
 						this.currentSliderPosition = (float) Math.max(0f,this.currentSliderPosition);
-						this.slider.setValue((this.currentSliderPosition * this.slider.getRange()) + this.slider.getMinimum());
+						this.slider.setValue((this.currentSliderPosition * (slider.max_value - slider.min_value)) + slider.min_value);
 					}
 				}
 			}
@@ -61,10 +61,10 @@ public class SliderComponent extends Component {
 		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24, 0.5f, 0.5f, 0.5f,
 				0.3f);
 		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset,
-				(int) Math.floor((parentWidth - 6) * this.currentSliderPosition), 24, color, 1f);
+				(int) Math.floor((parentWidth - 6) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value))), 24, color, 1f);
 		renderUtils.drawOutline(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24);
 		if(this.slider == null) return;
-		renderUtils.drawString(drawContext, this.text + ": " + this.slider.getValueFloat(), parentX + 10,
+		renderUtils.drawString(drawContext, this.text + ": " + this.slider.getValue().intValue(), parentX + 10,
 				parentY + 6 + offset, 0xFFFFFF);
 	}
 

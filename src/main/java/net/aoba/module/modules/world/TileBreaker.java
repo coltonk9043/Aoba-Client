@@ -22,10 +22,11 @@
 package net.aoba.module.modules.world;
 
 import java.util.ArrayList;
+
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -41,7 +42,7 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
 public class TileBreaker extends Module {
 	private MinecraftClient mc;
 	private ArrayList<Block> blocks = new ArrayList<Block>();
-	private SliderSetting radius;
+	private DoubleSetting radius;
 	
 	public TileBreaker() {
 		this.setName("TileBreaker");
@@ -49,13 +50,13 @@ public class TileBreaker extends Module {
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
 		this.loadTileBreakerBlocks();
-		this.radius = new SliderSetting("Radius", "tilebreaker_radius", 5f, 0f, 15f, 1f);
+		this.radius = new DoubleSetting("tilebreaker_radius", "Radius", 5f, null, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
 	}
 
 	public void setRadius(int radius) {
-		this.radius.setValue(radius);
+		this.radius.setValue((double)radius);
 	}
 	
 	@Override
@@ -72,7 +73,7 @@ public class TileBreaker extends Module {
 
 	@Override
 	public void onUpdate() {
-		int rad = this.radius.getValueInt();
+		int rad = this.radius.getValue().intValue();
 		for (int x = -rad; x < rad; x++) {
 			for (int y = rad; y > -rad; y--) {
 				for (int z = -rad; z < rad; z++) {
@@ -93,7 +94,7 @@ public class TileBreaker extends Module {
 
 	@Override
 	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		int rad = this.radius.getValueInt();
+		int rad = this.radius.getValue().intValue();
 		for (int x = -rad; x < rad; x++) {
 			for (int y = rad; y > -rad; y--) {
 				for (int z = -rad; z < rad; z++) {
@@ -149,10 +150,7 @@ public class TileBreaker extends Module {
 	}
 	
 	public boolean isTileBreakerBlock(Block b) {
-		if (this.blocks.contains(b)) {
-			return true;
-		}
-		return false;
+		return this.blocks.contains(b);
 	}
 
 	@Override

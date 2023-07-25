@@ -21,16 +21,16 @@
  */
 package net.aoba.module.modules.movement;
 
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.Packet;
 
 public class Step extends Module {
 
-	private SliderSetting stepHeight;
+	private DoubleSetting stepHeight;
 	
 	public Step() {
 		this.setName("Step");
@@ -38,7 +38,7 @@ public class Step extends Module {
 		this.setCategory(Category.Movement);
 		this.setDescription("Steps up blocks.");
 		
-		stepHeight = new SliderSetting("Height", "step_height", 1f, 0.0f, 2f, 0.5f);
+		stepHeight = new DoubleSetting("step_height", "Height", 1f, null, 0.0f, 2f, 0.5f);
 		this.addSetting(stepHeight);
 	}
 
@@ -51,7 +51,7 @@ public class Step extends Module {
 
 	@Override
 	public void onEnable() {
-		MC.player.setStepHeight(stepHeight.getValueFloat());
+		MC.player.setStepHeight(stepHeight.getValue().floatValue());
 	}
 
 	@Override
@@ -81,6 +81,6 @@ public class Step extends Module {
 	}
 	
 	public void setStepHeight(float height) {
-		this.stepHeight.setValue(height);
+		this.stepHeight.setValue((double)height);
 	}
 }

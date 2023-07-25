@@ -13,7 +13,7 @@ public class InfoHud extends AbstractHud {
 	
 	// 
 	public InfoHud(int x, int y) {
-		super(x, y, 190, 60);
+		super("InfoHud", x, y, 190, 60);
 	}
 	
 	@Override

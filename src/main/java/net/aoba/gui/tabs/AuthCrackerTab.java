@@ -5,10 +5,10 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import net.aoba.gui.tabs.components.ButtonComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StringComponent;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.MinecraftClient;
 
 public class AuthCrackerTab extends ClickGuiTab {
@@ -17,7 +17,7 @@ public class AuthCrackerTab extends ClickGuiTab {
 	private SliderComponent delaySlider;
 	private ButtonComponent start;
 
-	private SliderSetting delay = new SliderSetting("Delay", "authcracker_delay", 100, 50, 50000, 1);
+	private DoubleSetting delay = new DoubleSetting("authcracker_delay", "Delay", 100, null, 50, 50000, 1);
 
 	private AuthCracker authCracker;
 	
@@ -63,9 +63,9 @@ class AuthCracker{
 	private Thread curThread;
 	private boolean shouldContinue = true;
 	private MinecraftClient mc = MinecraftClient.getInstance();
-	private SliderSetting delay;
+	private DoubleSetting delay;
 	
-	public AuthCracker(SliderSetting delay) {
+	public AuthCracker(DoubleSetting delay) {
 		this.delay = delay;
 	}
 	
@@ -83,7 +83,7 @@ class AuthCracker{
 		}
 		if(s != null) {
 			while(shouldContinue && s.hasNextLine()) {
-				if(System.currentTimeMillis() - time > delay.getValue()) {
+				if(System.currentTimeMillis() - time > delay.getValue().floatValue()) {
 					String str = s.nextLine();
 					while(mc.player == null) {
 						try {

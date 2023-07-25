@@ -21,9 +21,9 @@
  */
 package net.aoba.module.modules.combat;
 
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
-import net.aoba.settings.BooleanSetting;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -45,8 +45,8 @@ public class Aimbot extends Module {
 
 		this.setCategory(Category.Combat);
 		this.setDescription("Locks your crosshair towards a desire player or entity.");
-		targetAnimals = new BooleanSetting("Trgt Mobs", "aimbot_target_mobs");
-		targetPlayers = new BooleanSetting("Trgt Players", "aimbot_target_players");
+		targetAnimals = new BooleanSetting("aimbot_target_mobs", "Target mobs.", false, null);
+		targetPlayers = new BooleanSetting("aimbot_target_players", "Target players.", true, null);
 		this.addSetting(targetAnimals);
 		this.addSetting(targetPlayers);
 	}

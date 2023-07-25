@@ -34,7 +34,7 @@ public class ArmorHud extends AbstractHud{
 	private ItemRenderer itemRenderer; 
 	
 	public ArmorHud(int x, int y, int width, int height) {
-		super(x,y,width,height);
+		super("ArmorHud", x,y,width,height);
 		itemRenderer = mc.getItemRenderer();
 		this.x = 300;
 		this.y = 300;

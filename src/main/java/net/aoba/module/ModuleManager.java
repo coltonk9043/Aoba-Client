@@ -22,6 +22,10 @@
 package net.aoba.module;
 
 import java.util.ArrayList;
+
+import net.aoba.Aoba;
+import net.aoba.core.settings.Setting;
+import net.aoba.core.settings.SettingManager;
 import org.lwjgl.opengl.GL11;
 
 import net.aoba.misc.RenderUtils;
@@ -133,6 +137,12 @@ public class ModuleManager {
 		addModule(tracer);
 		addModule(trajectory);
 		addModule(xray);
+
+		for(Module module : modules) {
+			for(Setting setting : module.getSettings()) {
+				SettingManager.register_setting(setting, Aoba.getInstance().settingManager.modules_category);
+			}
+		}
 	}
 	
 	public void update() {

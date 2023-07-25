@@ -21,9 +21,9 @@
  */
 package net.aoba.module.modules.movement;
 
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
-import net.aoba.settings.BooleanSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.Packet;
@@ -39,7 +39,7 @@ public class Jesus extends Module {
 		this.setDescription("Allows the player to walk on water.");
 		
 		// Add Settings
-		legit = new BooleanSetting("Legit", "jesus_legit");
+		legit = new BooleanSetting("jesus_legit", "Legit", true, null);
 		this.addSetting(legit);
 	}
 

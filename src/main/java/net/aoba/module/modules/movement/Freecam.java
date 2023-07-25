@@ -23,12 +23,12 @@ package net.aoba.module.modules.movement;
 
 import java.util.UUID;
 
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.Module;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -38,19 +38,19 @@ import net.minecraft.util.math.Vec3d;
 
 public class Freecam extends Module {
 	private FakePlayerEntity fakePlayer;
-	private SliderSetting flySpeed;
+	private DoubleSetting flySpeed;
 	
 	public Freecam() {
 		this.setName("Freecam");
 		this.setBind(new KeyBinding("key.freecam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to clip through blocks (Only work clientside).");
-		flySpeed = new SliderSetting("Speed", "freecam_speed", 2f, 0.1f, 15f, 0.5f);
+		flySpeed = new DoubleSetting("freecam_speed", "Speed", 2f, null, 0.1f, 15f, 0.5f);
 		this.addSetting(flySpeed);
 	}
 
 	public void setSpeed(float speed) {
-		this.flySpeed.setValue(speed);
+		this.flySpeed.setValue((double)speed);
 	}
 	
 	public double getSpeed() {
@@ -91,7 +91,7 @@ public class Freecam extends Module {
 		ClientPlayerEntity player = MC.player;
 		player.noClip = true;
 		player.setOnGround(false);
-		float speed = this.flySpeed.getValueFloat();
+		float speed = this.flySpeed.getValue().floatValue();
 		if (MC.options.sprintKey.isPressed()) {
 			speed *= 1.5;
 		}

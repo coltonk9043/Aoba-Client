@@ -21,9 +21,9 @@
  */
 package net.aoba.module.modules.combat;
 
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
@@ -37,7 +37,7 @@ import net.minecraft.util.Hand;
 
 public class AutoSoup extends Module {
 
-	private SliderSetting health;
+	private DoubleSetting health;
 	
 	private int previousSlot = -1;
 	
@@ -47,7 +47,7 @@ public class AutoSoup extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Automatically consumes soup when health is low. (KitPVP)");
 		
-		health = new SliderSetting("Health", "autosoup_health", 6f, 1f, 20f, 1f);
+		health = new DoubleSetting("autosoup_health", "Min Health",6f, null, 1f, 20f, 1f);
 		this.addSetting(health);
 	}
 

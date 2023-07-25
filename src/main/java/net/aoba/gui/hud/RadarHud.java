@@ -15,7 +15,7 @@ public class RadarHud extends AbstractHud {
 
 	float distance = 50;
 	public RadarHud( int x, int y, int width, int height) {
-		super(x, y, width, height);
+		super("RadarHud", x, y, width, height);
 	}
 
 	@Override

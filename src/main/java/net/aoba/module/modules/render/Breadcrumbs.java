@@ -23,10 +23,11 @@ package net.aoba.module.modules.render;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
-import net.aoba.settings.BooleanSetting;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.Packet;
@@ -39,9 +40,9 @@ public class Breadcrumbs extends Module{
 	private Color color;
 	private RainbowColor rainbowColor;
 
-	public SliderSetting hue = new SliderSetting("Hue", "breadcrumbs_hue", 4, 0, 360, 1);
-	public BooleanSetting rainbow = new BooleanSetting("Rainbow", "breadcrumbs_rainbow");
-	public SliderSetting effectSpeed = new SliderSetting("Effect Spd", "breadcrumbs_effectspeed", 4, 1, 20, 0.1);
+	public DoubleSetting hue = new DoubleSetting("breadcrumbs_hue", "Hue", 4, null, 0, 360, 1);
+	public BooleanSetting rainbow = new BooleanSetting("breadcrumbs_rainbow", "Rainbow", false, null);
+	public DoubleSetting effectSpeed = new DoubleSetting("breadcrumbs_effectspeed", "Effect Spd", 4, null, 1, 20, 0.1);
 	
 	private float timer = 10;
 	private float currentTick = 0;
@@ -52,7 +53,7 @@ public class Breadcrumbs extends Module{
 		this.setBind(new KeyBinding("key.breadcrumbs", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Shows breadcrumbs of where you last stepped;");
-		color = new Color(hue.getValueFloat(), 1f, 1f);
+		color = new Color(hue.getValue().floatValue(), 1f, 1f);
 		currentColor = color;
 		rainbowColor = new RainbowColor();
 		this.addSetting(hue);
@@ -82,10 +83,10 @@ public class Breadcrumbs extends Module{
 			positions.add(MC.player.getPos());
 		}
 		if(this.rainbow.getValue()) {
-			this.rainbowColor.update(this.effectSpeed.getValueFloat());
+			this.rainbowColor.update(this.effectSpeed.getValue().floatValue());
 			this.currentColor = this.rainbowColor.getColor();
 		}else {
-			this.color.setHSV(hue.getValueFloat(), 1f, 1f);
+			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
 			this.currentColor = color;
 		}
 	}

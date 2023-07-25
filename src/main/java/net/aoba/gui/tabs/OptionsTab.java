@@ -1,10 +1,10 @@
 package net.aoba.gui.tabs;
 
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import net.aoba.gui.tabs.components.CheckboxComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StringComponent;
-import net.aoba.settings.BooleanSetting;
-import net.aoba.settings.SliderSetting;
 
 public class OptionsTab extends ClickGuiTab {
 
@@ -13,8 +13,8 @@ public class OptionsTab extends ClickGuiTab {
 	private CheckboxComponent rainbowBox;
 	private SliderComponent effectSpeed;
 	private CheckboxComponent armorHud;
-	
-	public OptionsTab(String title, int x, int y, SliderSetting hue, BooleanSetting rainbow, BooleanSetting ah, SliderSetting es) {
+
+	public OptionsTab(String title, int x, int y, DoubleSetting hue, BooleanSetting rainbow, BooleanSetting ah, DoubleSetting es) {
 		super(title, x, y, false);
 		this.setWidth(180);
 		this.addChild(uiSettingsString);

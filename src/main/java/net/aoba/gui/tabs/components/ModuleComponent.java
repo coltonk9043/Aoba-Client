@@ -2,13 +2,16 @@ package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.aoba.core.settings.Setting;
+import net.aoba.core.settings.osettingtypes.BooleanSetting;
+import net.aoba.core.settings.osettingtypes.DoubleSetting;
+import net.aoba.core.settings.osettingtypes.IndexedStringListSetting;
+import net.aoba.core.settings.osettingtypes.StringListSetting;
 import net.aoba.module.Module;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
-import net.aoba.settings.Setting;
-import net.aoba.settings.*;
-import net.aoba.settings.SliderSetting;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -37,12 +40,12 @@ public class ModuleComponent extends Component {
 		this.module = module;
 		for (Setting setting : this.module.getSettings()) {
 			Component c;
-			if (setting instanceof SliderSetting) {
-				c = new SliderComponent(this.parent, (SliderSetting) setting);
+			if (setting instanceof DoubleSetting) {
+				c = new SliderComponent(this.parent, (DoubleSetting) setting);
 			} else if (setting instanceof BooleanSetting) {
 				c = new CheckboxComponent(this.parent, (BooleanSetting) setting);
-			} else if (setting instanceof ListSetting) {
-				c = new ListComponent(this.parent, (ListSetting) setting);
+			} else if (setting instanceof StringListSetting) {
+				c = new ListComponent(this.parent, (IndexedStringListSetting) setting);
 			} else {
 				c = null;
 			}
