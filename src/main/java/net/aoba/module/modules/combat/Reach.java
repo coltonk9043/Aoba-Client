@@ -21,8 +21,9 @@
  */
 package net.aoba.module.modules.combat;
 
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.DoubleSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -38,7 +39,7 @@ public class Reach extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Reaches further.");
 		
-		distance = new DoubleSetting("reach_distance", "Distance", 5f, null, 1f, 15f, 1f);
+		distance = new DoubleSetting("reach_distance", "Distance", 5f, 1f, 15f, 1f);
 		this.addSetting(distance);
 	}
 

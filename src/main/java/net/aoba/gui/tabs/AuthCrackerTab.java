@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
+import net.aoba.core.settings.types.DoubleSetting;
 import net.aoba.gui.tabs.components.ButtonComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StringComponent;
@@ -17,7 +17,7 @@ public class AuthCrackerTab extends ClickGuiTab {
 	private SliderComponent delaySlider;
 	private ButtonComponent start;
 
-	private DoubleSetting delay = new DoubleSetting("authcracker_delay", "Delay", 100, null, 50, 50000, 1);
+	private DoubleSetting delay = new DoubleSetting("authcracker_delay", "Delay", 100, 50, 50000, 1, null);
 
 	private AuthCracker authCracker;
 	

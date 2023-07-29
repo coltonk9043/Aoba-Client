@@ -1,6 +1,6 @@
 package net.aoba.gui.tabs.components;
 
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
+import net.aoba.core.settings.types.DoubleSetting;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
@@ -27,7 +27,7 @@ public class SliderComponent extends Component {
 
 	public SliderComponent(ClickGuiTab parent, DoubleSetting slider) {
 		super();
-		this.text = slider.name;
+		this.text = slider.displayName;
 		this.parent = parent;
 		this.slider = slider;
 		this.currentSliderPosition = (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value));
@@ -64,7 +64,8 @@ public class SliderComponent extends Component {
 				(int) Math.floor((parentWidth - 6) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value))), 24, color, 1f);
 		renderUtils.drawOutline(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24);
 		if(this.slider == null) return;
-		renderUtils.drawString(drawContext, this.text + ": " + this.slider.getValue().intValue(), parentX + 10,
+		// TODO: Slow but it works. Perhaps we can modify a STORED string using our new Consumer delegates?
+		renderUtils.drawString(drawContext, this.text + ": " + String.format("%.02f", this.slider.getValue()), parentX + 10,
 				parentY + 6 + offset, 0xFFFFFF);
 	}
 

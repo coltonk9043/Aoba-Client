@@ -21,28 +21,38 @@
  */
 package net.aoba.module.modules.render;
 
-import net.aoba.core.settings.osettingtypes.BooleanSetting;
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
+import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.core.settings.types.DoubleSetting;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
 import net.aoba.module.Module;
+import net.minecraft.client.model.ModelData;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.entity.model.CowEntityModel;
+import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.entity.model.EntityModelLoader;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 
 public class EntityESP extends Module {
 	private Color color;
 	private RainbowColor rainbowColor;
 
-	public DoubleSetting hue = new DoubleSetting("entitysp_hue", "Hue", 4, null, 0, 360, 1);
+	public DoubleSetting hue = new DoubleSetting("entitysp_hue", "Hue", 4, 0, 360, 1);
 	public BooleanSetting rainbow = new BooleanSetting("entityesp_rainbow", "Rainbow", false, null);
-	public DoubleSetting effectSpeed = new DoubleSetting("entityesp_effectspeed", "Effect Speed", 4, null, 1, 20, 0.1);
+	public DoubleSetting effectSpeed = new DoubleSetting("entityesp_effectspeed", "Effect Speed", 4, 1, 20, 0.1);
 	
 	public EntityESP() {
 		this.setName("EntityESP");
@@ -82,18 +92,29 @@ public class EntityESP extends Module {
 	}
 
 	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {		
+	public void onRender(MatrixStack matrixStack, float partialTicks) {	
+		matrixStack.push();
+		
 		for (Entity entity : MC.world.getEntities()) {
 			if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
+				
+				Box boundingBox = entity.getBoundingBox(); 
+				
+				Vec3d entityVelocity = entity.getVelocity();
+				Vec3d velocityPartial = new Vec3d(entityVelocity.x * partialTicks, 0, entityVelocity.z * partialTicks);
+				
+				boundingBox = boundingBox.offset(velocityPartial);
+				
 				if (entity instanceof AnimalEntity) {
-					this.getRenderUtils().draw3DBox(matrixStack, entity.getBoundingBox(), new Color(0, 255, 0), 0.2f);
+					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, new Color(0, 255, 0), 0.2f);
 				} else if (entity instanceof Monster) {
-					this.getRenderUtils().draw3DBox(matrixStack, entity.getBoundingBox(), new Color(255, 0, 0), 0.2f);
+					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, new Color(255, 0, 0), 0.2f);
 				} else {
-					this.getRenderUtils().draw3DBox(matrixStack, entity.getBoundingBox(), new Color(0, 0, 255), 0.2f);
+					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, new Color(0, 0, 255), 0.2f);
 				}
 			}
 		}
+		matrixStack.pop();
 	}
 
 	@Override

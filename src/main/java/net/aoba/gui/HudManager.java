@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.aoba.core.settings.SettingManager;
-import net.aoba.core.settings.osettingtypes.BooleanSetting;
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
+import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.core.settings.types.DoubleSetting;
+
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import net.aoba.module.Module;
@@ -52,8 +53,8 @@ public class HudManager {
 
 	public NavigationBar clickGuiNavBar;
 
-	public DoubleSetting hue = new DoubleSetting("color_hue", "Hue", 4, null, 0, 360, 1);
-	public DoubleSetting effectSpeed = new DoubleSetting("color_speed", "Effect Spd", 4, null, 1, 20, 0.1);
+	public DoubleSetting hue = new DoubleSetting("color_hue", "Hue", 4, 0, 360, 1, null);
+	public DoubleSetting effectSpeed = new DoubleSetting("color_speed", "Effect Spd", 4, 1, 20, 0.1, null);
 	public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
 	public BooleanSetting ah = new BooleanSetting("armorhud_toggle", "ArmorHUD", false, null);
 

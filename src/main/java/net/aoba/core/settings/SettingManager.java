@@ -1,7 +1,7 @@
 package net.aoba.core.settings;
 
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
-import net.aoba.core.settings.osettingtypes.IntegerSetting;
+import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.IntegerSetting;
 import net.aoba.core.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 
@@ -79,22 +79,22 @@ public class SettingManager {
                         switch (setting.type) {
                             case DOUBLE -> {
                                 if (((DoubleSetting) setting).min_value <= Double.parseDouble(value) && ((DoubleSetting) setting).max_value >= Double.parseDouble(value)) {
-                                    if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Double.parseDouble(value));
+                                    if (DEBUG_STUFF) System.out.println(setting.displayName + " " + setting.value + " " + Double.parseDouble(value));
                                     setting.setValue(Double.parseDouble(value));
                                 }
                             }
                             case INTEGER -> {
                                 if ((int) ((IntegerSetting) setting).min_value <= Integer.parseInt(value) && (int) ((IntegerSetting) setting).max_value >= Integer.parseInt(value)) {
-                                    if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Integer.parseInt(value));
+                                    if (DEBUG_STUFF) System.out.println(setting.displayName + " " + setting.value + " " + Integer.parseInt(value));
                                     setting.setValue(Integer.parseInt(value));
                                 }
                             }
                             case BOOLEAN -> {
-                                if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + Boolean.parseBoolean(value));
+                                if (DEBUG_STUFF) System.out.println(setting.displayName + " " + setting.value + " " + Boolean.parseBoolean(value));
                                 setting.setValue(Boolean.parseBoolean(value));
                             }
                             case STRING -> {
-                                if (DEBUG_STUFF) System.out.println(setting.name + " " + setting.value + " " + value);
+                                if (DEBUG_STUFF) System.out.println(setting.displayName + " " + setting.value + " " + value);
                                 setting.setValue(value);
                             }
                         }
@@ -104,7 +104,7 @@ public class SettingManager {
                         String value_x = config.getProperty(setting.ID + "_x", null);
                         String value_y = config.getProperty(setting.ID + "_y", null);
                         if (value_x == null || value_y == null) break;
-                        /* if (DEBUG_STUFF) */ System.out.println(setting.name + " " + ((Vector2)setting.value).x + " " + ((Vector2)setting.value).y + " " + value_x + " " + value_y);
+                        /* if (DEBUG_STUFF) */ System.out.println(setting.displayName + " " + ((Vector2)setting.value).x + " " + ((Vector2)setting.value).y + " " + value_x + " " + value_y);
                         setting.setValue(new Vector2(Double.parseDouble(value_x), Double.parseDouble(value_y)));
                     }
                 }

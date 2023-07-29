@@ -22,6 +22,9 @@
 package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.core.settings.types.DoubleSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -29,11 +32,22 @@ import net.minecraft.network.packet.Packet;
 
 public class Nametags extends Module {
 
+	private DoubleSetting scale;
+	private BooleanSetting onlyPlayers;
+	private BooleanSetting alwaysVisible;
+	
 	public Nametags() {
 		this.setName("Nametags");
 		this.setBind(new KeyBinding("key.nametags", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
 		this.setDescription("Scales the nametags to be larger.");
+		
+		scale = new DoubleSetting("nametags_scale", "Scale of the NameTags", 0, 0, 5, 0.25);
+		onlyPlayers = new BooleanSetting("nametags_onlyPlayers", "Whether Nametags are only enlarged for players.", false, null);
+		alwaysVisible = new BooleanSetting("nametags_alwaysVisible", "Whether Nametags will always be displayed.", false, null);
+		this.addSetting(scale);
+		this.addSetting(onlyPlayers);
+		this.addSetting(alwaysVisible);
 	}
 
 	@Override
@@ -69,5 +83,18 @@ public class Nametags extends Module {
 	@Override
 	public void onReceivePacket(Packet<?> packet) {
 
+	}
+	
+	
+	public double getNametagScale() {
+		return this.scale.getValue();
+	}
+	
+	public boolean getPlayersOnly() {
+		return this.onlyPlayers.getValue();
+	}
+	
+	public boolean getAlwaysVisible() {
+		return this.alwaysVisible.getValue();
 	}
 }

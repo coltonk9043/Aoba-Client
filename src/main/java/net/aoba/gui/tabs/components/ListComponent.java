@@ -3,7 +3,7 @@ package net.aoba.gui.tabs.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.aoba.core.settings.osettingtypes.IndexedStringListSetting;
+import net.aoba.core.settings.types.IndexedStringListSetting;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
@@ -26,7 +26,7 @@ public class ListComponent extends Component {
 
 	public ListComponent(ClickGuiTab parent, IndexedStringListSetting list) {
 		super();
-		this.text = list.name;
+		this.text = list.displayName;
 		this.parent = parent;
 		this.list = list;
 	}

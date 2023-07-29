@@ -1,7 +1,7 @@
 package net.aoba.gui.tabs;
 
-import net.aoba.core.settings.osettingtypes.BooleanSetting;
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
+import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.core.settings.types.DoubleSetting;
 import net.aoba.gui.tabs.components.CheckboxComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StringComponent;

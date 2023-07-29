@@ -21,8 +21,9 @@
  */
 package net.aoba.module.modules.misc;
 
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.DoubleSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -38,7 +39,7 @@ public class FastBreak extends Module {
 		this.setCategory(Category.Misc);
 		this.setDescription("Breaks blocks quicker based on a multiplier.");
 		
-		multiplier = new DoubleSetting("fastbreak_multiplier", "Multiplier", 1.25f, null, 1f, 3f, 0.05f);
+		multiplier = new DoubleSetting("fastbreak_multiplier", "Multiplier", 1.25f, 1f, 3f, 0.05f);
 		this.addSetting(multiplier);
 	}
 

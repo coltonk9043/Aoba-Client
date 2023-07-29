@@ -1,4 +1,4 @@
-package net.aoba.core.utils;
+package net.aoba.misc;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

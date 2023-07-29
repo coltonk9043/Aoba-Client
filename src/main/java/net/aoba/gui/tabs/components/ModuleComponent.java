@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.aoba.core.settings.Setting;
-import net.aoba.core.settings.osettingtypes.BooleanSetting;
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
-import net.aoba.core.settings.osettingtypes.IndexedStringListSetting;
-import net.aoba.core.settings.osettingtypes.StringListSetting;
+import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.IndexedStringListSetting;
+import net.aoba.core.settings.types.StringListSetting;
 import net.aoba.module.Module;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;

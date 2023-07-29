@@ -21,8 +21,9 @@
  */
 package net.aoba.module.modules.movement;
 
-import net.aoba.core.settings.osettingtypes.BooleanSetting;
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;

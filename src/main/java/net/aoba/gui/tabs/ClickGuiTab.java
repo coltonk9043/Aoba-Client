@@ -27,8 +27,8 @@ import java.util.function.Consumer;
 
 import net.aoba.Aoba;
 import net.aoba.core.settings.SettingManager;
-import net.aoba.core.settings.osettingtypes.BooleanSetting;
-import net.aoba.core.settings.osettingtypes.Vector2Setting;
+import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.core.settings.types.Vector2Setting;
 import net.aoba.core.utils.types.Vector2;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;

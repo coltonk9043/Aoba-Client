@@ -21,9 +21,9 @@
  */
 package net.aoba.module.modules.world;
 
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
 
+import net.aoba.core.settings.types.DoubleSetting;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.minecraft.block.Block;
@@ -48,7 +48,7 @@ public class Nuker extends Module {
 		this.setBind(new KeyBinding("key.nuker", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks around the player.");
-		this.radius = new DoubleSetting("nuker_radius", "Radius", 5f, null, 0f, 15f, 1f);
+		this.radius = new DoubleSetting("nuker_radius", "Radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
 	}

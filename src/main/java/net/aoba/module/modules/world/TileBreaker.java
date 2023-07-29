@@ -23,8 +23,9 @@ package net.aoba.module.modules.world;
 
 import java.util.ArrayList;
 
-import net.aoba.core.settings.osettingtypes.DoubleSetting;
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.DoubleSetting;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.minecraft.block.Block;
@@ -50,7 +51,7 @@ public class TileBreaker extends Module {
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
 		this.loadTileBreakerBlocks();
-		this.radius = new DoubleSetting("tilebreaker_radius", "Radius", 5f, null, 0f, 15f, 1f);
+		this.radius = new DoubleSetting("tilebreaker_radius", "Radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
 	}
