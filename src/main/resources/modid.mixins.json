@@ -27,7 +27,8 @@
 	"WorldRendererMixin",
 	"MinecraftClientMixin",
 	"BackgroundRendererMixin",
-	"LightmapTextureManagerMixin"
+	"LightmapTextureManagerMixin",
+	"EntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
