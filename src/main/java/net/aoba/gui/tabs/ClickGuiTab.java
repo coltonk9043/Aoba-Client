@@ -111,7 +111,7 @@ public class ClickGuiTab extends AbstractHud{
 		this.title = title;
 	}
 
-	public final int getX() {
+	public final float getX() {
 		return x;
 	}
 
@@ -119,7 +119,7 @@ public class ClickGuiTab extends AbstractHud{
 		this.x = x;
 	}
 
-	public final int getY() {
+	public final float getY() {
 		return y;
 	}
 
@@ -127,7 +127,7 @@ public class ClickGuiTab extends AbstractHud{
 		this.y = y;
 	}
 
-	public final int getWidth() {
+	public final float getWidth() {
 		return width;
 	}
 
@@ -135,7 +135,7 @@ public class ClickGuiTab extends AbstractHud{
 		this.width = width;
 	}
 
-	public final int getHeight() {
+	public final float getHeight() {
 		return height;
 	}
 

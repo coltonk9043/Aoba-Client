@@ -23,7 +23,7 @@ package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
@@ -34,7 +34,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class Fly extends Module {
 
-	private DoubleSetting flySpeed;
+	private FloatSetting flySpeed;
 	
 	public Fly() {
 		this.setName("Fly");
@@ -42,7 +42,7 @@ public class Fly extends Module {
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to fly.");
 		
-		flySpeed = new DoubleSetting("fly_speed", "Speed", 2f, 0.1f, 15f, 0.5f);
+		flySpeed = new FloatSetting("fly_speed", "Speed", 2f, 0.1f, 15f, 0.5f);
 		this.addSetting(flySpeed);
 	}
 

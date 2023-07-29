@@ -33,8 +33,8 @@ public class RadarHud extends AbstractHud {
 		float sin_theta = (float) Math.sin(Math.toRadians(-mc.player.getRotationClient().y));
 		float cos_theta = (float) Math.cos(Math.toRadians(-mc.player.getRotationClient().y));
 
-		int center_x = x + (width / 2);
-		int center_y = y - 2 + (height / 2);
+		float center_x = x + (width / 2);
+		float center_y = y - 2 + (height / 2);
 
 		// Render Entities
 		for (Entity entity : mc.world.getEntities()) {

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -44,7 +44,7 @@ public class KillAura extends Module {
 	}
 
 	private Priority priority = Priority.LOWESTHP;
-	private DoubleSetting radius;
+	private FloatSetting radius;
 	private BooleanSetting targetAnimals;
 	private BooleanSetting targetMonsters;
 	private BooleanSetting targetPlayers;
@@ -55,7 +55,7 @@ public class KillAura extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything within your personal space.");
 		
-		radius = new DoubleSetting("killaura_radius", "Radius", "Radius", 5f, 0.1f, 10f, 0.1f);
+		radius = new FloatSetting("killaura_radius", "Radius", "Radius", 5f, 0.1f, 10f, 0.1f);
 		targetAnimals = new BooleanSetting("killaura_target_animals", "Target Animals", "Target animals.", false);
 		targetMonsters = new BooleanSetting("killaura_target_monsters", "Target Monsters", "Target monsters.", true);
 		targetPlayers = new BooleanSetting("killaura_target_players", "Target Players", "Target pplayers.", true);

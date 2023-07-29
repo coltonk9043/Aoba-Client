@@ -39,20 +39,20 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.misc.ModuleUtils;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 
 public class AutoFarm extends Module {
-	private DoubleSetting radius;
+	private FloatSetting radius;
 
 	public AutoFarm() {
 		this.setName("AutoFarm");
 		this.setBind(new KeyBinding("key.autofarm", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
-		this.radius = new DoubleSetting("autofarm_radius", "Radius", 5f, 0f, 15f, 1f);
+		this.radius = new FloatSetting("autofarm_radius", "Radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
 	}
 

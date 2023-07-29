@@ -23,7 +23,7 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -38,7 +38,7 @@ import net.minecraft.util.Hand;
 
 public class AutoSoup extends Module {
 
-	private DoubleSetting health;
+	private FloatSetting health;
 	
 	private int previousSlot = -1;
 	
@@ -48,7 +48,7 @@ public class AutoSoup extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Automatically consumes soup when health is low. (KitPVP)");
 		
-		health = new DoubleSetting("autosoup_health", "Min Health",6f, 1f, 20f, 1f);
+		health = new FloatSetting("autosoup_health", "Min Health",6f, 1f, 20f, 1f);
 		this.addSetting(health);
 	}
 

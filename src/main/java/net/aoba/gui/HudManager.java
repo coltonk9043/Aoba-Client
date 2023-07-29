@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.aoba.core.settings.SettingManager;
 import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -53,8 +53,8 @@ public class HudManager {
 
 	public NavigationBar clickGuiNavBar;
 
-	public DoubleSetting hue = new DoubleSetting("color_hue", "Hue", 4, 0, 360, 1, null);
-	public DoubleSetting effectSpeed = new DoubleSetting("color_speed", "Effect Spd", 4, 1, 20, 0.1, null);
+	public FloatSetting hue = new FloatSetting("color_hue", "Hue", 4, 0, 360, 1, null);
+	public FloatSetting effectSpeed = new FloatSetting("color_speed", "Effect Spd", 4, 1, 20, 0.1, null);
 	public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
 	public BooleanSetting ah = new BooleanSetting("armorhud_toggle", "ArmorHUD", false, null);
 
@@ -97,7 +97,7 @@ public class HudManager {
 		hudPane.AddHud(radarHud);
 		hudPane.AddHud(infoHud);
 		
-		settingsPane.AddHud(new OptionsTab("Options", 370, 500, hue, rainbow, ah, effectSpeed));
+		settingsPane.AddHud(new OptionsTab());
 		
 		int xOffset = 335;
 		for (Category category : Module.Category.values()) {
@@ -155,8 +155,8 @@ public class HudManager {
 				if (!mouseClicked)
 					currentGrabbed = null;
 				else if (currentGrabbed != null) {
-					int newX = Math.max(0, currentGrabbed.getX() - (lastMouseX - dx));
-					int newY = Math.max(0, currentGrabbed.getY() - (lastMouseY - dy));
+					float newX = Math.max(0, currentGrabbed.getX() - (lastMouseX - dx));
+					float newY = Math.max(0, currentGrabbed.getY() - (lastMouseY - dy));
 
 					currentGrabbed.setX(newX);
 					currentGrabbed.setY(newY);

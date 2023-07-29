@@ -23,7 +23,7 @@ package net.aoba.module.modules.world;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.minecraft.block.Block;
@@ -41,14 +41,14 @@ import net.minecraft.util.math.Direction;
 public class Nuker extends Module {
 	private MinecraftClient mc;
 	
-	private DoubleSetting radius;
+	private FloatSetting radius;
 
 	public Nuker() {
 		this.setName("Nuker");
 		this.setBind(new KeyBinding("key.nuker", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks around the player.");
-		this.radius = new DoubleSetting("nuker_radius", "Radius", 5f, 0f, 15f, 1f);
+		this.radius = new FloatSetting("nuker_radius", "Radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
 	}

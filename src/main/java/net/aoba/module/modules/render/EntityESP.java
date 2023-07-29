@@ -25,7 +25,7 @@ import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
 import net.aoba.module.Module;
@@ -50,9 +50,9 @@ public class EntityESP extends Module {
 	private Color color;
 	private RainbowColor rainbowColor;
 
-	public DoubleSetting hue = new DoubleSetting("entitysp_hue", "Hue", 4, 0, 360, 1);
+	public FloatSetting hue = new FloatSetting("entitysp_hue", "Hue", 4, 0, 360, 1);
 	public BooleanSetting rainbow = new BooleanSetting("entityesp_rainbow", "Rainbow", false, null);
-	public DoubleSetting effectSpeed = new DoubleSetting("entityesp_effectspeed", "Effect Speed", 4, 1, 20, 0.1);
+	public FloatSetting effectSpeed = new FloatSetting("entityesp_effectspeed", "Effect Speed", 4, 1, 20, 0.1);
 	
 	public EntityESP() {
 		this.setName("EntityESP");

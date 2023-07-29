@@ -26,7 +26,7 @@ import java.util.List;
 
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
@@ -42,9 +42,9 @@ public class Breadcrumbs extends Module{
 	private Color color;
 	private RainbowColor rainbowColor;
 
-	public DoubleSetting hue = new DoubleSetting("breadcrumbs_hue", "Hue", 4, 0, 360, 1);
+	public FloatSetting hue = new FloatSetting("breadcrumbs_hue", "Hue", 4, 0, 360, 1);
 	public BooleanSetting rainbow = new BooleanSetting("breadcrumbs_rainbow", "Rainbow", false, null);
-	public DoubleSetting effectSpeed = new DoubleSetting("breadcrumbs_effectspeed", "Effect Spd", 4, 1, 20, 0.1);
+	public FloatSetting effectSpeed = new FloatSetting("breadcrumbs_effectspeed", "Effect Spd", 4, 1, 20, 0.1);
 	
 	private float timer = 10;
 	private float currentTick = 0;

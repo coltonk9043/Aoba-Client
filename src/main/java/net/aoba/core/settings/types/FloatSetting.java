@@ -3,12 +3,12 @@ package net.aoba.core.settings.types;
 import net.aoba.core.settings.Setting;
 import java.util.function.Consumer;
 
-public class DoubleSetting extends Setting<Double> {
+public class FloatSetting extends Setting<Double> {
 	public final double min_value;
 	public final double max_value;
 	public final double step;
 
-	public DoubleSetting(String ID, String description, double default_value, double min_value, double max_value, double step) {
+	public FloatSetting(String ID, String description, double default_value, double min_value, double max_value, double step) {
 		super(ID, description, default_value);
 		this.min_value = min_value;
 		this.max_value = max_value;
@@ -16,7 +16,7 @@ public class DoubleSetting extends Setting<Double> {
 		type = TYPE.DOUBLE;
 	}
 	
-	public DoubleSetting(String ID, String displayName, String description, double default_value, double min_value, double max_value, double step) {
+	public FloatSetting(String ID, String displayName, String description, double default_value, double min_value, double max_value, double step) {
 		super(ID, displayName, description, default_value);
 		this.min_value = min_value;
 		this.max_value = max_value;
@@ -24,7 +24,7 @@ public class DoubleSetting extends Setting<Double> {
 		type = TYPE.DOUBLE;
 	}
 	
-	public DoubleSetting(String ID, String description, double default_value, double min_value, double max_value, double step, Consumer<Double> onUpdate) {
+	public FloatSetting(String ID, String description, double default_value, double min_value, double max_value, double step, Consumer<Double> onUpdate) {
 		super(ID, description, default_value, onUpdate);
 		this.min_value = min_value;
 		this.max_value = max_value;

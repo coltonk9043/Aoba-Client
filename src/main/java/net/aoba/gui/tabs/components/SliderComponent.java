@@ -1,6 +1,6 @@
 package net.aoba.gui.tabs.components;
 
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
@@ -16,7 +16,7 @@ public class SliderComponent extends Component {
 	float g;
 	float b;
 	
-	DoubleSetting slider;
+	FloatSetting slider;
 
 	public SliderComponent(String text, ClickGuiTab parent) {
 		super();
@@ -25,7 +25,7 @@ public class SliderComponent extends Component {
 		this.slider = null;
 	}
 
-	public SliderComponent(ClickGuiTab parent, DoubleSetting slider) {
+	public SliderComponent(ClickGuiTab parent, FloatSetting slider) {
 		super();
 		this.text = slider.displayName;
 		this.parent = parent;
@@ -35,9 +35,9 @@ public class SliderComponent extends Component {
 
 	@Override
 	public void update(int offset, double mouseX, double mouseY, boolean mouseClicked) {
-		int parentX = parent.getX();
-		int parentY = parent.getY();
-		int parentWidth = parent.getWidth();
+		float parentX = parent.getX();
+		float parentY = parent.getY();
+		float parentWidth = parent.getWidth();
 		if (HudManager.currentGrabbed == null) {
 			if (mouseClicked) {
 				if (mouseX >= ((parentX + 2)) && mouseX <= (((parentX)) + parentWidth - 2)) {
@@ -54,9 +54,9 @@ public class SliderComponent extends Component {
 
 	@Override
 	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
-		int parentX = parent.getX();
-		int parentY = parent.getY();
-		int parentWidth = parent.getWidth();
+		float parentX = parent.getX();
+		float parentY = parent.getY();
+		float parentWidth = parent.getWidth();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24, 0.5f, 0.5f, 0.5f,
 				0.3f);

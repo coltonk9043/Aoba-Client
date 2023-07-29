@@ -22,9 +22,9 @@ public class CheckboxComponent extends Component {
 
 	@Override
 	public void update(int offset, double mouseX, double mouseY, boolean mouseClicked) {
-		int parentX = parent.getX();
-		int parentY = parent.getY();
-		int parentWidth = parent.getWidth();
+		float parentX = parent.getX();
+		float parentY = parent.getY();
+		float parentWidth = parent.getWidth();
 		if (HudManager.currentGrabbed == null) {
 			if (mouseClicked) {
 				if (mouseX >= ((parentX + parent.getWidth() - 28))
@@ -48,9 +48,9 @@ public class CheckboxComponent extends Component {
 
 	@Override
 	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
-		int parentX = parent.getX();
-		int parentY = parent.getY();
-		int parentWidth = parent.getWidth();
+		float parentX = parent.getX();
+		float parentY = parent.getY();
+		float parentWidth = parent.getWidth();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		renderUtils.drawString(drawContext, this.text, parentX + 10,
 				parentY + offset + 8, 0xFFFFFF);

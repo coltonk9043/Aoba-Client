@@ -3,7 +3,7 @@ package net.aoba.module.modules.combat;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,7 +17,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 
 public class TriggerBot extends Module {
-	private DoubleSetting radius;
+	private FloatSetting radius;
 	private BooleanSetting targetAnimals;
 	private BooleanSetting targetMonsters;
 	private BooleanSetting targetPlayers;
@@ -29,7 +29,7 @@ public class TriggerBot extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything you are looking at.");
 
-		radius = new DoubleSetting("triggerbot_radius", "Radius", 5f, 0.1f, 10f, 0.1f);
+		radius = new FloatSetting("triggerbot_radius", "Radius", 5f, 0.1f, 10f, 0.1f);
 		targetAnimals = new BooleanSetting("triggerbot_target_animals", "Target animals.", false, null);
 		targetMonsters = new BooleanSetting("triggerbot_target_monsters", "Target monsters.", true, null);
 		targetPlayers = new BooleanSetting("triggerbot_target_players", "Target players.", true, null);

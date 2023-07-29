@@ -24,7 +24,7 @@ package net.aoba.module.modules.combat;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -32,7 +32,7 @@ import net.minecraft.network.packet.Packet;
 
 public class Nametags extends Module {
 
-	private DoubleSetting scale;
+	private FloatSetting scale;
 	private BooleanSetting onlyPlayers;
 	private BooleanSetting alwaysVisible;
 	
@@ -42,7 +42,7 @@ public class Nametags extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Scales the nametags to be larger.");
 		
-		scale = new DoubleSetting("nametags_scale", "Scale of the NameTags", 0, 0, 5, 0.25);
+		scale = new FloatSetting("nametags_scale", "Scale of the NameTags", 0, 0, 5, 0.25);
 		onlyPlayers = new BooleanSetting("nametags_onlyPlayers", "Whether Nametags are only enlarged for players.", false, null);
 		alwaysVisible = new BooleanSetting("nametags_alwaysVisible", "Whether Nametags will always be displayed.", false, null);
 		this.addSetting(scale);

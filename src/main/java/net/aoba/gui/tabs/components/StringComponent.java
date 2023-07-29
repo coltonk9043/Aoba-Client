@@ -29,8 +29,8 @@ public class StringComponent extends Component {
 
 	@Override
 	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
-		int parentX = this.parent.getX();
-		int parentY = this.parent.getY();
+		float parentX = this.parent.getX();
+		float parentY = this.parent.getY();
 		renderUtils.drawString(drawContext, this.text, parentX + 10,
 				parentY + 8 + offset, 0xFFFFFF);
 	}

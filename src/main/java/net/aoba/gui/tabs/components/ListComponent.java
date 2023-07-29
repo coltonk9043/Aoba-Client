@@ -33,9 +33,9 @@ public class ListComponent extends Component {
 
 	@Override
 	public void update(int offset, double mouseX, double mouseY, boolean mouseClicked) {
-		int parentX = parent.getX();
-		int parentY = parent.getY();
-		int parentWidth = parent.getWidth();
+		float parentX = parent.getX();
+		float parentY = parent.getY();
+		float parentWidth = parent.getWidth();
 		if (HudManager.currentGrabbed == null) {
 			if (mouseClicked) {
 				if (mouseY >= (((parentY + offset + 4))) && mouseY <= (parentY + offset + 22)) {
@@ -66,9 +66,9 @@ public class ListComponent extends Component {
 
 	@Override
 	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
-		int parentX = parent.getX();
-		int parentY = parent.getY();
-		int parentWidth = parent.getWidth();
+		float parentX = parent.getX();
+		float parentY = parent.getY();
+		float parentWidth = parent.getWidth();
 		int length = MinecraftClient.getInstance().textRenderer.getWidth(list.getIndexValue());
 		MatrixStack matrixStack = drawContext.getMatrices();
 		renderUtils.drawOutlinedBox(matrixStack, parentX + 4, parentY + offset, parentWidth - 8, 22, new Color(25,25,25),

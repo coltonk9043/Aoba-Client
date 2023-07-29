@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.gui.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RainbowColor;
@@ -45,9 +45,9 @@ public class ChestESP extends Module {
 	private Color color;
 	private RainbowColor rainbowColor;
 
-	public DoubleSetting hue = new DoubleSetting("chestesp_hue", "Hue", 4, 0, 360, 1);
+	public FloatSetting hue = new FloatSetting("chestesp_hue", "Hue", 4, 0, 360, 1);
 	public BooleanSetting rainbow = new BooleanSetting("chestesp_rainbow", "Rainbow", false, null);
-	public DoubleSetting effectSpeed = new DoubleSetting("chestesp_effectspeed", "Effect Speed", 4, 1, 20, 0.1);
+	public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", 4, 1, 20, 0.1);
 	
 	public ChestESP() {
 		this.setName("ChestESP");

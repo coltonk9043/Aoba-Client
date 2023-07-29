@@ -31,11 +31,8 @@ import net.minecraft.util.collection.DefaultedList;
 
 public class ArmorHud extends AbstractHud{
 
-	private ItemRenderer itemRenderer; 
-	
 	public ArmorHud(int x, int y, int width, int height) {
 		super("ArmorHud", x,y,width,height);
-		itemRenderer = mc.getItemRenderer();
 		this.x = 300;
 		this.y = 300;
 		this.width = 64;
@@ -48,7 +45,7 @@ public class ArmorHud extends AbstractHud{
 		int yOff = 16;
 		for(ItemStack armor : armors) {
 			if(armor.getItem() == Items.AIR) continue;
-			drawContext.drawItem(armor, this.x, this.y + this.height - yOff);
+			drawContext.drawItem(armor, (int)this.x, (int)(this.y + this.height - yOff));
 			yOff += 16;
 		}
 	}

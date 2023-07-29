@@ -23,7 +23,7 @@ package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
@@ -31,7 +31,7 @@ import net.minecraft.network.packet.Packet;
 
 public class Step extends Module {
 
-	private DoubleSetting stepHeight;
+	private FloatSetting stepHeight;
 	
 	public Step() {
 		this.setName("Step");
@@ -39,7 +39,7 @@ public class Step extends Module {
 		this.setCategory(Category.Movement);
 		this.setDescription("Steps up blocks.");
 		
-		stepHeight = new DoubleSetting("step_height", "Height", 1f, 0.0f, 2f, 0.5f);
+		stepHeight = new FloatSetting("step_height", "Height", 1f, 0.0f, 2f, 0.5f);
 		this.addSetting(stepHeight);
 	}
 

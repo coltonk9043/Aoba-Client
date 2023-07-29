@@ -1,6 +1,6 @@
 package net.aoba.core.settings;
 
-import net.aoba.core.settings.types.DoubleSetting;
+import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.core.settings.types.IntegerSetting;
 import net.aoba.core.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
@@ -78,7 +78,7 @@ public class SettingManager {
                         if (value == null) break;
                         switch (setting.type) {
                             case DOUBLE -> {
-                                if (((DoubleSetting) setting).min_value <= Double.parseDouble(value) && ((DoubleSetting) setting).max_value >= Double.parseDouble(value)) {
+                                if (((FloatSetting) setting).min_value <= Double.parseDouble(value) && ((FloatSetting) setting).max_value >= Double.parseDouble(value)) {
                                     if (DEBUG_STUFF) System.out.println(setting.displayName + " " + setting.value + " " + Double.parseDouble(value));
                                     setting.setValue(Double.parseDouble(value));
                                 }
@@ -105,7 +105,7 @@ public class SettingManager {
                         String value_y = config.getProperty(setting.ID + "_y", null);
                         if (value_x == null || value_y == null) break;
                         /* if (DEBUG_STUFF) */ System.out.println(setting.displayName + " " + ((Vector2)setting.value).x + " " + ((Vector2)setting.value).y + " " + value_x + " " + value_y);
-                        setting.setValue(new Vector2(Double.parseDouble(value_x), Double.parseDouble(value_y)));
+                        setting.setValue(new Vector2(Float.parseFloat(value_x), Float.parseFloat(value_y)));
                     }
                 }
             }

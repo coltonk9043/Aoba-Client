@@ -1,11 +1,11 @@
 package net.aoba.core.utils.types;
 
 public class Vector2 {
-    public double x = 0;
-    public double y = 0;
+    public float x = 0;
+    public float y = 0;
 
     public Vector2() {}
-    public Vector2(double x, double y) {
+    public Vector2(float x, float y) {
         this.x = x;
         this.y = y;
     }
