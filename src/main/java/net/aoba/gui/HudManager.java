@@ -6,6 +6,7 @@ import java.util.List;
 import net.aoba.core.settings.SettingManager;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.MouseScrollEvent;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -77,7 +78,7 @@ public class HudManager {
 		NavigationPane modulesPane = new NavigationPane("Modules");
 		NavigationPane toolsPane = new NavigationPane("Tools");
 		NavigationPane hudPane = new NavigationPane("Hud");
-		NavigationPane settingsPane = new NavigationPane("Settings");
+		//NavigationPane settingsPane = new NavigationPane("Settings");
 		
 		toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
 		
@@ -97,7 +98,7 @@ public class HudManager {
 		hudPane.AddHud(radarHud);
 		hudPane.AddHud(infoHud);
 		
-		settingsPane.AddHud(new OptionsTab());
+		//settingsPane.AddHud(new OptionsTab());
 		
 		int xOffset = 335;
 		for (Category category : Module.Category.values()) {
@@ -115,7 +116,7 @@ public class HudManager {
 		clickGuiNavBar.addPane(modulesPane);
 		clickGuiNavBar.addPane(toolsPane);
 		clickGuiNavBar.addPane(hudPane);
-		clickGuiNavBar.addPane(settingsPane);
+		//clickGuiNavBar.addPane(settingsPane);
 
 		SettingManager.register_setting(hue, Aoba.getInstance().settingManager.config_category);
 		SettingManager.register_setting(effectSpeed, Aoba.getInstance().settingManager.config_category);
@@ -136,6 +137,10 @@ public class HudManager {
 		return this.color;
 	}
 
+	public void onMouseScroll(double horizontal, double vertical) {
+		
+	}
+	
 	public void update() {
 		boolean mouseClicked = mc.mouse.wasLeftButtonClicked();
 
@@ -198,6 +203,8 @@ public class HudManager {
 			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
 			this.currentColor = color;
 		}
+		
+		Aoba.getInstance().eventManager.Fire(new MouseScrollEvent(5.0f, 5.0f));
 	}
 
 	public void draw(DrawContext drawContext, float tickDelta) {

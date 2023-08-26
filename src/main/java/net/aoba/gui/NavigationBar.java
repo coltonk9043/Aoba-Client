@@ -3,6 +3,7 @@ package net.aoba.gui;
 import java.util.ArrayList;
 import java.util.List;
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -31,14 +32,14 @@ public class NavigationBar {
 	}
 	
 	public void update(double mouseX, double mouseY, boolean mouseClicked) {
-
+		AobaClient aoba = Aoba.getInstance();
 		Window window = mc.getWindow();
 
 		int width = 100 * options.size();
 		int centerX = (window.getWidth() / 2);
 
 		int x = centerX - (width / 2);
-		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
+		if (aoba.hudManager.isClickGuiOpen() && HudManager.currentGrabbed == null) {
 			if (mouseX >= (x) && mouseX <= (x + width)) {
 				if (mouseY >= (25) && mouseY <= (50)) {
 					if (mouseClicked) {
