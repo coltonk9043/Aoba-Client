@@ -22,17 +22,17 @@
 package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
-
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
 
-public class Fly extends Module {
+public class Fly extends Module implements TickListener {
 
 	private FloatSetting flySpeed;
 	
@@ -57,12 +57,12 @@ public class Fly extends Module {
 	
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class Fly extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		ClientPlayerEntity player = MC.player;
 		float speed = this.flySpeed.getValue().floatValue();
 		if(MC.player.isRiding()) {
@@ -95,20 +95,5 @@ public class Fly extends Module {
 			}
 			player.setVelocity(vec);
 		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
 	}
 }

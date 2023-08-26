@@ -22,23 +22,23 @@
 package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
-
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 
-public class Jesus extends Module {
-	
+public class Jesus extends Module implements TickListener {
+
 	public BooleanSetting legit;
-	
+
 	public Jesus() {
 		this.setName("Jesus");
 		this.setBind(new KeyBinding("key.jesus", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to walk on water.");
-		
+
 		// Add Settings
 		legit = new BooleanSetting("jesus_legit", "Legit", true, null);
 		this.addSetting(legit);
@@ -46,11 +46,12 @@ public class Jesus extends Module {
 
 	@Override
 	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -59,27 +60,12 @@ public class Jesus extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		// If Legit is enabled, simply swim.
-		if(this.legit.getValue()) {
-			if(MC.player.isInLava() || MC.player.isTouchingWater()){
+		if (this.legit.getValue()) {
+			if (MC.player.isInLava() || MC.player.isTouchingWater()) {
 				MC.options.jumpKey.setPressed(true);
 			}
 		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
 	}
 }

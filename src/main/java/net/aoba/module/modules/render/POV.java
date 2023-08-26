@@ -22,18 +22,18 @@
 package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
-
+import net.aoba.Aoba;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.Module;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.Packet;
 
-public class POV extends Module {
+public class POV extends Module implements TickListener {
 	private FakePlayerEntity fakePlayer;
 	private String povString = null;
 	private Entity povEntity = null;
@@ -53,11 +53,12 @@ public class POV extends Module {
 			fakePlayer.despawn();
 			MC.world.removeEntity(-3, null);
 		}
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 	
 
@@ -66,8 +67,24 @@ public class POV extends Module {
 
 	}
 
+	public void setEntityPOV(String entity) {
+		this.povString = entity;
+	}
+
+	public Entity getEntity() {
+		return this.povEntity;
+	}
+	
+	public PlayerEntity getEntityAsPlayer() {
+		if(this.povEntity instanceof PlayerEntity) {
+			return (PlayerEntity) this.povEntity;
+		}else {
+			return null;
+		}
+	}
+
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		ClientPlayerEntity player = MC.player;
 		povEntity = null;
 		for(Entity entity : MC.world.getPlayers()) {
@@ -95,39 +112,6 @@ public class POV extends Module {
 			}else {
 				MinecraftClient.getInstance().setCameraEntity(povEntity);
 			}
-		}
-		
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-		
-	}
-	
-	public void setEntityPOV(String entity) {
-		this.povString = entity;
-	}
-
-	public Entity getEntity() {
-		return this.povEntity;
-	}
-	
-	public PlayerEntity getEntityAsPlayer() {
-		if(this.povEntity instanceof PlayerEntity) {
-			return (PlayerEntity) this.povEntity;
-		}else {
-			return null;
 		}
 	}
 }

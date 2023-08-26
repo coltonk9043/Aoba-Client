@@ -23,13 +23,12 @@ import net.minecraft.text.Text;
 
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin<T extends Entity> {
-
 	@Shadow
 	@Final
 	protected EntityRenderDispatcher dispatcher;
 	
 	@Inject(at = @At(value = "HEAD"), 
-			method = "renderLabelIfPresent(Lnet/minecraft/entity/Entity;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;)V ", 
+			method = "renderLabelIfPresent(Lnet/minecraft/entity/Entity;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", 
 			cancellable=true)
 	protected void onRenderLabelIfPresent(T entity,
 			 Text text,

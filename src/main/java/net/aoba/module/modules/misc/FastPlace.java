@@ -22,13 +22,14 @@
 package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
+import net.aoba.Aoba;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 
-public class FastPlace extends Module {
+public class FastPlace extends Module implements TickListener{
 	IMinecraftClient iMC;
 	
 	public FastPlace() {
@@ -41,11 +42,12 @@ public class FastPlace extends Module {
 	@Override
 	public void onDisable() {
 		IMC.setItemUseCooldown(4);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -54,23 +56,7 @@ public class FastPlace extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		IMC.setItemUseCooldown(0);
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-		
 	}
 }

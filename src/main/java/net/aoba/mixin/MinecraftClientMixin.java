@@ -1,6 +1,7 @@
 package net.aoba.mixin;
 
 import net.aoba.Aoba;
+import net.aoba.event.events.TickEvent;
 import net.aoba.interfaces.IMinecraftClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.Session;
@@ -41,6 +42,9 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	@Inject(at = @At("TAIL"), method = "tick()V")
 	public void tick(CallbackInfo info) {
 		if (this.world != null) {
+			TickEvent updateEvent = new TickEvent();
+			Aoba.getInstance().eventManager.Fire(updateEvent);
+			
 			Aoba.getInstance().update();
 		}
 	}

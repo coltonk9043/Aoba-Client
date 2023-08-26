@@ -22,15 +22,16 @@
 package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
+import net.aoba.Aoba;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
 
-public class Sneak extends Module {
+public class Sneak extends Module implements TickListener {
 
 	public Sneak() {
 		this.setName("Sneak");
@@ -43,11 +44,12 @@ public class Sneak extends Module {
 	public void onDisable() {
 		ClientPlayerEntity player = MC.player;
 		player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.RELEASE_SHIFT_KEY));
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -56,27 +58,11 @@ public class Sneak extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		ClientPlayerEntity player = MC.player;
 		
 		MC.player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.PRESS_SHIFT_KEY));
 		MC.player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.RELEASE_SHIFT_KEY));
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-		
 	}
 }
 

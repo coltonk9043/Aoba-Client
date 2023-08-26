@@ -27,10 +27,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.CropBlock;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
@@ -39,12 +37,15 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.ModuleUtils;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 
-public class AutoFarm extends Module {
+public class AutoFarm extends Module implements TickListener {
 	private FloatSetting radius;
 
 	public AutoFarm() {
@@ -62,10 +63,12 @@ public class AutoFarm extends Module {
 
 	@Override
 	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -73,7 +76,7 @@ public class AutoFarm extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		int rad = radius.getValue().intValue();
 		for (int x = -rad; x < rad; x++) {
 			for (int y = -1; y <= 1; y++) {
@@ -126,20 +129,5 @@ public class AutoFarm extends Module {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
 	}
 }

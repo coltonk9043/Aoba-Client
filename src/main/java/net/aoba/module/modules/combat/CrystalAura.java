@@ -23,18 +23,19 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.aoba.Aoba;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -42,7 +43,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-public class CrystalAura extends Module {
+public class CrystalAura extends Module implements TickListener {
 	private float radius = 10.0f;
 
 	public CrystalAura() {
@@ -54,12 +55,12 @@ public class CrystalAura extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -68,7 +69,7 @@ public class CrystalAura extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		for (PlayerEntity player : MC.world.getPlayers()) {
 			if (player == MC.player || MC.player.distanceTo(player) > this.radius) {
 				continue;
@@ -100,21 +101,5 @@ public class CrystalAura extends Module {
 				}
 			}
 		}
-
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
 	}
 }

@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
+import net.aoba.event.events.RenderEvent;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
@@ -20,6 +21,11 @@ public class WorldRendererMixin {
 	private void onRenderWorld(MatrixStack matrixStack, float tickDelta, long limitTime, boolean renderBlockOutline,
 			Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f,
 			CallbackInfo info) {
+		
+		// TODO: Per Module rendering.
+		//RenderEvent event = new RenderEvent(matrixStack, tickDelta);
+		//Aoba.getInstance().eventManager.Fire(event);
+		
 		Aoba.getInstance().moduleManager.render(matrixStack);
 	}
 

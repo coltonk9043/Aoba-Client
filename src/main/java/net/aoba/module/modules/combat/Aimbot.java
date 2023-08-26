@@ -23,17 +23,20 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.network.packet.Packet;
 
-public class Aimbot extends Module {
+public class Aimbot extends Module implements RenderListener, TickListener {
 
 	private LivingEntity temp = null;
 
@@ -56,22 +59,29 @@ public class Aimbot extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
+	@Override
+	public void OnRender(RenderEvent event) {
+		if (temp != null) {
+			MC.player.lookAt(EntityAnchor.EYES, temp.getEyePos());
+		}
+	}
 
 	@Override
-	public void onUpdate() {
-
+	public void OnUpdate(TickEvent event) {
 		if (this.targetPlayers.getValue()) {
 			if (MC.world.getPlayers().size() == 2) {
 				temp = MC.world.getPlayers().get(1);
@@ -103,22 +113,5 @@ public class Aimbot extends Module {
 			}
 			temp = tempEntity;
 		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		if (temp != null) {
-			MC.player.lookAt(EntityAnchor.EYES, temp.getEyePos());
-		}
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
 	}
 }

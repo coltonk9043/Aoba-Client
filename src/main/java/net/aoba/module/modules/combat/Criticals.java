@@ -22,12 +22,13 @@
 package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
+import net.aoba.Aoba;
+import net.aoba.event.events.SendPacketEvent;
+import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 
-public class Criticals extends Module {
+public class Criticals extends Module implements SendPacketListener {
 
 	public Criticals() {
 		this.setName("Criticals");
@@ -38,48 +39,21 @@ public class Criticals extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(SendPacketListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(SendPacketListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
-
+	
 	@Override
-	public void onUpdate() {
+	public void OnSendPacket(SendPacketEvent event) {
 
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-//		if (packet instanceof UseEntityC2SPacket) {
-//			CUseEntityPacket packetUseEntity = (CUseEntityPacket) packet;
-//			if (packetUseEntity.getAction() == CUseEntityPacket.Action.ATTACK) {
-//				if(mc.player.isOnGround()) {
-//					boolean preGround = mc.player.isOnGround();
-//					mc.player.setOnGround(false);
-//					mc.player.jump();
-//					mc.player.setOnGround(preGround);
-//				}
-//				
-//			}
-//		}
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-		
 	}
 }

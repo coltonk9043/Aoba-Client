@@ -24,9 +24,10 @@ package net.aoba.module.modules.render;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-
+import net.aoba.Aoba;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.module.Module;
 import net.minecraft.client.MinecraftClient;
@@ -40,10 +41,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
 
-public class Trajectory extends Module {
+public class Trajectory extends Module implements RenderListener {
 
 	public Trajectory() {
 		this.setName("Trajectory");
@@ -54,27 +54,29 @@ public class Trajectory extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
-
-	@Override
-	public void onUpdate() {
+	
+	private double IntepolateThrowPower(Item item) {
+		float power = (float) Math.pow(((72000 - MinecraftClient.getInstance().player.getItemUseTime()) / 20.0f), 2.0f);
+		
+		return power + (power * 2.0f);
 	}
 
 	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
+	public void OnRender(RenderEvent event) {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		
+		MatrixStack matrixStack = event.GetMatrixStack();
 		matrixStack.push();
 		
 		RenderSystem.setShaderColor(0, 0, 0, 1);
@@ -114,22 +116,6 @@ public class Trajectory extends Module {
 		GL11.glDisable(GL11.GL_BLEND);
 		
 		matrixStack.pop();
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
-	}
-	
-	private double IntepolateThrowPower(Item item) {
-		float power = (float) Math.pow(((72000 - MinecraftClient.getInstance().player.getItemUseTime()) / 20.0f), 2.0f);
-		
-		return power + (power * 2.0f);
 	}
 
 }

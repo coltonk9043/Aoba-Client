@@ -22,21 +22,21 @@
 package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
-
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.StewItem;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Hand;
 
-public class AutoSoup extends Module {
+public class AutoSoup extends Module implements TickListener {
 
 	private FloatSetting health;
 	
@@ -54,54 +54,17 @@ public class AutoSoup extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-	
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
-	}
-
-	@Override
-	public void onUpdate() {
-		// If the players HP is below the given threshold.
-		if(MC.player.getHealth() < health.getValue()) {
-			
-			// Find the first item in the hotbar that is a Stew item.
-			int foodSlot= -1;
-			for(int i = 0; i< PlayerInventory.getHotbarSize(); i++) {
-				Item item = MC.player.getInventory().getStack(i).getItem();
-				
-				if(item instanceof StewItem) {
-					foodSlot = i;
-					break;
-				}
-			}
-			
-			// If a Stew item was found, switch to it and use it.
-			if(foodSlot >= 0) {
-				previousSlot = MC.player.getInventory().selectedSlot;
-				
-				MC.player.getInventory().selectedSlot = foodSlot;
-			    MC.options.useKey.setPressed(true);
-			    MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
-			    
-			    // Return the player's selected slot back to the previous slot.
-				if(previousSlot != -1) {
-					MC.options.useKey.setPressed(false);
-					MC.player.getInventory().selectedSlot = previousSlot;
-					previousSlot = -1;
-				}
-			}else {
-			// Otherwise, sort the inventory to try and find some.
-				sortInventory();
-			}
-		}
 	}
 
 	public void sortInventory() {
@@ -128,22 +91,44 @@ public class AutoSoup extends Module {
 		return -1;
 	}
 	
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-	}
-	
 	public void setHunger(int hunger) {
 		
+	}
+
+	@Override
+	public void OnUpdate(TickEvent event) {
+		// If the players HP is below the given threshold.
+				if(MC.player.getHealth() < health.getValue()) {
+					
+					// Find the first item in the hotbar that is a Stew item.
+					int foodSlot= -1;
+					for(int i = 0; i< PlayerInventory.getHotbarSize(); i++) {
+						Item item = MC.player.getInventory().getStack(i).getItem();
+						
+						if(item instanceof StewItem) {
+							foodSlot = i;
+							break;
+						}
+					}
+					
+					// If a Stew item was found, switch to it and use it.
+					if(foodSlot >= 0) {
+						previousSlot = MC.player.getInventory().selectedSlot;
+						
+						MC.player.getInventory().selectedSlot = foodSlot;
+					    MC.options.useKey.setPressed(true);
+					    MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+					    
+					    // Return the player's selected slot back to the previous slot.
+						if(previousSlot != -1) {
+							MC.options.useKey.setPressed(false);
+							MC.player.getInventory().selectedSlot = previousSlot;
+							previousSlot = -1;
+						}
+					}else {
+					// Otherwise, sort the inventory to try and find some.
+						sortInventory();
+					}
+				}
 	}
 }

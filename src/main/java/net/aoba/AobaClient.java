@@ -21,9 +21,12 @@
  */
 package net.aoba;
 
+import java.util.EventListener;
+
 import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
 import net.aoba.core.settings.SettingManager;
+import net.aoba.event.EventManager;
 import net.aoba.gui.HudManager;
 import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.misc.RenderUtils;
@@ -47,6 +50,8 @@ public class AobaClient {
 	// public Settings settings;
 	public SettingManager settingManager;
 	public RenderUtils renderUtils;
+	
+	public EventManager eventManager;
 	
 	private boolean ghostMode;
 	
@@ -73,7 +78,10 @@ public class AobaClient {
 		System.out.println("[Aoba] Loading Alts");
 		altManager = new AltManager();
 		System.out.println("[Aoba] Aoba-chan initialized and ready to play!");
-
+ 
+		eventManager = new EventManager();
+		
+		
 		SettingManager.loadSettings("config_category", settingManager.config_category);
 		SettingManager.loadSettings("modules_category", settingManager.modules_category);
 		SettingManager.loadSettings("hidden_category", settingManager.hidden_category);

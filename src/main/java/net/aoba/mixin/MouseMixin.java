@@ -15,5 +15,4 @@ public class MouseMixin
 	{
 		if(Aoba.getInstance().hudManager.isClickGuiOpen()) 	ci.cancel();
 	}
-	
 }

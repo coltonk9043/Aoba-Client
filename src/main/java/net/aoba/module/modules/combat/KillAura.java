@@ -22,23 +22,22 @@
 package net.aoba.module.modules.combat;
 
 import java.util.ArrayList;
-
 import org.lwjgl.glfw.GLFW;
-
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.Hand;
 
-public class KillAura extends Module {
+public class KillAura extends Module implements TickListener {
 	private enum Priority {
 		LOWESTHP, CLOSEST
 	}
@@ -67,12 +66,12 @@ public class KillAura extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -81,7 +80,7 @@ public class KillAura extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		if(MC.player.getAttackCooldownProgress(0) == 1) {
 			ArrayList<Entity> hitList = new ArrayList<Entity>();
 			LivingEntity entityToAttack = null;
@@ -131,21 +130,5 @@ public class KillAura extends Module {
 				MC.player.swingHand(Hand.MAIN_HAND);
 			}
 		}
-	}
-
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
 	}
 }

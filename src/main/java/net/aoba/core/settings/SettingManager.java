@@ -38,7 +38,7 @@ public class SettingManager {
 
     public static void prepare(String name) {
         try {
-            configFolder = new File(MinecraftClient.getInstance().runDirectory + File.separator + "Aoba");
+            configFolder = new File(MinecraftClient.getInstance().runDirectory + File.separator + "aoba");
             configFile = new File(configFolder + File.separator + name + ".xml");
             if (!configFolder.exists()) configFolder.mkdirs();
             if (!configFile.exists()) configFile.createNewFile();
@@ -104,7 +104,6 @@ public class SettingManager {
                         String value_x = config.getProperty(setting.ID + "_x", null);
                         String value_y = config.getProperty(setting.ID + "_y", null);
                         if (value_x == null || value_y == null) break;
-                        /* if (DEBUG_STUFF) */ System.out.println(setting.displayName + " " + ((Vector2)setting.value).x + " " + ((Vector2)setting.value).y + " " + value_x + " " + value_y);
                         setting.setValue(new Vector2(Float.parseFloat(value_x), Float.parseFloat(value_y)));
                     }
                 }
@@ -113,7 +112,7 @@ public class SettingManager {
     }
 
     public enum SettingCategories {
-        CONFGI,
+        CONFIG,
         MODULES,
         HIDDEN
     }

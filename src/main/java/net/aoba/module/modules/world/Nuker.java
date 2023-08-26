@@ -22,23 +22,25 @@
 package net.aoba.module.modules.world;
 
 import org.lwjgl.glfw.GLFW;
-
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 
-public class Nuker extends Module {
+public class Nuker extends Module implements RenderListener, TickListener {
 	private MinecraftClient mc;
 	
 	private FloatSetting radius;
@@ -59,10 +61,14 @@ public class Nuker extends Module {
 
 	@Override
 	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -70,8 +76,7 @@ public class Nuker extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
-		
+	public void OnUpdate(TickEvent event) {
 		int rad = radius.getValue().intValue();
 		for (int x = -rad; x < rad; x++) {
 			for (int y = rad; y > -rad; y--) {
@@ -92,7 +97,7 @@ public class Nuker extends Module {
 	}
 
 	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
+	public void OnRender(RenderEvent event) {
 		int rad = radius.getValue().intValue();
 		for (int x = -rad; x < rad; x++) {
 			for (int y = rad; y > -rad; y--) {
@@ -104,19 +109,9 @@ public class Nuker extends Module {
 					if (block == Blocks.AIR || block == Blocks.WATER || block == Blocks.LAVA)
 						continue;
 
-					this.getRenderUtils().draw3DBox(matrixStack, new Box(blockpos), new Color(255,0,0), 0.2f);
+					this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), new Color(255,0,0), 0.2f);
 				}
 			}
 		}
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
 	}
 }

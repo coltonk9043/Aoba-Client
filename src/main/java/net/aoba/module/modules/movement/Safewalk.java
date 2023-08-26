@@ -22,13 +22,14 @@
 package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
+import net.aoba.Aoba;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
 
-public class Safewalk extends Module {
+public class Safewalk extends Module implements TickListener {
 
 	public Safewalk() {
 		this.setName("Safewalk");
@@ -39,12 +40,12 @@ public class Safewalk extends Module {
 
 	@Override
 	public void onDisable() {
-		
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class Safewalk extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		double x = MC.player.getVelocity().x;
 		double y = MC.player.getVelocity().y;
 		double z = MC.player.getVelocity().z;
@@ -95,21 +96,6 @@ public class Safewalk extends Module {
 			}
 		}
 		MC.player.setVelocity(new Vec3d(x,y,z));
-		}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
 	}
 }
 

@@ -28,8 +28,6 @@ import net.aoba.module.Module;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 
 public class XRay extends Module {
 	public static ArrayList<Block> blocks = new ArrayList<Block>();
@@ -66,11 +64,6 @@ public class XRay extends Module {
 
 	}
 
-	@Override
-	public void onUpdate() {
-	
-	}
-
 	public void initXRay() {
 		blocks.add(Blocks.EMERALD_ORE);
 		blocks.add(Blocks.EMERALD_BLOCK);
@@ -105,21 +98,4 @@ public class XRay extends Module {
 		}
 		return false;
 	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-		
-	}
-
 }

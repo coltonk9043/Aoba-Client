@@ -22,14 +22,16 @@
 package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
+import net.aoba.Aoba;
+import net.aoba.event.events.ReceivePacketEvent;
+import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket;
 import net.minecraft.network.packet.s2c.play.HealthUpdateS2CPacket;
 
-public class AutoRespawn extends Module{
+public class AutoRespawn extends Module implements ReceivePacketListener {
 	
 	public AutoRespawn() {
 		this.setName("AutoRespawn");
@@ -40,36 +42,22 @@ public class AutoRespawn extends Module{
 
 	@Override
 	public void onDisable() {
-		
+		Aoba.getInstance().eventManager.RemoveListener(ReceivePacketListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		
+		Aoba.getInstance().eventManager.AddListener(ReceivePacketListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
-
-	@Override
-	public void onUpdate() {
-		
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
 	
 	@Override
-	public void onReceivePacket(Packet<?> packet) {
+	public void OnReceivePacket(ReceivePacketEvent readPacketEvent) {
+		Packet<?> packet = readPacketEvent.GetPacket();
 		if(packet instanceof HealthUpdateS2CPacket) {
 			HealthUpdateS2CPacket healthPacket = (HealthUpdateS2CPacket)packet;
 			if (healthPacket.getHealth() > 0.0F)

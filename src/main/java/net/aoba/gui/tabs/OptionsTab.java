@@ -1,38 +1,52 @@
 package net.aoba.gui.tabs;
 
-import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.DoubleSetting;
-import net.aoba.gui.tabs.components.CheckboxComponent;
-import net.aoba.gui.tabs.components.SliderComponent;
-import net.aoba.gui.tabs.components.StringComponent;
+import java.util.ArrayList;
+import net.aoba.Aoba;
+import net.aoba.gui.Color;
+import net.aoba.gui.hud.AbstractHud;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.Window;
+import net.minecraft.client.util.math.MatrixStack;
+import net.aoba.module.Module;
 
-public class OptionsTab extends ClickGuiTab {
+public class OptionsTab extends AbstractHud {
 
-	private StringComponent uiSettingsString = new StringComponent("UI Settings", this, true);
-	private SliderComponent hueSlider;
-	private CheckboxComponent rainbowBox;
-	private SliderComponent effectSpeed;
-	private CheckboxComponent armorHud;
-
-	public OptionsTab(String title, int x, int y, DoubleSetting hue, BooleanSetting rainbow, BooleanSetting ah, DoubleSetting es) {
-		super(title, x, y, false);
-		this.setWidth(180);
-		this.addChild(uiSettingsString);
-		this.hueSlider = new SliderComponent( this, hue);
-		this.addChild(hueSlider);
-		this.rainbowBox = new CheckboxComponent(this, rainbow);
-		this.addChild(rainbowBox);
-		this.effectSpeed = new SliderComponent(this, es);
-		this.addChild(effectSpeed);
-		this.armorHud = new CheckboxComponent(this, ah);
-		this.addChild(armorHud);
+	int visibleScrollElements;
+	int currentScroll;
+	
+	public OptionsTab() {
+		super("Options", 40, 220, 100, 100);
+		
+		
 	}
 
 	@Override
-	public void preupdate() {
+	public void update(double mouseX, double mouseY, boolean mouseClicked) {
+		Window window = mc.getWindow();
+		this.setWidth(window.getWidth() - 240);
+		this.setHeight(window.getHeight() - 240);
+		
+		visibleScrollElements = (int) ((this.height - 30) / 30);
 	}
 	
-	public void setHueSliderPosition(float position) {
-		this.hueSlider.setSliderPosition(position);
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+		MatrixStack matrixStack = drawContext.getMatrices();
+		
+		System.out.println("X: " + this.x + ", Y: " + this.y);
+		
+		renderUtils.drawRoundedBox(matrixStack, x, y, width, height, 6, new Color(30,30,30), 0.4f);
+		renderUtils.drawRoundedOutline(matrixStack, x, y, width, height, 6, new Color(0,0,0), 0.8f);
+		
+		renderUtils.drawLine(matrixStack, x + 480, y, x + 480, y + height, new Color(0,0,0), 0.8f);
+		
+		ArrayList<Module> modules = Aoba.getInstance().moduleManager.modules;
+		
+		int yHeight = 30;
+		for(int i = currentScroll; i < Math.min(modules.size(), visibleScrollElements); i++) {
+			Module module = modules.get(i);
+			renderUtils.drawString(drawContext, module.getName(), this.x + 10, this.y + yHeight, color);
+			yHeight += 30;
+		}
 	}
 }

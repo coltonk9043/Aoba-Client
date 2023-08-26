@@ -1,8 +1,3 @@
-/*
-Starts with an O as to not be confused with the legacy setting
-Partially skidded from balkan hack
-*/
-
 package net.aoba.core.settings;
 
 import java.util.function.Consumer;

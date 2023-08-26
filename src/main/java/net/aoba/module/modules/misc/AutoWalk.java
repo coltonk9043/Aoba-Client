@@ -22,12 +22,13 @@
 package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
+import net.aoba.Aoba;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 
-public class AutoWalk extends Module {
+public class AutoWalk extends Module implements TickListener {
 	public AutoWalk() {
 		this.setName("AutoWalk");
 		this.setBind(new KeyBinding("key.autowalk", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
@@ -38,35 +39,21 @@ public class AutoWalk extends Module {
 	@Override
 	public void onDisable() {
 		MC.options.forwardKey.setPressed(false);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
-
-	@Override
-	public void onUpdate() {
-		MC.options.forwardKey.setPressed(true);
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
 	
 	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
+	public void OnUpdate(TickEvent event) {
+		MC.options.forwardKey.setPressed(true);
 	}
 }

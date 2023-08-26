@@ -22,21 +22,19 @@
 package net.aoba.module.modules.movement;
 
 import java.util.UUID;
-
 import org.lwjgl.glfw.GLFW;
-
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity.RemovalReason;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
 
-public class Freecam extends Module {
+public class Freecam extends Module implements TickListener {
 	private FakePlayerEntity fakePlayer;
 	private FloatSetting flySpeed;
 	
@@ -66,6 +64,8 @@ public class Freecam extends Module {
 		player.copyFrom(fakePlayer);
 		fakePlayer.despawn();
 		MC.world.removeEntity(-3, RemovalReason.DISCARDED);
+		
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
@@ -79,15 +79,21 @@ public class Freecam extends Module {
 		
 		Aoba.getInstance().moduleManager.fly.setState(false);
 		Aoba.getInstance().moduleManager.noclip.setState(false);
+		
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
+	
+	public FakePlayerEntity getFakePlayer() {
+		return this.fakePlayer;
+	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		ClientPlayerEntity player = MC.player;
 		player.noClip = true;
 		player.setOnGround(false);
@@ -107,24 +113,5 @@ public class Freecam extends Module {
 		}
 
 		player.setVelocity(vec);
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
-	}
-	
-	public FakePlayerEntity getFakePlayer() {
-		return this.fakePlayer;
 	}
 }

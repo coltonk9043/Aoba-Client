@@ -22,14 +22,15 @@
 package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
+import net.aoba.Aoba;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
 
-public class Spider extends Module {
+public class Spider extends Module implements TickListener {
 
 	public Spider() {
 		this.setName("Spider");
@@ -40,10 +41,12 @@ public class Spider extends Module {
 
 	@Override
 	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -52,28 +55,12 @@ public class Spider extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		ClientPlayerEntity player = MC.player;
 		if(player.horizontalCollision) {
 			player.getVelocity().multiply(new Vec3d(1,0,1));
 			player.getVelocity().add(new Vec3d(0,0.2,0));
 			player.setOnGround(true);
 		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-		
 	}
 }

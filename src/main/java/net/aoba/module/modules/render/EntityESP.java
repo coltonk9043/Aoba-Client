@@ -21,32 +21,28 @@
  */
 package net.aoba.module.modules.render;
 
-import org.joml.Quaternionf;
 import org.lwjgl.glfw.GLFW;
-
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
 import net.aoba.module.Module;
-import net.minecraft.client.model.ModelData;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.CowEntityModel;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLoader;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
-public class EntityESP extends Module {
+public class EntityESP extends Module implements RenderListener, TickListener {
 	private Color color;
 	private RainbowColor rainbowColor;
 
@@ -69,12 +65,14 @@ public class EntityESP extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -83,16 +81,10 @@ public class EntityESP extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
-		if(this.rainbow.getValue()) {
-			this.rainbowColor.update(this.effectSpeed.getValue().floatValue());
-		}else {
-			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
-		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {	
+	public void OnRender(RenderEvent event) {
+		MatrixStack matrixStack = event.GetMatrixStack();
+		float partialTicks = event.GetPartialTicks();
+		
 		matrixStack.push();
 		
 		for (Entity entity : MC.world.getEntities()) {
@@ -118,12 +110,11 @@ public class EntityESP extends Module {
 	}
 
 	@Override
-	public void onSendPacket(Packet<?> packet) {
-
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
+	public void OnUpdate(TickEvent event) {
+		if(this.rainbow.getValue()) {
+			this.rainbowColor.update(this.effectSpeed.getValue().floatValue());
+		}else {
+			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
+		}
 	}
 }

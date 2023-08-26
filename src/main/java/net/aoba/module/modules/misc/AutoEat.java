@@ -22,16 +22,17 @@
 package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
+import net.aoba.Aoba;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
-import net.minecraft.network.packet.Packet;
 
-public class AutoEat extends Module {
-
+public class AutoEat extends Module implements TickListener {
 	private int hunger = 6;
+	
 	public AutoEat() {
 		this.setName("AutoEat");
 		this.setBind(new KeyBinding("key.autoeat", GLFW.GLFW_KEY_N, "key.categories.aoba"));
@@ -41,21 +42,25 @@ public class AutoEat extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-	
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
+	
+	public void setHunger(int hunger) {
+		
+	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		if(MC.player.getHungerManager().getFoodLevel() <= hunger) {
 			int foodSlot= -1;
 			FoodComponent bestFood = null;
@@ -83,24 +88,5 @@ public class AutoEat extends Module {
 		    	MC.options.useKey.setPressed(true);
 		    }
 		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-	}
-	
-	public void setHunger(int hunger) {
-		
 	}
 }

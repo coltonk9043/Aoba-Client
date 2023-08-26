@@ -45,8 +45,8 @@ public abstract class Module {
 
 	private List<Setting> settings = new ArrayList<Setting>();
 	
-	protected static final MinecraftClient MC = AobaClient.MC;
-	protected static final IMinecraftClient IMC = AobaClient.IMC;
+	protected final MinecraftClient MC = AobaClient.MC;
+	protected final IMinecraftClient IMC = AobaClient.IMC;
 	
 	public String getName() {
 		return this.name;
@@ -124,13 +124,6 @@ public abstract class Module {
 	public abstract void onEnable();
 
 	public abstract void onToggle();
-
-	public abstract void onUpdate();
-
-	public abstract void onRender(MatrixStack matrixStack, float partialTicks);
-
-	public abstract void onSendPacket(Packet<?> packet);
-	public abstract void onReceivePacket(Packet<?> packet);
 	
 	public void toggle() {
 		if(this.state) {

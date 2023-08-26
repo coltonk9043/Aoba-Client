@@ -24,17 +24,18 @@ package net.aoba.module.modules.render;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import org.lwjgl.glfw.GLFW;
+import net.aoba.Aoba;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.module.Module;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Box;
 
-public class SpawnerESP extends Module {
+public class SpawnerESP extends Module implements RenderListener {
 
 	public SpawnerESP() {
 		this.setName("SpawnerESP");
@@ -45,12 +46,12 @@ public class SpawnerESP extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
 	}
 
 	@Override
@@ -59,31 +60,14 @@ public class SpawnerESP extends Module {
 	}
 
 	@Override
-	public void onUpdate() {
-
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
+	public void OnRender(RenderEvent event) {
 		ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities().collect(Collectors.toCollection(ArrayList::new));
 		
 		for(BlockEntity blockEntity : blockEntities) {
 			if(blockEntity instanceof MobSpawnerBlockEntity) {
 				Box box = new Box(blockEntity.getPos());
-				this.getRenderUtils().draw3DBox(matrixStack, box, new Color(255,255,0), 0.2f);
+				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), box, new Color(255,255,0), 0.2f);
 			}
 		}
 	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-		
-	}
-
 }

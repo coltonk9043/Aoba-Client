@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import net.aoba.Aoba;
 import net.aoba.core.settings.Setting;
 import net.aoba.core.settings.SettingManager;
+import net.aoba.event.events.RenderEvent;
 import org.lwjgl.opengl.GL11;
-
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.modules.combat.*;
 import net.aoba.module.modules.misc.*;
@@ -36,7 +36,6 @@ import net.aoba.module.modules.render.*;
 import net.aoba.module.modules.world.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 
 public class ModuleManager {
 	public ArrayList<Module> modules = new ArrayList<Module>();
@@ -146,13 +145,12 @@ public class ModuleManager {
 	}
 	
 	public void update() {
+		
+		
 		for(Module module : modules) {
 			if(module.getBind().wasPressed()) {
 				module.toggle();
 				module.getBind().setPressed(false);
-			}
-			if(module.getState()) {
-				module.onUpdate();
 			}
 		}
 	}
@@ -168,31 +166,14 @@ public class ModuleManager {
 		
 		matrixStack.push();
 		RenderUtils.applyRenderOffset(matrixStack);
-		for(Module module : modules) {
-			if(module.getState()) {
-				module.onRender(matrixStack, MinecraftClient.getInstance().getTickDelta());
-			}
-		}
+		
+		RenderEvent renderEvent = new RenderEvent(matrixStack, MinecraftClient.getInstance().getTickDelta());
+		Aoba.getInstance().eventManager.Fire(renderEvent);
+		
 		matrixStack.pop();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-	}
-	
-	public void sendPacket(Packet<?> packet) {
-		for(Module module : modules) {
-			if(module.getState()) {
-				module.onSendPacket(packet);
-			}
-		}
-	}
-	
-	public void recievePacket(Packet<?> packet) {
-		for(Module module : modules) {
-			if(module.getState()) {
-				module.onReceivePacket(packet);
-			}
-		}
 	}
 	
 	public void addModule(Module module) {

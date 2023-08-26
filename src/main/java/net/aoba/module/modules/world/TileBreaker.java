@@ -22,25 +22,26 @@
 package net.aoba.module.modules.world;
 
 import java.util.ArrayList;
-
 import org.lwjgl.glfw.GLFW;
-
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
 
-public class TileBreaker extends Module {
+public class TileBreaker extends Module implements TickListener, RenderListener {
 	private MinecraftClient mc;
 	private ArrayList<Block> blocks = new ArrayList<Block>();
 	private FloatSetting radius;
@@ -62,55 +63,20 @@ public class TileBreaker extends Module {
 	
 	@Override
 	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 	}
 
-	@Override
-	public void onUpdate() {
-		int rad = this.radius.getValue().intValue();
-		for (int x = -rad; x < rad; x++) {
-			for (int y = rad; y > -rad; y--) {
-				for (int z = -rad; z < rad; z++) {
-					BlockPos blockpos = new BlockPos( mc.player.getBlockX() + x,
-							 mc.player.getBlockY() + y,
-							 mc.player.getBlockZ() + z);
-					Block block = mc.world.getBlockState(blockpos).getBlock();
-					if (this.isTileBreakerBlock(block)) {
-						mc.player.networkHandler.sendPacket(
-								new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, blockpos, Direction.NORTH));
-						mc.player.networkHandler.sendPacket(
-								new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockpos, Direction.NORTH));
-					}
-				}
-			}
-		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		int rad = this.radius.getValue().intValue();
-		for (int x = -rad; x < rad; x++) {
-			for (int y = rad; y > -rad; y--) {
-				for (int z = -rad; z < rad; z++) {
-					BlockPos blockpos = new BlockPos((int) mc.player.getBlockX() + x,
-							 mc.player.getBlockY() + y,
-							 mc.player.getBlockZ() + z);
-					Block block = mc.world.getBlockState(blockpos).getBlock();
-					if (this.isTileBreakerBlock(block)) {
-						this.getRenderUtils().draw3DBox(matrixStack, new Box(blockpos), new Color(255,0,0), 0.2f);
-					}
-				}
-			}
-		}
-	}
-	
 	private void loadTileBreakerBlocks() {
 		this.blocks.add(Blocks.TORCH);
 		this.blocks.add(Blocks.WALL_TORCH);
@@ -155,13 +121,41 @@ public class TileBreaker extends Module {
 	}
 
 	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
+	public void OnUpdate(TickEvent event) {
+		int rad = this.radius.getValue().intValue();
+		for (int x = -rad; x < rad; x++) {
+			for (int y = rad; y > -rad; y--) {
+				for (int z = -rad; z < rad; z++) {
+					BlockPos blockpos = new BlockPos( mc.player.getBlockX() + x,
+							 mc.player.getBlockY() + y,
+							 mc.player.getBlockZ() + z);
+					Block block = mc.world.getBlockState(blockpos).getBlock();
+					if (this.isTileBreakerBlock(block)) {
+						mc.player.networkHandler.sendPacket(
+								new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, blockpos, Direction.NORTH));
+						mc.player.networkHandler.sendPacket(
+								new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockpos, Direction.NORTH));
+					}
+				}
+			}
+		}
 	}
 
 	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-		
+	public void OnRender(RenderEvent event) {
+		int rad = this.radius.getValue().intValue();
+		for (int x = -rad; x < rad; x++) {
+			for (int y = rad; y > -rad; y--) {
+				for (int z = -rad; z < rad; z++) {
+					BlockPos blockpos = new BlockPos((int) mc.player.getBlockX() + x,
+							 mc.player.getBlockY() + y,
+							 mc.player.getBlockZ() + z);
+					Block block = mc.world.getBlockState(blockpos).getBlock();
+					if (this.isTileBreakerBlock(block)) {
+						this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), new Color(255,0,0), 0.2f);
+					}
+				}
+			}
+		}
 	}
 }

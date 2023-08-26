@@ -23,11 +23,14 @@ package net.aoba.module.modules.render;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-
 import org.lwjgl.glfw.GLFW;
-
+import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RainbowColor;
@@ -36,11 +39,9 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.entity.TrappedChestBlockEntity;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Box;
 
-public class ChestESP extends Module {
+public class ChestESP extends Module implements RenderListener, TickListener {
 	private Color currentColor;
 	private Color color;
 	private RainbowColor rainbowColor;
@@ -64,21 +65,34 @@ public class ChestESP extends Module {
 
 	@Override
 	public void onDisable() {
-
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
+	
+	@Override
+	public void OnRender(RenderEvent event) {
+		ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities().collect(Collectors.toCollection(ArrayList::new));
+		for(BlockEntity blockEntity : blockEntities) {
+			if(blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity) {
+				Box box = new Box(blockEntity.getPos());
+				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), box, currentColor, 0.2f);
+			}
+		}
+	}
 
 	@Override
-	public void onUpdate() {
+	public void OnUpdate(TickEvent event) {
 		if(this.rainbow.getValue()) {
 			this.rainbowColor.update(this.effectSpeed.getValue().floatValue());
 			this.currentColor = this.rainbowColor.getColor();
@@ -86,28 +100,6 @@ public class ChestESP extends Module {
 			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
 			this.currentColor = color;
 		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities().collect(Collectors.toCollection(ArrayList::new));
-		for(BlockEntity blockEntity : blockEntities) {
-			if(blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity) {
-				Box box = new Box(blockEntity.getPos());
-				this.getRenderUtils().draw3DBox(matrixStack, box, currentColor, 0.2f);
-			}
-		}
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-		
-		
 	}
 
 }

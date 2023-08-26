@@ -22,12 +22,9 @@
 package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
-
 import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 
 public class FastBreak extends Module {
 
@@ -60,21 +57,5 @@ public class FastBreak extends Module {
 	@Override
 	public void onToggle() {
 	
-	}
-
-	@Override
-	public void onUpdate() {
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
 	}
 }

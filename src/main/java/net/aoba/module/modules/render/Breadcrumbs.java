@@ -23,21 +23,21 @@ package net.aoba.module.modules.render;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
-
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.TickListener;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.util.math.Vec3d;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
 
-public class Breadcrumbs extends Module{
+public class Breadcrumbs extends Module implements RenderListener, TickListener {
 	private Color currentColor;
 	private Color color;
 	private RainbowColor rainbowColor;
@@ -65,20 +65,30 @@ public class Breadcrumbs extends Module{
 	
 	@Override
 	public void onDisable() {
-		
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
- 
+	
 	@Override
-	public void onUpdate() {
+	public void OnRender(RenderEvent event) {
+		for(int i = 0; i < this.positions.size() - 1; i++) {
+			this.getRenderUtils().drawLine3D(event.GetMatrixStack(), this.positions.get(i), this.positions.get(i + 1), this.currentColor);
+		}
+	}
+
+	@Override
+	public void OnUpdate(TickEvent event) {
 		currentTick++;
 		if(timer == currentTick) {
 			currentTick = 0;
@@ -93,22 +103,5 @@ public class Breadcrumbs extends Module{
 			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
 			this.currentColor = color;
 		}
-	}
-
-	@Override
-	public void onRender(MatrixStack matrixStack, float partialTicks) {
-		for(int i = 0; i < this.positions.size() - 1; i++) {
-			this.getRenderUtils().drawLine3D(matrixStack, this.positions.get(i), this.positions.get(i + 1), this.currentColor);
-		}
-	}
-
-	@Override
-	public void onSendPacket(Packet<?> packet) {
-		
-	}
-
-	@Override
-	public void onReceivePacket(Packet<?> packet) {
-
 	}
 }
