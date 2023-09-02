@@ -30,9 +30,9 @@ public class TriggerBot extends Module implements TickListener {
 		this.setDescription("Attacks anything you are looking at.");
 
 		radius = new FloatSetting("triggerbot_radius", "Radius", 5f, 0.1f, 10f, 0.1f);
-		targetAnimals = new BooleanSetting("triggerbot_target_animals", "Target animals.", false, null);
-		targetMonsters = new BooleanSetting("triggerbot_target_monsters", "Target monsters.", true, null);
-		targetPlayers = new BooleanSetting("triggerbot_target_players", "Target players.", true, null);
+		targetAnimals = new BooleanSetting("triggerbot_target_animals", "Target Animals", "Target animals.", false);
+		targetMonsters = new BooleanSetting("triggerbot_target_monsters", "Target Monsters", "Target monsters.", true);
+		targetPlayers = new BooleanSetting("triggerbot_target_players", "Target Players", "Target players.", true);
 		this.addSetting(radius);
 		this.addSetting(targetAnimals);
 		this.addSetting(targetMonsters);

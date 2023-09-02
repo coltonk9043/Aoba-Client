@@ -36,7 +36,7 @@ public class FastBreak extends Module {
 		this.setCategory(Category.Misc);
 		this.setDescription("Breaks blocks quicker based on a multiplier.");
 		
-		multiplier = new FloatSetting("fastbreak_multiplier", "Multiplier", 1.25f, 1f, 3f, 0.05f);
+		multiplier = new FloatSetting("fastbreak_multiplier", "Multiplier", "Multiplier for how fast the blocks will break.", 1.25f, 1f, 3f, 0.05f);
 		this.addSetting(multiplier);
 	}
 

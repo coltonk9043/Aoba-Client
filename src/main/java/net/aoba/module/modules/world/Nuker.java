@@ -50,7 +50,7 @@ public class Nuker extends Module implements RenderListener, TickListener {
 		this.setBind(new KeyBinding("key.nuker", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks around the player.");
-		this.radius = new FloatSetting("nuker_radius", "Radius", 5f, 0f, 15f, 1f);
+		this.radius = new FloatSetting("nuker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
 	}

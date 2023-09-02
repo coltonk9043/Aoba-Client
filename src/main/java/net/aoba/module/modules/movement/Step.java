@@ -36,7 +36,8 @@ public class Step extends Module {
 		this.setCategory(Category.Movement);
 		this.setDescription("Steps up blocks.");
 		
-		stepHeight = new FloatSetting("step_height", "Height", 1f, 0.0f, 2f, 0.5f);
+		stepHeight = new FloatSetting("step_height", "Height", "Height that the player will step up.", 1f, 0.0f, 2f, 0.5f);
+		
 		this.addSetting(stepHeight);
 	}
 

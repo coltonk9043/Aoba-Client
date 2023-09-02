@@ -34,7 +34,8 @@ public class Timer extends Module {
 		this.setBind(new KeyBinding("key.timer", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Misc);
 		this.setDescription("Increases the speed of Minecraft.");
-		this.multiplier = new FloatSetting("timer_multiplier", "Multiplier", 1f, 0.1f, 15f, 0.1f);
+		
+		this.multiplier = new FloatSetting("timer_multiplier", "Multiplier", "The multiplier that will affect the game speed.", 1f, 0.1f, 15f, 0.1f);
 		this.addSetting(multiplier);
 	}
 

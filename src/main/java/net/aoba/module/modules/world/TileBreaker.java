@@ -52,7 +52,7 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
 		this.loadTileBreakerBlocks();
-		this.radius = new FloatSetting("tilebreaker_radius", "Radius", 5f, 0f, 15f, 1f);
+		this.radius = new FloatSetting("tilebreaker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
 	}

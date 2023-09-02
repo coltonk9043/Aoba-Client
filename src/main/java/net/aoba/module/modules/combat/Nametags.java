@@ -39,9 +39,9 @@ public class Nametags extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Scales the nametags to be larger.");
 		
-		scale = new FloatSetting("nametags_scale", "Scale of the NameTags", 0, 0, 5, 0.25);
-		onlyPlayers = new BooleanSetting("nametags_onlyPlayers", "Whether Nametags are only enlarged for players.", false, null);
-		alwaysVisible = new BooleanSetting("nametags_alwaysVisible", "Whether Nametags will always be displayed.", false, null);
+		scale = new FloatSetting("nametags_scale", "Scale", "Scale of the NameTags", 0, 0, 5, 0.25);
+		onlyPlayers = new BooleanSetting("nametags_onlyPlayers", "Only Players", "Whether Nametags are only enlarged for players.", false);
+		alwaysVisible = new BooleanSetting("nametags_alwaysVisible", "Always Visible", "Whether Nametags will always be displayed.", false);
 		this.addSetting(scale);
 		this.addSetting(onlyPlayers);
 		this.addSetting(alwaysVisible);

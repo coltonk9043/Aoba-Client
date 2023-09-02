@@ -40,7 +40,7 @@ public class Jesus extends Module implements TickListener {
 		this.setDescription("Allows the player to walk on water.");
 
 		// Add Settings
-		legit = new BooleanSetting("jesus_legit", "Legit", true, null);
+		legit = new BooleanSetting("jesus_legit", "Legit", "Whether or not the player will swim as close to the surface as possible.", true);
 		this.addSetting(legit);
 	}
 

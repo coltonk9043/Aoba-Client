@@ -43,7 +43,7 @@ public class Freecam extends Module implements TickListener {
 		this.setBind(new KeyBinding("key.freecam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to clip through blocks (Only work clientside).");
-		flySpeed = new FloatSetting("freecam_speed", "Speed", 2f, 0.1f, 15f, 0.5f);
+		flySpeed = new FloatSetting("freecam_speed", "Speed", "Speed of the Freecam.", 2f, 0.1f, 15f, 0.5f);
 		this.addSetting(flySpeed);
 	}
 

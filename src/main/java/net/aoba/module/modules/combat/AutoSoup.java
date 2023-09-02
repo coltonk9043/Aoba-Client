@@ -48,7 +48,7 @@ public class AutoSoup extends Module implements TickListener {
 		this.setCategory(Category.Combat);
 		this.setDescription("Automatically consumes soup when health is low. (KitPVP)");
 		
-		health = new FloatSetting("autosoup_health", "Min Health",6f, 1f, 20f, 1f);
+		health = new FloatSetting("autosoup_health", "Min. Health", "Minimum health that the AutoSoup will trigger.", 6f, 1f, 20f, 1f);
 		this.addSetting(health);
 	}
 

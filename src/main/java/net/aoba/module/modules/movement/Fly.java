@@ -42,7 +42,7 @@ public class Fly extends Module implements TickListener {
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to fly.");
 		
-		flySpeed = new FloatSetting("fly_speed", "Speed", 2f, 0.1f, 15f, 0.5f);
+		flySpeed = new FloatSetting("fly_speed", "Speed", "Fly speed.", 2f, 0.1f, 15f, 0.5f);
 		this.addSetting(flySpeed);
 	}
 

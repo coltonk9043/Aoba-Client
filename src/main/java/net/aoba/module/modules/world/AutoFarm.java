@@ -53,7 +53,7 @@ public class AutoFarm extends Module implements TickListener {
 		this.setBind(new KeyBinding("key.autofarm", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
-		this.radius = new FloatSetting("autofarm_radius", "Radius", 5f, 0f, 15f, 1f);
+		this.radius = new FloatSetting("autofarm_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
 	}
 

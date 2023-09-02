@@ -36,7 +36,7 @@ public class Reach extends Module {
 		this.setCategory(Category.Combat);
 		this.setDescription("Reaches further.");
 		
-		distance = new FloatSetting("reach_distance", "Distance", 5f, 1f, 15f, 1f);
+		distance = new FloatSetting("reach_distance", "Distance", "Distance, in blocks, that you can reach.", 5f, 1f, 15f, 1f);
 		this.addSetting(distance);
 	}
 
