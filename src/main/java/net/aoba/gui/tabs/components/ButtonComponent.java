@@ -13,16 +13,18 @@ public class ButtonComponent extends Component implements MouseLeftClickListener
 
 	private String text;
 	private ClickGuiTab parent;
-	private boolean wasClicked = false;
-	private boolean hovered = false;
 	private Runnable onClick;
 
 	private Color hoverColor = new Color(90, 90, 90);
 	private Color color = new Color(128, 128, 128);
-
 	private Color backgroundColor = color;
-	private boolean focused = false;
-
+	
+	/**
+	 * Constructor for button component.
+	 * @param parent Parent Tab that this Component resides in.
+	 * @param text Text contained in this button element.
+	 * @param onClick OnClick delegate that will run when the button is pressed.
+	 */
 	public ButtonComponent(ClickGuiTab parent, String text, Runnable onClick) {
 		super();
 		this.text = text;
@@ -32,14 +34,29 @@ public class ButtonComponent extends Component implements MouseLeftClickListener
 		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
 	}
 
+	/**
+	 * Sets the text of the button.
+	 * @param text Text to set.
+	 */
 	public void setText(String text) {
 		this.text = text;
 	}
 
+	/**
+	 * Sets the OnClick delegate of the button.
+	 * @param onClick Delegate to set.
+	 */
 	public void setOnClick(Runnable onClick) {
 		this.onClick = onClick;
 	}
 
+	/**
+	 * Draws the button to the screen.
+	 * @param offset The offset (Y location relative to parent) of the Component.
+	 * @param drawContext The current draw context of the game.
+	 * @param partialTicks The partial ticks used for interpolation.
+	 * @param color The current Color of the UI.
+	 */
 	@Override
 	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
 		float parentX = parent.getX();
@@ -52,6 +69,10 @@ public class ButtonComponent extends Component implements MouseLeftClickListener
 		renderUtils.drawString(drawContext, this.text, parentX + 8, parentY + 8 + offset, 0xFFFFFF);
 	}
 
+	/**
+	 * Triggered when the user clicks the Left Mouse Button (LMB)
+	 * @param event Event fired.
+	 */
 	@Override
 	public void OnMouseLeftClick(MouseLeftClickEvent event) {
 		float parentX = parent.getX();
@@ -62,19 +83,12 @@ public class ButtonComponent extends Component implements MouseLeftClickListener
 		int mouseY = event.GetMouseY();
 
 		if (HudManager.currentGrabbed == null) {
-			// Enable Module
-			if ((mouseX >= ((parentX + 2)) && mouseX <= (((parentX + 2)) + parentWidth - 34))
-					&& (mouseY >= parentY + offset && mouseY <= (parentY + offset + 28))) {
-				backgroundColor = hoverColor;
-				hovered = true;
-				if (!this.wasClicked) {
-					focused = true;
+			// If our delegate exists and we are inside the bounds of the button, run it.
+			if(this.onClick != null) {
+				if ((mouseX >= ((parentX + 2)) && mouseX <= (((parentX + 2)) + parentWidth - 34))
+						&& (mouseY >= parentY + offset && mouseY <= (parentY + offset + 28))) {
+					this.onClick.run();
 				}
-			} else {
-				this.backgroundColor = color;
-				this.hovered = false;
-				this.wasClicked = false;
-				focused = true;
 			}
 		}
 	}

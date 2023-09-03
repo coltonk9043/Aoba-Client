@@ -1,11 +1,8 @@
 package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
-
 import net.aoba.gui.Color;
 import net.aoba.gui.tabs.ClickGuiTab;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 
 public class StringComponent extends Component {
@@ -77,6 +74,10 @@ public class StringComponent extends Component {
 		
 	}
 	
+	/**
+	 * Sets the text of the String Component.
+	 * @param text The text to set.
+	 */
 	public void setText(String text) {
 		this.originalText = text;
 		this.text = new ArrayList<String>();
@@ -95,6 +96,10 @@ public class StringComponent extends Component {
 		}
 	}
 	
+	/**
+	 * Gets the text of the String Component.
+	 * @return Text of the String Component as a string.
+	 */
 	public String getText() {
 		return this.originalText;
 	}

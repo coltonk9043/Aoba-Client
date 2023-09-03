@@ -23,9 +23,7 @@ public class ModuleComponent extends Component implements MouseLeftClickListener
 	private String text;
 	private Module module;
 	private ClickGuiTab parent;
-	private boolean wasClicked = false;
 	private boolean popped = false;
-	
 
 	private int expandedHeight = 30;
 
@@ -112,6 +110,7 @@ public class ModuleComponent extends Component implements MouseLeftClickListener
 		expandedHeight = height;
 	}
 
+	
 	@Override
 	public void OnMouseLeftClick(MouseLeftClickEvent event) {
 		float parentX = parent.getX();

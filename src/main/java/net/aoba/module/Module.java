@@ -25,15 +25,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.aoba.AobaClient;
 import net.aoba.core.settings.Setting;
 import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.packet.Packet;
 
 public abstract class Module {
 	private String name;
