@@ -1,9 +1,11 @@
 package net.aoba.mixin;
 
 import net.aoba.Aoba;
+import net.aoba.event.events.MouseLeftClickEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.interfaces.IMinecraftClient;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
 import net.minecraft.client.util.Session;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
@@ -25,9 +27,15 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	@Shadow
 	@Final
 	private Session session;
+	
+	@Shadow
+	@Final
+	private Mouse mouse;
+	
 	@Shadow
 	public ClientWorld world;
-
+	
+	
 	private Session aobaSession;
 	
 	public MinecraftClientMixin(String string) {
@@ -65,7 +73,14 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	
 	@Inject(at = {@At(value = "HEAD") }, method = {"doAttack()Z"}, cancellable = true)
 	private void onDoAttack(CallbackInfoReturnable<Boolean> cir) {
-		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
+		int mouseX = (int) Math.ceil(mouse.getX());
+		int mouseY = (int) Math.ceil(mouse.getY());
+		
+		MouseLeftClickEvent event = new MouseLeftClickEvent(mouseX, mouseY);
+		
+		Aoba.getInstance().eventManager.Fire(event);
+		
+		if(event.IsCancelled()) {
 			cir.setReturnValue(false);
 			cir.cancel();
 		}

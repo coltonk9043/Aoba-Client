@@ -30,6 +30,10 @@ import net.aoba.core.settings.SettingManager;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.Vector2Setting;
 import net.aoba.core.utils.types.Vector2;
+import net.aoba.event.events.MouseLeftClickEvent;
+import net.aoba.event.events.MouseMoveEvent;
+import net.aoba.event.listeners.MouseLeftClickListener;
+import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.hud.AbstractHud;
@@ -38,8 +42,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-
-public class ClickGuiTab extends AbstractHud{
+public class ClickGuiTab extends AbstractHud implements MouseLeftClickListener, MouseMoveListener {
 	protected String title;
 
 	protected boolean pinnable = false;
@@ -47,7 +50,7 @@ public class ClickGuiTab extends AbstractHud{
 	protected boolean pinWasClicked = false;
 	protected boolean drawBorder = true;
 	protected boolean inheritHeightFromChildren = true;
-	
+
 	protected ArrayList<Component> children = new ArrayList<>();
 
 	private Consumer<Vector2> update_pos;
@@ -67,8 +70,8 @@ public class ClickGuiTab extends AbstractHud{
 		update_pos = new Consumer<Vector2>() {
 			@Override
 			public void accept(Vector2 vector2) {
-				setX((int)vector2.x);
-				setY((int)vector2.y);
+				setX((int) vector2.x);
+				setY((int) vector2.y);
 			}
 		};
 
@@ -83,8 +86,10 @@ public class ClickGuiTab extends AbstractHud{
 		pinned_setting = new BooleanSetting(title + "_pinned", "IS PINNED", false, update_pinned);
 		SettingManager.register_setting(position, Aoba.getInstance().settingManager.hidden_category);
 		SettingManager.register_setting(pinned_setting, Aoba.getInstance().settingManager.hidden_category);
+		
+		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
 	}
-
 
 	public final String getTitle() {
 		return title;
@@ -156,50 +161,20 @@ public class ClickGuiTab extends AbstractHud{
 	}
 
 	@Override
-	public void update(double mouseX, double mouseY, boolean mouseClicked) {
-		if(this.inheritHeightFromChildren) {
+	public void update() {
+		if (this.inheritHeightFromChildren) {
 			int tempHeight = 1;
 			for (Component child : children) {
 				tempHeight += (child.getHeight());
 			}
 			this.height = tempHeight;
 		}
-		
+
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			if (HudManager.currentGrabbed == null) {
-				if (mouseX >= (x) && mouseX <= (x + width)) {
-					if (mouseY >= (y) && mouseY <= (y + 28)) {
-						if (mouseClicked) {
-							boolean isInsidePinButton = false;
-							if(this.pinnable) {
-								if (mouseX >= (x + width - 24) && mouseX <= (x + width - 2)) {
-									if (mouseY >= (y + 4) && mouseY <= (y + 20)) {
-										isInsidePinButton = true;
-									}
-								}
-							}
-							if (isInsidePinButton) {
-								if (!this.pinWasClicked) {
-									this.isPinned = !this.isPinned;
-									this.pinWasClicked = true;
-									return;
-								}
-							} else {
-								if (!this.isPinned) HudManager.currentGrabbed = this;
-							}
-						} else {
-							if (this.pinWasClicked) {
-								this.pinWasClicked = false;
-							}
-							if (!this.isPinned) HudManager.currentGrabbed = this;
-						}
-					}
-				}
-			}
 
 			int i = 30;
 			for (Component child : this.children) {
-				child.update(i, mouseX, mouseY, mouseClicked);
+				child.update(i);
 				i += child.getHeight();
 			}
 		}
@@ -218,20 +193,24 @@ public class ClickGuiTab extends AbstractHud{
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-		if(drawBorder) {
+		if (drawBorder) {
 			// Draws background depending on components width and height
-			renderUtils.drawRoundedBox(matrixStack, x, y, width, height + 30, 6, new Color(30,30,30), 0.4f);
-			renderUtils.drawRoundedOutline(matrixStack, x, y, width, height + 30, 6, new Color(0,0,0), 0.8f);
+			renderUtils.drawRoundedBox(matrixStack, x, y, width, height + 30, 6, new Color(30, 30, 30), 0.4f);
+			renderUtils.drawRoundedOutline(matrixStack, x, y, width, height + 30, 6, new Color(0, 0, 0), 0.8f);
 			renderUtils.drawString(drawContext, this.title, x + 8, y + 8, Aoba.getInstance().hudManager.getColor());
-			renderUtils.drawLine(matrixStack, x, y + 30, x + width, y + 30, new Color(0,0,0), 0.4f);
+			renderUtils.drawLine(matrixStack, x, y + 30, x + width, y + 30, new Color(0, 0, 0), 0.4f);
 
-			if(this.pinnable) {
+			if (this.pinnable) {
 				if (this.isPinned) {
-					renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(154,0,0), 0.8f);
-					renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.8f);
+					renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(154, 0, 0),
+							0.8f);
+					renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0, 0, 0),
+							0.8f);
 				} else {
-					renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(128,128,128), 0.2f);
-					renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0,0,0), 0.2f);
+					renderUtils.drawRoundedBox(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(128, 128, 128),
+							0.2f);
+					renderUtils.drawRoundedOutline(matrixStack, x + width - 23, y + 8, 15, 15, 6f, new Color(0, 0, 0),
+							0.2f);
 				}
 			}
 		}
@@ -239,6 +218,88 @@ public class ClickGuiTab extends AbstractHud{
 		for (Component child : children) {
 			child.draw(i, drawContext, partialTicks, color);
 			i += child.getHeight();
+		}
+	}
+
+	@Override
+	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+		super.OnMouseLeftClick(event);
+
+		int mouseX = (int) Math.ceil(mc.mouse.getX());
+		int mouseY = (int) Math.ceil(mc.mouse.getY());
+
+		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
+			if (HudManager.currentGrabbed == null) {
+				if (mouseX >= (x) && mouseX <= (x + width)) {
+					if (mouseY >= (y) && mouseY <= (y + 28)) {
+						boolean isInsidePinButton = false;
+						if (this.pinnable) {
+							if (mouseX >= (x + width - 24) && mouseX <= (x + width - 2)) {
+								if (mouseY >= (y + 4) && mouseY <= (y + 20)) {
+									isInsidePinButton = true;
+								}
+							}
+						}
+						if (isInsidePinButton) {
+							if (!this.pinWasClicked) {
+								this.isPinned = !this.isPinned;
+								this.pinWasClicked = true;
+								return;
+							}
+						} else {
+							if (!this.isPinned) {
+								HudManager.currentGrabbed = this;
+							}
+						}
+					} else {
+						if (this.pinWasClicked) {
+							this.pinWasClicked = false;
+						}
+						if (!this.isPinned) {
+							HudManager.currentGrabbed = this;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public void OnMouseMove(MouseMoveEvent mouseMoveEvent) {
+		double mouseX = mouseMoveEvent.GetHorizontal();
+		double mouseY = mouseMoveEvent.GetVertical();
+		
+		if (HudManager.currentGrabbed == null) {
+			if (mouseX >= (x) && mouseX <= (x + width)) {
+				if (mouseY >= (y) && mouseY <= (y + 28)) {
+					boolean isInsidePinButton = false;
+					if (this.pinnable) {
+						if (mouseX >= (x + width - 24) && mouseX <= (x + width - 2)) {
+							if (mouseY >= (y + 4) && mouseY <= (y + 20)) {
+								isInsidePinButton = true;
+							}
+						}
+					}
+					if (isInsidePinButton) {
+						if (!this.pinWasClicked) {
+							this.isPinned = !this.isPinned;
+							this.pinWasClicked = true;
+							return;
+						}
+					} else {
+						if (!this.isPinned) {
+							// TODO: HudManager.currentGrabbed = this;
+						}
+					}
+				} else {
+					if (this.pinWasClicked) {
+						this.pinWasClicked = false;
+					}
+					if (!this.isPinned) {
+						// TODO: HudManager.currentGrabbed = this;
+					}
+				}
+			}
 		}
 	}
 }

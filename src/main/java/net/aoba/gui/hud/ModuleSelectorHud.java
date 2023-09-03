@@ -41,10 +41,7 @@ public class ModuleSelectorHud extends AbstractHud {
 	}
 
 	@Override
-	public void update(double mouseX, double mouseY, boolean mouseClicked) {
-		
-			super.update(mouseX, mouseY, mouseClicked);
-			
+	public void update() {
 			if (!aoba.isGhosted()) {
 				if (this.keybindUp.isPressed()) {
 					if (!isCategoryMenuOpen) {

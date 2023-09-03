@@ -80,4 +80,9 @@ public class RadarHud extends AbstractHud {
 			}
 		}
 	}
+
+	@Override
+	public void update() {
+
+	}
 }

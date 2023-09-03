@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
+import net.aoba.event.events.MouseLeftClickEvent;
+import net.aoba.event.listeners.MouseLeftClickListener;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class NavigationBar {
+public class NavigationBar implements MouseLeftClickListener {
 	MinecraftClient mc = MinecraftClient.getInstance();
 
 	private List<NavigationPane> options;
@@ -31,28 +33,11 @@ public class NavigationBar {
 		return this.selectedIndex;
 	}
 	
-	public void update(double mouseX, double mouseY, boolean mouseClicked) {
-		AobaClient aoba = Aoba.getInstance();
+	public void update() {
 		Window window = mc.getWindow();
-
-		int width = 100 * options.size();
-		int centerX = (window.getWidth() / 2);
-
-		int x = centerX - (width / 2);
-		if (aoba.hudManager.isClickGuiOpen() && HudManager.currentGrabbed == null) {
-			if (mouseX >= (x) && mouseX <= (x + width)) {
-				if (mouseY >= (25) && mouseY <= (50)) {
-					if (mouseClicked) {
-						int mouseXInt = (int) mouseX;
-						int selection = (mouseXInt - x) / 100; 
-						this.selectedIndex = selection;
-					}
-				}
-			}
-		}
 		
 		if(options.size() > 0) {
-			options.get(selectedIndex).update(mouseX, mouseY, mouseClicked);
+			options.get(selectedIndex).update();
 		}
 	}
 
@@ -77,5 +62,27 @@ public class NavigationBar {
 			renderUtils.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, color);
 		}
 		
+	}
+
+	@Override
+	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+		AobaClient aoba = Aoba.getInstance();
+		Window window = mc.getWindow();
+		
+		int mouseX = event.GetMouseX();
+		int mouseY = event.GetMouseY();
+		int width = 100 * options.size();
+		int centerX = (window.getWidth() / 2);
+		int x = centerX - (width / 2);
+		
+		if (aoba.hudManager.isClickGuiOpen() && HudManager.currentGrabbed == null) {
+			if (mouseX >= (x) && mouseX <= (x + width)) {
+				if (mouseY >= (25) && mouseY <= (50)) {
+					int mouseXInt = (int) mouseX;
+					int selection = (mouseXInt - x) / 100; 
+					this.selectedIndex = selection;
+				}
+			}
+		}
 	}
 }

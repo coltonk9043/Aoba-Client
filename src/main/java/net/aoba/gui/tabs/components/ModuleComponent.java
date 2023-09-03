@@ -3,11 +3,14 @@ package net.aoba.gui.tabs.components;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.aoba.Aoba;
 import net.aoba.core.settings.Setting;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.core.settings.types.IndexedStringListSetting;
 import net.aoba.core.settings.types.StringListSetting;
+import net.aoba.event.events.MouseLeftClickEvent;
+import net.aoba.event.listeners.MouseLeftClickListener;
 import net.aoba.module.Module;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
@@ -15,17 +18,17 @@ import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class ModuleComponent extends Component {
+public class ModuleComponent extends Component implements MouseLeftClickListener {
 
 	private String text;
 	private Module module;
 	private ClickGuiTab parent;
 	private boolean wasClicked = false;
 	private boolean popped = false;
-	private boolean hovered = false;
 	
+
 	private int expandedHeight = 30;
-	
+
 	private Color hoverColor = new Color(90, 90, 90);
 	private Color color = new Color(128, 128, 128);
 
@@ -51,66 +54,24 @@ public class ModuleComponent extends Component {
 			}
 			settingsList.add(c);
 		}
-		
-		RecalculateExpandedHeight();
-	}
-	
-	
 
-	public void update(int offset, double mouseX, double mouseY, boolean mouseClicked) {
-		float parentX = parent.getX();
-		float parentY = parent.getY();
-		float parentWidth = parent.getWidth();
-		
+		RecalculateExpandedHeight();
+
+		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
+	}
+
+	@Override
+	public void update(int offset) {
+		super.update(offset);
+
 		// If the Module options are popped, display all of the options.
 		if (this.popped) {
-			// Updates all of the options. 
+			// Updates all of the options.
 			int i = offset + 30;
 			for (Component children : this.settingsList) {
-				children.update(i, mouseX, mouseY, mouseClicked);
+				children.update(i);
 				i += children.getHeight();
 			}
-		}
-		
-		// As long as no other Component is being grabbed.
-		if (HudManager.currentGrabbed == null) {
-			
-			// Check if the current Module Component is currently hovered over.
-			hovered = ((mouseX >= parentX && mouseX <= (parentX + parentWidth)) && (mouseY >= parentY + offset && mouseY <= (parentY + offset + 28)));
-			if(hovered) {
-				backgroundColor = hoverColor;
-				boolean isOnOptionsButton = (mouseX >= (parentX + parentWidth - 34) && mouseX <= (parentX + parentWidth));
-				if(isOnOptionsButton) {
-					if (mouseClicked) {
-						if (!this.wasClicked) {
-							this.popped = !this.popped;
-							
-							if(this.popped) {
-								this.setHeight(expandedHeight);
-							}else {
-								this.setHeight(30);
-							}
-							this.wasClicked = true;
-							return;
-						}
-					}
-				}else {
-					if (mouseClicked) {
-						if (!this.wasClicked) {
-							module.toggle();
-							this.wasClicked = true;
-							return;
-						}
-					}
-				}
-				
-				this.wasClicked = (mouseClicked && this.wasClicked);
-			}else {
-				backgroundColor = color;
-				this.wasClicked = false;
-			}
-		}else {
-			backgroundColor = hoverColor;
 		}
 	}
 
@@ -120,7 +81,8 @@ public class ModuleComponent extends Component {
 		float parentY = parent.getY();
 		float parentWidth = parent.getWidth();
 		MatrixStack matrixStack = drawContext.getMatrices();
-		//renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset, parentWidth - 4, this.getHeight() - 2, backgroundColor, 0.2f);
+		// renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset,
+		// parentWidth - 4, this.getHeight() - 2, backgroundColor, 0.2f);
 
 		if (this.popped) {
 			int i = offset + 30;
@@ -139,7 +101,7 @@ public class ModuleComponent extends Component {
 					parentY + 8 + offset, color.getColorAsInt());
 		}
 	}
-	
+
 	public void RecalculateExpandedHeight() {
 		int height = 30;
 		for (Component children : this.settingsList) {
@@ -148,5 +110,34 @@ public class ModuleComponent extends Component {
 			}
 		}
 		expandedHeight = height;
+	}
+
+	@Override
+	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+		float parentX = parent.getX();
+		float parentY = parent.getY();
+		float parentWidth = parent.getWidth();
+
+		int mouseX = event.GetMouseX();
+		int mouseY = event.GetMouseY();
+
+		if (hovered) {
+			backgroundColor = hoverColor;
+			boolean isOnOptionsButton = (mouseX >= (parentX + parentWidth - 34) && mouseX <= (parentX + parentWidth));
+			if (isOnOptionsButton) {
+				this.popped = !this.popped;
+
+				if (this.popped) {
+					this.setHeight(expandedHeight);
+				} else {
+					this.setHeight(30);
+				}
+			} else {
+				module.toggle();
+				return;
+			}
+		} else {
+			backgroundColor = color;
+		}
 	}
 }

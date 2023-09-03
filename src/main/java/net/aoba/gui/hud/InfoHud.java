@@ -17,9 +17,7 @@ public class InfoHud extends AbstractHud {
 	}
 	
 	@Override
-	public void update(double mouseX, double mouseY, boolean mouseClicked) {
-		super.update(mouseX, mouseY, mouseClicked);
-		
+	public void update() {
 		MinecraftClient mc = MinecraftClient.getInstance();
 
 		int time = ((int)mc.world.getTime() + 6000)% 24000;

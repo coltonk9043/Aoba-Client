@@ -4,6 +4,8 @@ import net.aoba.Aoba;
 import net.aoba.core.settings.SettingManager;
 import net.aoba.core.settings.types.Vector2Setting;
 import net.aoba.core.utils.types.Vector2;
+import net.aoba.event.events.MouseLeftClickEvent;
+import net.aoba.event.listeners.MouseLeftClickListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.IMoveable;
@@ -13,7 +15,7 @@ import net.minecraft.client.gui.DrawContext;
 
 import java.util.function.Consumer;
 
-public abstract class AbstractHud implements IMoveable {
+public abstract class AbstractHud implements IMoveable, MouseLeftClickListener {
 	protected float x;
 	protected float y;
 	protected float width;
@@ -61,10 +63,12 @@ public abstract class AbstractHud implements IMoveable {
 	
 	public void setX(float x) {
 		this.x = x;
+		position_setting.silentSetX(x);
 	}
 	
 	public void setY(float y) {
 		this.y = y;
+		position_setting.silentSetY(y);
 	}
 	
 	public void setWidth(float width) {
@@ -75,22 +79,23 @@ public abstract class AbstractHud implements IMoveable {
 		this.height = height;
 	}
 	
-	public void update(double mouseX, double mouseY, boolean mouseClicked) {
+	public abstract void update();
+	
+	public abstract void draw(DrawContext drawContext, float partialTicks, Color color);
+
+	@Override
+	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+		int mouseX = event.GetMouseX();
+		int mouseY = event.GetMouseY();
+		
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			if (HudManager.currentGrabbed == null) {
 				if (mouseX >= (x) && mouseX <= (x + width)) {
 					if (mouseY >= (y) && mouseY <= (y + height)) {
-						if (mouseClicked) {
-							HudManager.currentGrabbed = this;
-						}
+						HudManager.currentGrabbed = this;
 					}
 				}
 			}
 		}
-
-		position_setting.silentSetX(x);
-		position_setting.silentSetY(y);
 	}
-	
-	public abstract void draw(DrawContext drawContext, float partialTicks, Color color);
 }

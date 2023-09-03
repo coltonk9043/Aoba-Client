@@ -15,6 +15,10 @@ public abstract class AbstractEvent {
 		return isCancelled;
 	}
 	
+	public void SetCancelled(boolean state) {
+		this.isCancelled = state;
+	}
+	
 	public abstract void Fire(ArrayList<? extends AbstractListener> listeners);
 	public abstract <T extends AbstractListener> Class<T> GetListenerClassType();
 }

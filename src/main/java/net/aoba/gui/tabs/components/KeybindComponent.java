@@ -9,7 +9,7 @@ import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class ButtonComponent extends Component implements MouseLeftClickListener {
+public class KeybindComponent extends Component implements MouseLeftClickListener {
 
 	private String text;
 	private ClickGuiTab parent;
@@ -21,14 +21,13 @@ public class ButtonComponent extends Component implements MouseLeftClickListener
 	private Color color = new Color(128, 128, 128);
 
 	private Color backgroundColor = color;
-	private boolean focused = false;
 
-	public ButtonComponent(ClickGuiTab parent, String text, Runnable onClick) {
+	public KeybindComponent(ClickGuiTab parent, String text, Runnable onClick) {
 		super();
 		this.text = text;
 		this.parent = parent;
 		this.onClick = onClick;
-
+		
 		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
 	}
 
@@ -60,22 +59,28 @@ public class ButtonComponent extends Component implements MouseLeftClickListener
 
 		int mouseX = event.GetMouseX();
 		int mouseY = event.GetMouseY();
-
+		
 		if (HudManager.currentGrabbed == null) {
-			// Enable Module
-			if ((mouseX >= ((parentX + 2)) && mouseX <= (((parentX + 2)) + parentWidth - 34))
-					&& (mouseY >= parentY + offset && mouseY <= (parentY + offset + 28))) {
-				backgroundColor = hoverColor;
-				hovered = true;
-				if (!this.wasClicked) {
-					focused = true;
+			if (!this.wasClicked) {
+				// Enable Module
+				if((mouseX >= ((parentX + 2)) && mouseX <= (((parentX + 2)) + parentWidth - 34)) && 
+				   (mouseY >= parentY + offset && mouseY <= (parentY + offset + 28))) {
+					backgroundColor = hoverColor;
+					hovered = true;
+					if (!this.wasClicked) {
+						try {
+							onClick.run();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						this.wasClicked = true;
+					}
+				}else {
+					this.backgroundColor = color;
+					this.hovered = false;
+					this.wasClicked = false;
 				}
-			} else {
-				this.backgroundColor = color;
-				this.hovered = false;
-				this.wasClicked = false;
-				focused = true;
-			}
+			} 
 		}
 	}
 }

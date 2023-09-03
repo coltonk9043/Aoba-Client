@@ -63,10 +63,6 @@ public class StringComponent extends Component {
 		this.parent = parent;
 	}
 
-	public void update(int offset, double mouseX, double mouseY, boolean mouseClicked) {
-		
-	}
-
 	@Override
 	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
 		float parentX = this.parent.getX();

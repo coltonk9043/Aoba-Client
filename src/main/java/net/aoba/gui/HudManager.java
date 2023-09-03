@@ -6,7 +6,9 @@ import java.util.List;
 import net.aoba.core.settings.SettingManager;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.event.events.MouseLeftClickEvent;
 import net.aoba.event.events.MouseScrollEvent;
+import net.aoba.event.listeners.MouseLeftClickListener;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -28,7 +30,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class HudManager {
+public class HudManager implements MouseLeftClickListener {
 
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected RenderUtils renderUtils = new RenderUtils();
@@ -45,8 +47,6 @@ public class HudManager {
 
 	private int lastMouseX = 0;
 	private int lastMouseY = 0;
-	private int mouseX;
-	private int mouseY;
 
 	private List<AbstractHud> activeHuds = new ArrayList<AbstractHud>();
 	
@@ -122,6 +122,8 @@ public class HudManager {
 		SettingManager.register_setting(effectSpeed, Aoba.getInstance().settingManager.config_category);
 		SettingManager.register_setting(rainbow, Aoba.getInstance().settingManager.config_category);
 		SettingManager.register_setting(ah, Aoba.getInstance().settingManager.config_category);
+		
+		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
 	}
 
 	/**
@@ -142,39 +144,20 @@ public class HudManager {
 	}
 	
 	public void update() {
-		boolean mouseClicked = mc.mouse.wasLeftButtonClicked();
-
 		if(!Aoba.getInstance().isGhosted()){
 
-			mouseX = (int) Math.ceil(mc.mouse.getX());
-			mouseY = (int) Math.ceil(mc.mouse.getY());
-			
 			/**
 			 * Moves the selected Tab to where the user moves their mouse.
 			 */
 			if (this.clickGuiOpen) {
-				clickGuiNavBar.update(mouseX, mouseY, mouseClicked);
-				
-				int dx = (int) Math.ceil(mouseX);
-				int dy = (int) Math.ceil(mouseY);
-				if (!mouseClicked)
-					currentGrabbed = null;
-				else if (currentGrabbed != null) {
-					float newX = Math.max(0, currentGrabbed.getX() - (lastMouseX - dx));
-					float newY = Math.max(0, currentGrabbed.getY() - (lastMouseY - dy));
-
-					currentGrabbed.setX(newX);
-					currentGrabbed.setY(newY);
-				}
-				this.lastMouseX = dx;
-				this.lastMouseY = dy;
+				clickGuiNavBar.update();
 			}
 
 			/**
 			 * Updates each of the Tab GUIs that are currently on the screen.
 			 */
 			for(AbstractHud hud : activeHuds) {
-				hud.update(lastMouseX, lastMouseY, mouseClicked);
+				hud.update();
 			}
 
 			
@@ -251,6 +234,25 @@ public class HudManager {
 			this.mc.mouse.unlockCursor();
 		}else {
 			this.mc.mouse.lockCursor();
+		}
+	}
+
+	@Override
+	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+		if (this.clickGuiOpen) {
+			event.SetCancelled(true);
+			int dx = event.GetMouseX();
+			int dy = event.GetMouseY();
+			
+			if (currentGrabbed != null) {
+				float newX = Math.max(0, currentGrabbed.getX() - (lastMouseX - dx));
+				float newY = Math.max(0, currentGrabbed.getY() - (lastMouseY - dy));
+
+				//currentGrabbed.setX(newX);
+				//currentGrabbed.setY(newY);
+			}
+			this.lastMouseX = dx;
+			this.lastMouseY = dy;
 		}
 	}
 }

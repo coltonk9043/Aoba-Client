@@ -21,8 +21,6 @@
  */
 package net.aoba;
 
-import java.util.EventListener;
-
 import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
 import net.aoba.core.settings.SettingManager;
@@ -64,6 +62,9 @@ public class AobaClient {
 		IMC = (IMinecraftClient)MC;
 		
 		System.out.println("[Aoba] Starting Client");
+		
+		eventManager = new EventManager();
+		
 		renderUtils = new RenderUtils();
 		// System.out.println("[Aoba] Reading Settings");
 		// settings = new Settings();
@@ -79,7 +80,7 @@ public class AobaClient {
 		altManager = new AltManager();
 		System.out.println("[Aoba] Aoba-chan initialized and ready to play!");
  
-		eventManager = new EventManager();
+
 		
 		
 		SettingManager.loadSettings("config_category", settingManager.config_category);

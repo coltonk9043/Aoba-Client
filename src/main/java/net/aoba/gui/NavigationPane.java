@@ -18,9 +18,9 @@ public class NavigationPane {
 		tabs.add(hud);
 	}
 	
-	public void update(double mouseX, double mouseY, boolean mouseClicked) {
+	public void update() {
 		for(AbstractHud tab : tabs) {
-			tab.update(mouseX, mouseY, mouseClicked);
+			tab.update();
 		}
 	}
 	

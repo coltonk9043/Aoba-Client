@@ -21,7 +21,7 @@ public class OptionsTab extends AbstractHud {
 	}
 
 	@Override
-	public void update(double mouseX, double mouseY, boolean mouseClicked) {
+	public void update() {
 		Window window = mc.getWindow();
 		this.setWidth(window.getWidth() - 240);
 		this.setHeight(window.getHeight() - 240);

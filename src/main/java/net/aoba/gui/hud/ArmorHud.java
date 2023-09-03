@@ -40,6 +40,11 @@ public class ArmorHud extends AbstractHud{
 	}
 
 	@Override
+	public void update() {
+		
+	}
+	
+	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
 		int yOff = 16;
