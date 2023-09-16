@@ -119,9 +119,11 @@ public class ModuleComponent extends Component implements MouseLeftClickListener
 
 		int mouseX = event.GetMouseX();
 		int mouseY = event.GetMouseY();
-
+		
 		if (hovered) {
-			backgroundColor = hoverColor;
+			System.out.println("X: " + mouseX + ", Y: " + mouseY);
+			System.out.println("Parent X: " + parentX + ", Parent Y: " + parentY );
+			
 			boolean isOnOptionsButton = (mouseX >= (parentX + parentWidth - 34) && mouseX <= (parentX + parentWidth));
 			if (isOnOptionsButton) {
 				this.popped = !this.popped;
@@ -132,11 +134,10 @@ public class ModuleComponent extends Component implements MouseLeftClickListener
 					this.setHeight(30);
 				}
 			} else {
+				System.out.println(module.getName() + " TOGGLED! ");
 				module.toggle();
 				return;
 			}
-		} else {
-			backgroundColor = color;
 		}
 	}
 }

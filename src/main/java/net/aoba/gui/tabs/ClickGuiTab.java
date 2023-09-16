@@ -248,7 +248,7 @@ public class ClickGuiTab extends AbstractHud implements MouseLeftClickListener, 
 							}
 						} else {
 							if (!this.isPinned) {
-								HudManager.currentGrabbed = this;
+								//HudManager.currentGrabbed = this;
 							}
 						}
 					} else {
@@ -256,7 +256,7 @@ public class ClickGuiTab extends AbstractHud implements MouseLeftClickListener, 
 							this.pinWasClicked = false;
 						}
 						if (!this.isPinned) {
-							HudManager.currentGrabbed = this;
+							//HudManager.currentGrabbed = this;
 						}
 					}
 				}
@@ -264,7 +264,7 @@ public class ClickGuiTab extends AbstractHud implements MouseLeftClickListener, 
 		}
 	}
 
-	@Override
+	/*@Override
 	public void OnMouseMove(MouseMoveEvent mouseMoveEvent) {
 		double mouseX = mouseMoveEvent.GetHorizontal();
 		double mouseY = mouseMoveEvent.GetVertical();
@@ -288,7 +288,7 @@ public class ClickGuiTab extends AbstractHud implements MouseLeftClickListener, 
 						}
 					} else {
 						if (!this.isPinned) {
-							// TODO: HudManager.currentGrabbed = this;
+							HudManager.currentGrabbed = this;
 						}
 					}
 				} else {
@@ -296,10 +296,10 @@ public class ClickGuiTab extends AbstractHud implements MouseLeftClickListener, 
 						this.pinWasClicked = false;
 					}
 					if (!this.isPinned) {
-						// TODO: HudManager.currentGrabbed = this;
+						HudManager.currentGrabbed = this;
 					}
 				}
 			}
 		}
-	}
+	}*/
 }

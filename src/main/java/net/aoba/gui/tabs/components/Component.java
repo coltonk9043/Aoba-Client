@@ -97,16 +97,17 @@ public abstract class Component implements MouseMoveListener {
 	public void OnMouseMove(MouseMoveEvent mouseMoveEvent) {
 		if (HudManager.currentGrabbed != null) {
 			this.hovered = false;
-			return;
 		}
 		
-		float parentX = parent.getX();
-		float parentY = parent.getY();
-		float parentWidth = parent.getWidth();
-		
-		double mouseX = mouseMoveEvent.GetHorizontal();
-		double mouseY = mouseMoveEvent.GetVertical();
-		
-		this.hovered = ((mouseX >= parentX && mouseX <= (parentX + parentWidth)) && (mouseY >= parentY + offset && mouseY <= (parentY + offset + 28)));
+		if(this.parent != null) {
+			float parentX = parent.getX();
+			float parentY = parent.getY();
+			float parentWidth = parent.getWidth();
+			
+			double mouseX = mouseMoveEvent.GetHorizontal();
+			double mouseY = mouseMoveEvent.GetVertical();
+			
+			this.hovered = ((mouseX >= parentX && mouseX <= (parentX + parentWidth)) && (mouseY >= (parentY + offset) && mouseY <= (parentY + offset + 28)));	
+		}
 	}
 }

@@ -1,10 +1,8 @@
 package net.aoba.event.events;
 
 import java.util.ArrayList;
-
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.MouseMoveListener;
-import net.aoba.event.listeners.MouseScrollListener;
 
 public class MouseMoveEvent extends AbstractEvent{
 	private double horizontal;
@@ -34,7 +32,7 @@ public class MouseMoveEvent extends AbstractEvent{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Class<MouseScrollListener> GetListenerClassType() {
-		return MouseScrollListener.class;
+	public Class<MouseMoveListener> GetListenerClassType() {
+		return MouseMoveListener.class;
 	}
 }

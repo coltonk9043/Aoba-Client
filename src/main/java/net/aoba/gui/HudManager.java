@@ -43,10 +43,7 @@ public class HudManager implements MouseLeftClickListener {
 
 	private boolean clickGuiOpen = false;
 
-	public static IMoveable currentGrabbed = null;
-
-	private int lastMouseX = 0;
-	private int lastMouseY = 0;
+	public static AbstractHud currentGrabbed = null;
 
 	private List<AbstractHud> activeHuds = new ArrayList<AbstractHud>();
 	
@@ -196,7 +193,7 @@ public class HudManager implements MouseLeftClickListener {
 
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
-		matrixStack.scale(1.0f/mc.options.getGuiScale().getValue(), 1.0f/mc.options.getGuiScale().getValue(), 1.0f);
+		matrixStack.scale(1.0f / mc.options.getGuiScale().getValue(), 1.0f / mc.options.getGuiScale().getValue(), 1.0f);
 
 		Window window = mc.getWindow();
 		
@@ -241,18 +238,6 @@ public class HudManager implements MouseLeftClickListener {
 	public void OnMouseLeftClick(MouseLeftClickEvent event) {
 		if (this.clickGuiOpen) {
 			event.SetCancelled(true);
-			int dx = event.GetMouseX();
-			int dy = event.GetMouseY();
-			
-			if (currentGrabbed != null) {
-				float newX = Math.max(0, currentGrabbed.getX() - (lastMouseX - dx));
-				float newY = Math.max(0, currentGrabbed.getY() - (lastMouseY - dy));
-
-				//currentGrabbed.setX(newX);
-				//currentGrabbed.setY(newY);
-			}
-			this.lastMouseX = dx;
-			this.lastMouseY = dy;
 		}
 	}
 }
