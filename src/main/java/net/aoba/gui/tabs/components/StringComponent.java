@@ -12,7 +12,7 @@ public class StringComponent extends Component {
 	private ArrayList<String> text;
 	
 	public StringComponent(String text, ClickGuiTab parent) {
-		super();
+		super(parent);
 		this.originalText = text;
 		this.text = new ArrayList<String>();
 		
@@ -31,13 +31,11 @@ public class StringComponent extends Component {
 			this.setHeight(strings * 30);
 		}
 		
-		
 		this.bold = false;
-		this.parent = parent;
 	}
 	
 	public StringComponent(String text, ClickGuiTab parent, boolean bold) {
-		super();
+		super(parent);
 		this.originalText = text;
 		this.text = new ArrayList<String>();
 		
@@ -57,7 +55,6 @@ public class StringComponent extends Component {
 		}
 		
 		this.bold = bold;
-		this.parent = parent;
 	}
 
 	@Override

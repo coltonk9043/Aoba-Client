@@ -17,7 +17,8 @@ public abstract class Component implements MouseMoveListener {
 	protected int offset;
 	protected boolean hovered = false;
 	
-	public Component() {
+	public Component(ClickGuiTab parent) {
+		this.parent = parent;
 		this.renderUtils = Aoba.getInstance().renderUtils;
 		Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
 	}
@@ -97,17 +98,17 @@ public abstract class Component implements MouseMoveListener {
 	public void OnMouseMove(MouseMoveEvent mouseMoveEvent) {
 		if (HudManager.currentGrabbed != null) {
 			this.hovered = false;
-		}
-		
-		if(this.parent != null) {
-			float parentX = parent.getX();
-			float parentY = parent.getY();
-			float parentWidth = parent.getWidth();
-			
-			double mouseX = mouseMoveEvent.GetHorizontal();
-			double mouseY = mouseMoveEvent.GetVertical();
-			
-			this.hovered = ((mouseX >= parentX && mouseX <= (parentX + parentWidth)) && (mouseY >= (parentY + offset) && mouseY <= (parentY + offset + 28)));	
+		}else {
+			if(this.parent != null) {
+				float parentX = parent.getX();
+				float parentY = parent.getY();
+				float parentWidth = parent.getWidth();
+				
+				double mouseX = mouseMoveEvent.GetHorizontal();
+				double mouseY = mouseMoveEvent.GetVertical();
+				
+				this.hovered = ((mouseX >= parentX && mouseX <= (parentX + parentWidth)) && (mouseY >= (parentY + offset) && mouseY <= (parentY + offset + 28)));	
+			}
 		}
 	}
 }

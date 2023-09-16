@@ -34,8 +34,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	
 	@Shadow
 	public ClientWorld world;
-	
-	
+
 	private Session aobaSession;
 	
 	public MinecraftClientMixin(String string) {
@@ -71,11 +70,12 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 			return session;
 		}
 	
-	@Inject(at = {@At(value = "HEAD") }, method = {"doAttack()Z"}, cancellable = true)
+	@Inject(at = {@At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;crosshairTarget:Lnet/minecraft/util/hit/HitResult;", ordinal = 0)}, method = {"doAttack()Z"}, cancellable = true)
 	private void onDoAttack(CallbackInfoReturnable<Boolean> cir) {
-		int mouseX = (int) Math.ceil(mouse.getX());
-		int mouseY = (int) Math.ceil(mouse.getY());
+		double mouseX = Math.ceil(mouse.getX());
+		double mouseY = Math.ceil(mouse.getY());
 		
+		System.out.println("DOuble Click?");
 		MouseLeftClickEvent event = new MouseLeftClickEvent(mouseX, mouseY);
 		
 		Aoba.getInstance().eventManager.Fire(event);

@@ -16,9 +16,8 @@ public class CheckboxComponent extends Component implements MouseLeftClickListen
 	private Runnable onClick;
 	
 	public CheckboxComponent(ClickGuiTab parent, BooleanSetting checkbox) {
-		super();
+		super(parent);
 		this.text = checkbox.displayName;
-		this.parent = parent;
 		this.checkbox = checkbox;
 
 		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);

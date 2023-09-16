@@ -12,7 +12,6 @@ import net.minecraft.client.util.math.MatrixStack;
 public class ButtonComponent extends Component implements MouseLeftClickListener {
 
 	private String text;
-	private ClickGuiTab parent;
 	private Runnable onClick;
 
 	private Color hoverColor = new Color(90, 90, 90);
@@ -26,9 +25,8 @@ public class ButtonComponent extends Component implements MouseLeftClickListener
 	 * @param onClick OnClick delegate that will run when the button is pressed.
 	 */
 	public ButtonComponent(ClickGuiTab parent, String text, Runnable onClick) {
-		super();
+		super(parent);
 		this.text = text;
-		this.parent = parent;
 		this.onClick = onClick;
 
 		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
@@ -79,8 +77,8 @@ public class ButtonComponent extends Component implements MouseLeftClickListener
 		float parentY = parent.getY();
 		float parentWidth = parent.getWidth();
 
-		int mouseX = event.GetMouseX();
-		int mouseY = event.GetMouseY();
+		double mouseX = event.GetMouseX();
+		double mouseY = event.GetMouseY();
 
 		if (HudManager.currentGrabbed == null) {
 			// If our delegate exists and we are inside the bounds of the button, run it.

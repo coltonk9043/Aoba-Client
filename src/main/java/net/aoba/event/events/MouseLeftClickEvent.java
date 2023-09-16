@@ -6,20 +6,20 @@ import net.aoba.event.listeners.MouseLeftClickListener;
 
 public class MouseLeftClickEvent extends AbstractEvent{
 	
-	int mouseX;
-	int mouseY;
+	double mouseX;
+	double mouseY;
 	
-	public MouseLeftClickEvent(int mouseX, int mouseY) {
+	public MouseLeftClickEvent(double mouseX2, double mouseY2) {
 		super();
-		this.mouseX = mouseX;
-		this.mouseY = mouseY;
+		this.mouseX = mouseX2;
+		this.mouseY = mouseY2;
 	}
 
-	public int GetMouseX() {
+	public double GetMouseX() {
 		return mouseX;
 	}
 	
-	public int GetMouseY() {
+	public double GetMouseY() {
 		return mouseY;
 	}
 	

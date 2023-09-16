@@ -15,23 +15,20 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class ListComponent extends Component implements MouseLeftClickListener {
-
 	private String text;
 	private IndexedStringListSetting list;
 	private List<Component> settingsList = new ArrayList<Component>();
 
 	public ListComponent(String text, ClickGuiTab parent) {
-		super();
+		super(parent);
 		this.text = text;
-		this.parent = parent;
 
 		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
 	}
 
 	public ListComponent(ClickGuiTab parent, IndexedStringListSetting list) {
-		super();
+		super(parent);
 		this.text = list.displayName;
-		this.parent = parent;
 		this.list = list;
 
 		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
@@ -58,8 +55,8 @@ public class ListComponent extends Component implements MouseLeftClickListener {
 		float parentY = parent.getY();
 		float parentWidth = parent.getWidth();
 
-		int mouseX = event.GetMouseX();
-		int mouseY = event.GetMouseY();
+		double mouseX = event.GetMouseX();
+		double mouseY = event.GetMouseY();
 
 		if (HudManager.currentGrabbed == null) {
 			if (mouseY >= (((parentY + offset + 4))) && mouseY <= (parentY + offset + 22)) {

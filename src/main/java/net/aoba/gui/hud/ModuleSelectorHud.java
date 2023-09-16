@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
+import net.aoba.core.utils.types.Vector2;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
@@ -66,7 +67,7 @@ public class ModuleSelectorHud extends AbstractHud {
 					}
 					this.keybindDown.setPressed(false);
 				} else if (this.keybindRight.isPressed()) {
-					if (!isCategoryMenuOpen && x != -width) {
+					if (!isCategoryMenuOpen) {
 						isCategoryMenuOpen = !isCategoryMenuOpen;
 						if (modules.isEmpty()) {
 							for (Module module : aoba.moduleManager.modules) {
@@ -98,39 +99,41 @@ public class ModuleSelectorHud extends AbstractHud {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Window window = mc.getWindow();
 		
+		Vector2 pos = position.getValue();
+		
 		// Draws the top bar including "Aoba x.x"
 		renderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, color);
 
 		// Draws the table including all of the categories.
-		renderUtils.drawRoundedBox(matrixStack, x, y, width, height * this.categories.length, 6f, new Color(30,30,30), 0.4f);
-		renderUtils.drawRoundedOutline(matrixStack, x, y, width, height * this.categories.length, 6f, new Color(0,0,0), 0.8f);
+		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, new Color(30,30,30), 0.4f);
+		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, new Color(0,0,0), 0.8f);
 		
 		// For every category, draw a cell for it.
 		for (int i = 0; i < this.categories.length; i++) {
-			renderUtils.drawString(drawContext, ">>", x + width - 24, y + (height * i) + 8, color);
+			renderUtils.drawString(drawContext, ">>", pos.x + width - 24, pos.y + (height * i) + 8, color);
 			// Draws the name of the category dependent on whether it is selected.
 			if (this.index == i) {
-				renderUtils.drawString(drawContext, "> " + this.categories[i].name(), x + 8, y + (height * i) + 8, color);
+				renderUtils.drawString(drawContext, "> " + this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8, color);
 			} else {
-				renderUtils.drawString(drawContext, this.categories[i].name(), x + 8, y + (height * i) + 8, 0xFFFFFF);
+				renderUtils.drawString(drawContext, this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8, 0xFFFFFF);
 			}
 		}
 		
 		// If any particular category menu is open.
 		if (isCategoryMenuOpen) {
 			// Draw the table underneath
-			renderUtils.drawRoundedBox(matrixStack, x + width, y + (height * this.index), 165, height * modules.size(), 6f, new Color(30,30,30), 0.4f);
-			renderUtils.drawRoundedOutline(matrixStack, x + width, y + (height * this.index), 165, height * modules.size(), 6f, new Color(0,0,0), 0.8f);
+			renderUtils.drawRoundedBox(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, new Color(30,30,30), 0.4f);
+			renderUtils.drawRoundedOutline(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, new Color(0,0,0), 0.8f);
 			
 			// For every mod, draw a cell for it.
 			for (int i = 0; i < modules.size(); i++) {
 				if (this.indexMods == i) {
-					renderUtils.drawString(drawContext, "> " + modules.get(i).getName(), x + width + 5,
-							y + (i * height) + (this.index * height) + 8,
+					renderUtils.drawString(drawContext, "> " + modules.get(i).getName(), pos.x + width + 5,
+							pos.y + (i * height) + (this.index * height) + 8,
 							modules.get(i).getState() ? 0x00FF00 : color.getColorAsInt());
 				} else {
-					renderUtils.drawString(drawContext, modules.get(i).getName(), x + width + 5,
-							y + (i * height) + (this.index * height) + 8,
+					renderUtils.drawString(drawContext, modules.get(i).getName(), pos.x + width + 5,
+							pos.y + (i * height) + (this.index * height) + 8,
 							modules.get(i).getState() ? 0x00FF00 : 0xFFFFFF);
 				}
 			}

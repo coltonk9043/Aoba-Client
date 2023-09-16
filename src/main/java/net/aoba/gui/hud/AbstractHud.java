@@ -14,15 +14,13 @@ import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
-import java.util.function.Consumer;
-
 public abstract class AbstractHud implements MouseLeftClickListener, MouseMoveListener {
 	protected static RenderUtils renderUtils = new RenderUtils();
 	protected static MinecraftClient mc = MinecraftClient.getInstance();
 	
 	protected String ID; 
-	protected float x;
-	protected float y;
+	
+	protected Vector2Setting position;
 	protected float width;
 	protected float height;
 
@@ -30,45 +28,32 @@ public abstract class AbstractHud implements MouseLeftClickListener, MouseMoveLi
 	protected boolean moveable = true;
 	
 	// Mouse Variables
-	protected float lastMouseX;
-	protected float lastMouseY;
-	
-	
-	private Vector2Setting position_setting;
-	private Consumer<Vector2> position_setting_update;
+	protected double lastMouseX;
+	protected double lastMouseY;
 
 	public AbstractHud(String ID, int x, int y, int width, int height) {
 		this.ID = ID;
-		this.x = x;
-		this.y = y;
+	
+		this.position = new Vector2Setting(ID + "_position", "GUI POS", new Vector2(x, y));
 		this.width = width;
 		this.height = height;
 
-		position_setting_update = new Consumer<Vector2>() {
-			@Override
-			public void accept(Vector2 vector2) {
-				setX(vector2.x);
-				setY(vector2.y);
-			}
-		};
-
-		position_setting = new Vector2Setting(ID + "_position", "Position", new Vector2(x, y), position_setting_update);
-		SettingManager.register_setting(position_setting, Aoba.getInstance().settingManager.hidden_category);
+		SettingManager.register_setting(position, Aoba.getInstance().settingManager.hidden_category);
 		
 		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
 	}
 	
-	public float getX() {
-		return this.x;
-	}
-	
-	public float getY() {
-		return this.y;
-	}
-	
 	public float getHeight() {
 		return this.height;
+	}
+	
+	public float getX(){
+		return position.getValue().x;
+	}
+	
+	public float getY(){
+		return position.getValue().y;
 	}
 	
 	public float getWidth() {
@@ -76,13 +61,11 @@ public abstract class AbstractHud implements MouseLeftClickListener, MouseMoveLi
 	}
 	
 	public void setX(float x) {
-		this.x = x;
-		position_setting.silentSetX(x);
+		position.setX(x);
 	}
 	
 	public void setY(float y) {
-		this.y = y;
-		position_setting.silentSetY(y);
+		position.setY(y);
 	}
 	
 	public void setWidth(float width) {
@@ -99,15 +82,15 @@ public abstract class AbstractHud implements MouseLeftClickListener, MouseMoveLi
 
 	@Override
 	public void OnMouseLeftClick(MouseLeftClickEvent event) {
-		int mouseX = event.GetMouseX();
-		int mouseY = event.GetMouseY();
+		double mouseX = event.GetMouseX();
+		double mouseY = event.GetMouseY();
+		
+		Vector2 pos = position.getValue();
 		
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			if (HudManager.currentGrabbed == null) {
-				if (mouseX >= x && mouseX <= (x + width)) {
-					if (mouseY >= y && mouseY <= (y + height)) {
-						System.out.println(ID + " was clicked!");
-						//HudManager.currentGrabbed = this;
+				if (mouseX >= pos.x && mouseX <= (pos.x + width)) {
+					if (mouseY >= pos.y && mouseY <= (pos.y + height)) {
 						lastMouseX = mouseX;
 						lastMouseY = mouseY;
 					}

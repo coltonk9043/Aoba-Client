@@ -69,8 +69,8 @@ public class NavigationBar implements MouseLeftClickListener {
 		AobaClient aoba = Aoba.getInstance();
 		Window window = mc.getWindow();
 		
-		int mouseX = event.GetMouseX();
-		int mouseY = event.GetMouseY();
+		double mouseX = event.GetMouseX();
+		double mouseY = event.GetMouseY();
 		int width = 100 * options.size();
 		int centerX = (window.getWidth() / 2);
 		int x = centerX - (width / 2);

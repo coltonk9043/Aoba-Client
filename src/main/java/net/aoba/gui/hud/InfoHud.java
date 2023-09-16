@@ -1,5 +1,6 @@
 package net.aoba.gui.hud;
 
+import net.aoba.core.utils.types.Vector2;
 import net.aoba.gui.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -55,11 +56,14 @@ public class InfoHud extends AbstractHud {
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		// Draws background depending on components width and height
-		renderUtils.drawRoundedBox(matrixStack, x, y, width, height, 6, new Color(30,30,30), 0.4f);
-		renderUtils.drawRoundedOutline(matrixStack, x, y, width, height, 6, new Color(0,0,0), 0.8f);
 		
-		renderUtils.drawString(drawContext, positionText, x + 5, y + 4, color);
-		renderUtils.drawString(drawContext, timeText, x + 5, y + 24, color);
-		renderUtils.drawString(drawContext, fpsText, x + 5, y + 44, color);
+		Vector2 pos = position.getValue();
+		
+		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, new Color(30,30,30), 0.4f);
+		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, new Color(0,0,0), 0.8f);
+		
+		renderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, color);
+		renderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, color);
+		renderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, color);
 	}
 }

@@ -19,10 +19,8 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class ModuleComponent extends Component implements MouseLeftClickListener {
-
 	private String text;
 	private Module module;
-	private ClickGuiTab parent;
 	private boolean popped = false;
 
 	private int expandedHeight = 30;
@@ -35,9 +33,8 @@ public class ModuleComponent extends Component implements MouseLeftClickListener
 	private List<Component> settingsList = new ArrayList<Component>();
 
 	public ModuleComponent(String text, ClickGuiTab parent, Module module) {
-		super();
+		super(parent);
 		this.text = text;
-		this.parent = parent;
 		this.module = module;
 		for (Setting setting : this.module.getSettings()) {
 			Component c;
@@ -117,8 +114,8 @@ public class ModuleComponent extends Component implements MouseLeftClickListener
 		float parentY = parent.getY();
 		float parentWidth = parent.getWidth();
 
-		int mouseX = event.GetMouseX();
-		int mouseY = event.GetMouseY();
+		double mouseX = event.GetMouseX();
+		double mouseY = event.GetMouseY();
 		
 		if (hovered) {
 			System.out.println("X: " + mouseX + ", Y: " + mouseY);

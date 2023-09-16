@@ -12,7 +12,6 @@ import net.minecraft.client.util.math.MatrixStack;
 public class KeybindComponent extends Component implements MouseLeftClickListener {
 
 	private String text;
-	private ClickGuiTab parent;
 	private boolean wasClicked = false;
 	private boolean hovered = false;
 	private Runnable onClick;
@@ -23,9 +22,8 @@ public class KeybindComponent extends Component implements MouseLeftClickListene
 	private Color backgroundColor = color;
 
 	public KeybindComponent(ClickGuiTab parent, String text, Runnable onClick) {
-		super();
+		super( parent);
 		this.text = text;
-		this.parent = parent;
 		this.onClick = onClick;
 		
 		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
@@ -57,8 +55,8 @@ public class KeybindComponent extends Component implements MouseLeftClickListene
 		float parentY = parent.getY();
 		float parentWidth = parent.getWidth();
 
-		int mouseX = event.GetMouseX();
-		int mouseY = event.GetMouseY();
+		double mouseX = event.GetMouseX();
+		double mouseY = event.GetMouseY();
 		
 		if (HudManager.currentGrabbed == null) {
 			if (!this.wasClicked) {

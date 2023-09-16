@@ -13,7 +13,6 @@ import net.minecraft.client.util.math.MatrixStack;
 public class SliderComponent extends Component implements MouseLeftClickListener {
 
 	private String text;
-	private ClickGuiTab parent;
 	private float currentSliderPosition = 0.4f;
 	float r;
 	float g;
@@ -22,18 +21,16 @@ public class SliderComponent extends Component implements MouseLeftClickListener
 	FloatSetting slider;
 
 	public SliderComponent(String text, ClickGuiTab parent) {
-		super();
+		super(parent);
 		this.text = text;
-		this.parent = parent;
 		this.slider = null;
 		
 		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
 	}
 
 	public SliderComponent(ClickGuiTab parent, FloatSetting slider) {
-		super();
+		super(parent);
 		this.text = slider.displayName;
-		this.parent = parent;
 		this.slider = slider;
 		this.currentSliderPosition = (float) ((slider.getValue() - slider.min_value)
 				/ (slider.max_value - slider.min_value));
@@ -86,8 +83,8 @@ public class SliderComponent extends Component implements MouseLeftClickListener
 		float parentX = parent.getX();
 		float parentY = parent.getY();
 
-		int mouseX = event.GetMouseX();
-		int mouseY = event.GetMouseY();
+		double mouseX = event.GetMouseX();
+		double mouseY = event.GetMouseY();
 
 		float parentWidth = parent.getWidth();
 		if (HudManager.currentGrabbed == null) {
