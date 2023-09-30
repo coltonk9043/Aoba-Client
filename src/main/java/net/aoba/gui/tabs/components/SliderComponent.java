@@ -2,15 +2,15 @@ package net.aoba.gui.tabs.components;
 
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
-import net.aoba.event.events.MouseLeftClickEvent;
-import net.aoba.event.listeners.MouseLeftClickListener;
+import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class SliderComponent extends Component implements MouseLeftClickListener {
+public class SliderComponent extends Component implements LeftMouseDownListener {
 
 	private String text;
 	private float currentSliderPosition = 0.4f;
@@ -25,7 +25,7 @@ public class SliderComponent extends Component implements MouseLeftClickListener
 		this.text = text;
 		this.slider = null;
 		
-		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
 	public SliderComponent(ClickGuiTab parent, FloatSetting slider) {
@@ -79,7 +79,7 @@ public class SliderComponent extends Component implements MouseLeftClickListener
 	}
 
 	@Override
-	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		float parentX = parent.getX();
 		float parentY = parent.getY();
 
