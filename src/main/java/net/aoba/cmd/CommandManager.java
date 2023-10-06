@@ -23,7 +23,10 @@ package net.aoba.cmd;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import net.aoba.Aoba;
 import net.aoba.cmd.commands.*;
+import net.aoba.core.settings.SettingManager;
+import net.aoba.core.settings.types.StringSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -58,10 +61,17 @@ public class CommandManager {
 	public final CmdTracer tracer = new CmdTracer();
 	public final CmdXRay xray = new CmdXRay();
 	
+	public static StringSetting PREFIX;
+	
 	/**
 	 * Constructor for Command Manager. Initializes all commands.
 	 */
 	public CommandManager() {
+		
+		PREFIX = new StringSetting("Prefix", "Prefix", ".aoba");
+		 
+		SettingManager.register_setting(PREFIX, Aoba.getInstance().settingManager.hidden_category);
+		
 		try
 		{
 			for(Field field : CommandManager.class.getDeclaredFields())

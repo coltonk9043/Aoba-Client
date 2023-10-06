@@ -16,8 +16,8 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.aoba.cmd.Command;
+import net.aoba.cmd.CommandManager;
 import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.command.CommandSource;
@@ -42,14 +42,14 @@ public abstract class ChatInputSuggestorMixin {
 	@Inject(at = {
 			@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/TextFieldWidget;getCursor()I", ordinal = 0) }, method = "refresh()V", cancellable = true)
 	private void onRefresh(CallbackInfo ci) {
-		String prefix = AobaClient.PREFIX;
+		String prefix = CommandManager.PREFIX.getValue();
 		String string = this.textField.getText();
 		
 		if(string.length() > 0) {
 			int cursorPos = this.textField.getCursor();
 			String string2 = string.substring(0, cursorPos);
 			
-			if(string2.charAt(0) == '.') {
+			if(string2.charAt(0) == CommandManager.PREFIX.getValue().charAt(0)) {
 				int j = 0;
 				Matcher matcher = Pattern.compile("(\\s+)").matcher(string2);
 				while (matcher.find()) {
