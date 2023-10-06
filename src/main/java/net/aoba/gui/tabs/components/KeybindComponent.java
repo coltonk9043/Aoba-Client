@@ -1,15 +1,15 @@
 package net.aoba.gui.tabs.components;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.MouseLeftClickEvent;
-import net.aoba.event.listeners.MouseLeftClickListener;
+import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class KeybindComponent extends Component implements MouseLeftClickListener {
+public class KeybindComponent extends Component implements LeftMouseDownListener {
 
 	private String text;
 	private boolean wasClicked = false;
@@ -26,7 +26,7 @@ public class KeybindComponent extends Component implements MouseLeftClickListene
 		this.text = text;
 		this.onClick = onClick;
 		
-		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
 	public void setText(String text) {
@@ -50,7 +50,7 @@ public class KeybindComponent extends Component implements MouseLeftClickListene
 	}
 
 	@Override
-	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		float parentX = parent.getX();
 		float parentY = parent.getY();
 		float parentWidth = parent.getWidth();

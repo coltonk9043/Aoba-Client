@@ -6,9 +6,11 @@ import java.util.List;
 import net.aoba.core.settings.SettingManager;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
-import net.aoba.event.events.MouseLeftClickEvent;
+import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.events.LeftMouseUpEvent;
 import net.aoba.event.events.MouseScrollEvent;
-import net.aoba.event.listeners.MouseLeftClickListener;
+import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.listeners.LeftMouseUpListener;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -30,7 +32,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class HudManager implements MouseLeftClickListener {
+public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected RenderUtils renderUtils = new RenderUtils();
@@ -120,7 +122,8 @@ public class HudManager implements MouseLeftClickListener {
 		SettingManager.register_setting(rainbow, Aoba.getInstance().settingManager.config_category);
 		SettingManager.register_setting(ah, Aoba.getInstance().settingManager.config_category);
 		
-		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
 	}
 
 	/**
@@ -235,9 +238,16 @@ public class HudManager implements MouseLeftClickListener {
 	}
 
 	@Override
-	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		if (this.clickGuiOpen) {
 			event.SetCancelled(true);
+		}
+	}
+
+	@Override
+	public void OnLeftMouseUp(LeftMouseUpEvent event) {
+		if(this.clickGuiOpen) {
+			currentGrabbed = null;
 		}
 	}
 }

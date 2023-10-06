@@ -1,7 +1,7 @@
 package net.aoba.mixin;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.MouseLeftClickEvent;
+import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.interfaces.IMinecraftClient;
 import net.minecraft.client.MinecraftClient;
@@ -72,18 +72,18 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	
 	@Inject(at = {@At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;crosshairTarget:Lnet/minecraft/util/hit/HitResult;", ordinal = 0)}, method = {"doAttack()Z"}, cancellable = true)
 	private void onDoAttack(CallbackInfoReturnable<Boolean> cir) {
-		double mouseX = Math.ceil(mouse.getX());
-		double mouseY = Math.ceil(mouse.getY());
+		//double mouseX = Math.ceil(mouse.getX());
+		//double mouseY = Math.ceil(mouse.getY());
 		
-		System.out.println("DOuble Click?");
-		MouseLeftClickEvent event = new MouseLeftClickEvent(mouseX, mouseY);
+		//System.out.println("DOuble Click?");
+		//MouseLeftClickEvent event = new MouseLeftClickEvent(mouseX, mouseY);
 		
-		Aoba.getInstance().eventManager.Fire(event);
+		//Aoba.getInstance().eventManager.Fire(event);
 		
-		if(event.IsCancelled()) {
-			cir.setReturnValue(false);
-			cir.cancel();
-		}
+		//if(event.IsCancelled()) {
+		//	cir.setReturnValue(false);
+		//	cir.cancel();
+		//}
 	}
 	
 	@Inject(at = {@At(value = "HEAD")}, method = {"close()V"})

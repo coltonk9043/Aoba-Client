@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.event.events.MouseLeftClickEvent;
-import net.aoba.event.listeners.MouseLeftClickListener;
+import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class NavigationBar implements MouseLeftClickListener {
+public class NavigationBar implements LeftMouseDownListener {
 	MinecraftClient mc = MinecraftClient.getInstance();
 
 	private List<NavigationPane> options;
@@ -65,7 +65,7 @@ public class NavigationBar implements MouseLeftClickListener {
 	}
 
 	@Override
-	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		AobaClient aoba = Aoba.getInstance();
 		Window window = mc.getWindow();
 		

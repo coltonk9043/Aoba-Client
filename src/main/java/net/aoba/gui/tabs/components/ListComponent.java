@@ -5,8 +5,8 @@ import java.util.List;
 
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.IndexedStringListSetting;
-import net.aoba.event.events.MouseLeftClickEvent;
-import net.aoba.event.listeners.MouseLeftClickListener;
+import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
@@ -14,7 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class ListComponent extends Component implements MouseLeftClickListener {
+public class ListComponent extends Component implements LeftMouseDownListener {
 	private String text;
 	private IndexedStringListSetting list;
 	private List<Component> settingsList = new ArrayList<Component>();
@@ -23,7 +23,7 @@ public class ListComponent extends Component implements MouseLeftClickListener {
 		super(parent);
 		this.text = text;
 
-		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
 	public ListComponent(ClickGuiTab parent, IndexedStringListSetting list) {
@@ -31,7 +31,7 @@ public class ListComponent extends Component implements MouseLeftClickListener {
 		this.text = list.displayName;
 		this.list = list;
 
-		Aoba.getInstance().eventManager.AddListener(MouseLeftClickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class ListComponent extends Component implements MouseLeftClickListener {
 	}
 
 	@Override
-	public void OnMouseLeftClick(MouseLeftClickEvent event) {
+	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		float parentX = parent.getX();
 		float parentY = parent.getY();
 		float parentWidth = parent.getWidth();
