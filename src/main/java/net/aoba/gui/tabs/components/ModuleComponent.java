@@ -1,8 +1,5 @@
 package net.aoba.gui.tabs.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.aoba.Aoba;
 import net.aoba.core.settings.Setting;
 import net.aoba.core.settings.types.BooleanSetting;
@@ -13,10 +10,8 @@ import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.module.Module;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class ModuleComponent extends Component implements LeftMouseDownListener {
 	private String text;
@@ -30,24 +25,31 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 
 	private Color backgroundColor = color;
 
-	private List<Component> settingsList = new ArrayList<Component>();
-
 	public ModuleComponent(String text, ClickGuiTab parent, Module module) {
 		super(parent);
 		this.text = text;
 		this.module = module;
+		
+		this.setHeight(30);
+		
+		int i = 30;
 		for (Setting setting : this.module.getSettings()) {
 			Component c;
 			if (setting instanceof FloatSetting) {
-				c = new SliderComponent(this.parent, (FloatSetting) setting);
+				c = new SliderComponent(this, (FloatSetting) setting);
 			} else if (setting instanceof BooleanSetting) {
-				c = new CheckboxComponent(this.parent, (BooleanSetting) setting);
+				c = new CheckboxComponent(this, (BooleanSetting) setting);
 			} else if (setting instanceof StringListSetting) {
-				c = new ListComponent(this.parent, (IndexedStringListSetting) setting);
+				c = new ListComponent(this, (IndexedStringListSetting) setting);
 			} else {
 				c = null;
 			}
-			settingsList.add(c);
+			
+			c.setTop(i);
+			c.setHeight(30);
+			c.setVisible(false);
+			children.add(c);
+			i += 30;
 		}
 
 		RecalculateExpandedHeight();
@@ -56,52 +58,34 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 	}
 
 	@Override
-	public void update(int offset) {
-		super.update(offset);
+	public void update() {
 
-		// If the Module options are popped, display all of the options.
-		if (this.popped) {
-			// Updates all of the options.
-			int i = offset + 30;
-			for (Component children : this.settingsList) {
-				children.update(i);
-				i += children.getHeight();
-			}
-		}
 	}
 
 	@Override
-	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
-		float parentX = parent.getX();
-		float parentY = parent.getY();
-		float parentWidth = parent.getWidth();
-		MatrixStack matrixStack = drawContext.getMatrices();
-		// renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset,
-		// parentWidth - 4, this.getHeight() - 2, backgroundColor, 0.2f);
-
-		if (this.popped) {
-			int i = offset + 30;
-			for (Component children : this.settingsList) {
-				if (children.isVisible()) {
-					children.draw(i, drawContext, partialTicks, color);
-					i += children.getHeight();
-				}
-			}
-		}
-
-		renderUtils.drawString(drawContext, this.text, parentX + 8, parentY + 8 + offset,
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+		super.draw(drawContext, partialTicks, color);
+		renderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8,
 				module.getState() ? 0x00FF00 : 0xFFFFFF);
 		if (module.hasSettings()) {
-			renderUtils.drawString(drawContext, this.popped ? "<<" : ">>", parentX + parentWidth - 30,
-					parentY + 8 + offset, color.getColorAsInt());
+			renderUtils.drawString(drawContext, this.popped ? "<<" : ">>", actualX + actualWidth - 30,
+					actualY + 8, color.getColorAsInt());
 		}
 	}
 
+	public void setPopped(boolean state) {
+		this.popped = state;
+		for(Component child : children) {
+			child.setVisible(state);
+		}
+		RecalculateExpandedHeight();
+	}
+	
 	public void RecalculateExpandedHeight() {
 		int height = 30;
-		for (Component children : this.settingsList) {
-			if (children.isVisible()) {
-				height += children.getHeight();
+		for (Component child : this.children) {
+			if (child.isVisible()) {
+				height += child.getHeight();
 			}
 		}
 		expandedHeight = height;
@@ -110,30 +94,23 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 	
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		float parentX = parent.getX();
-		float parentY = parent.getY();
-		float parentWidth = parent.getWidth();
-
 		double mouseX = event.GetMouseX();
 		double mouseY = event.GetMouseY();
-		
 		if (hovered) {
-			System.out.println("X: " + mouseX + ", Y: " + mouseY);
-			System.out.println("Parent X: " + parentX + ", Parent Y: " + parentY );
-			
-			boolean isOnOptionsButton = (mouseX >= (parentX + parentWidth - 34) && mouseX <= (parentX + parentWidth));
-			if (isOnOptionsButton) {
-				this.popped = !this.popped;
+			if(mouseY >= actualY && mouseY <= actualY + 30){
+				boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
+				if (isOnOptionsButton) {
+					setPopped(!this.popped);
 
-				if (this.popped) {
-					this.setHeight(expandedHeight);
+					if (this.popped) {
+						this.setHeight(expandedHeight);
+					} else {
+						this.setHeight(30);
+					}
 				} else {
-					this.setHeight(30);
+					module.toggle();
+					return;
 				}
-			} else {
-				System.out.println(module.getName() + " TOGGLED! ");
-				module.toggle();
-				return;
 			}
 		}
 	}

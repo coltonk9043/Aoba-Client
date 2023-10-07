@@ -1,26 +1,201 @@
 package net.aoba.gui.tabs.components;
 
+import java.util.ArrayList;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
-import net.aoba.gui.tabs.ClickGuiTab;
+import net.aoba.gui.IHudElement;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 
-public abstract class Component implements MouseMoveListener {
-	protected RenderUtils renderUtils;
-	protected ClickGuiTab parent;
-	private int height = 30;
+public abstract class Component implements IHudElement, MouseMoveListener {
+	protected static RenderUtils renderUtils;
 	private boolean visible = true;
-	protected int offset;
 	protected boolean hovered = false;
 	
-	public Component(ClickGuiTab parent) {
+	// NEW ui variables.
+	protected IHudElement parent;
+	protected ArrayList<Component> children;
+	
+	// These are positions that the UI designer will input to enforce specific options. 
+	// These will take precedence over the top/bottom/left/right positions. 
+	protected float x;
+	protected float y;
+	protected float width;
+	protected float height;
+	
+	protected boolean autoWidth;
+	protected boolean autoHeight;
+	
+	private float top;
+	private float bottom;
+	private float left;
+	private float right;
+	
+	// The actual screen space positions of the HUD elements. 
+	protected float actualX;
+	protected float actualY;
+	protected float actualHeight;
+	protected float actualWidth;
+	
+	public Component(IHudElement parent) {
 		this.parent = parent;
-		this.renderUtils = Aoba.getInstance().renderUtils;
+		this.children = new ArrayList<Component>();
+		
+		// Assumes that the component will take up the entire space of the parent unless otherwise specified.
+		this.setTop(0);
+		this.setLeft(0);
+		this.setRight(0);
+		this.setBottom(0);
+		
+		if(renderUtils == null) {
+			renderUtils = Aoba.getInstance().renderUtils;
+		}
 		Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
+	}
+	
+	/**
+	 * Gets the X position of the component.
+	 * @return X position of the component as a float.
+	 */
+	@Override
+	public float getX() {
+		return actualX;
+	}
+	
+	/**
+	 * Gets the Y position of the component.
+	 * @return Y position of the component as a float.
+	 */
+	@Override
+	public float getY() {
+		return actualY;
+	}
+	
+	/**
+	 * Gets the Width of the component.
+	 * @return Width of the component as a float.
+	 */
+	@Override
+	public float getWidth() {
+		return actualWidth;
+	}
+	
+	/**
+	 * Gets the height of the component.
+	 * @return Height of the component as a float.
+	 */
+	@Override
+	public float getHeight()
+	{
+		return actualHeight;
+	}
+	
+	public void setX(float x) {
+		this.x = x;
+		this.actualX = this.parent.getX() + x;
+		updateChildrenPosition();
+	}
+	
+	public void setY(float y) {
+		this.y = y;
+		this.actualY = this.parent.getY() + y;
+		updateChildrenPosition();
+	}
+	
+	public void setWidth(float width) {
+		this.width = width;
+		this.actualWidth = width;
+		updateChildrenPosition();
+	}
+	
+	/**
+	 * Sets the height of the component.
+	 * @param height The height to set.
+	 */
+	@Override
+	public void setHeight(float height)
+	{
+		this.height = height;
+		this.actualHeight = height;
+		updateChildrenPosition();
+	}
+	
+	public void setTop(float top) {
+		this.top = top;
+		if(y == 0.0f) {
+			actualY = parent.getY() + top;	
+		}else {
+			actualY = y;
+		}
+		if(height == 0.0f) {
+			actualHeight = parent.getHeight() - top - bottom;
+		}else {
+			actualHeight = height;
+		}	
+		updateChildrenPosition();
+	}
+	
+	public void setBottom(float bottom) {
+		this.bottom = bottom;
+		if(height == 0.0) {
+			actualHeight = parent.getHeight() - top - bottom;
+		}else {
+			actualHeight = height;
+		}
+		updateChildrenPosition();
+	}
+	
+	public void setLeft(float left) {
+		this.left = left;
+		if(x == 0.0) {
+			actualX = parent.getX() + left;
+		}else {
+			actualX = x;
+		}
+		updateChildrenPosition();
+	}
+	
+	public void setRight(float right) {
+		this.right = right;
+		if(width == 0.0f) {
+			actualWidth = parent.getWidth() - right - left;
+		}else {
+			actualWidth = width;
+		}
+		updateChildrenPosition();
+	}
+	
+	public void addChild(Component component) {
+		this.children.add(component);
+	}
+	
+	protected void updateChildrenPosition() {
+		for(Component child : children) {
+			child.onParentMoved();
+		}
+	}
+	
+	/**
+	 * Updates the position of these elements whenever the parent is moved.
+	 */
+	public void onParentMoved() {
+		setTop(top);
+		setBottom(bottom);
+		setRight(right);
+		setLeft(left);
+	}
+	
+	/**
+	 * Returns the parent of the Component.
+	 * @return Parent of the component as a ClickGuiTab.
+	 */
+	public IHudElement getParent()
+	{
+		return parent;
 	}
 	
 	/**
@@ -47,38 +222,15 @@ public abstract class Component implements MouseMoveListener {
 	}
 	
 	/**
-	 * Gets the height of the component.
-	 * @return Height of the component as an integer.
-	 */
-	public int getHeight()
-	{
-		return height;
-	}
-	
-	/**
-	 * Sets the height of the component.
-	 * @param height The height to set.
-	 */
-	public void setHeight(int height)
-	{
-		this.height = height;
-	}
-	
-	/**
-	 * Returns the parent of the Component.
-	 * @return Parent of the component as a ClickGuiTab.
-	 */
-	public ClickGuiTab getParent()
-	{
-		return parent;
-	}
-
-	/**
 	 * Updates the offset (y position relative to parent) of the component.
 	 * @param offset Offset 
 	 */
-	public void update(int offset) {
-		this.offset = offset;
+	public void update() {
+		for(Component child : children) {
+			if(child.visible) {
+				child.update();
+			}
+		}
 	}
 	
 	/**
@@ -88,7 +240,13 @@ public abstract class Component implements MouseMoveListener {
 	 * @param partialTicks Partial Ticks of the game.
 	 * @param color Color of the UI.
 	 */
-	public abstract void draw(int offset, DrawContext drawContext, float partialTicks, Color color);
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+		for(Component child : children) {
+			if(child.visible) {
+				child.draw(drawContext, partialTicks, color);
+			}
+		}
+	}
 	
 	/**
 	 * Triggers when the mouse is moved.
@@ -96,19 +254,14 @@ public abstract class Component implements MouseMoveListener {
 	 */
 	@Override
 	public void OnMouseMove(MouseMoveEvent mouseMoveEvent) {
-		if (HudManager.currentGrabbed != null) {
+		if (HudManager.currentGrabbed != null || !visible) {
 			this.hovered = false;
 		}else {
-			if(this.parent != null) {
-				float parentX = parent.getX();
-				float parentY = parent.getY();
-				float parentWidth = parent.getWidth();
-				
 				double mouseX = mouseMoveEvent.GetHorizontal();
 				double mouseY = mouseMoveEvent.GetVertical();
 				
-				this.hovered = ((mouseX >= parentX && mouseX <= (parentX + parentWidth)) && (mouseY >= (parentY + offset) && mouseY <= (parentY + offset + 28)));	
-			}
+				this.hovered = ((mouseX >= actualX && mouseX <= (actualX + actualWidth)) && (mouseY >= (actualY) && mouseY <= (actualY + actualHeight)));	
+			
 		}
 	}
 }

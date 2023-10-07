@@ -56,15 +56,12 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	 * @param color The current Color of the UI.
 	 */
 	@Override
-	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
-		float parentX = parent.getX();
-		float parentY = parent.getY();
-		float parentWidth = parent.getWidth();
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-		renderUtils.drawOutlinedBox(matrixStack, parentX + 2, parentY + offset, parentWidth - 4, this.getHeight() - 2,
+		renderUtils.drawOutlinedBox(matrixStack, actualX + 2, actualY, actualWidth - 4, actualHeight - 2,
 				backgroundColor, 0.2f);
 
-		renderUtils.drawString(drawContext, this.text, parentX + 8, parentY + 8 + offset, 0xFFFFFF);
+		renderUtils.drawString(drawContext, this.text, actualY + 8, actualY + 8, 0xFFFFFF);
 	}
 
 	/**
@@ -73,21 +70,23 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	 */
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		float parentX = parent.getX();
-		float parentY = parent.getY();
-		float parentWidth = parent.getWidth();
-
 		double mouseX = event.GetMouseX();
 		double mouseY = event.GetMouseY();
 
 		if (HudManager.currentGrabbed == null) {
 			// If our delegate exists and we are inside the bounds of the button, run it.
 			if(this.onClick != null) {
-				if ((mouseX >= ((parentX + 2)) && mouseX <= (((parentX + 2)) + parentWidth - 34))
-						&& (mouseY >= parentY + offset && mouseY <= (parentY + offset + 28))) {
+				if ((mouseX >= actualX && mouseX <= actualX + actualWidth - 34)
+						&& (mouseY >= actualY && mouseY <= actualY + actualHeight)) {
 					this.onClick.run();
 				}
 			}
 		}
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -23,6 +23,7 @@ import net.aoba.gui.hud.ModuleSelectorHud;
 import net.aoba.gui.hud.RadarHud;
 import net.aoba.gui.tabs.*;
 import net.aoba.gui.tabs.components.ModuleComponent;
+import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.aoba.misc.RainbowColor;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module.Category;
@@ -102,12 +103,19 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		int xOffset = 335;
 		for (Category category : Module.Category.values()) {
 			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75, true);
+			
+			StackPanelComponent stackPanel = new StackPanelComponent(tab);
+			stackPanel.setTop(30);
 			for (Module module : Aoba.getInstance().moduleManager.modules) {
 				if (module.getCategory() == category) {
 					ModuleComponent button = new ModuleComponent(module.getName(), tab, module);
-					tab.addChild(button);
+					
+					button.setHeight(30);
+					stackPanel.addChild(button);
 				}
 			}
+			tab.addChild(stackPanel);
+			
 			modulesPane.AddHud(tab);
 			xOffset += tab.getWidth() + 10;
 		}

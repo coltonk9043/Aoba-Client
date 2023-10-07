@@ -6,6 +6,7 @@ import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
+import net.aoba.gui.IHudElement;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -15,7 +16,7 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	private BooleanSetting checkbox;
 	private Runnable onClick;
 	
-	public CheckboxComponent(ClickGuiTab parent, BooleanSetting checkbox) {
+	public CheckboxComponent(IHudElement parent, BooleanSetting checkbox) {
 		super(parent);
 		this.text = checkbox.displayName;
 		this.checkbox = checkbox;
@@ -31,17 +32,14 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	 * @param color The current Color of the UI.
 	 */
 	@Override
-	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
-		float parentX = parent.getX();
-		float parentY = parent.getY();
-		float parentWidth = parent.getWidth();
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-		renderUtils.drawString(drawContext, this.text, parentX + 10, parentY + offset + 8, 0xFFFFFF);
+		renderUtils.drawString(drawContext, this.text, actualX + 10, actualY + 8, 0xFFFFFF);
 		if (this.checkbox.getValue()) {
-			renderUtils.drawOutlinedBox(matrixStack, parentX + parentWidth - 24, parentY + 1 + offset, 20, 20,
+			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 24, actualY + 1, 20, 20,
 					new Color(0, 154, 0), 0.8f);
 		} else {
-			renderUtils.drawOutlinedBox(matrixStack, parentX + parentWidth - 24, parentY + 1 + offset, 20, 20,
+			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 24, actualY + 1, 20, 20,
 					new Color(154, 0, 0), 0.8f);
 		}
 	}
@@ -51,7 +49,7 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	 * @param offset The offset (Y position relative to parent) of the Checkbox.
 	 */
 	@Override
-	public void update(int offset) {
+	public void update() {
 	}
 
 	/**
@@ -61,7 +59,7 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	 */
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if (HudManager.currentGrabbed == null && hovered) {
+		if (hovered) {
 			checkbox.toggle();
 			if(onClick != null) {
 				onClick.run();

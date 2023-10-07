@@ -2,6 +2,7 @@ package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
 import net.aoba.gui.Color;
+import net.aoba.gui.IHudElement;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
 
@@ -11,7 +12,7 @@ public class StringComponent extends Component {
 	private String originalText;
 	private ArrayList<String> text;
 	
-	public StringComponent(String text, ClickGuiTab parent) {
+	public StringComponent(String text, IHudElement parent) {
 		super(parent);
 		this.originalText = text;
 		this.text = new ArrayList<String>();
@@ -34,7 +35,7 @@ public class StringComponent extends Component {
 		this.bold = false;
 	}
 	
-	public StringComponent(String text, ClickGuiTab parent, boolean bold) {
+	public StringComponent(String text, IHudElement parent, boolean bold) {
 		super(parent);
 		this.originalText = text;
 		this.text = new ArrayList<String>();
@@ -58,14 +59,11 @@ public class StringComponent extends Component {
 	}
 
 	@Override
-	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
-		float parentX = this.parent.getX();
-		float parentY = this.parent.getY();
-		
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		int i = 0;
 		for(String str : text) {
-			renderUtils.drawString(drawContext, str, parentX + 10,
-					parentY + 8 + offset + i, 0xFFFFFF);
+			renderUtils.drawString(drawContext, str, actualX + 10,
+					actualY + 8 + i, 0xFFFFFF);
 			i += 30;
 		}
 		
@@ -99,5 +97,11 @@ public class StringComponent extends Component {
 	 */
 	public String getText() {
 		return this.originalText;
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
 	}
 }

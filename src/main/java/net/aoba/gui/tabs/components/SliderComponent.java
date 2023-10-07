@@ -5,8 +5,7 @@ import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
-import net.aoba.gui.tabs.ClickGuiTab;
+import net.aoba.gui.IHudElement;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -20,40 +19,21 @@ public class SliderComponent extends Component implements LeftMouseDownListener 
 
 	FloatSetting slider;
 
-	public SliderComponent(String text, ClickGuiTab parent) {
+	public SliderComponent(String text, IHudElement parent) {
 		super(parent);
 		this.text = text;
 		this.slider = null;
-		
+		this.setHeight(24);
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
-	public SliderComponent(ClickGuiTab parent, FloatSetting slider) {
+	public SliderComponent(IHudElement parent, FloatSetting slider) {
 		super(parent);
 		this.text = slider.displayName;
 		this.slider = slider;
 		this.currentSliderPosition = (float) ((slider.getValue() - slider.min_value)
 				/ (slider.max_value - slider.min_value));
-	}
-
-	@Override
-	public void draw(int offset, DrawContext drawContext, float partialTicks, Color color) {
-		float parentX = parent.getX();
-		float parentY = parent.getY();
-		float parentWidth = parent.getWidth();
-		MatrixStack matrixStack = drawContext.getMatrices();
-		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24, 0.5f, 0.5f, 0.5f, 0.3f);
-		renderUtils.drawBox(matrixStack, parentX + 3, parentY + offset,
-				(int) Math.floor((parentWidth - 6)
-						* (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value))),
-				24, color, 1f);
-		renderUtils.drawOutline(matrixStack, parentX + 3, parentY + offset, parentWidth - 6, 24);
-		if (this.slider == null)
-			return;
-		// TODO: Slow but it works. Perhaps we can modify a STORED string using our new
-		// Consumer delegates?
-		renderUtils.drawString(drawContext, this.text + ": " + String.format("%.02f", this.slider.getValue()),
-				parentX + 10, parentY + 6 + offset, 0xFFFFFF);
+		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
 	public float getSliderPosition() {
@@ -80,24 +60,37 @@ public class SliderComponent extends Component implements LeftMouseDownListener 
 
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		float parentX = parent.getX();
-		float parentY = parent.getY();
-
+		System.out.println("click");
 		double mouseX = event.GetMouseX();
-		double mouseY = event.GetMouseY();
-
-		float parentWidth = parent.getWidth();
-		if (HudManager.currentGrabbed == null) {
-			if (mouseX >= ((parentX + 2)) && mouseX <= (((parentX)) + parentWidth - 2)) {
-				if (mouseY >= (((parentY + offset))) && mouseY <= ((parentY + offset) + 24)) {
-					this.currentSliderPosition = (float) Math
-							.min((((mouseX - ((parentX + 4))) - 1) / ((parentWidth - 12))), 1f);
-					this.currentSliderPosition = (float) Math.max(0f, this.currentSliderPosition);
-					this.slider.setValue(
-							(this.currentSliderPosition * (slider.max_value - slider.min_value)) + slider.min_value);
-				}
-			}
+		if (hovered) {
+			this.currentSliderPosition = (float) Math.min((((mouseX - ((actualX + 4))) - 1) / ((actualWidth - 12))),1f);
+			this.currentSliderPosition = (float) Math.max(0f, this.currentSliderPosition);
+			System.out.println("Inside slider at position: " + currentSliderPosition);
+			this.slider.setValue((this.currentSliderPosition * (slider.max_value - slider.min_value)) + slider.min_value);
 		}
+	}
+
+	@Override
+	public void update() {
+
+	}
+
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+		MatrixStack matrixStack = drawContext.getMatrices();
+		renderUtils.drawBox(matrixStack, actualX, actualY, actualWidth, actualHeight, 0.5f, 0.5f, 0.5f, 0.3f);
+		renderUtils.drawBox(matrixStack, actualX, actualY,
+				(int) Math.floor(actualWidth)
+						* (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)),
+				actualHeight, color, 1f);
+
+		renderUtils.drawOutline(matrixStack, actualX, actualY, actualWidth, actualHeight);
+		if (this.slider == null)
+			return;
+		// TODO: Slow but it works. Perhaps we can modify a STORED string using our new
+		// Consumer delegates?
+		renderUtils.drawString(drawContext, this.text + ": " + String.format("%.02f", this.slider.getValue()),
+				actualX + 10, actualY + 6, 0xFFFFFF);
 	}
 
 }

@@ -46,8 +46,7 @@ public class ClickGuiTab extends AbstractHud implements LeftMouseDownListener, M
 	protected boolean drawBorder = true;
 	protected boolean inheritHeightFromChildren = true;
 
-	protected ArrayList<Component> children = new ArrayList<>();
-	
+
 	private BooleanSetting isPinned;
 
 	public ClickGuiTab(String title, int x, int y, boolean pinnable) {
@@ -77,22 +76,6 @@ public class ClickGuiTab extends AbstractHud implements LeftMouseDownListener, M
 
 		this.title = title;
 	}
-	
-	public final float getWidth() {
-		return width;
-	}
-
-	public final void setWidth(int width) {
-		this.width = width;
-	}
-
-	public final float getHeight() {
-		return height;
-	}
-
-	public final void setHeight(int height) {
-		this.height = height;
-	}
 
 	public final boolean isGrabbed() {
 		return (HudManager.currentGrabbed == this);
@@ -105,19 +88,17 @@ public class ClickGuiTab extends AbstractHud implements LeftMouseDownListener, M
 	@Override
 	public void update() {
 		if (this.inheritHeightFromChildren) {
-			int tempHeight = 1;
+			float tempHeight = 0;
 			for (Component child : children) {
 				tempHeight += (child.getHeight());
+				child.setTop(tempHeight);
 			}
-			this.height = tempHeight;
+			this.setHeight(tempHeight);
 		}
 
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-
-			int i = 30;
 			for (Component child : this.children) {
-				child.update(i);
-				i += child.getHeight();
+				child.update();
 			}
 		}
 	}
@@ -155,10 +136,8 @@ public class ClickGuiTab extends AbstractHud implements LeftMouseDownListener, M
 				}
 			}
 		}
-		int i = 30;
 		for (Component child : children) {
-			child.draw(i, drawContext, partialTicks, color);
-			i += child.getHeight();
+			child.draw(drawContext, partialTicks, color);
 		}
 	}
 
