@@ -2,21 +2,29 @@ package net.aoba.gui.tabs.components;
 
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.utils.types.Vector2;
 import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.events.LeftMouseUpEvent;
+import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.listeners.LeftMouseUpListener;
+import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
+import net.aoba.gui.HudManager;
 import net.aoba.gui.IHudElement;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class SliderComponent extends Component implements LeftMouseDownListener {
+public class SliderComponent extends Component implements LeftMouseDownListener, LeftMouseUpListener, MouseMoveListener {
 
 	private String text;
 	private float currentSliderPosition = 0.4f;
 	float r;
 	float g;
 	float b;
-
+	private boolean isSliding = false;
+	
+	
 	FloatSetting slider;
 
 	public SliderComponent(String text, IHudElement parent) {
@@ -28,8 +36,9 @@ public class SliderComponent extends Component implements LeftMouseDownListener 
 		this.setHeight(24);
 		this.setLeft(4);
 		this.setRight(4);
-		
+
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
 	}
 
 	public SliderComponent(IHudElement parent, FloatSetting slider) {
@@ -39,6 +48,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener 
 		this.currentSliderPosition = (float) ((slider.getValue() - slider.min_value)
 				/ (slider.max_value - slider.min_value));
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
 	}
 
 	public float getSliderPosition() {
@@ -65,15 +75,28 @@ public class SliderComponent extends Component implements LeftMouseDownListener 
 
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		System.out.println("click");
-		double mouseX = event.GetMouseX();
 		if (hovered) {
+			isSliding = true;
+		}
+	}
+	
+	@Override
+	public void OnLeftMouseUp(LeftMouseUpEvent event) {
+		isSliding = false;
+	}
+	
+	@Override
+	public void OnMouseMove(MouseMoveEvent event) {
+		super.OnMouseMove(event);
+		
+		double mouseX = event.GetHorizontal();
+		if (Aoba.getInstance().hudManager.isClickGuiOpen() && this.isSliding) {
 			this.currentSliderPosition = (float) Math.min((((mouseX - ((actualX + 4))) - 1) / ((actualWidth - 12))),1f);
 			this.currentSliderPosition = (float) Math.max(0f, this.currentSliderPosition);
-			System.out.println("Inside slider at position: " + currentSliderPosition);
 			this.slider.setValue((this.currentSliderPosition * (slider.max_value - slider.min_value)) + slider.min_value);
 		}
 	}
+
 
 	@Override
 	public void update() {
@@ -93,5 +116,4 @@ public class SliderComponent extends Component implements LeftMouseDownListener 
 		renderUtils.drawString(drawContext, this.text + ": " + String.format("%.02f", this.slider.getValue()),
 				actualX + 10, actualY + 6, 0xFFFFFF);
 	}
-
 }
