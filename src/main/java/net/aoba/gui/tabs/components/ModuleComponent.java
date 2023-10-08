@@ -10,6 +10,7 @@ import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.module.Module;
 import net.aoba.gui.Color;
+import net.aoba.gui.IHudElement;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
 
@@ -25,7 +26,7 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 
 	private Color backgroundColor = color;
 
-	public ModuleComponent(String text, ClickGuiTab parent, Module module) {
+	public ModuleComponent(String text, IHudElement parent, Module module) {
 		super(parent);
 		this.text = text;
 		this.module = module;

@@ -91,11 +91,10 @@ public class ClickGuiTab extends AbstractHud implements LeftMouseDownListener, M
 			float tempHeight = 0;
 			for (Component child : children) {
 				tempHeight += (child.getHeight());
-				child.setTop(tempHeight);
 			}
 			this.setHeight(tempHeight);
 		}
-
+		
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			for (Component child : this.children) {
 				child.update();

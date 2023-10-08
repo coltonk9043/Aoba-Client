@@ -13,6 +13,9 @@ import net.minecraft.client.gui.DrawContext;
 
 public abstract class Component implements IHudElement, MouseMoveListener {
 	protected static RenderUtils renderUtils;
+	
+	private static boolean DEBUG = false;
+	
 	private boolean visible = true;
 	protected boolean hovered = false;
 	
@@ -94,22 +97,43 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 		return actualHeight;
 	}
 	
+	public float getTop() {
+		return top;
+	}
+	
+	public float getBottom() {
+		return bottom;
+	}
+	public float getLeft() {
+		return left;
+	}
+	
+	public float getRight() {
+		return right;
+	}
+	
 	public void setX(float x) {
-		this.x = x;
-		this.actualX = this.parent.getX() + x;
-		updateChildrenPosition();
+		if(this.x != x) {
+			this.x = x;
+			this.actualX = this.parent.getX() + x;
+			updateChildrenPosition();
+		}
 	}
 	
 	public void setY(float y) {
-		this.y = y;
-		this.actualY = this.parent.getY() + y;
-		updateChildrenPosition();
+		if(this.y != y) {
+			this.y = y;
+			this.actualY = this.parent.getY() + y;
+			updateChildrenPosition();
+		}
 	}
 	
 	public void setWidth(float width) {
-		this.width = width;
-		this.actualWidth = width;
-		updateChildrenPosition();
+		if(this.width != width) {
+			this.width = width;
+			this.actualWidth = width;
+			updateChildrenPosition();
+		}
 	}
 	
 	/**
@@ -119,54 +143,70 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	@Override
 	public void setHeight(float height)
 	{
-		this.height = height;
-		this.actualHeight = height;
-		updateChildrenPosition();
+		if(this.height != height) {
+			this.height = height;
+			this.actualHeight = height;
+			updateChildrenPosition();
+		}
 	}
 	
 	public void setTop(float top) {
-		this.top = top;
-		if(y == 0.0f) {
-			actualY = parent.getY() + top;	
-		}else {
-			actualY = y;
+		if(this.top != top) {
+			this.top = top;
+			if(y == 0.0f) {
+				actualY = parent.getY() + top;	
+			}else {
+				actualY = y;
+			}
+			if(height == 0.0f) {
+				actualHeight = parent.getHeight() - top - bottom;
+			}else {
+				actualHeight = height;
+			}	
+			updateChildrenPosition();
 		}
-		if(height == 0.0f) {
-			actualHeight = parent.getHeight() - top - bottom;
-		}else {
-			actualHeight = height;
-		}	
-		updateChildrenPosition();
 	}
 	
 	public void setBottom(float bottom) {
-		this.bottom = bottom;
-		if(height == 0.0) {
-			actualHeight = parent.getHeight() - top - bottom;
-		}else {
-			actualHeight = height;
+		if(this.bottom != bottom) {
+			this.bottom = bottom;
+			if(height == 0.0) {
+				actualHeight = parent.getHeight() - top - bottom;
+			}else {
+				actualHeight = height;
+			}
+			updateChildrenPosition();
 		}
-		updateChildrenPosition();
 	}
 	
 	public void setLeft(float left) {
-		this.left = left;
-		if(x == 0.0) {
-			actualX = parent.getX() + left;
-		}else {
-			actualX = x;
+		if(this.left != left) {
+			this.left = left;
+			if(x == 0.0) {
+				actualX = parent.getX() + left;
+			}else {
+				actualX = x;
+			}
+			
+			if(width == 0.0f) {
+				actualWidth = parent.getWidth() - left - right;
+			}else {
+				actualWidth = width;
+			}	
+			updateChildrenPosition();
 		}
-		updateChildrenPosition();
 	}
 	
 	public void setRight(float right) {
-		this.right = right;
-		if(width == 0.0f) {
-			actualWidth = parent.getWidth() - right - left;
-		}else {
-			actualWidth = width;
+		if(this.right != right) {
+			this.right = right;
+			if(width == 0.0f) {
+				actualWidth = parent.getWidth() - right - left;
+			}else {
+				actualWidth = width;
+			}
+			updateChildrenPosition();
 		}
-		updateChildrenPosition();
 	}
 	
 	public void addChild(Component component) {
@@ -183,10 +223,31 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	 * Updates the position of these elements whenever the parent is moved.
 	 */
 	public void onParentMoved() {
-		setTop(top);
-		setBottom(bottom);
-		setRight(right);
-		setLeft(left);
+		// Set Y and Height
+		if(y == 0.0f) {
+			actualY = parent.getY() + top;	
+		}else {
+			actualY = y;
+		}
+		if(height == 0.0f) {
+			actualHeight = parent.getHeight() - top - bottom;
+		}else {
+			actualHeight = height;
+		}	
+		
+		// Set X and Width
+		if(x == 0.0) {
+			actualX = parent.getX() + left;
+		}else {
+			actualX = x;
+		}
+		
+		if(width == 0.0f) {
+			actualWidth = parent.getWidth() - left - right;
+		}else {
+			actualWidth = width;
+		}	
+		updateChildrenPosition();
 	}
 	
 	/**
@@ -241,6 +302,10 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	 * @param color Color of the UI.
 	 */
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+		if(this.hovered && DEBUG) {
+			renderUtils.drawOutline(drawContext.getMatrices(), this.actualX, this.actualY, this.actualWidth, this.actualHeight);
+		}
+
 		for(Component child : children) {
 			if(child.visible) {
 				child.draw(drawContext, partialTicks, color);
@@ -261,7 +326,6 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 				double mouseY = mouseMoveEvent.GetVertical();
 				
 				this.hovered = ((mouseX >= actualX && mouseX <= (actualX + actualWidth)) && (mouseY >= (actualY) && mouseY <= (actualY + actualHeight)));	
-			
 		}
 	}
 }

@@ -73,30 +73,38 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 
 	@Override
 	public void setX(float x) {
-		position.setX(x);
-		for(Component component : this.children) {
-			component.onParentMoved();
+		if(this.position.getValue().x != x) {
+			position.setX(x);
+			for(Component component : this.children) {
+				component.onParentMoved();
+			}
 		}
 	}
 
 	public void setY(float y) {
-		position.setY(y);
-		for(Component component : this.children) {
-			component.onParentMoved();
+		if(this.position.getValue().y != y) {
+			position.setY(y);
+			for(Component component : this.children) {
+				component.onParentMoved();
+			}
 		}
 	}
 
 	public void setWidth(float width) {
-		this.width = width;
-		for(Component component : this.children) {
-			component.onParentMoved();
+		if(this.width != width) {
+			this.width = width;
+			for(Component component : this.children) {
+				component.onParentMoved();
+			}
 		}
 	}
 
 	public void setHeight(float height) {
-		this.height = height;
-		for(Component component : this.children) {
-			component.onParentMoved();
+		if(this.height != height) {
+			this.height = height;
+			for(Component component : this.children) {
+				component.onParentMoved();
+			}
 		}
 	}
 
