@@ -30,28 +30,32 @@ import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.Vec3d;
 
-public class Fly extends Module implements TickListener {
+public class Jetpack extends Module implements TickListener {
 
-	private FloatSetting flySpeed;
+	private FloatSetting jetpackSpeed;
 	
-	public Fly() {
-		this.setName("Fly");
+	public Jetpack() {
+		this.setName("Jetpack");
 		this.setBind(new KeyBinding("key.fly", GLFW.GLFW_KEY_V, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
-		this.setDescription("Allows the player to fly.");
+		this.setDescription("Like fly, but a lot more fun!");
 		
-		flySpeed = new FloatSetting("fly_speed", "Speed", "Fly speed.", 2f, 0.1f, 15f, 0.5f);
-		this.addSetting(flySpeed);
+		jetpackSpeed = new FloatSetting(""
+				+ "jetpack_speed", "Speed", "Jetpack Speed", 0.5f, 0.1f, 5.0f, 0.1f);
+		this.addSetting(jetpackSpeed);
 	}
 
 	public void setSpeed(float speed) {
-		this.flySpeed.setValue((double)speed);
+		this.jetpackSpeed.setValue((double)speed);
 	}
 	
 	public double getSpeed() {
-		return this.flySpeed.getValue();
+		return this.jetpackSpeed.getValue();
 	}
 
 	
@@ -73,34 +77,33 @@ public class Fly extends Module implements TickListener {
 	@Override
 	public void OnUpdate(TickEvent event) {
 		ClientPlayerEntity player = MC.player;
-		float speed = this.flySpeed.getValue().floatValue();
+		float speed = this.jetpackSpeed.getValue().floatValue();
+		
+		if(MC.player.fallDistance > 2f) {
+			MC.player.networkHandler.sendPacket(new OnGroundOnly(true));
+		}
+		
 		if(MC.player.isRiding()) {
 			Entity riding = MC.player.getRootVehicle();
 			Vec3d velocity = riding.getVelocity();
 			double motionY = MC.options.jumpKey.isPressed() ? 0.3 : 0;
 			riding.setVelocity(velocity.x, motionY, velocity.z);
 		}else {
-			if (MC.options.sprintKey.isPressed()) {
-				speed *= 1.5;
-			}
 			player.getAbilities().flying = false;
-			player.setVelocity(new Vec3d(0, 0, 0));
 			
-			Vec3d vec = new Vec3d(0, 0, 0);
-			
-			// If the player is moving forward.
-			if(MC.options.forwardKey.isPressed()) {
-				
-			}
-				
-				
+			Vec3d playerSpeed = player.getVelocity();
 			if (MC.options.jumpKey.isPressed()) {
-				vec = new Vec3d(0, speed * 0.2f, 0);
+				double angle = -player.bodyYaw;
+				float leftThrusterX = (float) Math.sin(Math.toRadians(angle + 90)) * 0.25f;
+				float leftThrusterZ = (float) Math.cos(Math.toRadians(angle + 90)) * 0.25f;
+				float rightThrusterX = (float) Math.sin(Math.toRadians(angle + 270)) * 0.25f;
+				float rightThrusterZ = (float) Math.cos(Math.toRadians(angle + 270)) * 0.25f;
+				
+				MC.world.addParticle(ParticleTypes.FLAME, player.getX() + leftThrusterX, player.getY(), player.getZ() + leftThrusterZ, 0, -0.5f, 0);
+				MC.world.addParticle(ParticleTypes.FLAME, player.getX() + rightThrusterX, player.getY(), player.getZ() + rightThrusterZ, 0, -0.5f, 0);
+				playerSpeed = playerSpeed.add(0, speed / 20.0f, 0);	
 			}
-			if (MC.options.sneakKey.isPressed()) {
-				vec = new Vec3d(0, -speed * 0.2f, 0);
-			}
-			player.setVelocity(vec);
+			player.setVelocity(playerSpeed);
 		}
 	}
 }

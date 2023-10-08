@@ -65,6 +65,7 @@ public class ModuleManager {
 	public Module itemesp = new ItemESP();
 	public Module glide = new Glide();
 	public Module jesus = new Jesus();
+	public Module jetpack = new Jetpack();
 	public Module killaura = new KillAura();
 	public Module nametags = new Nametags();
 	public Module noclip = new Noclip();
@@ -114,6 +115,7 @@ public class ModuleManager {
 		addModule(glide);
 		addModule(itemesp);
 		addModule(jesus);
+		addModule(jetpack);
 		addModule(killaura);
 		addModule(nametags);
 		addModule(noclip);

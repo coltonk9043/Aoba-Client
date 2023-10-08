@@ -23,7 +23,12 @@ public class SliderComponent extends Component implements LeftMouseDownListener 
 		super(parent);
 		this.text = text;
 		this.slider = null;
+		
+		
 		this.setHeight(24);
+		this.setLeft(4);
+		this.setRight(4);
+		
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
@@ -78,13 +83,9 @@ public class SliderComponent extends Component implements LeftMouseDownListener 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-		renderUtils.drawBox(matrixStack, actualX, actualY, actualWidth, actualHeight, 0.5f, 0.5f, 0.5f, 0.3f);
-		renderUtils.drawBox(matrixStack, actualX, actualY,
-				(int) Math.floor(actualWidth)
-						* (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)),
-				actualHeight, color, 1f);
-
-		renderUtils.drawOutline(matrixStack, actualX, actualY, actualWidth, actualHeight);
+		renderUtils.drawBox(matrixStack, actualX, actualY + 4, actualWidth, actualHeight - 8, 0.5f, 0.5f, 0.5f, 0.3f);
+		renderUtils.drawBox(matrixStack, actualX, actualY + 4, actualWidth * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)), actualHeight - 8, color, 1f);
+		renderUtils.drawOutline(matrixStack, actualX, actualY + 4, actualWidth, actualHeight - 8);
 		if (this.slider == null)
 			return;
 		// TODO: Slow but it works. Perhaps we can modify a STORED string using our new

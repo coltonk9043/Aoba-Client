@@ -31,6 +31,8 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 		this.module = module;
 		
 		this.setHeight(30);
+		this.setLeft(2);
+		this.setRight(2);
 		
 		int i = 30;
 		for (Setting setting : this.module.getSettings()) {
