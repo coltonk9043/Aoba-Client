@@ -99,9 +99,9 @@ public class Jetpack extends Module implements TickListener {
 				float rightThrusterX = (float) Math.sin(Math.toRadians(angle + 270)) * 0.25f;
 				float rightThrusterZ = (float) Math.cos(Math.toRadians(angle + 270)) * 0.25f;
 				
-				MC.world.addParticle(ParticleTypes.FLAME, player.getX() + leftThrusterX, player.getY(), player.getZ() + leftThrusterZ, 0, -0.5f, 0);
-				MC.world.addParticle(ParticleTypes.FLAME, player.getX() + rightThrusterX, player.getY(), player.getZ() + rightThrusterZ, 0, -0.5f, 0);
-				playerSpeed = playerSpeed.add(0, speed / 20.0f, 0);	
+				MC.world.addParticle(ParticleTypes.FLAME, player.getX() + leftThrusterX, player.getY() + 0.5f, player.getZ() + leftThrusterZ, leftThrusterX, -0.5f, leftThrusterZ);
+				MC.world.addParticle(ParticleTypes.FLAME, player.getX() + rightThrusterX, player.getY() + 0.5f, player.getZ() + rightThrusterZ, rightThrusterX, -0.5f, rightThrusterZ);
+				playerSpeed = playerSpeed.add(0, speed / 20.0f, 0);
 			}
 			player.setVelocity(playerSpeed);
 		}
