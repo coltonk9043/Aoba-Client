@@ -35,6 +35,7 @@ import net.aoba.module.modules.movement.*;
 import net.aoba.module.modules.render.*;
 import net.aoba.module.modules.world.*;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class ModuleManager {
@@ -150,9 +151,10 @@ public class ModuleManager {
 		
 		
 		for(Module module : modules) {
-			if(module.getBind().wasPressed()) {
+			KeyBinding binding = module.getBind().getValue();
+			if(binding.wasPressed()) {
 				module.toggle();
-				module.getBind().setPressed(false);
+				binding.setPressed(false);
 			}
 		}
 	}

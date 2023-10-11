@@ -25,6 +25,7 @@ import java.util.UUID;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.FakePlayerEntity;
@@ -39,8 +40,9 @@ public class Freecam extends Module implements TickListener {
 	private FloatSetting flySpeed;
 	
 	public Freecam() {
+		super(new KeybindSetting("key.freecam", "Freecam Key", new KeyBinding("key.freecam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Freecam");
-		this.setBind(new KeyBinding("key.freecam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to clip through blocks (Only work clientside).");
 		flySpeed = new FloatSetting("freecam_speed", "Speed", "Speed of the Freecam.", 2f, 0.1f, 15f, 0.5f);

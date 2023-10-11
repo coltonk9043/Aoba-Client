@@ -23,6 +23,7 @@ package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -32,8 +33,9 @@ import net.minecraft.util.math.Vec3d;
 public class Safewalk extends Module implements TickListener {
 
 	public Safewalk() {
+		super(new KeybindSetting("key.safewalk", "Safewalk Key", new KeyBinding("key.safewalk", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Safewalk");
-		this.setBind(new KeyBinding("key.safewalk", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Permanently keeps player in sneaking mode.");
 	}

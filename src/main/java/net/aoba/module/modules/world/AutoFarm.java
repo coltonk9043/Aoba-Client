@@ -39,6 +39,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.ModuleUtils;
@@ -49,8 +50,9 @@ public class AutoFarm extends Module implements TickListener {
 	private FloatSetting radius;
 
 	public AutoFarm() {
+		super(new KeybindSetting("key.autofarm", "AutoFarm Key", new KeyBinding("key.autofarm", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("AutoFarm");
-		this.setBind(new KeyBinding("key.autofarm", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
 		this.radius = new FloatSetting("autofarm_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);

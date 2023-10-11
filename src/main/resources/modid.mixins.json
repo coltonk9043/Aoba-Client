@@ -20,6 +20,7 @@
 	"FluidBlockMixin",
 	"GameRendererMixin",
 	"IngameHudMixin",
+	"KeyboardMixin",
 	"MouseMixin",
 	"MultiplayerScreenMixin",
 	"RenderTickCounterMixin",

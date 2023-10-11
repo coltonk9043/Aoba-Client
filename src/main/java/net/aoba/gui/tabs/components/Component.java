@@ -14,7 +14,7 @@ import net.minecraft.client.gui.DrawContext;
 public abstract class Component implements IHudElement, MouseMoveListener {
 	protected static RenderUtils renderUtils;
 	
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
 	
 	private boolean visible = true;
 	protected boolean hovered = false;

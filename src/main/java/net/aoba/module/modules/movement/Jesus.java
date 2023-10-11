@@ -24,6 +24,7 @@ package net.aoba.module.modules.movement;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -34,8 +35,9 @@ public class Jesus extends Module implements TickListener {
 	public BooleanSetting legit;
 
 	public Jesus() {
+		super(new KeybindSetting("key.jesus", "Jesus Key", new KeyBinding("key.jesus", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Jesus");
-		this.setBind(new KeyBinding("key.jesus", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to walk on water.");
 

@@ -22,14 +22,18 @@
 package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 
 public class AntiKnockback extends Module {
 	
 	public AntiKnockback() {
+		super(new KeybindSetting("key.antiknockback", "AntiKnockback Key", new KeyBinding("key.antiknockback", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		
 		this.setName("AntiKnockback");
-		this.setBind(new KeyBinding("key.antiknockback", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
+		
 		this.setCategory(Category.Combat);
 		this.setDescription("Prevents knockback.");
 	}

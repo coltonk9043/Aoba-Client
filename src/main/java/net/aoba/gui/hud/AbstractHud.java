@@ -29,15 +29,16 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 	protected float height;
 
 	protected boolean isMouseOver = false;
-	protected boolean moveable = true;
-
+	public boolean moveable = true;
+	public boolean visible = true;
+	
 	// Mouse Variables
 	protected double lastClickOffsetX;
 	protected double lastClickOffsetY;
 
 	protected ArrayList<Component> children = new ArrayList<>();
 	
-	public AbstractHud(String ID, int x, int y, int width, int height) {
+	public AbstractHud(String ID, float x, float y, float width, float height) {
 		this.ID = ID;
 
 		this.position = new Vector2Setting(ID + "_position", "GUI POS", new Vector2(x, y));
@@ -114,10 +115,6 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		// TODO: Before the logic would store the clicked mouse pos, which lead to
-		// the choppy, unpredictable nature of moving GUI. Not sure if it is needed
-		// anymore as we have raw mouse position.
-
 		double mouseX = event.GetMouseX();
 		double mouseY = event.GetMouseY();
 

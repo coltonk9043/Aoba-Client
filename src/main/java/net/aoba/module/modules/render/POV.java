@@ -23,6 +23,7 @@ package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.FakePlayerEntity;
@@ -40,8 +41,9 @@ public class POV extends Module implements TickListener {
 	
 	private boolean fakePlayerSpawned = false;
 	public POV() {
+		super(new KeybindSetting("key.pov", "POV Key", new KeyBinding("key.pov", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("POV");
-		this.setBind(new KeyBinding("key.pov", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see someone else's point-of-view.");
 	}

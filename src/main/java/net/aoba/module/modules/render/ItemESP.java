@@ -23,6 +23,7 @@ package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.Color;
@@ -34,11 +35,11 @@ import net.minecraft.entity.ItemEntity;
 public class ItemESP extends Module implements RenderListener {
 
 	public ItemESP() {
+		super(new KeybindSetting("key.itemesp", "ItemESP Key", new KeyBinding("key.itemesp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("ItemESP");
-		this.setBind(new KeyBinding("key.itemesp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see items with an ESP.");
-
 	}
 
 	@Override

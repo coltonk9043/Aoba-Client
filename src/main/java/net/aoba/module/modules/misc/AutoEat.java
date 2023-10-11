@@ -23,6 +23,7 @@ package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -34,8 +35,9 @@ public class AutoEat extends Module implements TickListener {
 	private int hunger = 6;
 	
 	public AutoEat() {
+		super(new KeybindSetting("key.autoeat", "AntiCactus Key", new KeyBinding("key.autoeat", GLFW.GLFW_KEY_N, "key.categories.aoba")));
+		
 		this.setName("AutoEat");
-		this.setBind(new KeyBinding("key.autoeat", GLFW.GLFW_KEY_N, "key.categories.aoba"));
 		this.setCategory(Category.Misc);
 		this.setDescription("Automatically eats the best food in your inventory.");
 	}

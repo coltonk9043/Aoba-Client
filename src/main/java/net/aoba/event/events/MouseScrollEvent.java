@@ -1,8 +1,10 @@
 package net.aoba.event.events;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.aoba.event.listeners.AbstractListener;
+import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.event.listeners.MouseScrollListener;
 
 public class MouseScrollEvent extends AbstractEvent{
@@ -25,7 +27,7 @@ public class MouseScrollEvent extends AbstractEvent{
 
 	@Override
 	public void Fire(ArrayList<? extends AbstractListener> listeners) {
-		for(AbstractListener listener : listeners) {
+		for(AbstractListener listener : List.copyOf(listeners)) {
 			MouseScrollListener mouseScrollListener = (MouseScrollListener) listener;
 			mouseScrollListener.OnMouseScroll(this);
 		}

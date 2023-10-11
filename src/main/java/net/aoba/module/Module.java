@@ -25,8 +25,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.core.settings.Setting;
+import net.aoba.core.settings.SettingManager;
+import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
@@ -36,14 +41,19 @@ public abstract class Module {
 	private String name;
 	private String description;
 	private Category category;
-	private KeyBinding keybind;
 	private boolean state;
 	private RenderUtils renderUtils = new RenderUtils();
 
+	protected KeybindSetting keyBind;
 	private List<Setting> settings = new ArrayList<Setting>();
 	
 	protected final MinecraftClient MC = AobaClient.MC;
 	protected final IMinecraftClient IMC = AobaClient.IMC;
+	
+	public Module(KeybindSetting keyBind) {
+		this.keyBind = keyBind;
+		SettingManager.register_setting(this.keyBind, Aoba.getInstance().settingManager.modules_category);
+	}
 	
 	public String getName() {
 		return this.name;
@@ -69,8 +79,8 @@ public abstract class Module {
 		this.category = category;
 	}
 
-	public KeyBinding getBind() {
-		return this.keybind;
+	public KeybindSetting getBind() {
+		return this.keyBind;
 	}
 
 
@@ -89,15 +99,6 @@ public abstract class Module {
 			this.state = false;
 		}
 
-	}
-
-	public void setBind(KeyBinding bind) {
-		try {
-			this.keybind = bind;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
 	}
 
 	public void addSetting(Setting setting) {

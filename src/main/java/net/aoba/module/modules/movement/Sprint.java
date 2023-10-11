@@ -23,6 +23,7 @@ package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -31,8 +32,9 @@ import net.minecraft.client.option.KeyBinding;
 public class Sprint extends Module implements TickListener {
 
 	public Sprint() {
+		super(new KeybindSetting("key.sprinthack", "Sprint Key", new KeyBinding("key.sprinthack", GLFW.GLFW_KEY_G, "key.categories.aoba")));
+
 		this.setName("Sprint");
-		this.setBind(new KeyBinding("key.sprinthack", GLFW.GLFW_KEY_G, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Permanently keeps player in sprinting mode.");
 	}

@@ -23,6 +23,7 @@ package net.aoba.module.modules.world;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.cmd.CommandManager;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 
@@ -30,11 +31,11 @@ public class AutoSign extends Module {
 	String[] text;
 
 	public AutoSign() {
+		super(new KeybindSetting("key.autosign", "AutoSign Key", new KeyBinding("key.autosign", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("AutoSign");
-		this.setBind(new KeyBinding("key.autosign", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Automatically places sign.");
-
 	}
 
 	public void setText(String[] text) {

@@ -22,14 +22,17 @@
 package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 
 public class AutoTotem extends Module{
 
 	public AutoTotem() {
+		super(new KeybindSetting("key.autototem", "AutoTotem Key", new KeyBinding("key.autototem", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("AutoTotem");
-		this.setBind(new KeyBinding("key.autototem", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
 		this.setDescription("Automatically replaced totems.");
 	}

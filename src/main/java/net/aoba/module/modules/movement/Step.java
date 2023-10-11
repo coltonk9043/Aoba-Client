@@ -23,6 +23,7 @@ package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 
@@ -31,8 +32,9 @@ public class Step extends Module {
 	private FloatSetting stepHeight;
 	
 	public Step() {
+		super(new KeybindSetting("key.step", "Step Key", new KeyBinding("key.step", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Step");
-		this.setBind(new KeyBinding("key.step", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Steps up blocks.");
 		

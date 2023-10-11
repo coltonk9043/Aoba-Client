@@ -23,6 +23,7 @@ package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.Color;
@@ -33,11 +34,11 @@ import net.minecraft.client.option.KeyBinding;
 public class PlayerESP extends Module implements RenderListener {
 
 	public PlayerESP() {
+		super(new KeybindSetting("key.playeresp", "PlayerESP Key", new KeyBinding("key.playeresp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("PlayerESP");
-		this.setBind(new KeyBinding("key.playeresp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see other players with an ESP.");
-
 	}
 
 	@Override

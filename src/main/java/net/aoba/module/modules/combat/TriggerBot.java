@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -24,8 +25,9 @@ public class TriggerBot extends Module implements TickListener {
 	private BooleanSetting targetPlayers;
 
 	public TriggerBot() {
+		super(new KeybindSetting("key.triggerbot", "TriggerBot Key", new KeyBinding("key.triggerbot", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		
 		this.setName("Triggerbot");
-		this.setBind(new KeyBinding("key.triggerbot", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything you are looking at.");
 

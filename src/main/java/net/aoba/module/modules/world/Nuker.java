@@ -24,6 +24,7 @@ package net.aoba.module.modules.world;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
@@ -46,8 +47,9 @@ public class Nuker extends Module implements RenderListener, TickListener {
 	private FloatSetting radius;
 
 	public Nuker() {
+		super(new KeybindSetting("key.nuker", "Nuker Key", new KeyBinding("key.nuker", GLFW.GLFW_KEY_N, "key.categories.aoba")));
+
 		this.setName("Nuker");
-		this.setBind(new KeyBinding("key.nuker", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks around the player.");
 		this.radius = new FloatSetting("nuker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);

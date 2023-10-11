@@ -1,8 +1,10 @@
 package net.aoba.event.events;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.aoba.event.listeners.AbstractListener;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.SendPacketListener;
 import net.minecraft.network.packet.Packet;
 
@@ -20,7 +22,7 @@ public class SendPacketEvent extends AbstractEvent {
 	
 	@Override
 	public void Fire(ArrayList<? extends AbstractListener> listeners) {
-		for(AbstractListener listener : listeners) {
+		for(AbstractListener listener : List.copyOf(listeners)) {
 			SendPacketListener sendPacketListener = (SendPacketListener) listener;
 			sendPacketListener.OnSendPacket(this);
 		}

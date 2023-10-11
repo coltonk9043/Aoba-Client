@@ -91,7 +91,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 		
 		double mouseX = event.GetHorizontal();
 		if (Aoba.getInstance().hudManager.isClickGuiOpen() && this.isSliding) {
-			this.currentSliderPosition = (float) Math.min((((mouseX - ((actualX + 4))) - 1) / ((actualWidth - 12))),1f);
+			this.currentSliderPosition = (float) Math.min((((mouseX - (actualX + 4)) - 1) / (actualWidth - 8)),1f);
 			this.currentSliderPosition = (float) Math.max(0f, this.currentSliderPosition);
 			this.slider.setValue((this.currentSliderPosition * (slider.max_value - slider.min_value)) + slider.min_value);
 		}
@@ -106,9 +106,9 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-		renderUtils.drawBox(matrixStack, actualX, actualY + 4, actualWidth, actualHeight - 8, 0.5f, 0.5f, 0.5f, 0.3f);
-		renderUtils.drawBox(matrixStack, actualX, actualY + 4, actualWidth * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)), actualHeight - 8, color, 1f);
-		renderUtils.drawOutline(matrixStack, actualX, actualY + 4, actualWidth, actualHeight - 8);
+		renderUtils.drawBox(matrixStack, actualX + 4, actualY + 4, actualWidth - 8, actualHeight - 8, 0.5f, 0.5f, 0.5f, 0.3f);
+		renderUtils.drawBox(matrixStack, actualX + 4, actualY + 4, (actualWidth - 8) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)), actualHeight - 8, color, 1f);
+		renderUtils.drawOutline(matrixStack, actualX + 4, actualY + 4, actualWidth - 8, actualHeight - 8);
 		if (this.slider == null)
 			return;
 		// TODO: Slow but it works. Perhaps we can modify a STORED string using our new

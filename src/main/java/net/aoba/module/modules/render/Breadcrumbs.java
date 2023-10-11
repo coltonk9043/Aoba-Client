@@ -26,6 +26,7 @@ import java.util.List;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
@@ -51,8 +52,9 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 	private List<Vec3d> positions = new ArrayList<Vec3d>();
 	
 	public Breadcrumbs() {
+		super(new KeybindSetting("key.breadcrumbs", "Breadcrumbs Key", new KeyBinding("key.breadcrumbs", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Breadcrumbs");
-		this.setBind(new KeyBinding("key.breadcrumbs", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Shows breadcrumbs of where you last stepped;");
 		color = new Color(0f, 1f, 1f);

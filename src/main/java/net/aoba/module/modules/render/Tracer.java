@@ -23,6 +23,7 @@ package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.module.Module;
@@ -33,8 +34,9 @@ import net.minecraft.entity.LivingEntity;
 public class Tracer extends Module implements RenderListener {
 
 	public Tracer() {
+		super(new KeybindSetting("key.tracer", "Tracer Key", new KeyBinding("key.tracer", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Tracer");
-		this.setBind(new KeyBinding("key.tracer", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Points toward other players and entities with a line.");
 	}

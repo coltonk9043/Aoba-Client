@@ -23,6 +23,8 @@ package net.aoba.module.modules.render;
 
 import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.interfaces.ISimpleOption;
 import net.aoba.module.Module;
 import net.minecraft.block.Block;
@@ -33,8 +35,9 @@ public class XRay extends Module {
 	public static ArrayList<Block> blocks = new ArrayList<Block>();
 
 	public XRay() {
+		super(new KeybindSetting("key.xray", "XRay Key", new KeyBinding("key.xray", GLFW.GLFW_KEY_X, "key.categories.aoba")));
+
 		this.setName("XRay");
-		this.setBind(new KeyBinding("key.xray", GLFW.GLFW_KEY_X, "key.categories.aoba" ));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see ores.");
 		initXRay();

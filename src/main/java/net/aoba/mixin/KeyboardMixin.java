@@ -12,7 +12,7 @@ import net.minecraft.client.Keyboard;
 @Mixin(Keyboard.class)
 public class KeyboardMixin {
 	
-	@Inject(at = {@At("HEAD")}, method = {"onKey(JIIII)V" })
+	@Inject(at = {@At("HEAD")}, method = {"onKey(JIIII)V" }, cancellable = true)
 	private void OnKeyDown(long window, int key, int scancode,
 			int action, int modifiers, CallbackInfo ci) {
 		KeyDownEvent event = new KeyDownEvent(window, key, scancode, action, modifiers);

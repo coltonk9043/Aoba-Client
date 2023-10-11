@@ -23,6 +23,7 @@ package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -34,8 +35,9 @@ import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
 public class Sneak extends Module implements TickListener {
 
 	public Sneak() {
+		super(new KeybindSetting("key.sneakhack", "Sneak Key", new KeyBinding("key.sneakhack", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Sneak");
-		this.setBind(new KeyBinding("key.sneakhack", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Makes the player appear like they're sneaking.");
 	}

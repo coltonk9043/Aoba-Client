@@ -23,6 +23,7 @@ package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.interfaces.IMinecraftClient;
@@ -33,8 +34,9 @@ public class FastPlace extends Module implements TickListener{
 	IMinecraftClient iMC;
 	
 	public FastPlace() {
+		super(new KeybindSetting("key.fastplace", "FastPlace Key", new KeyBinding("key.fastplace", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("FastPlace");
-		this.setBind(new KeyBinding("key.fastplace", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Misc);
 		this.setDescription("Places blocks exceptionally fast");
 	}

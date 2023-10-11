@@ -26,6 +26,7 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -49,8 +50,9 @@ public class KillAura extends Module implements TickListener {
 	private BooleanSetting targetPlayers;
 	
 	public KillAura() {
+		super(new KeybindSetting("key.killaura", "Kill Aura Key", new KeyBinding("key.killaura", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		
 		this.setName("KillAura");
-		this.setBind(new KeyBinding("key.killaura", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything within your personal space.");
 		

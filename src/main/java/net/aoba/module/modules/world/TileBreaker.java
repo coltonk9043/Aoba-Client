@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
@@ -47,8 +48,9 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 	private FloatSetting radius;
 	
 	public TileBreaker() {
+		super(new KeybindSetting("key.tilebreaker", "TileBreaker Key", new KeyBinding("key.tilebreaker", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("TileBreaker");
-		this.setBind(new KeyBinding("key.tilebreaker", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.World);
 		this.setDescription("Destroys blocks that can be instantly broken around the player.");
 		this.loadTileBreakerBlocks();

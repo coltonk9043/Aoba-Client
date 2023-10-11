@@ -23,6 +23,7 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.module.Module;
@@ -34,8 +35,11 @@ import net.minecraft.network.packet.s2c.play.HealthUpdateS2CPacket;
 public class AutoRespawn extends Module implements ReceivePacketListener {
 	
 	public AutoRespawn() {
+		
+		super(new KeybindSetting("key.autorespawn", "AutoRespawn Key", new KeyBinding("key.autorespawn", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("AutoRespawn");
-		this.setBind(new KeyBinding("key.autorespawn", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
+
 		this.setCategory(Category.Combat);
 		this.setDescription("Automatically respawns when you die.");
 	}

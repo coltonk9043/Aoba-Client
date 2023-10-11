@@ -51,6 +51,8 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 
 	private List<AbstractHud> activeHuds = new ArrayList<AbstractHud>();
 	
+	
+	
 	private boolean wasTildaPressed = false;
 
 	public NavigationBar clickGuiNavBar;
@@ -76,9 +78,9 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 
 		clickGuiNavBar = new NavigationBar();
 		
-		NavigationPane modulesPane = new NavigationPane("Modules");
-		NavigationPane toolsPane = new NavigationPane("Tools");
-		NavigationPane hudPane = new NavigationPane("Hud");
+		Page modulesPane = new Page("Modules");
+		Page toolsPane = new Page("Tools");
+		Page hudPane = new Page("Hud");
 		//NavigationPane settingsPane = new NavigationPane("Settings");
 		
 		toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
@@ -110,8 +112,6 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 			for (Module module : Aoba.getInstance().moduleManager.modules) {
 				if (module.getCategory() == category) {
 					ModuleComponent button = new ModuleComponent(module.getName(), stackPanel, module);
-					
-					//button.setHeight(30);
 					stackPanel.addChild(button);
 				}
 			}
@@ -135,6 +135,24 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
 	}
 
+	public void AddHud(AbstractHud hud, String pageName) {
+		for(Page page : clickGuiNavBar.getPanes()) {
+			if(page.getTitle().equals(pageName)) {
+				page.tabs.add(hud);
+				break;
+			}
+		}
+	}
+	
+	public void RemoveHud(AbstractHud hud, String pageName) {
+		for(Page page : clickGuiNavBar.getPanes()) {
+			if(page.getTitle().equals(pageName)) {
+				page.tabs.remove(hud);
+				break;
+			}
+		}
+	}
+	
 	/**
 	 * Getter for the current color used by the GUI for text rendering.
 	 * @return Current Color
@@ -142,14 +160,9 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 	public Color getColor() {
 		return this.currentColor;
 	}
-
 	
 	public Color getOriginalColor() {
 		return this.color;
-	}
-
-	public void onMouseScroll(double horizontal, double vertical) {
-		
 	}
 	
 	public void update() {
@@ -217,7 +230,9 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 			clickGuiNavBar.draw(drawContext, tickDelta, this.currentColor);
 		}else {
 			for(AbstractHud hud : activeHuds) {
-				hud.draw(drawContext, tickDelta, this.currentColor);
+				if(hud.visible) {
+					hud.draw(drawContext, tickDelta, this.currentColor);
+				}
 			}
 		}
 

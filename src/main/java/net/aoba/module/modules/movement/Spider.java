@@ -23,6 +23,7 @@ package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -33,8 +34,9 @@ import net.minecraft.util.math.Vec3d;
 public class Spider extends Module implements TickListener {
 
 	public Spider() {
+		super(new KeybindSetting("key.spider", "Spider Key", new KeyBinding("key.spider", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Spider");
-		this.setBind(new KeyBinding("key.spider", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows players to climb up blocks.");
 	}

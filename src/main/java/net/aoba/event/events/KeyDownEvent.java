@@ -1,9 +1,12 @@
 package net.aoba.event.events;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.KeyDownListener;
+import net.aoba.event.listeners.LeftMouseDownListener;
 
 public class KeyDownEvent extends AbstractEvent{
 	private final long window;
@@ -43,7 +46,7 @@ public class KeyDownEvent extends AbstractEvent{
 	
 	@Override
 	public void Fire(ArrayList<? extends AbstractListener> listeners) {
-		for(AbstractListener listener : listeners) {
+		for(AbstractListener listener : List.copyOf(listeners)) {
 			KeyDownListener keyDownListener = (KeyDownListener) listener;
 			keyDownListener.OnKeyDown(this);
 		}

@@ -22,6 +22,8 @@
 package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.interfaces.ISimpleOption;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
@@ -30,11 +32,11 @@ public class Fullbright extends Module {
 
 	private double previousValue = 0.0;
 	public Fullbright() {
+		super(new KeybindSetting("key.fullbright", "Fullbright Key", new KeyBinding("key.fullbright", GLFW.GLFW_KEY_F, "key.categories.aoba")));
+
 		this.setName("Fullbright");
-		this.setBind(new KeyBinding("key.fullbright", GLFW.GLFW_KEY_F, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Maxes out the brightness.");
-
 	}
 
 	@Override

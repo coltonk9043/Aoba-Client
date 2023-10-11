@@ -24,6 +24,7 @@ package net.aoba.module.modules.combat;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -47,8 +48,9 @@ public class CrystalAura extends Module implements TickListener {
 	private float radius = 10.0f;
 
 	public CrystalAura() {
+		super(new KeybindSetting("key.crystalaura", "Crystal Aura Key", new KeyBinding("key.crystalaura", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("CrystalAura");
-		this.setBind(new KeyBinding("key.crystalaura", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything within your personal space.");
 	}

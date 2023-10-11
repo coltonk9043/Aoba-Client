@@ -23,6 +23,7 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.SendPacketEvent;
 import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.module.Module;
@@ -31,8 +32,9 @@ import net.minecraft.client.option.KeyBinding;
 public class Criticals extends Module implements SendPacketListener {
 
 	public Criticals() {
+		super(new KeybindSetting("key.criticals", "Criticals Key", new KeyBinding("key.criticals", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Criticals");
-		this.setBind(new KeyBinding("key.criticals", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
 		this.setDescription("Makes all attacks into critical strikes.");
 	}

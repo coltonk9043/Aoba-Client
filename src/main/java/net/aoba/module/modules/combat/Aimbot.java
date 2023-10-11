@@ -25,6 +25,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
@@ -44,8 +45,8 @@ public class Aimbot extends Module implements RenderListener, TickListener {
 	private BooleanSetting targetPlayers;
 
 	public Aimbot() {
+		super(new KeybindSetting("key.aimbot", "Aimbot Key", new KeyBinding("key.aimbot", GLFW.GLFW_KEY_K, "key.categories.aoba")));
 		this.setName("Aimbot");
-		this.setBind(new KeyBinding("key.aimbot", GLFW.GLFW_KEY_K, "key.categories.aoba"));
 
 		this.setCategory(Category.Combat);
 		this.setDescription("Locks your crosshair towards a desire player or entity.");

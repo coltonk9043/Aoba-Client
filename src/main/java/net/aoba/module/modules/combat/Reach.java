@@ -23,6 +23,7 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
 
@@ -31,8 +32,9 @@ public class Reach extends Module {
 	private FloatSetting distance;
 	
 	public Reach() {
+		super(new KeybindSetting("key.reach", "Reach Key", new KeyBinding("key.reach", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		
 		this.setName("Reach");
-		this.setBind(new KeyBinding("key.reach", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
 		this.setDescription("Reaches further.");
 		

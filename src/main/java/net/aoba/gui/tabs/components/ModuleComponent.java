@@ -12,6 +12,7 @@ import net.aoba.module.Module;
 import net.aoba.gui.Color;
 import net.aoba.gui.IHudElement;
 import net.aoba.gui.tabs.ClickGuiTab;
+import net.aoba.gui.tabs.ModuleSettingsTab;
 import net.minecraft.client.gui.DrawContext;
 
 public class ModuleComponent extends Component implements LeftMouseDownListener {
@@ -35,28 +36,6 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 		this.setLeft(2);
 		this.setRight(2);
 		
-		int i = 30;
-		for (Setting setting : this.module.getSettings()) {
-			Component c;
-			if (setting instanceof FloatSetting) {
-				c = new SliderComponent(this, (FloatSetting) setting);
-			} else if (setting instanceof BooleanSetting) {
-				c = new CheckboxComponent(this, (BooleanSetting) setting);
-			} else if (setting instanceof StringListSetting) {
-				c = new ListComponent(this, (IndexedStringListSetting) setting);
-			} else {
-				c = null;
-			}
-			
-			c.setTop(i);
-			c.setHeight(30);
-			c.setVisible(false);
-			children.add(c);
-			i += 30;
-		}
-
-		RecalculateExpandedHeight();
-
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
@@ -81,18 +60,9 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 		for(Component child : children) {
 			child.setVisible(state);
 		}
-		RecalculateExpandedHeight();
 	}
 	
-	public void RecalculateExpandedHeight() {
-		int height = 30;
-		for (Component child : this.children) {
-			if (child.isVisible()) {
-				height += child.getHeight();
-			}
-		}
-		expandedHeight = height;
-	}
+
 
 	
 	@Override
@@ -103,13 +73,15 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 			if(mouseY >= actualY && mouseY <= actualY + 30){
 				boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
 				if (isOnOptionsButton) {
-					setPopped(!this.popped);
-
-					if (this.popped) {
-						this.setHeight(expandedHeight);
-					} else {
-						this.setHeight(30);
-					}
+//					setPopped(!this.popped);
+//
+//					if (this.popped) {
+//						this.setHeight(expandedHeight);
+//					} else {
+//						this.setHeight(30);
+//					}
+					
+					Aoba.getInstance().hudManager.AddHud(new ModuleSettingsTab(this.module.getName(), this.actualX + this.width + 1, this.y, this.module), "Modules");
 				} else {
 					module.toggle();
 					return;

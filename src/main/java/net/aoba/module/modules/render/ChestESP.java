@@ -27,6 +27,7 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
@@ -51,8 +52,9 @@ public class ChestESP extends Module implements RenderListener, TickListener {
 	public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", "Effect Speed", 4, 1, 20, 0.1);
 	
 	public ChestESP() {
+		super(new KeybindSetting("key.chestesp", "ChestESP Key", new KeyBinding("key.chestesp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("ChestESP");
-		this.setBind(new KeyBinding("key.chestesp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see Chests with an ESP.");
 		color = new Color(hue.getValue().floatValue(), 1f, 1f);

@@ -24,6 +24,7 @@ package net.aoba.module.modules.combat;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.core.settings.types.FloatSetting;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
@@ -43,8 +44,9 @@ public class AutoSoup extends Module implements TickListener {
 	private int previousSlot = -1;
 	
 	public AutoSoup() {
+		super(new KeybindSetting("key.autosoup", "AutoSoup Key", new KeyBinding("key.autosoup", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("AutoSoup");
-		this.setBind(new KeyBinding("key.autosoup", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Combat);
 		this.setDescription("Automatically consumes soup when health is low. (KitPVP)");
 		

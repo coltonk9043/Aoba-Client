@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.Color;
@@ -38,8 +39,9 @@ import net.minecraft.util.math.Box;
 public class SpawnerESP extends Module implements RenderListener {
 
 	public SpawnerESP() {
+		super(new KeybindSetting("key.spawneresp", "SpawnerESP Key", new KeyBinding("key.spawneresp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("SpawnerESP");
-		this.setBind(new KeyBinding("key.spawneresp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see spawners with an ESP.");
 	}

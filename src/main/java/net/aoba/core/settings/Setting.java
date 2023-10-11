@@ -7,7 +7,7 @@ import net.aoba.misc.TextUtils;
 public abstract class Setting<T> {
 	
 	public enum TYPE {
-		BOOLEAN, DOUBLE, STRING, INTEGER, STRINGLIST, INDEXEDSTRINGLIST, VECTOR2
+		BOOLEAN, DOUBLE, STRING, INTEGER, STRINGLIST, INDEXEDSTRINGLIST, VECTOR2, KEYBIND
 	}
 	
 	public final String ID;

@@ -15,18 +15,22 @@ import net.minecraft.client.util.math.MatrixStack;
 public class NavigationBar implements LeftMouseDownListener {
 	MinecraftClient mc = MinecraftClient.getInstance();
 
-	private List<NavigationPane> options;
+	private List<Page> options;
 	
 	private int selectedIndex;
 	private RenderUtils renderUtils;
 
 	public NavigationBar() {
-		options = new ArrayList<NavigationPane>();
+		options = new ArrayList<Page>();
 		renderUtils = new RenderUtils();
 	}
 
-	public void addPane(NavigationPane pane) {
+	public void addPane(Page pane) {
 		options.add(pane);
+	}
+	
+	public List<Page> getPanes(){
+		return this.options;
 	}
 	
 	public int getSelectedIndex() {
@@ -55,7 +59,7 @@ public class NavigationBar implements LeftMouseDownListener {
 		renderUtils.drawRoundedBox(drawContext.getMatrices(), centerX - (width / 2) + (100 * this.selectedIndex), 25, 100, 25, 5, new Color(150, 150, 150), 0.4f);
 			
 		for(int i = 0; i < options.size(); i++) {
-			NavigationPane pane = options.get(i);
+			Page pane = options.get(i);
 			if(i == selectedIndex) {
 				pane.render(drawContext, partialTicks, color);
 			}

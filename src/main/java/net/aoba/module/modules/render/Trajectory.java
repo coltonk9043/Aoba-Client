@@ -26,6 +26,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.Aoba;
+import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.misc.ModuleUtils;
@@ -46,8 +47,9 @@ import net.minecraft.util.math.Vec3d;
 public class Trajectory extends Module implements RenderListener {
 
 	public Trajectory() {
+		super(new KeybindSetting("key.trajectory", "Trajectory Key", new KeyBinding("key.trajectory", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+
 		this.setName("Trajectory");
-		this.setBind(new KeyBinding("key.trajectory", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba"));
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see where they are aiming. (DISABLED)");
 	}

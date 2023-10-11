@@ -4,6 +4,9 @@ import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.core.settings.types.IntegerSetting;
 import net.aoba.core.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.InputUtil.Key;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,12 +58,15 @@ public class SettingManager {
                     case DOUBLE, INTEGER, BOOLEAN, STRING -> {
                         config.setProperty(setting.ID, String.valueOf(setting.getValue()));
                     }
+                    case KEYBIND -> {
+                    	Key key = InputUtil.fromTranslationKey(((KeyBinding)setting.getValue()).getBoundKeyTranslationKey());
+                    	config.setProperty(setting.ID, String.valueOf(key.getCode()));
+                    }
                     case VECTOR2 -> {
                         config.setProperty(setting.ID + "_x", String.valueOf(((Vector2)setting.getValue()).x));
                         config.setProperty(setting.ID + "_y", String.valueOf(((Vector2)setting.getValue()).y));
                     }
                 }
-                // config.setProperty(setting.ID, String.valueOf(setting.getValue()));
             }
             config.storeToXML(new FileOutputStream(configFile), null);
         } catch (Exception ignored) {}
@@ -99,7 +105,10 @@ public class SettingManager {
                             }
                         }
                     }
-
+                    case KEYBIND -> {
+                    	int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
+                    	setting.setValue(new KeyBinding(setting.ID, keyCode, "key.categories.aoba"));
+                    }
                     case VECTOR2 -> {
                         String value_x = config.getProperty(setting.ID + "_x", null);
                         String value_y = config.getProperty(setting.ID + "_y", null);

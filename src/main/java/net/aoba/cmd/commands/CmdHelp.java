@@ -54,7 +54,7 @@ public class CmdHelp extends Command {
 				CommandManager.sendChatMessage(title);
 				CommandManager.sendChatMessage("Name: " + Formatting.LIGHT_PURPLE + module.getName() + Formatting.RESET);
 				CommandManager.sendChatMessage("Description: " + Formatting.LIGHT_PURPLE + module.getDescription() + Formatting.RESET);
-				CommandManager.sendChatMessage("Keybind: " + Formatting.LIGHT_PURPLE + module.getBind().getTranslationKey() + Formatting.RESET);
+				CommandManager.sendChatMessage("Keybind: " + Formatting.LIGHT_PURPLE + module.getBind().getValue().getTranslationKey() + Formatting.RESET);
 				CommandManager.sendChatMessage("-".repeat(unformatted_title.length() - 2)); // mc font characters are not the same width but eh..
 			}
 		}
