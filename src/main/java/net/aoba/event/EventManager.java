@@ -22,8 +22,9 @@ public class EventManager {
 			{
 				listOfListeners = new ArrayList<>(Arrays.asList(listener));
 				listeners.put((Class<AbstractListener>) object, listOfListeners);
+			}else {
+				listOfListeners.add(listener);
 			}
-			listOfListeners.add(listener);
 		}catch(Exception e) {
 			System.out.println("Issue adding listener: " + object.getTypeName() + "...");
 			e.printStackTrace();
