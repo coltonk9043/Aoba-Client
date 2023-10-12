@@ -26,14 +26,15 @@ import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class FastBreak extends Module {
 
 	private FloatSetting multiplier;
 	
 	public FastBreak() {
-		super(new KeybindSetting("key.fastbreak", "FastBreak Key", new KeyBinding("key.fastbreak", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-		
+		super(new KeybindSetting("key.fastbreak", "FastBreak Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+
 		this.setName("FastBreak");
 		this.setCategory(Category.Misc);
 		this.setDescription("Breaks blocks quicker based on a multiplier.");

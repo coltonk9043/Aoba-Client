@@ -28,6 +28,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 
@@ -35,8 +36,8 @@ public class AutoEat extends Module implements TickListener {
 	private int hunger = 6;
 	
 	public AutoEat() {
-		super(new KeybindSetting("key.autoeat", "AntiCactus Key", new KeyBinding("key.autoeat", GLFW.GLFW_KEY_N, "key.categories.aoba")));
-		
+		super(new KeybindSetting("key.autoeat", "AntiCactus Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+
 		this.setName("AutoEat");
 		this.setCategory(Category.Misc);
 		this.setDescription("Automatically eats the best food in your inventory.");

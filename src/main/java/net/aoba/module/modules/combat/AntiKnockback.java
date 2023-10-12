@@ -26,11 +26,12 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class AntiKnockback extends Module {
 	
 	public AntiKnockback() {
-		super(new KeybindSetting("key.antiknockback", "AntiKnockback Key", new KeyBinding("key.antiknockback", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.antiknockback", "AntiKnockback Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		
 		this.setName("AntiKnockback");
 		

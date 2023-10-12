@@ -34,6 +34,7 @@ import net.aoba.event.listeners.TickListener;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
@@ -52,7 +53,7 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 	private List<Vec3d> positions = new ArrayList<Vec3d>();
 	
 	public Breadcrumbs() {
-		super(new KeybindSetting("key.breadcrumbs", "Breadcrumbs Key", new KeyBinding("key.breadcrumbs", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.breadcrumbs", "Breadcrumbs Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Breadcrumbs");
 		this.setCategory(Category.Render);

@@ -58,7 +58,7 @@ public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListe
 			i += 30;
 		}
 
-		this.setHeight(i);
+		this.setHeight(i - 30);
 	}
 
 	public final String getTitle() {

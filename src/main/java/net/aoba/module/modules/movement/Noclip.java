@@ -29,14 +29,15 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
 
 public class Noclip extends Module implements TickListener {
 	private float flySpeed = 5;
 	
 	public Noclip() {
-		super(new KeybindSetting("key.noclip", "Noclip Key", new KeyBinding("key.noclip", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.noclip", "Noclip Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		
 		this.setName("Noclip");
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to clip through blocks (Only work clientside).");

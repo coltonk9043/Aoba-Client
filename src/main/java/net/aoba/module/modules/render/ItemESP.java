@@ -29,13 +29,14 @@ import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 
 public class ItemESP extends Module implements RenderListener {
 
 	public ItemESP() {
-		super(new KeybindSetting("key.itemesp", "ItemESP Key", new KeyBinding("key.itemesp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.itemesp", "ItemESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("ItemESP");
 		this.setCategory(Category.Render);

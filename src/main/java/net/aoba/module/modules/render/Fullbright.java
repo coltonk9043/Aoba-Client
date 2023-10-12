@@ -27,12 +27,13 @@ import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.interfaces.ISimpleOption;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class Fullbright extends Module {
 
 	private double previousValue = 0.0;
 	public Fullbright() {
-		super(new KeybindSetting("key.fullbright", "Fullbright Key", new KeyBinding("key.fullbright", GLFW.GLFW_KEY_F, "key.categories.aoba")));
+		super(new KeybindSetting("key.fullbright", "Fullbright Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Fullbright");
 		this.setCategory(Category.Render);

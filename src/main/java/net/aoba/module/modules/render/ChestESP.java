@@ -40,6 +40,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.entity.TrappedChestBlockEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Box;
 
 public class ChestESP extends Module implements RenderListener, TickListener {
@@ -52,7 +53,7 @@ public class ChestESP extends Module implements RenderListener, TickListener {
 	public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", "Effect Speed", 4, 1, 20, 0.1);
 	
 	public ChestESP() {
-		super(new KeybindSetting("key.chestesp", "ChestESP Key", new KeyBinding("key.chestesp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.chestesp", "ChestESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("ChestESP");
 		this.setCategory(Category.Render);

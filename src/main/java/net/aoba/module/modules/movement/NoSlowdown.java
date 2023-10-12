@@ -28,11 +28,12 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class NoSlowdown extends Module implements TickListener {
 
 	public NoSlowdown() {
-		super(new KeybindSetting("key.noslowdown", "NoSlowdown Key", new KeyBinding("key.noslowdown", GLFW.GLFW_KEY_Z, "key.categories.aoba")));
+		super(new KeybindSetting("key.noslowdown", "NoSlowdown Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("NoSlowdown");
 		this.setCategory(Category.Movement);

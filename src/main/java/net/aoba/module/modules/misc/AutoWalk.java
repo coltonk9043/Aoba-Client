@@ -28,11 +28,12 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class AutoWalk extends Module implements TickListener {
 	public AutoWalk() {
-		super(new KeybindSetting("key.autowalk", "AutoWalk Key", new KeyBinding("key.autowalk", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-		
+		super(new KeybindSetting("key.autowalk", "AutoWalk Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+
 		this.setName("AutoWalk");
 		this.setCategory(Category.Misc);
 		this.setDescription("Places blocks exceptionally fast");

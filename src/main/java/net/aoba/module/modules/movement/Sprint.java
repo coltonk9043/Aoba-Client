@@ -28,11 +28,12 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class Sprint extends Module implements TickListener {
 
 	public Sprint() {
-		super(new KeybindSetting("key.sprinthack", "Sprint Key", new KeyBinding("key.sprinthack", GLFW.GLFW_KEY_G, "key.categories.aoba")));
+		super(new KeybindSetting("key.sprinthack", "Sprint Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Sprint");
 		this.setCategory(Category.Movement);

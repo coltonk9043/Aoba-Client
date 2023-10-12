@@ -28,6 +28,7 @@ import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -36,8 +37,8 @@ import net.minecraft.util.Hand;
 
 public class AutoFish extends Module implements ReceivePacketListener {
 	public AutoFish() {
-		super(new KeybindSetting("key.autofish", "AutoFish Key", new KeyBinding("key.autofish", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-		
+		super(new KeybindSetting("key.autofish", "AutoFish Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+
 		this.setName("AutoFish");
 		this.setCategory(Category.Misc);
 		this.setDescription("Automatically fishes for you.");

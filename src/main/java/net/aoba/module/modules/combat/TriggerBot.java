@@ -10,6 +10,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -25,8 +26,8 @@ public class TriggerBot extends Module implements TickListener {
 	private BooleanSetting targetPlayers;
 
 	public TriggerBot() {
-		super(new KeybindSetting("key.triggerbot", "TriggerBot Key", new KeyBinding("key.triggerbot", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-		
+		super(new KeybindSetting("key.triggerbot", "TriggerBot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+
 		this.setName("Triggerbot");
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything you are looking at.");

@@ -31,6 +31,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -50,7 +51,7 @@ public class KillAura extends Module implements TickListener {
 	private BooleanSetting targetPlayers;
 	
 	public KillAura() {
-		super(new KeybindSetting("key.killaura", "Kill Aura Key", new KeyBinding("key.killaura", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.killaura", "Kill Aura Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		
 		this.setName("KillAura");
 		this.setCategory(Category.Combat);

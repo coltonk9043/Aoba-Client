@@ -29,14 +29,15 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class Jesus extends Module implements TickListener {
 
 	public BooleanSetting legit;
 
 	public Jesus() {
-		super(new KeybindSetting("key.jesus", "Jesus Key", new KeyBinding("key.jesus", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.jesus", "Jesus Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		
 		this.setName("Jesus");
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to walk on water.");

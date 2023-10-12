@@ -26,13 +26,14 @@ import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class Step extends Module {
 
 	private FloatSetting stepHeight;
 	
 	public Step() {
-		super(new KeybindSetting("key.step", "Step Key", new KeyBinding("key.step", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.step", "Step Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Step");
 		this.setCategory(Category.Movement);

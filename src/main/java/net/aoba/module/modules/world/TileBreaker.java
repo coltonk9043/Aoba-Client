@@ -36,6 +36,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -48,7 +49,7 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 	private FloatSetting radius;
 	
 	public TileBreaker() {
-		super(new KeybindSetting("key.tilebreaker", "TileBreaker Key", new KeyBinding("key.tilebreaker", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.tilebreaker", "TileBreaker Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("TileBreaker");
 		this.setCategory(Category.World);

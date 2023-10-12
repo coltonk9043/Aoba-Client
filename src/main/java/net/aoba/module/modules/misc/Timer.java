@@ -26,13 +26,14 @@ import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class Timer extends Module {
 	private FloatSetting multiplier;
 	
 	public Timer() {
-		super(new KeybindSetting("key.timer", "Timer Key", new KeyBinding("key.timer", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.timer", "Timer Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		
 		this.setName("Timer");
 		this.setCategory(Category.Misc);
 		this.setDescription("Increases the speed of Minecraft.");

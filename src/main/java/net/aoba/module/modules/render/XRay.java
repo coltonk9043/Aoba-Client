@@ -30,13 +30,14 @@ import net.aoba.module.Module;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class XRay extends Module {
 	public static ArrayList<Block> blocks = new ArrayList<Block>();
 
 	public XRay() {
-		super(new KeybindSetting("key.xray", "XRay Key", new KeyBinding("key.xray", GLFW.GLFW_KEY_X, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.xray", "XRay Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+	
 		this.setName("XRay");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see ores.");

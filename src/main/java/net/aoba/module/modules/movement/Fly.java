@@ -30,6 +30,7 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
@@ -38,8 +39,8 @@ public class Fly extends Module implements TickListener {
 	private FloatSetting flySpeed;
 	
 	public Fly() {
-		super(new KeybindSetting("key.fly", "Fly Key", new KeyBinding("key.fly", GLFW.GLFW_KEY_V, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.fly", "Fly Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0)));
+	
 		this.setName("Fly");
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to fly.");

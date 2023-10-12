@@ -38,6 +38,7 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.Item;
@@ -47,8 +48,8 @@ import net.minecraft.util.math.Vec3d;
 public class Trajectory extends Module implements RenderListener {
 
 	public Trajectory() {
-		super(new KeybindSetting("key.trajectory", "Trajectory Key", new KeyBinding("key.trajectory", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.trajectory", "Trajectory Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		
 		this.setName("Trajectory");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see where they are aiming. (DISABLED)");

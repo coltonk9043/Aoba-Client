@@ -26,12 +26,13 @@ import net.aoba.cmd.CommandManager;
 import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class AutoSign extends Module {
 	String[] text;
 
 	public AutoSign() {
-		super(new KeybindSetting("key.autosign", "AutoSign Key", new KeyBinding("key.autosign", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.autosign", "AutoSign Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("AutoSign");
 		this.setCategory(Category.World);

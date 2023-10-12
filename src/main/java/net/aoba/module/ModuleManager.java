@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import net.aoba.Aoba;
 import net.aoba.core.settings.Setting;
 import net.aoba.core.settings.SettingManager;
+import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.RenderEvent;
+import net.aoba.event.listeners.KeyDownListener;
 import org.lwjgl.opengl.GL11;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.modules.combat.*;
@@ -36,9 +38,10 @@ import net.aoba.module.modules.render.*;
 import net.aoba.module.modules.world.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil.Key;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class ModuleManager {
+public class ModuleManager implements KeyDownListener {
 	public ArrayList<Module> modules = new ArrayList<Module>();
 	
 	//Modules
@@ -145,18 +148,11 @@ public class ModuleManager {
 				SettingManager.register_setting(setting, Aoba.getInstance().settingManager.modules_category);
 			}
 		}
+		
+		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 	}
 	
 	public void update() {
-		
-		
-		for(Module module : modules) {
-			KeyBinding binding = module.getBind().getValue();
-			if(binding.wasPressed()) {
-				module.toggle();
-				binding.setPressed(false);
-			}
-		}
 	}
 	
 	public void render(MatrixStack matrixStack) {
@@ -165,9 +161,7 @@ public class ModuleManager {
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		
-		
-		
+
 		matrixStack.push();
 		RenderUtils.applyRenderOffset(matrixStack);
 		
@@ -197,5 +191,15 @@ public class ModuleManager {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void OnKeyDown(KeyDownEvent event) {
+		for(Module module : modules) {
+			Key binding = module.getBind().getValue();
+			if(binding.getCode() == event.GetKey()) {
+				module.toggle();
+			}
+		}
 	}
 }

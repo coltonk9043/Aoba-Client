@@ -26,12 +26,13 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class AntiCactus extends Module {
 	
 	public AntiCactus() {
-		super(new KeybindSetting("key.anticactus", "AntiCactus Key", new KeyBinding("key.anticactus", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-		
+		super(new KeybindSetting("key.anticactus", "AntiCactus Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+
 		this.setName("AntiCactus");
 		this.setCategory(Category.Misc);
 		this.setDescription("Prevents blocks from hurting you.");

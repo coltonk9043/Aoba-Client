@@ -34,6 +34,7 @@ import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -52,7 +53,7 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 	public FloatSetting effectSpeed = new FloatSetting("entityesp_effectspeed", "Effect Speed", "Effect Speed", 4, 1, 20, 0.1);
 	
 	public EntityESP() {
-		super(new KeybindSetting("key.entityesp", "EntityESP Key", new KeyBinding("key.entityesp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.entityesp", "EntityESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("EntityESP");
 		this.setCategory(Category.Render);

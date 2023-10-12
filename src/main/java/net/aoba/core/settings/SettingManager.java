@@ -107,7 +107,7 @@ public class SettingManager {
                     }
                     case KEYBIND -> {
                     	int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
-                    	setting.setValue(new KeyBinding(setting.ID, keyCode, "key.categories.aoba"));
+                    	setting.setValue(InputUtil.fromKeyCode(keyCode, 0));
                     }
                     case VECTOR2 -> {
                         String value_x = config.getProperty(setting.ID + "_x", null);

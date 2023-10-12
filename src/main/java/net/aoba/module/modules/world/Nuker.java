@@ -35,6 +35,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
 import net.minecraft.util.math.BlockPos;
@@ -47,7 +48,7 @@ public class Nuker extends Module implements RenderListener, TickListener {
 	private FloatSetting radius;
 
 	public Nuker() {
-		super(new KeybindSetting("key.nuker", "Nuker Key", new KeyBinding("key.nuker", GLFW.GLFW_KEY_N, "key.categories.aoba")));
+		super(new KeybindSetting("key.nuker", "Nuker Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Nuker");
 		this.setCategory(Category.World);

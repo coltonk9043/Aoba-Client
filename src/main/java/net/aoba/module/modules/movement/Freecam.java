@@ -32,6 +32,7 @@ import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.util.math.Vec3d;
 
@@ -40,8 +41,8 @@ public class Freecam extends Module implements TickListener {
 	private FloatSetting flySpeed;
 	
 	public Freecam() {
-		super(new KeybindSetting("key.freecam", "Freecam Key", new KeyBinding("key.freecam", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.freecam", "Freecam Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		
 		this.setName("Freecam");
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to clip through blocks (Only work clientside).");

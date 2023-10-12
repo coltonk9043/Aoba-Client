@@ -31,6 +31,7 @@ import net.aoba.module.Module;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -41,7 +42,7 @@ public class POV extends Module implements TickListener {
 	
 	private boolean fakePlayerSpawned = false;
 	public POV() {
-		super(new KeybindSetting("key.pov", "POV Key", new KeyBinding("key.pov", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.pov", "POV Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("POV");
 		this.setCategory(Category.Render);

@@ -28,6 +28,7 @@ import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket;
 import net.minecraft.network.packet.s2c.play.HealthUpdateS2CPacket;
@@ -35,8 +36,7 @@ import net.minecraft.network.packet.s2c.play.HealthUpdateS2CPacket;
 public class AutoRespawn extends Module implements ReceivePacketListener {
 	
 	public AutoRespawn() {
-		
-		super(new KeybindSetting("key.autorespawn", "AutoRespawn Key", new KeyBinding("key.autorespawn", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.autorespawn", "AutoRespawn Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("AutoRespawn");
 

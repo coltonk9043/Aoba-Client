@@ -27,6 +27,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.CropBlock;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
@@ -50,7 +51,7 @@ public class AutoFarm extends Module implements TickListener {
 	private FloatSetting radius;
 
 	public AutoFarm() {
-		super(new KeybindSetting("key.autofarm", "AutoFarm Key", new KeyBinding("key.autofarm", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.autofarm", "AutoFarm Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("AutoFarm");
 		this.setCategory(Category.World);

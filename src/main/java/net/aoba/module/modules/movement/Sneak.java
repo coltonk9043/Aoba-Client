@@ -29,13 +29,14 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
 
 public class Sneak extends Module implements TickListener {
 
 	public Sneak() {
-		super(new KeybindSetting("key.sneakhack", "Sneak Key", new KeyBinding("key.sneakhack", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.sneakhack", "Sneak Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Sneak");
 		this.setCategory(Category.Movement);

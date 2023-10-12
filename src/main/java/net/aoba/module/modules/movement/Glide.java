@@ -29,12 +29,13 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class Glide extends Module implements TickListener {
 	private float fallSpeed = .25f;
 	public Glide() {
-		super(new KeybindSetting("key.glide", "Glide Key", new KeyBinding("key.glide", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.glide", "Glide Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		
 		this.setName("Glide");
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to glide down.");

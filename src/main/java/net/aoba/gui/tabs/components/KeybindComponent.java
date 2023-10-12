@@ -32,7 +32,7 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 		renderUtils.drawString(drawContext, "Keybind", actualX + 8, actualY + 8, 0xFFFFFF);
 		renderUtils.drawBox(drawContext.getMatrices(), actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4, new Color(115, 115, 115), 0.8f);
 		renderUtils.drawOutline(drawContext.getMatrices(), actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4);
-		renderUtils.drawString(drawContext, this.keyBind.getValue().getBoundKeyLocalizedText().getString(), actualX + actualWidth - 90, actualY + 8, 0xFFFFFF);
+		renderUtils.drawString(drawContext, this.keyBind.getValue().getLocalizedText().getString(), actualX + actualWidth - 90, actualY + 8, 0xFFFFFF);
 	}
 
 	@Override
@@ -47,8 +47,7 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 		if(listeningForKey) {
 			int key = event.GetKey();
 			int scanCode = event.GetScanCode();
-			
-			keyBind.getValue().setBoundKey(InputUtil.fromKeyCode(key, scanCode));
+			keyBind.setValue(InputUtil.fromKeyCode(key, scanCode));
 			listeningForKey = false;
 			
 			event.SetCancelled(true);

@@ -30,6 +30,7 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly;
 import net.minecraft.particle.ParticleEffect;
@@ -41,8 +42,8 @@ public class Jetpack extends Module implements TickListener {
 	private FloatSetting jetpackSpeed;
 	
 	public Jetpack() {
-		super(new KeybindSetting("key.jetpack", "Jetpack Key", new KeyBinding("key.jetpack", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.jetpack", "Jetpack Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+	
 		this.setName("Jetpack");
 		this.setCategory(Category.Movement);
 		this.setDescription("Like fly, but a lot more fun!");

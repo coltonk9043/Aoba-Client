@@ -28,13 +28,14 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly;
 
 public class NoFall extends Module implements TickListener {
 
 	public NoFall() {
-		super(new KeybindSetting("key.nofall", "NoFall Key", new KeyBinding("key.nofall", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.nofall", "NoFall Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		
 		this.setName("No-Fall");
 		this.setCategory(Category.Movement);
 		this.setDescription("Prevents fall damage.");

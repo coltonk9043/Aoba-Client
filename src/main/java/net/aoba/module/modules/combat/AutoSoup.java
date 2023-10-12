@@ -29,6 +29,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -44,7 +45,7 @@ public class AutoSoup extends Module implements TickListener {
 	private int previousSlot = -1;
 	
 	public AutoSoup() {
-		super(new KeybindSetting("key.autosoup", "AutoSoup Key", new KeyBinding("key.autosoup", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.autosoup", "AutoSoup Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("AutoSoup");
 		this.setCategory(Category.Combat);

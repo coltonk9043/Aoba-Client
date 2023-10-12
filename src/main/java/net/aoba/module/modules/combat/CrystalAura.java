@@ -32,6 +32,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
@@ -48,8 +49,8 @@ public class CrystalAura extends Module implements TickListener {
 	private float radius = 10.0f;
 
 	public CrystalAura() {
-		super(new KeybindSetting("key.crystalaura", "Crystal Aura Key", new KeyBinding("key.crystalaura", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.crystalaura", "Crystal Aura Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		
 		this.setName("CrystalAura");
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything within your personal space.");

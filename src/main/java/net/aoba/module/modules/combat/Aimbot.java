@@ -36,6 +36,8 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.InputUtil.Key;
 
 public class Aimbot extends Module implements RenderListener, TickListener {
 
@@ -45,9 +47,9 @@ public class Aimbot extends Module implements RenderListener, TickListener {
 	private BooleanSetting targetPlayers;
 
 	public Aimbot() {
-		super(new KeybindSetting("key.aimbot", "Aimbot Key", new KeyBinding("key.aimbot", GLFW.GLFW_KEY_K, "key.categories.aoba")));
+		super(new KeybindSetting("key.aimbot", "Aimbot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		this.setName("Aimbot");
-
+		
 		this.setCategory(Category.Combat);
 		this.setDescription("Locks your crosshair towards a desire player or entity.");
 		

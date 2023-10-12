@@ -30,11 +30,12 @@ import net.aoba.gui.Color;
 import net.aoba.module.Module;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class PlayerESP extends Module implements RenderListener {
 
 	public PlayerESP() {
-		super(new KeybindSetting("key.playeresp", "PlayerESP Key", new KeyBinding("key.playeresp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.playeresp", "PlayerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("PlayerESP");
 		this.setCategory(Category.Render);

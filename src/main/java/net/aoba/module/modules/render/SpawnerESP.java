@@ -34,13 +34,14 @@ import net.aoba.module.Module;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Box;
 
 public class SpawnerESP extends Module implements RenderListener {
 
 	public SpawnerESP() {
-		super(new KeybindSetting("key.spawneresp", "SpawnerESP Key", new KeyBinding("key.spawneresp", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
-
+		super(new KeybindSetting("key.spawneresp", "SpawnerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		
 		this.setName("SpawnerESP");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see spawners with an ESP.");

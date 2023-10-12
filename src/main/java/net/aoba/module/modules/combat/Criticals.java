@@ -28,11 +28,12 @@ import net.aoba.event.events.SendPacketEvent;
 import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.module.Module;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class Criticals extends Module implements SendPacketListener {
 
 	public Criticals() {
-		super(new KeybindSetting("key.criticals", "Criticals Key", new KeyBinding("key.criticals", GLFW.GLFW_KEY_UNKNOWN, "key.categories.aoba")));
+		super(new KeybindSetting("key.criticals", "Criticals Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Criticals");
 		this.setCategory(Category.Combat);
