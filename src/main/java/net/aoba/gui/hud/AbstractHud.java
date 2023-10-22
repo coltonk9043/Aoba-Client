@@ -30,7 +30,9 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 
 	protected boolean isMouseOver = false;
 	public boolean moveable = true;
-	public boolean visible = true;
+	
+	protected boolean alwaysVisible = false;
+	protected boolean visible = false;
 	
 	// Mouse Variables
 	protected double lastClickOffsetX;
@@ -46,9 +48,6 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 		this.height = height;
 
 		SettingManager.register_setting(position, Aoba.getInstance().settingManager.hidden_category);
-
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
 	}
 
 	@Override
@@ -59,7 +58,6 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 	@Override
 	public float getX() {
 		return position.getValue().x;
-		
 	}
 
 	@Override
@@ -108,6 +106,43 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 			}
 		}
 	}
+	
+	public boolean getVisible() {
+		return this.visible;
+	}
+	
+	public void setVisible(boolean state) {
+		if(this.visible == state || alwaysVisible) return;
+		
+		this.visible = state;
+		
+		for(Component component : children){
+			component.setVisible(state);
+		}
+		
+		// Binds/Unbinds respective listeners depending on whether it is visible.
+		if(state) {
+			Aoba.instance.eventManager.AddListener(LeftMouseDownListener.class, this);
+			Aoba.instance.eventManager.AddListener(MouseMoveListener.class, this);
+		}else {
+			Aoba.instance.eventManager.RemoveListener(LeftMouseDownListener.class, this);
+			Aoba.instance.eventManager.RemoveListener(MouseMoveListener.class, this);
+		}
+	}
+	
+	public void setAlwaysVisible(boolean state) {
+		this.alwaysVisible = state;
+		if(this.alwaysVisible) {
+			this.visible = true;
+			
+			for(Component component : children){
+				component.setVisible(true);
+			}
+			
+			Aoba.instance.eventManager.AddListener(LeftMouseDownListener.class, this);
+			Aoba.instance.eventManager.AddListener(MouseMoveListener.class, this);
+		}
+	}
 
 	public abstract void update();
 
@@ -134,8 +169,7 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 
 	@Override
 	public void OnMouseMove(MouseMoveEvent event) {
-
-		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
+		if (this.visible && Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			double mouseX = event.GetHorizontal();
 			double mouseY = event.GetVertical();
 
@@ -151,6 +185,13 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 					isMouseOver = true;
 				}
 			}
+		}else {
+			isMouseOver = false;
 		}
+	}
+	
+	@Override
+	public void OnChildChanged(IHudElement child) {
+		
 	}
 }

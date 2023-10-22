@@ -13,4 +13,6 @@ public interface IHudElement {
 	public void setY(float y);
 	public void setWidth(float width);
 	public void setHeight(float height);
+	
+	public void OnChildChanged(IHudElement child);
 }

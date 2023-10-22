@@ -24,7 +24,9 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 	}
 
 	@Override
-	public void update() {}
+	public void update() {
+		super.update();
+	}
 	
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {

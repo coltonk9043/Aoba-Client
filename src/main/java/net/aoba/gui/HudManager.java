@@ -50,9 +50,7 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 	public static AbstractHud currentGrabbed = null;
 
 	private List<AbstractHud> activeHuds = new ArrayList<AbstractHud>();
-	
-	
-	
+
 	private boolean wasTildaPressed = false;
 
 	public NavigationBar clickGuiNavBar;
@@ -73,9 +71,6 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		color = new Color(hue.getValue().floatValue(), 1f, 1f);
 		currentColor = color;
 		rainbowColor = new RainbowColor();
-		// rainbow.setValue(Settings.getSettingBoolean("rainbowUI"));
-		// TODO: ^^^^^^^^^^^^^^
-
 		clickGuiNavBar = new NavigationBar();
 		
 		Page modulesPane = new Page("Modules");
@@ -86,6 +81,8 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
 		
 		ModuleSelectorHud moduleSelector = new ModuleSelectorHud();
+		moduleSelector.setAlwaysVisible(true);
+		
 		ArmorHud armorHud = new ArmorHud(790, 500, 200, 50);
 		RadarHud radarHud = new RadarHud(590, 500, 180, 180);
 		InfoHud infoHud = new InfoHud(100, 500);
@@ -133,6 +130,8 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
+		
+		clickGuiNavBar.setSelectedIndex(0);
 	}
 
 	public void AddHud(AbstractHud hud, String pageName) {
@@ -218,7 +217,9 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
-		matrixStack.scale(1.0f / mc.options.getGuiScale().getValue(), 1.0f / mc.options.getGuiScale().getValue(), 1.0f);
+		
+		int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
+		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
 
 		Window window = mc.getWindow();
 		
@@ -230,14 +231,11 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 			clickGuiNavBar.draw(drawContext, tickDelta, this.currentColor);
 		}else {
 			for(AbstractHud hud : activeHuds) {
-				if(hud.visible) {
+				if(hud.getVisible()) {
 					hud.draw(drawContext, tickDelta, this.currentColor);
 				}
 			}
 		}
-
-		
-		
 		matrixStack.pop();
 		GL11.glEnable(GL11.GL_CULL_FACE);
 	}

@@ -33,6 +33,8 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	 */
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+		super.draw(drawContext, partialTicks, color);
+		
 		MatrixStack matrixStack = drawContext.getMatrices();
 		renderUtils.drawString(drawContext, this.text, actualX + 10, actualY + 8, 0xFFFFFF);
 		if (this.checkbox.getValue()) {
@@ -50,6 +52,7 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	 */
 	@Override
 	public void update() {
+		super.update();
 	}
 
 	/**

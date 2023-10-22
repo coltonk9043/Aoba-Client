@@ -23,6 +23,7 @@ public class NavigationBar implements LeftMouseDownListener {
 	public NavigationBar() {
 		options = new ArrayList<Page>();
 		renderUtils = new RenderUtils();
+		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
 	public void addPane(Page pane) {
@@ -35,6 +36,14 @@ public class NavigationBar implements LeftMouseDownListener {
 	
 	public int getSelectedIndex() {
 		return this.selectedIndex;
+	}
+	
+	public void setSelectedIndex(int index) {
+		if(index <= this.options.size()) {
+			this.options.get(selectedIndex).setVisible(false);
+			this.selectedIndex = index;
+			this.options.get(selectedIndex).setVisible(true);
+		}
 	}
 	
 	public void update() {
@@ -65,7 +74,6 @@ public class NavigationBar implements LeftMouseDownListener {
 			}
 			renderUtils.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, color);
 		}
-		
 	}
 
 	@Override
@@ -84,7 +92,7 @@ public class NavigationBar implements LeftMouseDownListener {
 				if (mouseY >= (25) && mouseY <= (50)) {
 					int mouseXInt = (int) mouseX;
 					int selection = (mouseXInt - x) / 100; 
-					this.selectedIndex = selection;
+					this.setSelectedIndex(selection);
 				}
 			}
 		}

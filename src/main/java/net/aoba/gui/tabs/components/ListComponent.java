@@ -73,7 +73,6 @@ public class ListComponent extends Component implements LeftMouseDownListener {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-		
+		super.update();
 	}
 }

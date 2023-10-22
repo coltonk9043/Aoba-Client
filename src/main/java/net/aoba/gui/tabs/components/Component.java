@@ -1,12 +1,10 @@
 package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
 import net.aoba.gui.IHudElement;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
@@ -16,7 +14,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	
 	private static boolean DEBUG = true;
 	
-	private boolean visible = true;
+	private boolean visible = false;
 	protected boolean hovered = false;
 	
 	// NEW ui variables.
@@ -57,7 +55,6 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 		if(renderUtils == null) {
 			renderUtils = Aoba.getInstance().renderUtils;
 		}
-		Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
 	}
 	
 	/**
@@ -117,6 +114,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 			this.x = x;
 			this.actualX = this.parent.getX() + x;
 			updateChildrenPosition();
+			this.parent.OnChildChanged(this);
 		}
 	}
 	
@@ -125,6 +123,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 			this.y = y;
 			this.actualY = this.parent.getY() + y;
 			updateChildrenPosition();
+			this.parent.OnChildChanged(this);
 		}
 	}
 	
@@ -133,6 +132,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 			this.width = width;
 			this.actualWidth = width;
 			updateChildrenPosition();
+			this.parent.OnChildChanged(this);
 		}
 	}
 	
@@ -147,6 +147,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 			this.height = height;
 			this.actualHeight = height;
 			updateChildrenPosition();
+			this.parent.OnChildChanged(this);
 		}
 	}
 	
@@ -164,6 +165,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 				actualHeight = height;
 			}	
 			updateChildrenPosition();
+			this.parent.OnChildChanged(this);
 		}
 	}
 	
@@ -176,6 +178,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 				actualHeight = height;
 			}
 			updateChildrenPosition();
+			this.parent.OnChildChanged(this);
 		}
 	}
 	
@@ -194,6 +197,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 				actualWidth = width;
 			}	
 			updateChildrenPosition();
+			this.parent.OnChildChanged(this);
 		}
 	}
 	
@@ -206,11 +210,13 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 				actualWidth = width;
 			}
 			updateChildrenPosition();
+			this.parent.OnChildChanged(this);
 		}
 	}
 	
 	public void addChild(Component component) {
 		this.children.add(component);
+		this.OnChildAdded(component);
 	}
 	
 	protected void updateChildrenPosition() {
@@ -264,14 +270,24 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	 * @param bool State to set visibility to.
 	 */
 	public void setVisible(boolean bool) {
-		this.visible = bool;
+		if(this.visible == bool) return;
 		
+		this.visible = bool;
+		this.hovered = false;
+		
+		for(Component child : this.children) {
+			child.setVisible(true);
+		}
+		
+		this.parent.OnChildChanged(this);
 		// Register and Unregister event listener according to state.
 		if(bool) {
 			Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
 		}else {
 			Aoba.getInstance().eventManager.RemoveListener(MouseMoveListener.class, this);
 		}
+		
+		this.OnVisibilityChanged();
 	}
 	
 	/**
@@ -302,13 +318,15 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	 * @param color Color of the UI.
 	 */
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
-		if(this.hovered && DEBUG) {
-			renderUtils.drawOutline(drawContext.getMatrices(), this.actualX, this.actualY, this.actualWidth, this.actualHeight);
-		}
+		if(this.visible) {
+			if(this.hovered && DEBUG) {
+				renderUtils.drawOutline(drawContext.getMatrices(), this.actualX, this.actualY, this.actualWidth, this.actualHeight);
+			}
 
-		for(Component child : children) {
-			if(child.visible) {
-				child.draw(drawContext, partialTicks, color);
+			for(Component child : children) {
+				if(child.visible) {
+					child.draw(drawContext, partialTicks, color);
+				}
 			}
 		}
 	}
@@ -319,7 +337,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	 */
 	@Override
 	public void OnMouseMove(MouseMoveEvent mouseMoveEvent) {
-		if (HudManager.currentGrabbed != null || !visible) {
+		if (!visible) {
 			this.hovered = false;
 		}else {
 				double mouseX = mouseMoveEvent.GetHorizontal();
@@ -327,5 +345,18 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 				
 				this.hovered = ((mouseX >= actualX && mouseX <= (actualX + actualWidth)) && (mouseY >= (actualY) && mouseY <= (actualY + actualHeight)));	
 		}
+	}
+	
+	public void OnChildAdded(IHudElement child) {
+		
+	}
+	
+	@Override
+	public void OnChildChanged(IHudElement child) {
+		
+	}
+	
+	public void OnVisibilityChanged() {
+		
 	}
 }

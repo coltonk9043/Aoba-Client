@@ -100,7 +100,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 
 	@Override
 	public void update() {
-
+		super.update();
 	}
 
 	@Override

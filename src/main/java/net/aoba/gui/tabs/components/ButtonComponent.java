@@ -28,8 +28,6 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 		super(parent);
 		this.text = text;
 		this.onClick = onClick;
-
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
 	/**
@@ -86,7 +84,15 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-		
+		super.update();
+	}
+	
+	@Override
+	public void OnVisibilityChanged() {
+		if(this.isVisible()) {
+			Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+		}else {
+			Aoba.getInstance().eventManager.RemoveListener(LeftMouseDownListener.class, this);
+		}
 	}
 }

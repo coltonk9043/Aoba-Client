@@ -15,13 +15,27 @@ public class StackPanelComponent extends Component {
 
 	@Override
 	public void update() {
+		super.update();
+	}
+	
+	@Override
+	public void OnChildAdded(IHudElement child) {
+		this.RecalculateHeight();
+	}
+	
+	@Override
+	public void OnChildChanged(IHudElement child) {
+		this.RecalculateHeight();
+	}
+	
+	public void RecalculateHeight() {
 		int height = 0;
 		for(int i = 0; i < children.size(); i++) {
-			Component child = children.get(i);
+			Component iChild = children.get(i);
 
 			// If the child is visible, increase the height of the StackPanel.
-			if (child.isVisible()) {
-				height += child.getHeight();
+			if (iChild.isVisible()) {
+				height += iChild.getHeight();
 			}	
 			
 			// Move the Top of the child below to the top + height of the previous element.

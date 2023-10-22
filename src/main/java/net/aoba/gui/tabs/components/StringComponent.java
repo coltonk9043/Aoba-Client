@@ -66,7 +66,6 @@ public class StringComponent extends Component {
 					actualY + 8 + i, 0xFFFFFF);
 			i += 30;
 		}
-		
 	}
 	
 	/**
