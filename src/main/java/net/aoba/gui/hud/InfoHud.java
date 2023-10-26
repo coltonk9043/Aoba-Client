@@ -15,6 +15,7 @@ public class InfoHud extends AbstractHud {
 	// 
 	public InfoHud(int x, int y) {
 		super("InfoHud", x, y, 190, 60);
+		this.setVisible(false);
 	}
 	
 	@Override
@@ -54,16 +55,18 @@ public class InfoHud extends AbstractHud {
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
-		MatrixStack matrixStack = drawContext.getMatrices();
-		// Draws background depending on components width and height
-		
-		Vector2 pos = position.getValue();
-		
-		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, new Color(30,30,30), 0.4f);
-		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, new Color(0,0,0), 0.8f);
-		
-		renderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, color);
-		renderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, color);
-		renderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, color);
+		if(this.visible) {
+			MatrixStack matrixStack = drawContext.getMatrices();
+			// Draws background depending on components width and height
+			
+			Vector2 pos = position.getValue();
+			
+			renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, new Color(30,30,30), 0.4f);
+			renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, new Color(0,0,0), 0.8f);
+			
+			renderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, color);
+			renderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, color);
+			renderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, color);
+		}
 	}
 }

@@ -21,6 +21,8 @@ public class OptionsTab extends AbstractHud implements MouseScrollListener {
 		super("Options", 40, 220, 100, 100);
 
 		Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
+		
+		
 	}
 
 	@Override

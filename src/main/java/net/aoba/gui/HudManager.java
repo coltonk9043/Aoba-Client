@@ -50,11 +50,17 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 	public static AbstractHud currentGrabbed = null;
 
 	private List<AbstractHud> activeHuds = new ArrayList<AbstractHud>();
-
+	private List<AbstractHud> pinnableHuds = new ArrayList<AbstractHud>();
+	
 	private boolean wasTildaPressed = false;
 
+	// Navigation Bar and Pages
 	public NavigationBar clickGuiNavBar;
-
+	public Page modulesPane = new Page("Modules");
+	public Page toolsPane = new Page("Tools");
+	public Page hudPane = new Page("Hud");
+	
+	// Global HUD Settings
 	public FloatSetting hue = new FloatSetting("color_hue", "Hue", 4, 0, 360, 1, null);
 	public FloatSetting effectSpeed = new FloatSetting("color_speed", "Effect Spd", 4, 1, 20, 0.1, null);
 	public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
@@ -72,12 +78,7 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		currentColor = color;
 		rainbowColor = new RainbowColor();
 		clickGuiNavBar = new NavigationBar();
-		
-		Page modulesPane = new Page("Modules");
-		Page toolsPane = new Page("Tools");
-		Page hudPane = new Page("Hud");
-		//NavigationPane settingsPane = new NavigationPane("Settings");
-		
+	
 		toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
 		
 		ModuleSelectorHud moduleSelector = new ModuleSelectorHud();
@@ -87,16 +88,12 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		RadarHud radarHud = new RadarHud(590, 500, 180, 180);
 		InfoHud infoHud = new InfoHud(100, 500);
 		
-		// TODO: Dumb workaround but I would like to be able to add HUDs through the pane found on the NavBar
 		this.activeHuds.add(moduleSelector);
-		this.activeHuds.add(armorHud);
-		this.activeHuds.add(radarHud);
-		this.activeHuds.add(infoHud);
+		this.AddPinnableHud(armorHud);
+		this.AddPinnableHud(radarHud);
+		this.AddPinnableHud(infoHud);
 		
-		hudPane.AddHud(moduleSelector);
-		hudPane.AddHud(armorHud);
-		hudPane.AddHud(radarHud);
-		hudPane.AddHud(infoHud);
+		hudPane.AddHud(new HudsTab(pinnableHuds));
 		
 		//settingsPane.AddHud(new OptionsTab());
 		
@@ -113,7 +110,7 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 				}
 			}
 			tab.addChild(stackPanel);
-			
+			tab.setWidth(180);
 			modulesPane.AddHud(tab);
 			xOffset += tab.getWidth() + 10;
 		}
@@ -149,6 +146,27 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 				page.tabs.remove(hud);
 				break;
 			}
+		}
+	}
+	
+	/**
+	 * Registers a HUD as Pinnable, which gives it a little more functionality.
+	 */
+	public void AddPinnableHud(AbstractHud hud) {
+		hudPane.AddHud(hud);
+		pinnableHuds.add(hud);
+	}
+	
+	public List<AbstractHud> GetPinnableHuds(){
+		return this.pinnableHuds;
+	}
+	
+	public void SetHudActive(AbstractHud hud, boolean state) {
+		if(state) {
+			this.activeHuds.add(hud);
+		}
+		else {
+			this.activeHuds.remove(hud);
 		}
 	}
 	

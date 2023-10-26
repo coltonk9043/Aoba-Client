@@ -11,87 +11,86 @@ public class StringComponent extends Component {
 	private boolean bold;
 	private String originalText;
 	private ArrayList<String> text;
-	
+
 	public StringComponent(String text, IHudElement parent) {
 		super(parent);
 		this.originalText = text;
 		this.text = new ArrayList<String>();
-		
+
 		int strings = (int) ((text.length() * 15) / (parent.getWidth() - 20));
 		System.out.println(text.length() * 5);
-		
-		if(strings <= 1) {
+
+		if (strings <= 1) {
 			this.text.add(text);
 			this.setHeight(30);
-		}else {
+		} else {
 			int lengthOfEachSegment = text.length() / strings;
-			
-			for(int i = 0; i < strings; i++) {
+
+			for (int i = 0; i < strings; i++) {
 				this.text.add(text.substring(lengthOfEachSegment * i, (lengthOfEachSegment * i) + lengthOfEachSegment));
 			}
 			this.setHeight(strings * 30);
 		}
-		
+
 		this.bold = false;
 	}
-	
+
 	public StringComponent(String text, IHudElement parent, boolean bold) {
 		super(parent);
 		this.originalText = text;
 		this.text = new ArrayList<String>();
-		
-		int strings = (int) ((text.length() * 5) / parent.getWidth());
-		System.out.println(text.length() * 5);
-		
-		if(strings == 0) {
+
+		int strings = (int) ((text.length() * 5) / this.actualWidth);
+		if (strings == 0) {
 			this.text.add(text);
 			this.setHeight(30);
-		}else {
+		} else {
 			int lengthOfEachSegment = text.length() / strings;
-			
-			for(int i = 0; i < strings; i++) {
+
+			for (int i = 0; i < strings; i++) {
 				this.text.add(text.substring(lengthOfEachSegment * i, (lengthOfEachSegment * i) + lengthOfEachSegment));
 			}
 			this.setHeight(strings * 30);
 		}
-		
+
 		this.bold = bold;
 	}
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		int i = 0;
-		for(String str : text) {
-			renderUtils.drawString(drawContext, str, actualX + 10,
-					actualY + 8 + i, 0xFFFFFF);
+		for (String str : text) {
+			renderUtils.drawString(drawContext, str, actualX + 10, actualY + 8 + i, 0xFFFFFF);
 			i += 30;
 		}
 	}
-	
+
 	/**
 	 * Sets the text of the String Component.
+	 * 
 	 * @param text The text to set.
 	 */
 	public void setText(String text) {
 		this.originalText = text;
 		this.text = new ArrayList<String>();
-		
-		int strings = (int) ((text.length() * 5) / parent.getWidth());
-		if(strings == 0) {
+
+		int strings = (int) ((text.length() * 5) / this.actualWidth);
+		if (strings == 0) {
 			this.text.add(text);
 			this.setHeight(30);
-		}else {
+		} else {
 			int lengthOfEachSegment = text.length() / strings;
-			
-			for(int i = 0; i < strings; i++) {
+
+			for (int i = 0; i < strings; i++) {
 				this.text.add(text.substring(lengthOfEachSegment * i, (lengthOfEachSegment * i) + lengthOfEachSegment));
 			}
 			this.setHeight(strings * 30);
 		}
 	}
-	
+
 	/**
 	 * Gets the text of the String Component.
+	 * 
 	 * @return Text of the String Component as a string.
 	 */
 	public String getText() {
@@ -101,6 +100,23 @@ public class StringComponent extends Component {
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void OnParentWidthChanged() {
+		int strings = (int) ((originalText.length() * 5) / this.actualWidth);
+		if (strings == 0) {
+			this.text.add(originalText);
+			this.setHeight(30);
+		} else {
+			int lengthOfEachSegment = originalText.length() / strings;
+
+			for (int i = 0; i < strings; i++) {
+				this.text.add(originalText.substring(lengthOfEachSegment * i,
+						(lengthOfEachSegment * i) + lengthOfEachSegment));
+			}
+			this.setHeight(strings * 30);
+		}
 	}
 }

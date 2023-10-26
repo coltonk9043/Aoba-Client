@@ -1,6 +1,7 @@
 package net.aoba.gui.hud;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import net.aoba.Aoba;
 import net.aoba.core.settings.SettingManager;
@@ -42,14 +43,28 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 	
 	public AbstractHud(String ID, float x, float y, float width, float height) {
 		this.ID = ID;
-
-		this.position = new Vector2Setting(ID + "_position", "GUI POS", new Vector2(x, y));
+		
+		//TODO: I don't like this. It will use the setting to store position, but will only use this
+		// runnable when it needs to update from loading. Perhaps we could either forget about storing 
+		// gui position OR we could find another way to do this.
+		this.position = new Vector2Setting(ID + "_position", "GUI POS", new Vector2(x, y), (Vector2 vec) -> UpdateAll(vec));
 		this.width = width;
 		this.height = height;
 
 		SettingManager.register_setting(position, Aoba.getInstance().settingManager.hidden_category);
 	}
 
+	public void UpdateAll(Vector2 vec) {
+		for(Component component : this.children) {
+			component.OnParentXChanged();
+			component.OnParentYChanged();
+		}
+	}
+	
+	public String getID() {
+		return ID;
+	}
+	
 	@Override
 	public float getHeight() {
 		return this.height;
@@ -73,18 +88,18 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 	@Override
 	public void setX(float x) {
 		if(this.position.getValue().x != x) {
-			position.setX(x);
+			position.silentSetX(x);
 			for(Component component : this.children) {
-				component.onParentMoved();
+				component.OnParentXChanged();
 			}
 		}
 	}
 
 	public void setY(float y) {
 		if(this.position.getValue().y != y) {
-			position.setY(y);
+			position.silentSetY(y);
 			for(Component component : this.children) {
-				component.onParentMoved();
+				component.OnParentYChanged();
 			}
 		}
 	}
@@ -93,7 +108,7 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 		if(this.width != width) {
 			this.width = width;
 			for(Component component : this.children) {
-				component.onParentMoved();
+				component.OnParentWidthChanged();
 			}
 		}
 	}
@@ -102,7 +117,7 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 		if(this.height != height) {
 			this.height = height;
 			for(Component component : this.children) {
-				component.onParentMoved();
+				component.OnParentHeightChanged();
 			}
 		}
 	}

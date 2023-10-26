@@ -53,7 +53,6 @@ public class ClickGuiTab extends AbstractHud implements LeftMouseDownListener, M
 		super(title + "_tab", x, y, 180, 0);
 		this.title = title;
 
-		this.width = 180;
 		this.pinnable = pinnable;
 
 		isPinned = new BooleanSetting(title + "_pinned", "IS PINNED", false);

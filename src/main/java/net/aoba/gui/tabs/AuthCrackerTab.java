@@ -8,13 +8,11 @@ import java.util.concurrent.TimeUnit;
 import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.gui.tabs.components.ButtonComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
+import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.aoba.gui.tabs.components.StringComponent;
 import net.minecraft.client.MinecraftClient;
 
 public class AuthCrackerTab extends ClickGuiTab {
-	
-	private StringComponent information;
-	private SliderComponent delaySlider;
 	private ButtonComponent start;
 
 	private FloatSetting delay = new FloatSetting("authcracker_delay", "Delay", 100, 50, 50000, 1, null);
@@ -28,16 +26,17 @@ public class AuthCrackerTab extends ClickGuiTab {
 		super(title, x, y, false);
 		this.width = 360.0f;
 		
+		StackPanelComponent stackPanel = new StackPanelComponent(this);
+		stackPanel.setTop(30);
+		
+		StringComponent label = new StringComponent("This panel can be used to break Auth passwords used in cracked servers.", stackPanel);
+		label.setHeight(30);
+		stackPanel.addChild(label);
+		
+		SliderComponent slider = new SliderComponent(stackPanel, delay);
+		slider.setHeight(30);
+		stackPanel.addChild(slider);
 
-		
-		this.information = new StringComponent("This panel can be used to break Auth passwords used in cracked servers.", this);
-		this.addChild(information);
-		
-		
-		
-		this.delaySlider = new SliderComponent(this, delay);
-		this.addChild(delaySlider);
-		
 		authCracker = new AuthCracker(delay);
 		
 		this.startRunnable = new Runnable() {
@@ -58,8 +57,11 @@ public class AuthCrackerTab extends ClickGuiTab {
 			}
 		};
 		
-		this.start = new ButtonComponent(this, "Start", startRunnable);
-		this.addChild(this.start);
+		start = new ButtonComponent(stackPanel, "Start", startRunnable);
+		start.setHeight(30);
+		stackPanel.addChild(start);
+		
+		this.children.add(stackPanel);
 	}
 }
 

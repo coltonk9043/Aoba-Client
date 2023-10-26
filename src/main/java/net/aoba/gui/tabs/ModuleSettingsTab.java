@@ -2,7 +2,6 @@ package net.aoba.gui.tabs;
 
 import net.aoba.Aoba;
 import net.aoba.core.settings.Setting;
-import net.aoba.core.settings.SettingManager;
 import net.aoba.core.settings.types.BooleanSetting;
 import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.core.settings.types.IndexedStringListSetting;

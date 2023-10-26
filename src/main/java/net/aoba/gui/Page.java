@@ -33,16 +33,20 @@ public class Page {
 	}
 	
 	public void update() {
-		Iterator<AbstractHud> tabIterator =  tabs.iterator();
-		while(tabIterator.hasNext()) {
-			tabIterator.next().update();
+		if(this.isVisible) {
+			Iterator<AbstractHud> tabIterator =  tabs.iterator();
+			while(tabIterator.hasNext()) {
+				tabIterator.next().update();
+			}
 		}
 	}
 	
 	public void render(DrawContext drawContext, float partialTicks, Color color) {
-		Iterator<AbstractHud> tabIterator =  tabs.iterator();
-		while(tabIterator.hasNext()) {
-			tabIterator.next().draw(drawContext, partialTicks, color);
+		if(this.isVisible) {
+			Iterator<AbstractHud> tabIterator =  tabs.iterator();
+			while(tabIterator.hasNext()) {
+				tabIterator.next().draw(drawContext, partialTicks, color);
+			}
 		}
 	}
 }

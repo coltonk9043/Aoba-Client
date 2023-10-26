@@ -31,10 +31,10 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	protected boolean autoWidth;
 	protected boolean autoHeight;
 	
-	private float top;
-	private float bottom;
-	private float left;
-	private float right;
+	private float top = -1;
+	private float bottom= -1;
+	private float left = -1;
+	private float right = -1;
 	
 	// The actual screen space positions of the HUD elements. 
 	protected float actualX;
@@ -112,8 +112,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	public void setX(float x) {
 		if(this.x != x) {
 			this.x = x;
-			this.actualX = this.parent.getX() + x;
-			updateChildrenPosition();
+			this.setActualX(x);
 			this.parent.OnChildChanged(this);
 		}
 	}
@@ -121,8 +120,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	public void setY(float y) {
 		if(this.y != y) {
 			this.y = y;
-			this.actualY = this.parent.getY() + y;
-			updateChildrenPosition();
+			this.setActualY(y);
 			this.parent.OnChildChanged(this);
 		}
 	}
@@ -130,8 +128,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	public void setWidth(float width) {
 		if(this.width != width) {
 			this.width = width;
-			this.actualWidth = width;
-			updateChildrenPosition();
+			this.setActualWidth(width);
 			this.parent.OnChildChanged(this);
 		}
 	}
@@ -145,8 +142,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	{
 		if(this.height != height) {
 			this.height = height;
-			this.actualHeight = height;
-			updateChildrenPosition();
+			this.setActualHeight(height);
 			this.parent.OnChildChanged(this);
 		}
 	}
@@ -154,17 +150,15 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	public void setTop(float top) {
 		if(this.top != top) {
 			this.top = top;
+			
 			if(y == 0.0f) {
-				actualY = parent.getY() + top;	
-			}else {
-				actualY = y;
+				this.setActualY(parent.getY() + top);
 			}
+			
 			if(height == 0.0f) {
-				actualHeight = parent.getHeight() - top - bottom;
-			}else {
-				actualHeight = height;
-			}	
-			updateChildrenPosition();
+				this.setActualHeight(parent.getHeight() - top - bottom);
+			}
+
 			this.parent.OnChildChanged(this);
 		}
 	}
@@ -173,11 +167,8 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 		if(this.bottom != bottom) {
 			this.bottom = bottom;
 			if(height == 0.0) {
-				actualHeight = parent.getHeight() - top - bottom;
-			}else {
-				actualHeight = height;
+				this.setActualHeight(parent.getHeight() - top - bottom);
 			}
-			updateChildrenPosition();
 			this.parent.OnChildChanged(this);
 		}
 	}
@@ -186,17 +177,11 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 		if(this.left != left) {
 			this.left = left;
 			if(x == 0.0) {
-				actualX = parent.getX() + left;
-			}else {
-				actualX = x;
+				this.setActualX(parent.getX() + left);
 			}
-			
 			if(width == 0.0f) {
-				actualWidth = parent.getWidth() - left - right;
-			}else {
-				actualWidth = width;
-			}	
-			updateChildrenPosition();
+				this.setActualWidth(parent.getWidth() - left - right);
+			}
 			this.parent.OnChildChanged(this);
 		}
 	}
@@ -205,56 +190,78 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 		if(this.right != right) {
 			this.right = right;
 			if(width == 0.0f) {
-				actualWidth = parent.getWidth() - right - left;
-			}else {
-				actualWidth = width;
+				this.setActualWidth(parent.getWidth() - right - left);
 			}
-			updateChildrenPosition();
 			this.parent.OnChildChanged(this);
 		}
 	}
+	
+	private void setActualX(float value) {
+		if(actualX == value) return;
+		
+		actualX = value;
+		for(Component child : children) {
+			child.OnParentXChanged();
+		}
+	}
+	
+	private void setActualY(float value) {
+		if(actualY == value) return;
+		
+		actualY = value;
+		for(Component child : children) {
+			child.OnParentYChanged();
+		}
+	}
+	
+	private void setActualWidth(float value) {
+		if(actualWidth == value) return;
+		
+		actualWidth = value;
+		for(Component child : children) {
+			child.OnParentWidthChanged();
+		}
+	}
+	
+	private void setActualHeight(float value) {
+		if(actualHeight == value) return;
+		
+		actualHeight = value;
+		for(Component child : children) {
+			child.OnParentHeightChanged();
+		}
+	}
+	
 	
 	public void addChild(Component component) {
 		this.children.add(component);
 		this.OnChildAdded(component);
 	}
 	
-	protected void updateChildrenPosition() {
-		for(Component child : children) {
-			child.onParentMoved();
+	public void OnParentXChanged() {
+		if(x == 0.0) {
+			setActualX(parent.getX() + left);
 		}
 	}
 	
-	/**
-	 * Updates the position of these elements whenever the parent is moved.
-	 */
-	public void onParentMoved() {
-		// Set Y and Height
+	public void OnParentYChanged() {
 		if(y == 0.0f) {
-			actualY = parent.getY() + top;	
-		}else {
-			actualY = y;
+			setActualY(parent.getY() + top);	
 		}
-		if(height == 0.0f) {
-			actualHeight = parent.getHeight() - top - bottom;
-		}else {
-			actualHeight = height;
-		}	
-		
-		// Set X and Width
-		if(x == 0.0) {
-			actualX = parent.getX() + left;
-		}else {
-			actualX = x;
-		}
-		
-		if(width == 0.0f) {
-			actualWidth = parent.getWidth() - left - right;
-		}else {
-			actualWidth = width;
-		}	
-		updateChildrenPosition();
 	}
+	
+	public void OnParentWidthChanged() {
+		if(width == 0.0f) {
+			setActualWidth(parent.getWidth() - left - right);
+		}
+	}
+	
+	public void OnParentHeightChanged() {
+		if(height == 0.0f) {
+			setActualHeight(parent.getHeight() - top - bottom);
+		}
+	}
+	
 	
 	/**
 	 * Returns the parent of the Component.
@@ -276,7 +283,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 		this.hovered = false;
 		
 		for(Component child : this.children) {
-			child.setVisible(true);
+			child.setVisible(bool);
 		}
 		
 		this.parent.OnChildChanged(this);
@@ -330,7 +337,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 			}
 		}
 	}
-	
+	 
 	/**
 	 * Triggers when the mouse is moved.
 	 * @param mouseMoveEvent Event fired.

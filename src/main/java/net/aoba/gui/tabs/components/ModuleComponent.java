@@ -55,8 +55,8 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		double mouseX = event.GetMouseX();
 		double mouseY = event.GetMouseY();
+		
 		if (hovered) {
-			if(mouseY >= actualY && mouseY <= actualY + 30){
 				boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
 				if (isOnOptionsButton) {
 					if(lastSettingsTab == null) {
@@ -71,7 +71,6 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 					module.toggle();
 					return;
 				}
-			}
 		}
 	}
 	

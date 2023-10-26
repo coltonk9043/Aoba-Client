@@ -22,8 +22,11 @@
 
 package net.aoba.gui.hud;
 
+import net.aoba.Aoba;
 import net.aoba.core.utils.types.Vector2;
+import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.gui.Color;
+import net.aoba.gui.HudManager;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -33,6 +36,7 @@ public class ArmorHud extends AbstractHud{
 
 	public ArmorHud(int x, int y, int width, int height) {
 		super("ArmorHud", x,y,width,height);
+		this.setVisible(false);
 		this.width = 64;
 		this.height = 256;
 	}
@@ -44,14 +48,25 @@ public class ArmorHud extends AbstractHud{
 	
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
-		DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
-		
-		Vector2 pos = position.getValue();
-		int yOff = 16;
-		for(ItemStack armor : armors) {
-			if(armor.getItem() == Items.AIR) continue;
-			drawContext.drawItem(armor, (int)pos.x, (int)(pos.y + this.height - yOff));
-			yOff += 16;
+		if(this.visible) {
+			DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
+			
+			Vector2 pos = position.getValue();
+			int yOff = 16;
+			for(ItemStack armor : armors) {
+				if(armor.getItem() == Items.AIR) continue;
+				drawContext.drawItem(armor, (int)pos.x, (int)(pos.y + this.height - yOff));
+				yOff += 16;
+			}
+		}
+	}
+	
+	@Override
+	public void OnLeftMouseDown(LeftMouseDownEvent event) {
+		super.OnLeftMouseDown(event);
+
+		if(this.isMouseOver) {
+			HudManager.currentGrabbed = this;
 		}
 	}
 }

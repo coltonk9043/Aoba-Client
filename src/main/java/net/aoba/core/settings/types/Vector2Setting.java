@@ -16,6 +16,7 @@ public class Vector2Setting extends Setting<Vector2> {
 		type = TYPE.VECTOR2;
 	}
 	
+	
 	public Vector2Setting(String ID, String description, Vector2 default_value, Consumer<Vector2> onUpdate) {
 		super(ID, description, default_value, onUpdate);
 		type = TYPE.VECTOR2;

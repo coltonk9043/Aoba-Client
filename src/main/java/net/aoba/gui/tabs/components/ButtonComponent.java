@@ -5,6 +5,7 @@ import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
+import net.aoba.gui.IHudElement;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -24,7 +25,7 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	 * @param text Text contained in this button element.
 	 * @param onClick OnClick delegate that will run when the button is pressed.
 	 */
-	public ButtonComponent(ClickGuiTab parent, String text, Runnable onClick) {
+	public ButtonComponent(IHudElement parent, String text, Runnable onClick) {
 		super(parent);
 		this.text = text;
 		this.onClick = onClick;
@@ -59,7 +60,7 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 		renderUtils.drawOutlinedBox(matrixStack, actualX + 2, actualY, actualWidth - 4, actualHeight - 2,
 				backgroundColor, 0.2f);
 
-		renderUtils.drawString(drawContext, this.text, actualY + 8, actualY + 8, 0xFFFFFF);
+		renderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);
 	}
 
 	/**
