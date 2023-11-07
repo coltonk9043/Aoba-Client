@@ -30,6 +30,7 @@ public class HudComponent extends Component implements LeftMouseDownListener {
 		super.draw(drawContext, partialTicks, color);
 		renderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);
 		
+
 		
 		if(this.hud.getVisible()) {
 			renderUtils.drawString(drawContext, "-", actualX + actualWidth - 16, actualY + 8, 0xFF0000);

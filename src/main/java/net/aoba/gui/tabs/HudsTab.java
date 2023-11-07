@@ -9,6 +9,7 @@ import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.hud.AbstractHud;
+import net.aoba.gui.tabs.components.ColorPickerComponent;
 import net.aoba.gui.tabs.components.HudComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.minecraft.client.gui.DrawContext;
@@ -33,8 +34,11 @@ public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 
 			stackPanel.addChild(hudComponent);
 		}
-
+		
+		stackPanel.addChild(new ColorPickerComponent("Hud Color", stackPanel, Aoba.getInstance().hudManager.color));
+		
 		this.children.add(stackPanel);
+		this.setWidth(300);
 	}
 	
 	@Override

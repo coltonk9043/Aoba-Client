@@ -27,6 +27,11 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	 */
 	public ButtonComponent(IHudElement parent, String text, Runnable onClick) {
 		super(parent);
+		
+		this.setLeft(2);
+		this.setRight(2);
+		this.setHeight(30);
+		
 		this.text = text;
 		this.onClick = onClick;
 	}

@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.mojang.authlib.GameProfile;
 import net.aoba.Aoba;
+import net.aoba.gui.HudManager;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
@@ -43,6 +44,14 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
 	private void sendMovementPackets(CallbackInfo ci) {
 		if (Aoba.getInstance().moduleManager.freecam.getState()) {
 			ci.cancel();
+		}
+	}
+	
+	@Inject (at = {@At("HEAD")}, method="setShowsDeathScreen(Z)V")
+	private void onShowDeathScreen(boolean state, CallbackInfo ci) {
+		HudManager hudManager = Aoba.getInstance().hudManager;
+		if(state && hudManager.isClickGuiOpen()) {
+			hudManager.setClickGuiOpen(false);
 		}
 	}
 	

@@ -37,7 +37,7 @@ public class ArmorHud extends AbstractHud{
 	public ArmorHud(int x, int y, int width, int height) {
 		super("ArmorHud", x,y,width,height);
 		this.setVisible(false);
-		this.width = 64;
+		this.width = 60;
 		this.height = 256;
 	}
 

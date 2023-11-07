@@ -4,6 +4,7 @@
   "package": "net.aoba.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+	"interfaces.ILivingEntity",
   ],
   "client": [
 	"AbstractBlockStateMixin",
@@ -16,6 +17,7 @@
 	"ClientPlayerEntityMixin",
 	"ClientPlayerInteractionManagerMixin",
 	"ClientConnectionMixin",
+	"DeathScreenMixin",
 	"EntityMixin",
 	"FluidBlockMixin",
 	"GameRendererMixin",

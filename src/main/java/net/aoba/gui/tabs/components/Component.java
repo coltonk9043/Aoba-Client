@@ -12,7 +12,7 @@ import net.minecraft.client.gui.DrawContext;
 public abstract class Component implements IHudElement, MouseMoveListener {
 	protected static RenderUtils renderUtils;
 	
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	
 	private boolean visible = false;
 	protected boolean hovered = false;
@@ -158,7 +158,6 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 			if(height == 0.0f) {
 				this.setActualHeight(parent.getHeight() - top - bottom);
 			}
-
 			this.parent.OnChildChanged(this);
 		}
 	}
@@ -231,8 +230,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 			child.OnParentHeightChanged();
 		}
 	}
-	
-	
+
 	public void addChild(Component component) {
 		this.children.add(component);
 		this.OnChildAdded(component);

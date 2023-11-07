@@ -95,6 +95,11 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 		}	
 	}
 	
+	@Inject(at = {@At(value="HEAD")}, method = {"openPauseMenu(Z)V"})
+	private void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
+		Aoba.getInstance().hudManager.setClickGuiOpen(false);
+	}
+	
 	@Override
 	public int getItemUseCooldown()
 	{
@@ -106,4 +111,5 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	{
 		this.itemUseCooldown = delay;
 	}
+	
 }

@@ -30,7 +30,8 @@ public class Color {
 	public int r;
 	public int g;
 	public int b;
-
+	public int alpha = 255;
+	
 	public float hue;
 	public float saturation;
 	public float luminance;
@@ -48,6 +49,13 @@ public class Color {
 		this.b = b;
 	}
 
+	public Color(int r, int g, int b, int alpha) {
+		this.r = r;
+		this.g = g;
+		this.b = b;
+		this.alpha = alpha;
+	}
+	
 	/**
 	 * Color Constructor using HSV color space.
 	 * 
@@ -108,12 +116,12 @@ public class Color {
 	 */
 	public int getColorAsInt() {
 		// Perform shifts and Bitwise AND to get color value in integer format.
+		int Alpha = ((this.alpha) << 24) & 0xFF000000;
 		int R = ((this.r) << 16) & 0x00FF0000;
 		int G = ((this.g) << 8) & 0x0000FF00;
 		int B = (this.b) & 0x000000FF;
-
 		// Return the color as a combination of these values.
-		return 0xFF000000 | R | G | B;
+		return Alpha | R | G | B;
 	}
 
 	/**

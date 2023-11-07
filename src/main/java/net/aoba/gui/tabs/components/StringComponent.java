@@ -3,12 +3,9 @@ package net.aoba.gui.tabs.components;
 import java.util.ArrayList;
 import net.aoba.gui.Color;
 import net.aoba.gui.IHudElement;
-import net.aoba.gui.tabs.ClickGuiTab;
 import net.minecraft.client.gui.DrawContext;
 
 public class StringComponent extends Component {
-
-	private boolean bold;
 	private String originalText;
 	private ArrayList<String> text;
 
@@ -18,8 +15,6 @@ public class StringComponent extends Component {
 		this.text = new ArrayList<String>();
 
 		int strings = (int) ((text.length() * 15) / (parent.getWidth() - 20));
-		System.out.println(text.length() * 5);
-
 		if (strings <= 1) {
 			this.text.add(text);
 			this.setHeight(30);
@@ -31,8 +26,6 @@ public class StringComponent extends Component {
 			}
 			this.setHeight(strings * 30);
 		}
-
-		this.bold = false;
 	}
 
 	public StringComponent(String text, IHudElement parent, boolean bold) {
@@ -52,8 +45,6 @@ public class StringComponent extends Component {
 			}
 			this.setHeight(strings * 30);
 		}
-
-		this.bold = bold;
 	}
 
 	@Override

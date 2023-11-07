@@ -5,7 +5,9 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.core.utils.types.Vector2;
+import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.gui.Color;
+import net.aoba.gui.HudManager;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
 import net.minecraft.client.MinecraftClient;
@@ -150,5 +152,14 @@ public class ModuleSelectorHud extends AbstractHud {
 				iteration++;
 			}
 		}
+	}
+	
+	@Override
+	public void OnLeftMouseDown(LeftMouseDownEvent event) {
+		if(this.isMouseOver) {
+			HudManager.currentGrabbed = this;
+		}
+		
+		super.OnLeftMouseDown(event);
 	}
 }
