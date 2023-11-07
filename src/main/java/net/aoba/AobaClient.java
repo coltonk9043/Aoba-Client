@@ -23,12 +23,12 @@ package net.aoba;
 
 import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
-import net.aoba.core.settings.SettingManager;
 import net.aoba.event.EventManager;
 import net.aoba.gui.HudManager;
 import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.ModuleManager;
+import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
@@ -73,6 +73,7 @@ public class AobaClient {
 		commandManager = new CommandManager();
 		System.out.println("[Aoba] Initializing GUI");
 		hudManager = new HudManager();
+		hudManager.Initialize();
 		System.out.println("[Aoba] Loading Alts");
 		altManager = new AltManager();
 		System.out.println("[Aoba] Aoba-chan initialized and ready to play!");

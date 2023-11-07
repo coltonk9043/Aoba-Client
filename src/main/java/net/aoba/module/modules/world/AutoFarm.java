@@ -39,13 +39,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.aoba.Aoba;
-import net.aoba.core.settings.types.FloatSetting;
-import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.ModuleUtils;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
+import net.aoba.settings.types.FloatSetting;
+import net.aoba.settings.types.KeybindSetting;
 
 public class AutoFarm extends Module implements TickListener {
 	private FloatSetting radius;

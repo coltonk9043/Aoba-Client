@@ -1,9 +1,9 @@
-package net.aoba.core.settings.types;
-
-import net.aoba.core.settings.Setting;
+package net.aoba.settings.types;
 
 import java.util.List;
 import java.util.function.Consumer;
+
+import net.aoba.settings.Setting;
 
 public class StringListSetting extends Setting<List<String>> {
 	public StringListSetting(String ID, String description, List<String> default_value) {

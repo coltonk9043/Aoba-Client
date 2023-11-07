@@ -1,7 +1,8 @@
-package net.aoba.core.settings.types;
+package net.aoba.settings.types;
 
 import java.util.function.Consumer;
-import net.aoba.core.settings.Setting;
+
+import net.aoba.settings.Setting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil.Key;
 

@@ -28,12 +28,12 @@ import java.util.List;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.core.settings.Setting;
-import net.aoba.core.settings.SettingManager;
-import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.misc.RenderUtils;
+import net.aoba.settings.Setting;
+import net.aoba.settings.SettingManager;
+import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 

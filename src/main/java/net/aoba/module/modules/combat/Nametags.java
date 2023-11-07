@@ -22,10 +22,11 @@
 package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
-import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.FloatSetting;
-import net.aoba.core.settings.types.KeybindSetting;
+
 import net.aoba.module.Module;
+import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.FloatSetting;
+import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 

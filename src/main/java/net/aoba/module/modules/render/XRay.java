@@ -24,9 +24,9 @@ package net.aoba.module.modules.render;
 import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 
-import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.interfaces.ISimpleOption;
 import net.aoba.module.Module;
+import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.option.KeyBinding;

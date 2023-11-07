@@ -1,7 +1,8 @@
-package net.aoba.core.settings.types;
+package net.aoba.settings.types;
 
-import net.aoba.core.settings.Setting;
 import net.aoba.core.utils.types.Vector2;
+import net.aoba.settings.Setting;
+
 import java.util.function.Consumer;
 
 public class Vector2Setting extends Setting<Vector2> {

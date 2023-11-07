@@ -1,11 +1,6 @@
 package net.aoba.gui.tabs;
 
 import net.aoba.Aoba;
-import net.aoba.core.settings.Setting;
-import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.FloatSetting;
-import net.aoba.core.settings.types.IndexedStringListSetting;
-import net.aoba.core.settings.types.StringListSetting;
 import net.aoba.core.utils.types.Vector2;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
@@ -21,6 +16,11 @@ import net.aoba.gui.tabs.components.SliderComponent;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.aoba.module.Module;
+import net.aoba.settings.Setting;
+import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.FloatSetting;
+import net.aoba.settings.types.IndexedStringListSetting;
+import net.aoba.settings.types.StringListSetting;
 
 public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListener, MouseMoveListener {
 	protected String title;
@@ -52,9 +52,8 @@ public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListe
 			}
 
 			c.setTop(i);
-			c.setHeight(30);
 			children.add(c);
-			i += 30;
+			i += c.getHeight();
 		}
 
 		this.setHeight(i - 30);
@@ -101,7 +100,9 @@ public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListe
 		renderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0), 0.4f);
 
 		renderUtils.drawBox(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, color, 1.0f);
-
+		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(0,0,0), 1.0f);
+		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(0,0,0), 1.0f);
+		
 		for (Component child : children) {
 			child.draw(drawContext, partialTicks, color);
 		}
@@ -125,6 +126,7 @@ public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListe
 			if (mouseX >= (pos.x + width - 24) && mouseX <= (pos.x + width - 2)) {
 				if (mouseY >= (pos.y + 4) && mouseY <= (pos.y + 20)) {
 					HudManager.currentGrabbed = null;
+					Aoba.getInstance().hudManager.RemoveHud(this, "Modules");
 				}
 			}
 		}

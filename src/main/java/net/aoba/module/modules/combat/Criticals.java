@@ -23,10 +23,10 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
-import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.event.events.SendPacketEvent;
 import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.module.Module;
+import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 

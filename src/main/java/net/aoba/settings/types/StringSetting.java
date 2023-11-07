@@ -1,7 +1,8 @@
-package net.aoba.core.settings.types;
+package net.aoba.settings.types;
 
-import net.aoba.core.settings.Setting;
 import java.util.function.Consumer;
+
+import net.aoba.settings.Setting;
 
 public class StringSetting extends Setting<String> {
 	public StringSetting(String ID, String description, String default_value) {

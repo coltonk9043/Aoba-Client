@@ -22,11 +22,9 @@
 package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
-
-import net.aoba.core.settings.types.KeybindSetting;
 import net.aoba.interfaces.ISimpleOption;
 import net.aoba.module.Module;
-import net.minecraft.client.option.KeyBinding;
+import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 
 public class Fullbright extends Module {

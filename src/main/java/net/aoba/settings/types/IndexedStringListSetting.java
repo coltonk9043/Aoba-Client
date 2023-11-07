@@ -1,4 +1,4 @@
-package net.aoba.core.settings.types;
+package net.aoba.settings.types;
 
 import java.util.List;
 import java.util.function.Consumer;

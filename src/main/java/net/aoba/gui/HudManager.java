@@ -3,9 +3,6 @@ package net.aoba.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.aoba.core.settings.SettingManager;
-import net.aoba.core.settings.types.BooleanSetting;
-import net.aoba.core.settings.types.FloatSetting;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.LeftMouseUpEvent;
 import net.aoba.event.events.MouseScrollEvent;
@@ -28,6 +25,10 @@ import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.aoba.misc.RainbowColor;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module.Category;
+import net.aoba.settings.SettingManager;
+import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.FloatSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
@@ -38,12 +39,9 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 	protected RenderUtils renderUtils = new RenderUtils();
-	
 
-	private KeyBinding clickGuiButton = new KeyBinding("key.clickgui", GLFW.GLFW_KEY_GRAVE_ACCENT,
-			"key.categories.aoba");
-	private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE,
-			"key.categories.aoba");
+	private KeyBinding clickGuiButton = new KeyBinding("key.clickgui", GLFW.GLFW_KEY_GRAVE_ACCENT, "key.categories.aoba");
+	private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
 
 	private boolean clickGuiOpen = false;
 
@@ -67,28 +65,32 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 	public BooleanSetting ah = new BooleanSetting("armorhud_toggle", "ArmorHUD", false, null);
 
 	private Color currentColor;
-	private Color color;
+
+	public ColorSetting color;
+	
 	private RainbowColor rainbowColor;
 
 	public HudManager() {
 		mc = MinecraftClient.getInstance();
 		
 		renderUtils = Aoba.getInstance().renderUtils;
-		color = new Color(hue.getValue().floatValue(), 1f, 1f);
-		currentColor = color;
+		color = new ColorSetting("hudcolor", "The color of the HUD", new Color(hue.getValue().floatValue(), 1f, 1f));
+		currentColor = color.getValue();
 		rainbowColor = new RainbowColor();
 		clickGuiNavBar = new NavigationBar();
-	
-		toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
+	}
+
+	public void Initialize() {
+			toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
 		
 		ModuleSelectorHud moduleSelector = new ModuleSelectorHud();
-		moduleSelector.setAlwaysVisible(true);
+		this.SetHudActive(moduleSelector, true);
 		
 		ArmorHud armorHud = new ArmorHud(790, 500, 200, 50);
 		RadarHud radarHud = new RadarHud(590, 500, 180, 180);
 		InfoHud infoHud = new InfoHud(100, 500);
 		
-		this.activeHuds.add(moduleSelector);
+		this.AddPinnableHud(moduleSelector);
 		this.AddPinnableHud(armorHud);
 		this.AddPinnableHud(radarHud);
 		this.AddPinnableHud(infoHud);
@@ -130,7 +132,7 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		
 		clickGuiNavBar.setSelectedIndex(0);
 	}
-
+	
 	public void AddHud(AbstractHud hud, String pageName) {
 		for(Page page : clickGuiNavBar.getPanes()) {
 			if(page.getTitle().equals(pageName)) {
@@ -164,9 +166,12 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 	public void SetHudActive(AbstractHud hud, boolean state) {
 		if(state) {
 			this.activeHuds.add(hud);
+			hud.setAlwaysVisible(true);
 		}
 		else {
 			this.activeHuds.remove(hud);
+			hud.setAlwaysVisible(false);
+			hud.setVisible(false);
 		}
 	}
 	
@@ -179,7 +184,7 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 	}
 	
 	public Color getOriginalColor() {
-		return this.color;
+		return this.color.getValue();
 	}
 	
 	public void update() {
@@ -222,8 +227,7 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 			rainbowColor.update(this.effectSpeed.getValue().floatValue());
 			this.currentColor = rainbowColor.getColor();
 		}else {
-			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
-			this.currentColor = color;
+			this.currentColor = color.getValue();
 		}
 		
 		Aoba.getInstance().eventManager.Fire(new MouseScrollEvent(5.0f, 5.0f));
@@ -266,6 +270,11 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		return this.clickGuiOpen;
 	}
 
+	public void setClickGuiOpen(boolean state) {
+		this.clickGuiOpen = state;	
+		currentGrabbed = null;
+	}
+	
 	/**
 	 * Locks and unlocks the Mouse.
 	 */
@@ -286,8 +295,6 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 
 	@Override
 	public void OnLeftMouseUp(LeftMouseUpEvent event) {
-		if(this.clickGuiOpen) {
-			currentGrabbed = null;
-		}
+		currentGrabbed = null;
 	}
 }

@@ -24,8 +24,6 @@ package net.aoba.module;
 import java.util.ArrayList;
 
 import net.aoba.Aoba;
-import net.aoba.core.settings.Setting;
-import net.aoba.core.settings.SettingManager;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.KeyDownListener;
@@ -36,6 +34,8 @@ import net.aoba.module.modules.misc.*;
 import net.aoba.module.modules.movement.*;
 import net.aoba.module.modules.render.*;
 import net.aoba.module.modules.world.*;
+import net.aoba.settings.Setting;
+import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil.Key;
@@ -74,6 +74,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module nametags = new Nametags();
 	public Module noclip = new Noclip();
 	public Module nofall = new NoFall();
+	public Module nojumpdelay = new NoJumpDelay();
 	public Module nooverlay = new NoOverlay();
 	public Module noslowdown = new NoSlowdown();
 	public Module nuker = new Nuker();
@@ -124,6 +125,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(nametags);
 		addModule(noclip);
 		addModule(nofall);
+		addModule(nojumpdelay);
 		addModule(nooverlay);
 		addModule(noslowdown);
 		addModule(nuker);

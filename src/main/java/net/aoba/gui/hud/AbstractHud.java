@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import net.aoba.Aoba;
-import net.aoba.core.settings.SettingManager;
-import net.aoba.core.settings.types.Vector2Setting;
 import net.aoba.core.utils.types.Vector2;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.MouseMoveEvent;
@@ -16,6 +14,8 @@ import net.aoba.gui.HudManager;
 import net.aoba.gui.IHudElement;
 import net.aoba.gui.tabs.components.Component;
 import net.aoba.misc.RenderUtils;
+import net.aoba.settings.SettingManager;
+import net.aoba.settings.types.Vector2Setting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
@@ -43,14 +43,9 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 	
 	public AbstractHud(String ID, float x, float y, float width, float height) {
 		this.ID = ID;
-		
-		//TODO: I don't like this. It will use the setting to store position, but will only use this
-		// runnable when it needs to update from loading. Perhaps we could either forget about storing 
-		// gui position OR we could find another way to do this.
 		this.position = new Vector2Setting(ID + "_position", "GUI POS", new Vector2(x, y), (Vector2 vec) -> UpdateAll(vec));
 		this.width = width;
 		this.height = height;
-
 		SettingManager.register_setting(position, Aoba.getInstance().settingManager.hidden_category);
 	}
 
@@ -127,7 +122,9 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 	}
 	
 	public void setVisible(boolean state) {
-		if(this.visible == state || alwaysVisible) return;
+		if(alwaysVisible) state = true;
+		
+		if(this.visible == state) return;
 		
 		this.visible = state;
 		
@@ -148,14 +145,7 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 	public void setAlwaysVisible(boolean state) {
 		this.alwaysVisible = state;
 		if(this.alwaysVisible) {
-			this.visible = true;
-			
-			for(Component component : children){
-				component.setVisible(true);
-			}
-			
-			Aoba.instance.eventManager.AddListener(LeftMouseDownListener.class, this);
-			Aoba.instance.eventManager.AddListener(MouseMoveListener.class, this);
+			this.setVisible(true);
 		}
 	}
 
@@ -198,7 +188,11 @@ public abstract class AbstractHud implements IHudElement, LeftMouseDownListener,
 			if (mouseX >= pos.x && mouseX <= pos.x + width) {
 				if (mouseY >= pos.y && mouseY <= pos.y + height) {
 					isMouseOver = true;
+				}else {
+					isMouseOver = false;
 				}
+			}else {
+				isMouseOver = false;
 			}
 		}else {
 			isMouseOver = false;

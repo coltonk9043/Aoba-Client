@@ -1,7 +1,8 @@
-package net.aoba.core.settings.types;
+package net.aoba.settings.types;
 
-import net.aoba.core.settings.Setting;
 import java.util.function.Consumer;
+
+import net.aoba.settings.Setting;
 
 public class IntegerSetting extends Setting<Integer> {
 	public final int min_value;
