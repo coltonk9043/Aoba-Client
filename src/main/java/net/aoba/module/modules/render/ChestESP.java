@@ -34,6 +34,7 @@ import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RainbowColor;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.entity.BlockEntity;
@@ -45,12 +46,13 @@ import net.minecraft.util.math.Box;
 
 public class ChestESP extends Module implements RenderListener, TickListener {
 	private Color currentColor;
-	private Color color;
 	private RainbowColor rainbowColor;
 
-	public FloatSetting hue = new FloatSetting("chestesp_hue", "Hue","Hue", 4, 0, 360, 1);
+	private ColorSetting color = new ColorSetting("chestesp_color", "Color", "Color", new Color(0, 1f, 1f));
+	
 	public BooleanSetting rainbow = new BooleanSetting("chestesp_rainbow", "Rainbow", "Rainbow", false);
 	public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", "Effect Speed", 4, 1, 20, 0.1);
+	
 	
 	public ChestESP() {
 		super(new KeybindSetting("key.chestesp", "ChestESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -58,10 +60,10 @@ public class ChestESP extends Module implements RenderListener, TickListener {
 		this.setName("ChestESP");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see Chests with an ESP.");
-		color = new Color(hue.getValue().floatValue(), 1f, 1f);
-		currentColor = color;
+		
+		currentColor = color.getValue();
 		rainbowColor = new RainbowColor();
-		this.addSetting(hue);
+		this.addSetting(color);
 		this.addSetting(rainbow);
 		this.addSetting(effectSpeed);
 	}
@@ -100,8 +102,7 @@ public class ChestESP extends Module implements RenderListener, TickListener {
 			this.rainbowColor.update(this.effectSpeed.getValue().floatValue());
 			this.currentColor = this.rainbowColor.getColor();
 		}else {
-			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
-			this.currentColor = color;
+			this.currentColor = color.getValue();
 		}
 	}
 

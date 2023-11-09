@@ -41,6 +41,8 @@ public class POV extends Module implements TickListener {
 	private Entity povEntity = null;
 	
 	private boolean fakePlayerSpawned = false;
+	
+	
 	public POV() {
 		super(new KeybindSetting("key.pov", "POV Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 

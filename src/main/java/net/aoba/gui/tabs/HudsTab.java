@@ -35,7 +35,7 @@ public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 			stackPanel.addChild(hudComponent);
 		}
 		
-		stackPanel.addChild(new ColorPickerComponent("Hud Color", stackPanel, Aoba.getInstance().hudManager.color));
+		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.color));
 		
 		this.children.add(stackPanel);
 		this.setWidth(300);

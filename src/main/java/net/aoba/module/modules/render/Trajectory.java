@@ -28,8 +28,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.Aoba;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
+import net.aoba.gui.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.module.Module;
+import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -47,12 +49,16 @@ import net.minecraft.util.math.Vec3d;
 
 public class Trajectory extends Module implements RenderListener {
 
+	private ColorSetting color = new ColorSetting("trajectory_color", "Color", "Color", new Color(0, 1f, 1f));
+	
 	public Trajectory() {
 		super(new KeybindSetting("key.trajectory", "Trajectory Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		
 		this.setName("Trajectory");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see where they are aiming. (DISABLED)");
+		
+		this.addSetting(color);
 	}
 
 	@Override

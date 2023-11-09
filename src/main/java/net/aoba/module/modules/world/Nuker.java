@@ -29,6 +29,7 @@ import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
+import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.Block;
@@ -45,6 +46,8 @@ import net.minecraft.util.math.Direction;
 public class Nuker extends Module implements RenderListener, TickListener {
 	private MinecraftClient mc;
 	
+	private ColorSetting color = new ColorSetting("nuker_color", "Color", "Color", new Color(0, 1f, 1f));
+	
 	private FloatSetting radius;
 
 	public Nuker() {
@@ -56,6 +59,8 @@ public class Nuker extends Module implements RenderListener, TickListener {
 		this.radius = new FloatSetting("nuker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
+		
+		this.addSetting(color);
 	}
 
 	public void setRadius(int radius) {
@@ -112,7 +117,7 @@ public class Nuker extends Module implements RenderListener, TickListener {
 					if (block == Blocks.AIR || block == Blocks.WATER || block == Blocks.LAVA)
 						continue;
 
-					this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), new Color(255,0,0), 0.2f);
+					this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), color.getValue(), 0.2f);
 				}
 			}
 		}

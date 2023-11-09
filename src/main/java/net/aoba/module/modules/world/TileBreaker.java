@@ -30,6 +30,7 @@ import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
+import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.Block;
@@ -48,6 +49,8 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 	private ArrayList<Block> blocks = new ArrayList<Block>();
 	private FloatSetting radius;
 	
+	private ColorSetting color = new ColorSetting("tilebreaker_color", "Color", "Color", new Color(0, 1f, 1f));
+	
 	public TileBreaker() {
 		super(new KeybindSetting("key.tilebreaker", "TileBreaker Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
@@ -58,6 +61,8 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 		this.radius = new FloatSetting("tilebreaker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
 		this.addSetting(radius);
 		mc = MinecraftClient.getInstance();
+		
+		this.addSetting(color);
 	}
 
 	public void setRadius(int radius) {
@@ -155,7 +160,7 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 							 mc.player.getBlockZ() + z);
 					Block block = mc.world.getBlockState(blockpos).getBlock();
 					if (this.isTileBreakerBlock(block)) {
-						this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), new Color(255,0,0), 0.2f);
+						this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), color.getValue(), 0.2f);
 					}
 				}
 			}

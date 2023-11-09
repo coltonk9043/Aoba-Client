@@ -9,6 +9,7 @@ import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.gui.tabs.components.CheckboxComponent;
+import net.aoba.gui.tabs.components.ColorPickerComponent;
 import net.aoba.gui.tabs.components.Component;
 import net.aoba.gui.tabs.components.KeybindComponent;
 import net.aoba.gui.tabs.components.ListComponent;
@@ -18,6 +19,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.aoba.module.Module;
 import net.aoba.settings.Setting;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IndexedStringListSetting;
 import net.aoba.settings.types.StringListSetting;
@@ -47,6 +49,8 @@ public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListe
 				c = new CheckboxComponent(this, (BooleanSetting) setting);
 			} else if (setting instanceof StringListSetting) {
 				c = new ListComponent(this, (IndexedStringListSetting) setting);
+			} else if (setting instanceof ColorSetting) {
+				c = new ColorPickerComponent(this, (ColorSetting) setting);
 			} else {
 				c = null;
 			}

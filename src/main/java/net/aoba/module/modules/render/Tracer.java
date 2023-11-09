@@ -25,7 +25,9 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
+import net.aoba.gui.Color;
 import net.aoba.module.Module;
+import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -34,12 +36,16 @@ import net.minecraft.entity.LivingEntity;
 
 public class Tracer extends Module implements RenderListener {
 
+	private ColorSetting color = new ColorSetting("tracer_color", "Color", "Color", new Color(0, 1f, 1f));
+	
 	public Tracer() {
 		super(new KeybindSetting("key.tracer", "Tracer Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		
 		this.setName("Tracer");
 		this.setCategory(Category.Render);
 		this.setDescription("Points toward other players and entities with a line.");
+		
+		this.addSetting(color);
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.module.Module;
+import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
@@ -39,12 +40,16 @@ import net.minecraft.util.math.Box;
 
 public class SpawnerESP extends Module implements RenderListener {
 
+	private ColorSetting color = new ColorSetting("spawneresp_color", "Color", "Color", new Color(0, 1f, 1f));
+	
 	public SpawnerESP() {
 		super(new KeybindSetting("key.spawneresp", "SpawnerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		
 		this.setName("SpawnerESP");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see spawners with an ESP.");
+		
+		this.addSetting(color);
 	}
 
 	@Override
@@ -69,7 +74,7 @@ public class SpawnerESP extends Module implements RenderListener {
 		for(BlockEntity blockEntity : blockEntities) {
 			if(blockEntity instanceof MobSpawnerBlockEntity) {
 				Box box = new Box(blockEntity.getPos());
-				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), box, new Color(255,255,0), 0.2f);
+				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), box, color.getValue(), 0.2f);
 			}
 		}
 	}

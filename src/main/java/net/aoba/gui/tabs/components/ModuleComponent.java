@@ -26,7 +26,7 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 
 	private ModuleSettingsTab lastSettingsTab = null;
 	
-	public static final Identifier gear = new Identifier("minecraft", "textures/gear.png");
+	public static final Identifier gear = new Identifier("aoba", "/textures/gear.png");
 	
 	public ModuleComponent(String text, IHudElement parent, Module module) {
 		super(parent);
@@ -49,9 +49,13 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 		
 		renderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, module.getState() ? 0x00FF00 : this.hovered ? color.getColorAsInt() : 0xFFFFFF);
 		
-		if (module.hasSettings()) {
-			drawContext.drawTexture(gear, (int) (actualX + actualWidth - 16), (int) (actualY + 6), 0, 0, 12, 12);
+		if(module.hasSettings()) {
+			renderUtils.drawString(drawContext, ">>", (actualX + actualWidth - 24), actualY + 8, color.getColorAsInt());
+			
 		}
+		//if (module.hasSettings()) {
+		//	drawContext.drawTexture(gear, (int) (actualX + actualWidth - 16), (int) (actualY + 6), 0, 0, 4, 4, 4, 4);
+		//}
 	}
 	
 	@Override

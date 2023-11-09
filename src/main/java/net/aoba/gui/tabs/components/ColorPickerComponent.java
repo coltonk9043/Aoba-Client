@@ -36,16 +36,15 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
 	}
 	
-	public ColorPickerComponent(String text, IHudElement parent, ColorSetting color) {
+	public ColorPickerComponent(IHudElement parent, ColorSetting color) {
 		super(parent);
 		
+		this.text = color.displayName;
 		this.color = color;
 	
 		this.hue = color.getValue().hue;
 		this.saturation = color.getValue().saturation;
 		this.luminance = color.getValue().luminance;
-		
-		this.text = text;
 		
 		this.setHeight(145);
 		this.setLeft(4);

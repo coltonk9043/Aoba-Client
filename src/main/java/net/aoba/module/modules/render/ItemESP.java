@@ -27,6 +27,7 @@ import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.Color;
 import net.aoba.module.Module;
+import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -35,12 +36,17 @@ import net.minecraft.entity.ItemEntity;
 
 public class ItemESP extends Module implements RenderListener {
 
+	private ColorSetting color = new ColorSetting("itemesp_color", "Color", "Color", new Color(0, 1f, 1f));
+	
+	
 	public ItemESP() {
 		super(new KeybindSetting("key.itemesp", "ItemESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("ItemESP");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see items with an ESP.");
+		
+		this.addSetting(color);
 	}
 
 	@Override
@@ -62,7 +68,7 @@ public class ItemESP extends Module implements RenderListener {
 	public void OnRender(RenderEvent event) {
 		for (Entity entity : MC.world.getEntities()) {
 			if(entity instanceof ItemEntity) {
-				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), entity.getBoundingBox(), new Color(255, 0, 0), 0.2f);
+				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), entity.getBoundingBox(), color.getValue(), 0.2f);
 			}
 		}
 	}

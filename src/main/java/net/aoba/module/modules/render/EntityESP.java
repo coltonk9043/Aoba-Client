@@ -31,6 +31,7 @@ import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.option.KeyBinding;
@@ -45,10 +46,12 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public class EntityESP extends Module implements RenderListener, TickListener {
-	private Color color;
 	private RainbowColor rainbowColor;
 
-	public FloatSetting hue = new FloatSetting("entitysp_hue", "Hue","Hue", 4, 0, 360, 1);
+	private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color",  "Passive Color", new Color(0, 1f, 1f));
+	private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
+	private ColorSetting color_misc = new ColorSetting("entityesp_color_misYOUBliterc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
+	
 	public BooleanSetting rainbow = new BooleanSetting("entityesp_rainbow", "Rainbow","Rainbow", false);
 	public FloatSetting effectSpeed = new FloatSetting("entityesp_effectspeed", "Effect Speed", "Effect Speed", 4, 1, 20, 0.1);
 	
@@ -58,10 +61,12 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 		this.setName("EntityESP");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see entities with an ESP.");
-		color = new Color(255, 0, 0);
 		rainbowColor = new RainbowColor();
 		
-		this.addSetting(hue);
+		this.addSetting(color_passive);
+		this.addSetting(color_enemies);
+		this.addSetting(color_misc);
+		
 		this.addSetting(rainbow);
 		this.addSetting(effectSpeed);
 	}
@@ -101,11 +106,11 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 				boundingBox = boundingBox.offset(velocityPartial);
 				
 				if (entity instanceof AnimalEntity) {
-					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, new Color(0, 255, 0), 0.2f);
+					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_passive.getValue(), 0.2f);
 				} else if (entity instanceof Monster) {
-					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, new Color(255, 0, 0), 0.2f);
+					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_enemies.getValue(), 0.2f);
 				} else {
-					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, new Color(0, 0, 255), 0.2f);
+					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_misc.getValue(), 0.2f);
 				}
 			}
 		}
@@ -114,10 +119,11 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 
 	@Override
 	public void OnUpdate(TickEvent event) {
-		if(this.rainbow.getValue()) {
-			this.rainbowColor.update(this.effectSpeed.getValue().floatValue());
-		}else {
-			this.color.setHSV(hue.getValue().floatValue(), 1f, 1f);
-		}
+		/*
+		 * if(this.rainbow.getValue()) {
+		 * this.rainbowColor.update(this.effectSpeed.getValue().floatValue()); }else {
+		 * 
+		 * this.color.setHSV(hue.getValue().floatValue(), 1f, 1f); }
+		 */
 	}
 }
