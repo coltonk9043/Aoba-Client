@@ -102,7 +102,7 @@ public class POV extends Module implements TickListener {
 				fakePlayer = new FakePlayerEntity();
 				fakePlayer.copyFrom(player);
 				fakePlayer.headYaw = player.headYaw;
-				MC.world.addEntity(-3, fakePlayer);
+				MC.world.addEntity(fakePlayer);
 			}
 			fakePlayer.copyFrom(player);
 			fakePlayer.headYaw = player.headYaw;

@@ -73,7 +73,8 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 					name = "Steve";
 				}
 
-				UUID uuid = Uuids.getUuidFromProfile(new GameProfile((UUID)null, name));
+				
+				UUID uuid = Uuids.getOfflinePlayerUuid(name);;
 				entry = new PlayerListEntry(new GameProfile(uuid, name), false);
 
 			} catch (Exception e) {
@@ -140,14 +141,14 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 			int fh = 192;
 			float u = 24;
 			float v = 24;
-			drawContext.drawTexture(entry.getSkinTexture(), x, y, y, u, v, 24, 24, fw, fh);
+			drawContext.drawTexture(entry.getSkinTextures().texture(), x, y, y, u, v, 24, 24, fw, fh);
 
 			// Hat
 			fw = 192;
 			fh = 192;
 			u = 120;
 			v = 24;
-			drawContext.drawTexture(entry.getSkinTexture(), x, y, y, u, v, 24, 24, fw, fh);
+			drawContext.drawTexture(entry.getSkinTextures().texture(), x, y, y, u, v, 24, 24, fw, fh);
 
 			GL11.glDisable(GL11.GL_BLEND);
 		}

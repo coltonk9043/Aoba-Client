@@ -6,7 +6,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.interfaces.IMinecraftClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
-import net.minecraft.client.util.Session;
+import net.minecraft.client.session.Session;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import org.objectweb.asm.Opcodes;
@@ -63,12 +63,12 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 			cir.setReturnValue(aobaSession);
 		}
 	
-	@Redirect(at = @At(value = "FIELD",target = "Lnet/minecraft/client/MinecraftClient;session:Lnet/minecraft/client/util/Session;",opcode = Opcodes.GETFIELD,ordinal = 0),method = {"getSessionProperties()Lcom/mojang/authlib/properties/PropertyMap;"})
-		private Session getSessionForSessionProperties(MinecraftClient mc)
-		{
-			if(aobaSession != null)return aobaSession;
-			return session;
-		}
+	@Redirect(at = @At(value = "FIELD",target = "Lnet/minecraft/client/MinecraftClient;session:Lnet/minecraft/client/session/Session;",opcode = Opcodes.GETFIELD,ordinal = 0),method = {"getSession()Lnet/minecraft/client/session/Session;"})
+	private Session getSessionForSessionProperties(MinecraftClient mc)
+	{
+		if(aobaSession != null)return aobaSession;
+		return session;
+	}
 	
 	@Inject(at = {@At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;crosshairTarget:Lnet/minecraft/util/hit/HitResult;", ordinal = 0)}, method = {"doAttack()Z"}, cancellable = true)
 	private void onDoAttack(CallbackInfoReturnable<Boolean> cir) {
@@ -95,7 +95,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 		}	
 	}
 	
-	@Inject(at = {@At(value="HEAD")}, method = {"openPauseMenu(Z)V"})
+	@Inject(at = {@At(value="HEAD")}, method = {"openGameMenu(Z)V"})
 	private void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
 		Aoba.getInstance().hudManager.setClickGuiOpen(false);
 	}

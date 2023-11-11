@@ -103,9 +103,8 @@ public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListe
 		renderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
 		renderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0), 0.4f);
 
-		renderUtils.drawBox(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, color, 1.0f);
-		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(0,0,0), 1.0f);
-		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(0,0,0), 1.0f);
+		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255,0,0), 1.0f);
+		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255,0,0), 1.0f);
 		
 		for (Component child : children) {
 			child.draw(drawContext, partialTicks, color);

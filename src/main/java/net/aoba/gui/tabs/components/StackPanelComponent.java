@@ -17,7 +17,7 @@ public class StackPanelComponent extends Component {
 	public void update() {
 		super.update();
 	}
-
+	
 	@Override
 	public void OnChildAdded(IHudElement child) {
 		this.RecalculateHeight();

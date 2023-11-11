@@ -49,12 +49,10 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
-
 import org.apache.commons.io.IOUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -62,10 +60,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.authlib.Agent;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
-
 import net.aoba.AobaClient;
 import net.aoba.altmanager.exceptions.APIDownException;
 import net.aoba.altmanager.exceptions.APIErrorException;
@@ -73,8 +67,9 @@ import net.aoba.altmanager.exceptions.InvalidResponseException;
 import net.aoba.altmanager.exceptions.InvalidTokenException;
 import net.aoba.interfaces.IMinecraftClient;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Session;
-import net.minecraft.client.util.Session.AccountType;
+import net.minecraft.client.session.Session;
+import net.minecraft.client.session.Session.AccountType;
+import net.minecraft.util.Uuids;
 
 public class AltManager {
 	private final MinecraftClient mc;
@@ -267,8 +262,7 @@ public class AltManager {
 			uuid = uuidFromJson(json.get("id").getAsString());
 			name = json.get("name").getAsString();
 
-			Session session = new Session(name, uuid.toString(), mcAccessToken, Optional.empty(), Optional.empty(),
-					Session.AccountType.MOJANG);
+			Session session = new Session(name, uuid, mcAccessToken, Optional.empty(), Optional.empty(), Session.AccountType.MOJANG);
 			iMC.setSession(session);
 			System.out.println("Logged in as " + alt.getUsername());
 			return true;
@@ -360,29 +354,28 @@ public class AltManager {
 	}
 
 	private boolean loginMinecraft(Alt alt) {
-		YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(
-				Proxy.NO_PROXY, "").createUserAuthentication(Agent.MINECRAFT);
-		auth.setUsername(alt.getEmail());
-		auth.setPassword(alt.getPassword());
-
-		try {
-			auth.logIn();
-			IMinecraftClient iMC = (IMinecraftClient) this.mc;
-			iMC.setSession(
-					new Session(auth.getSelectedProfile().getName(), auth.getSelectedProfile().getId().toString(),
-							auth.getAuthenticatedToken(), Optional.empty(), Optional.empty(), AccountType.MOJANG));
-			alt.setUsername(mc.getSession().getUsername());
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		return false;
+		// TODO: Seems like MC removed old accounts. If i can find a way around this, I will.
+		/*
+		 * YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new
+		 * YggdrasilAuthenticationService(Proxy.NO_PROXY,
+		 * "").createUserAuthentication(Agent.MINECRAFT);
+		 * auth.setUsername(alt.getEmail()); auth.setPassword(alt.getPassword());
+		 * 
+		 * try { auth.logIn(); IMinecraftClient iMC = (IMinecraftClient) this.mc;
+		 * iMC.setSession( new Session(auth.getSelectedProfile().getName(),
+		 * auth.getSelectedProfile().getId().toString(), auth.getAuthenticatedToken(),
+		 * Optional.empty(), Optional.empty(), AccountType.MOJANG));
+		 * alt.setUsername(mc.getSession().getUsername()); return true; } catch
+		 * (Exception e) { e.printStackTrace(); return false; }
+		 */
 	}
 
 	public boolean loginCracked(String alt) {
 		try {
 			IMinecraftClient iMC = (IMinecraftClient) this.mc;
-			iMC.setSession(new Session(alt, "", "", Optional.empty(), Optional.empty(), AccountType.MOJANG));
+			UUID offlineAlt = Uuids.getOfflinePlayerUuid(alt);
+			iMC.setSession(new Session(alt, offlineAlt, "", Optional.empty(), Optional.empty(), AccountType.MOJANG));
 			System.out.println("Logged in as " + alt);
 
 			return true;

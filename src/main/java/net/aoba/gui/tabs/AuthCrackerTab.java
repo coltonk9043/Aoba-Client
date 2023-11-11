@@ -30,11 +30,9 @@ public class AuthCrackerTab extends ClickGuiTab {
 		stackPanel.setTop(30);
 		
 		StringComponent label = new StringComponent("This panel can be used to break Auth passwords used in cracked servers.", stackPanel);
-		label.setHeight(30);
 		stackPanel.addChild(label);
 		
 		SliderComponent slider = new SliderComponent(stackPanel, delay);
-		slider.setHeight(30);
 		stackPanel.addChild(slider);
 
 		authCracker = new AuthCracker(delay);
@@ -58,7 +56,6 @@ public class AuthCrackerTab extends ClickGuiTab {
 		};
 		
 		start = new ButtonComponent(stackPanel, "Start", startRunnable);
-		start.setHeight(30);
 		stackPanel.addChild(start);
 		
 		this.children.add(stackPanel);

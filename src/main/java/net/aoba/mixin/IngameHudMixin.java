@@ -14,8 +14,9 @@ public class IngameHudMixin {
 
 	@Inject(at = {@At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V", remap = false,ordinal = 3) }, method = {"render(Lnet/minecraft/client/gui/DrawContext;F)V" })
 	private void onRender(DrawContext context, float tickDelta, CallbackInfo ci) {
-		if (MinecraftClient.getInstance().options.debugEnabled)
-			return;
+		// TODO: 
+		//if (MinecraftClient.getInstance().options.)
+		//	return;
 		Aoba.getInstance().drawHUD(context, tickDelta);
 	}
 }

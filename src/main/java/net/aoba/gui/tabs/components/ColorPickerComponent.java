@@ -121,7 +121,7 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		renderUtils.drawVerticalGradient(matrixStack, actualX + 4, actualY + actualHeight - 4, actualX + actualWidth - 44, actualY + 29, new Color(0, 0, 0, 0), new Color(0, 0, 0));
 		
 		// Draw Hue Rectangle
-		int increment = (int) ((this.actualHeight - 8) / 6);
+		int increment = (int) ((this.actualHeight - 8) / 7);
 		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 40, actualY + 29, actualX + actualWidth - 4, actualY + 29 + increment, new Color(255, 255, 0), new Color(255, 0, 0));
 		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 40, actualY + 29 + increment, actualX + actualWidth - 4, actualY + 29 + (2 * increment), new Color(0, 255, 0), new Color(255, 255, 0));
 		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 40, actualY + 29 + (2 * increment), actualX + actualWidth - 4, actualY + 29 + (3 * increment), new Color(0, 255, 255), new Color(0, 255, 0));

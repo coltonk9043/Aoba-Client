@@ -78,7 +78,7 @@ public class Freecam extends Module implements TickListener {
 		fakePlayer.copyFrom(player);
 		fakePlayer.setUuid(UUID.randomUUID());
 		fakePlayer.headYaw = player.headYaw;
-		MC.world.addEntity(-3, fakePlayer);
+		MC.world.addEntity(fakePlayer);
 		
 		Aoba.getInstance().moduleManager.fly.setState(false);
 		Aoba.getInstance().moduleManager.noclip.setState(false);

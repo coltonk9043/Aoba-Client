@@ -55,8 +55,9 @@ public class DirectLoginAltScreen extends Screen{
 	
 	@Override
 	public void tick() {
-	      this.textFieldAltUsername.tick();
-	      this.textFieldAltPassword.tick();
+		// TODO:
+	     // this.textFieldAltUsername.tick();
+	      //this.textFieldAltPassword.tick();
 	  }
 	
 	private void onButtonLoginPressed() {
@@ -78,9 +79,8 @@ public class DirectLoginAltScreen extends Screen{
 	}
 	
 	@Override
-	public void render(DrawContext drawContext, int mouseX, int mouseY,
-			float partialTicks) {
-		this.renderBackground(drawContext);
+	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+		this.renderBackground(drawContext, mouseX, mouseY, partialTicks);
 		drawContext.drawCenteredTextWithShadow(textRenderer, this.title.getString(), this.width / 2, 20, 16777215);
 		drawContext.drawTextWithShadow(textRenderer, this.textFieldAltPassword.getText().isEmpty() ? "Cracked Account" : "Premium Account", this.width / 2 - 100, height / 2 - 106, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
 		drawContext.drawTextWithShadow(textRenderer, "Enter Username", this.width / 2 - 100, height / 2 - 90, 16777215);

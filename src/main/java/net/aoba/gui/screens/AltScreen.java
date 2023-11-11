@@ -65,7 +65,7 @@ public class AltScreen extends Screen {
 	
 	@Override
 	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(drawContext);
+		this.renderBackground(drawContext, mouseX, mouseY, partialTicks);
 		this.altListSelector.render(drawContext, mouseX, mouseY, partialTicks);
 
 		super.render(drawContext, mouseX, mouseY, partialTicks);

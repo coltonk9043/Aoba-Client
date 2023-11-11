@@ -1,6 +1,6 @@
 package net.aoba.interfaces;
 
-import net.minecraft.client.util.Session;
+import net.minecraft.client.session.Session;
 
 public interface IMinecraftClient {
 	public void rightClick();
