@@ -56,7 +56,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 		}
 	}
 
-	@Inject(at = {@At("HEAD")}, method = {"getSession()Lnet/minecraft/client/util/Session;"}, cancellable = true)
+	@Inject(at = {@At("HEAD")}, method = {"getSession()Lnet/minecraft/client/session/Session;"}, cancellable = true)
 		private void onGetSession(CallbackInfoReturnable<Session> cir)
 		{
 			if(aobaSession == null) return;

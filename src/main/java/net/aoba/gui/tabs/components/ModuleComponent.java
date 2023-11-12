@@ -1,7 +1,12 @@
 package net.aoba.gui.tabs.components;
 
+import java.awt.Cursor;
+
+import org.lwjgl.glfw.GLFW;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.module.Module;
 import net.aoba.settings.Setting;
@@ -13,6 +18,7 @@ import net.aoba.gui.Color;
 import net.aoba.gui.IHudElement;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.gui.tabs.ModuleSettingsTab;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
@@ -61,7 +67,7 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		double mouseX = event.GetMouseX();
-		if (hovered) {
+		if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
 				boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
 				if (isOnOptionsButton) {
 					if(lastSettingsTab == null) {

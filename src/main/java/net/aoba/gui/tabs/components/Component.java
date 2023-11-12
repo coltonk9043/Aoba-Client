@@ -342,7 +342,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	 */
 	@Override
 	public void OnMouseMove(MouseMoveEvent mouseMoveEvent) {
-		if (!visible) {
+		if (!visible || !Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			this.hovered = false;
 		}else {
 				double mouseX = mouseMoveEvent.GetHorizontal();

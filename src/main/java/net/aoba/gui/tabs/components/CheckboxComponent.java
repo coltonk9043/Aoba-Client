@@ -66,7 +66,7 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	 */
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if (hovered) {
+		if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			checkbox.toggle();
 			if(onClick != null) {
 				onClick.run();

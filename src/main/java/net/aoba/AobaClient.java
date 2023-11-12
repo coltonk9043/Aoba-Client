@@ -78,9 +78,6 @@ public class AobaClient {
 		altManager = new AltManager();
 		System.out.println("[Aoba] Aoba-chan initialized and ready to play!");
  
-
-		
-		
 		SettingManager.loadSettings("config_category", settingManager.config_category);
 		SettingManager.loadSettings("modules_category", settingManager.modules_category);
 		SettingManager.loadSettings("hidden_category", settingManager.hidden_category);

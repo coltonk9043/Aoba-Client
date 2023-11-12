@@ -77,14 +77,8 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 		double mouseX = event.GetMouseX();
 		double mouseY = event.GetMouseY();
 
-		if (HudManager.currentGrabbed == null) {
-			// If our delegate exists and we are inside the bounds of the button, run it.
-			if(this.onClick != null) {
-				if ((mouseX >= actualX && mouseX <= actualX + actualWidth - 34)
-						&& (mouseY >= actualY && mouseY <= actualY + actualHeight)) {
-					this.onClick.run();
-				}
-			}
+		if(this.hovered && Aoba.getInstance().hudManager.isClickGuiOpen())  {
+			this.onClick.run();
 		}
 	}
 

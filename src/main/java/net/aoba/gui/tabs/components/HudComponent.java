@@ -41,7 +41,7 @@ public class HudComponent extends Component implements LeftMouseDownListener {
 	
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if(this.hovered) {
+		if(this.hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			boolean visibility = hud.getVisible();
 			hud.setVisible(!visibility);
 			Aoba.getInstance().hudManager.SetHudActive(hud, !visibility);

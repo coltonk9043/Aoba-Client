@@ -80,7 +80,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if (hovered) {
+		if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			isSliding = true;
 		}
 	}
