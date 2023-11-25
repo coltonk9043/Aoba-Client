@@ -1,4 +1,4 @@
-package net.aoba.core.utils.types;
+package net.aoba.utils.types;
 
 public class Vector2 {
     public float x = 0;

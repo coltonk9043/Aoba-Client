@@ -62,10 +62,12 @@ public class NavigationBar implements LeftMouseDownListener {
 		MatrixStack matrixStack = drawContext.getMatrices();
 
 		int width = 100 * options.size();
-		renderUtils.drawRoundedBox(matrixStack, centerX - (width / 2), 25, width, 25, 6, new Color(30,30,30), 0.4f);
-		renderUtils.drawRoundedOutline(matrixStack, centerX -  (width / 2), 25, width, 25, 6, new Color(0,0,0), 0.8f);
+		
+		HudManager hudManager = Aoba.getInstance().hudManager;
+		renderUtils.drawRoundedBox(matrixStack, centerX - (width / 2), 25, width, 25, 6, hudManager.backgroundColor.getValue());
+		renderUtils.drawRoundedOutline(matrixStack, centerX -  (width / 2), 25, width, 25, 6, hudManager.borderColor.getValue());
 
-		renderUtils.drawRoundedBox(drawContext.getMatrices(), centerX - (width / 2) + (100 * this.selectedIndex), 25, 100, 25, 5, new Color(150, 150, 150), 0.4f);
+		renderUtils.drawRoundedBox(drawContext.getMatrices(), centerX - (width / 2) + (100 * this.selectedIndex), 25, 100, 25, 5, new Color(150, 150, 150, 100));
 			
 		for(int i = 0; i < options.size(); i++) {
 			Page pane = options.get(i);

@@ -1,7 +1,6 @@
 package net.aoba.gui.tabs.components;
 
 import net.aoba.Aoba;
-import net.aoba.core.utils.types.Vector2;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.LeftMouseUpEvent;
 import net.aoba.event.events.MouseMoveEvent;
@@ -12,6 +11,7 @@ import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.gui.IHudElement;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -117,9 +117,9 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 		
 		float xLength = ((actualWidth - 18) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)));
 		
-		renderUtils.drawBox(matrixStack, actualX + 10, actualY + 35, xLength, 2, color, 1.0f);
-		renderUtils.drawBox(matrixStack, actualX + 10 + xLength, actualY + 35, (actualWidth - xLength - 18), 2, new Color(255, 255, 255), 1.0f);
-		renderUtils.drawCircle(matrixStack, actualX + 10 + xLength, actualY + 35, 6, color, 1.0f);
+		renderUtils.drawBox(matrixStack, actualX + 10, actualY + 35, xLength, 2, color);
+		renderUtils.drawBox(matrixStack, actualX + 10 + xLength, actualY + 35, (actualWidth - xLength - 18), 2, new Color(255, 255, 255, 255));
+		renderUtils.drawCircle(matrixStack, actualX + 10 + xLength, actualY + 35, 6, color);
 		
 		
 		//renderUtils.drawBox(matrixStack, actualX + 4, actualY + 4, (actualWidth - 8) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)), actualHeight - 8, color, 1f);

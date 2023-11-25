@@ -25,11 +25,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.misc.RenderUtils;
+import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;

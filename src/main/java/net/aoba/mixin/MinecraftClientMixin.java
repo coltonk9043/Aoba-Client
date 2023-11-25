@@ -3,7 +3,6 @@ package net.aoba.mixin;
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.interfaces.IMinecraftClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.session.Session;
@@ -20,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MinecraftClient.class)
-public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runnable> implements IMinecraftClient{
+public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runnable>{
 
 	@Shadow
 	private int itemUseCooldown;
@@ -39,11 +38,6 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	
 	public MinecraftClientMixin(String string) {
 		super(string);
-	}
-	
-	@Override
-	public void setSession(Session session) {
-		aobaSession = session;
 	}
 
 	@Inject(at = @At("TAIL"), method = "tick()V")
@@ -99,17 +93,4 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
 	private void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
 		Aoba.getInstance().hudManager.setClickGuiOpen(false);
 	}
-	
-	@Override
-	public int getItemUseCooldown()
-	{
-		return itemUseCooldown;
-	}
-	
-	@Override
-	public void setItemUseCooldown(int delay)
-	{
-		this.itemUseCooldown = delay;
-	}
-	
 }

@@ -50,7 +50,7 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 
 	private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color",  "Passive Color", new Color(0, 1f, 1f));
 	private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
-	private ColorSetting color_misc = new ColorSetting("entityesp_color_misYOUBliterc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
+	private ColorSetting color_misc = new ColorSetting("entityesp_color_misc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
 	
 	public BooleanSetting rainbow = new BooleanSetting("entityesp_rainbow", "Rainbow","Rainbow", false);
 	public FloatSetting effectSpeed = new FloatSetting("entityesp_effectspeed", "Effect Speed", "Effect Speed", 4, 1, 20, 0.1);
@@ -106,11 +106,11 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 				boundingBox = boundingBox.offset(velocityPartial);
 				
 				if (entity instanceof AnimalEntity) {
-					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_passive.getValue(), 0.2f);
+					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_passive.getValue());
 				} else if (entity instanceof Monster) {
-					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_enemies.getValue(), 0.2f);
+					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_enemies.getValue());
 				} else {
-					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_misc.getValue(), 0.2f);
+					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_misc.getValue());
 				}
 			}
 		}

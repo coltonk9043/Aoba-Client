@@ -43,10 +43,10 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 		renderUtils.drawString(drawContext, this.text, actualX + 10, actualY + 8, 0xFFFFFF);
 		if (this.checkbox.getValue()) {
 			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 24, actualY + 5, 20, 20,
-					new Color(0, 154, 0), 0.8f);
+					new Color(0, 154, 0, 200));
 		} else {
 			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 24, actualY + 5, 20, 20,
-					new Color(154, 0, 0), 0.8f);
+					new Color(154, 0, 0, 200));
 		}
 	}
 

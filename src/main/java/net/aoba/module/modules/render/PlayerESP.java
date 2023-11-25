@@ -70,7 +70,7 @@ public class PlayerESP extends Module implements RenderListener {
 	public void OnRender(RenderEvent event) {
 		for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
 			if(entity != MC.player) {
-				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), entity.getBoundingBox(), color_default.getValue(), 0.2f);
+				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), entity.getBoundingBox(), color_default.getValue());
 			}
 		}
 	}

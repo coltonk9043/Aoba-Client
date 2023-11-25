@@ -25,8 +25,8 @@ import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
 import net.aoba.event.EventManager;
 import net.aoba.gui.HudManager;
-import net.aoba.interfaces.IMinecraftClient;
 import net.aoba.misc.RenderUtils;
+import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
 import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
@@ -35,7 +35,8 @@ import net.minecraft.client.gui.DrawContext;
 public class AobaClient {
 	public static final String NAME = "Aoba";
 	public static final String VERSION = "1.20.2";
-
+	public static final String AOBA_VERSION = "1.4-preview-1";
+	
 	public static MinecraftClient MC;
 	public static IMinecraftClient IMC;
 	
@@ -59,7 +60,8 @@ public class AobaClient {
 		// Gets instance of Minecraft
 		MC = MinecraftClient.getInstance();
 		IMC = (IMinecraftClient)MC;
-		
+
+		IMC.getItemUseCooldown();
 		System.out.println("[Aoba] Starting Client");
 		
 		eventManager = new EventManager();
@@ -122,10 +124,15 @@ public class AobaClient {
 	 * Called when the client is shutting down.
 	 */
 	public void endClient() {
-		SettingManager.saveSettings("config_category", settingManager.config_category);
-		SettingManager.saveSettings("modules_category", settingManager.modules_category);
-		SettingManager.saveSettings("hidden_category", settingManager.hidden_category);
-		altManager.saveAlts();
+		try {
+			SettingManager.saveSettings("config_category", settingManager.config_category);
+			SettingManager.saveSettings("modules_category", settingManager.modules_category);
+			SettingManager.saveSettings("hidden_category", settingManager.hidden_category);
+			altManager.saveAlts();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		System.out.println("[Aoba] Shutting down...");
 	}
 }

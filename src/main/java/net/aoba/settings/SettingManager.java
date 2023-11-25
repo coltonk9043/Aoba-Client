@@ -1,9 +1,9 @@
 package net.aoba.settings;
 
-import net.aoba.core.utils.types.Vector2;
 import net.aoba.gui.Color;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IntegerSetting;
+import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -11,7 +11,9 @@ import net.minecraft.client.util.InputUtil.Key;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -44,31 +46,30 @@ public class SettingManager {
 		try {
 			configFolder = new File(MinecraftClient.getInstance().runDirectory + File.separator + "aoba");
 			configFile = new File(configFolder + File.separator + name + ".xml");
-			
+
 			if (!configFolder.exists())
 				configFolder.mkdirs();
-			
+
 			if (!configFile.exists())
 				configFile.createNewFile();
-			
+
 			config = new Properties();
 		} catch (Exception ignored) {
-			
+
 		}
 	}
 
-	public static void saveSettings(String name, List<Setting<?>> config_category2) {
-		try {
-			System.out.println("Saving config " + name + ".");
-			prepare(name);
-			for (Setting setting : config_category2) {
+	public static void saveSettings(String name, List<Setting<?>> config_category2) throws FileNotFoundException, IOException {
+		System.out.println("Saving config " + name + ".");
+		prepare(name);
+		for (Setting setting : config_category2) {
+			try {
 				switch (setting.type) {
 				case DOUBLE, INTEGER, BOOLEAN, STRING -> {
 					config.setProperty(setting.ID, String.valueOf(setting.getValue()));
 				}
 				case KEYBIND -> {
-					Key key = InputUtil
-							.fromTranslationKey(((KeyBinding) setting.getValue()).getBoundKeyTranslationKey());
+					Key key = ((Key) setting.getValue());
 					config.setProperty(setting.ID, String.valueOf(key.getCode()));
 				}
 				case VECTOR2 -> {
@@ -76,13 +77,15 @@ public class SettingManager {
 					config.setProperty(setting.ID + "_y", String.valueOf(((Vector2) setting.getValue()).y));
 				}
 				case COLOR -> {
-					config.setProperty(setting.ID, String.valueOf(((Color) setting.getValue()).getColorAsInt()));
+					String s = ((Color) setting.getValue()).getColorAsHex();
+					config.setProperty(setting.ID, s);
 				}
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			config.storeToXML(new FileOutputStream(configFile), null);
-		} catch (Exception ignored) {
 		}
+		config.storeToXML(new FileOutputStream(configFile), null);
 	}
 
 	public static void loadSettings(String name, List<Setting<?>> config_category2) {
@@ -93,9 +96,10 @@ public class SettingManager {
 			for (Setting setting : config_category2) {
 
 				String value = config.getProperty(setting.ID, null);
-				
-				if (DEBUG_STUFF)System.out.println(setting.displayName + " " + setting.value + " " + Double.parseDouble(value));
-				
+
+				if (DEBUG_STUFF)
+					System.out.println(setting.displayName + " " + setting.value + " " + Double.parseDouble(value));
+
 				if (value == null)
 					break;
 
@@ -109,7 +113,8 @@ public class SettingManager {
 				}
 				case INTEGER -> {
 					int intValue = Integer.parseInt(value);
-					if (((IntegerSetting) setting).min_value <= intValue && ((IntegerSetting) setting).max_value >= intValue) {
+					if (((IntegerSetting) setting).min_value <= intValue
+							&& ((IntegerSetting) setting).max_value >= intValue) {
 						setting.setValue(Integer.parseInt(value));
 					}
 				}
@@ -129,6 +134,14 @@ public class SettingManager {
 					if (value_x == null || value_y == null)
 						break;
 					setting.setValue(new Vector2(Float.parseFloat(value_x), Float.parseFloat(value_y)));
+				}
+				case COLOR -> {
+					long hexValue = Long.parseLong(value.replace("#", ""), 16);
+					int Alpha = (int)((hexValue) >> 24) & 0xFF;
+					int R = (int)((hexValue) >> 16) & 0xFF;
+					int G = (int)((hexValue) >> 8) & 0xFF;
+					int B = (int)(hexValue) & 0xFF;
+					setting.setValue(new Color(R, G, B, Alpha));
 				}
 				}
 			}

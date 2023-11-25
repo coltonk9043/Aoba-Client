@@ -15,7 +15,6 @@
 
   "license": "CC0-1.0",
   "icon": "assets/modid/icon.png",
-
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -23,7 +22,7 @@
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "aoba.mixins.json"
   ],
 
   "depends": {

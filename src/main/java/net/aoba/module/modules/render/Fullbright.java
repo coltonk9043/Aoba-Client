@@ -22,6 +22,7 @@
 package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
+
 import net.aoba.interfaces.ISimpleOption;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;

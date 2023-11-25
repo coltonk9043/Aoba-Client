@@ -65,7 +65,7 @@ import net.aoba.altmanager.exceptions.APIDownException;
 import net.aoba.altmanager.exceptions.APIErrorException;
 import net.aoba.altmanager.exceptions.InvalidResponseException;
 import net.aoba.altmanager.exceptions.InvalidTokenException;
-import net.aoba.interfaces.IMinecraftClient;
+import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.session.Session;
 import net.minecraft.client.session.Session.AccountType;

@@ -160,7 +160,7 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 							 mc.player.getBlockZ() + z);
 					Block block = mc.world.getBlockState(blockpos).getBlock();
 					if (this.isTileBreakerBlock(block)) {
-						this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), color.getValue(), 0.2f);
+						this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), color.getValue());
 					}
 				}
 			}

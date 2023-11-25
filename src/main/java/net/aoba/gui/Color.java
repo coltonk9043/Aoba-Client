@@ -97,6 +97,18 @@ public class Color {
 		this.b = b;
 	}
 
+	public void setRGBA(int r, int g, int b, int alpha) {
+		this.r = r;
+		this.g = b;
+		this.b = b;
+		this.alpha = alpha;
+	}
+	
+	public void setAlpha(int alpha) {
+		this.alpha = alpha;
+	}
+	
+	
 	/**
 	 * Returns the Color as a string in format RRRGGGBBB.
 	 * 
@@ -158,6 +170,10 @@ public class Color {
 	 */
 	public float getBlueFloat() {
 		return ((float) this.b) / 255.0f;
+	}
+	
+	public float getAlphaFloat() {
+		return ((float) this.alpha) / 255.0f;
 	}
 
 	/**

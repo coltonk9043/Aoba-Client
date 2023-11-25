@@ -59,14 +59,17 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 	public Page hudPane = new Page("Hud");
 	
 	// Global HUD Settings
-	public FloatSetting hue = new FloatSetting("color_hue", "Hue", 4, 0, 360, 1, null);
+	public ColorSetting color;
+	public ColorSetting borderColor;
+	public ColorSetting backgroundColor;
+	
 	public FloatSetting effectSpeed = new FloatSetting("color_speed", "Effect Spd", 4, 1, 20, 0.1, null);
 	public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
 	public BooleanSetting ah = new BooleanSetting("armorhud_toggle", "ArmorHUD", false, null);
 
 	private Color currentColor;
 
-	public ColorSetting color;
+	
 	
 	private RainbowColor rainbowColor;
 
@@ -74,10 +77,16 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		mc = MinecraftClient.getInstance();
 		
 		renderUtils = Aoba.getInstance().renderUtils;
-		color = new ColorSetting("hudcolor", "The color of the HUD", new Color(hue.getValue().floatValue(), 1f, 1f));
+		borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
+		backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(128, 128, 128, 50));
+		color = new ColorSetting("hudcolor", "The color of the HUD", new Color(1f, 0f, 0f));
 		currentColor = color.getValue();
 		rainbowColor = new RainbowColor();
 		clickGuiNavBar = new NavigationBar();
+		
+		SettingManager.register_setting(borderColor, Aoba.getInstance().settingManager.config_category);
+		SettingManager.register_setting(backgroundColor, Aoba.getInstance().settingManager.config_category);
+		SettingManager.register_setting(color, Aoba.getInstance().settingManager.config_category);
 	}
 
 	public void Initialize() {
@@ -122,7 +131,6 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		clickGuiNavBar.addPane(hudPane);
 		//clickGuiNavBar.addPane(settingsPane);
 
-		SettingManager.register_setting(hue, Aoba.getInstance().settingManager.config_category);
 		SettingManager.register_setting(effectSpeed, Aoba.getInstance().settingManager.config_category);
 		SettingManager.register_setting(rainbow, Aoba.getInstance().settingManager.config_category);
 		SettingManager.register_setting(ah, Aoba.getInstance().settingManager.config_category);
@@ -249,7 +257,9 @@ public class HudManager implements LeftMouseDownListener, LeftMouseUpListener {
 		 * Render ClickGUI and Sidebar
 		 */
 		if (this.clickGuiOpen) {
-			renderUtils.drawBox(matrixStack, 0, 0, window.getWidth(), window.getHeight(), 0.1f, 0.1f, 0.1f, 0.4f);
+			
+			
+			renderUtils.drawBox(matrixStack, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
 			clickGuiNavBar.draw(drawContext, tickDelta, this.currentColor);
 		}else {
 			for(AbstractHud hud : activeHuds) {

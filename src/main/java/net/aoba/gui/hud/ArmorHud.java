@@ -23,10 +23,10 @@
 package net.aoba.gui.hud;
 
 import net.aoba.Aoba;
-import net.aoba.core.utils.types.Vector2;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
+import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;

@@ -68,7 +68,7 @@ public class ItemESP extends Module implements RenderListener {
 	public void OnRender(RenderEvent event) {
 		for (Entity entity : MC.world.getEntities()) {
 			if(entity instanceof ItemEntity) {
-				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), entity.getBoundingBox(), color.getValue(), 0.2f);
+				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), entity.getBoundingBox(), color.getValue());
 			}
 		}
 	}

@@ -91,7 +91,7 @@ public class ChestESP extends Module implements RenderListener, TickListener {
 		for(BlockEntity blockEntity : blockEntities) {
 			if(blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity) {
 				Box box = new Box(blockEntity.getPos());
-				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), box, currentColor, 0.2f);
+				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), box, currentColor);
 			}
 		}
 	}

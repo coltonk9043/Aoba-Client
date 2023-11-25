@@ -117,7 +117,7 @@ public class Nuker extends Module implements RenderListener, TickListener {
 					if (block == Blocks.AIR || block == Blocks.WATER || block == Blocks.LAVA)
 						continue;
 
-					this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), color.getValue(), 0.2f);
+					this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), color.getValue());
 				}
 			}
 		}

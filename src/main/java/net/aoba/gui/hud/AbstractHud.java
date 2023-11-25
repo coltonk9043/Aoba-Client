@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 import net.aoba.Aoba;
-import net.aoba.core.utils.types.Vector2;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
@@ -16,6 +15,7 @@ import net.aoba.gui.tabs.components.Component;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.Vector2Setting;
+import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 

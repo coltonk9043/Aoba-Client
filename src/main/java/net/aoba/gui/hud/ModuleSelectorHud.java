@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.core.utils.types.Vector2;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.gui.Color;
 import net.aoba.gui.HudManager;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
+import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
@@ -107,8 +107,9 @@ public class ModuleSelectorHud extends AbstractHud {
 		renderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, color);
 
 		// Draws the table including all of the categories.
-		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, new Color(30,30,30), 0.4f);
-		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, new Color(0,0,0), 0.8f);
+		HudManager hudManager = Aoba.getInstance().hudManager;
+		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.backgroundColor.getValue());
+		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.borderColor.getValue());
 		
 		// For every category, draw a cell for it.
 		for (int i = 0; i < this.categories.length; i++) {
@@ -124,8 +125,8 @@ public class ModuleSelectorHud extends AbstractHud {
 		// If any particular category menu is open.
 		if (isCategoryMenuOpen) {
 			// Draw the table underneath
-			renderUtils.drawRoundedBox(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, new Color(30,30,30), 0.4f);
-			renderUtils.drawRoundedOutline(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, new Color(0,0,0), 0.8f);
+			renderUtils.drawRoundedBox(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, hudManager.backgroundColor.getValue());
+			renderUtils.drawRoundedOutline(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, hudManager.borderColor.getValue());
 			
 			// For every mod, draw a cell for it.
 			for (int i = 0; i < modules.size(); i++) {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.aoba.Aoba;
-import net.aoba.core.utils.types.Vector2;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.Color;
@@ -15,6 +14,7 @@ import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.aoba.module.Module;
+import net.aoba.utils.types.Vector2;
 
 public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 
@@ -36,6 +36,9 @@ public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 		}
 		
 		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.color));
+		
+		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.backgroundColor));
+		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.borderColor));
 		
 		this.children.add(stackPanel);
 		this.setWidth(300);

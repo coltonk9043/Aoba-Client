@@ -1,7 +1,6 @@
 package net.aoba.gui.tabs;
 
 import net.aoba.Aoba;
-import net.aoba.core.utils.types.Vector2;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.MouseMoveListener;
@@ -23,6 +22,7 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IndexedStringListSetting;
 import net.aoba.settings.types.StringListSetting;
+import net.aoba.utils.types.Vector2;
 
 public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListener, MouseMoveListener {
 	protected String title;
@@ -98,13 +98,15 @@ public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListe
 		Vector2 pos = position.getValue();
 
 		// Draws background depending on components width and height
-		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, new Color(30, 30, 30), 0.4f);
-		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, new Color(0, 0, 0), 0.8f);
+		HudManager hudManager = Aoba.getInstance().hudManager;
+		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.backgroundColor.getValue());
+		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.borderColor.getValue());
+		
 		renderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
-		renderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0), 0.4f);
+		renderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
 
-		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255,0,0), 1.0f);
-		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255,0,0), 1.0f);
+		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255, 0, 0, 255));
+		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255, 0, 0, 255));
 		
 		for (Component child : children) {
 			child.draw(drawContext, partialTicks, color);

@@ -1,7 +1,7 @@
 package net.aoba.settings.types;
 
-import net.aoba.core.utils.types.Vector2;
 import net.aoba.settings.Setting;
+import net.aoba.utils.types.Vector2;
 
 import java.util.function.Consumer;
 

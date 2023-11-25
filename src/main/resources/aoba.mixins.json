@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
 	"interfaces.ILivingEntity",
+	"interfaces.IMinecraftClient",
+	"interfaces.IChatInputSuggestor"
   ],
   "client": [
 	"AbstractBlockStateMixin",
@@ -31,7 +33,8 @@
 	"MinecraftClientMixin",
 	"BackgroundRendererMixin",
 	"LightmapTextureManagerMixin",
-	"EntityRendererMixin"
+	"EntityRendererMixin",
+	"TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

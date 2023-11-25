@@ -25,7 +25,6 @@ import net.aoba.gui.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.util.math.MatrixStack;
@@ -42,14 +41,9 @@ public class RenderUtils {
 
 	final float ROUND_QUALITY = 10;
 	
-	public void drawBox(MatrixStack matrixStack, float x, float y, float width, float height, float r, float g, float b, float alpha) {
-		Color c = new Color(r,g, b);
-		drawBox(matrixStack, x, y,width, height, c, alpha);
-	}
-	
-	public void drawBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color, float alpha) {
+	public void drawBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
 
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -71,14 +65,9 @@ public class RenderUtils {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-
-	public void drawCircle(MatrixStack matrixStack, float x, float y, float radius, int r, int g, int b, float alpha) {
-		Color c= new Color(r,g,b);
-		drawCircle(matrixStack, x, y, radius, c, alpha);
-	}
 	
-	public void drawCircle(MatrixStack matrixStack, float x, float y, float radius, Color color, float alpha) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+	public void drawCircle(MatrixStack matrixStack, float x, float y, float radius, Color color) {
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -112,13 +101,8 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawRoundedBox(MatrixStack matrixStack, float x, float y, float width, float height, float radius, int r, int g, int b, float alpha) {
-		Color c= new Color(r,g,b);
-		drawRoundedBox(matrixStack, x, y, width, height, radius, c, alpha);
-	}
-	
-	public void drawRoundedBox(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color, float alpha) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+	public void drawRoundedBox(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color) {
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -192,8 +176,8 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawRoundedOutline(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color, float alpha) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+	public void drawRoundedOutline(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color) {
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -230,16 +214,9 @@ public class RenderUtils {
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 	}
-
-	public void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, int r, int g, int b, float alpha) {
-		Color c = new Color(r, g, b);
-		drawOutlinedBox(matrixStack, x, y, width, height, c, alpha);
-	}
 	
-	public void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color,
-			float alpha) {
-
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+	public void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, Color outlineColor, Color backgroundColor) {
+		RenderSystem.setShaderColor(backgroundColor.getRedFloat(), backgroundColor.getGreenFloat(), backgroundColor.getBlueFloat(), backgroundColor.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -258,7 +235,7 @@ public class RenderUtils {
 
 		tessellator.draw();
 		
-		RenderSystem.setShaderColor(0, 0, 0, alpha);
+		RenderSystem.setShaderColor(outlineColor.getRedFloat(), outlineColor.getGreenFloat(), outlineColor.getBlueFloat(), outlineColor.getAlphaFloat());
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
 
@@ -274,9 +251,13 @@ public class RenderUtils {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
+	
+	public void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
+		drawOutlinedBox(matrixStack, x, y, width, height, Colors.Black, color);
+	}
 
-	public void drawLine(MatrixStack matrixStack, float x1, float y1, float x2, float y2, Color color, float alpha) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+	public void drawLine(MatrixStack matrixStack, float x1, float y1, float x2, float y2, Color color) {
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -347,7 +328,6 @@ public class RenderUtils {
 	}
 	
 	public void drawOutline(MatrixStack matrixStack, float x, float y, float width, float height) {
-
 		RenderSystem.setShaderColor(0, 0, 0, 1);
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -373,7 +353,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	public void draw3DBox(MatrixStack matrixStack, Box box, Color color, float alpha) {
+	public void draw3DBox(MatrixStack matrixStack, Box box, Color color) {
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), 1.0f);
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -424,7 +404,7 @@ public class RenderUtils {
 
 		tessellator.draw();
 		
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
@@ -466,7 +446,7 @@ public class RenderUtils {
 	}
 
 	public void drawLine3D(MatrixStack matrixStack, Vec3d pos, Vec3d pos2, Color color) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), 1.0f);
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
