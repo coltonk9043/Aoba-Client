@@ -20,7 +20,7 @@ public abstract class Setting<T> {
 	public TYPE type;
 
 	// Consumers
-	private final Consumer<T> onUpdate;
+	private Consumer<T> onUpdate;
 
 	public Setting(String ID, String description, T default_value) {
 		this.ID = ID;
@@ -94,6 +94,10 @@ public abstract class Setting<T> {
 		}
 	}
 
+	public void setOnUpdate(Consumer<T> consumer) {
+		this.onUpdate = consumer;
+	}
+	
 	/**
 	 * Getter for the default value.
 	 * @return
