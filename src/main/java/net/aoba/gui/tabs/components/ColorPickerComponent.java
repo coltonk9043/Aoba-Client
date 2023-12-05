@@ -17,7 +17,7 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 
 	private String text;
 	private boolean isSliding = false;
-
+	private boolean collapsed = false;
 	private float hue = 0.0f;
 	private float saturation = 0.0f;
 	private float luminance = 0.0f;
@@ -42,6 +42,7 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		
 		this.text = color.displayName;
 		this.color = color;
+		this.color.setOnUpdate((Color newColor) -> ensureGuiUpdated(newColor));
 	
 		this.hue = color.getValue().hue;
 		this.saturation = color.getValue().saturation;
@@ -53,6 +54,12 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
+	}
+	
+	public void ensureGuiUpdated(Color newColor) {
+		this.hue = newColor.hue;
+		this.saturation = newColor.saturation;
+		this.luminance = newColor.luminance;
 	}
 	
 	public void setText(String text) {
@@ -139,11 +146,11 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		// Draw Outlines
 		renderUtils.drawOutline(matrixStack, actualX + 4, actualY + 29, actualWidth - 78, actualHeight - 33);
 		renderUtils.drawOutline(matrixStack, actualX + actualWidth - 70, actualY + 29, 30f, actualHeight - 33);
-		renderUtils.drawOutline(matrixStack, actualX + actualWidth - 36, actualY + 29, 30f, actualHeight - 33);
+		renderUtils.drawOutline(matrixStack, actualX + actualWidth - 35, actualY + 29, 30f, actualHeight - 33);
 		
 		// Draw Indicators
 		renderUtils.drawCircle(matrixStack, actualX + 4 + (saturation * (actualWidth - 74)), actualY + 29 + ((1.0f - luminance) * (actualHeight - 33)), 3, new Color(255, 255, 255, 255));
 		renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 70, actualY + 29 + ((hue / 360.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
-		renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 36, actualY + 29 + ((alpha / 360.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
+		renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 36, actualY + 29 + (((255.0f - alpha) / 255.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
 	}
 }

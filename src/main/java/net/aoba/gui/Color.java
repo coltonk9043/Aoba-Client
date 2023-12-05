@@ -31,7 +31,7 @@ public class Color {
 	public int g;
 	public int b;
 	public int alpha = 255;
-	
+
 	public float hue;
 	public float saturation;
 	public float luminance;
@@ -47,15 +47,54 @@ public class Color {
 		this.r = r;
 		this.g = g;
 		this.b = b;
+
+		HSVFromRGB(r, g, b);
 	}
 
 	public Color(int r, int g, int b, int alpha) {
 		this.r = r;
 		this.g = g;
 		this.b = b;
+
+		HSVFromRGB(r, g, b);
+
 		this.alpha = alpha;
 	}
-	
+
+	private void HSVFromRGB(int r, int g, int b) {
+		// Calculate HSV value
+		float rPrime = r / 255.0f;
+		float gPrime = g / 255.0f;
+		float bPrime = b / 255.0f;
+
+		float cMax = Math.max(rPrime, Math.max(gPrime, bPrime));
+		float cMin = Math.min(rPrime, Math.min(gPrime, bPrime));
+
+		float delta = cMax - cMin;
+
+		// Calculate Hue
+		if(delta == 0.0f) {
+			hue = 0.0f;
+		}else {
+			if (cMax == rPrime) {
+				hue = (60.0f * (((gPrime - bPrime) / delta) % 6));
+			} else if (cMax == gPrime) {
+				hue = (60.0f * (((bPrime - rPrime) / delta) + 2));
+			} else if (cMax == bPrime) {
+				hue = (60.0f * (((rPrime - gPrime) / delta) + 2));
+			}
+		}
+		
+		// Calculate Saturation
+		if (cMax == 0.0f)
+			saturation = 0.0f;
+		else
+			saturation = delta / cMax;
+
+		// Calculate Luminance
+		luminance = cMax;
+	}
+
 	/**
 	 * Color Constructor using HSV color space.
 	 * 
@@ -79,9 +118,11 @@ public class Color {
 		this.saturation = saturation;
 		this.luminance = luminance;
 		Color vec = hsv2rgb(hue, saturation, luminance);
-		this.r = vec.r;
-		this.g = vec.g;
-		this.b = vec.b;
+		if(vec != null) {
+			this.r = vec.r;
+			this.g = vec.g;
+			this.b = vec.b;
+		}
 	}
 
 	/**
@@ -103,12 +144,11 @@ public class Color {
 		this.b = b;
 		this.alpha = alpha;
 	}
-	
+
 	public void setAlpha(int alpha) {
 		this.alpha = alpha;
 	}
-	
-	
+
 	/**
 	 * Returns the Color as a string in format RRRGGGBBB.
 	 * 
@@ -171,7 +211,7 @@ public class Color {
 	public float getBlueFloat() {
 		return ((float) this.b) / 255.0f;
 	}
-	
+
 	public float getAlphaFloat() {
 		return ((float) this.alpha) / 255.0f;
 	}
@@ -279,5 +319,5 @@ public class Color {
 		}
 		return null;
 	}
-
+	
 }
