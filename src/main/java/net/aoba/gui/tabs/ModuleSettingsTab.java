@@ -54,12 +54,13 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 			} else {
 				c = null;
 			}
-
-			c.setTop(i);
-			children.add(c);
-			i += c.getHeight();
+			
+			if(c != null) {
+				c.setTop(i);
+				children.add(c);
+				i += c.getHeight();
+			}
 		}
-
 		this.setHeight(i - 30);
 	}
 
