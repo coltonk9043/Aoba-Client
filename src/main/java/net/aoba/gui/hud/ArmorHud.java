@@ -24,8 +24,9 @@ package net.aoba.gui.hud;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
+import net.aoba.gui.GuiManager;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
@@ -36,7 +37,6 @@ public class ArmorHud extends AbstractHud{
 
 	public ArmorHud(int x, int y, int width, int height) {
 		super("ArmorHud", x,y,width,height);
-		this.setVisible(false);
 		this.width = 60;
 		this.height = 256;
 	}
@@ -66,7 +66,7 @@ public class ArmorHud extends AbstractHud{
 		super.OnLeftMouseDown(event);
 
 		if(this.isMouseOver) {
-			HudManager.currentGrabbed = this;
+			GuiManager.currentGrabbed = this;
 		}
 	}
 }

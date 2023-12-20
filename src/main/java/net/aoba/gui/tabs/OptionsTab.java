@@ -4,26 +4,23 @@ import java.util.ArrayList;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
+import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
-import net.aoba.gui.hud.AbstractHud;
+import net.aoba.gui.GuiManager;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import net.aoba.module.Module;
 import net.aoba.utils.types.Vector2;
 
-public class OptionsTab extends AbstractHud implements MouseScrollListener {
+public class OptionsTab extends AbstractGui implements MouseScrollListener {
 
 	int visibleScrollElements;
 	int currentScroll;
 
 	public OptionsTab() {
 		super("Options", 40, 220, 100, 100);
-
 		Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
-		
-		
 	}
 
 	@Override
@@ -43,10 +40,9 @@ public class OptionsTab extends AbstractHud implements MouseScrollListener {
 
 		System.out.println("X: " + pos.x + ", Y: " + pos.y);
 
-		HudManager hudManager = Aoba.getInstance().hudManager;
+		GuiManager hudManager = Aoba.getInstance().hudManager;
 		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, hudManager.backgroundColor.getValue());
 		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, hudManager.borderColor.getValue());
-
 		renderUtils.drawLine(matrixStack, pos.x + 480, pos.y, pos.x + 480, pos.y + height, new Color(0, 0, 0, 200));
 
 		ArrayList<Module> modules = Aoba.getInstance().moduleManager.modules;

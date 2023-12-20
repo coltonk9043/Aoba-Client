@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.aoba.Aoba;
-import net.aoba.gui.HudManager;
+import net.aoba.gui.GuiManager;
 import net.minecraft.client.gui.screen.DeathScreen;
 
 
@@ -15,7 +15,7 @@ public class DeathScreenMixin{
 	
 	@Inject(at = { @At("HEAD") }, method = "init()V", cancellable = true)
 	private void onInit(CallbackInfo ci) {
-		HudManager hudManager = Aoba.getInstance().hudManager;
+		GuiManager hudManager = Aoba.getInstance().hudManager;
 		if(hudManager.isClickGuiOpen()) {
 			hudManager.setClickGuiOpen(false);
 		}

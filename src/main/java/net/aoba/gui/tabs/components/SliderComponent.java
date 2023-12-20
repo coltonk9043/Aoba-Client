@@ -8,8 +8,8 @@ import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.LeftMouseUpListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
-import net.aoba.gui.IHudElement;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.IGuiElement;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
@@ -28,7 +28,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 	
 	FloatSetting slider;
 
-	public SliderComponent(String text, IHudElement parent) {
+	public SliderComponent(String text, IGuiElement parent) {
 		super(parent);
 		this.text = text;
 		this.slider = null;
@@ -41,7 +41,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
 	}
 
-	public SliderComponent(IHudElement parent, FloatSetting slider) {
+	public SliderComponent(IGuiElement parent, FloatSetting slider) {
 		super(parent);
 		this.text = slider.displayName;
 		this.slider = slider;
@@ -117,9 +117,10 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 		
 		float xLength = ((actualWidth - 18) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)));
 		
-		renderUtils.drawBox(matrixStack, actualX + 10, actualY + 35, xLength, 2, color);
+		GuiManager hudManager = Aoba.getInstance().hudManager;
+		renderUtils.drawBox(matrixStack, actualX + 10, actualY + 35, xLength, 2, hudManager.color.getValue());
 		renderUtils.drawBox(matrixStack, actualX + 10 + xLength, actualY + 35, (actualWidth - xLength - 18), 2, new Color(255, 255, 255, 255));
-		renderUtils.drawCircle(matrixStack, actualX + 10 + xLength, actualY + 35, 6, color);
+		renderUtils.drawCircle(matrixStack, actualX + 10 + xLength, actualY + 35, 6, hudManager.color.getValue());
 		
 		
 		//renderUtils.drawBox(matrixStack, actualX + 4, actualY + 4, (actualWidth - 8) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)), actualHeight - 8, color, 1f);

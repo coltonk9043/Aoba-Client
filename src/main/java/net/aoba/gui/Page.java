@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.aoba.gui.hud.AbstractHud;
 import net.minecraft.client.gui.DrawContext;
 
 public class Page {
 	protected String title;
-	protected List<AbstractHud> tabs = new ArrayList<AbstractHud>();
+	protected List<AbstractGui> tabs = new ArrayList<AbstractGui>();
 
 	private boolean isVisible;
 	
@@ -21,20 +20,20 @@ public class Page {
 		return this.title;
 	}
 	
-	public void AddHud(AbstractHud hud) {
+	public void AddHud(AbstractGui hud) {
 		tabs.add(hud);
 	}
 	
 	public void setVisible(boolean state) {
 		this.isVisible = state;
-		for(AbstractHud hud : tabs){
+		for(AbstractGui hud : tabs){
 			hud.setVisible(state);
 		}
 	}
 	
 	public void update() {
 		if(this.isVisible) {
-			Iterator<AbstractHud> tabIterator =  tabs.iterator();
+			Iterator<AbstractGui> tabIterator =  tabs.iterator();
 			while(tabIterator.hasNext()) {
 				tabIterator.next().update();
 			}
@@ -43,7 +42,7 @@ public class Page {
 	
 	public void render(DrawContext drawContext, float partialTicks, Color color) {
 		if(this.isVisible) {
-			Iterator<AbstractHud> tabIterator =  tabs.iterator();
+			Iterator<AbstractGui> tabIterator =  tabs.iterator();
 			while(tabIterator.hasNext()) {
 				tabIterator.next().draw(drawContext, partialTicks, color);
 			}

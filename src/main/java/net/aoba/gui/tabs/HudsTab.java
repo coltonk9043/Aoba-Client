@@ -6,10 +6,12 @@ import java.util.List;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
+import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.gui.tabs.components.ColorPickerComponent;
 import net.aoba.gui.tabs.components.HudComponent;
+import net.aoba.gui.tabs.components.KeybindComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -21,22 +23,23 @@ public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 	int visibleScrollElements;
 	int currentScroll;
 
-	public HudsTab(List<AbstractHud> hudList) {
+	public HudsTab(AbstractHud[] abstractHuds) {
 		super("Enable Huds", 50, 50, false);
 
 		Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
-		
 		StackPanelComponent stackPanel = new StackPanelComponent(this);
 		stackPanel.setTop(30);
 		
-		for(AbstractHud hud : hudList) {
+		for(AbstractHud hud : abstractHuds) {
 			HudComponent hudComponent = new HudComponent(hud.getID(), stackPanel, hud);
-
 			stackPanel.addChild(hudComponent);
 		}
 		
-		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.color));
+		KeybindComponent clickGuiKeybindComponent = new KeybindComponent(stackPanel, Aoba.getInstance().hudManager.clickGuiButton);
+		clickGuiKeybindComponent.setHeight(30);
+		stackPanel.addChild(clickGuiKeybindComponent);
 		
+		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.color));
 		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.backgroundColor));
 		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.borderColor));
 		

@@ -5,11 +5,11 @@ import net.aoba.Aoba;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.IHudElement;
+import net.aoba.gui.IGuiElement;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 
-public abstract class Component implements IHudElement, MouseMoveListener {
+public abstract class Component implements IGuiElement, MouseMoveListener {
 	protected static RenderUtils renderUtils;
 	
 	private static boolean DEBUG = false;
@@ -18,7 +18,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	protected boolean hovered = false;
 	
 	// NEW ui variables.
-	protected IHudElement parent;
+	protected IGuiElement parent;
 	protected ArrayList<Component> children;
 	
 	// These are positions that the UI designer will input to enforce specific options. 
@@ -42,7 +42,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	protected float actualHeight;
 	protected float actualWidth;
 	
-	public Component(IHudElement parent) {
+	public Component(IGuiElement parent) {
 		this.parent = parent;
 		this.children = new ArrayList<Component>();
 		
@@ -265,7 +265,7 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 	 * Returns the parent of the Component.
 	 * @return Parent of the component as a ClickGuiTab.
 	 */
-	public IHudElement getParent()
+	public IGuiElement getParent()
 	{
 		return parent;
 	}
@@ -352,12 +352,12 @@ public abstract class Component implements IHudElement, MouseMoveListener {
 		}
 	}
 	
-	public void OnChildAdded(IHudElement child) {
+	public void OnChildAdded(IGuiElement child) {
 		
 	}
 	
 	@Override
-	public void OnChildChanged(IHudElement child) {
+	public void OnChildChanged(IGuiElement child) {
 		
 	}
 	

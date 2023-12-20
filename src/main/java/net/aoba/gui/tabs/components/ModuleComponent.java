@@ -15,7 +15,7 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IndexedStringListSetting;
 import net.aoba.settings.types.StringListSetting;
 import net.aoba.gui.Color;
-import net.aoba.gui.IHudElement;
+import net.aoba.gui.IGuiElement;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.gui.tabs.ModuleSettingsTab;
 import net.minecraft.client.MinecraftClient;
@@ -34,7 +34,7 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 	
 	public static final Identifier gear = new Identifier("aoba", "/textures/gear.png");
 	
-	public ModuleComponent(String text, IHudElement parent, Module module) {
+	public ModuleComponent(String text, IGuiElement parent, Module module) {
 		super(parent);
 		this.text = text;
 		this.module = module;

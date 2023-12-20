@@ -2,7 +2,7 @@
 // that will appear on the screen. 
 package net.aoba.gui;
 
-public interface IHudElement {
+public interface IGuiElement {
 
 	public float getX();
 	public float getY();
@@ -14,5 +14,5 @@ public interface IHudElement {
 	public void setWidth(float width);
 	public void setHeight(float height);
 	
-	public void OnChildChanged(IHudElement child);
+	public void OnChildChanged(IGuiElement child);
 }

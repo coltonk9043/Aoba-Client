@@ -24,7 +24,7 @@ package net.aoba;
 import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
 import net.aoba.event.EventManager;
-import net.aoba.gui.HudManager;
+import net.aoba.gui.GuiManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
@@ -44,7 +44,7 @@ public class AobaClient {
 	public ModuleManager moduleManager;
 	public CommandManager commandManager;
 	public AltManager altManager;
-	public HudManager hudManager;
+	public GuiManager hudManager;
 	// public Settings settings;
 	public SettingManager settingManager;
 	public RenderUtils renderUtils;
@@ -74,7 +74,7 @@ public class AobaClient {
 		System.out.println("[Aoba] Initializing Commands");
 		commandManager = new CommandManager();
 		System.out.println("[Aoba] Initializing GUI");
-		hudManager = new HudManager();
+		hudManager = new GuiManager();
 		hudManager.Initialize();
 		System.out.println("[Aoba] Loading Alts");
 		altManager = new AltManager();

@@ -37,6 +37,7 @@ public class CommandManager {
 	public final CmdAimbot aimbot = new CmdAimbot();
 	public final CmdAutoEat autoeat = new CmdAutoEat();
 	public final CmdChestESP chestesp = new CmdChestESP();
+	public final CmdClickgui clickgui = new CmdClickgui();
 	public final CmdEntityESP entityesp = new CmdEntityESP();
 	public final CmdFastBreak fastbreak = new CmdFastBreak();
 	public final CmdFly fly = new CmdFly();

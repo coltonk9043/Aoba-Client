@@ -1,6 +1,6 @@
 package net.aoba.gui.tabs.components;
 
-import net.aoba.gui.IHudElement;
+import net.aoba.gui.IGuiElement;
 
 public class StackPanelComponent extends Component {
 	public enum StackType {
@@ -9,7 +9,7 @@ public class StackPanelComponent extends Component {
 
 	protected StackType stackType = StackType.Vertical;
 
-	public StackPanelComponent(IHudElement parent) {
+	public StackPanelComponent(IGuiElement parent) {
 		super(parent);
 	}
 
@@ -19,12 +19,12 @@ public class StackPanelComponent extends Component {
 	}
 	
 	@Override
-	public void OnChildAdded(IHudElement child) {
+	public void OnChildAdded(IGuiElement child) {
 		this.RecalculateHeight();
 	}
 
 	@Override
-	public void OnChildChanged(IHudElement child) {
+	public void OnChildChanged(IGuiElement child) {
 		this.RecalculateHeight();
 	}
 

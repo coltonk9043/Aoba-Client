@@ -4,8 +4,8 @@ import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
-import net.aoba.gui.IHudElement;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.IGuiElement;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.types.BooleanSetting;
 import net.minecraft.client.gui.DrawContext;
@@ -16,7 +16,7 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	private BooleanSetting checkbox;
 	private Runnable onClick;
 	
-	public CheckboxComponent(IHudElement parent, BooleanSetting checkbox) {
+	public CheckboxComponent(IGuiElement parent, BooleanSetting checkbox) {
 		super(parent);
 		this.text = checkbox.displayName;
 		this.checkbox = checkbox;

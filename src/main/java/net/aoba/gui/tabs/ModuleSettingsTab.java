@@ -4,9 +4,9 @@ import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.MouseMoveListener;
+import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
-import net.aoba.gui.hud.AbstractHud;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.tabs.components.CheckboxComponent;
 import net.aoba.gui.tabs.components.ColorPickerComponent;
 import net.aoba.gui.tabs.components.Component;
@@ -24,7 +24,7 @@ import net.aoba.settings.types.IndexedStringListSetting;
 import net.aoba.settings.types.StringListSetting;
 import net.aoba.utils.types.Vector2;
 
-public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListener, MouseMoveListener {
+public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListener, MouseMoveListener {
 	protected String title;
 	protected Module module;
 
@@ -98,7 +98,7 @@ public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListe
 		Vector2 pos = position.getValue();
 
 		// Draws background depending on components width and height
-		HudManager hudManager = Aoba.getInstance().hudManager;
+		GuiManager hudManager = Aoba.getInstance().hudManager;
 		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.backgroundColor.getValue());
 		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.borderColor.getValue());
 		
@@ -124,13 +124,13 @@ public class ModuleSettingsTab extends AbstractHud implements LeftMouseDownListe
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			if (mouseX >= pos.x && mouseX <= pos.x + width) {
 				if (mouseY >= pos.y && mouseY <= pos.y + 24) {
-					HudManager.currentGrabbed = this;
+					GuiManager.currentGrabbed = this;
 				}
 			}
 
 			if (mouseX >= (pos.x + width - 24) && mouseX <= (pos.x + width - 2)) {
 				if (mouseY >= (pos.y + 4) && mouseY <= (pos.y + 20)) {
-					HudManager.currentGrabbed = null;
+					GuiManager.currentGrabbed = null;
 					Aoba.getInstance().hudManager.RemoveHud(this, "Modules");
 				}
 			}

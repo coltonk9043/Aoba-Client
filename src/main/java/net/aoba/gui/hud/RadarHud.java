@@ -2,8 +2,9 @@ package net.aoba.gui.hud;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
+import net.aoba.gui.GuiManager;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -19,7 +20,6 @@ public class RadarHud extends AbstractHud {
 	float distance = 50;
 	public RadarHud( int x, int y, int width, int height) {
 		super("RadarHud", x, y, width, height);
-		this.setVisible(false);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class RadarHud extends AbstractHud {
 			Vector2 pos = position.getValue();
 			
 			// Draws background depending on components width and height
-			HudManager hudManager = Aoba.getInstance().hudManager;
+			GuiManager hudManager = Aoba.getInstance().hudManager;
 			renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, hudManager.backgroundColor.getValue());
 			renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, hudManager.borderColor.getValue());
 
@@ -99,7 +99,7 @@ public class RadarHud extends AbstractHud {
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		if(this.isMouseOver) {
-			HudManager.currentGrabbed = this;
+			GuiManager.currentGrabbed = this;
 		}		
 		super.OnLeftMouseDown(event);
 	}

@@ -8,7 +8,7 @@ import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.IHudElement;
+import net.aoba.gui.IGuiElement;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.InputUtil;
@@ -17,7 +17,7 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 	private boolean listeningForKey;
 	private KeybindSetting keyBind;
 	
-	public KeybindComponent(IHudElement parent, KeybindSetting keyBind) {
+	public KeybindComponent(IGuiElement parent, KeybindSetting keyBind) {
 		super(parent);
 		this.keyBind = keyBind;
 		

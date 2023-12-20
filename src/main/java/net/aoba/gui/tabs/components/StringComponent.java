@@ -2,14 +2,14 @@ package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
 import net.aoba.gui.Color;
-import net.aoba.gui.IHudElement;
+import net.aoba.gui.IGuiElement;
 import net.minecraft.client.gui.DrawContext;
 
 public class StringComponent extends Component {
 	private String originalText;
 	private ArrayList<String> text;
 
-	public StringComponent(String text, IHudElement parent) {
+	public StringComponent(String text, IGuiElement parent) {
 		super(parent);
 		this.originalText = text;
 		this.text = new ArrayList<String>();
@@ -28,7 +28,7 @@ public class StringComponent extends Component {
 		}
 	}
 
-	public StringComponent(String text, IHudElement parent, boolean bold) {
+	public StringComponent(String text, IGuiElement parent, boolean bold) {
 		super(parent);
 		this.originalText = text;
 		this.text = new ArrayList<String>();

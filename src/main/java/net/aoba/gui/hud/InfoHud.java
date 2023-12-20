@@ -1,8 +1,9 @@
 package net.aoba.gui.hud;
 
 import net.aoba.Aoba;
+import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
+import net.aoba.gui.GuiManager;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -17,7 +18,6 @@ public class InfoHud extends AbstractHud {
 	// 
 	public InfoHud(int x, int y) {
 		super("InfoHud", x, y, 190, 60);
-		this.setVisible(false);
 	}
 	
 	@Override
@@ -63,7 +63,7 @@ public class InfoHud extends AbstractHud {
 			
 			Vector2 pos = position.getValue();
 			
-			HudManager hudManager = Aoba.getInstance().hudManager;
+			GuiManager hudManager = Aoba.getInstance().hudManager;
 			renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, hudManager.backgroundColor.getValue());
 			renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, hudManager.borderColor.getValue());
 			

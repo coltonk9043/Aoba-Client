@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
 	"interfaces.ILivingEntity",
-	"interfaces.IMinecraftClient",
-	"interfaces.IChatInputSuggestor"
+	"interfaces.IMinecraftClient"
   ],
   "client": [
 	"AbstractBlockStateMixin",

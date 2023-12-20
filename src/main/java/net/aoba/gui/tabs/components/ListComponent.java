@@ -7,8 +7,8 @@ import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
-import net.aoba.gui.IHudElement;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.IGuiElement;
 import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.types.IndexedStringListSetting;
 import net.minecraft.client.MinecraftClient;
@@ -20,14 +20,14 @@ public class ListComponent extends Component implements LeftMouseDownListener {
 	private IndexedStringListSetting list;
 	private List<Component> settingsList = new ArrayList<Component>();
 
-	public ListComponent(String text, IHudElement parent) {
+	public ListComponent(String text, IGuiElement parent) {
 		super(parent);
 		this.text = text;
 
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
-	public ListComponent(IHudElement parent, IndexedStringListSetting list) {
+	public ListComponent(IGuiElement parent, IndexedStringListSetting list) {
 		super(parent);
 		this.text = list.displayName;
 		this.list = list;

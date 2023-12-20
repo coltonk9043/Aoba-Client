@@ -28,9 +28,9 @@ import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.MouseMoveListener;
+import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
-import net.aoba.gui.hud.AbstractHud;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.tabs.components.Component;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
@@ -39,7 +39,7 @@ import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class ClickGuiTab extends AbstractHud implements LeftMouseDownListener, MouseMoveListener {
+public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, MouseMoveListener {
 	protected String title;
 
 	protected boolean pinnable = true;
@@ -77,7 +77,7 @@ public class ClickGuiTab extends AbstractHud implements LeftMouseDownListener, M
 	}
 
 	public final boolean isGrabbed() {
-		return (HudManager.currentGrabbed == this);
+		return (GuiManager.currentGrabbed == this);
 	}
 
 	public final void addChild(Component component) {
@@ -147,14 +147,14 @@ public class ClickGuiTab extends AbstractHud implements LeftMouseDownListener, M
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			if(mouseX >= pos.x && mouseX <= pos.x + width) {
 				if(mouseY >= pos.y && mouseY <= pos.y + 24) {
-					HudManager.currentGrabbed = this;
+					GuiManager.currentGrabbed = this;
 				}
 			}
 			
 			if (this.pinnable) {
 				if (mouseX >= (pos.x + width - 24) && mouseX <= (pos.x + width - 2)) {
 					if (mouseY >= (pos.y + 4) && mouseY <= (pos.y + 20)) {
-						HudManager.currentGrabbed = null;
+						GuiManager.currentGrabbed = null;
 						isPinned.silentSetValue(!isPinned.getValue());
 					}
 				}

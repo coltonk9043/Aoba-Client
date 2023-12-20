@@ -8,7 +8,7 @@ import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.LeftMouseUpListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.IHudElement;
+import net.aoba.gui.IGuiElement;
 import net.aoba.settings.types.ColorSetting;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -25,7 +25,7 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 	
 	private ColorSetting color;
 
-	public ColorPickerComponent(String text, IHudElement parent) {
+	public ColorPickerComponent(String text, IGuiElement parent) {
 		super(parent);
 		this.text = text;
 		
@@ -37,7 +37,7 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
 	}
 	
-	public ColorPickerComponent(IHudElement parent, ColorSetting color) {
+	public ColorPickerComponent(IGuiElement parent, ColorSetting color) {
 		super(parent);
 		
 		this.text = color.displayName;
@@ -60,6 +60,7 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		this.hue = newColor.hue;
 		this.saturation = newColor.saturation;
 		this.luminance = newColor.luminance;
+		this.alpha = newColor.alpha;
 	}
 	
 	public void setText(String text) {
@@ -72,8 +73,19 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			isSliding = true;
+		double mouseY = event.GetMouseY();
+		
+		if(hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+			if(mouseY < actualY + 29) {
+				collapsed = !collapsed;
+				if(collapsed) 
+					this.setHeight(30);
+				else
+					this.setHeight(145);
+			}else {
+				if(!collapsed)
+					isSliding = true;
+			}
 		}
 	}
 	
@@ -93,14 +105,14 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 			float vertical = (float) Math.min(Math.max(1.0f - (((mouseY - (actualY + 29)) - 1) / (actualHeight - 33)), 0.0f), 1.0f);
 			
 			// If inside of saturation/lightness box.
-			if(mouseX >= actualX + 4 && mouseX <= actualX + actualWidth - 74) {
-				float horizontal = (float) Math.min(Math.max(((mouseX - (actualX + 4)) - 1) / (actualWidth - 74), 0.0f), 1.0f);
+			if(mouseX >= actualX + 4 && mouseX <= actualX + actualWidth - 68) {
+				float horizontal = (float) Math.min(Math.max(((mouseX - (actualX + 4)) - 1) / (actualWidth - 68), 0.0f), 1.0f);
 				
 				this.luminance = vertical;
 				this.saturation = horizontal;
-			}else if(mouseX >= actualX + actualWidth - 70 && mouseX <= actualX + actualWidth - 32) {
+			}else if(mouseX >= actualX + actualWidth - 72 && mouseX <= actualX + actualWidth - 38) {
 				this.hue = (1.0f - vertical) * 360.0f;
-			}else if(mouseX >= actualX + actualWidth - 36 && mouseX <= actualX + actualWidth - 4) {
+			}else if(mouseX >= actualX + actualWidth - 34 && mouseX <= actualX + actualWidth - 4) {
 				this.alpha = (vertical) * 255.0f;
 			}
 			
@@ -117,40 +129,39 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
-		
 		MatrixStack matrixStack = drawContext.getMatrices();
 		
 		renderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
+		renderUtils.drawString(drawContext, collapsed ? "<<" :  ">>", (actualX + actualWidth - 24), actualY + 6, color.getColorAsInt());
 		
-		//String valueText = String.format("%.02f", this.slider.getValue());
-		//int textSize = MinecraftClient.getInstance().textRenderer.getWidth(valueText) * MinecraftClient.getInstance().options.getGuiScale().getValue();
-		//renderUtils.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 6, 0xFFFFFF);
+		if(!collapsed) {
+			Color newColor = new Color(255, 0, 0);
+			newColor.setHSV(this.hue, 1.0f, 1.0f);
+			renderUtils.drawHorizontalGradient(matrixStack, actualX + 4, actualY + 29, actualWidth - 76, actualHeight - 33, new Color(255, 255, 255), newColor);
+			renderUtils.drawVerticalGradient(matrixStack, actualX + 4, actualY+ 29, actualWidth - 76, actualHeight - 33, new Color(0, 0, 0, 0), new Color(0, 0, 0));
+			
+			// Draw Hue Rectangle
+			float increment = ((this.actualHeight - 33) / 6.0f);
+			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29, 30, increment, new Color(255, 0, 0), new Color(255, 255, 0));
+			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + increment, 30,increment, new Color(255, 255, 0), new Color(0, 255, 0));
+			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (2 * increment), 30, increment, new Color(0, 255, 0), new Color(0, 255, 255));
+			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (3 * increment), 30, increment, new Color(0, 255, 255), new Color(0, 0, 255));
+			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (4 * increment), 30, increment, new Color(0, 0, 255), new Color(255, 0, 255));
+			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (5 * increment), 30, increment, new Color(255, 0, 255), new Color(255, 0, 0));
 		
-		Color newColor = new Color(255, 0, 0);
-		newColor.setHSV(this.hue, 1.0f, 1.0f);
-		renderUtils.drawHorizontalGradient(matrixStack, actualX + 4, actualY + 29, actualX + actualWidth - 74, actualY + actualHeight - 4, new Color(255, 255, 255), newColor);
-		renderUtils.drawVerticalGradient(matrixStack, actualX + 4, actualY + actualHeight - 4, actualX + actualWidth - 74, actualY + 29, new Color(0, 0, 0, 0), new Color(0, 0, 0));
+			// Draw Alpha Rectangle
+			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 34 , actualY + 29, 30, actualHeight - 33, new Color(255, 255, 255), new Color(0, 0, 0));
+			
+			// Draw Outlines
+			renderUtils.drawOutline(matrixStack, actualX + 4, actualY + 29, actualWidth - 76, actualHeight - 33);
+			renderUtils.drawOutline(matrixStack, actualX + actualWidth - 68, actualY + 29, 30, actualHeight - 33);
+			renderUtils.drawOutline(matrixStack, actualX + actualWidth - 34, actualY + 29, 30, actualHeight - 33);
+			
+			// Draw Indicators
+			renderUtils.drawCircle(matrixStack, actualX + 4 + (saturation * (actualWidth - 72)), actualY + 29 + ((1.0f - luminance) * (actualHeight - 33)), 3, new Color(255, 255, 255, 255));
+			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 68, actualY + 29 + ((hue / 360.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
+			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 34, actualY + 29 + (((255.0f - alpha) / 255.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
+		}
 		
-		// Draw Hue Rectangle
-		int increment = (int) ((this.actualHeight - 8) / 7);
-		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 70, actualY + 29, actualX + actualWidth - 40, actualY + 29 + increment, new Color(255, 255, 0), new Color(255, 0, 0));
-		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 70, actualY + 29 + increment, actualX + actualWidth - 40, actualY + 29 + (2 * increment), new Color(0, 255, 0), new Color(255, 255, 0));
-		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 70, actualY + 29 + (2 * increment), actualX + actualWidth - 40, actualY + 29 + (3 * increment), new Color(0, 255, 255), new Color(0, 255, 0));
-		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 70, actualY + 29 + (3 * increment), actualX + actualWidth - 40, actualY + 29 + (4 * increment), new Color(0, 0, 255), new Color(0, 255, 255));
-		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 70, actualY + 29 + (4 * increment), actualX + actualWidth - 40, actualY + 29 + (5 * increment), new Color(255, 0, 255), new Color(0, 0, 255));
-		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 70, actualY + 29 + (5 * increment), actualX + actualWidth - 40, actualY + actualHeight - 4, new Color(255, 0, 0), new Color(255, 0, 255));
-	
-		// Draw Alpha Rectangle
-		renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 36 , actualY + 29, actualX + actualWidth - 4, actualY + actualHeight - 4, new Color(0, 0, 0), new Color(255, 255, 255));
-		
-		// Draw Outlines
-		renderUtils.drawOutline(matrixStack, actualX + 4, actualY + 29, actualWidth - 78, actualHeight - 33);
-		renderUtils.drawOutline(matrixStack, actualX + actualWidth - 70, actualY + 29, 30f, actualHeight - 33);
-		renderUtils.drawOutline(matrixStack, actualX + actualWidth - 35, actualY + 29, 30f, actualHeight - 33);
-		
-		// Draw Indicators
-		renderUtils.drawCircle(matrixStack, actualX + 4 + (saturation * (actualWidth - 74)), actualY + 29 + ((1.0f - luminance) * (actualHeight - 33)), 3, new Color(255, 255, 255, 255));
-		renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 70, actualY + 29 + ((hue / 360.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
-		renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 36, actualY + 29 + (((255.0f - alpha) / 255.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
 	}
 }

@@ -35,12 +35,11 @@ public abstract class ChatInputSuggestorMixin {
 	private CompletableFuture<Suggestions> pendingSuggestions;
 	@Shadow
 	private List<OrderedText> messages;
-
+	
 	@Shadow
 	public abstract void show(boolean narrateFirstSuggestion);
 	
-	@Inject(at = {
-			@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/TextFieldWidget;getCursor()I", ordinal = 0) }, method = "refresh()V", cancellable = true)
+	@Inject(at = { @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/TextFieldWidget;getCursor()I", ordinal = 0) }, method = "refresh()V", cancellable = true)
 	private void onRefresh(CallbackInfo ci) {
 		String prefix = CommandManager.PREFIX.getValue();
 		String string = this.textField.getText();

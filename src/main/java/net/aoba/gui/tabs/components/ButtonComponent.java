@@ -4,9 +4,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
-import net.aoba.gui.IHudElement;
-import net.aoba.gui.tabs.ClickGuiTab;
+import net.aoba.gui.IGuiElement;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -14,8 +12,6 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 
 	private String text;
 	private Runnable onClick;
-
-	private Color hoverColor = new Color(90, 90, 90);
 	private Color color = new Color(128, 128, 128);
 	private Color backgroundColor = color;
 	
@@ -25,7 +21,7 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	 * @param text Text contained in this button element.
 	 * @param onClick OnClick delegate that will run when the button is pressed.
 	 */
-	public ButtonComponent(IHudElement parent, String text, Runnable onClick) {
+	public ButtonComponent(IGuiElement parent, String text, Runnable onClick) {
 		super(parent);
 		
 		this.setLeft(2);
@@ -72,17 +68,9 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	 */
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		double mouseX = event.GetMouseX();
-		double mouseY = event.GetMouseY();
-
 		if(this.hovered && Aoba.getInstance().hudManager.isClickGuiOpen())  {
 			this.onClick.run();
 		}
-	}
-
-	@Override
-	public void update() {
-		super.update();
 	}
 	
 	@Override

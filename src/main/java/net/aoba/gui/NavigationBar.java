@@ -63,7 +63,7 @@ public class NavigationBar implements LeftMouseDownListener {
 
 		int width = 100 * options.size();
 		
-		HudManager hudManager = Aoba.getInstance().hudManager;
+		GuiManager hudManager = Aoba.getInstance().hudManager;
 		renderUtils.drawRoundedBox(matrixStack, centerX - (width / 2), 25, width, 25, 6, hudManager.backgroundColor.getValue());
 		renderUtils.drawRoundedOutline(matrixStack, centerX -  (width / 2), 25, width, 25, 6, hudManager.borderColor.getValue());
 
@@ -89,7 +89,7 @@ public class NavigationBar implements LeftMouseDownListener {
 		int centerX = (window.getWidth() / 2);
 		int x = centerX - (width / 2);
 		
-		if (aoba.hudManager.isClickGuiOpen() && HudManager.currentGrabbed == null) {
+		if (aoba.hudManager.isClickGuiOpen() && GuiManager.currentGrabbed == null) {
 			if (mouseX >= (x) && mouseX <= (x + width)) {
 				if (mouseY >= (25) && mouseY <= (50)) {
 					int mouseXInt = (int) mouseX;

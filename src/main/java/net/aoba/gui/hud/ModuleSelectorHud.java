@@ -5,8 +5,9 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
-import net.aoba.gui.HudManager;
+import net.aoba.gui.GuiManager;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
 import net.aoba.utils.types.Vector2;
@@ -32,7 +33,6 @@ public class ModuleSelectorHud extends AbstractHud {
 	ArrayList<Module> modules = new ArrayList<Module>();
 
 	public ModuleSelectorHud() {
-		// super(Settings.getSettingInt("x"), Settings.getSettingInt("y"), 150, 30);
 		super("ModuleSelectorHud", 0, 0, 150, 30);
 		this.keybindUp = new KeyBinding("key.tabup", GLFW.GLFW_KEY_UP, "key.categories.aoba");
 		this.keybindDown = new KeyBinding("key.tabdown", GLFW.GLFW_KEY_DOWN, "key.categories.aoba");
@@ -107,7 +107,7 @@ public class ModuleSelectorHud extends AbstractHud {
 		renderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, color);
 
 		// Draws the table including all of the categories.
-		HudManager hudManager = Aoba.getInstance().hudManager;
+		GuiManager hudManager = Aoba.getInstance().hudManager;
 		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.backgroundColor.getValue());
 		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.borderColor.getValue());
 		
@@ -158,7 +158,7 @@ public class ModuleSelectorHud extends AbstractHud {
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		if(this.isMouseOver) {
-			HudManager.currentGrabbed = this;
+			GuiManager.currentGrabbed = this;
 		}
 		
 		super.OnLeftMouseDown(event);

@@ -279,9 +279,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawHorizontalGradient(MatrixStack matrixStack, float x1, float y1, float x2, float y2, Color startColor, Color endColor) {
-		RenderSystem.setShaderColor(1, 1, 1, 1);
-		
+	public void drawHorizontalGradient(MatrixStack matrixStack, float x, float y, float width, float height, Color startColor, Color endColor) {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
@@ -292,19 +290,17 @@ public class RenderUtils {
 		
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 
-        bufferBuilder.vertex(matrix, x1, y1, 0.0F).color(startColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix, x1, y2, 0.0F).color(startColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix, x2, y2, 0.0F).color(endColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix, x2, y1, 0.0F).color(endColor.getColorAsInt()).next();
+        bufferBuilder.vertex(matrix, x, y, 0.0F).color(startColor.getColorAsInt()).next();
+        bufferBuilder.vertex(matrix, x + width, y, 0.0F).color(endColor.getColorAsInt()).next();
+        bufferBuilder.vertex(matrix, x + width, y + height, 0.0F).color(endColor.getColorAsInt()).next();
+        bufferBuilder.vertex(matrix, x, y + height, 0.0F).color(startColor.getColorAsInt()).next();
 		
 		tessellator.draw();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-
-	public void drawVerticalGradient(MatrixStack matrixStack, float x1, float y1, float x2, float y2, Color startColor, Color endColor) {
-		RenderSystem.setShaderColor(1, 1, 1, 1);
-		
+	
+	public void drawVerticalGradient(MatrixStack matrixStack, float x, float y, float width, float height, Color startColor, Color endColor) {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
@@ -313,14 +309,12 @@ public class RenderUtils {
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		
-		
-		
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 
-        bufferBuilder.vertex(matrix, x1, y1, 0.0F).color(endColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix, x1, y2, 0.0F).color(startColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix, x2, y2, 0.0F).color(startColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix, x2, y1, 0.0F).color(endColor.getColorAsInt()).next();
+        bufferBuilder.vertex(matrix, x, y, 0.0F).color(startColor.getColorAsInt()).next();
+        bufferBuilder.vertex(matrix, x + width, y, 0.0F).color(startColor.getColorAsInt()).next();
+        bufferBuilder.vertex(matrix, x + width, y + height, 0.0F).color(endColor.getColorAsInt()).next();
+        bufferBuilder.vertex(matrix, x, y + height, 0.0F).color(endColor.getColorAsInt()).next();
 		
 		tessellator.draw();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -329,6 +323,32 @@ public class RenderUtils {
 	
 	public void drawOutline(MatrixStack matrixStack, float x, float y, float width, float height) {
 		RenderSystem.setShaderColor(0, 0, 0, 1);
+		
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		
+		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+		Tessellator tessellator = RenderSystem.renderThreadTesselator();
+		BufferBuilder bufferBuilder = tessellator.getBuffer();
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
+
+		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+
+		bufferBuilder.vertex(matrix, x, y, 0).next();
+		bufferBuilder.vertex(matrix, x + width, y, 0).next();
+		bufferBuilder.vertex(matrix, x + width, y + height, 0).next();
+		bufferBuilder.vertex(matrix, x, y + height, 0).next();
+		bufferBuilder.vertex(matrix, x, y, 0).next();
+
+		tessellator.draw();
+		RenderSystem.setShaderColor(1, 1, 1, 1);
+		
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
+	}
+	
+	public void drawOutline(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
+		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
