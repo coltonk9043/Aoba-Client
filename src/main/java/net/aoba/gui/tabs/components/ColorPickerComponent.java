@@ -17,7 +17,7 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 
 	private String text;
 	private boolean isSliding = false;
-	private boolean collapsed = false;
+	private boolean collapsed = true;
 	private float hue = 0.0f;
 	private float saturation = 0.0f;
 	private float luminance = 0.0f;
@@ -48,7 +48,7 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		this.saturation = color.getValue().saturation;
 		this.luminance = color.getValue().luminance;
 		
-		this.setHeight(145);
+		this.setHeight(30);
 		this.setLeft(4);
 		this.setRight(4);
 		

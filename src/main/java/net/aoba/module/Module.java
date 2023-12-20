@@ -51,6 +51,7 @@ public abstract class Module {
 	
 	public Module(KeybindSetting keyBind) {
 		this.keyBind = keyBind;
+		this.addSetting(keyBind);
 		SettingManager.register_setting(this.keyBind, Aoba.getInstance().settingManager.modules_category);
 	}
 	

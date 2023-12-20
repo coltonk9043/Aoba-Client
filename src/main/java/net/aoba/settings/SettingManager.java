@@ -73,8 +73,7 @@ public class SettingManager {
 					config.setProperty(setting.ID, String.valueOf(key.getCode()));
 				}
 				case VECTOR2 -> {
-					config.setProperty(setting.ID + "_x", String.valueOf(((Vector2) setting.getValue()).x));
-					config.setProperty(setting.ID + "_y", String.valueOf(((Vector2) setting.getValue()).y));
+					config.setProperty(setting.ID, String.valueOf(((Vector2) setting.getValue()).x) + "," + String.valueOf(((Vector2) setting.getValue()).y));
 				}
 				case COLOR -> {
 					String s = ((Color) setting.getValue()).getColorAsHex();
@@ -110,6 +109,7 @@ public class SettingManager {
 							&& ((FloatSetting) setting).max_value >= floatValue) {
 						setting.setValue(Double.parseDouble(value));
 					}
+					break;
 				}
 				case INTEGER -> {
 					int intValue = Integer.parseInt(value);
@@ -117,23 +117,27 @@ public class SettingManager {
 							&& ((IntegerSetting) setting).max_value >= intValue) {
 						setting.setValue(Integer.parseInt(value));
 					}
+					break;
 				}
 				case BOOLEAN -> {
 					setting.setValue(Boolean.parseBoolean(value));
+					break;
 				}
 				case STRING -> {
 					setting.setValue(value);
+					break;
 				}
 				case KEYBIND -> {
 					int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
 					setting.setValue(InputUtil.fromKeyCode(keyCode, 0));
+					break;
 				}
 				case VECTOR2 -> {
-					String value_x = config.getProperty(setting.ID + "_x", null);
-					String value_y = config.getProperty(setting.ID + "_y", null);
-					if (value_x == null || value_y == null)
-						break;
-					setting.setValue(new Vector2(Float.parseFloat(value_x), Float.parseFloat(value_y)));
+					String[] dimensions = value.split(",");
+					if (dimensions.length == 2) {
+						setting.setValue(new Vector2(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
+					}
+					break;
 				}
 				case COLOR -> {
 					long hexValue = Long.parseLong(value.replace("#", ""), 16);
@@ -142,6 +146,7 @@ public class SettingManager {
 					int G = (int)((hexValue) >> 8) & 0xFF;
 					int B = (int)(hexValue) & 0xFF;
 					setting.setValue(new Color(R, G, B, Alpha));
+					break;
 				}
 				}
 			}
