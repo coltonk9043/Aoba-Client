@@ -60,13 +60,4 @@ public class ArmorHud extends AbstractHud{
 			}
 		}
 	}
-	
-	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		super.OnLeftMouseDown(event);
-
-		if(this.isMouseOver) {
-			GuiManager.currentGrabbed = this;
-		}
-	}
 }

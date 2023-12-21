@@ -95,12 +95,4 @@ public class RadarHud extends AbstractHud {
 	public void update() {
 
 	}
-	
-	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if(this.isMouseOver) {
-			GuiManager.currentGrabbed = this;
-		}		
-		super.OnLeftMouseDown(event);
-	}
 }

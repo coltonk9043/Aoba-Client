@@ -13,6 +13,7 @@ import net.aoba.gui.tabs.components.Component;
 import net.aoba.gui.tabs.components.KeybindComponent;
 import net.aoba.gui.tabs.components.ListComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
+import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.aoba.module.Module;
@@ -34,34 +35,32 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 		this.module = module;
 		this.setWidth(260);
 
-		int i = 30;
-		KeybindComponent keybindComponent = new KeybindComponent(this, module.getBind());
-		keybindComponent.setTop(i);
+		StackPanelComponent stackPanel = new StackPanelComponent(this);
+		stackPanel.setTop(30);
+		
+		KeybindComponent keybindComponent = new KeybindComponent(stackPanel, module.getBind());
 		keybindComponent.setHeight(30);
-		children.add(keybindComponent);
 
-		i += 30;
 		for (Setting setting : this.module.getSettings()) {
 			Component c;
 			if (setting instanceof FloatSetting) {
-				c = new SliderComponent(this, (FloatSetting) setting);
+				c = new SliderComponent(stackPanel, (FloatSetting) setting);
 			} else if (setting instanceof BooleanSetting) {
-				c = new CheckboxComponent(this, (BooleanSetting) setting);
+				c = new CheckboxComponent(stackPanel, (BooleanSetting) setting);
 			} else if (setting instanceof StringListSetting) {
-				c = new ListComponent(this, (IndexedStringListSetting) setting);
+				c = new ListComponent(stackPanel, (IndexedStringListSetting) setting);
 			} else if (setting instanceof ColorSetting) {
-				c = new ColorPickerComponent(this, (ColorSetting) setting);
+				c = new ColorPickerComponent(stackPanel, (ColorSetting) setting);
 			} else {
 				c = null;
 			}
 			
 			if(c != null) {
-				c.setTop(i);
-				children.add(c);
-				i += c.getHeight();
+				stackPanel.addChild(c);
 			}
 		}
-		this.setHeight(i - 30);
+		
+		this.addChild(stackPanel);
 	}
 
 	public final String getTitle() {
@@ -79,6 +78,14 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 
 	@Override
 	public void update() {
+		if (this.inheritHeightFromChildren) {
+			float tempHeight = 0;
+			for (Component child : children) {
+				tempHeight += (child.getHeight());
+			}
+			this.setHeight(tempHeight);
+		}
+		
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			for (Component child : this.children) {
 				child.update();
@@ -116,8 +123,6 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		super.OnLeftMouseDown(event);
-
 		double mouseX = mc.mouse.getX();
 		double mouseY = mc.mouse.getY();
 		Vector2 pos = position.getValue();
@@ -125,6 +130,8 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			if (mouseX >= pos.x && mouseX <= pos.x + width) {
 				if (mouseY >= pos.y && mouseY <= pos.y + 24) {
+					this.lastClickOffsetX = mouseX - pos.x;
+					this.lastClickOffsetY = mouseY - pos.y;
 					GuiManager.currentGrabbed = this;
 				}
 			}

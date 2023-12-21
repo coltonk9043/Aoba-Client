@@ -246,11 +246,14 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		}
 		
 		// Render HUDS
-		for(AbstractGui hud : pinnedHuds.values()) {
-			if(hud.getVisible()) {
-				hud.draw(drawContext, tickDelta, this.currentColor);
+		if(!this.clickGuiOpen || this.clickGuiNavBar.getSelectedPage() == this.hudPane) {
+			for(AbstractGui hud : pinnedHuds.values()) {
+				if(hud.getVisible()) {
+					hud.draw(drawContext, tickDelta, this.currentColor);
+				}
 			}
 		}
+		
 		
 		matrixStack.pop();
 		GL11.glEnable(GL11.GL_CULL_FACE);

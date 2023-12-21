@@ -1,8 +1,10 @@
 package net.aoba.gui.hud;
 
 import net.aoba.Aoba;
+import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
+import net.aoba.gui.GuiManager;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.Vector2Setting;

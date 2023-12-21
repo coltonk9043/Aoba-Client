@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
 import net.aoba.module.Module;
@@ -40,6 +38,7 @@ public class ModuleSelectorHud extends AbstractHud {
 		this.keybindRight = new KeyBinding("key.tabright", GLFW.GLFW_KEY_RIGHT, "key.categories.aoba");
 
 		categories = Module.Category.values();
+		
 		this.aoba = Aoba.getInstance();
 	}
 
@@ -153,14 +152,5 @@ public class ModuleSelectorHud extends AbstractHud {
 				iteration++;
 			}
 		}
-	}
-	
-	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if(this.isMouseOver) {
-			GuiManager.currentGrabbed = this;
-		}
-		
-		super.OnLeftMouseDown(event);
 	}
 }

@@ -36,7 +36,9 @@ public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener,
 	// Mouse Variables
 	protected double lastClickOffsetX;
 	protected double lastClickOffsetY;
-
+	protected boolean inheritHeightFromChildren = true;
+	
+	
 	protected ArrayList<Component> children = new ArrayList<>();
 	
 	public AbstractGui(String ID, float x, float y, float width, float height) {
@@ -161,6 +163,7 @@ public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener,
 			if (GuiManager.currentGrabbed == null) {
 				if (mouseX >= pos.x && mouseX <= (pos.x + width)) {
 					if (mouseY >= pos.y && mouseY <= (pos.y + height)) {
+						GuiManager.currentGrabbed = this;
 						this.lastClickOffsetX = mouseX - pos.x;
 						this.lastClickOffsetY = mouseY - pos.y;
 					}

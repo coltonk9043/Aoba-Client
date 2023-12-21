@@ -38,6 +38,10 @@ public class NavigationBar implements LeftMouseDownListener {
 		return this.selectedIndex;
 	}
 	
+	public Page getSelectedPage() {
+		return options.get(selectedIndex);
+	}
+	
 	public void setSelectedIndex(int index) {
 		if(index <= this.options.size()) {
 			this.options.get(selectedIndex).setVisible(false);

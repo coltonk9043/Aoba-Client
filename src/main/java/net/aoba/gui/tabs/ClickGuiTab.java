@@ -44,7 +44,7 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 
 	protected boolean pinnable = true;
 	protected boolean drawBorder = true;
-	protected boolean inheritHeightFromChildren = true;
+	
 
 
 	private BooleanSetting isPinned;
@@ -138,8 +138,6 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		super.OnLeftMouseDown(event);
-
 		double mouseX = mc.mouse.getX();
 		double mouseY = mc.mouse.getY();
 		Vector2 pos = position.getValue();
@@ -147,6 +145,8 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			if(mouseX >= pos.x && mouseX <= pos.x + width) {
 				if(mouseY >= pos.y && mouseY <= pos.y + 24) {
+					this.lastClickOffsetX = mouseX - pos.x;
+					this.lastClickOffsetY = mouseY - pos.y;
 					GuiManager.currentGrabbed = this;
 				}
 			}

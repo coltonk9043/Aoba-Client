@@ -27,7 +27,7 @@ public class StackPanelComponent extends Component {
 	public void OnChildChanged(IGuiElement child) {
 		this.RecalculateHeight();
 	}
-
+	
 	@Override
 	public void OnVisibilityChanged() {
 		this.RecalculateHeight();
