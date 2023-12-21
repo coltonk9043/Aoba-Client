@@ -40,7 +40,8 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 		
 		KeybindComponent keybindComponent = new KeybindComponent(stackPanel, module.getBind());
 		keybindComponent.setHeight(30);
-
+		stackPanel.addChild(keybindComponent);
+		
 		for (Setting setting : this.module.getSettings()) {
 			Component c;
 			if (setting instanceof FloatSetting) {

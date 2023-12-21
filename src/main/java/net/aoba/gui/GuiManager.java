@@ -82,8 +82,8 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		
 		renderUtils = Aoba.getInstance().renderUtils;
 		borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
-		backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(128, 128, 128, 50));
-		color = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1f, 0f, 0f));
+		backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(0, 0, 0, 50));
+		color = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
 		currentColor = color.getValue();
 		rainbowColor = new RainbowColor();
 		clickGuiNavBar = new NavigationBar();
