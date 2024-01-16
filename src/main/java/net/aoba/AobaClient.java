@@ -23,6 +23,7 @@ package net.aoba;
 
 import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
+import net.aoba.cmd.GlobalChat;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
 import net.aoba.misc.RenderUtils;
@@ -35,7 +36,7 @@ import net.minecraft.client.gui.DrawContext;
 public class AobaClient {
 	public static final String NAME = "Aoba";
 	public static final String VERSION = "1.20.2";
-	public static final String AOBA_VERSION = "1.4-preview-2";
+	public static final String AOBA_VERSION = "1.4.0-preview-2";
 	
 	public static MinecraftClient MC;
 	public static IMinecraftClient IMC;
@@ -48,7 +49,7 @@ public class AobaClient {
 	// public Settings settings;
 	public SettingManager settingManager;
 	public RenderUtils renderUtils;
-	
+	public GlobalChat globalChat;
 	public EventManager eventManager;
 	
 	private boolean ghostMode;
@@ -83,6 +84,9 @@ public class AobaClient {
 		SettingManager.loadSettings("config_category", settingManager.config_category);
 		SettingManager.loadSettings("modules_category", settingManager.modules_category);
 		SettingManager.loadSettings("hidden_category", settingManager.hidden_category);
+
+		globalChat = new GlobalChat();
+		globalChat.StartListener();
 	}
 	
 	/**

@@ -38,7 +38,7 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 		renderUtils.drawOutline(drawContext.getMatrices(), actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4);
 		
 		String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
-		if(keyBindText.equals("scancode.0"))
+		if(keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
 			keyBindText = "N/A";
 		
 		renderUtils.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 8, 0xFFFFFF);

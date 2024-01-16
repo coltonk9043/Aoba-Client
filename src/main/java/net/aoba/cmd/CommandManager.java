@@ -154,6 +154,8 @@ public class CommandManager {
 	 */
 	public static void sendChatMessage(String message) {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "Aoba" + Formatting.DARK_PURPLE +  "] " + Formatting.RESET + message));
+		if(mc.inGameHud != null) {
+			mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "Aoba" + Formatting.DARK_PURPLE +  "] " + Formatting.RESET + message));
+		}
 	}
 }

@@ -25,9 +25,11 @@ import net.aoba.gui.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import org.joml.Matrix4f;
@@ -40,6 +42,29 @@ import com.mojang.blaze3d.systems.RenderSystem;
 public class RenderUtils {
 
 	final float ROUND_QUALITY = 10;
+	
+	public void drawTexturedQuad(DrawContext drawContext, Identifier texture, float x1, float y1, float width, float height, Color color) {
+		float red = color.getRedFloat();
+		float green = color.getGreenFloat(); 
+		float blue = color.getBlueFloat(); 
+		float alpha = color.getAlphaFloat();
+		
+		float x2 = x1 + width;
+		float y2 = y1 + height;
+		
+		RenderSystem.setShaderTexture(0, texture);
+        RenderSystem.setShader(GameRenderer::getPositionColorTexProgram);
+        RenderSystem.enableBlend();
+        Matrix4f matrix4f = drawContext.getMatrices().peek().getPositionMatrix();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
+        bufferBuilder.vertex(matrix4f, x1, y1, 0).color(red, green, blue, alpha).texture(0, 0).next();
+        bufferBuilder.vertex(matrix4f, x1, y2, 0).color(red, green, blue, alpha).texture(0, 1).next();
+        bufferBuilder.vertex(matrix4f, x2, y2, 0).color(red, green, blue, alpha).texture(1, 1).next();
+        bufferBuilder.vertex(matrix4f, x2, y1, 0).color(red, green, blue, alpha).texture(1, 0).next();
+        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+        RenderSystem.disableBlend();
+	}
 	
 	public void drawBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
 

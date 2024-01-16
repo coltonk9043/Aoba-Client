@@ -18,6 +18,8 @@ public class ChatScreenMixin {
 		if (message.startsWith(CommandManager.PREFIX.getValue())) {
 			Aoba.getInstance().commandManager.command(message.split(" "));
 			cir.setReturnValue(true);
+		}else if (message.startsWith(".global")) {
+			Aoba.getInstance().globalChat.SendMessage(message);
 		}
 	}
 }

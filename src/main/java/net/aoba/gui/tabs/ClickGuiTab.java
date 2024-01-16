@@ -22,8 +22,6 @@
 
 package net.aoba.gui.tabs;
 
-import java.util.ArrayList;
-import java.util.function.Consumer;
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
@@ -34,21 +32,20 @@ import net.aoba.gui.GuiManager;
 import net.aoba.gui.tabs.components.Component;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
-import net.aoba.settings.types.Vector2Setting;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
 public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, MouseMoveListener {
 	protected String title;
 
 	protected boolean pinnable = true;
 	protected boolean drawBorder = true;
-	
-
 
 	private BooleanSetting isPinned;
-
+	private Identifier icon = null;
+	
 	public ClickGuiTab(String title, int x, int y, boolean pinnable) {
 		super(title + "_tab", x, y, 180, 0);
 		this.title = title;
@@ -57,6 +54,17 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 
 		isPinned = new BooleanSetting(title + "_pinned", "IS PINNED", false);
 		SettingManager.register_setting(isPinned, Aoba.getInstance().settingManager.hidden_category);
+	}
+	
+	public ClickGuiTab(String title, int x, int y, boolean pinnable, String iconName) {
+		super(title + "_tab", x, y, 180, 0);
+		this.title = title;
+
+		this.pinnable = pinnable;
+
+		isPinned = new BooleanSetting(title + "_pinned", "IS PINNED", false);
+		SettingManager.register_setting(isPinned, Aoba.getInstance().settingManager.hidden_category);
+		icon = new Identifier("aoba", "/textures/" + iconName.trim().toLowerCase() + ".png");
 	}
 
 	public final String getTitle() {
@@ -118,7 +126,12 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 			renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, Aoba.getInstance().hudManager.backgroundColor.getValue());
 			renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, Aoba.getInstance().hudManager.borderColor.getValue());
 			
-			renderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
+			if(icon != null) {
+				renderUtils.drawTexturedQuad(drawContext, icon, pos.x + 8, pos.y + 4, 22, 22, color);
+				renderUtils.drawString(drawContext, this.title, pos.x + 38, pos.y + 8, Aoba.getInstance().hudManager.getColor());
+			}else
+				renderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
+			
 			renderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
 
 			if (this.pinnable) {
@@ -143,15 +156,19 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 		Vector2 pos = position.getValue();
 		
 		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			if(mouseX >= pos.x && mouseX <= pos.x + width) {
-				if(mouseY >= pos.y && mouseY <= pos.y + 24) {
-					this.lastClickOffsetX = mouseX - pos.x;
-					this.lastClickOffsetY = mouseY - pos.y;
-					GuiManager.currentGrabbed = this;
+			// Allow the user to move the clickgui if it within the header bar and NOT pinned.
+			if(!isPinned.getValue()) {
+				if(mouseX >= pos.x && mouseX <= pos.x + width) {
+					if(mouseY >= pos.y && mouseY <= pos.y + 24) {
+						lastClickOffsetX = mouseX - pos.x;
+						lastClickOffsetY = mouseY - pos.y;
+						GuiManager.currentGrabbed = this;
+					}
 				}
 			}
 			
-			if (this.pinnable) {
+			// If the GUI is pinnable, allow the user to click the pin button to pin a gui
+			if (pinnable) {
 				if (mouseX >= (pos.x + width - 24) && mouseX <= (pos.x + width - 2)) {
 					if (mouseY >= (pos.y + 4) && mouseY <= (pos.y + 20)) {
 						GuiManager.currentGrabbed = null;
@@ -161,20 +178,4 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 			}
 		}
 	}
-
-	/*
-	 * @Override public void OnMouseMove(MouseMoveEvent mouseMoveEvent) { double
-	 * mouseX = mouseMoveEvent.GetHorizontal(); double mouseY =
-	 * mouseMoveEvent.GetVertical();
-	 * 
-	 * if (HudManager.currentGrabbed == null) { if (mouseX >= (x) && mouseX <= (x +
-	 * width)) { if (mouseY >= (y) && mouseY <= (y + 28)) { boolean
-	 * isInsidePinButton = false; if (this.pinnable) { if (mouseX >= (x + width -
-	 * 24) && mouseX <= (x + width - 2)) { if (mouseY >= (y + 4) && mouseY <= (y +
-	 * 20)) { isInsidePinButton = true; } } } if (isInsidePinButton) { if
-	 * (!this.pinWasClicked) { this.isPinned = !this.isPinned; this.pinWasClicked =
-	 * true; return; } } else { if (!this.isPinned) { HudManager.currentGrabbed =
-	 * this; } } } else { if (this.pinWasClicked) { this.pinWasClicked = false; } if
-	 * (!this.isPinned) { HudManager.currentGrabbed = this; } } } } }
-	 */
 }

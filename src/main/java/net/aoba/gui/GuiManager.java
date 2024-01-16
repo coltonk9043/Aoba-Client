@@ -108,7 +108,7 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 
 		int xOffset = 335;
 		for (Category category : Module.Category.values()) {
-			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75, true);
+			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75, true, category.name());
 			
 			StackPanelComponent stackPanel = new StackPanelComponent(tab);
 			stackPanel.setTop(30);

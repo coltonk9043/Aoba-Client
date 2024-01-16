@@ -27,6 +27,8 @@ import org.joml.Vector3f;
 
 public class Color {
 
+	public static Color WHITE = new Color(255, 255, 255);
+	
 	public int r;
 	public int g;
 	public int b;
