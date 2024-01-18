@@ -19,7 +19,8 @@ public class ChatScreenMixin {
 			Aoba.getInstance().commandManager.command(message.split(" "));
 			cir.setReturnValue(true);
 		}else if (message.startsWith(".global")) {
-			Aoba.getInstance().globalChat.SendMessage(message);
+			Aoba.getInstance().globalChat.SendMessage(message.substring(8, message.length()));
+			cir.setReturnValue(true);
 		}
 	}
 }

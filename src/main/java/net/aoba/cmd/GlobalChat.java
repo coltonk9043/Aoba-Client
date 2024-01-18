@@ -10,7 +10,12 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import net.aoba.Aoba;
+import net.aoba.settings.SettingManager;
+import net.aoba.settings.types.BooleanSetting;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 public class GlobalChat {
 
@@ -21,8 +26,12 @@ public class GlobalChat {
 	private BufferedReader in;
 	private boolean started = false;
 	
+	private BooleanSetting enabled;
+	
 	public GlobalChat() {
 		gson = new Gson();
+		enabled = new BooleanSetting("global_chat_enabled", "Whether or not global chat is enabled or disabled.", true);
+		SettingManager.register_setting(this.enabled, Aoba.getInstance().settingManager.modules_category);
 	}
 	
 	private void Send(String json) {
@@ -34,6 +43,14 @@ public class GlobalChat {
 		Send(gson.toJson(new MessageAction(message, null)));
 	}
 	
+	private void SendChatMessage(String message) {
+		MinecraftClient mc = MinecraftClient.getInstance();
+		if(mc.inGameHud != null) {
+			mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "GLOBAL" + Formatting.DARK_PURPLE +  "] " + Formatting.RESET + message));
+		}
+	}
+	
+	
 	public void StartListener() {
 		if(started) {
 			System.out.println("Socket listener already started.");
@@ -42,7 +59,9 @@ public class GlobalChat {
 		
 		try {
 			started = true;
-			socket = new Socket("18.119.121.174", 80);
+			
+			// Gotta love AWS!
+			socket = new Socket("18.221.222.43", 80);
 			out = new PrintWriter(socket.getOutputStream(), false);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			
@@ -54,11 +73,14 @@ public class GlobalChat {
 						Send(gson.toJson(new ConnectAction(MinecraftClient.getInstance().getSession().getUsername())));
 						
 						String json = in.readLine();
-						while(json != null) {
-							Map<String, String> map = new Gson().fromJson(json, new TypeToken<HashMap<String, String>>() {}.getType());
-							if(map.containsKey("message")) {
-								String message = map.get("message");
-								CommandManager.sendChatMessage(message);
+						while(json != null && MinecraftClient.getInstance() != null) {
+							MessageResponse response = new Gson().fromJson(json, MessageResponse.class);
+							if(response != null) {
+								String user = response.getUser();
+								String chatMessage = response.getMessage();
+								if(user != null && chatMessage != null) {
+									SendChatMessage(String.format("<%s> %s", user, chatMessage));
+								}
 							}
 							json = in.readLine();
 						}
@@ -107,5 +129,30 @@ class MessageAction extends GenericAction{
 		this.to = to;
 	}
 }
+
+/**
+ *  Server Response
+ */
+class MessageResponse {
+	private String message;
+	private String user;
+	
+	public String getMessage() {
+		return message;
+	}
+	
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
+	public String getUser() {
+		return user;
+	}
+	
+	public void setUser(String user) {
+		this.user = user;
+	}
+}
+
 
 

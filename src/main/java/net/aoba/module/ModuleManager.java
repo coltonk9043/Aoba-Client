@@ -197,10 +197,12 @@ public class ModuleManager implements KeyDownListener {
 
 	@Override
 	public void OnKeyDown(KeyDownEvent event) {
-		for(Module module : modules) {
-			Key binding = module.getBind().getValue();
-			if(binding.getCode() == event.GetKey()) {
-				module.toggle();
+		if(MinecraftClient.getInstance().currentScreen == null) {
+			for(Module module : modules) {
+				Key binding = module.getBind().getValue();
+				if(binding.getCode() == event.GetKey()) {
+					module.toggle();
+				}
 			}
 		}
 	}
