@@ -27,7 +27,6 @@ import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket;

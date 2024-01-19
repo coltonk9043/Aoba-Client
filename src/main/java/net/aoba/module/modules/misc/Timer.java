@@ -22,11 +22,9 @@
 package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
-
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
 public class Timer extends Module {
