@@ -22,17 +22,16 @@
 package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
-
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
+import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 
-public class FastBreak extends Module implements TickListener {
+public class FastBreak extends Module {
 
-	private FloatSetting multiplier;
+	public FloatSetting multiplier;
+	public BooleanSetting ignoreWater;
 	
 	public FastBreak() {
 		super(new KeybindSetting("key.fastbreak", "FastBreak Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -41,8 +40,11 @@ public class FastBreak extends Module implements TickListener {
 		this.setCategory(Category.Misc);
 		this.setDescription("Breaks blocks quicker based on a multiplier.");
 		
-		multiplier = new FloatSetting("fastbreak_multiplier", "Multiplier", "Multiplier for how fast the blocks will break.", 1.25f, 1f, 3f, 0.05f);
+		multiplier = new FloatSetting("fastbreak_multiplier", "Multiplier", "Multiplier for how fast the blocks will break.", 1.25f, 1f, 10f, 0.05f);
+		ignoreWater = new BooleanSetting("fastbreak_ignore_water", "Ignore Water", "Ignores the slowdown that being in water causes.", false);
+		
 		this.addSetting(multiplier);
+		this.addSetting(ignoreWater);
 	}
 
 	public void setMultiplier(float multiplier) { this.multiplier.setValue((double)multiplier); }
@@ -62,9 +64,5 @@ public class FastBreak extends Module implements TickListener {
 	@Override
 	public void onToggle() {
 	
-	}
-
-	@Override
-	public void OnUpdate(TickEvent event) {
 	}
 }

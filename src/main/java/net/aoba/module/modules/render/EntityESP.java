@@ -29,6 +29,7 @@ import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
+import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
@@ -99,18 +100,15 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 			if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
 				
 				Box boundingBox = entity.getBoundingBox(); 
-				
-				Vec3d entityVelocity = entity.getVelocity();
-				Vec3d velocityPartial = new Vec3d(entityVelocity.x * partialTicks, 0, entityVelocity.z * partialTicks);
-				
-				boundingBox = boundingBox.offset(velocityPartial);
+				Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(entity, partialTicks);
+				boundingBox = boundingBox.offset(offset);
 				
 				if (entity instanceof AnimalEntity) {
-					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_passive.getValue());
+					RenderUtils.draw3DBox(matrixStack, boundingBox, color_passive.getValue());
 				} else if (entity instanceof Monster) {
-					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_enemies.getValue());
+					RenderUtils.draw3DBox(matrixStack, boundingBox, color_enemies.getValue());
 				} else {
-					this.getRenderUtils().draw3DBox(matrixStack, boundingBox, color_misc.getValue());
+					RenderUtils.draw3DBox(matrixStack, boundingBox, color_misc.getValue());
 				}
 			}
 		}

@@ -49,7 +49,9 @@ public class Noclip extends Module implements TickListener {
 	
 	@Override
 	public void onDisable() {
-		MC.player.noClip = false;
+		if(MC.player != null) {
+			MC.player.noClip = false;
+		}
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 

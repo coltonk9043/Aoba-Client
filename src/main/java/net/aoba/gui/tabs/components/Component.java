@@ -10,8 +10,6 @@ import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 
 public abstract class Component implements IGuiElement, MouseMoveListener {
-	protected static RenderUtils renderUtils;
-	
 	private static boolean DEBUG = false;
 	
 	private boolean visible = false;
@@ -51,10 +49,6 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
 		this.setLeft(0);
 		this.setRight(0);
 		this.setBottom(0);
-		
-		if(renderUtils == null) {
-			renderUtils = Aoba.getInstance().renderUtils;
-		}
 	}
 	
 	/**
@@ -325,7 +319,7 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		if(this.visible) {
 			if(this.hovered && DEBUG) {
-				renderUtils.drawOutline(drawContext.getMatrices(), this.actualX, this.actualY, this.actualWidth, this.actualHeight);
+				RenderUtils.drawOutline(drawContext.getMatrices(), this.actualX, this.actualY, this.actualWidth, this.actualHeight);
 			}
 
 			for(Component child : children) {

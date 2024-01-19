@@ -41,7 +41,6 @@ public abstract class Module {
 	private String description;
 	private Category category;
 	private boolean state;
-	private RenderUtils renderUtils = new RenderUtils();
 
 	protected KeybindSetting keyBind;
 	private List<Setting> settings = new ArrayList<Setting>();
@@ -107,10 +106,6 @@ public abstract class Module {
 	
 	public List<Setting> getSettings() {
 		return this.settings;
-	}
-	
-	public RenderUtils getRenderUtils() {
-		return this.renderUtils;
 	}
 	
 	public boolean hasSettings() {

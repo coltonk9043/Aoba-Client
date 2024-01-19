@@ -23,17 +23,15 @@ package net.aoba.module.modules.render;
 
 import java.util.ArrayList;
 import org.lwjgl.glfw.GLFW;
-
 import net.aoba.interfaces.ISimpleOption;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
 public class XRay extends Module {
-	public static ArrayList<Block> blocks = new ArrayList<Block>();
+	public static final ArrayList<Block> blocks = new ArrayList<Block>();
 
 	public XRay() {
 		super(new KeybindSetting("key.xray", "XRay Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));

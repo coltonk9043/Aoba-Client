@@ -106,7 +106,7 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		
 		hudPane.AddHud(new HudsTab(new AbstractHud[] { moduleSelector, armorHud,radarHud, infoHud }));
 
-		int xOffset = 335;
+		int xOffset = 50;
 		for (Category category : Module.Category.values()) {
 			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75, true, category.name());
 			

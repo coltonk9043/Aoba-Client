@@ -7,6 +7,7 @@ import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.tabs.ClickGuiTab;
+import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.BooleanSetting;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -40,12 +41,12 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 		super.draw(drawContext, partialTicks, color);
 		
 		MatrixStack matrixStack = drawContext.getMatrices();
-		renderUtils.drawString(drawContext, this.text, actualX + 10, actualY + 8, 0xFFFFFF);
+		RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 8, 0xFFFFFF);
 		if (this.checkbox.getValue()) {
-			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 24, actualY + 5, 20, 20,
+			RenderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 24, actualY + 5, 20, 20,
 					new Color(0, 154, 0, 200));
 		} else {
-			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 24, actualY + 5, 20, 20,
+			RenderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 24, actualY + 5, 20, 20,
 					new Color(154, 0, 0, 200));
 		}
 	}

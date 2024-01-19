@@ -5,8 +5,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -14,10 +16,23 @@ import net.aoba.Aoba;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.client.gui.hud.MessageIndicator;
+import net.minecraft.client.util.ChatMessages;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class GlobalChat {
+	
+	public enum ChatType{
+		Minecraft,
+		Global
+	}
+	
+	public static ChatType chatType = ChatType.Minecraft;
+
+	public final List<ChatHudLine.Visible> messages = Lists.newArrayList();
 
 	private Gson gson;
 	private Socket socket;
@@ -35,8 +50,10 @@ public class GlobalChat {
 	}
 	
 	private void Send(String json) {
-		out.print(json);
-		out.flush();
+		if(out != null) {
+			out.print(json);
+			out.flush();
+		}
 	}
 
 	public void SendMessage(String message) {
@@ -44,10 +61,17 @@ public class GlobalChat {
 	}
 	
 	private void SendChatMessage(String message) {
-		MinecraftClient mc = MinecraftClient.getInstance();
-		if(mc.inGameHud != null) {
-			mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "GLOBAL" + Formatting.DARK_PURPLE +  "] " + Formatting.RESET + message));
+		List<OrderedText> list = ChatMessages.breakRenderedChatMessageLines(Text.of(message), 1, MinecraftClient.getInstance().textRenderer);
+		for(int i = 0; i < list.size(); ++i) {
+			OrderedText orderedText = list.get(i);
+			this.messages.add(0, new ChatHudLine.Visible(MinecraftClient.getInstance().inGameHud.getTicks(), orderedText, MessageIndicator.system(), false));
 		}
+		
+		
+		//MinecraftClient mc = MinecraftClient.getInstance();
+		//if(mc.inGameHud != null) {
+		//	mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "GLOBAL" + Formatting.DARK_PURPLE +  "] " + Formatting.RESET + message));
+		//}
 	}
 	
 	

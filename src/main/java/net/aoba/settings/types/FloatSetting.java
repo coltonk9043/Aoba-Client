@@ -39,7 +39,7 @@ public class FloatSetting extends Setting<Double> {
 	@Override
 	public void setValue(Double value) {
 		double newValue = Math.max(min_value, Math.min(max_value, value));
-		int steps = (int) ((newValue - min_value) / step);
+		int steps = (int) Math.round((newValue) / step);
 		super.setValue(step * steps);
 	}
 	

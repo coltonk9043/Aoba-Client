@@ -40,6 +40,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil.Key;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Vec3d;
 
 public class ModuleManager implements KeyDownListener {
 	public ArrayList<Module> modules = new ArrayList<Module>();
@@ -87,12 +88,14 @@ public class ModuleManager implements KeyDownListener {
 	public Module spider = new Spider();
 	public Module sprint = new Sprint();
 	public Module step = new Step();
+	public Module surround = new Surround();
 	public Module tilebreaker = new TileBreaker();
 	public Module timer = new Timer();
 	public Module tracer = new Tracer();
 	public Module trajectory = new Trajectory();
 	public Module triggerbot = new TriggerBot();
 	public Module xray = new XRay();
+	public Module zoom = new Zoom();
 	
 	public ModuleManager() {
 		// Look at all these modules!
@@ -138,13 +141,15 @@ public class ModuleManager implements KeyDownListener {
 		addModule(spider);
 		addModule(sprint);
 		addModule(step);
+		addModule(surround);
 		addModule(tilebreaker);
 		addModule(timer);
 		addModule(triggerbot);
 		addModule(tracer);
 		addModule(trajectory);
 		addModule(xray);
-
+		addModule(zoom);
+		
 		for(Module module : modules) {
 			for(Setting setting : module.getSettings()) {
 				SettingManager.register_setting(setting, Aoba.getInstance().settingManager.modules_category);
@@ -165,7 +170,9 @@ public class ModuleManager implements KeyDownListener {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		matrixStack.push();
-		RenderUtils.applyRenderOffset(matrixStack);
+		
+		Vec3d camPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getPos();
+		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 		
 		RenderEvent renderEvent = new RenderEvent(matrixStack, MinecraftClient.getInstance().getTickDelta());
 		Aoba.getInstance().eventManager.Fire(renderEvent);

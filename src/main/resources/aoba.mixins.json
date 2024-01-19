@@ -16,6 +16,7 @@
 	"BlockModelRendererMixin",
 	"CactusBlockMixin",
 	"ChatScreenMixin",
+	"ChatHudMixin",
 	"ChatInputSuggestorMixin",
 	"ClientPlayerEntityMixin",
 	"ClientPlayerInteractionManagerMixin",
@@ -35,7 +36,8 @@
 	"BackgroundRendererMixin",
 	"LightmapTextureManagerMixin",
 	"EntityRendererMixin",
-	"TitleScreenMixin"
+	"TitleScreenMixin",
+	"PlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

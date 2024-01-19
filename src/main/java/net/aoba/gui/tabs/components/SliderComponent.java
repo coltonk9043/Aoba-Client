@@ -10,6 +10,7 @@ import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
+import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
@@ -118,22 +119,16 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 		float xLength = ((actualWidth - 18) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)));
 		
 		GuiManager hudManager = Aoba.getInstance().hudManager;
-		renderUtils.drawBox(matrixStack, actualX + 10, actualY + 35, xLength, 2, hudManager.color.getValue());
-		renderUtils.drawBox(matrixStack, actualX + 10 + xLength, actualY + 35, (actualWidth - xLength - 18), 2, new Color(255, 255, 255, 255));
-		renderUtils.drawCircle(matrixStack, actualX + 10 + xLength, actualY + 35, 6, hudManager.color.getValue());
-		
-		
-		//renderUtils.drawBox(matrixStack, actualX + 4, actualY + 4, (actualWidth - 8) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)), actualHeight - 8, color, 1f);
-		//renderUtils.drawOutline(matrixStack, actualX + 4, actualY + 24, actualWidth - 8, actualHeight - 8);
+		RenderUtils.drawBox(matrixStack, actualX + 10, actualY + 35, xLength, 2, hudManager.color.getValue());
+		RenderUtils.drawBox(matrixStack, actualX + 10 + xLength, actualY + 35, (actualWidth - xLength - 18), 2, new Color(255, 255, 255, 255));
+		RenderUtils.drawCircle(matrixStack, actualX + 10 + xLength, actualY + 35, 6, hudManager.color.getValue());
 		
 		if (this.slider == null)
 			return;
-		// TODO: Slow but it works. Perhaps we can modify a STORED string using our new
-		// Consumer delegates?
-		renderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
+		RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
 		
 		String valueText = String.format("%.02f", this.slider.getValue());
 		int textSize = MinecraftClient.getInstance().textRenderer.getWidth(valueText) * MinecraftClient.getInstance().options.getGuiScale().getValue();
-		renderUtils.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 6, 0xFFFFFF);
+		RenderUtils.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 6, 0xFFFFFF);
 	}
 }

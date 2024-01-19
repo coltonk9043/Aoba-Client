@@ -28,6 +28,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
+import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -117,7 +118,7 @@ public class Nuker extends Module implements RenderListener, TickListener {
 					if (block == Blocks.AIR || block == Blocks.WATER || block == Blocks.LAVA)
 						continue;
 
-					this.getRenderUtils().draw3DBox(event.GetMatrixStack(), new Box(blockpos), color.getValue());
+					RenderUtils.draw3DBox(event.GetMatrixStack(), new Box(blockpos), color.getValue());
 				}
 			}
 		}

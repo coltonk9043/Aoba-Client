@@ -29,9 +29,12 @@ import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import net.minecraft.util.math.Vec3d;
@@ -41,9 +44,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 public class RenderUtils {
 
-	final float ROUND_QUALITY = 10;
+	static final float ROUND_QUALITY = 10;
 	
-	public void drawTexturedQuad(DrawContext drawContext, Identifier texture, float x1, float y1, float width, float height, Color color) {
+	public static void drawTexturedQuad(DrawContext drawContext, Identifier texture, float x1, float y1, float width, float height, Color color) {
 		float red = color.getRedFloat();
 		float green = color.getGreenFloat(); 
 		float blue = color.getBlueFloat(); 
@@ -66,7 +69,7 @@ public class RenderUtils {
         RenderSystem.disableBlend();
 	}
 	
-	public void drawBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
+	public static void drawBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
 
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
@@ -91,7 +94,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawCircle(MatrixStack matrixStack, float x, float y, float radius, Color color) {
+	public static void drawCircle(MatrixStack matrixStack, float x, float y, float radius, Color color) {
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -126,7 +129,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawRoundedBox(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color) {
+	public static void drawRoundedBox(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color) {
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -201,7 +204,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawRoundedOutline(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color) {
+	public static void drawRoundedOutline(MatrixStack matrixStack, float x, float y, float width, float height, float radius, Color color) {
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -240,7 +243,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 	}
 	
-	public void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, Color outlineColor, Color backgroundColor) {
+	public static void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, Color outlineColor, Color backgroundColor) {
 		RenderSystem.setShaderColor(backgroundColor.getRedFloat(), backgroundColor.getGreenFloat(), backgroundColor.getBlueFloat(), backgroundColor.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -277,11 +280,11 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
+	public static void drawOutlinedBox(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
 		drawOutlinedBox(matrixStack, x, y, width, height, Colors.Black, color);
 	}
 
-	public void drawLine(MatrixStack matrixStack, float x1, float y1, float x2, float y2, Color color) {
+	public static void drawLine(MatrixStack matrixStack, float x1, float y1, float x2, float y2, Color color) {
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -304,7 +307,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawHorizontalGradient(MatrixStack matrixStack, float x, float y, float width, float height, Color startColor, Color endColor) {
+	public static void drawHorizontalGradient(MatrixStack matrixStack, float x, float y, float width, float height, Color startColor, Color endColor) {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
@@ -325,7 +328,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawVerticalGradient(MatrixStack matrixStack, float x, float y, float width, float height, Color startColor, Color endColor) {
+	public static void drawVerticalGradient(MatrixStack matrixStack, float x, float y, float width, float height, Color startColor, Color endColor) {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
@@ -346,7 +349,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawOutline(MatrixStack matrixStack, float x, float y, float width, float height) {
+	public static void drawOutline(MatrixStack matrixStack, float x, float y, float width, float height) {
 		RenderSystem.setShaderColor(0, 0, 0, 1);
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -372,7 +375,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-	public void drawOutline(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
+	public static void drawOutline(MatrixStack matrixStack, float x, float y, float width, float height, Color color) {
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -398,7 +401,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	public void draw3DBox(MatrixStack matrixStack, Box box, Color color) {
+	public static void draw3DBox(MatrixStack matrixStack, Box box, Color color) {
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), 1.0f);
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -490,7 +493,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	public void drawLine3D(MatrixStack matrixStack, Vec3d pos, Vec3d pos2, Color color) {
+	public static void drawLine3D(MatrixStack matrixStack, Vec3d pos, Vec3d pos2, Color color) {
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		
 		GL11.glEnable(GL11.GL_BLEND);
@@ -513,7 +516,7 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	public void drawString(DrawContext drawContext, String text, float x, float y, Color color) {
+	public static void drawString(DrawContext drawContext, String text, float x, float y, Color color) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
@@ -523,7 +526,7 @@ public class RenderUtils {
 		matrixStack.pop();
 	}
 
-	public void drawString(DrawContext drawContext, String text, float x, float y, int color) {
+	public static void drawString(DrawContext drawContext, String text, float x, float y, int color) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
@@ -533,7 +536,7 @@ public class RenderUtils {
 		matrixStack.pop();
 	}
 
-	public void drawStringWithScale(DrawContext drawContext, String text, float x, float y, Color color, float scale) {
+	public static void drawStringWithScale(DrawContext drawContext, String text, float x, float y, Color color, float scale) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
@@ -547,7 +550,7 @@ public class RenderUtils {
 		matrixStack.pop();
 	}
 	
-	public void drawStringWithScale(DrawContext drawContext, String text, float x, float y, int color, float scale) {
+	public static void drawStringWithScale(DrawContext drawContext, String text, float x, float y, int color, float scale) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
@@ -561,7 +564,7 @@ public class RenderUtils {
 		matrixStack.pop();
 	}
 
-	private void buildFilledArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius, float startAngle, float sweepAngle) {
+	private static void buildFilledArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius, float startAngle, float sweepAngle) {
 		double roundedInterval = (sweepAngle / ROUND_QUALITY);
 		
 				for(int i = 0; i < ROUND_QUALITY; i++) {
@@ -595,7 +598,7 @@ public class RenderUtils {
 				}
 	}
 	
-	private void buildArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius, float startAngle, float sweepAngle) {
+	private static void buildArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius, float startAngle, float sweepAngle) {
 		double roundedInterval = (sweepAngle / ROUND_QUALITY);
 		
 		for(int i = 0; i < ROUND_QUALITY; i++) {
@@ -607,30 +610,27 @@ public class RenderUtils {
 		}
 	}
 	
-	private void buildArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius, float startAngle, float sweepAngle, float quality) {
-		double roundedInterval = (sweepAngle / quality);
-		
-		for(int i = 0; i < quality; i++) {
-			double angle = Math.toRadians(startAngle + (i * roundedInterval));
-			float radiusX1 = (float) (Math.cos(angle) * radius);
-			float radiusY1 = (float)Math.sin(angle) * radius;
-
-			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).next();
-		}
+	/**
+	 * Gets the interpolated position of the entity given a tick delta.
+	 * @param entity Entity to get position of
+	 * @param delta Tick delta.
+	 * @return Vec3d representing the interpolated position of the entity.
+	 */
+	public static Vec3d getEntityPositionInterpolated(Entity entity, float delta) {
+		return new Vec3d(MathHelper.lerp(delta, entity.lastRenderX, entity.getX()),
+				MathHelper.lerp(delta, entity.lastRenderY, entity.getY()),
+				MathHelper.lerp(delta, entity.lastRenderZ, entity.getZ()));
 	}
 	
-	public static void applyRenderOffset(MatrixStack matrixStack) {
-		Vec3d camPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getPos();
-		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
+	/**
+	 * Gets the difference between the interpolated position and 
+	 * @param entity Entity to get position of
+	 * @param delta Tick delta.
+	 * @return Vec3d representing the interpolated position of the entity.
+	 */
+	public static Vec3d getEntityPositionOffsetInterpolated(Entity entity, float delta) {
+		Vec3d interpolated = getEntityPositionInterpolated(entity, delta);
+		return entity.getPos().subtract(interpolated);
 	}
-
-	public void applyRegionalRenderOffset(MatrixStack matrixStack) {
-		Vec3d camPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getPos();
-		BlockPos camBlockPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getBlockPos();
-
-		int regionX = (camBlockPos.getX() >> 9) * 512;
-		int regionZ = (camBlockPos.getZ() >> 9) * 512;
-
-		matrixStack.translate(regionX - camPos.x, -camPos.y, regionZ - camPos.z);
-	}
+	
 }

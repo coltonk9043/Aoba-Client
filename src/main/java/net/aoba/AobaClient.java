@@ -133,7 +133,7 @@ public class AobaClient {
 			SettingManager.saveSettings("modules_category", settingManager.modules_category);
 			SettingManager.saveSettings("hidden_category", settingManager.hidden_category);
 			altManager.saveAlts();
-			
+			moduleManager.modules.forEach(s -> s.onDisable());
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

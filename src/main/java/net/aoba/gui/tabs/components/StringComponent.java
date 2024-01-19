@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import net.aoba.gui.Color;
 import net.aoba.gui.IGuiElement;
 import net.aoba.misc.Colors;
+import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.ColorSetting;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Formatting;
@@ -41,7 +42,7 @@ public class StringComponent extends Component {
 		for (String str : text) {
 			if(bold)
 				str = Formatting.BOLD + str;
-			renderUtils.drawString(drawContext, str, actualX + 8, actualY + 8 + i, color.getColorAsInt());
+			RenderUtils.drawString(drawContext, str, actualX + 8, actualY + 8 + i, color.getColorAsInt());
 			i += 30;
 		}
 	}
@@ -81,7 +82,6 @@ public class StringComponent extends Component {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
 
 	}
 

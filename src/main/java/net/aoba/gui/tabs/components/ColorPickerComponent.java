@@ -9,6 +9,7 @@ import net.aoba.event.listeners.LeftMouseUpListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.IGuiElement;
+import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.ColorSetting;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -131,36 +132,36 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		
-		renderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
-		renderUtils.drawString(drawContext, collapsed ? "<<" :  ">>", (actualX + actualWidth - 24), actualY + 6, color.getColorAsInt());
+		RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
+		RenderUtils.drawString(drawContext, collapsed ? "<<" :  ">>", (actualX + actualWidth - 24), actualY + 6, color.getColorAsInt());
 		
 		if(!collapsed) {
 			Color newColor = new Color(255, 0, 0);
 			newColor.setHSV(this.hue, 1.0f, 1.0f);
-			renderUtils.drawHorizontalGradient(matrixStack, actualX + 4, actualY + 29, actualWidth - 76, actualHeight - 33, new Color(255, 255, 255), newColor);
-			renderUtils.drawVerticalGradient(matrixStack, actualX + 4, actualY+ 29, actualWidth - 76, actualHeight - 33, new Color(0, 0, 0, 0), new Color(0, 0, 0));
+			RenderUtils.drawHorizontalGradient(matrixStack, actualX + 4, actualY + 29, actualWidth - 76, actualHeight - 33, new Color(255, 255, 255), newColor);
+			RenderUtils.drawVerticalGradient(matrixStack, actualX + 4, actualY+ 29, actualWidth - 76, actualHeight - 33, new Color(0, 0, 0, 0), new Color(0, 0, 0));
 			
 			// Draw Hue Rectangle
 			float increment = ((this.actualHeight - 33) / 6.0f);
-			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29, 30, increment, new Color(255, 0, 0), new Color(255, 255, 0));
-			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + increment, 30,increment, new Color(255, 255, 0), new Color(0, 255, 0));
-			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (2 * increment), 30, increment, new Color(0, 255, 0), new Color(0, 255, 255));
-			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (3 * increment), 30, increment, new Color(0, 255, 255), new Color(0, 0, 255));
-			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (4 * increment), 30, increment, new Color(0, 0, 255), new Color(255, 0, 255));
-			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (5 * increment), 30, increment, new Color(255, 0, 255), new Color(255, 0, 0));
+			RenderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29, 30, increment, new Color(255, 0, 0), new Color(255, 255, 0));
+			RenderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + increment, 30,increment, new Color(255, 255, 0), new Color(0, 255, 0));
+			RenderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (2 * increment), 30, increment, new Color(0, 255, 0), new Color(0, 255, 255));
+			RenderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (3 * increment), 30, increment, new Color(0, 255, 255), new Color(0, 0, 255));
+			RenderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (4 * increment), 30, increment, new Color(0, 0, 255), new Color(255, 0, 255));
+			RenderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 68, actualY + 29 + (5 * increment), 30, increment, new Color(255, 0, 255), new Color(255, 0, 0));
 		
 			// Draw Alpha Rectangle
-			renderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 34 , actualY + 29, 30, actualHeight - 33, new Color(255, 255, 255), new Color(0, 0, 0));
+			RenderUtils.drawVerticalGradient(matrixStack, actualX + actualWidth - 34 , actualY + 29, 30, actualHeight - 33, new Color(255, 255, 255), new Color(0, 0, 0));
 			
 			// Draw Outlines
-			renderUtils.drawOutline(matrixStack, actualX + 4, actualY + 29, actualWidth - 76, actualHeight - 33);
-			renderUtils.drawOutline(matrixStack, actualX + actualWidth - 68, actualY + 29, 30, actualHeight - 33);
-			renderUtils.drawOutline(matrixStack, actualX + actualWidth - 34, actualY + 29, 30, actualHeight - 33);
+			RenderUtils.drawOutline(matrixStack, actualX + 4, actualY + 29, actualWidth - 76, actualHeight - 33);
+			RenderUtils.drawOutline(matrixStack, actualX + actualWidth - 68, actualY + 29, 30, actualHeight - 33);
+			RenderUtils.drawOutline(matrixStack, actualX + actualWidth - 34, actualY + 29, 30, actualHeight - 33);
 			
 			// Draw Indicators
-			renderUtils.drawCircle(matrixStack, actualX + 4 + (saturation * (actualWidth - 72)), actualY + 29 + ((1.0f - luminance) * (actualHeight - 33)), 3, new Color(255, 255, 255, 255));
-			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 68, actualY + 29 + ((hue / 360.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
-			renderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 34, actualY + 29 + (((255.0f - alpha) / 255.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
+			RenderUtils.drawCircle(matrixStack, actualX + 4 + (saturation * (actualWidth - 72)), actualY + 29 + ((1.0f - luminance) * (actualHeight - 33)), 3, new Color(255, 255, 255, 255));
+			RenderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 68, actualY + 29 + ((hue / 360.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
+			RenderUtils.drawOutlinedBox(matrixStack, actualX + actualWidth - 34, actualY + 29 + (((255.0f - alpha) / 255.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
 		}
 		
 	}

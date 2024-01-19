@@ -81,7 +81,6 @@ public class CmdHelp extends Command {
 
 	@Override
 	public String[] getAutocorrect(String previousParameter) {
-		// TODO Auto-generated method stub
 		CommandManager cm = Aoba.getInstance().commandManager;
 		int numCmds = cm.getNumOfCommands();
 		String[] commands = new String[numCmds];

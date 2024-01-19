@@ -9,6 +9,7 @@ import net.aoba.module.Module;
 import net.aoba.gui.Color;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.tabs.ModuleSettingsTab;
+import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
@@ -46,10 +47,10 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		super.draw(drawContext, partialTicks, color);
-		renderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, module.getState() ? 0x00FF00 : this.hovered ? color.getColorAsInt() : 0xFFFFFF);
+		RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, module.getState() ? 0x00FF00 : this.hovered ? color.getColorAsInt() : 0xFFFFFF);
 		if(module.hasSettings()) {
 			Color hudColor = Aoba.getInstance().hudManager.color.getValue();
-			renderUtils.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 20), (actualY + 6), 16, 16, hudColor);
+			RenderUtils.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 20), (actualY + 6), 16, 16, hudColor);
 		}
 	}
 	

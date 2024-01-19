@@ -221,11 +221,7 @@ public class AltManager {
 	 */
 	public boolean login(Alt alt) {
 		// Log in to the correct service depending on the Alt type.
-		if (alt.isMicrosoft()) {
-			return loginMicrosoft(alt);
-		} else {
-			return loginMinecraft(alt);
-		}
+		return loginMicrosoft(alt);
 	}
 
 	/**
@@ -350,24 +346,6 @@ public class AltManager {
 		} catch (IOException e) {
 			throw new LoginException("Connection failed: " + e);
 		}
-	}
-
-	private boolean loginMinecraft(Alt alt) {
-		return false;
-		// TODO: Seems like MC removed old accounts. If i can find a way around this, I will.
-		/*
-		 * YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new
-		 * YggdrasilAuthenticationService(Proxy.NO_PROXY,
-		 * "").createUserAuthentication(Agent.MINECRAFT);
-		 * auth.setUsername(alt.getEmail()); auth.setPassword(alt.getPassword());
-		 * 
-		 * try { auth.logIn(); IMinecraftClient iMC = (IMinecraftClient) this.mc;
-		 * iMC.setSession( new Session(auth.getSelectedProfile().getName(),
-		 * auth.getSelectedProfile().getId().toString(), auth.getAuthenticatedToken(),
-		 * Optional.empty(), Optional.empty(), AccountType.MOJANG));
-		 * alt.setUsername(mc.getSession().getUsername()); return true; } catch
-		 * (Exception e) { e.printStackTrace(); return false; }
-		 */
 	}
 
 	public boolean loginCracked(String alt) {

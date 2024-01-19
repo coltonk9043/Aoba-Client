@@ -26,6 +26,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.Color;
+import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -68,7 +69,7 @@ public class ItemESP extends Module implements RenderListener {
 	public void OnRender(RenderEvent event) {
 		for (Entity entity : MC.world.getEntities()) {
 			if(entity instanceof ItemEntity) {
-				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), entity.getBoundingBox(), color.getValue());
+				RenderUtils.draw3DBox(event.GetMatrixStack(), entity.getBoundingBox(), color.getValue());
 			}
 		}
 	}

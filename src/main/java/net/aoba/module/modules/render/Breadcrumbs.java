@@ -39,6 +39,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
 import net.aoba.gui.Color;
 import net.aoba.misc.RainbowColor;
+import net.aoba.misc.RenderUtils;
 
 public class Breadcrumbs extends Module implements RenderListener, TickListener {
 	private Color currentColor;
@@ -88,7 +89,7 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 	@Override
 	public void OnRender(RenderEvent event) {
 		for(int i = 0; i < this.positions.size() - 1; i++) {
-			this.getRenderUtils().drawLine3D(event.GetMatrixStack(), this.positions.get(i), this.positions.get(i + 1), this.currentColor);
+			RenderUtils.drawLine3D(event.GetMatrixStack(), this.positions.get(i), this.positions.get(i + 1), this.currentColor);
 		}
 	}
 

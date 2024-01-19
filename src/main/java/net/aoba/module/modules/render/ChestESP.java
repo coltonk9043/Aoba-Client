@@ -32,6 +32,7 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RainbowColor;
+import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
@@ -91,7 +92,7 @@ public class ChestESP extends Module implements RenderListener, TickListener {
 		for(BlockEntity blockEntity : blockEntities) {
 			if(blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity) {
 				Box box = new Box(blockEntity.getPos());
-				this.getRenderUtils().draw3DBox(event.GetMatrixStack(), box, currentColor);
+				RenderUtils.draw3DBox(event.GetMatrixStack(), box, currentColor);
 			}
 		}
 	}
