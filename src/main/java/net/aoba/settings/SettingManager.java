@@ -4,11 +4,12 @@ import net.aoba.gui.Color;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IntegerSetting;
 import net.aoba.utils.types.Vector2;
+import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.InputUtil.Key;
-
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,17 +26,8 @@ public class SettingManager {
 	public List<Setting<?>> modules_category = new ArrayList<>();
 	public List<Setting<?>> hidden_category = new ArrayList<>();
 
-	public static void register_setting(Setting<?> p_setting, List<Setting<?>> p_category) {
+	public static void registerSetting(Setting<?> p_setting, List<Setting<?>> p_category) {
 		p_category.add(p_setting);
-	}
-
-	public static Setting<?> get_setting_in_category(String p_setting_id, List<Setting<?>> p_category) {
-		for (Setting<?> setting : p_category) {
-			if (setting.ID.equals(p_setting_id)) {
-				return setting;
-			}
-		}
-		return null;
 	}
 
 	public static File configFolder;
@@ -59,10 +51,11 @@ public class SettingManager {
 		}
 	}
 
-	public static void saveSettings(String name, List<Setting<?>> config_category2) throws FileNotFoundException, IOException {
+	public static void saveSettings(String name, List<Setting<?>> config_category2)
+			throws FileNotFoundException, IOException {
 		System.out.println("Saving config " + name + ".");
 		prepare(name);
-		for (Setting setting : config_category2) {
+		for (Setting<?> setting : config_category2) {
 			try {
 				switch (setting.type) {
 				case DOUBLE, INTEGER, BOOLEAN, STRING -> {
@@ -73,11 +66,26 @@ public class SettingManager {
 					config.setProperty(setting.ID, String.valueOf(key.getCode()));
 				}
 				case VECTOR2 -> {
-					config.setProperty(setting.ID, String.valueOf(((Vector2) setting.getValue()).x) + "," + String.valueOf(((Vector2) setting.getValue()).y));
+					config.setProperty(setting.ID, String.valueOf(((Vector2) setting.getValue()).x) + ","
+							+ String.valueOf(((Vector2) setting.getValue()).y));
 				}
 				case COLOR -> {
 					String s = ((Color) setting.getValue()).getColorAsHex();
 					config.setProperty(setting.ID, s);
+				}
+				case BLOCKS -> {
+					List<Block> s = (List<Block>) setting.getValue();
+					String result = "";
+					int sSize = s.size();
+					for (int i = 0; i < sSize; i++) {
+						Block block = s.get(i);
+						Identifier id = Registries.BLOCK.getId(block);
+						result += id.getNamespace() + ":" + id.getPath();
+						if (i != sSize - 1) {
+							result += ",";
+						}
+					}
+					config.setProperty(setting.ID, result);
 				}
 				}
 			} catch (Exception e) {
@@ -92,8 +100,12 @@ public class SettingManager {
 			System.out.println("Loading config " + name + ".");
 			prepare(name);
 			config.loadFromXML(new FileInputStream(configFile));
-			for (Setting setting : config_category2) {
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+		for (Setting setting : config_category2) {
+			try {
 				String value = config.getProperty(setting.ID, null);
 
 				if (DEBUG_STUFF)
@@ -141,17 +153,27 @@ public class SettingManager {
 				}
 				case COLOR -> {
 					long hexValue = Long.parseLong(value.replace("#", ""), 16);
-					int Alpha = (int)((hexValue) >> 24) & 0xFF;
-					int R = (int)((hexValue) >> 16) & 0xFF;
-					int G = (int)((hexValue) >> 8) & 0xFF;
-					int B = (int)(hexValue) & 0xFF;
+					int Alpha = (int) ((hexValue) >> 24) & 0xFF;
+					int R = (int) ((hexValue) >> 16) & 0xFF;
+					int G = (int) ((hexValue) >> 8) & 0xFF;
+					int B = (int) (hexValue) & 0xFF;
 					setting.setValue(new Color(R, G, B, Alpha));
 					break;
 				}
+				case BLOCKS -> {
+					String[] ids = value.split(",");
+					List<Block> result = new ArrayList<Block>();
+					for (String str : ids) {
+						Identifier i = new Identifier(str);
+						result.add(Registries.BLOCK.get(i));
+					}
+					setting.setValue(result);
+					break;
 				}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 

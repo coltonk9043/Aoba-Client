@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.module.modules.render.XRay;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.VertexConsumer;
@@ -25,8 +26,10 @@ public abstract class BlockModelRendererMixin {
 			BlockState state, BlockPos pos, MatrixStack matrices,
 			VertexConsumer vertexConsumer, boolean cull, Random random, long seed,
 			int overlay, CallbackInfo ci) {
-		if (Aoba.getInstance().moduleManager.xray.getState()) {
-			if (XRay.isXRayBlock(state.getBlock())) {
+		AobaClient aoba = Aoba.getInstance();
+		XRay xray = (XRay)aoba.moduleManager.xray;
+		if (xray.getState()) {
+			if (xray.isXRayBlock(state.getBlock())) {
 				ci.cancel();
 				return;
 			}

@@ -21,32 +21,42 @@
  */
 package net.aoba.module.modules.render;
 
-import java.util.ArrayList;
+import java.util.List;
 import org.lwjgl.glfw.GLFW;
+import com.google.common.collect.Lists;
 import net.aoba.interfaces.ISimpleOption;
 import net.aoba.module.Module;
+import net.aoba.settings.types.BlocksSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.util.InputUtil;
 
 public class XRay extends Module {
-	public static final ArrayList<Block> blocks = new ArrayList<Block>();
+	public BlocksSetting blocks;
 
 	public XRay() {
 		super(new KeybindSetting("key.xray", "XRay Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-	
+
 		this.setName("XRay");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see ores.");
-		initXRay();
+
+		blocks = new BlocksSetting("xray_blocks", "Blocks", "Blocks that can be seen in Xray",
+				Lists.newArrayList(Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.DIAMOND_ORE, Blocks.DIAMOND_BLOCK,
+						Blocks.GOLD_ORE, Blocks.GOLD_BLOCK, Blocks.IRON_ORE, Blocks.IRON_BLOCK, Blocks.COAL_ORE,
+						Blocks.COAL_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.REDSTONE_ORE, Blocks.LAPIS_ORE,
+						Blocks.LAPIS_BLOCK, Blocks.NETHER_QUARTZ_ORE, Blocks.MOSSY_COBBLESTONE, Blocks.STONE_BRICKS,
+						Blocks.OAK_PLANKS, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
+						Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_COAL_ORE));
+		blocks.setOnUpdate((List<Block> block) -> ReloadRenderer(block));
+		this.addSetting(blocks);
 	}
 
 	@Override
 	public void onDisable() {
 		@SuppressWarnings("unchecked")
-		ISimpleOption<Double> gamma =
-				(ISimpleOption<Double>)(Object)MC.options.getGamma();
+		ISimpleOption<Double> gamma = (ISimpleOption<Double>) (Object) MC.options.getGamma();
 		gamma.forceSetValue(1.0);
 		MC.worldRenderer.reload();
 	}
@@ -55,10 +65,9 @@ public class XRay extends Module {
 	public void onEnable() {
 		MC.worldRenderer.reload();
 		@SuppressWarnings("unchecked")
-		ISimpleOption<Double> gamma =
-				(ISimpleOption<Double>)(Object)MC.options.getGamma();
+		ISimpleOption<Double> gamma = (ISimpleOption<Double>) (Object) MC.options.getGamma();
 		gamma.forceSetValue(10000.0);
-		
+
 	}
 
 	@Override
@@ -66,38 +75,17 @@ public class XRay extends Module {
 
 	}
 
-	public void initXRay() {
-		blocks.add(Blocks.EMERALD_ORE);
-		blocks.add(Blocks.EMERALD_BLOCK);
-		blocks.add(Blocks.DIAMOND_ORE);
-		blocks.add(Blocks.DIAMOND_BLOCK);
-		blocks.add(Blocks.GOLD_ORE);
-		blocks.add(Blocks.GOLD_BLOCK);
-		blocks.add(Blocks.IRON_ORE);
-		blocks.add(Blocks.IRON_BLOCK);
-		blocks.add(Blocks.COAL_ORE);
-		blocks.add(Blocks.COAL_BLOCK);
-		blocks.add(Blocks.REDSTONE_BLOCK);
-		blocks.add(Blocks.REDSTONE_ORE);
-		blocks.add(Blocks.LAPIS_ORE);
-		blocks.add(Blocks.LAPIS_BLOCK);
-		blocks.add(Blocks.NETHER_QUARTZ_ORE);
-		blocks.add(Blocks.MOSSY_COBBLESTONE);
-		blocks.add(Blocks.COBBLESTONE);
-		blocks.add(Blocks.STONE_BRICKS);
-		blocks.add(Blocks.OAK_PLANKS);
-		blocks.add(Blocks.DEEPSLATE_EMERALD_ORE);
-		blocks.add(Blocks.DEEPSLATE_DIAMOND_ORE);
-		blocks.add(Blocks.DEEPSLATE_GOLD_ORE);
-		blocks.add(Blocks.DEEPSLATE_IRON_ORE);
-		blocks.add(Blocks.DEEPSLATE_COAL_ORE);
-	}
-
-
-	public static boolean isXRayBlock(Block b) {
-		if (XRay.blocks.contains(b)) {
+	public boolean isXRayBlock(Block b) {
+		List<Block> blockList = blocks.getValue();
+		if (blockList.contains(b)) {
 			return true;
 		}
 		return false;
+	}
+	
+	public void ReloadRenderer(List<Block> block) {
+		if(MC.worldRenderer != null && this.getState()) {
+			MC.worldRenderer.reload();
+		}	
 	}
 }

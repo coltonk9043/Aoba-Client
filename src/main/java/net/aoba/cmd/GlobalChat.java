@@ -4,14 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import net.aoba.Aoba;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
@@ -21,7 +16,6 @@ import net.minecraft.client.gui.hud.MessageIndicator;
 import net.minecraft.client.util.ChatMessages;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 public class GlobalChat {
 	
@@ -46,7 +40,7 @@ public class GlobalChat {
 	public GlobalChat() {
 		gson = new Gson();
 		enabled = new BooleanSetting("global_chat_enabled", "Whether or not global chat is enabled or disabled.", true);
-		SettingManager.register_setting(this.enabled, Aoba.getInstance().settingManager.modules_category);
+		SettingManager.registerSetting(this.enabled, Aoba.getInstance().settingManager.modules_category);
 	}
 	
 	private void Send(String json) {

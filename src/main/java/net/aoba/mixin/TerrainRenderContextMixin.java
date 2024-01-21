@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.module.modules.render.XRay;
 import net.fabricmc.fabric.impl.client.indigo.renderer.render.TerrainRenderContext;
 import net.minecraft.block.BlockState;
@@ -17,8 +18,10 @@ public class TerrainRenderContextMixin {
 	@Inject(at = { @At("HEAD") }, method = { "tessellateBlock" }, cancellable = true, remap = false)
 	private void tesselateBlock(BlockState blockState, BlockPos blockPos, final BakedModel model,
 			MatrixStack matrixStack, CallbackInfo ci) {
-		if (Aoba.getInstance().moduleManager.xray.getState()) {
-			if (XRay.isXRayBlock(blockState.getBlock())) {
+		AobaClient aoba = Aoba.getInstance();
+		XRay xray = (XRay)aoba.moduleManager.xray;
+		if (xray.getState()) {
+			if (xray.isXRayBlock(blockState.getBlock())) {
 				ci.cancel();
 				return;
 			}

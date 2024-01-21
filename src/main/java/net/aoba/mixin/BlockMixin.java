@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.module.modules.render.XRay;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -20,8 +21,10 @@ public abstract class BlockMixin implements ItemConvertible {
 			"shouldDrawSide(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;)Z" }, cancellable = true)
 	private static void onShouldDrawSide(BlockState state, BlockView world, BlockPos pos, Direction direction,
 			BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
-		if (Aoba.getInstance().moduleManager.xray.getState()) {
-			boolean isXray = XRay.isXRayBlock(state.getBlock());
+		AobaClient aoba = Aoba.getInstance();
+		XRay xray = (XRay)aoba.moduleManager.xray;
+		if (xray.getState()) {
+			boolean isXray = xray.isXRayBlock(state.getBlock());
 			cir.setReturnValue(isXray);
 		}
 	}
