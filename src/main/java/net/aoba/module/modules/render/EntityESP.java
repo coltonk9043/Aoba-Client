@@ -28,14 +28,12 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Color;
-import net.aoba.misc.RainbowColor;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -47,8 +45,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public class EntityESP extends Module implements RenderListener, TickListener {
-	private RainbowColor rainbowColor;
-
 	private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color",  "Passive Color", new Color(0, 1f, 1f));
 	private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
 	private ColorSetting color_misc = new ColorSetting("entityesp_color_misc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
@@ -62,7 +58,6 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 		this.setName("EntityESP");
 		this.setCategory(Category.Render);
 		this.setDescription("Allows the player to see entities with an ESP.");
-		rainbowColor = new RainbowColor();
 		
 		this.addSetting(color_passive);
 		this.addSetting(color_enemies);

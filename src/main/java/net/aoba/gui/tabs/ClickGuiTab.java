@@ -30,6 +30,7 @@ import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.tabs.components.Component;
+import net.aoba.misc.RenderUtils;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.utils.types.Vector2;
@@ -53,7 +54,7 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 		this.pinnable = pinnable;
 
 		isPinned = new BooleanSetting(title + "_pinned", "IS PINNED", false);
-		SettingManager.register_setting(isPinned, Aoba.getInstance().settingManager.hidden_category);
+		SettingManager.registerSetting(isPinned, Aoba.getInstance().settingManager.hidden_category);
 	}
 	
 	public ClickGuiTab(String title, int x, int y, boolean pinnable, String iconName) {
@@ -63,7 +64,7 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 		this.pinnable = pinnable;
 
 		isPinned = new BooleanSetting(title + "_pinned", "IS PINNED", false);
-		SettingManager.register_setting(isPinned, Aoba.getInstance().settingManager.hidden_category);
+		SettingManager.registerSetting(isPinned, Aoba.getInstance().settingManager.hidden_category);
 		icon = new Identifier("aoba", "/textures/" + iconName.trim().toLowerCase() + ".png");
 	}
 
@@ -123,24 +124,24 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 		
 		if (drawBorder) {
 			// Draws background depending on components width and height
-			renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, Aoba.getInstance().hudManager.backgroundColor.getValue());
-			renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, Aoba.getInstance().hudManager.borderColor.getValue());
+			RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, Aoba.getInstance().hudManager.backgroundColor.getValue());
+			RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, Aoba.getInstance().hudManager.borderColor.getValue());
 			
 			if(icon != null) {
-				renderUtils.drawTexturedQuad(drawContext, icon, pos.x + 8, pos.y + 4, 22, 22, color);
-				renderUtils.drawString(drawContext, this.title, pos.x + 38, pos.y + 8, Aoba.getInstance().hudManager.getColor());
+				RenderUtils.drawTexturedQuad(drawContext, icon, pos.x + 8, pos.y + 4, 22, 22, color);
+				RenderUtils.drawString(drawContext, this.title, pos.x + 38, pos.y + 8, Aoba.getInstance().hudManager.getColor());
 			}else
-				renderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
+				RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
 			
-			renderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
+			RenderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
 
 			if (this.pinnable) {
 				if (this.isPinned.getValue()) {
-					renderUtils.drawRoundedBox(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(154, 0, 0, 200));
-					renderUtils.drawRoundedOutline(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(0, 0, 0, 200));
+					RenderUtils.drawRoundedBox(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(154, 0, 0, 200));
+					RenderUtils.drawRoundedOutline(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(0, 0, 0, 200));
 				} else {
-					renderUtils.drawRoundedBox(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(128, 128, 128, 50));
-					renderUtils.drawRoundedOutline(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(0, 0, 0, 50));
+					RenderUtils.drawRoundedBox(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(128, 128, 128, 50));
+					RenderUtils.drawRoundedOutline(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(0, 0, 0, 50));
 				}
 			}
 		}

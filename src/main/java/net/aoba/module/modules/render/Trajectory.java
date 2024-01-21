@@ -34,7 +34,6 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
@@ -43,7 +42,6 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.BowItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 
@@ -76,12 +74,6 @@ public class Trajectory extends Module implements RenderListener {
 
 	}
 	
-	private double IntepolateThrowPower(Item item) {
-		float power = (float) Math.pow(((72000 - MinecraftClient.getInstance().player.getItemUseTime()) / 20.0f), 2.0f);
-		
-		return power + (power * 2.0f);
-	}
-
 	@Override
 	public void OnRender(RenderEvent event) {
 		MinecraftClient mc = MinecraftClient.getInstance();
@@ -99,8 +91,7 @@ public class Trajectory extends Module implements RenderListener {
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
 		ItemStack itemStack = mc.player.getActiveItem();
-		Item item = itemStack.getItem();
-		
+
 		if(!(ModuleUtils.isThrowable(itemStack))) return;
 		
 		float initialVelocity = (52 * BowItem.getPullProgress(mc.player.getItemUseTime()));

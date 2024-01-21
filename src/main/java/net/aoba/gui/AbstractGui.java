@@ -1,15 +1,12 @@
 package net.aoba.gui;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.tabs.components.Component;
-import net.aoba.misc.RenderUtils;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.Vector2Setting;
 import net.aoba.utils.types.Vector2;
@@ -17,7 +14,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
 public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener, MouseMoveListener {
-	protected static RenderUtils renderUtils = new RenderUtils();
 	protected static MinecraftClient mc = MinecraftClient.getInstance();
 
 	protected String ID;
@@ -46,7 +42,7 @@ public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener,
 		this.position = new Vector2Setting(ID + "_position", ID + "Position", new Vector2(x, y), (Vector2 vec) -> UpdateAll(vec));
 		this.width = width;
 		this.height = height;
-		SettingManager.register_setting(position, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(position, Aoba.getInstance().settingManager.config_category);
 	}
 
 	public void UpdateAll(Vector2 vec) {

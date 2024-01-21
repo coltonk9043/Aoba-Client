@@ -7,6 +7,7 @@ import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.tabs.components.BlocksComponent;
 import net.aoba.gui.tabs.components.CheckboxComponent;
 import net.aoba.gui.tabs.components.ColorPickerComponent;
 import net.aoba.gui.tabs.components.Component;
@@ -14,10 +15,12 @@ import net.aoba.gui.tabs.components.KeybindComponent;
 import net.aoba.gui.tabs.components.ListComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
+import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.aoba.module.Module;
 import net.aoba.settings.Setting;
+import net.aoba.settings.types.BlocksSetting;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -42,7 +45,7 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 		keybindComponent.setHeight(30);
 		stackPanel.addChild(keybindComponent);
 		
-		for (Setting setting : this.module.getSettings()) {
+		for (Setting<?> setting : this.module.getSettings()) {
 			Component c;
 			if (setting instanceof FloatSetting) {
 				c = new SliderComponent(stackPanel, (FloatSetting) setting);
@@ -52,6 +55,8 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 				c = new ListComponent(stackPanel, (IndexedStringListSetting) setting);
 			} else if (setting instanceof ColorSetting) {
 				c = new ColorPickerComponent(stackPanel, (ColorSetting) setting);
+			} else if (setting instanceof BlocksSetting) {
+				c = new BlocksComponent(stackPanel, (BlocksSetting)setting);
 			} else {
 				c = null;
 			}
@@ -108,14 +113,14 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 
 		// Draws background depending on components width and height
 		GuiManager hudManager = Aoba.getInstance().hudManager;
-		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.backgroundColor.getValue());
-		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.borderColor.getValue());
 		
-		renderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
-		renderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
+		RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
+		RenderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
 
-		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255, 0, 0, 255));
-		renderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255, 0, 0, 255));
+		RenderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255, 0, 0, 255));
+		RenderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255, 0, 0, 255));
 		
 		for (Component child : children) {
 			child.draw(drawContext, partialTicks, color);

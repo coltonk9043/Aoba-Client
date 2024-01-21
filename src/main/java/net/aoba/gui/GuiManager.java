@@ -1,14 +1,9 @@
 package net.aoba.gui;
 
-import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.List;
-
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.LeftMouseUpEvent;
-import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.LeftMouseUpListener;
 import net.aoba.event.listeners.KeyDownListener;
@@ -40,9 +35,7 @@ import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, KeyDownListener {
-
 	protected MinecraftClient mc = MinecraftClient.getInstance();
-	protected RenderUtils renderUtils = new RenderUtils();
 
 	public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
 	private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
@@ -80,7 +73,6 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 	public GuiManager() {
 		mc = MinecraftClient.getInstance();
 		
-		renderUtils = Aoba.getInstance().renderUtils;
 		borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
 		backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(0, 0, 0, 50));
 		color = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
@@ -88,10 +80,10 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		rainbowColor = new RainbowColor();
 		clickGuiNavBar = new NavigationBar();
 		
-		SettingManager.register_setting(borderColor, Aoba.getInstance().settingManager.config_category);
-		SettingManager.register_setting(backgroundColor, Aoba.getInstance().settingManager.config_category);
-		SettingManager.register_setting(color, Aoba.getInstance().settingManager.config_category);
-		SettingManager.register_setting(clickGuiButton, Aoba.getInstance().settingManager.modules_category);
+		SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(backgroundColor, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(color, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(clickGuiButton, Aoba.getInstance().settingManager.modules_category);
 		
 		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 	}
@@ -129,9 +121,9 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		clickGuiNavBar.addPane(hudPane);
 		//clickGuiNavBar.addPane(settingsPane);
 
-		SettingManager.register_setting(effectSpeed, Aoba.getInstance().settingManager.config_category);
-		SettingManager.register_setting(rainbow, Aoba.getInstance().settingManager.config_category);
-		SettingManager.register_setting(ah, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(effectSpeed, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(rainbow, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(ah, Aoba.getInstance().settingManager.config_category);
 		
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
@@ -222,7 +214,7 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 			this.currentColor = color.getValue();
 		}
 		
-		Aoba.getInstance().eventManager.Fire(new MouseScrollEvent(5.0f, 5.0f));
+		//Aoba.getInstance().eventManager.Fire(new MouseScrollEvent(5.0f, 5.0f));
 	}
 
 	public void draw(DrawContext drawContext, float tickDelta) {
@@ -241,7 +233,7 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		 * Render ClickGUI and Sidebar
 		 */
 		if (this.clickGuiOpen) {
-			renderUtils.drawBox(matrixStack, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
+			RenderUtils.drawBox(matrixStack, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
 			clickGuiNavBar.draw(drawContext, tickDelta, this.currentColor);
 		}
 		

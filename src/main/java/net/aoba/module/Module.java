@@ -27,14 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.misc.RenderUtils;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
-import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
 
 public abstract class Module {
 	private String name;
@@ -43,7 +40,7 @@ public abstract class Module {
 	private boolean state;
 
 	protected KeybindSetting keyBind;
-	private List<Setting> settings = new ArrayList<Setting>();
+	private List<Setting<?>> settings = new ArrayList<Setting<?>>();
 	
 	protected final MinecraftClient MC = AobaClient.MC;
 	protected final IMinecraftClient IMC = AobaClient.IMC;
@@ -51,7 +48,7 @@ public abstract class Module {
 	public Module(KeybindSetting keyBind) {
 		this.keyBind = keyBind;
 		this.addSetting(keyBind);
-		SettingManager.register_setting(this.keyBind, Aoba.getInstance().settingManager.modules_category);
+		SettingManager.registerSetting(this.keyBind, Aoba.getInstance().settingManager.modules_category);
 	}
 	
 	public String getName() {
@@ -100,11 +97,11 @@ public abstract class Module {
 
 	}
 
-	public void addSetting(Setting setting) {
+	public void addSetting(Setting<?> setting) {
 		this.settings.add(setting);
 	}
 	
-	public List<Setting> getSettings() {
+	public List<Setting<?>> getSettings() {
 		return this.settings;
 	}
 	

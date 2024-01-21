@@ -2,26 +2,24 @@ package net.aoba.event.events;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.aoba.event.listeners.AbstractListener;
-import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.event.listeners.MouseScrollListener;
 
 public class MouseScrollEvent extends AbstractEvent{
-	private float horizontal;
-	private float vertical;
+	private double horizontal;
+	private double vertical;
 	
-	public MouseScrollEvent(float horizontal, float vertical) {
+	public MouseScrollEvent(double horizontal2, double vertical2) {
 		super();
-		this.horizontal = horizontal;
-		this.vertical = vertical;
+		this.horizontal = horizontal2;
+		this.vertical = vertical2;
 	}
 	
-	public float GetVertical() {
+	public double GetVertical() {
 		return vertical;
 	}
 	
-	public float GetHorizontal() {
+	public double GetHorizontal() {
 		return horizontal;
 	}
 

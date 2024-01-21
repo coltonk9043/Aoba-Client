@@ -6,6 +6,7 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
+import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
 import net.aoba.utils.types.Vector2;
@@ -103,38 +104,38 @@ public class ModuleSelectorHud extends AbstractHud {
 		Vector2 pos = position.getValue();
 		
 		// Draws the top bar including "Aoba x.x"
-		renderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, color);
+		RenderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, color);
 
 		// Draws the table including all of the categories.
 		GuiManager hudManager = Aoba.getInstance().hudManager;
-		renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.backgroundColor.getValue());
-		renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.borderColor.getValue());
 		
 		// For every category, draw a cell for it.
 		for (int i = 0; i < this.categories.length; i++) {
-			renderUtils.drawString(drawContext, ">>", pos.x + width - 24, pos.y + (height * i) + 8, color);
+			RenderUtils.drawString(drawContext, ">>", pos.x + width - 24, pos.y + (height * i) + 8, color);
 			// Draws the name of the category dependent on whether it is selected.
 			if (this.index == i) {
-				renderUtils.drawString(drawContext, "> " + this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8, color);
+				RenderUtils.drawString(drawContext, "> " + this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8, color);
 			} else {
-				renderUtils.drawString(drawContext, this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8, 0xFFFFFF);
+				RenderUtils.drawString(drawContext, this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8, 0xFFFFFF);
 			}
 		}
 		
 		// If any particular category menu is open.
 		if (isCategoryMenuOpen) {
 			// Draw the table underneath
-			renderUtils.drawRoundedBox(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, hudManager.backgroundColor.getValue());
-			renderUtils.drawRoundedOutline(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, hudManager.borderColor.getValue());
+			RenderUtils.drawRoundedBox(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, hudManager.backgroundColor.getValue());
+			RenderUtils.drawRoundedOutline(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, hudManager.borderColor.getValue());
 			
 			// For every mod, draw a cell for it.
 			for (int i = 0; i < modules.size(); i++) {
 				if (this.indexMods == i) {
-					renderUtils.drawString(drawContext, "> " + modules.get(i).getName(), pos.x + width + 5,
+					RenderUtils.drawString(drawContext, "> " + modules.get(i).getName(), pos.x + width + 5,
 							pos.y + (i * height) + (this.index * height) + 8,
 							modules.get(i).getState() ? 0x00FF00 : color.getColorAsInt());
 				} else {
-					renderUtils.drawString(drawContext, modules.get(i).getName(), pos.x + width + 5,
+					RenderUtils.drawString(drawContext, modules.get(i).getName(), pos.x + width + 5,
 							pos.y + (i * height) + (this.index * height) + 8,
 							modules.get(i).getState() ? 0x00FF00 : 0xFFFFFF);
 				}
@@ -146,7 +147,7 @@ public class ModuleSelectorHud extends AbstractHud {
 		for(int i = 0; i < aoba.moduleManager.modules.size(); i++) {
 			Module mod = aoba.moduleManager.modules.get(i);
 			if(mod.getState()) {
-				renderUtils.drawString(drawContext, mod.getName(),
+				RenderUtils.drawString(drawContext, mod.getName(),
 						(float) (window.getWidth() - ((mc.textRenderer.getWidth(mod.getName()) + 5) * 2)), 10 + (iteration*20),
 						color.getColorAsInt());
 				iteration++;

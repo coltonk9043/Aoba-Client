@@ -16,13 +16,10 @@ public class NavigationBar implements LeftMouseDownListener {
 	MinecraftClient mc = MinecraftClient.getInstance();
 
 	private List<Page> options;
-	
 	private int selectedIndex;
-	private RenderUtils renderUtils;
 
 	public NavigationBar() {
 		options = new ArrayList<Page>();
-		renderUtils = new RenderUtils();
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
@@ -51,8 +48,6 @@ public class NavigationBar implements LeftMouseDownListener {
 	}
 	
 	public void update() {
-		Window window = mc.getWindow();
-		
 		if(options.size() > 0) {
 			options.get(selectedIndex).update();
 		}
@@ -68,17 +63,17 @@ public class NavigationBar implements LeftMouseDownListener {
 		int width = 100 * options.size();
 		
 		GuiManager hudManager = Aoba.getInstance().hudManager;
-		renderUtils.drawRoundedBox(matrixStack, centerX - (width / 2), 25, width, 25, 6, hudManager.backgroundColor.getValue());
-		renderUtils.drawRoundedOutline(matrixStack, centerX -  (width / 2), 25, width, 25, 6, hudManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrixStack, centerX - (width / 2), 25, width, 25, 6, hudManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrixStack, centerX -  (width / 2), 25, width, 25, 6, hudManager.borderColor.getValue());
 
-		renderUtils.drawRoundedBox(drawContext.getMatrices(), centerX - (width / 2) + (100 * this.selectedIndex), 25, 100, 25, 5, new Color(150, 150, 150, 100));
+		RenderUtils.drawRoundedBox(drawContext.getMatrices(), centerX - (width / 2) + (100 * this.selectedIndex), 25, 100, 25, 5, new Color(150, 150, 150, 100));
 			
 		for(int i = 0; i < options.size(); i++) {
 			Page pane = options.get(i);
 			if(i == selectedIndex) {
 				pane.render(drawContext, partialTicks, color);
 			}
-			renderUtils.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, color);
+			RenderUtils.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, color);
 		}
 	}
 

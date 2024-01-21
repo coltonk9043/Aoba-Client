@@ -25,7 +25,6 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.cmd.CommandManager;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
 public class AutoSign extends Module {

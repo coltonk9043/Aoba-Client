@@ -1,9 +1,7 @@
 package net.aoba.settings.types;
 
 import java.util.function.Consumer;
-
 import net.aoba.settings.Setting;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil.Key;
 
 public class KeybindSetting extends Setting<Key> {

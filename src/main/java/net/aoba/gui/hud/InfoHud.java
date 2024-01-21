@@ -1,9 +1,9 @@
 package net.aoba.gui.hud;
 
 import net.aoba.Aoba;
-import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
+import net.aoba.misc.RenderUtils;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -64,12 +64,12 @@ public class InfoHud extends AbstractHud {
 			Vector2 pos = position.getValue();
 			
 			GuiManager hudManager = Aoba.getInstance().hudManager;
-			renderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, hudManager.backgroundColor.getValue());
-			renderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, hudManager.borderColor.getValue());
+			RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, hudManager.backgroundColor.getValue());
+			RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, hudManager.borderColor.getValue());
 			
-			renderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, color);
-			renderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, color);
-			renderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, color);
+			RenderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, color);
+			RenderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, color);
+			RenderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, color);
 		}
 	}
 }

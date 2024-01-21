@@ -151,8 +151,8 @@ public class ModuleManager implements KeyDownListener {
 		addModule(zoom);
 		
 		for(Module module : modules) {
-			for(Setting setting : module.getSettings()) {
-				SettingManager.register_setting(setting, Aoba.getInstance().settingManager.modules_category);
+			for(Setting<?> setting : module.getSettings()) {
+				SettingManager.registerSetting(setting, Aoba.getInstance().settingManager.modules_category);
 			}
 		}
 		

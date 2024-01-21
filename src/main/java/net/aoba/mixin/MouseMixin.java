@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseMoveEvent;
+import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.LeftMouseUpEvent;
 import net.minecraft.client.Mouse;
@@ -43,6 +44,16 @@ public class MouseMixin
 		case GLFW.GLFW_MOUSE_BUTTON_MIDDLE:
 			
 			break;
+		}
+	}
+	
+	@Inject(at = {@At("HEAD")}, method= {"onMouseScroll(JDD)V"}, cancellable = true)
+	private void onMouseScroll(long window, double horizontal, double vertical, CallbackInfo ci) {
+		MouseScrollEvent event = new MouseScrollEvent(horizontal, vertical);
+		Aoba.getInstance().eventManager.Fire(event);
+		
+		if(event.IsCancelled()) {
+			ci.cancel();
 		}
 	}
 	

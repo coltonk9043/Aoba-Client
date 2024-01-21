@@ -75,12 +75,12 @@ public class RenderUtils {
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		
+		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
-
+		
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
 		bufferBuilder.vertex(matrix, x, y, 0).next();
 		bufferBuilder.vertex(matrix, x + width, y, 0).next();
@@ -568,23 +568,6 @@ public class RenderUtils {
 		double roundedInterval = (sweepAngle / ROUND_QUALITY);
 		
 				for(int i = 0; i < ROUND_QUALITY; i++) {
-					double angle = Math.toRadians(startAngle + (i * roundedInterval));
-					double angle2 = Math.toRadians(startAngle + ((i + 1) * roundedInterval));
-					float radiusX1 = (float)(Math.cos(angle) * radius);
-					float radiusY1 = (float)Math.sin(angle) * radius;
-					float radiusX2 = (float)Math.cos(angle2) * radius;
-					float radiusY2 = (float)Math.sin(angle2) * radius;
-					
-					bufferBuilder.vertex(matrix, x, y, 0).next();
-					bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).next();
-					bufferBuilder.vertex(matrix, x + radiusX2, y + radiusY2, 0).next();
-				}
-	}
-	
-	private void buildFilledArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius, float startAngle, float sweepAngle, float quality) {
-		double roundedInterval = (sweepAngle / quality);
-		
-				for(int i = 0; i < quality; i++) {
 					double angle = Math.toRadians(startAngle + (i * roundedInterval));
 					double angle2 = Math.toRadians(startAngle + ((i + 1) * roundedInterval));
 					float radiusX1 = (float)(Math.cos(angle) * radius);

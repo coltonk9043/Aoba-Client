@@ -3,7 +3,6 @@ package net.aoba.gui.tabs.components;
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
-import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.hud.AbstractHud;

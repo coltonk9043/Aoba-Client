@@ -2,9 +2,7 @@ package net.aoba.event.events;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.aoba.event.listeners.AbstractListener;
-import net.aoba.event.listeners.LeftMouseUpListener;
 import net.aoba.event.listeners.MouseMoveListener;
 
 public class MouseMoveEvent extends AbstractEvent{

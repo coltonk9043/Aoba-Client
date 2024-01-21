@@ -69,7 +69,7 @@ public class CmdXRay extends Command {
 					return;
 				}
 				
-				XRay.blocks.add(tempBlock1);
+				module.blocks.getValue().add(tempBlock1);
 				mc.worldRenderer.reload();
 				break;
 			case "remove":
@@ -82,12 +82,12 @@ public class CmdXRay extends Command {
 					return;
 				}
 
-				XRay.blocks.remove(tempBlock2);
+				module.blocks.getValue().remove(tempBlock2);
 				mc.worldRenderer.reload();
 				break;
 			case "list":
 				String blockList = "";
-				for (Block block : XRay.blocks) {
+				for (Block block : module.blocks.getValue()) {
 					blockList += block.getName().getString() + ", ";
 				}
 				blockList = blockList.substring(0, blockList.length() - 2);

@@ -12,7 +12,6 @@ import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;

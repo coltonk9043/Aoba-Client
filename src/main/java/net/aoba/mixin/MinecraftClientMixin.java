@@ -1,7 +1,6 @@
 package net.aoba.mixin;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.TickEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;

@@ -1,7 +1,5 @@
 package net.aoba.gui.tabs.components;
 
-import org.joml.Matrix4f;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
@@ -11,12 +9,6 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.tabs.ModuleSettingsTab;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 
 public class ModuleComponent extends Component implements LeftMouseDownListener {

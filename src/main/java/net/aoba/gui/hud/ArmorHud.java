@@ -22,11 +22,7 @@
 
 package net.aoba.gui.hud;
 
-import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.gui.AbstractGui;
 import net.aoba.gui.Color;
-import net.aoba.gui.GuiManager;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;

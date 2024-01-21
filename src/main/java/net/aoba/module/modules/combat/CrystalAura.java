@@ -38,10 +38,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 
 public class CrystalAura extends Module implements TickListener {
 	private float radius = 10.0f;
@@ -89,7 +86,7 @@ public class CrystalAura extends Module implements TickListener {
 					break;
 				}
 			}
-			BlockHitResult rayTrace = new BlockHitResult(new Vec3d(0,0,0), Direction.UP, check, false);
+			//BlockHitResult rayTrace = new BlockHitResult(new Vec3d(0,0,0), Direction.UP, check, false);
 			this.MC.player.networkHandler.sendPacket(new PlayerInteractItemC2SPacket(Hand.MAIN_HAND, 0));
 		}
 

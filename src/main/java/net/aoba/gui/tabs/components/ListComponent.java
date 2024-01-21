@@ -2,18 +2,13 @@ package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
-import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
-import net.aoba.gui.tabs.ClickGuiTab;
 import net.aoba.settings.types.IndexedStringListSetting;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class ListComponent extends Component implements LeftMouseDownListener {
 	private String text;
