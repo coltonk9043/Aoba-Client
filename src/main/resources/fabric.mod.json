@@ -2,17 +2,14 @@
   "schemaVersion": 1,
   "id": "aoba",
   "version": "1.4.0",
-
   "name": "Aoba Hacked Client",
-  "description": "Custom hacked client running on Fabric 1.20.x",
+  "description": "Custom hacked client running on Fabric 1.20.4",
   "authors": [
     "Cocolots"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/coltonk9043/Aoba-MC-Hacked-Client"
   },
-
   "license": "CC0-1.0",
   "icon": "assets/modid/icon.png",
   "environment": "*",
@@ -24,14 +21,10 @@
   "mixins": [
     "aoba.mixins.json"
   ],
-
   "depends": {
-    "fabricloader": ">=0.14.24",
-    "fabric-api": ">=0.90.7",
-    "minecraft": "1.20.2",
+    "fabricloader": ">=0.15.7",
+    "fabric-api": ">=0.96.3",
+    "minecraft": "1.20.4",
     "java": ">=16"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }

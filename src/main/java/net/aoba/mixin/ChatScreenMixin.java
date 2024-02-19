@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import net.aoba.Aoba;
 import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
+import net.aoba.cmd.GlobalChat.ChatType;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -24,12 +25,19 @@ public class ChatScreenMixin extends Screen{
 	@Shadow
 	protected TextFieldWidget chatField;
 	
-	protected ButtonWidget button;
+	protected ButtonWidget serverChatButton;
+	protected ButtonWidget globalChatButton;
+	
 	
 	@Inject(at = { @At("TAIL") }, method = {"init()V" }, cancellable = true)
 	public void onInit(CallbackInfo ci) {
-		this.addDrawableChild(ButtonWidget.builder(Text.of("Server Chat"), s -> GlobalChat.chatType = GlobalChat.ChatType.Minecraft).dimensions(chatField.getX(), chatField.getY() - chatField.getHeight() - 10, 70, 15).build());
-		this.addDrawableChild(ButtonWidget.builder(Text.of("Global Chat"), s -> GlobalChat.chatType = GlobalChat.ChatType.Global).dimensions(chatField.getX() + 80, chatField.getY() - chatField.getHeight() - 10, 70, 15).build());
+		serverChatButton = ButtonWidget.builder(Text.of("Server Chat"), s -> { switchToServer(); }).dimensions(chatField.getX(), chatField.getY() - chatField.getHeight() - 10, 70, 15).build();
+		globalChatButton = ButtonWidget.builder(Text.of("Global Chat"), s -> { switchToGlobal(); }).dimensions(chatField.getX() + 80, chatField.getY() - chatField.getHeight() - 10, 70, 15).build();
+		this.addDrawableChild(serverChatButton);
+		this.addDrawableChild(globalChatButton);
+		
+		serverChatButton.active = !(GlobalChat.chatType == ChatType.Minecraft);
+		globalChatButton.active = !(GlobalChat.chatType == ChatType.Global);
 	}
 	
 	@Inject(at = {
@@ -38,9 +46,30 @@ public class ChatScreenMixin extends Screen{
 		if (message.startsWith(CommandManager.PREFIX.getValue())) {
 			Aoba.getInstance().commandManager.command(message.split(" "));
 			cir.setReturnValue(true);
-		}else if (message.startsWith(".global")) {
-			Aoba.getInstance().globalChat.SendMessage(message.substring(8, message.length()));
+		}else if (GlobalChat.chatType == ChatType.Global) {
+			Aoba.getInstance().globalChat.SendMessage(message);
 			cir.setReturnValue(true);
+		}
+	}
+	
+	
+	// TODO: For some dumb reason, the chat field unfocused when the chat window is switched. 
+	// Tried a few possible solutions (focus, selectedtext, etc..) but none seem to work.
+	private void switchToGlobal() {
+		GlobalChat.chatType = GlobalChat.ChatType.Global;
+		
+		if(globalChatButton != null) {
+			globalChatButton.active = false;
+			serverChatButton.active = true;
+		}
+	}
+	
+	private void switchToServer() {
+		GlobalChat.chatType = GlobalChat.ChatType.Minecraft;
+
+		if(serverChatButton != null) {
+			globalChatButton.active = true;
+			serverChatButton.active = false;
 		}
 	}
 }

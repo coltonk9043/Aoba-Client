@@ -23,8 +23,8 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
 	private final AltScreen owner;
 	private final List<AltSelectionList.NormalEntry> altList = new ArrayList<AltSelectionList.NormalEntry>();
 
-	public AltSelectionList(AltScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l, int m) {
-		super(minecraftClient, i, j, k, l, m);
+	public AltSelectionList(AltScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l) {
+		super(minecraftClient, i, j, k, l);
 		this.owner = ownerIn;
 	}
 

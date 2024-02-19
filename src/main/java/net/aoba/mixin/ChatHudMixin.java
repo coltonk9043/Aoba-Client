@@ -63,15 +63,11 @@ public abstract class ChatHudMixin {
 	
 	public void AobaChatRender(DrawContext context, int currentTick, int mouseX, int mouseY) {
         int x;
-        int w;
         int v;
         int u;
         int t;
-        int i = this.getVisibleLineCount();
-        int j = this.visibleMessages.size();
-        if (j <= 0) {
-            return;
-        }
+        int visibleLinesCount = this.getVisibleLineCount();
+        
         boolean bl = this.isChatFocused();
         float f = (float)this.getChatScale();
         int k = MathHelper.ceil((float)this.getWidth() / f);
@@ -81,30 +77,28 @@ public abstract class ChatHudMixin {
         context.getMatrices().translate(4.0f, 0.0f, 0.0f);
         int m = MathHelper.floor((float)(l - 40) / f);
         int n = this.getMessageIndex(this.toChatLineX(mouseX), this.toChatLineY(mouseY));
-        double d = this.client.options.getChatOpacity().getValue() * (double)0.9f + (double)0.1f;
-        double e = this.client.options.getTextBackgroundOpacity().getValue();
-        double g = this.client.options.getChatLineSpacing().getValue();
-        int o = this.getLineHeight();
-        int p = (int)Math.round(-8.0 * (g + 1.0) + 4.0 * g);
-        int q = 0;
-        for (int r = 0; r < Aoba.getInstance().globalChat.messages.size() && r < i; ++r) {
+        double opacity = this.client.options.getChatOpacity().getValue() * (double)0.9f + (double)0.1f;
+        double textOpacity = this.client.options.getTextBackgroundOpacity().getValue();
+        double chatSpacing = this.client.options.getChatLineSpacing().getValue();
+        int lineHeight = this.getLineHeight();
+        int p = (int)Math.round(-8.0 * (chatSpacing + 1.0) + 4.0 * chatSpacing);
+        
+        for (int r = 0; r < Aoba.getInstance().globalChat.messages.size() && r < visibleLinesCount; ++r) {
             ChatHudLine.Visible visible = Aoba.getInstance().globalChat.messages.get(r);
             if (visible == null || (t = currentTick - visible.addedTime()) >= 200 && !bl) continue;
             double h = bl ? 1.0 : getMessageOpacityMultiplier(t);
-            u = (int)(255.0 * h * d);
-            v = (int)(255.0 * h * e);
-            ++q;
+            u = (int)(255.0 * h * opacity);
+            v = (int)(255.0 * h * textOpacity);
             if (u <= 3) continue;
-            w = 0;
-            x = m - r * o;
+            x = m - r * lineHeight;
             int y = x + p;
             context.getMatrices().push();
             context.getMatrices().translate(0.0f, 0.0f, 50.0f);
-            context.fill(-4, x - o, 0 + k + 4 + 4, x, v << 24);
+            context.fill(-4, x - lineHeight, 0 + k + 4 + 4, x, v << 24);
             MessageIndicator messageIndicator = visible.indicator();
             if (messageIndicator != null) {
                 int z = messageIndicator.indicatorColor() | u << 24;
-                context.fill(-4, x - o, -2, x, z);
+                context.fill(-4, x - lineHeight, -2, x, z);
                 if (r == n && messageIndicator.icon() != null) {
                     int aa = this.getIndicatorX(visible);
                     int ab = y + this.client.textRenderer.fontHeight;
@@ -115,31 +109,7 @@ public abstract class ChatHudMixin {
             context.drawTextWithShadow(this.client.textRenderer, visible.content(), 0, y, 0xFFFFFF + (u << 24));
             context.getMatrices().pop();
         }
-        long ac = this.client.getMessageHandler().getUnprocessedMessageCount();
-        if (ac > 0L) {
-            int ad = (int)(128.0 * d);
-            t = (int)(255.0 * e);
-            context.getMatrices().push();
-            context.getMatrices().translate(0.0f, m, 50.0f);
-            context.fill(-2, 0, k + 4, 9, t << 24);
-            context.getMatrices().translate(0.0f, 0.0f, 50.0f);
-            context.drawTextWithShadow(this.client.textRenderer, Text.translatable("chat.queue", ac), 0, 1, 0xFFFFFF + (ad << 24));
-            context.getMatrices().pop();
-        }
-        if (bl) {
-            int ad = this.getLineHeight();
-            t = j * ad;
-            int ae = q * ad;
-            int af = this.scrolledLines * ae / j - m;
-            u = ae * ae / t;
-            if (t != ae) {
-                v = af > 0 ? 170 : 96;
-                w = this.hasUnreadNewMessages ? 0xCC3333 : 0x3333AA;
-                x = k + 4;
-                context.fill(x, -af, x + 2, -af - u, 100, w + (v << 24));
-                context.fill(x + 2, -af, x + 1, -af - u, 100, 0xCCCCCC + (v << 24));
-            }
-        }
+        
         context.getMatrices().pop();
     }
 }

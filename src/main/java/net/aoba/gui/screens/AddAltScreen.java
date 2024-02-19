@@ -44,7 +44,8 @@ public class AddAltScreen extends Screen {
 				str += "*";
 			return OrderedText.styledForwardsVisitedString(str, Style.EMPTY);
 		});
-		this.toggleMicrosoft = new CheckboxWidget(this.width / 2 - 100, height / 2 + - 12, 20, 20, Text.of("Microsoft Account?"), false);
+		
+		this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 + - 12).build();
 		this.addDrawableChild(this.toggleMicrosoft);
 		
 		this.buttonAddAlt = ButtonWidget.builder(Text.of("Add Alt"), b -> this.onButtonAltAddPressed())

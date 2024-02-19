@@ -55,17 +55,11 @@ public class GlobalChat {
 	}
 	
 	private void SendChatMessage(String message) {
-		List<OrderedText> list = ChatMessages.breakRenderedChatMessageLines(Text.of(message), 1, MinecraftClient.getInstance().textRenderer);
-		for(int i = 0; i < list.size(); ++i) {
-			OrderedText orderedText = list.get(i);
-			this.messages.add(0, new ChatHudLine.Visible(MinecraftClient.getInstance().inGameHud.getTicks(), orderedText, MessageIndicator.system(), false));
+		MinecraftClient MC = MinecraftClient.getInstance();
+		if(MC != null && MC.inGameHud != null) {
+			this.messages.add(0, new ChatHudLine.Visible(MC.inGameHud.getTicks(), Text.of(message).asOrderedText(), MessageIndicator.system(), false));
+			
 		}
-		
-		
-		//MinecraftClient mc = MinecraftClient.getInstance();
-		//if(mc.inGameHud != null) {
-		//	mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "GLOBAL" + Formatting.DARK_PURPLE +  "] " + Formatting.RESET + message));
-		//}
 	}
 	
 	

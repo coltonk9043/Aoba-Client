@@ -42,7 +42,7 @@ public class DirectLoginAltScreen extends Screen{
 		});
 		this.addDrawableChild(this.textFieldAltPassword);
 		
-		this.toggleMicrosoft = new CheckboxWidget(this.width / 2 - 100, height / 2 - 12, 20, 20, Text.of("Microsoft Account?"), false);
+		this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 + - 12).build();
 		this.addDrawableChild(this.toggleMicrosoft);
 		
 		this.buttonLoginAlt = ButtonWidget.builder(Text.of("Login"), b ->  this.onButtonLoginPressed())

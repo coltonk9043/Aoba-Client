@@ -98,7 +98,7 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 		this.blocks.add(Blocks.WHEAT);
 		this.blocks.add(Blocks.BEETROOTS);
 		this.blocks.add(Blocks.SUGAR_CANE);
-		this.blocks.add(Blocks.GRASS);
+		this.blocks.add(Blocks.GRASS_BLOCK);
 		this.blocks.add(Blocks.TALL_GRASS);
 		this.blocks.add(Blocks.SEAGRASS);
 		this.blocks.add(Blocks.TALL_SEAGRASS);

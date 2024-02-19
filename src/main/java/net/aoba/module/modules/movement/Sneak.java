@@ -45,7 +45,9 @@ public class Sneak extends Module implements TickListener {
 	@Override
 	public void onDisable() {
 		ClientPlayerEntity player = MC.player;
-		player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.RELEASE_SHIFT_KEY));
+		if(player != null && player.networkHandler != null) {
+			player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.RELEASE_SHIFT_KEY));
+		}
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
@@ -62,7 +64,6 @@ public class Sneak extends Module implements TickListener {
 	@Override
 	public void OnUpdate(TickEvent event) {
 		ClientPlayerEntity player = MC.player;
-		
 		MC.player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.PRESS_SHIFT_KEY));
 		MC.player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.RELEASE_SHIFT_KEY));
 	}
