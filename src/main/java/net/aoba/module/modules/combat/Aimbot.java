@@ -1,6 +1,6 @@
 /*
 * Aoba Hacked Client
-* Copyright (C) 2019-2023 coltonk9043
+* Copyright (C) 2019-2024 coltonk9043
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,21 +27,27 @@ import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.client.util.InputUtil;
 
-public class Aimbot extends Module implements RenderListener, TickListener {
+public class Aimbot extends Module implements TickListener, RenderListener {
 
 	private LivingEntity temp = null;
 
 	private BooleanSetting targetAnimals;
 	private BooleanSetting targetPlayers;
+	private FloatSetting frequency;
+	
+	private int currentTick = 0;
 	
 	public Aimbot() {
 		super(new KeybindSetting("key.aimbot", "Aimbot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -52,66 +58,74 @@ public class Aimbot extends Module implements RenderListener, TickListener {
 		
 		targetAnimals = new BooleanSetting("aimbot_target_mobs", "Target Mobs", "Target mobs.", false);
 		targetPlayers = new BooleanSetting("aimbot_target_players", "Target Players", "Target players.", true);
-		
+		frequency = new FloatSetting("aimbot_frequency", "Ticks", "How frequent the aimbot updates (Lower = Laggier)", 1.0f, 1.0f, 20.0f, 1.0f);
 		this.addSetting(targetAnimals);
 		this.addSetting(targetPlayers);
+		this.addSetting(frequency);
 	}
 
 	@Override
 	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
 	}
-	@Override
-	public void OnRender(RenderEvent event) {
-		if (temp != null) {
-			MC.player.lookAt(EntityAnchor.EYES, temp.getEyePos());
-		}
-	}
 
 	@Override
+	public void OnRender(RenderEvent event) {
+		if(temp != null) {
+			Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
+			MC.player.lookAt(EntityAnchor.EYES, temp.getEyePos().add(offset));
+		}
+	}
+	
+	@Override
 	public void OnUpdate(TickEvent event) {
-		if (this.targetPlayers.getValue()) {
-			if (MC.world.getPlayers().size() == 2) {
-				temp = MC.world.getPlayers().get(1);
-			} else if (MC.world.getPlayers().size() > 2) {
-				for (int x = 0; x < MC.world.getPlayers().size(); x++) {
-					for (int y = 1; y < MC.world.getPlayers().size(); y++) {
-						if (MC.world.getPlayers().get(x).distanceTo(MC.player) < MC.world.getPlayers().get(y)
-								.distanceTo(MC.player)) {
-							temp = MC.world.getPlayers().get(x);
+		currentTick++;
+		if(currentTick >= frequency.getValue()) {
+			if (this.targetPlayers.getValue()) {
+				if (MC.world.getPlayers().size() == 2) {
+					temp = MC.world.getPlayers().get(1);
+				} else if (MC.world.getPlayers().size() > 2) {
+					for (int x = 0; x < MC.world.getPlayers().size(); x++) {
+						for (int y = 1; y < MC.world.getPlayers().size(); y++) {
+							if (MC.world.getPlayers().get(x).distanceTo(MC.player) < MC.world.getPlayers().get(y)
+									.distanceTo(MC.player)) {
+								temp = MC.world.getPlayers().get(x);
+							}
 						}
 					}
 				}
 			}
-		}
-		if (this.targetAnimals.getValue()) {
-			LivingEntity tempEntity = null;
-			for (Entity entity : MC.world.getEntities()) {
-				if (!(entity instanceof LivingEntity))
-					continue;
-				if (entity instanceof ClientPlayerEntity)
-					continue;
-				if (tempEntity == null) {
-					tempEntity = (LivingEntity) entity;
-				} else {
-					if (entity.distanceTo(MC.player) < tempEntity.distanceTo(MC.player)) {
+			if (this.targetAnimals.getValue()) {
+				LivingEntity tempEntity = null;
+				for (Entity entity : MC.world.getEntities()) {
+					if (!(entity instanceof LivingEntity))
+						continue;
+					if (entity instanceof ClientPlayerEntity)
+						continue;
+					if (tempEntity == null) {
 						tempEntity = (LivingEntity) entity;
+					} else {
+						if (entity.distanceTo(MC.player) < tempEntity.distanceTo(MC.player)) {
+							tempEntity = (LivingEntity) entity;
+						}
 					}
 				}
+				temp = tempEntity;
 			}
-			temp = tempEntity;
+			
+			currentTick = 0;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /*
 * Aoba Hacked Client
-* Copyright (C) 2019-2023 coltonk9043
+* Copyright (C) 2019-2024 coltonk9043
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,13 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
-import net.aoba.event.events.ReceivePacketEvent;
-import net.aoba.event.listeners.ReceivePacketListener;
+import net.aoba.event.events.PlayerDeathEvent;
+import net.aoba.event.listeners.PlayerDeathListener;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.ClientStatusC2SPacket;
-import net.minecraft.network.packet.s2c.play.HealthUpdateS2CPacket;
 
-public class AutoRespawn extends Module implements ReceivePacketListener {
+public class AutoRespawn extends Module implements PlayerDeathListener {
 	
 	public AutoRespawn() {
 		super(new KeybindSetting("key.autorespawn", "AutoRespawn Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -45,12 +42,12 @@ public class AutoRespawn extends Module implements ReceivePacketListener {
 
 	@Override
 	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(ReceivePacketListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(PlayerDeathListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(ReceivePacketListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(PlayerDeathListener.class, this);
 	}
 
 	@Override
@@ -59,13 +56,8 @@ public class AutoRespawn extends Module implements ReceivePacketListener {
 	}
 	
 	@Override
-	public void OnReceivePacket(ReceivePacketEvent readPacketEvent) {
-		Packet<?> packet = readPacketEvent.GetPacket();
-		if(packet instanceof HealthUpdateS2CPacket) {
-			HealthUpdateS2CPacket healthPacket = (HealthUpdateS2CPacket)packet;
-			if (healthPacket.getHealth() > 0.0F)
-				return;
-			MC.player.networkHandler.sendPacket(new ClientStatusC2SPacket(ClientStatusC2SPacket.Mode.PERFORM_RESPAWN));
-		}
+	public void OnPlayerDeath(PlayerDeathEvent readPacketEvent) {
+		MC.player.requestRespawn();
+		MC.setScreen(null);
 	}
 }

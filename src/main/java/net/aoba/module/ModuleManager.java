@@ -1,6 +1,6 @@
 /*
 * Aoba Hacked Client
-* Copyright (C) 2019-2023 coltonk9043
+* Copyright (C) 2019-2024 coltonk9043
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,11 @@
 package net.aoba.module;
 
 import java.util.ArrayList;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import org.lwjgl.opengl.GL11;
-import net.aoba.misc.RenderUtils;
 import net.aoba.module.modules.combat.*;
 import net.aoba.module.modules.misc.*;
 import net.aoba.module.modules.movement.*;
@@ -37,7 +35,6 @@ import net.aoba.module.modules.world.*;
 import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil.Key;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Vec3d;

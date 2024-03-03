@@ -1,3 +1,21 @@
+/*
+* Aoba Hacked Client
+* Copyright (C) 2019-2024 coltonk9043
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package net.aoba.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,11 +37,6 @@ public class WorldRendererMixin {
 	private void onRenderWorld(MatrixStack matrixStack, float tickDelta, long limitTime, boolean renderBlockOutline,
 			Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f,
 			CallbackInfo info) {
-		
-		// TODO: Per Module rendering.
-		//RenderEvent event = new RenderEvent(matrixStack, tickDelta);
-		//Aoba.getInstance().eventManager.Fire(event);
-		
 		Aoba.getInstance().moduleManager.render(matrixStack);
 	}
 

@@ -1,6 +1,6 @@
 /*
 * Aoba Hacked Client
-* Copyright (C) 2019-2023 coltonk9043
+* Copyright (C) 2019-2024 coltonk9043
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ package net.aoba.module.modules.combat;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PlayerHealthEvent;
+import net.aoba.event.listeners.PlayerHealthListener;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -37,7 +37,7 @@ import net.minecraft.item.StewItem;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Hand;
 
-public class AutoSoup extends Module implements TickListener {
+public class AutoSoup extends Module implements PlayerHealthListener {
 
 	private FloatSetting health;
 	
@@ -56,12 +56,12 @@ public class AutoSoup extends Module implements TickListener {
 
 	@Override
 	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(PlayerHealthListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(PlayerHealthListener.class, this);
 	}
 
 	@Override
@@ -98,39 +98,42 @@ public class AutoSoup extends Module implements TickListener {
 	}
 
 	@Override
-	public void OnUpdate(TickEvent event) {
+	public void OnHealthChanged(PlayerHealthEvent readPacketEvent) {
+		System.out.println("autosoup");
+		float playerHealth = readPacketEvent.getHealth();
+		
 		// If the players HP is below the given threshold.
-				if(MC.player.getHealth() < health.getValue()) {
-					
-					// Find the first item in the hotbar that is a Stew item.
-					int foodSlot= -1;
-					for(int i = 0; i< PlayerInventory.getHotbarSize(); i++) {
-						Item item = MC.player.getInventory().getStack(i).getItem();
-						
-						if(item instanceof StewItem) {
-							foodSlot = i;
-							break;
-						}
-					}
-					
-					// If a Stew item was found, switch to it and use it.
-					if(foodSlot >= 0) {
-						previousSlot = MC.player.getInventory().selectedSlot;
-						
-						MC.player.getInventory().selectedSlot = foodSlot;
-					    MC.options.useKey.setPressed(true);
-					    MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
-					    
-					    // Return the player's selected slot back to the previous slot.
-						if(previousSlot != -1) {
-							MC.options.useKey.setPressed(false);
-							MC.player.getInventory().selectedSlot = previousSlot;
-							previousSlot = -1;
-						}
-					}else {
-					// Otherwise, sort the inventory to try and find some.
-						sortInventory();
-					}
+		if(playerHealth < health.getValue()) {
+			System.out.println("autosoup enabled");
+			// Find the first item in the hotbar that is a Stew item.
+			int foodSlot= -1;
+			for(int i = 0; i< PlayerInventory.getHotbarSize(); i++) {
+				Item item = MC.player.getInventory().getStack(i).getItem();
+				
+				if(item instanceof StewItem) {
+					foodSlot = i;
+					break;
 				}
+			}
+			
+			// If a Stew item was found, switch to it and use it.
+			if(foodSlot >= 0) {
+				previousSlot = MC.player.getInventory().selectedSlot;
+				
+				MC.player.getInventory().selectedSlot = foodSlot;
+			    MC.options.useKey.setPressed(true);
+			    MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+			    
+			    // Return the player's selected slot back to the previous slot.
+				if(previousSlot != -1) {
+					MC.options.useKey.setPressed(false);
+					MC.player.getInventory().selectedSlot = previousSlot;
+					previousSlot = -1;
+				}
+			}else {
+			// Otherwise, sort the inventory to try and find some.
+				sortInventory();
+			}
+		}
 	}
 }

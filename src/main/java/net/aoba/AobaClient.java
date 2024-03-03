@@ -1,6 +1,6 @@
 /*
 * Aoba Hacked Client
-* Copyright (C) 2019-2023 coltonk9043
+* Copyright (C) 2019-2024 coltonk9043
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,17 +21,27 @@
  */
 package net.aoba;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.font.FontManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
 import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.Font;
+import net.minecraft.client.font.FontLoader;
+import net.minecraft.client.font.FontStorage;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.font.TrueTypeFontLoader;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.util.Identifier;
 
 public class AobaClient {
 	public static final String NAME = "Aoba";
@@ -46,6 +56,7 @@ public class AobaClient {
 	public CommandManager commandManager;
 	public AltManager altManager;
 	public GuiManager hudManager;
+	public FontManager fontManager;
 	// public Settings settings;
 	public SettingManager settingManager;
 	public RenderUtils renderUtils;
@@ -74,6 +85,8 @@ public class AobaClient {
 		moduleManager = new ModuleManager();
 		System.out.println("[Aoba] Initializing Commands");
 		commandManager = new CommandManager();
+		System.out.println("[Aoba] Initializing Font Manager");
+		fontManager = new FontManager();
 		System.out.println("[Aoba] Initializing GUI");
 		hudManager = new GuiManager();
 		hudManager.Initialize();
@@ -87,6 +100,10 @@ public class AobaClient {
 
 		globalChat = new GlobalChat();
 		globalChat.StartListener();
+	}
+	
+	public void loadAssets() {
+		fontManager.Initialize();
 	}
 	
 	/**

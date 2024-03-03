@@ -1,6 +1,6 @@
 /*
 * Aoba Hacked Client
-* Copyright (C) 2019-2023 coltonk9043
+* Copyright (C) 2019-2024 coltonk9043
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,16 @@
  */
 package net.aoba.misc;
 
+import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.gui.Color;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.Font;
+import net.minecraft.client.font.FontStorage;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.font.TrueTypeFont;
+import net.minecraft.client.font.TrueTypeFontLoader;
+import net.minecraft.client.font.TrueTypeFontLoader.Shift;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
@@ -31,12 +39,22 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.stb.STBTTFontinfo;
+import org.lwjgl.stb.STBTruetype;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.Struct;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
@@ -45,7 +63,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 public class RenderUtils {
 
 	static final float ROUND_QUALITY = 10;
-	
+
 	public static void drawTexturedQuad(DrawContext drawContext, Identifier texture, float x1, float y1, float width, float height, Color color) {
 		float red = color.getRedFloat();
 		float green = color.getGreenFloat(); 
@@ -518,26 +536,29 @@ public class RenderUtils {
 
 	public static void drawString(DrawContext drawContext, String text, float x, float y, Color color) {
 		MinecraftClient mc = MinecraftClient.getInstance();
+		AobaClient aoba = Aoba.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.scale(2.0f, 2.0f, 1.0f);
 		matrixStack.translate(-x / 2, -y / 2, 0.0f);
-		drawContext.drawText(mc.textRenderer, text, (int)x, (int)y, color.getColorAsInt(), false);
+		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int)x, (int)y, color.getColorAsInt(), false);
 		matrixStack.pop();
 	}
 
 	public static void drawString(DrawContext drawContext, String text, float x, float y, int color) {
 		MinecraftClient mc = MinecraftClient.getInstance();
+		AobaClient aoba = Aoba.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.scale(2.0f, 2.0f, 1.0f);
 		matrixStack.translate(-x / 2, -y / 2, 0.0f);
-		drawContext.drawText(mc.textRenderer, text, (int)x, (int)y, color, false);
+		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int)x, (int)y, color, false);
 		matrixStack.pop();
 	}
 
 	public static void drawStringWithScale(DrawContext drawContext, String text, float x, float y, Color color, float scale) {
 		MinecraftClient mc = MinecraftClient.getInstance();
+		AobaClient aoba = Aoba.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.scale(scale, scale, 1.0f);
@@ -546,12 +567,13 @@ public class RenderUtils {
 		} else {
 			matrixStack.translate((x / scale) - x, (y * scale) - y, 0.0f);
 		}
-		drawContext.drawText(mc.textRenderer, text, (int)x, (int)y, color.getColorAsInt(), false);
+		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int)x, (int)y, color.getColorAsInt(), false);
 		matrixStack.pop();
 	}
 	
 	public static void drawStringWithScale(DrawContext drawContext, String text, float x, float y, int color, float scale) {
 		MinecraftClient mc = MinecraftClient.getInstance();
+		AobaClient aoba = Aoba.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.scale(scale, scale, 1.0f);
@@ -560,7 +582,7 @@ public class RenderUtils {
 		} else {
 			matrixStack.translate(x / scale, y * scale, 0.0f);
 		}
-		drawContext.drawText(mc.textRenderer, text, (int)x, (int)y, color, false);
+		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int)x, (int)y, color, false);
 		matrixStack.pop();
 	}
 
