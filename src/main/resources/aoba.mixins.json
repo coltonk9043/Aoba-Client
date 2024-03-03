@@ -33,6 +33,7 @@
 	"SimpleOptionMixin",
 	"WorldRendererMixin",
 	"MinecraftClientMixin",
+	"ScreenMixin",
 	"BackgroundRendererMixin",
 	"LightmapTextureManagerMixin",
 	"EntityRendererMixin",

@@ -31,8 +31,8 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 
 	private String text;
 	private Runnable onClick;
-	private Color color = new Color(128, 128, 128);
-	private Color backgroundColor = color;
+	private Color borderColor = new Color(128, 128, 128);
+	private Color backgroundColor = borderColor;
 	
 	/**
 	 * Constructor for button component.
@@ -49,6 +49,20 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 		
 		this.text = text;
 		this.onClick = onClick;
+	}
+	
+	public ButtonComponent(IGuiElement parent, String text, Runnable onClick, Color borderColor, Color backgroundColor) {
+		super(parent);
+		
+		this.setLeft(2);
+		this.setRight(2);
+		this.setHeight(30);
+		
+		this.text = text;
+		this.onClick = onClick;
+		
+		this.borderColor = borderColor;
+		this.backgroundColor = backgroundColor;
 	}
 
 	/**
@@ -67,6 +81,14 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 		this.onClick = onClick;
 	}
 
+	public void setBorderColor(Color color) {
+		this.borderColor = color;
+	}
+	
+	public void setBackgroundColor(Color color) {
+		this.backgroundColor = color;
+	}
+	
 	/**
 	 * Draws the button to the screen.
 	 * @param offset The offset (Y location relative to parent) of the Component.
@@ -77,7 +99,7 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks, Color color) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-		RenderUtils.drawOutlinedBox(matrixStack, actualX + 2, actualY, actualWidth - 4, actualHeight - 2, backgroundColor);
+		RenderUtils.drawOutlinedBox(matrixStack, actualX + 2, actualY, actualWidth - 4, actualHeight - 2, borderColor, backgroundColor);
 		RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);
 	}
 
@@ -87,7 +109,7 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	 */
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if(this.hovered && Aoba.getInstance().hudManager.isClickGuiOpen())  {
+		if(this.hovered && this.isVisible() && onClick != null)  {
 			this.onClick.run();
 		}
 	}

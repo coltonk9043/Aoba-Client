@@ -18,6 +18,7 @@
 
 package net.aoba.mixin;
 
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,34 +29,89 @@ import net.aoba.Aoba;
 import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
 import net.aoba.cmd.GlobalChat.ChatType;
+import net.aoba.gui.Color;
+import net.aoba.gui.tabs.components.ButtonComponent;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 
 @Mixin(ChatScreen.class)
-public class ChatScreenMixin extends Screen{
-	protected ChatScreenMixin(Text title) {
-		super(title);
-	}
-
+public class ChatScreenMixin extends ScreenMixin{
 	@Shadow
 	protected TextFieldWidget chatField;
 	
-	protected ButtonWidget serverChatButton;
-	protected ButtonWidget globalChatButton;
+	//protected ButtonWidget serverChatButton;
+	//protected ButtonWidget globalChatButton;
 	
+	protected ButtonComponent serverChatButton;
+	protected ButtonComponent globalChatButton;
 	
 	@Inject(at = { @At("TAIL") }, method = {"init()V" }, cancellable = true)
 	public void onInit(CallbackInfo ci) {
-		serverChatButton = ButtonWidget.builder(Text.of("Server Chat"), s -> { switchToServer(); }).dimensions(chatField.getX(), chatField.getY() - chatField.getHeight() - 10, 70, 15).build();
-		globalChatButton = ButtonWidget.builder(Text.of("Global Chat"), s -> { switchToGlobal(); }).dimensions(chatField.getX() + 80, chatField.getY() - chatField.getHeight() - 10, 70, 15).build();
-		this.addDrawableChild(serverChatButton);
-		this.addDrawableChild(globalChatButton);
+		MinecraftClient mc = MinecraftClient.getInstance();
+		int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
 		
-		serverChatButton.active = !(GlobalChat.chatType == ChatType.Minecraft);
-		globalChatButton.active = !(GlobalChat.chatType == ChatType.Global);
+		// Create server chat button.
+		serverChatButton = new ButtonComponent(null, "Server Chat", new Runnable() {
+			@Override
+			public void run() {
+				GlobalChat.chatType = GlobalChat.ChatType.Minecraft;
+				serverChatButton.setBackgroundColor(new Color(56, 56, 56));
+				globalChatButton.setBackgroundColor(new Color(128, 128, 128));
+			}
+		}, new Color(192, 192, 192), new Color(56, 56, 56));
+		serverChatButton.setX(chatField.getX() * guiScale);
+		serverChatButton.setY((chatField.getY() - chatField.getHeight() - 10) * guiScale);
+		serverChatButton.setWidth(140);
+		serverChatButton.setHeight(30);
+		
+		// Create global chat button
+		globalChatButton = new ButtonComponent(null, "Global Chat", new Runnable() {
+			@Override
+			public void run() {
+				GlobalChat.chatType = GlobalChat.ChatType.Global;
+				globalChatButton.setBackgroundColor(new Color(56, 56, 56));
+				serverChatButton.setBackgroundColor(new Color(128, 128, 128));
+			}
+		}, new Color(192, 192, 192), new Color(128, 128, 128));
+		globalChatButton.setX((chatField.getX() + 80) * guiScale);
+		globalChatButton.setY((chatField.getY() - chatField.getHeight() - 10) * guiScale);
+		globalChatButton.setWidth(140);
+		globalChatButton.setHeight(30);
+		
+		serverChatButton.setVisible(true);
+		globalChatButton.setVisible(true);
+	}
+
+	@Override
+	protected void onClose(CallbackInfo ci) {
+		serverChatButton.setVisible(false);
+		globalChatButton.setVisible(false);
+	}
+	
+	@Override
+	protected void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci)
+	{
+		super.onRender(context, mouseX, mouseY, delta, ci);
+		
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		
+		MinecraftClient mc = MinecraftClient.getInstance();
+		MatrixStack matrixStack = context.getMatrices();
+		matrixStack.push();
+		
+		int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
+		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
+		serverChatButton.draw(context, delta, Aoba.getInstance().hudManager.color.getValue());
+		globalChatButton.draw(context, delta, Aoba.getInstance().hudManager.color.getValue());
+		matrixStack.pop();
+		GL11.glEnable(GL11.GL_CULL_FACE);
 	}
 	
 	@Inject(at = {
@@ -67,27 +123,6 @@ public class ChatScreenMixin extends Screen{
 		}else if (GlobalChat.chatType == ChatType.Global) {
 			Aoba.getInstance().globalChat.SendMessage(message);
 			cir.setReturnValue(true);
-		}
-	}
-	
-	
-	// TODO: For some dumb reason, the chat field unfocused when the chat window is switched. 
-	// Tried a few possible solutions (focus, selectedtext, etc..) but none seem to work.
-	private void switchToGlobal() {
-		GlobalChat.chatType = GlobalChat.ChatType.Global;
-		
-		if(globalChatButton != null) {
-			globalChatButton.active = false;
-			serverChatButton.active = true;
-		}
-	}
-	
-	private void switchToServer() {
-		GlobalChat.chatType = GlobalChat.ChatType.Minecraft;
-
-		if(serverChatButton != null) {
-			globalChatButton.active = true;
-			serverChatButton.active = false;
 		}
 	}
 }
