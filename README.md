@@ -8,17 +8,17 @@ A custom hacked client for Minecraft 1.20.4 using Fabric .
 - Plenty of hacks.
 
 ## Default Keybinds:
-~ - Toggle ClickGUI.
-↑ - Move menu 'cursor' up.
-↓ - Move menu 'cursor' down.
-← - Leave current 'mod' menu.
-→ - Enter currently selected 'mod' menu.
-K - Toggle Aimbot.
-N - Toggle AutoEat.
-V - Toggle Fly.
-Z - Toggle NoSlowdown.
-G - Toggle Sprint.
-F - Toggle Fullbright.
+~ - Toggle ClickGUI.\
+↑ - Move menu 'cursor' up.\
+↓ - Move menu 'cursor' down.\
+← - Leave current 'mod' menu.\
+→ - Enter currently selected 'mod' menu.\
+K - Toggle Aimbot.\
+N - Toggle AutoEat.\
+V - Toggle Fly.\
+Z - Toggle NoSlowdown.\
+G - Toggle Sprint.\
+F - Toggle Fullbright.\
 X - Toggle XRay.
 
 ## Screenshots
