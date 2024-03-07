@@ -1,5 +1,5 @@
-# Aoba Hacked Client (1.20.2)
-A custom hacked client for Minecraft 1.20.2 using Fabric . 
+# Aoba Hacked Client (1.20.4)
+A custom hacked client for Minecraft 1.20.4 using Fabric . 
 
 ## Features
 - Fully featured Alt Manager with MCLeaks integration.
@@ -19,7 +19,7 @@ V - Toggle Fly.\
 Z - Toggle NoSlowdown.\
 G - Toggle Sprint.\
 F - Toggle Fullbright.\
-X - Toggle XRay.\
+X - Toggle XRay.
 
 ## Screenshots
 ![image](https://user-images.githubusercontent.com/56643581/155033953-08f9ed72-f79f-46e4-b8ce-80d45d981d7a.png)
