@@ -69,8 +69,8 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 				c = new SliderComponent(stackPanel, (FloatSetting) setting);
 			} else if (setting instanceof BooleanSetting) {
 				c = new CheckboxComponent(stackPanel, (BooleanSetting) setting);
-			} else if (setting instanceof StringListSetting) {
-				c = new ListComponent(stackPanel, (IndexedStringListSetting) setting);
+			//}else if (setting instanceof StringListSetting) {
+			//c = new ListComponent(stackPanel, (IndexedStringListSetting) setting);
 			} else if (setting instanceof ColorSetting) {
 				c = new ColorPickerComponent(stackPanel, (ColorSetting) setting);
 			} else if (setting instanceof BlocksSetting) {

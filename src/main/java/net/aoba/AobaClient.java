@@ -21,9 +21,6 @@
  */
 package net.aoba;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.aoba.altmanager.AltManager;
 import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
@@ -35,13 +32,7 @@ import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
 import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.Font;
-import net.minecraft.client.font.FontLoader;
-import net.minecraft.client.font.FontStorage;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.font.TrueTypeFontLoader;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
 
 public class AobaClient {
 	public static final String NAME = "Aoba";
@@ -57,7 +48,6 @@ public class AobaClient {
 	public AltManager altManager;
 	public GuiManager hudManager;
 	public FontManager fontManager;
-	// public Settings settings;
 	public SettingManager settingManager;
 	public RenderUtils renderUtils;
 	public GlobalChat globalChat;
@@ -72,8 +62,9 @@ public class AobaClient {
 		// Gets instance of Minecraft
 		MC = MinecraftClient.getInstance();
 		IMC = (IMinecraftClient)MC;
-
-		IMC.getItemUseCooldown();
+	}
+	
+	public void loadAssets() {
 		System.out.println("[Aoba] Starting Client");
 		
 		eventManager = new EventManager();
@@ -87,6 +78,7 @@ public class AobaClient {
 		commandManager = new CommandManager();
 		System.out.println("[Aoba] Initializing Font Manager");
 		fontManager = new FontManager();
+		fontManager.Initialize();
 		System.out.println("[Aoba] Initializing GUI");
 		hudManager = new GuiManager();
 		hudManager.Initialize();
@@ -100,10 +92,6 @@ public class AobaClient {
 
 		globalChat = new GlobalChat();
 		globalChat.StartListener();
-	}
-	
-	public void loadAssets() {
-		fontManager.Initialize();
 	}
 	
 	/**

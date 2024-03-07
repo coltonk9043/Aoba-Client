@@ -371,10 +371,8 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
 
 		// Register and Unregister event listener according to state.
 		if (bool) {
-			System.out.println("Registering");
 			Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
 		} else {
-			System.out.println("Unregistering");
 			Aoba.getInstance().eventManager.RemoveListener(MouseMoveListener.class, this);
 		}
 

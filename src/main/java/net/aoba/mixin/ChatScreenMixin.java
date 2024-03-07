@@ -34,19 +34,13 @@ import net.aoba.gui.tabs.components.ButtonComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
 
 @Mixin(ChatScreen.class)
 public class ChatScreenMixin extends ScreenMixin{
 	@Shadow
 	protected TextFieldWidget chatField;
-	
-	//protected ButtonWidget serverChatButton;
-	//protected ButtonWidget globalChatButton;
 	
 	protected ButtonComponent serverChatButton;
 	protected ButtonComponent globalChatButton;

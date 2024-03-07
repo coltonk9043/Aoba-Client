@@ -19,18 +19,26 @@
 package net.aoba.gui.tabs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.Color;
+import net.aoba.gui.font.FontManager;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.gui.tabs.components.ColorPickerComponent;
 import net.aoba.gui.tabs.components.HudComponent;
 import net.aoba.gui.tabs.components.KeybindComponent;
+import net.aoba.gui.tabs.components.ListComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.aoba.gui.tabs.components.StringComponent;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.aoba.module.Module;
+import net.aoba.settings.types.StringSetting;
 
 public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 
@@ -44,6 +52,16 @@ public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 		StackPanelComponent stackPanel = new StackPanelComponent(this);
 		stackPanel.setTop(30);
 		
+		List<String> test = new ArrayList<String>();
+		
+		
+		HashMap<String, TextRenderer> fontRenderers = Aoba.getInstance().fontManager.fontRenderers;
+		Set<String> set = fontRenderers.keySet();
+		
+		for(String s : set) {
+			test.add(s);
+		}
+		
 		stackPanel.addChild(new StringComponent("Toggle HUD", stackPanel, Aoba.getInstance().hudManager.color.getValue(), true));
 		
 		for(AbstractHud hud : abstractHuds) {
@@ -51,11 +69,20 @@ public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 			stackPanel.addChild(hudComponent);
 		}
 		
+		// Keybinds Header
 		stackPanel.addChild(new StringComponent("Keybinds", stackPanel, Aoba.getInstance().hudManager.color.getValue(), true));
 		
 		KeybindComponent clickGuiKeybindComponent = new KeybindComponent(stackPanel, Aoba.getInstance().hudManager.clickGuiButton);
 		clickGuiKeybindComponent.setHeight(30);
 		stackPanel.addChild(clickGuiKeybindComponent);
+
+		// Hud Font Header
+		stackPanel.addChild(new StringComponent("HUD Font", stackPanel, Aoba.getInstance().hudManager.color.getValue(), true));
+		
+
+		
+		ListComponent listComponent = new ListComponent(stackPanel, test, Aoba.getInstance().fontManager.fontSetting);
+		stackPanel.addChild(listComponent);
 		
 		stackPanel.addChild(new StringComponent("HUD Colors", stackPanel, Aoba.getInstance().hudManager.color.getValue(), true));
 		

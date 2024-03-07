@@ -31,6 +31,10 @@ import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.Struct;
+
+import net.aoba.Aoba;
+import net.aoba.settings.SettingManager;
+import net.aoba.settings.types.StringSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.Font;
 import net.minecraft.client.font.FontStorage;
@@ -45,10 +49,19 @@ public class FontManager {
 	private TextRenderer currentFontRenderer;
 
 	public HashMap<String, TextRenderer> fontRenderers;
-
+	public StringSetting fontSetting;
+	
 	public FontManager() {
 		fontRenderers = new HashMap<String, TextRenderer>();
 		MC = MinecraftClient.getInstance();
+		
+		fontSetting = new StringSetting("font", "The font that Aoba will use.", "minecraft");
+		fontSetting.setOnUpdate((i) -> {
+			FontManager font = Aoba.getInstance().fontManager;
+			font.SetRenderer(font.fontRenderers.get(i));
+		});
+		
+		SettingManager.registerSetting(fontSetting, Aoba.getInstance().settingManager.hidden_category);
 	}
 
 	public void Initialize() {
