@@ -19,6 +19,11 @@
 package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
+
+import net.aoba.Aoba;
+import net.aoba.event.events.FontChangedEvent;
+import net.aoba.event.listeners.FontChangedListener;
+import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
 import net.aoba.gui.IGuiElement;
 import net.aoba.misc.Colors;
@@ -26,7 +31,7 @@ import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Formatting;
 
-public class StringComponent extends Component {
+public class StringComponent extends Component implements FontChangedListener {
 	private String originalText;
 	private ArrayList<String> text;
 	private boolean bold;
@@ -37,6 +42,8 @@ public class StringComponent extends Component {
 		setText(text);
 		this.color = Colors.White;
 		this.bold = false;
+		
+		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
 	}
 
 	public StringComponent(String text, IGuiElement parent, boolean bold) {
@@ -44,6 +51,8 @@ public class StringComponent extends Component {
 		setText(text);
 		this.color = Colors.White;
 		this.bold = bold;
+		
+		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
 	}
 	
 	public StringComponent(String text, IGuiElement parent, Color color, boolean bold) {
@@ -51,6 +60,8 @@ public class StringComponent extends Component {
 		setText(text);
 		this.color = color;
 		this.bold = bold;
+		
+		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
 	}
 
 	@Override
@@ -72,8 +83,9 @@ public class StringComponent extends Component {
 	public void setText(String text) {
 		this.originalText = text;
 		this.text = new ArrayList<String>();
-
-		int strings = (int) ((text.length() * 5) / this.actualWidth);
+		
+		float textWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(text) * 2.0f;
+		int strings = (int) Math.ceil(textWidth / this.actualWidth);
 		if (strings == 0) {
 			this.text.add(text);
 			this.setHeight(30);
@@ -105,5 +117,10 @@ public class StringComponent extends Component {
 	@Override
 	public void OnParentWidthChanged() {
 		setText(originalText);
+	}
+
+	@Override
+	public void OnFontChanged(FontChangedEvent event) {
+		setText(this.originalText);
 	}
 }

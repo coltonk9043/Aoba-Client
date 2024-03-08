@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
@@ -33,6 +34,7 @@ import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.Struct;
 
 import net.aoba.Aoba;
+import net.aoba.event.events.FontChangedEvent;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.StringSetting;
 import net.minecraft.client.MinecraftClient;
@@ -65,6 +67,8 @@ public class FontManager {
 	}
 
 	public void Initialize() {
+		fontRenderers.put("minecraft", MC.textRenderer);
+		
 		File fontDirectory = new File(MC.runDirectory + "\\aoba\\fonts\\");
 		if (fontDirectory.isDirectory()) {
 			File[] files = fontDirectory.listFiles(new FilenameFilter() {
@@ -74,7 +78,6 @@ public class FontManager {
 				}
 			});
 
-			fontRenderers.put("minecraft", MC.textRenderer);
 			for (File file : files) {
 				List<Font> list = new ArrayList<Font>();
 
@@ -91,7 +94,11 @@ public class FontManager {
 			}
 		}
 
-		currentFontRenderer = fontRenderers.values().iterator().next();
+		Iterator<TextRenderer> newFonts = fontRenderers.values().iterator();
+		if(newFonts.hasNext()) {
+			currentFontRenderer = newFonts.next();
+		}
+		
 	}
 
 	public TextRenderer GetRenderer() {
@@ -100,6 +107,7 @@ public class FontManager {
 
 	public void SetRenderer(TextRenderer renderer) {
 		this.currentFontRenderer = renderer;
+		Aoba.getInstance().eventManager.Fire(new FontChangedEvent());
 	}
 
 	private static Font LoadTTFFont(File location, float size, float oversample, Shift shift, String skip) throws IOException {
