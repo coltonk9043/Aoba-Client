@@ -70,7 +70,6 @@ public class ListComponent extends Component implements LeftMouseDownListener {
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		double mouseX = event.GetMouseX();
 
-		System.out.println("mouse down");
 		// Mouse is on the left
 		if(this.hovered) {			
 			if (mouseX > actualX && mouseX < (actualX + 32)) {
@@ -82,13 +81,7 @@ public class ListComponent extends Component implements LeftMouseDownListener {
 		}
 	}
 
-	@Override
-	public void update() {
-		super.update();
-	}
-
 	public void setSelectedIndex(int index) {
-		System.out.println(index);
 		selectedIndex = index;
 		listSetting.setValue(options.get(selectedIndex));
 	}

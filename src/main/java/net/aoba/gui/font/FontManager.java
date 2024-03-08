@@ -79,7 +79,7 @@ public class FontManager {
 				List<Font> list = new ArrayList<Font>();
 
 				try {
-					Font font = LoadTTFFont(file, 14, 2, new TrueTypeFontLoader.Shift(-1, -1f), "");
+					Font font = LoadTTFFont(file, 12.5f, 2, new TrueTypeFontLoader.Shift(-1, 0), "");
 					list.add(font);
 				} catch (Exception e) {
 					e.printStackTrace();
