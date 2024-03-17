@@ -22,8 +22,8 @@ F - Toggle Fullbright.\
 X - Toggle XRay.
 
 ## Screenshots
-![image](https://user-images.githubusercontent.com/56643581/155033953-08f9ed72-f79f-46e4-b8ce-80d45d981d7a.png)
-![image](https://user-images.githubusercontent.com/56643581/155034033-49970900-802e-4314-9c3a-425abf105a26.png)
+![image](https://github.com/coltonk9043/Aoba-MC-Hacked-Client/assets/56643581/546d79e0-01eb-4c63-a1f8-49d40bb48a45)
+
 
 ## License
 This code is licensed under the GNU General Public License v3. You may use code published here in your own clients under the same license.
