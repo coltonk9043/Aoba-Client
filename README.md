@@ -5,7 +5,7 @@ A custom hacked client for Minecraft 1.20.4 using Fabric .
 - Fully featured Alt Manager with MCLeaks integration.
 - Working Command System.
 - ClickGui with moveable/pinnable windows and customization.
-- Plenty of hacks.
+- Plenty of hacks with rebindable keybinds.
 
 ## Default Keybinds:
 ~ - Toggle ClickGUI.\
@@ -13,13 +13,6 @@ A custom hacked client for Minecraft 1.20.4 using Fabric .
 ↓ - Move menu 'cursor' down.\
 ← - Leave current 'mod' menu.\
 → - Enter currently selected 'mod' menu.\
-K - Toggle Aimbot.\
-N - Toggle AutoEat.\
-V - Toggle Fly.\
-Z - Toggle NoSlowdown.\
-G - Toggle Sprint.\
-F - Toggle Fullbright.\
-X - Toggle XRay.
 
 ## Screenshots
 ![image](https://github.com/coltonk9043/Aoba-MC-Hacked-Client/assets/56643581/546d79e0-01eb-4c63-a1f8-49d40bb48a45)
