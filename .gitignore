@@ -30,6 +30,7 @@ bin/
 
 # fabric
 
+.metadata/
 run/
 
 # java
