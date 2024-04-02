@@ -59,4 +59,9 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 			ci.setReturnValue(speed);
 		}
 	}
+	
+	@Inject(at = {@At("HEAD")}, method="getOffGroundSpeed()F", cancellable = true)
+	protected void onGetOffGroundSpeed(CallbackInfoReturnable<Float> cir) {
+		return;
+	}
 }
