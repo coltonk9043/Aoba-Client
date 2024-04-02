@@ -46,7 +46,7 @@ public class AbstractHud extends AbstractGui {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		
 	}
 }

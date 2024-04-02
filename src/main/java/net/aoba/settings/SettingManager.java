@@ -76,7 +76,7 @@ public class SettingManager {
 		for (Setting<?> setting : config_category2) {
 			try {
 				switch (setting.type) {
-				case DOUBLE, INTEGER, BOOLEAN, STRING -> {
+				case FLOAT, INTEGER, BOOLEAN, STRING -> {
 					config.setProperty(setting.ID, String.valueOf(setting.getValue()));
 				}
 				case KEYBIND -> {
@@ -133,11 +133,11 @@ public class SettingManager {
 					break;
 
 				switch (setting.type) {
-				case DOUBLE -> {
+				case FLOAT -> {
 					float floatValue = Float.parseFloat(value);
 					if (((FloatSetting) setting).min_value <= floatValue
 							&& ((FloatSetting) setting).max_value >= floatValue) {
-						setting.setValue(Double.parseDouble(value));
+						setting.setValue(Float.parseFloat(value));
 					}
 					break;
 				}
@@ -188,6 +188,9 @@ public class SettingManager {
 					setting.setValue(result);
 					break;
 				}
+				case INDEXEDSTRINGLIST -> throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
+				case STRINGLIST -> throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
+				default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -42,6 +42,8 @@ import net.minecraft.util.math.Vec3d;
 public class ModuleManager implements KeyDownListener {
 	public ArrayList<Module> modules = new ArrayList<Module>();
 	
+	private MinecraftClient mc = MinecraftClient.getInstance();
+	
 	//Modules
 	public Module aimbot = new Aimbot();
 	public Module anticactus = new AntiCactus();
@@ -52,6 +54,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module autofish = new AutoFish();
 	public Module autosign = new AutoSign();
 	public Module autosoup = new AutoSoup();
+	public Module autoTotem = new AutoTotem();
 	public Module autorespawn = new AutoRespawn();
 	public Module autowalk = new AutoWalk();
 	public Module breadcrumbs = new Breadcrumbs();
@@ -105,6 +108,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(autofish);
 		addModule(autosign);
 		addModule(autosoup);
+		addModule(autoTotem);
 		addModule(autorespawn);
 		addModule(autowalk);
 		addModule(breadcrumbs);
@@ -168,7 +172,7 @@ public class ModuleManager implements KeyDownListener {
 
 		matrixStack.push();
 		
-		Vec3d camPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getPos();
+		Vec3d camPos = mc.getBlockEntityRenderDispatcher().camera.getPos();
 		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 		
 		RenderEvent renderEvent = new RenderEvent(matrixStack, MinecraftClient.getInstance().getTickDelta());
@@ -201,7 +205,7 @@ public class ModuleManager implements KeyDownListener {
 
 	@Override
 	public void OnKeyDown(KeyDownEvent event) {
-		if(MinecraftClient.getInstance().currentScreen == null) {
+		if(mc.currentScreen == null) {
 			for(Module module : modules) {
 				Key binding = module.getBind().getValue();
 				if(binding.getCode() == event.GetKey()) {

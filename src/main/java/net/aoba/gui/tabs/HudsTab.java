@@ -27,6 +27,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.Color;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.gui.tabs.components.ColorPickerComponent;
@@ -62,7 +63,7 @@ public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 			test.add(s);
 		}
 		
-		stackPanel.addChild(new StringComponent("Toggle HUD", stackPanel, Aoba.getInstance().hudManager.color.getValue(), true));
+		stackPanel.addChild(new StringComponent("Toggle HUD", stackPanel, GuiManager.foregroundColor.getValue(), true));
 		
 		for(AbstractHud hud : abstractHuds) {
 			HudComponent hudComponent = new HudComponent(hud.getID(), stackPanel, hud);
@@ -70,25 +71,25 @@ public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 		}
 		
 		// Keybinds Header
-		stackPanel.addChild(new StringComponent("Keybinds", stackPanel, Aoba.getInstance().hudManager.color.getValue(), true));
+		stackPanel.addChild(new StringComponent("Keybinds", stackPanel, GuiManager.foregroundColor.getValue(), true));
 		
 		KeybindComponent clickGuiKeybindComponent = new KeybindComponent(stackPanel, Aoba.getInstance().hudManager.clickGuiButton);
 		clickGuiKeybindComponent.setHeight(30);
 		stackPanel.addChild(clickGuiKeybindComponent);
 
 		// Hud Font Header
-		stackPanel.addChild(new StringComponent("HUD Font", stackPanel, Aoba.getInstance().hudManager.color.getValue(), true));
+		stackPanel.addChild(new StringComponent("HUD Font", stackPanel, GuiManager.foregroundColor.getValue(), true));
 		
 
 		
 		ListComponent listComponent = new ListComponent(stackPanel, test, Aoba.getInstance().fontManager.fontSetting);
 		stackPanel.addChild(listComponent);
 		
-		stackPanel.addChild(new StringComponent("HUD Colors", stackPanel, Aoba.getInstance().hudManager.color.getValue(), true));
+		stackPanel.addChild(new StringComponent("HUD Colors", stackPanel, GuiManager.foregroundColor.getValue(), true));
 		
-		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.color));
-		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.backgroundColor));
-		stackPanel.addChild(new ColorPickerComponent(stackPanel, Aoba.getInstance().hudManager.borderColor));
+		stackPanel.addChild(new ColorPickerComponent(stackPanel, GuiManager.foregroundColor));
+		stackPanel.addChild(new ColorPickerComponent(stackPanel, GuiManager.backgroundColor));
+		stackPanel.addChild(new ColorPickerComponent(stackPanel, GuiManager.borderColor));
 		
 		this.children.add(stackPanel);
 		this.setWidth(300);
@@ -105,7 +106,7 @@ public class HudsTab extends ClickGuiTab implements MouseScrollListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
-		super.draw(drawContext, partialTicks, color);
+	public void draw(DrawContext drawContext, float partialTicks) {
+		super.draw(drawContext, partialTicks);
 	}
 }

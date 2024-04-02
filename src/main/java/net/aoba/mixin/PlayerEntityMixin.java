@@ -34,11 +34,13 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.registry.tag.FluidTags;
 
 @Mixin (PlayerEntity.class)
-public abstract class PlayerEntityMixin extends EntityMixin{
+public abstract class PlayerEntityMixin extends LivingEntityMixin {
 
 	@Shadow 
 	private PlayerInventory inventory;
-
+	
+	@Shadow
+	public abstract boolean isSpectator();
 	
 	@Inject(method = "getBlockBreakingSpeed", at = @At("HEAD"), cancellable = true)
 	public void onGetBlockBreakingSpeed(BlockState blockState, CallbackInfoReturnable<Float> ci) {
@@ -57,14 +59,4 @@ public abstract class PlayerEntityMixin extends EntityMixin{
 			ci.setReturnValue(speed);
 		}
 	}
-	
-	@Override
-	public void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
-		PlayerHealthEvent event = new PlayerHealthEvent(source, amount);
-		Aoba.getInstance().eventManager.Fire(event);
-		if(event.IsCancelled()) {
-			ci.cancel();
-		}
-	}
-	
 }

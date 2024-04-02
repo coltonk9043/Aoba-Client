@@ -164,7 +164,7 @@ public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener,
 
 	public abstract void update();
 
-	public abstract void draw(DrawContext drawContext, float partialTicks, Color color);
+	public abstract void draw(DrawContext drawContext, float partialTicks);
 
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {

@@ -50,8 +50,8 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 	}
 	
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
-		super.draw(drawContext, partialTicks, color);
+	public void draw(DrawContext drawContext, float partialTicks) {
+		super.draw(drawContext, partialTicks);
 		RenderUtils.drawString(drawContext, "Keybind", actualX + 8, actualY + 8, 0xFFFFFF);
 		RenderUtils.drawBox(drawContext.getMatrices(), actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4, new Color(115, 115, 115, 200));
 		RenderUtils.drawOutline(drawContext.getMatrices(), actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4);

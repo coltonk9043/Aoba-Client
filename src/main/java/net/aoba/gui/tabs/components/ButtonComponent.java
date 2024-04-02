@@ -97,7 +97,7 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	 * @param color The current Color of the UI.
 	 */
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		RenderUtils.drawOutlinedBox(matrixStack, actualX + 2, actualY, actualWidth - 4, actualHeight - 2, borderColor, backgroundColor);
 		RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);

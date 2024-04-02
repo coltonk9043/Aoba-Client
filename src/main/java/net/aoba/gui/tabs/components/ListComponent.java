@@ -58,7 +58,7 @@ public class ListComponent extends Component implements LeftMouseDownListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(listSetting.getValue());
 		RenderUtils.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
 				actualY + 8, 0xFFFFFF);

@@ -26,6 +26,7 @@ import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.LeftMouseUpListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.Color;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.ColorSetting;
@@ -147,11 +148,11 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		
 		RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
-		RenderUtils.drawString(drawContext, collapsed ?  ">>" :  "<<", (actualX + actualWidth - 24), actualY + 6, color.getColorAsInt());
+		RenderUtils.drawString(drawContext, collapsed ?  ">>" :  "<<", (actualX + actualWidth - 24), actualY + 6, GuiManager.foregroundColor.getValue().getColorAsInt());
 		
 		if(!collapsed) {
 			Color newColor = new Color(255, 0, 0);

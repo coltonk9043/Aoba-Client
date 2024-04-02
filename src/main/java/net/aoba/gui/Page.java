@@ -58,11 +58,11 @@ public class Page {
 		}
 	}
 	
-	public void render(DrawContext drawContext, float partialTicks, Color color) {
+	public void render(DrawContext drawContext, float partialTicks) {
 		if(this.isVisible) {
 			Iterator<AbstractGui> tabIterator =  tabs.iterator();
 			while(tabIterator.hasNext()) {
-				tabIterator.next().draw(drawContext, partialTicks, color);
+				tabIterator.next().draw(drawContext, partialTicks);
 			}
 		}
 	}

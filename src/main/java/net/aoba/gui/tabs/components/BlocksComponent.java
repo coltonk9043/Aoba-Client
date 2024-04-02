@@ -24,6 +24,7 @@ import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.Color;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.BlocksSetting;
@@ -71,9 +72,9 @@ public class BlocksComponent extends Component implements MouseScrollListener, L
 	 * @param color The current Color of the UI.
 	 */
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		RenderUtils.drawString(drawContext, text, actualX + 6, actualY + 6, 0xFFFFFF);
-		RenderUtils.drawString(drawContext, collapsed ? ">>" :  "<<", (actualX + actualWidth - 24), actualY + 6, color.getColorAsInt());
+		RenderUtils.drawString(drawContext, collapsed ? ">>" :  "<<", (actualX + actualWidth - 24), actualY + 6, GuiManager.foregroundColor.getValue().getColorAsInt());
 		
 		if(!collapsed) {
 			MatrixStack matrixStack = drawContext.getMatrices();

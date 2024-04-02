@@ -52,16 +52,13 @@ public class OptionsTab extends AbstractGui implements MouseScrollListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
 
 		Vector2 pos = position.getValue();
 
-		System.out.println("X: " + pos.x + ", Y: " + pos.y);
-
-		GuiManager hudManager = Aoba.getInstance().hudManager;
-		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, hudManager.backgroundColor.getValue());
-		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, hudManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
 		RenderUtils.drawLine(matrixStack, pos.x + 480, pos.y, pos.x + 480, pos.y + height, new Color(0, 0, 0, 200));
 
 		ArrayList<Module> modules = Aoba.getInstance().moduleManager.modules;
@@ -69,7 +66,7 @@ public class OptionsTab extends AbstractGui implements MouseScrollListener {
 		int yHeight = 30;
 		for (int i = currentScroll; i < Math.min(modules.size(), currentScroll + visibleScrollElements); i++) {
 			Module module = modules.get(i);
-			RenderUtils.drawString(drawContext, module.getName(), pos.x + 10, pos.y + yHeight, color);
+			RenderUtils.drawString(drawContext, module.getName(), pos.x + 10, pos.y + yHeight, GuiManager.foregroundColor.getValue());
 			yHeight += 30;
 		}
 	}

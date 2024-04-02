@@ -52,7 +52,7 @@ public class Jetpack extends Module implements TickListener {
 	}
 
 	public void setSpeed(float speed) {
-		this.jetpackSpeed.setValue((double)speed);
+		this.jetpackSpeed.setValue(speed);
 	}
 	
 	public double getSpeed() {

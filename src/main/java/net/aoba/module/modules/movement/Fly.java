@@ -49,7 +49,7 @@ public class Fly extends Module implements TickListener {
 	}
 
 	public void setSpeed(float speed) {
-		this.flySpeed.setValue((double)speed);
+		this.flySpeed.setValue(speed);
 	}
 	
 	public double getSpeed() {

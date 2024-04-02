@@ -117,21 +117,22 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		
 		Vector2 pos = position.getValue();
 		
+		
 		if (drawBorder) {
 			// Draws background depending on components width and height
-			RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, Aoba.getInstance().hudManager.backgroundColor.getValue());
-			RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, Aoba.getInstance().hudManager.borderColor.getValue());
+			RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, GuiManager.backgroundColor.getValue());
+			RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, GuiManager.borderColor.getValue());
 			
 			if(icon != null) {
-				RenderUtils.drawTexturedQuad(drawContext, icon, pos.x + 8, pos.y + 4, 22, 22, color);
-				RenderUtils.drawString(drawContext, this.title, pos.x + 38, pos.y + 8, Aoba.getInstance().hudManager.getColor());
+				RenderUtils.drawTexturedQuad(drawContext, icon, pos.x + 8, pos.y + 4, 22, 22, GuiManager.foregroundColor.getValue());
+				RenderUtils.drawString(drawContext, this.title, pos.x + 38, pos.y + 8, GuiManager.foregroundColor.getValue());
 			}else
-				RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
+				RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, GuiManager.foregroundColor.getValue());
 			
 			RenderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
 
@@ -146,7 +147,7 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 			}
 		}
 		for (Component child : children) {
-			child.draw(drawContext, partialTicks, color);
+			child.draw(drawContext, partialTicks);
 		}
 	}
 

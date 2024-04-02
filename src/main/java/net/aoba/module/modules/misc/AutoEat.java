@@ -23,16 +23,19 @@ package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.event.events.FoodLevelEvent;
 import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.FoodLevelListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
+import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 
-public class AutoEat extends Module implements TickListener {
-	private int hunger = 6;
+public class AutoEat extends Module implements FoodLevelListener {
+	private FloatSetting hungerSetting;
 	
 	public AutoEat() {
 		super(new KeybindSetting("key.autoeat", "AntiCactus Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -40,16 +43,20 @@ public class AutoEat extends Module implements TickListener {
 		this.setName("AutoEat");
 		this.setCategory(Category.Misc);
 		this.setDescription("Automatically eats the best food in your inventory.");
+		
+		hungerSetting = new FloatSetting("autoeat_hunger", "Hunger", "Determines when AutoEat will trigger.", 6, 1, 20, 1);
+		
+		this.addSetting(hungerSetting);
 	}
 
 	@Override
 	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(FoodLevelListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(FoodLevelListener.class, this);
 	}
 
 	@Override
@@ -58,12 +65,12 @@ public class AutoEat extends Module implements TickListener {
 	}
 	
 	public void setHunger(int hunger) {
-		
+		hungerSetting.setValue((float)hunger);
 	}
 
 	@Override
-	public void OnUpdate(TickEvent event) {
-		if(MC.player.getHungerManager().getFoodLevel() <= hunger) {
+	public void OnFoodLevelChanged(FoodLevelEvent readPacketEvent) {
+		if(readPacketEvent.getFoodLevel() <= hungerSetting.getValue()) {
 			int foodSlot= -1;
 			FoodComponent bestFood = null;
 			for(int i = 0; i< 9; i++) {

@@ -61,6 +61,6 @@ public class Step extends Module {
 	}
 	
 	public void setStepHeight(float height) {
-		this.stepHeight.setValue((double)height);
+		this.stepHeight.setValue(height);
 	}
 }

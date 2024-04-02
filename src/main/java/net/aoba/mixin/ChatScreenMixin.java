@@ -102,8 +102,8 @@ public class ChatScreenMixin extends ScreenMixin{
 		
 		int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
 		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
-		serverChatButton.draw(context, delta, Aoba.getInstance().hudManager.color.getValue());
-		globalChatButton.draw(context, delta, Aoba.getInstance().hudManager.color.getValue());
+		serverChatButton.draw(context, delta);
+		globalChatButton.draw(context, delta);
 		matrixStack.pop();
 		GL11.glEnable(GL11.GL_CULL_FACE);
 	}

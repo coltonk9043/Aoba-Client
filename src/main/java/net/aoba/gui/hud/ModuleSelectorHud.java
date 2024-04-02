@@ -112,7 +112,7 @@ public class ModuleSelectorHud extends AbstractHud {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		// Gets the client and window.
 		MinecraftClient mc = MinecraftClient.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
@@ -121,19 +121,19 @@ public class ModuleSelectorHud extends AbstractHud {
 		Vector2 pos = position.getValue();
 		
 		// Draws the top bar including "Aoba x.x"
-		RenderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, color);
+		RenderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, GuiManager.foregroundColor.getValue());
 
 		// Draws the table including all of the categories.
 		GuiManager hudManager = Aoba.getInstance().hudManager;
-		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.backgroundColor.getValue());
-		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, hudManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, GuiManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, GuiManager.borderColor.getValue());
 		
 		// For every category, draw a cell for it.
 		for (int i = 0; i < this.categories.length; i++) {
-			RenderUtils.drawString(drawContext, ">>", pos.x + width - 24, pos.y + (height * i) + 8, color);
+			RenderUtils.drawString(drawContext, ">>", pos.x + width - 24, pos.y + (height * i) + 8, GuiManager.foregroundColor.getValue());
 			// Draws the name of the category dependent on whether it is selected.
 			if (this.index == i) {
-				RenderUtils.drawString(drawContext, "> " + this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8, color);
+				RenderUtils.drawString(drawContext, "> " + this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8, GuiManager.foregroundColor.getValue());
 			} else {
 				RenderUtils.drawString(drawContext, this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8, 0xFFFFFF);
 			}
@@ -142,15 +142,15 @@ public class ModuleSelectorHud extends AbstractHud {
 		// If any particular category menu is open.
 		if (isCategoryMenuOpen) {
 			// Draw the table underneath
-			RenderUtils.drawRoundedBox(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, hudManager.backgroundColor.getValue());
-			RenderUtils.drawRoundedOutline(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, hudManager.borderColor.getValue());
+			RenderUtils.drawRoundedBox(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, GuiManager.backgroundColor.getValue());
+			RenderUtils.drawRoundedOutline(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, GuiManager.borderColor.getValue());
 			
 			// For every mod, draw a cell for it.
 			for (int i = 0; i < modules.size(); i++) {
 				if (this.indexMods == i) {
 					RenderUtils.drawString(drawContext, "> " + modules.get(i).getName(), pos.x + width + 5,
 							pos.y + (i * height) + (this.index * height) + 8,
-							modules.get(i).getState() ? 0x00FF00 : color.getColorAsInt());
+							modules.get(i).getState() ? 0x00FF00 : GuiManager.foregroundColor.getValue().getColorAsInt());
 				} else {
 					RenderUtils.drawString(drawContext, modules.get(i).getName(), pos.x + width + 5,
 							pos.y + (i * height) + (this.index * height) + 8,
@@ -166,7 +166,7 @@ public class ModuleSelectorHud extends AbstractHud {
 			if(mod.getState()) {
 				RenderUtils.drawString(drawContext, mod.getName(),
 						(float) (window.getWidth() - ((mc.textRenderer.getWidth(mod.getName()) + 5) * 2)), 10 + (iteration*20),
-						color.getColorAsInt());
+						GuiManager.foregroundColor.getValue().getColorAsInt());
 				iteration++;
 			}
 		}

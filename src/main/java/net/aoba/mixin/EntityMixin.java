@@ -26,12 +26,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.registry.tag.TagKey;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin{
+	
+	@Shadow
+	protected DataTracker dataTracker;
 	
 	@Shadow
 	public abstract boolean isSubmergedIn(TagKey<Fluid> fluidTag);

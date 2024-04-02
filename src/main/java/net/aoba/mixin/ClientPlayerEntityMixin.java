@@ -23,28 +23,20 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.mojang.authlib.GameProfile;
-
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
+import net.aoba.event.events.PlayerHealthEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.misc.FakePlayerEntity;
-import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity {
+public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntityMixin {
 	@Shadow
 	private ClientPlayNetworkHandler networkHandler;
-	
-	public ClientPlayerEntityMixin(ClientWorld world, GameProfile profile) {
-		super(world, profile);
-	}
 	
 	@Inject(at = { @At("HEAD") }, method = "tick()V", cancellable = true)
 	private void onPlayerTick(CallbackInfo ci) {
@@ -67,6 +59,9 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		}
 	}
 	
+	
+	
+	
 	@Inject (at = {@At("HEAD")}, method="setShowsDeathScreen(Z)V")
 	private void onShowDeathScreen(boolean state, CallbackInfo ci) {
 		GuiManager hudManager = Aoba.getInstance().hudManager;
@@ -75,27 +70,34 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			hudManager.setClickGuiOpen(false);
 		}
 	}
+
 	
 	@Override
-
-	public boolean isSpectator() {
-		return super.isSpectator() || Aoba.getInstance().moduleManager.freecam.getState();
-	}
-	
-
-	@Override
-
-	protected float getOffGroundSpeed() {
-		float speed = super.getOffGroundSpeed();
-		if(Aoba.getInstance().moduleManager.fly.getState()) {
-			Fly fly = (Fly)Aoba.getInstance().moduleManager.fly;
-			return (float)fly.getSpeed();
-		}
-
+	public void onIsSpectator(CallbackInfoReturnable<Boolean> cir) {
 		if(Aoba.getInstance().moduleManager.freecam.getState()) {
-			Freecam freecam = (Freecam)Aoba.getInstance().moduleManager.freecam;
-			return (float)freecam.getSpeed();
+			cir.setReturnValue(true);
 		}
-		return speed;
 	}
+	
+	@Override
+	public void onSetHealth(float health, CallbackInfo ci) {
+		PlayerHealthEvent event = new PlayerHealthEvent(null, health);
+		Aoba.getInstance().eventManager.Fire(event);
+	}
+
+
+//	@Override
+//	protected float getOffGroundSpeed() {
+//		float speed = super.getOffGroundSpeed();
+//		if(Aoba.getInstance().moduleManager.fly.getState()) {
+//			Fly fly = (Fly)Aoba.getInstance().moduleManager.fly;
+//			return (float)fly.getSpeed();
+//		}
+//
+//		if(Aoba.getInstance().moduleManager.freecam.getState()) {
+//			Freecam freecam = (Freecam)Aoba.getInstance().moduleManager.freecam;
+//			return (float)freecam.getSpeed();
+//		}
+//		return speed;
+//	}
 }

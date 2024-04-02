@@ -124,24 +124,24 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
 
 		Vector2 pos = position.getValue();
 
 		// Draws background depending on components width and height
 		GuiManager hudManager = Aoba.getInstance().hudManager;
-		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.backgroundColor.getValue());
-		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, hudManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, GuiManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, GuiManager.borderColor.getValue());
 		
-		RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, Aoba.getInstance().hudManager.getColor());
+		RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, GuiManager.foregroundColor.getValue());
 		RenderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
 
 		RenderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255, 0, 0, 255));
 		RenderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255, 0, 0, 255));
 		
 		for (Component child : children) {
-			child.draw(drawContext, partialTicks, color);
+			child.draw(drawContext, partialTicks);
 		}
 	}
 

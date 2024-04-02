@@ -127,18 +127,16 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-		//renderUtils.drawBox(matrixStack, actualX + 4, actualY + 24, actualWidth - 8, actualHeight - 8, 0.5f, 0.5f, 0.5f, 0.3f);
-		
+
 		// Draw the rest of the box.
-		
 		float xLength = ((actualWidth - 18) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)));
 		
 		GuiManager hudManager = Aoba.getInstance().hudManager;
-		RenderUtils.drawBox(matrixStack, actualX + 10, actualY + 35, xLength, 2, hudManager.color.getValue());
+		RenderUtils.drawBox(matrixStack, actualX + 10, actualY + 35, xLength, 2, GuiManager.foregroundColor.getValue());
 		RenderUtils.drawBox(matrixStack, actualX + 10 + xLength, actualY + 35, (actualWidth - xLength - 18), 2, new Color(255, 255, 255, 255));
-		RenderUtils.drawCircle(matrixStack, actualX + 10 + xLength, actualY + 35, 6, hudManager.color.getValue());
+		RenderUtils.drawCircle(matrixStack, actualX + 10 + xLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
 		
 		if (this.slider == null)
 			return;

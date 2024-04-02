@@ -48,7 +48,7 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 	private RainbowColor rainbowColor;
 
 	public BooleanSetting rainbow = new BooleanSetting("breadcrumbs_rainbow", "Rainbow", "Rainbow", false);
-	public FloatSetting effectSpeed = new FloatSetting("breadcrumbs_effectspeed", "Effect Spd.", "Effect Spd", 4, 1, 20, 0.1);
+	public FloatSetting effectSpeed = new FloatSetting("breadcrumbs_effectspeed", "Effect Spd.", "Effect Spd", 4f, 1f, 20f, 0.1f);
 	
 	private float timer = 10;
 	private float currentTick = 0;

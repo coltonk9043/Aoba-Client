@@ -71,7 +71,7 @@ public class NavigationBar implements LeftMouseDownListener {
 		}
 	}
 
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		Window window = mc.getWindow();
 
 		int centerX = (window.getWidth() / 2);
@@ -81,17 +81,17 @@ public class NavigationBar implements LeftMouseDownListener {
 		int width = 100 * options.size();
 		
 		GuiManager hudManager = Aoba.getInstance().hudManager;
-		RenderUtils.drawRoundedBox(matrixStack, centerX - (width / 2), 25, width, 25, 6, hudManager.backgroundColor.getValue());
-		RenderUtils.drawRoundedOutline(matrixStack, centerX -  (width / 2), 25, width, 25, 6, hudManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrixStack, centerX - (width / 2), 25, width, 25, 6, GuiManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrixStack, centerX -  (width / 2), 25, width, 25, 6, GuiManager.borderColor.getValue());
 
 		RenderUtils.drawRoundedBox(drawContext.getMatrices(), centerX - (width / 2) + (100 * this.selectedIndex), 25, 100, 25, 5, new Color(150, 150, 150, 100));
 			
 		for(int i = 0; i < options.size(); i++) {
 			Page pane = options.get(i);
 			if(i == selectedIndex) {
-				pane.render(drawContext, partialTicks, color);
+				pane.render(drawContext, partialTicks);
 			}
-			RenderUtils.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, color);
+			RenderUtils.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, GuiManager.foregroundColor.getValue());
 		}
 	}
 

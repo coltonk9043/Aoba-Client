@@ -409,7 +409,7 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
 	 * @param partialTicks Partial Ticks of the game.
 	 * @param color        Color of the UI.
 	 */
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		if (this.visible) {
 			if (this.hovered && DEBUG) {
 				RenderUtils.drawOutline(drawContext.getMatrices(), this.actualX, this.actualY, this.actualWidth,
@@ -418,7 +418,7 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
 
 			for (Component child : children) {
 				if (child.visible) {
-					child.draw(drawContext, partialTicks, color);
+					child.draw(drawContext, partialTicks);
 				}
 			}
 		}

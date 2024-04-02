@@ -66,7 +66,7 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 	}
 
 	public void setRadius(int radius) {
-		this.radius.setValue((double)radius);
+		this.radius.setValue((float)radius);
 	}
 	
 	@Override

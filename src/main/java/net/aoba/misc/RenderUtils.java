@@ -41,20 +41,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.stb.STBTTFontinfo;
-import org.lwjgl.stb.STBTruetype;
-import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.system.Struct;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
@@ -535,7 +523,6 @@ public class RenderUtils {
 	}
 
 	public static void drawString(DrawContext drawContext, String text, float x, float y, Color color) {
-		MinecraftClient mc = MinecraftClient.getInstance();
 		AobaClient aoba = Aoba.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
@@ -546,7 +533,6 @@ public class RenderUtils {
 	}
 
 	public static void drawString(DrawContext drawContext, String text, float x, float y, int color) {
-		MinecraftClient mc = MinecraftClient.getInstance();
 		AobaClient aoba = Aoba.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
@@ -557,7 +543,6 @@ public class RenderUtils {
 	}
 
 	public static void drawStringWithScale(DrawContext drawContext, String text, float x, float y, Color color, float scale) {
-		MinecraftClient mc = MinecraftClient.getInstance();
 		AobaClient aoba = Aoba.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
@@ -572,7 +557,6 @@ public class RenderUtils {
 	}
 	
 	public static void drawStringWithScale(DrawContext drawContext, String text, float x, float y, int color, float scale) {
-		MinecraftClient mc = MinecraftClient.getInstance();
 		AobaClient aoba = Aoba.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();

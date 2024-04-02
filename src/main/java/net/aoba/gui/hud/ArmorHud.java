@@ -22,7 +22,6 @@
 
 package net.aoba.gui.hud;
 
-import net.aoba.gui.Color;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
@@ -43,7 +42,7 @@ public class ArmorHud extends AbstractHud{
 	}
 	
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		if(this.visible) {
 			DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
 			

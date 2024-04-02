@@ -22,6 +22,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.Color;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.BooleanSetting;
@@ -53,8 +54,8 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	 * @param color The current Color of the UI.
 	 */
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
-		super.draw(drawContext, partialTicks, color);
+	public void draw(DrawContext drawContext, float partialTicks) {
+		super.draw(drawContext, partialTicks);
 		
 		MatrixStack matrixStack = drawContext.getMatrices();
 		RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 8, 0xFFFFFF);

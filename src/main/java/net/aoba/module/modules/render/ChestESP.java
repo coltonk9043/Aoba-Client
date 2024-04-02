@@ -51,7 +51,7 @@ public class ChestESP extends Module implements RenderListener, TickListener {
 	private ColorSetting color = new ColorSetting("chestesp_color", "Color", "Color", new Color(0, 1f, 1f));
 	
 	public BooleanSetting rainbow = new BooleanSetting("chestesp_rainbow", "Rainbow", "Rainbow", false);
-	public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", "Effect Speed", 4, 1, 20, 0.1);
+	public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", "Effect Speed", 4f, 1f, 20f, 0.1f);
 	
 	
 	public ChestESP() {

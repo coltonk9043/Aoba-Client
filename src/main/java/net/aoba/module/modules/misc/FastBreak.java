@@ -47,7 +47,7 @@ public class FastBreak extends Module {
 		this.addSetting(ignoreWater);
 	}
 
-	public void setMultiplier(float multiplier) { this.multiplier.setValue((double)multiplier); }
+	public void setMultiplier(float multiplier) { this.multiplier.setValue(multiplier); }
 	
 	public float getMultiplier() {
 		return this.multiplier.getValue().floatValue();

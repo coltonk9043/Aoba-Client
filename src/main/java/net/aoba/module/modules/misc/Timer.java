@@ -46,7 +46,7 @@ public class Timer extends Module {
 	}
 	
 	public void setMultipler(float multiplier) {
-		this.multiplier.setValue((double)multiplier);
+		this.multiplier.setValue(multiplier);
 	}
 	
 	@Override

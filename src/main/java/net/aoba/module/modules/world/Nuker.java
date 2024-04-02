@@ -64,7 +64,7 @@ public class Nuker extends Module implements RenderListener, TickListener {
 	}
 
 	public void setRadius(int radius) {
-		this.radius.setValue((double)radius);
+		this.radius.setValue((float)radius);
 	}
 
 	@Override

@@ -71,36 +71,30 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 	public Page hudPane = new Page("Hud");
 	
 	// Global HUD Settings
-	public ColorSetting color;
-	public ColorSetting borderColor;
-	public ColorSetting backgroundColor;
+	public static ColorSetting foregroundColor;
+	public static ColorSetting borderColor;
+	public static ColorSetting backgroundColor;
 	
-	public FloatSetting effectSpeed = new FloatSetting("color_speed", "Effect Spd", 4, 1, 20, 0.1, null);
+	public FloatSetting effectSpeed = new FloatSetting("color_speed", "Effect Spd", 4f, 1f, 20f, 0.1f, null);
 	public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
 	public BooleanSetting ah = new BooleanSetting("armorhud_toggle", "ArmorHUD", false, null);
-
-	private Color currentColor;
 
 	public ModuleSelectorHud moduleSelector;
 	public ArmorHud armorHud;
 	public RadarHud radarHud;
 	public InfoHud infoHud;
-	 
-	private RainbowColor rainbowColor;
 
 	public GuiManager() {
 		mc = MinecraftClient.getInstance();
 		
 		borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
 		backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(0, 0, 0, 50));
-		color = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
-		currentColor = color.getValue();
-		rainbowColor = new RainbowColor();
+		foregroundColor = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
 		clickGuiNavBar = new NavigationBar();
 		
 		SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.config_category);
 		SettingManager.registerSetting(backgroundColor, Aoba.getInstance().settingManager.config_category);
-		SettingManager.registerSetting(color, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(foregroundColor, Aoba.getInstance().settingManager.config_category);
 		SettingManager.registerSetting(clickGuiButton, Aoba.getInstance().settingManager.modules_category);
 		
 		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
@@ -190,14 +184,6 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 	 * Getter for the current color used by the GUI for text rendering.
 	 * @return Current Color
 	 */
-	public Color getColor() {
-		return this.currentColor;
-	}
-	
-	public Color getOriginalColor() {
-		return this.color.getValue();
-	}
-	
 	public void update() {
 		if(!Aoba.getInstance().isGhosted()){
 
@@ -225,12 +211,12 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		 * Updates the Color. 
 		 * TODO: Remove this and move to event-based.
 		 */
-		if(this.rainbow.getValue()) {
-			rainbowColor.update(this.effectSpeed.getValue().floatValue());
-			this.currentColor = rainbowColor.getColor();
-		}else {
-			this.currentColor = color.getValue();
-		}
+		//if(this.rainbow.getValue()) {
+		//	rainbowColor.update(this.effectSpeed.getValue().floatValue());
+		//	this.currentColor = rainbowColor.getColor();
+		//}else {
+		//	this.currentColor = foregroundColor.getValue();
+		//}
 		
 		//Aoba.getInstance().eventManager.Fire(new MouseScrollEvent(5.0f, 5.0f));
 	}
@@ -252,14 +238,14 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		 */
 		if (this.clickGuiOpen) {
 			RenderUtils.drawBox(matrixStack, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
-			clickGuiNavBar.draw(drawContext, tickDelta, this.currentColor);
+			clickGuiNavBar.draw(drawContext, tickDelta);
 		}
 		
 		// Render HUDS
 		if(!this.clickGuiOpen || this.clickGuiNavBar.getSelectedPage() == this.hudPane) {
 			for(AbstractGui hud : pinnedHuds.values()) {
 				if(hud.getVisible()) {
-					hud.draw(drawContext, tickDelta, this.currentColor);
+					hud.draw(drawContext, tickDelta);
 				}
 			}
 		}

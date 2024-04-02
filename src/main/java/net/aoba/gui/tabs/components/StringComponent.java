@@ -65,7 +65,7 @@ public class StringComponent extends Component implements FontChangedListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		int i = 0;
 		for (String str : text) {
 			if(bold)

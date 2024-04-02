@@ -45,8 +45,8 @@ public class HudComponent extends Component implements LeftMouseDownListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
-		super.draw(drawContext, partialTicks, color);
+	public void draw(DrawContext drawContext, float partialTicks) {
+		super.draw(drawContext, partialTicks);
 		RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);
 		
 		if(this.hud.activated.getValue()) {

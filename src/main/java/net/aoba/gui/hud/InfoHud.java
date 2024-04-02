@@ -17,8 +17,6 @@
 */
 package net.aoba.gui.hud;
 
-import net.aoba.Aoba;
-import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.utils.types.Vector2;
@@ -73,20 +71,19 @@ public class InfoHud extends AbstractHud {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks, Color color) {
+	public void draw(DrawContext drawContext, float partialTicks) {
 		if(this.visible) {
 			MatrixStack matrixStack = drawContext.getMatrices();
 			// Draws background depending on components width and height
 			
 			Vector2 pos = position.getValue();
 			
-			GuiManager hudManager = Aoba.getInstance().hudManager;
-			RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, hudManager.backgroundColor.getValue());
-			RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, hudManager.borderColor.getValue());
+			RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
+			RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
 			
-			RenderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, color);
-			RenderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, color);
-			RenderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, color);
+			RenderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, GuiManager.foregroundColor.getValue());
+			RenderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, GuiManager.foregroundColor.getValue());
+			RenderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, GuiManager.foregroundColor.getValue());
 		}
 	}
 }
