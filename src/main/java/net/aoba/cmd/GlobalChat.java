@@ -87,15 +87,15 @@ public class GlobalChat {
 		
 		try {
 			started = true;
-			
-			// Gotta love AWS!
-			socket = new Socket("18.221.222.43", 80);
-			out = new PrintWriter(socket.getOutputStream(), false);
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			
+
 			chatSocketListenerThread = new Thread(new Runnable() {
 				@Override
 				public void run() {
+					// Gotta love AWS!
+					socket = new Socket("18.221.222.43", 80);
+					out = new PrintWriter(socket.getOutputStream(), false);
+					in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+					
 					try {
 						// Send the connection action to the server.
 						Send(gson.toJson(new ConnectAction(MinecraftClient.getInstance().getSession().getUsername())));
