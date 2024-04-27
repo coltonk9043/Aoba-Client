@@ -22,10 +22,15 @@
 package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
+
+import net.aoba.Aoba;
+import net.aoba.gui.font.FontManager;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributes;
 
 public class Step extends Module {
 
@@ -40,22 +45,31 @@ public class Step extends Module {
 		
 		stepHeight = new FloatSetting("step_height", "Height", "Height that the player will step up.", 1f, 0.0f, 2f, 0.5f);
 		
+		stepHeight.setOnUpdate((i) -> {
+			if(this.getState()) {
+				EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT);
+				attribute.setBaseValue(stepHeight.getValue());
+			}
+		});
+		
 		this.addSetting(stepHeight);
 	}
 
 	@Override
 	public void onDisable() {
-
+		EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT);
+		attribute.setBaseValue(0.5f);
 	}
 
 	@Override
 	public void onEnable() {
-		
+		EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT);
+		attribute.setBaseValue(stepHeight.getValue());
 	}
 
 	@Override
 	public void onToggle() {
-
+		
 	}
 	
 	public float getStepHeight() {
