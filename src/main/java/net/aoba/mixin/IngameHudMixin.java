@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InGameHud.class)
 public class IngameHudMixin {
 
-	@Inject(at = {@At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V", remap = false,ordinal = 3) }, method = {"render(Lnet/minecraft/client/gui/DrawContext;F)V" })
+	@Inject(at = {@At(value = "HEAD") }, method = {"render(Lnet/minecraft/client/gui/DrawContext;F)V" })
 	private void onRender(DrawContext context, float tickDelta, CallbackInfo ci) {
 		Aoba.getInstance().drawHUD(context, tickDelta);
 	}

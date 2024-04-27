@@ -16,32 +16,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * A class to represent a Color that iterates.
- */
-package net.aoba.misc;
+package net.aoba.event.listeners;
 
-import net.aoba.gui.Color;
+import net.aoba.event.events.LeftMouseDownEvent;
 
-public class RainbowColor {
-	private Color color;
-	private float timer = 0f;
-
-	public RainbowColor() {
-		this.color = new Color(255, 0, 0);
-	}
-
-	public void update(float timerIncrement) {
-		if (timer >= (20 - timerIncrement)) {
-			timer = 0f;
-			this.color.setHSV(((this.color.hue + 1f) % 361), 1f, 1f);
-		} else {
-			timer++;
-		}
-
-	}
-
-	public Color getColor() {
-		return this.color;
-	}
+public interface LeftMouseDownListener extends AbstractListener {
+	public abstract void OnLeftMouseDown(LeftMouseDownEvent event);
 }

@@ -25,18 +25,18 @@ import net.aoba.event.listeners.RenderListener;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class RenderEvent extends AbstractEvent {
-	MatrixStack matrixStack; 
+	MatrixStack matrices; 
 	float partialTicks;
 	
-	public MatrixStack GetMatrixStack() {
-		return matrixStack;
+	public MatrixStack GetMatrix() {
+		return matrices;
 	}
 	public float GetPartialTicks() {
 		return partialTicks;
 	}
 	
-	public RenderEvent(MatrixStack matrixStack, float partialTicks) {
-		this.matrixStack = matrixStack;
+	public RenderEvent(MatrixStack matrix4f, float partialTicks) {
+		this.matrices = matrix4f;
 		this.partialTicks = partialTicks;
 	}
 	

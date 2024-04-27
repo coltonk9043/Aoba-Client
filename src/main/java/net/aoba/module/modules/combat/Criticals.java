@@ -79,7 +79,9 @@ public class Criticals extends Module implements SendPacketListener {
 		if(packet instanceof PlayerInteractEntityC2SPacket) {
 			PlayerInteractEntityC2SPacket playerInteractPacket = (PlayerInteractEntityC2SPacket) packet;
 			PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
-			playerInteractPacket.write(packetBuf);
+			
+			// TODO: Fix packet write.
+			//playerInteractPacket.write(packetBuf);
 			packetBuf.readVarInt();
 			InteractType type = packetBuf.readEnumConstant(InteractType.class);
 			

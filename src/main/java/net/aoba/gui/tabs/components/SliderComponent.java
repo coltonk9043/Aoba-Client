@@ -18,6 +18,8 @@
 
 package net.aoba.gui.tabs.components;
 
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.LeftMouseUpEvent;
@@ -25,9 +27,9 @@ import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.LeftMouseUpListener;
 import net.aoba.event.listeners.MouseMoveListener;
-import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.FloatSetting;
 import net.minecraft.client.MinecraftClient;
@@ -129,14 +131,14 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+		
 		// Draw the rest of the box.
 		float xLength = ((actualWidth - 18) * (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value)));
 		
-		GuiManager hudManager = Aoba.getInstance().hudManager;
-		RenderUtils.drawBox(matrixStack, actualX + 10, actualY + 35, xLength, 2, GuiManager.foregroundColor.getValue());
-		RenderUtils.drawBox(matrixStack, actualX + 10 + xLength, actualY + 35, (actualWidth - xLength - 18), 2, new Color(255, 255, 255, 255));
-		RenderUtils.drawCircle(matrixStack, actualX + 10 + xLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
+		RenderUtils.drawBox(matrix4f, actualX + 10, actualY + 35, xLength, 2, GuiManager.foregroundColor.getValue());
+		RenderUtils.drawBox(matrix4f, actualX + 10 + xLength, actualY + 35, (actualWidth - xLength - 18), 2, new Color(255, 255, 255, 255));
+		RenderUtils.drawCircle(matrix4f, actualX + 10 + xLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
 		
 		if (this.slider == null)
 			return;

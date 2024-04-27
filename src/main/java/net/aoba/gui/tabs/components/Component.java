@@ -19,13 +19,17 @@
 package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
+
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.MouseMoveListener;
-import net.aoba.gui.Color;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 
 public abstract class Component implements IGuiElement, MouseMoveListener {
 	private static boolean DEBUG = false;
@@ -412,7 +416,9 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
 	public void draw(DrawContext drawContext, float partialTicks) {
 		if (this.visible) {
 			if (this.hovered && DEBUG) {
-				RenderUtils.drawOutline(drawContext.getMatrices(), this.actualX, this.actualY, this.actualWidth,
+				MatrixStack matrixStack = drawContext.getMatrices();
+				Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+				RenderUtils.drawOutline(matrix4f, this.actualX, this.actualY, this.actualWidth,
 						this.actualHeight);
 			}
 

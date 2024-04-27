@@ -18,6 +18,7 @@
 
 package net.aoba.mixin;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,7 +40,7 @@ public class GameRendererMixin {
 	}
 
 	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F", ordinal = 0), method = {
-			"renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V" })
+			"renderWorld(FJ)V" })
 	private float nauseaLerp(float delta, float first, float second) {
 		if (Aoba.getInstance().moduleManager.nooverlay.getState())
 			return 0;

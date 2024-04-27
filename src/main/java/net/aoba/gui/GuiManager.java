@@ -25,10 +25,15 @@ import net.aoba.event.events.LeftMouseUpEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.LeftMouseUpListener;
 import net.aoba.event.listeners.KeyDownListener;
+
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import net.aoba.module.Module;
 import net.aoba.Aoba;
+import net.aoba.gui.colors.Color;
+import net.aoba.gui.colors.RainbowColor;
+import net.aoba.gui.colors.RandomColor;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.gui.hud.ArmorHud;
 import net.aoba.gui.hud.InfoHud;
@@ -37,7 +42,6 @@ import net.aoba.gui.hud.RadarHud;
 import net.aoba.gui.tabs.*;
 import net.aoba.gui.tabs.components.ModuleComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
-import net.aoba.misc.RainbowColor;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module.Category;
 import net.aoba.settings.SettingManager;
@@ -74,6 +78,9 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 	public static ColorSetting foregroundColor;
 	public static ColorSetting borderColor;
 	public static ColorSetting backgroundColor;
+	
+	public static RainbowColor rainbowColor = new RainbowColor();
+	public static RandomColor randomColor = new RandomColor();
 	
 	public FloatSetting effectSpeed = new FloatSetting("color_speed", "Effect Spd", 4f, 1f, 20f, 0.1f, null);
 	public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
@@ -230,14 +237,15 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		
 		int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
 		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
-
+		
 		Window window = mc.getWindow();
+		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		
 		/**
 		 * Render ClickGUI and Sidebar
 		 */
 		if (this.clickGuiOpen) {
-			RenderUtils.drawBox(matrixStack, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
+			RenderUtils.drawBox(matrix, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
 			clickGuiNavBar.draw(drawContext, tickDelta);
 		}
 		

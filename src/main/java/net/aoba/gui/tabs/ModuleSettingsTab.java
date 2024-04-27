@@ -18,13 +18,15 @@
 
 package net.aoba.gui.tabs;
 
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.AbstractGui;
-import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.components.BlocksComponent;
 import net.aoba.gui.tabs.components.CheckboxComponent;
 import net.aoba.gui.tabs.components.ColorPickerComponent;
@@ -126,19 +128,19 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+		
 		Vector2 pos = position.getValue();
 
 		// Draws background depending on components width and height
-		GuiManager hudManager = Aoba.getInstance().hudManager;
-		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, GuiManager.backgroundColor.getValue());
-		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, GuiManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height + 30, 6, GuiManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height + 30, 6, GuiManager.borderColor.getValue());
 		
 		RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, GuiManager.foregroundColor.getValue());
-		RenderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
+		RenderUtils.drawLine(matrix4f, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
 
-		RenderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255, 0, 0, 255));
-		RenderUtils.drawLine(matrixStack, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255, 0, 0, 255));
+		RenderUtils.drawLine(matrix4f, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255, 0, 0, 255));
+		RenderUtils.drawLine(matrix4f, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255, 0, 0, 255));
 		
 		for (Component child : children) {
 			child.draw(drawContext, partialTicks);

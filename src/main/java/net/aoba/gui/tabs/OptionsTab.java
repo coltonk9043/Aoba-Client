@@ -19,12 +19,15 @@
 package net.aoba.gui.tabs;
 
 import java.util.ArrayList;
+
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.AbstractGui;
-import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.Window;
@@ -54,12 +57,13 @@ public class OptionsTab extends AbstractGui implements MouseScrollListener {
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+		
 		Vector2 pos = position.getValue();
 
-		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
-		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
-		RenderUtils.drawLine(matrixStack, pos.x + 480, pos.y, pos.x + 480, pos.y + height, new Color(0, 0, 0, 200));
+		RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
+		RenderUtils.drawLine(matrix4f, pos.x + 480, pos.y, pos.x + 480, pos.y + height, new Color(0, 0, 0, 200));
 
 		ArrayList<Module> modules = Aoba.getInstance().moduleManager.modules;
 

@@ -28,6 +28,9 @@ import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.gui.colors.Color;
+import net.aoba.gui.colors.RainbowColor;
+
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -36,8 +39,6 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
-import net.aoba.gui.Color;
-import net.aoba.misc.RainbowColor;
 import net.aoba.misc.RenderUtils;
 
 public class Breadcrumbs extends Module implements RenderListener, TickListener {
@@ -88,7 +89,7 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 	@Override
 	public void OnRender(RenderEvent event) {
 		for(int i = 0; i < this.positions.size() - 1; i++) {
-			RenderUtils.drawLine3D(event.GetMatrixStack(), this.positions.get(i), this.positions.get(i + 1), this.currentColor);
+			RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), this.positions.get(i), this.positions.get(i + 1), this.currentColor);
 		}
 	}
 
@@ -100,12 +101,6 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 			if(!Aoba.getInstance().moduleManager.freecam.getState()) {
 				positions.add(MC.player.getPos());
 			}
-		}
-		if(this.rainbow.getValue()) {
-			this.rainbowColor.update(this.effectSpeed.getValue().floatValue());
-			this.currentColor = this.rainbowColor.getColor();
-		}else {
-			this.currentColor = color.getValue();
 		}
 	}
 }

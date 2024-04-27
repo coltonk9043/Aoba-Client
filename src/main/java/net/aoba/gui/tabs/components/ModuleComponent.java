@@ -18,16 +18,19 @@
 
 package net.aoba.gui.tabs.components;
 
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.module.Module;
-import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.ModuleSettingsTab;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 public class ModuleComponent extends Component implements LeftMouseDownListener {
@@ -58,10 +61,14 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
+		
+		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+		
 		RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, module.getState() ? 0x00FF00 : this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
 		if(module.hasSettings()) {
 			Color hudColor = GuiManager.foregroundColor.getValue();
-			RenderUtils.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 20), (actualY + 6), 16, 16, hudColor);
+			RenderUtils.drawTexturedQuad(matrix4f, gear, (actualX + actualWidth - 20), (actualY + 6), 16, 16, hudColor);
 		}
 	}
 	

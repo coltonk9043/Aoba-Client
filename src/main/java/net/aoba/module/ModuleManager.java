@@ -26,6 +26,8 @@ import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.KeyDownListener;
+
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import net.aoba.module.modules.combat.*;
 import net.aoba.module.modules.misc.*;
@@ -163,22 +165,20 @@ public class ModuleManager implements KeyDownListener {
 	public void update() {
 	}
 	
-	public void render(MatrixStack matrixStack) {
+	public void render(MatrixStack matrices) {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-		matrixStack.push();
-		
+		matrices.push();
 		Vec3d camPos = mc.getBlockEntityRenderDispatcher().camera.getPos();
-		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
-		
-		RenderEvent renderEvent = new RenderEvent(matrixStack, MinecraftClient.getInstance().getTickDelta());
+		matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+		RenderEvent renderEvent = new RenderEvent(matrices, MinecraftClient.getInstance().getTickDelta());
 		Aoba.getInstance().eventManager.Fire(renderEvent);
+		matrices.pop();
 		
-		matrixStack.pop();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);

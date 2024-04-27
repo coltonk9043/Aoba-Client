@@ -29,7 +29,7 @@ import net.aoba.Aoba;
 import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
 import net.aoba.cmd.GlobalChat.ChatType;
-import net.aoba.gui.Color;
+import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.components.ButtonComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -110,13 +110,11 @@ public class ChatScreenMixin extends ScreenMixin{
 	
 	@Inject(at = {
 			@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;addToMessageHistory(Ljava/lang/String;)V", ordinal = 0, shift = At.Shift.AFTER) }, method = "sendMessage(Ljava/lang/String;Z)Z", cancellable = true)
-	public void onSendMessage(String message, boolean addToHistory, CallbackInfoReturnable<Boolean> cir) {
+	public void onSendMessage(String message, boolean addToHistory, CallbackInfo ci) {
 		if (message.startsWith(CommandManager.PREFIX.getValue())) {
 			Aoba.getInstance().commandManager.command(message.split(" "));
-			cir.setReturnValue(true);
 		}else if (GlobalChat.chatType == ChatType.Global) {
 			Aoba.getInstance().globalChat.SendMessage(message);
-			cir.setReturnValue(true);
 		}
 	}
 }

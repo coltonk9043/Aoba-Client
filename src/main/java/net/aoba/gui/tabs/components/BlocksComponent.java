@@ -18,14 +18,16 @@
 
 package net.aoba.gui.tabs.components;
 
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.MouseScrollListener;
-import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.BlocksSetting;
 import net.minecraft.block.Block;
@@ -73,11 +75,13 @@ public class BlocksComponent extends Component implements MouseScrollListener, L
 	 */
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
+		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+		
 		RenderUtils.drawString(drawContext, text, actualX + 6, actualY + 6, 0xFFFFFF);
 		RenderUtils.drawString(drawContext, collapsed ? ">>" :  "<<", (actualX + actualWidth - 24), actualY + 6, GuiManager.foregroundColor.getValue().getColorAsInt());
 		
 		if(!collapsed) {
-			MatrixStack matrixStack = drawContext.getMatrices();
 			matrixStack.push();
 			matrixStack.scale(2.0f, 2.0f, 2.0f);
 			for(int i = scroll; i < visibleRows + scroll; i++) {
@@ -89,7 +93,7 @@ public class BlocksComponent extends Component implements MouseScrollListener, L
 					Block block = Registries.BLOCK.get(index);
 					
 					if(blocks.getValue().contains(block)) {
-						RenderUtils.drawBox(matrixStack, ((actualX + (j * 36) + 4) / 2.0f), ((actualY + ((i-scroll) * 36) + 25) / 2.0f), 16, 16, new Color(0, 255, 0, 55));
+						RenderUtils.drawBox(matrix4f, ((actualX + (j * 36) + 4) / 2.0f), ((actualY + ((i-scroll) * 36) + 25) / 2.0f), 16, 16, new Color(0, 255, 0, 55));
 					}
 					drawContext.drawItem(new ItemStack(block.asItem()), (int) ((actualX + (j * 36) + 6) / 2.0f), (int) ((actualY + ((i-scroll) * 36) + 25) / 2.0f) );
 				}

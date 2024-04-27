@@ -28,7 +28,7 @@ import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.gui.Color;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
@@ -160,7 +160,7 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 							 mc.player.getBlockZ() + z);
 					Block block = mc.world.getBlockState(blockpos).getBlock();
 					if (this.isTileBreakerBlock(block)) {
-						RenderUtils.draw3DBox(event.GetMatrixStack(), new Box(blockpos), color.getValue());
+						RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), new Box(blockpos), color.getValue());
 					}
 				}
 			}

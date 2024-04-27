@@ -70,8 +70,8 @@ public abstract class ChatHudMixin {
 	@Shadow
 	public abstract void drawIndicatorIcon(DrawContext context, int x, int y, MessageIndicator.Icon icon);
 	
-	@Inject(at = { @At("HEAD") }, method = {"render(Lnet/minecraft/client/gui/DrawContext;III)V" }, cancellable = true)
-	public void onRender(DrawContext context, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
+	@Inject(at = { @At("HEAD") }, method = {"render(Lnet/minecraft/client/gui/DrawContext;IIIZ)V" }, cancellable = true)
+	public void onRender(DrawContext context, int currentTick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
 		if(GlobalChat.chatType == GlobalChat.ChatType.Global) {
 			AobaChatRender(context, currentTick, mouseX, mouseY);
 			ci.cancel();

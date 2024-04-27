@@ -20,15 +20,12 @@
  * A class to represent Colors and their respective functions.
  */
 
-package net.aoba.gui;
+package net.aoba.gui.colors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector3f;
 
 public class Color {
-
-	public static Color WHITE = new Color(255, 255, 255);
-	
 	public int r;
 	public int g;
 	public int b;

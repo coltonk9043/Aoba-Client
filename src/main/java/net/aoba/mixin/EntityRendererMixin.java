@@ -44,13 +44,14 @@ public abstract class EntityRendererMixin<T extends Entity> {
 	protected EntityRenderDispatcher dispatcher;
 	
 	@Inject(at = @At(value = "HEAD"), 
-			method = "renderLabelIfPresent(Lnet/minecraft/entity/Entity;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", 
+			method = "renderLabelIfPresent(Lnet/minecraft/entity/Entity;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IF)V", 
 			cancellable=true)
 	protected void onRenderLabelIfPresent(T entity,
 			 Text text,
 			 MatrixStack matrices,
 			 VertexConsumerProvider vertexConsumers,
-			 int light, CallbackInfo ci) {
+			 int light,
+			 float tickDelta, CallbackInfo ci) {
 		CustomRenderLabel(entity, text, matrices, vertexConsumers, light);
 			ci.cancel();
 	}
@@ -82,10 +83,10 @@ public abstract class EntityRendererMixin<T extends Entity> {
             return;
         }
         boolean bl = !((Entity)entity).isSneaky();
-        float f = ((Entity)entity).getNameLabelHeight();
+        // TODO: Get name line height
         int i = "deadmau5".equals(text.getString()) ? -10 : 0;
         matrices.push();
-        matrices.translate(0.0f, f, 0.0f);
+        matrices.translate(0.0f, 1.0f, 0.0f);
         matrices.multiply(dispatcher.getRotation());
         matrices.scale(-0.025f, -0.025f, 0.025f);
         if(aoba.moduleManager.nametags.getState()) {

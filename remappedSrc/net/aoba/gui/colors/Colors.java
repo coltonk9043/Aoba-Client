@@ -16,9 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package net.aoba.misc;
-
-import net.aoba.gui.Color;
+package net.aoba.gui.colors;
 
 public class Colors {
 	public static final Color Red = new Color(255, 0, 0);

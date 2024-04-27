@@ -18,6 +18,7 @@
 
 package net.aoba.gui.tabs.components;
 
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
@@ -25,12 +26,13 @@ import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.event.listeners.LeftMouseDownListener;
-import net.aoba.gui.Color;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.math.MatrixStack;
 
 public class KeybindComponent extends Component implements LeftMouseDownListener, KeyDownListener {
 	private boolean listeningForKey;
@@ -52,9 +54,13 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
+		
+		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+		
 		RenderUtils.drawString(drawContext, "Keybind", actualX + 8, actualY + 8, 0xFFFFFF);
-		RenderUtils.drawBox(drawContext.getMatrices(), actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4, new Color(115, 115, 115, 200));
-		RenderUtils.drawOutline(drawContext.getMatrices(), actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4);
+		RenderUtils.drawBox(matrix4f, actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4, new Color(115, 115, 115, 200));
+		RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4);
 		
 		String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
 		if(keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))

@@ -24,21 +24,29 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Vec3d;
+
 import org.joml.Matrix4f;
+import org.objectweb.asm.Opcodes;
 
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
-	@Inject(at = { @At("RETURN") }, method = { "render" })
-	private void onRenderWorld(MatrixStack matrixStack, float tickDelta, long limitTime, boolean renderBlockOutline,
-			Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f,
-			CallbackInfo info) {
-		Aoba.getInstance().moduleManager.render(matrixStack);
+	@Inject(at = @At("HEAD"), method = "renderChunkDebugInfo(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/Camera;)V", cancellable = true)
+	private void onRenderChunkDebugInfo(MatrixStack matrices,
+			 VertexConsumerProvider vertexConsumers,
+			 Camera camera, CallbackInfo ci) {
+		if(Aoba.getInstance().moduleManager != null) {
+			Aoba.getInstance().moduleManager.render(matrices); 
+		}
 	}
+	
 
 	@Inject(at = @At("HEAD"), method = "hasBlindnessOrDarkness(Lnet/minecraft/client/render/Camera;)Z", cancellable = true)
 	private void onHasBlindnessOrDarknessEffect(Camera camera, CallbackInfoReturnable<Boolean> cir) {

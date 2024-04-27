@@ -53,10 +53,16 @@ public abstract class MinecraftClientMixin{
 
 	private Session aobaSession;
 
-	@Inject(at = @At("TAIL"), method = "initFont(Z)V")
-	private void init(boolean forcesUnicode, CallbackInfo info) {
+	@Inject(at = @At("HEAD"), method = "onFinishedLoading(Lnet/minecraft/client/MinecraftClient$LoadingContext;)V")
+	private void onfinishedloading(CallbackInfo info) {
 		Aoba.getInstance().loadAssets();
 	}
+	
+	// TODO: this was moved to the FontManager class.
+	//@Inject(at = @At("TAIL"), method = "initFont(Z)V")
+	//private void onInitFont(boolean forcesUnicode, CallbackInfo info) {
+	//	Aoba.getInstance().loadAssets();
+	//}
 	
 	@Inject(at = @At("TAIL"), method = "tick()V")
 	public void tick(CallbackInfo info) {

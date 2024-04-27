@@ -18,11 +18,13 @@
 package net.aoba.gui.hud;
 
 import java.util.ArrayList;
+
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
@@ -116,6 +118,7 @@ public class ModuleSelectorHud extends AbstractHud {
 		// Gets the client and window.
 		MinecraftClient mc = MinecraftClient.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 		Window window = mc.getWindow();
 		
 		Vector2 pos = position.getValue();
@@ -124,9 +127,8 @@ public class ModuleSelectorHud extends AbstractHud {
 		RenderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, GuiManager.foregroundColor.getValue());
 
 		// Draws the table including all of the categories.
-		GuiManager hudManager = Aoba.getInstance().hudManager;
-		RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, GuiManager.backgroundColor.getValue());
-		RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height * this.categories.length, 6f, GuiManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height * this.categories.length, 6f, GuiManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height * this.categories.length, 6f, GuiManager.borderColor.getValue());
 		
 		// For every category, draw a cell for it.
 		for (int i = 0; i < this.categories.length; i++) {
@@ -142,8 +144,8 @@ public class ModuleSelectorHud extends AbstractHud {
 		// If any particular category menu is open.
 		if (isCategoryMenuOpen) {
 			// Draw the table underneath
-			RenderUtils.drawRoundedBox(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, GuiManager.backgroundColor.getValue());
-			RenderUtils.drawRoundedOutline(matrixStack, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, GuiManager.borderColor.getValue());
+			RenderUtils.drawRoundedBox(matrix4f, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, GuiManager.backgroundColor.getValue());
+			RenderUtils.drawRoundedOutline(matrix4f, pos.x + width, pos.y + (height * this.index), 165, height * modules.size(), 6f, GuiManager.borderColor.getValue());
 			
 			// For every mod, draw a cell for it.
 			for (int i = 0; i < modules.size(); i++) {

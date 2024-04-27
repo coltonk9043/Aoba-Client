@@ -28,10 +28,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.Struct;
+import org.lwjgl.util.freetype.FT_Face;
+import org.lwjgl.util.freetype.FreeType;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.FontChangedEvent;
@@ -39,7 +45,9 @@ import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.StringSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.Font;
+import net.minecraft.client.font.FontFilterType.FilterMap;
 import net.minecraft.client.font.FontStorage;
+import net.minecraft.client.font.FreeTypeUtil;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TrueTypeFont;
 import net.minecraft.client.font.TrueTypeFontLoader;
@@ -79,17 +87,17 @@ public class FontManager {
 			});
 
 			for (File file : files) {
-				List<Font> list = new ArrayList<Font>();
+				List<Font.FontFilterPair> list = new ArrayList<Font.FontFilterPair>();
 
 				try {
 					Font font = LoadTTFFont(file, 12.5f, 2, new TrueTypeFontLoader.Shift(-1, 0), "");
-					list.add(font);
+					list.add(new Font.FontFilterPair(font, FilterMap.NO_FILTER));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
 				FontStorage storage = new FontStorage(MC.getTextureManager(), new Identifier("aoba:" + file.getName()));
-				storage.setFonts(list);
+				storage.setFonts(list, Set.of());
 				fontRenderers.put(file.getName().replace(".ttf", ""), new TextRenderer(id -> storage, true));
 			}
 		}
@@ -112,7 +120,7 @@ public class FontManager {
 
 	private static Font LoadTTFFont(File location, float size, float oversample, Shift shift, String skip) throws IOException {
 		TrueTypeFont trueTypeFont = null;
-		Struct sTBTTFontinfo = null;
+		STBTTFontinfo sTBTTFontinfo = null;
 		ByteBuffer byteBuffer = null;
 
 		InputStream inputStream = new FileInputStream(location);
@@ -123,12 +131,19 @@ public class FontManager {
 			byteBuffer.put(test, 0, test.length);
 			byteBuffer.flip();
 
-			if (!STBTruetype.stbtt_InitFont((STBTTFontinfo) sTBTTFontinfo, byteBuffer)) {
-				inputStream.close();
-				throw new IOException("Invalid ttf");
-			}
-			trueTypeFont = new TrueTypeFont(byteBuffer, (STBTTFontinfo) sTBTTFontinfo, size, oversample, shift.x(),
-					shift.y(), skip);
+			MemoryStack memoryStack = MemoryStack.stackPush();
+            PointerBuffer pointerBuffer = memoryStack.mallocPointer(1);
+            FreeTypeUtil.checkFatalError(FreeType.FT_New_Memory_Face(FreeTypeUtil.initialize(), byteBuffer, 0L, pointerBuffer), "Initializing font face");
+            FT_Face fT_Face = FT_Face.create(pointerBuffer.get());
+                
+            String string = FreeType.FT_Get_Font_Format(fT_Face);
+            if (!"TrueType".equals(string)) {
+            	throw new IOException("Font is not in TTF format, was " + string);
+                }
+                FreeTypeUtil.checkFatalError(FreeType.FT_Select_Charmap(fT_Face, FreeType.FT_ENCODING_UNICODE), "Find unicode charmap");
+                trueTypeFont = new TrueTypeFont(byteBuffer, fT_Face, size, oversample, shift.x(),
+    					shift.y(), skip);
+			
 		} catch (Throwable throwable) {
 			try {
 				if (inputStream != null) {

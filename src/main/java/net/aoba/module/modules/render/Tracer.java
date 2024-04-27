@@ -25,7 +25,7 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
-import net.aoba.gui.Color;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
@@ -87,18 +87,18 @@ public class Tracer extends Module implements RenderListener {
 			if(entity instanceof LivingEntity && (entity != MC.player)) {
 				Vec3d interpolated = RenderUtils.getEntityPositionInterpolated(entity, MinecraftClient.getInstance().getTickDelta());
 				if (entity instanceof AnimalEntity) {
-					RenderUtils.drawLine3D(event.GetMatrixStack(), eyePosition, interpolated, color_passive.getValue());
+					RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_passive.getValue());
 				} else if (entity instanceof Monster) {
-					RenderUtils.drawLine3D(event.GetMatrixStack(), eyePosition, interpolated, color_enemies.getValue());
+					RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_enemies.getValue());
 				} else {
-					RenderUtils.drawLine3D(event.GetMatrixStack(), eyePosition, interpolated, color_misc.getValue());
+					RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_misc.getValue());
 				}
 			}
 		}
 		
 		for(AbstractClientPlayerEntity player : MC.world.getPlayers()) {
 			Vec3d interpolated = RenderUtils.getEntityPositionInterpolated(player, MinecraftClient.getInstance().getTickDelta());
-			RenderUtils.drawLine3D(event.GetMatrixStack(), eyePosition, interpolated, color_player.getValue());
+			RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_player.getValue());
 		}
 	}
 }

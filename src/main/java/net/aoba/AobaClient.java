@@ -26,6 +26,7 @@ import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.colors.ColorMode;
 import net.aoba.gui.font.FontManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.mixin.interfaces.IMinecraftClient;
@@ -36,8 +37,8 @@ import net.minecraft.client.gui.DrawContext;
 
 public class AobaClient {
 	public static final String NAME = "Aoba";
-	public static final String VERSION = "1.20.4";
-	public static final String AOBA_VERSION = "1.4.0";
+	public static final String VERSION = "1.20.5";
+	public static final String AOBA_VERSION = "1.4.1";
 	
 	public static MinecraftClient MC;
 	public static IMinecraftClient IMC;
@@ -92,6 +93,9 @@ public class AobaClient {
 
 		globalChat = new GlobalChat();
 		globalChat.StartListener();
+		
+		//GuiManager.borderColor.setMode(ColorMode.Rainbow);
+		//GuiManager.foregroundColor.setMode(ColorMode.Random);
 	}
 	
 	/**

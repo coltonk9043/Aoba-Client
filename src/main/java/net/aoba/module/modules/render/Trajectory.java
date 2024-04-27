@@ -28,7 +28,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.Aoba;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
-import net.aoba.gui.Color;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
@@ -77,15 +77,13 @@ public class Trajectory extends Module implements RenderListener {
 	@Override
 	public void OnRender(RenderEvent event) {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		MatrixStack matrixStack = event.GetMatrixStack();
-		matrixStack.push();
-		
+
+		Matrix4f matrix4f = event.GetMatrix().peek().getPositionMatrix();
 		RenderSystem.setShaderColor(0, 0, 0, 1);
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
@@ -99,11 +97,11 @@ public class Trajectory extends Module implements RenderListener {
 		
 		bufferBuilder.begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION);
 		for(int iteration = 0; iteration < 1000; iteration++){
-			bufferBuilder.vertex(matrix, (float) prevPoint.x, (float) prevPoint.y, (float) prevPoint.z).next();
+			bufferBuilder.vertex(matrix4f, (float) prevPoint.x, (float) prevPoint.y, (float) prevPoint.z).next();
 			
 			float distance =  (float) ((initialVelocity)*Math.sin(2*mc.player.getRotationVector().x) / 9.0f);
 			Vec3d nextPoint = mc.player.getRotationVector().multiply(distance);
-			bufferBuilder.vertex(matrix, (float) nextPoint.x, (float) nextPoint.y, (float) nextPoint.z).next();
+			bufferBuilder.vertex(matrix4f, (float) nextPoint.x, (float) nextPoint.y, (float) nextPoint.z).next();
 			
 			prevPoint = nextPoint;
 		}
@@ -114,8 +112,7 @@ public class Trajectory extends Module implements RenderListener {
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
-		
-		matrixStack.pop();
+	
 	}
 
 }

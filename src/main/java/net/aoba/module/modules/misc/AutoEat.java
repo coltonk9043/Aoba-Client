@@ -31,7 +31,9 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.item.FoodComponent;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.FoodComponent;
+import net.minecraft.component.type.FoodComponents;
 import net.minecraft.item.Item;
 
 public class AutoEat extends Module implements FoodLevelListener {
@@ -76,12 +78,13 @@ public class AutoEat extends Module implements FoodLevelListener {
 			for(int i = 0; i< 9; i++) {
 				Item item = MC.player.getInventory().getStack(i).getItem();
 				
-				if(!item.isFood()) {
+				// TODO: ensure it works.
+				FoodComponent food = item.getComponents().get(DataComponentTypes.FOOD);
+				if(food == null)
 					continue;
-				}
-				FoodComponent food = item.getFoodComponent();
+				
 				if(bestFood != null) {
-					if(food.getHunger() > bestFood.getHunger()) {
+					if(food.nutrition() > bestFood.nutrition()) {
 						bestFood = food;
 						foodSlot = i;
 					}

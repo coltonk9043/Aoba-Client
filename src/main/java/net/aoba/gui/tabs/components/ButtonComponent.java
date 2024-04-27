@@ -18,11 +18,13 @@
 
 package net.aoba.gui.tabs.components;
 
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
-import net.aoba.gui.Color;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -99,7 +101,8 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
-		RenderUtils.drawOutlinedBox(matrixStack, actualX + 2, actualY, actualWidth - 4, actualHeight - 2, borderColor, backgroundColor);
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+		RenderUtils.drawOutlinedBox(matrix4f, actualX + 2, actualY, actualWidth - 4, actualHeight - 2, borderColor, backgroundColor);
 		RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);
 	}
 

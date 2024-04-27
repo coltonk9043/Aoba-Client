@@ -17,6 +17,8 @@
 */
 package net.aoba.gui.hud;
 
+import org.joml.Matrix4f;
+
 import net.aoba.gui.GuiManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.utils.types.Vector2;
@@ -74,12 +76,13 @@ public class InfoHud extends AbstractHud {
 	public void draw(DrawContext drawContext, float partialTicks) {
 		if(this.visible) {
 			MatrixStack matrixStack = drawContext.getMatrices();
-			// Draws background depending on components width and height
+			Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 			
+			// Draws background depending on components width and height
 			Vector2 pos = position.getValue();
 			
-			RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
-			RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
+			RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
+			RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
 			
 			RenderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, GuiManager.foregroundColor.getValue());
 			RenderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, GuiManager.foregroundColor.getValue());

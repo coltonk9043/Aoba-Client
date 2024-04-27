@@ -45,19 +45,21 @@ public class Step extends Module {
 
 	@Override
 	public void onDisable() {
-		if(MC.world != null) {
-			MC.player.setStepHeight(.5f);
-		}
+
 	}
 
 	@Override
 	public void onEnable() {
-		MC.player.setStepHeight(stepHeight.getValue().floatValue());
+		
 	}
 
 	@Override
 	public void onToggle() {
 
+	}
+	
+	public float getStepHeight() {
+		return stepHeight.getValue();
 	}
 	
 	public void setStepHeight(float height) {

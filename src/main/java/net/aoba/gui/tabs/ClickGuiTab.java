@@ -22,13 +22,15 @@
 
 package net.aoba.gui.tabs;
 
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.AbstractGui;
-import net.aoba.gui.Color;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.components.Component;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.SettingManager;
@@ -119,30 +121,30 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 		
 		Vector2 pos = position.getValue();
 		
-		
 		if (drawBorder) {
 			// Draws background depending on components width and height
-			RenderUtils.drawRoundedBox(matrixStack, pos.x, pos.y, width, height + 30, 6, GuiManager.backgroundColor.getValue());
-			RenderUtils.drawRoundedOutline(matrixStack, pos.x, pos.y, width, height + 30, 6, GuiManager.borderColor.getValue());
+			RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height + 30, 6, GuiManager.backgroundColor.getValue());
+			RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height + 30, 6, GuiManager.borderColor.getValue());
 			
 			if(icon != null) {
-				RenderUtils.drawTexturedQuad(drawContext, icon, pos.x + 8, pos.y + 4, 22, 22, GuiManager.foregroundColor.getValue());
+				RenderUtils.drawTexturedQuad(matrix4f, icon, pos.x + 8, pos.y + 4, 22, 22, GuiManager.foregroundColor.getValue());
 				RenderUtils.drawString(drawContext, this.title, pos.x + 38, pos.y + 8, GuiManager.foregroundColor.getValue());
 			}else
 				RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, GuiManager.foregroundColor.getValue());
 			
-			RenderUtils.drawLine(matrixStack, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
+			RenderUtils.drawLine(matrix4f, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
 
 			if (this.pinnable) {
 				if (this.isPinned.getValue()) {
-					RenderUtils.drawRoundedBox(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(154, 0, 0, 200));
-					RenderUtils.drawRoundedOutline(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(0, 0, 0, 200));
+					RenderUtils.drawRoundedBox(matrix4f, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(154, 0, 0, 200));
+					RenderUtils.drawRoundedOutline(matrix4f, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(0, 0, 0, 200));
 				} else {
-					RenderUtils.drawRoundedBox(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(128, 128, 128, 50));
-					RenderUtils.drawRoundedOutline(matrixStack, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(0, 0, 0, 50));
+					RenderUtils.drawRoundedBox(matrix4f, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(128, 128, 128, 50));
+					RenderUtils.drawRoundedOutline(matrix4f, pos.x + width - 23, pos.y + 8, 15, 15, 6f, new Color(0, 0, 0, 50));
 				}
 			}
 		}

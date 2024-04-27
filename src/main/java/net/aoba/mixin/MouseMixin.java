@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.events.LeftMouseDownEvent;
@@ -80,13 +81,15 @@ public class MouseMixin {
 			ci.cancel();
 	}
 
-	@Inject(at = { @At(value = "INVOKE", target = "Lnet/minecraft/client/Mouse;updateMouse()V") }, method = {
-			"onCursorPos(JDD)V" }, cancellable = true)
+	@Inject(at = { @At("HEAD") }, method = { "onCursorPos(JDD)V" }, cancellable = true)
 	private void onCursorPos(long window, double x, double y, CallbackInfo ci) {
-		MouseMoveEvent event = new MouseMoveEvent(x, y);
-		Aoba.getInstance().eventManager.Fire(event);
+		AobaClient aoba = Aoba.getInstance();
+		if(aoba.eventManager != null) {
+			MouseMoveEvent event = new MouseMoveEvent(x, y);
+			aoba.eventManager.Fire(event);
 
-		if (event.IsCancelled())
-			ci.cancel();
+			if (event.IsCancelled())
+				ci.cancel();
+		}
 	}
 }

@@ -30,6 +30,7 @@ import net.aoba.gui.GuiManager;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
+import net.aoba.module.modules.movement.Step;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
@@ -61,8 +62,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	}
 	
 	
-	
-	
 	@Inject (at = {@At("HEAD")}, method="setShowsDeathScreen(Z)V")
 	private void onShowDeathScreen(boolean state, CallbackInfo ci) {
 		GuiManager hudManager = Aoba.getInstance().hudManager;
@@ -91,11 +90,18 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	protected void onGetOffGroundSpeed(CallbackInfoReturnable<Float> cir) {
 		if(Aoba.getInstance().moduleManager.fly.getState()) {
 			Fly fly = (Fly)Aoba.getInstance().moduleManager.fly;
-			System.out.println("FLY IS ON!");
 			cir.setReturnValue((float)fly.getSpeed());
 		}else if(Aoba.getInstance().moduleManager.freecam.getState()) {
 			Freecam freecam = (Freecam)Aoba.getInstance().moduleManager.freecam;
 			cir.setReturnValue((float)freecam.getSpeed());
+		}
+	}
+	
+	@Override
+	public void onGetStepHeight(CallbackInfoReturnable<Float> cir) {
+		Step stepHack = (Step) Aoba.getInstance().moduleManager.step;
+		if(stepHack.getState()) {
+			cir.setReturnValue(cir.getReturnValue());
 		}
 	}
 }

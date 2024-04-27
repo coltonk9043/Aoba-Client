@@ -20,10 +20,14 @@ package net.aoba.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -77,14 +81,13 @@ public class NavigationBar implements LeftMouseDownListener {
 		int centerX = (window.getWidth() / 2);
 
 		MatrixStack matrixStack = drawContext.getMatrices();
-
+		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		int width = 100 * options.size();
 		
-		GuiManager hudManager = Aoba.getInstance().hudManager;
-		RenderUtils.drawRoundedBox(matrixStack, centerX - (width / 2), 25, width, 25, 6, GuiManager.backgroundColor.getValue());
-		RenderUtils.drawRoundedOutline(matrixStack, centerX -  (width / 2), 25, width, 25, 6, GuiManager.borderColor.getValue());
+		RenderUtils.drawRoundedBox(matrix, centerX - (width / 2), 25, width, 25, 6, GuiManager.backgroundColor.getValue());
+		RenderUtils.drawRoundedOutline(matrix, centerX -  (width / 2), 25, width, 25, 6, GuiManager.borderColor.getValue());
 
-		RenderUtils.drawRoundedBox(drawContext.getMatrices(), centerX - (width / 2) + (100 * this.selectedIndex), 25, 100, 25, 5, new Color(150, 150, 150, 100));
+		RenderUtils.drawRoundedBox(matrix, centerX - (width / 2) + (100 * this.selectedIndex), 25, 100, 25, 5, new Color(150, 150, 150, 100));
 			
 		for(int i = 0; i < options.size(); i++) {
 			Page pane = options.get(i);

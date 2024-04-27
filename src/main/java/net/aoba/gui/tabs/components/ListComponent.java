@@ -19,14 +19,18 @@
 package net.aoba.gui.tabs.components;
 
 import java.util.List;
+
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
-import net.aoba.gui.Color;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.StringSetting;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 
 public class ListComponent extends Component implements LeftMouseDownListener {
 	private StringSetting listSetting;
@@ -59,6 +63,9 @@ public class ListComponent extends Component implements LeftMouseDownListener {
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
+		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+		
 		float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(listSetting.getValue());
 		RenderUtils.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
 				actualY + 8, 0xFFFFFF);

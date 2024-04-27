@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
+import net.aoba.module.modules.movement.Step;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -53,5 +54,10 @@ public abstract class EntityMixin{
 	@Inject(at = {@At("HEAD")}, method = "damage(Lnet/minecraft/entity/damage/DamageSource;F)Z", cancellable = true)
 	public void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
 
+	}
+	
+	@Inject(at= {@At("HEAD")}, method = "getStepHeight()F", cancellable=true)
+	public void onGetStepHeight(CallbackInfoReturnable<Float> cir) {
+		
 	}
 }
