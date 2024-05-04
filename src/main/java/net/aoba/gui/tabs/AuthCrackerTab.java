@@ -19,6 +19,8 @@
 package net.aoba.gui.tabs;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -98,9 +100,12 @@ class AuthCracker{
 		URL url;
 		Scanner s = null;
 		try {
-			url = new URL("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt");
+			URI uri = new URI("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt");
+			url = uri.toURL();
 			s = new Scanner(url.openStream());
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 		if(s != null) {

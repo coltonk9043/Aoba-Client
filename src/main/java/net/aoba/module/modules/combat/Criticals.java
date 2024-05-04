@@ -26,6 +26,7 @@ import io.netty.buffer.Unpooled;
 import net.aoba.Aoba;
 import net.aoba.event.events.SendPacketEvent;
 import net.aoba.event.listeners.SendPacketListener;
+import net.aoba.mixin.interfaces.IPlayerInteractEntityC2SPacket;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -78,10 +79,10 @@ public class Criticals extends Module implements SendPacketListener {
 		Packet<?> packet = event.GetPacket();
 		if(packet instanceof PlayerInteractEntityC2SPacket) {
 			PlayerInteractEntityC2SPacket playerInteractPacket = (PlayerInteractEntityC2SPacket) packet;
-			PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
+			IPlayerInteractEntityC2SPacket packetAccessor = (IPlayerInteractEntityC2SPacket)playerInteractPacket;
 			
-			// TODO: Fix packet write.
-			//playerInteractPacket.write(packetBuf);
+			PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
+			packetAccessor.write(packetBuf);
 			packetBuf.readVarInt();
 			InteractType type = packetBuf.readEnumConstant(InteractType.class);
 			

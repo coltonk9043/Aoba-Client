@@ -25,7 +25,6 @@ import net.aoba.event.events.LeftMouseUpEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.LeftMouseUpListener;
 import net.aoba.event.listeners.KeyDownListener;
-
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -115,8 +114,8 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		radarHud = new RadarHud(590, 500, 180, 180);
 		infoHud = new InfoHud(100, 500);
 		
-		hudPane.AddHud(new HudsTab(new AbstractHud[] { moduleSelector, armorHud,radarHud, infoHud }));
-
+		hudPane.AddHud(new HudOptionsTab());
+		hudPane.AddHud(new ToggleHudsTab(new AbstractHud[] { moduleSelector, armorHud,radarHud, infoHud }));
 		int xOffset = 50;
 		for (Category category : Module.Category.values()) {
 			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75, true, category.name());

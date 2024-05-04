@@ -130,6 +130,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
+		MinecraftClient mc = MinecraftClient.getInstance();
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 		
@@ -145,7 +146,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 		RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
 		
 		String valueText = String.format("%.02f", this.slider.getValue());
-		int textSize = MinecraftClient.getInstance().textRenderer.getWidth(valueText) * MinecraftClient.getInstance().options.getGuiScale().getValue();
+		int textSize = mc.textRenderer.getWidth(valueText) * mc.options.getGuiScale().getValue();
 		RenderUtils.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 6, 0xFFFFFF);
 	}
 }

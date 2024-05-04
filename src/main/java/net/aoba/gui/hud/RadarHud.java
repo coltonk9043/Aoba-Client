@@ -18,8 +18,6 @@
 package net.aoba.gui.hud;
 
 import org.joml.Matrix4f;
-
-import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
@@ -49,7 +47,6 @@ public class RadarHud extends AbstractHud {
 			Vector2 pos = position.getValue();
 			
 			// Draws background depending on components width and height
-			GuiManager hudManager = Aoba.getInstance().hudManager;
 			RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
 			RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
 

@@ -20,14 +20,12 @@ repositories {
 
 loom {
     splitEnvironmentSourceSets()
-
 	mods {
-		"template-mod" {
+		"aoba" {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
 	}
-
 }
 
 dependencies {

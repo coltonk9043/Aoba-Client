@@ -19,19 +19,14 @@
 package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
-
-import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.FontChangedEvent;
 import net.aoba.event.listeners.FontChangedListener;
-import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Formatting;
 
 public class StringComponent extends Component implements FontChangedListener {
@@ -69,9 +64,6 @@ public class StringComponent extends Component implements FontChangedListener {
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-		
 		int i = 0;
 		for (String str : text) {
 			if(bold)

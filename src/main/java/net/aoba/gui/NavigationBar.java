@@ -20,9 +20,7 @@ package net.aoba.gui;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.LeftMouseDownEvent;

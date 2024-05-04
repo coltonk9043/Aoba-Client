@@ -19,11 +19,9 @@
 package net.aoba.gui.tabs.components;
 
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
-import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;

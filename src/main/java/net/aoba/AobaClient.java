@@ -26,7 +26,6 @@ import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.colors.ColorMode;
 import net.aoba.gui.font.FontManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.mixin.interfaces.IMinecraftClient;

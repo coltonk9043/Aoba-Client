@@ -18,13 +18,11 @@
 package net.aoba.gui.hud;
 
 import java.util.ArrayList;
-
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;

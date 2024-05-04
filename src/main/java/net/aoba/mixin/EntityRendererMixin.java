@@ -76,6 +76,7 @@ public abstract class EntityRendererMixin<T extends Entity> {
 			 MatrixStack matrices,
 			 VertexConsumerProvider vertexConsumers,
 			 int light) {
+		MinecraftClient mc = MinecraftClient.getInstance();
 		AobaClient aoba = Aoba.getInstance();
 		
 		double d = dispatcher.getSquaredDistanceToCamera((Entity)entity);
@@ -92,19 +93,11 @@ public abstract class EntityRendererMixin<T extends Entity> {
         if(aoba.moduleManager.nametags.getState()) {
         	float scale = 1.0f;
         	Nametags nameTagsModule = (Nametags) aoba.moduleManager.nametags;
-// TODO Player Entities are not PlayerEntity.
-//        	if(nameTagsModule.getPlayersOnly()) {
-//        		if(entity instanceof PlayerEntity) {
-//        			scale = (float)nameTagsModule.getNametagScale();
-//        		}
-//        	}else {
-        		scale = (float)nameTagsModule.getNametagScale();
-//}
-        	
+        	scale = (float)nameTagsModule.getNametagScale();
         	matrices.scale(scale, scale, scale);
         }
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
-        float g = MinecraftClient.getInstance().options.getTextBackgroundOpacity(0.25f);
+        float g = mc.options.getTextBackgroundOpacity(0.25f);
         int j = (int)(g * 255.0f) << 24;
         TextRenderer textRenderer = this.getTextRenderer();
         float h = -textRenderer.getWidth(text) / 2;

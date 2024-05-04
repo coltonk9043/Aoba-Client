@@ -25,10 +25,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.At;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.event.events.PlayerHealthEvent;
 import net.aoba.module.modules.misc.FastBreak;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.registry.tag.FluidTags;
@@ -46,7 +44,10 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 	public void onGetBlockBreakingSpeed(BlockState blockState, CallbackInfoReturnable<Float> ci) {
 		AobaClient aoba = Aoba.getInstance();
 		FastBreak fastBreak = (FastBreak)aoba.moduleManager.fastbreak;
+		
+		// If fast break is enabled.
 		if(fastBreak.getState()) {
+			// Multiply the break speed and override the return value.
 			float speed = inventory.getBlockBreakingSpeed(blockState);
 			speed *= fastBreak.multiplier.getValue();
 			

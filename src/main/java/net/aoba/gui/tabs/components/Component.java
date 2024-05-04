@@ -19,14 +19,11 @@
 package net.aoba.gui.tabs.components;
 
 import java.util.ArrayList;
-
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.IGuiElement;
-import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;

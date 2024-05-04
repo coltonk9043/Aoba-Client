@@ -32,7 +32,6 @@ import net.aoba.gui.tabs.components.CheckboxComponent;
 import net.aoba.gui.tabs.components.ColorPickerComponent;
 import net.aoba.gui.tabs.components.Component;
 import net.aoba.gui.tabs.components.KeybindComponent;
-import net.aoba.gui.tabs.components.ListComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.aoba.misc.RenderUtils;
@@ -44,8 +43,6 @@ import net.aoba.settings.types.BlocksSetting;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.IndexedStringListSetting;
-import net.aoba.settings.types.StringListSetting;
 import net.aoba.utils.types.Vector2;
 
 public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListener, MouseMoveListener {

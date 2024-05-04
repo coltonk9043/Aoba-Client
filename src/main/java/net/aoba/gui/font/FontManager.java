@@ -29,16 +29,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.stb.STBTTFontinfo;
-import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.system.Struct;
 import org.lwjgl.util.freetype.FT_Face;
 import org.lwjgl.util.freetype.FreeType;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.FontChangedEvent;
 import net.aoba.settings.SettingManager;
@@ -96,9 +92,10 @@ public class FontManager {
 					e.printStackTrace();
 				}
 
-				FontStorage storage = new FontStorage(MC.getTextureManager(), new Identifier("aoba:" + file.getName()));
-				storage.setFonts(list, Set.of());
-				fontRenderers.put(file.getName().replace(".ttf", ""), new TextRenderer(id -> storage, true));
+				try (FontStorage storage = new FontStorage(MC.getTextureManager(), new Identifier("aoba:" + file.getName()))) {
+					storage.setFonts(list, Set.of());
+					fontRenderers.put(file.getName().replace(".ttf", ""), new TextRenderer(id -> storage, true));
+				}
 			}
 		}
 

@@ -33,6 +33,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -313,7 +315,8 @@ public class AltManager {
 		byte[] encodedDataBytes = urlEncodeMap(postData).getBytes(StandardCharsets.UTF_8);
 
 		try {
-			URL url = new URL(urlPost);
+			URI uri = URI.create(urlPost);
+			URL url = uri.toURL();
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 			connection.setRequestMethod("POST");
@@ -557,7 +560,8 @@ public class AltManager {
 	}
 
 	private String postJson(final String urlString, final String content) throws Exception {
-		URL url = new URL(urlString);
+		URI uri = new URI(urlString);
+		URL url = uri.toURL();
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 		connection.setDoInput(true);
 		connection.setDoOutput(true);
@@ -601,8 +605,11 @@ public class AltManager {
 
 	private URL createURL(String url) {
 		try {
-			return new URL(url);
+			URI uri = new URI(url);
+			return uri.toURL();
 		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException(e);
+		} catch(URISyntaxException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

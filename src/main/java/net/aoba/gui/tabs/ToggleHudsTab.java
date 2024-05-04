@@ -16,36 +16,34 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package net.aoba.gui.hud;
+package net.aoba.gui.tabs;
 
 import net.aoba.Aoba;
-import net.aoba.gui.AbstractGui;
-import net.aoba.settings.SettingManager;
-import net.aoba.settings.types.BooleanSetting;
+import net.aoba.event.listeners.MouseScrollListener;
+import net.aoba.gui.hud.AbstractHud;
+import net.aoba.gui.tabs.components.HudComponent;
+import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.minecraft.client.gui.DrawContext;
 
-public class AbstractHud extends AbstractGui {
+public class ToggleHudsTab extends ClickGuiTab {
+	public ToggleHudsTab(AbstractHud[] abstractHuds) {
+		super("Toggle HUDs", 50, 50, false);
 
-	public BooleanSetting activated;
-	
-	public AbstractHud(String ID, float x, float y, float width, float height) {
-		super(ID, x, y, width, height);
-		this.setVisible(true);
-		this.activated = new BooleanSetting(ID + "_activated", ID + " Activated", false, (Boolean val) -> onActivatedChanged(val));
-		SettingManager.registerSetting(activated, Aoba.getInstance().settingManager.config_category);
-	}
+		Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
+		StackPanelComponent stackPanel = new StackPanelComponent(this);
+		stackPanel.setTop(30);
 
-	private void onActivatedChanged(Boolean state) {
-		Aoba.getInstance().hudManager.SetHudActive(this, state.booleanValue());
-	}
-	
-	@Override
-	public void update() {
+		for(AbstractHud hud : abstractHuds) {
+			HudComponent hudComponent = new HudComponent(hud.getID(), stackPanel, hud);
+			stackPanel.addChild(hudComponent);
+		}
 		
+		this.children.add(stackPanel);
+		this.setWidth(300);
 	}
-
+	
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		
+		super.draw(drawContext, partialTicks);
 	}
 }
