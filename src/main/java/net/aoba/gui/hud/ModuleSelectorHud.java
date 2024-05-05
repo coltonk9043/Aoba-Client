@@ -158,17 +158,5 @@ public class ModuleSelectorHud extends AbstractHud {
 				}
 			}
 		}
-		
-		// Draws the active mods in the top right of the screen.
-		int iteration = 0;
-		for(int i = 0; i < aoba.moduleManager.modules.size(); i++) {
-			Module mod = aoba.moduleManager.modules.get(i);
-			if(mod.getState()) {
-				RenderUtils.drawString(drawContext, mod.getName(),
-						(float) (window.getWidth() - ((mc.textRenderer.getWidth(mod.getName()) + 5) * 2)), 10 + (iteration*20),
-						GuiManager.foregroundColor.getValue().getColorAsInt());
-				iteration++;
-			}
-		}
 	}
 }
