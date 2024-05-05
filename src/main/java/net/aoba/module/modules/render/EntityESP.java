@@ -36,16 +36,14 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 
-public class EntityESP extends Module implements RenderListener, TickListener {
+public class EntityESP extends Module implements RenderListener {
 	private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color",  "Passive Color", new Color(0, 1f, 1f));
 	private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
 	private ColorSetting color_misc = new ColorSetting("entityesp_color_misc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
@@ -71,13 +69,11 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 	@Override
 	public void onDisable() {
 		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
 		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -88,16 +84,9 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 	@Override
 	public void OnRender(RenderEvent event) {
 		Matrix4f matrix4f = event.GetMatrix().peek().getPositionMatrix();
-		float partialTicks = event.GetPartialTicks();
-		
-		
 		
 		for (Entity entity : MC.world.getEntities()) {
 			if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
-				
-				//double x = Math.lerp(partialTicks, entity.lastRenderX, entity.getX());
-				//double y = Math.lerp(partialTicks, entity.lastRenderY, entity.getY());
-				//double z = Math.lerp(partialTicks, entity.lastRenderZ, entity.getZ());
 				
 				Box boundingBox = entity.getBoundingBox(); 
 				//Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(entity, partialTicks);
@@ -111,15 +100,5 @@ public class EntityESP extends Module implements RenderListener, TickListener {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void OnUpdate(TickEvent event) {
-		/*
-		 * if(this.rainbow.getValue()) {
-		 * this.rainbowColor.update(this.effectSpeed.getValue().floatValue()); }else {
-		 * 
-		 * this.color.setHSV(hue.getValue().floatValue(), 1f, 1f); }
-		 */
 	}
 }

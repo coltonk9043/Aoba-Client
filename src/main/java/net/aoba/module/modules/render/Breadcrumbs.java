@@ -29,8 +29,6 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.gui.colors.RainbowColor;
-
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -45,8 +43,6 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 	private Color currentColor;
 	
 	private ColorSetting color = new ColorSetting("breadcrumbs_color", "Color",  "Color", new Color(0, 1f, 1f));
-	
-	private RainbowColor rainbowColor;
 
 	public BooleanSetting rainbow = new BooleanSetting("breadcrumbs_rainbow", "Rainbow", "Rainbow", false);
 	public FloatSetting effectSpeed = new FloatSetting("breadcrumbs_effectspeed", "Effect Spd.", "Effect Spd", 4f, 1f, 20f, 0.1f);
@@ -62,7 +58,6 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 		this.setCategory(Category.Render);
 		this.setDescription("Shows breadcrumbs of where you last stepped;");
 		currentColor = color.getValue();
-		rainbowColor = new RainbowColor();
 		
 		this.addSetting(color);
 		this.addSetting(rainbow);

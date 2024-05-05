@@ -19,11 +19,7 @@
 package net.aoba.gui.tabs;
 
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
-import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.AbstractGui;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
@@ -45,7 +41,7 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.types.Vector2;
 
-public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListener, MouseMoveListener {
+public class ModuleSettingsTab extends AbstractGui {
 	protected String title;
 	protected Module module;
 
@@ -144,27 +140,27 @@ public class ModuleSettingsTab extends AbstractGui implements LeftMouseDownListe
 		}
 	}
 
-	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		double mouseX = mc.mouse.getX();
-		double mouseY = mc.mouse.getY();
-		Vector2 pos = position.getValue();
-
-		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			if (mouseX >= pos.x && mouseX <= pos.x + width) {
-				if (mouseY >= pos.y && mouseY <= pos.y + 24) {
-					this.lastClickOffsetX = mouseX - pos.x;
-					this.lastClickOffsetY = mouseY - pos.y;
-					GuiManager.currentGrabbed = this;
-				}
-			}
-
-			if (mouseX >= (pos.x + width - 24) && mouseX <= (pos.x + width - 2)) {
-				if (mouseY >= (pos.y + 4) && mouseY <= (pos.y + 20)) {
-					GuiManager.currentGrabbed = null;
-					Aoba.getInstance().hudManager.RemoveHud(this, "Modules");
-				}
-			}
-		}
-	}
+//	@Override
+//	public void OnLeftMouseDown(LeftMouseDownEvent event) {
+//		double mouseX = mc.mouse.getX();
+//		double mouseY = mc.mouse.getY();
+//		Vector2 pos = position.getValue();
+//
+//		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
+//			if (mouseX >= pos.x && mouseX <= pos.x + width) {
+//				if (mouseY >= pos.y && mouseY <= pos.y + 24) {
+//					this.lastClickOffsetX = mouseX - pos.x;
+//					this.lastClickOffsetY = mouseY - pos.y;
+//					GuiManager.currentGrabbed = this;
+//				}
+//			}
+//
+//			if (mouseX >= (pos.x + width - 24) && mouseX <= (pos.x + width - 2)) {
+//				if (mouseY >= (pos.y + 4) && mouseY <= (pos.y + 20)) {
+//					GuiManager.currentGrabbed = null;
+//					Aoba.getInstance().hudManager.RemoveHud(this, "Modules");
+//				}
+//			}
+//		}
+//	}
 }
