@@ -41,37 +41,43 @@ public class MouseMixin {
 
 	@Inject(at = { @At("HEAD") }, method = { "onMouseButton(JIII)V" }, cancellable = true)
 	private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
-		switch (button) {
-		case GLFW.GLFW_MOUSE_BUTTON_LEFT:
-			if (action == 1) {
-				LeftMouseDownEvent event = new LeftMouseDownEvent(x, y);
-				Aoba.getInstance().eventManager.Fire(event);
+		AobaClient aoba = Aoba.getInstance();
+		if(aoba != null && aoba.eventManager != null) {
+			switch (button) {
+			case GLFW.GLFW_MOUSE_BUTTON_LEFT:
+				if (action == 1) {
+					LeftMouseDownEvent event = new LeftMouseDownEvent(x, y);
+					aoba.eventManager.Fire(event);
 
-				if (event.IsCancelled()) {
-					ci.cancel();
-				}
-			} else {
-				LeftMouseUpEvent event = new LeftMouseUpEvent(x, y);
-				Aoba.getInstance().eventManager.Fire(event);
+					if (event.IsCancelled()) {
+						ci.cancel();
+					}
+				} else {
+					LeftMouseUpEvent event = new LeftMouseUpEvent(x, y);
+					aoba.eventManager.Fire(event);
 
-				if (event.IsCancelled()) {
-					ci.cancel();
+					if (event.IsCancelled()) {
+						ci.cancel();
+					}
 				}
+				break;
+			case GLFW.GLFW_MOUSE_BUTTON_MIDDLE:
+
+				break;
 			}
-			break;
-		case GLFW.GLFW_MOUSE_BUTTON_MIDDLE:
-
-			break;
 		}
 	}
 
 	@Inject(at = { @At("HEAD") }, method = { "onMouseScroll(JDD)V" }, cancellable = true)
 	private void onMouseScroll(long window, double horizontal, double vertical, CallbackInfo ci) {
-		MouseScrollEvent event = new MouseScrollEvent(horizontal, vertical);
-		Aoba.getInstance().eventManager.Fire(event);
+		AobaClient aoba = Aoba.getInstance();
+		if(aoba != null && aoba.eventManager != null) {
+			MouseScrollEvent event = new MouseScrollEvent(horizontal, vertical);
+			aoba.eventManager.Fire(event);
 
-		if (event.IsCancelled()) {
-			ci.cancel();
+			if (event.IsCancelled()) {
+				ci.cancel();
+			}
 		}
 	}
 
@@ -84,7 +90,7 @@ public class MouseMixin {
 	@Inject(at = { @At("HEAD") }, method = { "onCursorPos(JDD)V" }, cancellable = true)
 	private void onCursorPos(long window, double x, double y, CallbackInfo ci) {
 		AobaClient aoba = Aoba.getInstance();
-		if(aoba.eventManager != null) {
+		if(aoba != null && aoba.eventManager != null) {
 			MouseMoveEvent event = new MouseMoveEvent(x, y);
 			aoba.eventManager.Fire(event);
 
