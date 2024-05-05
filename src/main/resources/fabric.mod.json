@@ -1,30 +1,30 @@
 {
-  "schemaVersion": 1,
-  "id": "aoba",
-  "version": "1.4.1",
-  "name": "Aoba Hacked Client",
-  "description": "Custom hacked client running on Fabric 1.20.5",
-  "authors": [
-    "Cocolots"
-  ],
-  "contact": {
-    "sources": "https://github.com/coltonk9043/Aoba-MC-Hacked-Client"
-  },
-  "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "net.aoba.Aoba"
-    ]
-  },
-  "mixins": [
-    "aoba.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.15.10",
-    "fabric-api": ">=0.97.7",
-    "minecraft": "1.20.5",
-    "java": ">=21"
-  }
+	"schemaVersion": 1,
+	"id": "aoba",
+	"version": "1.4.1",
+	"name": "Aoba Hacked Client",
+	"description": "Custom hacked client running on Fabric 1.20.5",
+	"authors": [
+		"Cocolots"
+	],
+	"contact": {
+		"sources": "https://github.com/coltonk9043/Aoba-MC-Hacked-Client"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/aoba/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.aoba.Aoba"
+		]
+	},
+	"mixins": [
+		"aoba.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.20.5",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
 }

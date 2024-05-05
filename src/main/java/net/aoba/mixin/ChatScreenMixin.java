@@ -108,7 +108,7 @@ public class ChatScreenMixin extends ScreenMixin{
 	}
 	
 	@Inject(at = {
-			@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;addToMessageHistory(Ljava/lang/String;)V", ordinal = 0, shift = At.Shift.AFTER) }, method = "sendMessage(Ljava/lang/String;Z)Z", cancellable = true)
+			@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;addToMessageHistory(Ljava/lang/String;)V", shift = At.Shift.AFTER) }, method = "sendMessage(Ljava/lang/String;Z)V", cancellable = true)
 	public void onSendMessage(String message, boolean addToHistory, CallbackInfo ci) {
 		if (message.startsWith(CommandManager.PREFIX.getValue())) {
 			Aoba.getInstance().commandManager.command(message.split(" "));
