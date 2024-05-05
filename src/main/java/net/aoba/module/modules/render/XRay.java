@@ -22,7 +22,6 @@
 package net.aoba.module.modules.render;
 
 import java.util.HashSet;
-import java.util.List;
 import org.lwjgl.glfw.GLFW;
 import com.google.common.collect.Lists;
 import net.aoba.interfaces.ISimpleOption;

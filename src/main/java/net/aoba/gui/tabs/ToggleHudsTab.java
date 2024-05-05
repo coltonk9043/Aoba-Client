@@ -18,8 +18,6 @@
 
 package net.aoba.gui.tabs;
 
-import net.aoba.Aoba;
-import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.gui.tabs.components.HudComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
@@ -29,7 +27,6 @@ public class ToggleHudsTab extends ClickGuiTab {
 	public ToggleHudsTab(AbstractHud[] abstractHuds) {
 		super("Toggle HUDs", 50, 50, false);
 
-		Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
 		StackPanelComponent stackPanel = new StackPanelComponent(this);
 		stackPanel.setTop(30);
 

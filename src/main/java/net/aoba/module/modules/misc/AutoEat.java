@@ -24,16 +24,13 @@ package net.aoba.module.modules.misc;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.FoodLevelEvent;
-import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.FoodLevelListener;
-import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
-import net.minecraft.component.type.FoodComponents;
 import net.minecraft.item.Item;
 
 public class AutoEat extends Module implements FoodLevelListener {

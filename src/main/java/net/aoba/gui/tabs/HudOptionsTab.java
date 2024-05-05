@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import net.aoba.Aoba;
-import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.tabs.components.ColorPickerComponent;
 import net.aoba.gui.tabs.components.KeybindComponent;
@@ -37,7 +36,6 @@ public class HudOptionsTab extends ClickGuiTab {
 	public HudOptionsTab() {
 		super("Hud Options", 260, 50, false);
 
-		Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
 		StackPanelComponent stackPanel = new StackPanelComponent(this);
 		stackPanel.setTop(30);
 		

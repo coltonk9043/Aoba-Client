@@ -22,9 +22,6 @@
 package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
-
-import net.aoba.Aoba;
-import net.aoba.gui.font.FontManager;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
