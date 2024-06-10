@@ -82,7 +82,7 @@ public class Criticals extends Module implements SendPacketListener {
 			IPlayerInteractEntityC2SPacket packetAccessor = (IPlayerInteractEntityC2SPacket)playerInteractPacket;
 			
 			PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
-			packetAccessor.write(packetBuf);
+			packetAccessor.invokeWrite(packetBuf);
 			packetBuf.readVarInt();
 			InteractType type = packetBuf.readEnumConstant(InteractType.class);
 			

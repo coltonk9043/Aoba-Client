@@ -52,7 +52,6 @@ public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener,
 	protected double lastClickOffsetY;
 	protected boolean inheritHeightFromChildren = true;
 	
-	
 	protected ArrayList<Component> children = new ArrayList<>();
 	
 	public AbstractGui(String ID, float x, float y, float width, float height) {

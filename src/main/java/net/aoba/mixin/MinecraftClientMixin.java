@@ -19,6 +19,7 @@
 package net.aoba.mixin;
 
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.event.events.TickEvent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
@@ -57,19 +58,11 @@ public abstract class MinecraftClientMixin{
 		Aoba.getInstance().loadAssets();
 	}
 	
-	// TODO: this was moved to the FontManager class.
-	//@Inject(at = @At("TAIL"), method = "initFont(Z)V")
-	//private void onInitFont(boolean forcesUnicode, CallbackInfo info) {
-	//	Aoba.getInstance().loadAssets();
-	//}
-	
 	@Inject(at = @At("TAIL"), method = "tick()V")
 	public void tick(CallbackInfo info) {
 		if (this.world != null) {
 			TickEvent updateEvent = new TickEvent();
 			Aoba.getInstance().eventManager.Fire(updateEvent);
-			
-			Aoba.getInstance().update();
 		}
 	}
 
@@ -87,22 +80,6 @@ public abstract class MinecraftClientMixin{
 		return session;
 	}
 	
-	@Inject(at = {@At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;crosshairTarget:Lnet/minecraft/util/hit/HitResult;", ordinal = 0)}, method = {"doAttack()Z"}, cancellable = true)
-	private void onDoAttack(CallbackInfoReturnable<Boolean> cir) {
-		//double mouseX = Math.ceil(mouse.getX());
-		//double mouseY = Math.ceil(mouse.getY());
-		
-		//System.out.println("DOuble Click?");
-		//MouseLeftClickEvent event = new MouseLeftClickEvent(mouseX, mouseY);
-		
-		//Aoba.getInstance().eventManager.Fire(event);
-		
-		//if(event.IsCancelled()) {
-		//	cir.setReturnValue(false);
-		//	cir.cancel();
-		//}
-	}
-	
 	@Inject(at = {@At(value = "HEAD")}, method = {"close()V"})
 	private void onClose(CallbackInfo ci) {
 		try {
@@ -114,6 +91,9 @@ public abstract class MinecraftClientMixin{
 	
 	@Inject(at = {@At(value="HEAD")}, method = {"openGameMenu(Z)V"})
 	private void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
-		Aoba.getInstance().hudManager.setClickGuiOpen(false);
+		AobaClient aoba = Aoba.getInstance();
+		if(aoba.hudManager != null) {
+			Aoba.getInstance().hudManager.setClickGuiOpen(false);
+		}
 	}
 }

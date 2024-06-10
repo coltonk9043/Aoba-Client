@@ -96,14 +96,6 @@ public class AobaClient {
 		//GuiManager.borderColor.setMode(ColorMode.Rainbow);
 		//GuiManager.foregroundColor.setMode(ColorMode.Random);
 	}
-	
-	/**
-	 * Updates Aoba on a per-tick basis.
-	 */
-	public void update() {
-		moduleManager.update();
-		hudManager.update();
-	}
 
 	/**
 	 * Renders the HUD every frame

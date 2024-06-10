@@ -22,8 +22,10 @@ import java.util.HashMap;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.LeftMouseUpEvent;
+import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.LeftMouseDownListener;
 import net.aoba.event.listeners.LeftMouseUpListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.event.listeners.KeyDownListener;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
@@ -56,7 +58,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, KeyDownListener {
+public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, KeyDownListener, TickListener {
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 
 	public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
@@ -105,6 +107,7 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		SettingManager.registerSetting(clickGuiButton, Aoba.getInstance().settingManager.modules_category);
 		
 		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	public void Initialize() {
@@ -191,7 +194,8 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 	 * Getter for the current color used by the GUI for text rendering.
 	 * @return Current Color
 	 */
-	public void update() {
+	@Override
+	public void OnUpdate(TickEvent event) {
 		if(!Aoba.getInstance().isGhosted()){
 
 			/**
@@ -227,7 +231,7 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		
 		//Aoba.getInstance().eventManager.Fire(new MouseScrollEvent(5.0f, 5.0f));
 	}
-
+	
 	public void draw(DrawContext drawContext, float tickDelta) {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

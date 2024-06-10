@@ -8,5 +8,5 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 @Mixin(PlayerInteractEntityC2SPacket.class)
 public interface IPlayerInteractEntityC2SPacket {
     @Invoker("write")
-    void write(PacketByteBuf buf);
+    public void invokeWrite(PacketByteBuf buf);
 }
