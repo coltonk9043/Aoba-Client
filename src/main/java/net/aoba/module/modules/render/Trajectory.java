@@ -35,6 +35,7 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
@@ -84,7 +85,7 @@ public class Trajectory extends Module implements RenderListener {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
+		
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
 		ItemStack itemStack = mc.player.getActiveItem();
@@ -94,19 +95,18 @@ public class Trajectory extends Module implements RenderListener {
 		float initialVelocity = (52 * BowItem.getPullProgress(mc.player.getItemUseTime()));
 		Vec3d prevPoint = new Vec3d(0,0,0);
 		
-		bufferBuilder.begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION);
 		for(int iteration = 0; iteration < 1000; iteration++){
-			bufferBuilder.vertex(matrix4f, (float) prevPoint.x, (float) prevPoint.y, (float) prevPoint.z).next();
+			bufferBuilder.vertex(matrix4f, (float) prevPoint.x, (float) prevPoint.y, (float) prevPoint.z);
 			
 			float distance =  (float) ((initialVelocity)*Math.sin(2*mc.player.getRotationVector().x) / 9.0f);
 			Vec3d nextPoint = mc.player.getRotationVector().multiply(distance);
-			bufferBuilder.vertex(matrix4f, (float) nextPoint.x, (float) nextPoint.y, (float) nextPoint.z).next();
+			bufferBuilder.vertex(matrix4f, (float) nextPoint.x, (float) nextPoint.y, (float) nextPoint.z);
 			
 			prevPoint = nextPoint;
 		}
 		
-
-		tessellator.draw();
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);

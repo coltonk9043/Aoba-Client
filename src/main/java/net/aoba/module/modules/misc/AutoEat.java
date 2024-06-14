@@ -75,7 +75,6 @@ public class AutoEat extends Module implements FoodLevelListener {
 			for(int i = 0; i< 9; i++) {
 				Item item = MC.player.getInventory().getStack(i).getItem();
 				
-				// TODO: ensure it works.
 				FoodComponent food = item.getComponents().get(DataComponentTypes.FOOD);
 				if(food == null)
 					continue;

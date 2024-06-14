@@ -18,21 +18,10 @@
 
 package net.aoba.mixin;
 
-import net.aoba.Aoba;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
-
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.minecraft.client.render.RenderTickCounter.Constant;
 
-@Mixin(InGameHud.class)
-public class IngameHudMixin {
-
-	@Inject(at = {@At(value = "HEAD") }, method = {"render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V" })
-	private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
-		Aoba.getInstance().drawHUD(context, tickDelta.getTickDelta(false));
-	}
+@Mixin(Constant.class)
+public class ConstantMixin {
+	// TODO: Wtf is constant and what's it for? Determine and lets HACK.
 }

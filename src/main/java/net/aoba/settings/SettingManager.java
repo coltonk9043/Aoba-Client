@@ -186,7 +186,7 @@ public class SettingManager {
 					String[] ids = value.split(",");
 					HashSet<Block> result = new HashSet<Block>();
 					for (String str : ids) {
-						Identifier i = new Identifier(str);
+						Identifier i = Identifier.of(str);
 						result.add(Registries.BLOCK.get(i));
 					}
 					setting.setValue(result);

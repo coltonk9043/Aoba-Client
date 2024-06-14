@@ -44,7 +44,7 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 	public ModuleComponent(String text, IGuiElement parent, Module module) {
 		super(parent);
 		
-		gear = new Identifier("aoba", "/textures/gear.png");
+		gear = Identifier.of("aoba", "/textures/gear.png");
 		this.text = text;
 		this.module = module;
 		

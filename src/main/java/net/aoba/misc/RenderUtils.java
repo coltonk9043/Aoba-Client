@@ -56,14 +56,13 @@ public class RenderUtils {
 		float y2 = y1 + height;
 		
 		RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.setShader(GameRenderer::getPositionColorTexProgram);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
         RenderSystem.enableBlend();
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
-        bufferBuilder.vertex(matrix4f, x1, y1, 0).color(red, green, blue, alpha).texture(0, 0).next();
-        bufferBuilder.vertex(matrix4f, x1, y2, 0).color(red, green, blue, alpha).texture(0, 1).next();
-        bufferBuilder.vertex(matrix4f, x2, y2, 0).color(red, green, blue, alpha).texture(1, 1).next();
-        bufferBuilder.vertex(matrix4f, x2, y1, 0).color(red, green, blue, alpha).texture(1, 0).next();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+        bufferBuilder.vertex(matrix4f, x1, y1, 0).color(red, green, blue, alpha).texture(0, 0);
+        bufferBuilder.vertex(matrix4f, x1, y2, 0).color(red, green, blue, alpha).texture(0, 1);
+        bufferBuilder.vertex(matrix4f, x2, y2, 0).color(red, green, blue, alpha).texture(1, 1);
+        bufferBuilder.vertex(matrix4f, x2, y1, 0).color(red, green, blue, alpha).texture(1, 0);
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.disableBlend();
 	}
@@ -76,16 +75,15 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
+		
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
-		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
-		bufferBuilder.vertex(matrix4f, x, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y + height, 0).next();
-
-		tessellator.draw();
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
+		bufferBuilder.vertex(matrix4f, x, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0);
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -99,11 +97,9 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
-		bufferBuilder.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
-		
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
 		double roundedInterval = (360.0f / 30.0f);
 		
 		for(int i = 0; i < 30; i++) {
@@ -114,12 +110,11 @@ public class RenderUtils {
 			float radiusX2 = (float)Math.cos(angle2) * radius;
 			float radiusY2 = (float)Math.sin(angle2) * radius;
 			
-			bufferBuilder.vertex(matrix4f, x, y, 0).next();
-			bufferBuilder.vertex(matrix4f, x + radiusX1, y + radiusY1, 0).next();
-			bufferBuilder.vertex(matrix4f, x + radiusX2, y + radiusY2, 0).next();
+			bufferBuilder.vertex(matrix4f, x, y, 0);
+			bufferBuilder.vertex(matrix4f, x + radiusX1, y + radiusY1, 0);
+			bufferBuilder.vertex(matrix4f, x + radiusX2, y + radiusY2, 0);
 		}
-		
-		tessellator.draw();
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -133,67 +128,65 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
-		bufferBuilder.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
-		
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
 		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
 		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f);
 		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
 		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f);
 		
 		// |---
-		bufferBuilder.vertex(matrix4f, x + radius, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x + radius, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
 		
 		// ---|
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
 		
 		// _||
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
 		
 		// |||
-		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
 		
 		/// __|
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
 		
 		// |__
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).next();
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
 		
 		// |||
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x , y + radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x , y + radius, 0);
 		
 		/// ||-
-		bufferBuilder.vertex(matrix4f, x , y + radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + radius , y + radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x , y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius , y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
 
 		/// |-/
-		bufferBuilder.vertex(matrix4f, x + radius , y + radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius , y + radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + radius , y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x + radius , y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius , y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius , y + height - radius, 0);
 		
 		/// /_|
-		bufferBuilder.vertex(matrix4f, x + radius , y + height - radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius , y + height - radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius , y + radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x + radius , y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius , y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius , y + radius, 0);
 		
-		tessellator.draw();
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -207,32 +200,30 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
-		
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
-		
+
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
 		// Top Left Arc and Top
 		buildArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x + radius, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).next();
+		bufferBuilder.vertex(matrix4f, x + radius, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
 		
 		// Top Right Arc and Right
 		buildArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0);
 		
 		// Bottom Right
 		buildArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).next();
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0);
 		
 		// Bottom Left
 		buildArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y + radius, 0).next();
+		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
 		
-		tessellator.draw();
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -245,29 +236,26 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
-		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
-
-		bufferBuilder.vertex(matrix4f, x, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y + height, 0).next();
-
-		tessellator.draw();
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
+		bufferBuilder.vertex(matrix4f, x, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0);
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		RenderSystem.setShaderColor(outlineColor.getRedFloat(), outlineColor.getGreenFloat(), outlineColor.getBlueFloat(), outlineColor.getAlphaFloat());
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
 
-		bufferBuilder.vertex(matrix4f, x, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y, 0).next();
+		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+		bufferBuilder.vertex(matrix4f, x, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x, y, 0);
 
-		tessellator.draw();
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -285,15 +273,13 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
-
-		bufferBuilder.vertex(matrix4f, x1, y1, 0).next();
-		bufferBuilder.vertex(matrix4f, x2, y2, 0).next();
-
-		tessellator.draw();
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
+		bufferBuilder.vertex(matrix4f, x1, y1, 0);
+		bufferBuilder.vertex(matrix4f, x2, y2, 0);
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+		
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -305,17 +291,15 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		
-		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-
-        bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix4f, x + width, y, 0.0F).color(endColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix4f, x + width, y + height, 0.0F).color(endColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(startColor.getColorAsInt()).next();
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColor.getColorAsInt());
+        bufferBuilder.vertex(matrix4f, x + width, y, 0.0F).color(endColor.getColorAsInt());
+        bufferBuilder.vertex(matrix4f, x + width, y + height, 0.0F).color(endColor.getColorAsInt());
+        bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(startColor.getColorAsInt());
 		
-		tessellator.draw();
+        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
@@ -325,17 +309,15 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		
-		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-
-        bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix4f, x + width, y, 0.0F).color(startColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix4f, x + width, y + height, 0.0F).color(endColor.getColorAsInt()).next();
-        bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(endColor.getColorAsInt()).next();
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColor.getColorAsInt());
+        bufferBuilder.vertex(matrix4f, x + width, y, 0.0F).color(startColor.getColorAsInt());
+        bufferBuilder.vertex(matrix4f, x + width, y + height, 0.0F).color(endColor.getColorAsInt());
+        bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(endColor.getColorAsInt());
 		
-		tessellator.draw();
+        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
@@ -347,18 +329,16 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+		bufferBuilder.vertex(matrix4f, x, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x, y, 0);
 
-		bufferBuilder.vertex(matrix4f, x, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y, 0).next();
-
-		tessellator.draw();
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -372,18 +352,16 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+		bufferBuilder.vertex(matrix4f, x, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x, y, 0);
 
-		bufferBuilder.vertex(matrix4f, x, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y, 0).next();
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y + height, 0).next();
-		bufferBuilder.vertex(matrix4f, x, y, 0).next();
-
-		tessellator.draw();
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -397,84 +375,81 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ).next();
-
-		tessellator.draw();
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
-		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
+		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ).next();
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ).next();
-
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ).next();
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ).next();
-		tessellator.draw();
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ);
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -488,15 +463,13 @@ public class RenderUtils {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
-		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
+		bufferBuilder.vertex(matrix4f, (float) pos.x, (float) pos.y, (float) pos.z);
+		bufferBuilder.vertex(matrix4f, (float) pos2.x, (float) pos2.y, (float) pos2.z);
 
-		bufferBuilder.vertex(matrix4f, (float) pos.x, (float) pos.y, (float) pos.z).next();
-		bufferBuilder.vertex(matrix4f, (float) pos2.x, (float) pos2.y, (float) pos2.z).next();
-
-		tessellator.draw();
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -562,9 +535,9 @@ public class RenderUtils {
 					float radiusX2 = (float)Math.cos(angle2) * radius;
 					float radiusY2 = (float)Math.sin(angle2) * radius;
 					
-					bufferBuilder.vertex(matrix, x, y, 0).next();
-					bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).next();
-					bufferBuilder.vertex(matrix, x + radiusX2, y + radiusY2, 0).next();
+					bufferBuilder.vertex(matrix, x, y, 0);
+					bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0);
+					bufferBuilder.vertex(matrix, x + radiusX2, y + radiusY2, 0);
 				}
 	}
 	
@@ -576,7 +549,7 @@ public class RenderUtils {
 			float radiusX1 = (float) (Math.cos(angle) * radius);
 			float radiusY1 = (float)Math.sin(angle) * radius;
 
-			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).next();
+			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0);
 		}
 	}
 	

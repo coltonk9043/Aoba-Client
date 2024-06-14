@@ -58,7 +58,6 @@ public class StringListSetting extends Setting<List<String>> {
 			value.remove(index);
 			update();
 		}
-		// TODO: add out of bounds error .. maybe
 	}
 	
 	/**
@@ -85,7 +84,6 @@ public class StringListSetting extends Setting<List<String>> {
 			return value.get(index);
 		}
 		return null;
-		// TODO: add out of bounds error .. maybe
 	}
 
 	/**

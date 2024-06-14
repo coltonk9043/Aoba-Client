@@ -67,7 +67,7 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 
 		isPinned = new BooleanSetting(title + "_pinned", "IS PINNED", false);
 		SettingManager.registerSetting(isPinned, Aoba.getInstance().settingManager.hidden_category);
-		icon = new Identifier("aoba", "/textures/" + iconName.trim().toLowerCase() + ".png");
+		icon = Identifier.of("aoba", "/textures/" + iconName.trim().toLowerCase() + ".png");
 	}
 
 	public final String getTitle() {

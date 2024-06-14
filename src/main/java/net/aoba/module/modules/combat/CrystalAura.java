@@ -96,7 +96,7 @@ public class CrystalAura extends Module implements TickListener {
 			}
 			BlockHitResult rayTrace = new BlockHitResult(check.toCenterPos(), Direction.UP, check, false);
 			MC.interactionManager.interactBlock(MC.player, Hand.MAIN_HAND, rayTrace);
-			this.MC.player.networkHandler.sendPacket(new PlayerInteractItemC2SPacket(Hand.MAIN_HAND, 0));
+			this.MC.player.networkHandler.sendPacket(new PlayerInteractItemC2SPacket(Hand.MAIN_HAND, 0, MC.player.getYaw(), MC.player.getPitch()));
 		}
 
 		// Hit the entity that has been found.

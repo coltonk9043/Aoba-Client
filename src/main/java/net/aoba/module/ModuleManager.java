@@ -173,7 +173,7 @@ public class ModuleManager implements KeyDownListener {
 		matrices.push();
 		Vec3d camPos = mc.getBlockEntityRenderDispatcher().camera.getPos();
 		matrices.translate(-camPos.x, -camPos.y, -camPos.z);
-		RenderEvent renderEvent = new RenderEvent(matrices, MinecraftClient.getInstance().getTickDelta());
+		RenderEvent renderEvent = new RenderEvent(matrices, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
 		Aoba.getInstance().eventManager.Fire(renderEvent);
 		matrices.pop();
 		

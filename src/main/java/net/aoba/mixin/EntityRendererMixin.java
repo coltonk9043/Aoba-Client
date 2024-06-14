@@ -64,7 +64,6 @@ public abstract class EntityRendererMixin<T extends Entity> {
 	
 	/**
 	 * Custom Label Render that will allow us to Render what we'd like in the future. 
-	 * TODO: If this can be replaced by an INVOKE @ matrixStack.scale(), I would love to do that.
 	 * @param entity Entity being currently rendered.
 	 * @param text The text to render.
 	 * @param matrices The MatrixStack.

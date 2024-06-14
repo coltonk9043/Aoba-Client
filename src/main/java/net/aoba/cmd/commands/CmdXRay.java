@@ -63,7 +63,7 @@ public class CmdXRay extends Command {
 				String block1 = parameters[2].toLowerCase();
 				Block tempBlock1;
 				try {
-					tempBlock1 = Registries.BLOCK.get(new Identifier(block1));
+					tempBlock1 = Registries.BLOCK.get(Identifier.of(block1));
 				} catch (InvalidIdentifierException e) {
 					CommandManager.sendChatMessage("Block " +  parameters[2] + " could not be found.");
 					return;
@@ -76,7 +76,7 @@ public class CmdXRay extends Command {
 				String block2 = parameters[2].toLowerCase();
 				Block tempBlock2;
 				try {
-					tempBlock2 = Registries.BLOCK.get(new Identifier(block2));
+					tempBlock2 = Registries.BLOCK.get(Identifier.of(block2));
 				} catch (InvalidIdentifierException e) {
 					CommandManager.sendChatMessage("Block " +  parameters[2] + " could not be found.");
 					return;

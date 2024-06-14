@@ -76,13 +76,6 @@ public class EditAltScreen extends Screen {
 	}
 
 	@Override
-	public void tick() {
-		// TODO:
-		//this.textFieldAltUsername.tick();
-		//this.textFieldAltPassword.tick();
-	}
-
-	@Override
 	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(drawContext, mouseX, mouseY, partialTicks);
 		drawContext.drawCenteredTextWithShadow(textRenderer, "Edit Alternate Account", this.width / 2, 20, 16777215);

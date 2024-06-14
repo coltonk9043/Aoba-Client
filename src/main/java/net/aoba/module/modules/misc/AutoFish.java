@@ -59,8 +59,8 @@ public class AutoFish extends Module implements ReceivePacketListener {
 	}
 	
 	private void recastRod() {
-		
-		PlayerInteractItemC2SPacket packetTryUse = new PlayerInteractItemC2SPacket(Hand.MAIN_HAND, 0);
+		// todo: eNSURE that this is correct
+		PlayerInteractItemC2SPacket packetTryUse = new PlayerInteractItemC2SPacket(Hand.MAIN_HAND, 0, MC.player.getYaw(), MC.player.getPitch());
 		MC.player.networkHandler.sendPacket(packetTryUse);
 		MC.player.networkHandler.sendPacket(packetTryUse);
 	}

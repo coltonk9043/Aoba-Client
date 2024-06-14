@@ -83,9 +83,11 @@ public class Tracer extends Module implements RenderListener {
 		eyePosition = eyePosition.rotateY((float) -Math.toRadians(camera.getYaw()));
 		eyePosition = eyePosition.add(MC.cameraEntity.getEyePos());
 		eyePosition = eyePosition.subtract(offset);
+		
+		float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
 		for (Entity entity : MC.world.getEntities()) {
 			if(entity instanceof LivingEntity && (entity != MC.player)) {
-				Vec3d interpolated = RenderUtils.getEntityPositionInterpolated(entity, MinecraftClient.getInstance().getTickDelta());
+				Vec3d interpolated = RenderUtils.getEntityPositionInterpolated(entity, tickDelta);
 				if (entity instanceof AnimalEntity) {
 					RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_passive.getValue());
 				} else if (entity instanceof Monster) {
@@ -97,7 +99,7 @@ public class Tracer extends Module implements RenderListener {
 		}
 		
 		for(AbstractClientPlayerEntity player : MC.world.getPlayers()) {
-			Vec3d interpolated = RenderUtils.getEntityPositionInterpolated(player, MinecraftClient.getInstance().getTickDelta());
+			Vec3d interpolated = RenderUtils.getEntityPositionInterpolated(player, tickDelta);
 			RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_player.getValue());
 		}
 	}

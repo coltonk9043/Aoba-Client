@@ -39,7 +39,7 @@ public class GameRendererMixin {
 	}
 
 	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F", ordinal = 0), method = {
-			"renderWorld(FJ)V" })
+			"renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V" })
 	private float nauseaLerp(float delta, float first, float second) {
 		if (Aoba.getInstance().moduleManager.nooverlay.getState())
 			return 0;

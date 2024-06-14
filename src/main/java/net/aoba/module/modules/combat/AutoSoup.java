@@ -29,11 +29,11 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.component.type.FoodComponents;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.StewItem;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Hand;
 
@@ -110,10 +110,11 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 			for(int i = 0; i< PlayerInventory.getHotbarSize(); i++) {
 				Item item = MC.player.getInventory().getStack(i).getItem();
 				
-				if(item instanceof StewItem) {
-					foodSlot = i;
-					break;
-				}
+				// Fix AutoSoup
+				/*
+				 * item.getComponents().contains(FoodComponents.MUSHROOM_STEW); if(item
+				 * instanceof StewItem) { foodSlot = i; break; }
+				 */
 			}
 			
 			// If a Stew item was found, switch to it and use it.

@@ -92,7 +92,7 @@ public class FontManager {
 					e.printStackTrace();
 				}
 
-				try (FontStorage storage = new FontStorage(MC.getTextureManager(), new Identifier("aoba:" + file.getName()))) {
+				try (FontStorage storage = new FontStorage(MC.getTextureManager(), Identifier.of("aoba:" + file.getName()))) {
 					storage.setFonts(list, Set.of());
 					fontRenderers.put(file.getName().replace(".ttf", ""), new TextRenderer(id -> storage, true));
 				}

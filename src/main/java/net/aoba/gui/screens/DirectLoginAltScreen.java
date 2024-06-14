@@ -71,13 +71,6 @@ public class DirectLoginAltScreen extends Screen{
 		 		.dimensions(this.width / 2 - 100, this.height / 2 + 46, 200, 20).build());
 	}
 	
-	@Override
-	public void tick() {
-		// TODO:
-	     // this.textFieldAltUsername.tick();
-	      //this.textFieldAltPassword.tick();
-	  }
-	
 	private void onButtonLoginPressed() {
 		boolean loggedIn = false;
 		if(this.textFieldAltPassword.getText().isEmpty()) {

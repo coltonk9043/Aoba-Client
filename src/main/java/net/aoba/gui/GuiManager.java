@@ -217,19 +217,6 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 				this.toggleMouse();
 			}
 		}
-		
-		/**
-		 * Updates the Color. 
-		 * TODO: Remove this and move to event-based.
-		 */
-		//if(this.rainbow.getValue()) {
-		//	rainbowColor.update(this.effectSpeed.getValue().floatValue());
-		//	this.currentColor = rainbowColor.getColor();
-		//}else {
-		//	this.currentColor = foregroundColor.getValue();
-		//}
-		
-		//Aoba.getInstance().eventManager.Fire(new MouseScrollEvent(5.0f, 5.0f));
 	}
 	
 	public void draw(DrawContext drawContext, float tickDelta) {
