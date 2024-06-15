@@ -37,7 +37,7 @@ public class AutoEat extends Module implements FoodLevelListener {
 	private FloatSetting hungerSetting;
 	
 	public AutoEat() {
-		super(new KeybindSetting("key.autoeat", "AntiCactus Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+		super(new KeybindSetting("key.autoeat", "AutoEat Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("AutoEat");
 		this.setCategory(Category.Misc);

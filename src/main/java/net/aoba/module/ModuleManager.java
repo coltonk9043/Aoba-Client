@@ -72,6 +72,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module jesus = new Jesus();
 	public Module jetpack = new Jetpack();
 	public Module killaura = new KillAura();
+	public Module maceaura = new MaceAura();
 	public Module nametags = new Nametags();
 	public Module noclip = new Noclip();
 	public Module nofall = new NoFall();
@@ -126,6 +127,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(jesus);
 		addModule(jetpack);
 		addModule(killaura);
+		addModule(maceaura);
 		addModule(nametags);
 		addModule(noclip);
 		addModule(nofall);

@@ -54,7 +54,7 @@ public class Aimbot extends Module implements TickListener, RenderListener {
 		this.setName("Aimbot");
 		
 		this.setCategory(Category.Combat);
-		this.setDescription("Locks your crosshair towards a desire player or entity.");
+		this.setDescription("Locks your crosshair towards a desired player or entity.");
 		
 		targetAnimals = new BooleanSetting("aimbot_target_mobs", "Target Mobs", "Target mobs.", false);
 		targetPlayers = new BooleanSetting("aimbot_target_players", "Target Players", "Target players.", true);

@@ -93,7 +93,7 @@ public class GlobalChat {
 				public void run() {
 					try {
 						// Gotta love AWS!
-						socket = new Socket("18.221.222.43", 80);
+						socket = new Socket("chat.aobaclient.com", 42069);
 						out = new PrintWriter(socket.getOutputStream(), false);
 						in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 						
