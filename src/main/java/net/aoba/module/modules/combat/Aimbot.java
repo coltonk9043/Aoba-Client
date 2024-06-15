@@ -32,6 +32,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
@@ -45,22 +46,26 @@ public class Aimbot extends Module implements TickListener, RenderListener {
 
 	private BooleanSetting targetAnimals;
 	private BooleanSetting targetPlayers;
+	private BooleanSetting targetFriends;
 	private FloatSetting frequency;
-	
+
 	private int currentTick = 0;
-	
+
 	public Aimbot() {
 		super(new KeybindSetting("key.aimbot", "Aimbot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		this.setName("Aimbot");
-		
+
 		this.setCategory(Category.Combat);
 		this.setDescription("Locks your crosshair towards a desired player or entity.");
-		
+
 		targetAnimals = new BooleanSetting("aimbot_target_mobs", "Target Mobs", "Target mobs.", false);
 		targetPlayers = new BooleanSetting("aimbot_target_players", "Target Players", "Target players.", true);
-		frequency = new FloatSetting("aimbot_frequency", "Ticks", "How frequent the aimbot updates (Lower = Laggier)", 1.0f, 1.0f, 20.0f, 1.0f);
+		targetFriends = new BooleanSetting("aimbot_target_friends", "Target Friends", "Target friends.", false);
+		frequency = new FloatSetting("aimbot_frequency", "Ticks", "How frequent the aimbot updates (Lower = Laggier)",
+				1.0f, 1.0f, 20.0f, 1.0f);
 		this.addSetting(targetAnimals);
 		this.addSetting(targetPlayers);
+		this.addSetting(targetFriends);
 		this.addSetting(frequency);
 	}
 
@@ -83,48 +88,56 @@ public class Aimbot extends Module implements TickListener, RenderListener {
 
 	@Override
 	public void OnRender(RenderEvent event) {
-		if(temp != null) {
+		if (temp != null) {
 			Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
 			MC.player.lookAt(EntityAnchor.EYES, temp.getEyePos().add(offset));
 		}
 	}
-	
+
 	@Override
 	public void OnUpdate(TickEvent event) {
 		currentTick++;
-		if(currentTick >= frequency.getValue()) {
+		if (currentTick >= frequency.getValue()) {
+			LivingEntity entityFound = null;
+
+			// Check for players within range of the player.
 			if (this.targetPlayers.getValue()) {
-				if (MC.world.getPlayers().size() == 2) {
-					temp = MC.world.getPlayers().get(1);
-				} else if (MC.world.getPlayers().size() > 2) {
-					for (int x = 0; x < MC.world.getPlayers().size(); x++) {
-						for (int y = 1; y < MC.world.getPlayers().size(); y++) {
-							if (MC.world.getPlayers().get(x).distanceTo(MC.player) < MC.world.getPlayers().get(y)
-									.distanceTo(MC.player)) {
-								temp = MC.world.getPlayers().get(x);
+				for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
+					// Skip player if targetFriends is false and the FriendsList contains the entity.
+					if(entity == MC.player)
+						continue;
+					
+					if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(entity))
+						continue;
+
+					if(entityFound == null) 
+						entityFound = entity;
+					
+					if (entity.squaredDistanceTo(MC.player) < entityFound.squaredDistanceTo(MC.player)) {
+						entityFound = entity;
+					}
+				}
+			}
+
+			if (this.targetAnimals.getValue()) {
+				for (Entity entity : MC.world.getEntities()) {
+					if (entity instanceof LivingEntity) {
+						if (entity instanceof ClientPlayerEntity)
+							continue;
+						
+						if (entityFound == null) {
+							entityFound = (LivingEntity) entity;
+						} else {
+							if (entity.squaredDistanceTo(MC.player) < entityFound.squaredDistanceTo(MC.player)) {
+								entityFound = (LivingEntity) entity;
 							}
 						}
 					}
 				}
 			}
-			if (this.targetAnimals.getValue()) {
-				LivingEntity tempEntity = null;
-				for (Entity entity : MC.world.getEntities()) {
-					if (!(entity instanceof LivingEntity))
-						continue;
-					if (entity instanceof ClientPlayerEntity)
-						continue;
-					if (tempEntity == null) {
-						tempEntity = (LivingEntity) entity;
-					} else {
-						if (entity.distanceTo(MC.player) < tempEntity.distanceTo(MC.player)) {
-							tempEntity = (LivingEntity) entity;
-						}
-					}
-				}
-				temp = tempEntity;
-			}
-			
+
+			temp = entityFound;
+
 			currentTick = 0;
 		}
 	}
