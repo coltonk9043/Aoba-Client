@@ -23,58 +23,49 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IntegerSetting;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.InputUtil.Key;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 
 public class SettingManager {
 	private static boolean DEBUG_STUFF = false;
 
-	public List<Setting<?>> config_category = new ArrayList<>();
-	public List<Setting<?>> modules_category = new ArrayList<>();
-	public List<Setting<?>> hidden_category = new ArrayList<>();
-
-	public static void registerSetting(Setting<?> p_setting, List<Setting<?>> p_category) {
-		p_category.add(p_setting);
-	}
-
-	public static File configFolder;
-	public static File configFile;
-	public static Properties config;
-
-	public static void prepare(String name) {
+	public SettingsContainer configContainer;
+	public SettingsContainer modulesContainer;
+	public SettingsContainer hiddenContainer;
+	
+	public SettingManager() {
 		try {
-			configFolder = new File(MinecraftClient.getInstance().runDirectory + File.separator + "aoba");
-			configFile = new File(configFolder + File.separator + name + ".xml");
-
-			if (!configFolder.exists())
-				configFolder.mkdirs();
-
-			if (!configFile.exists())
-				configFile.createNewFile();
-
-			config = new Properties();
-		} catch (Exception ignored) {
-
+			configContainer = new SettingsContainer("config_category");
+			modulesContainer = new SettingsContainer("modules_category");
+			hiddenContainer =  new SettingsContainer("hidden_category");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
+	
+	public static void registerSetting(Setting<?> p_setting, SettingsContainer p_category) {
+		p_category.settingsList.add(p_setting);
+	}
 
-	public static void saveSettings(String name, List<Setting<?>> config_category2)
+	public static Properties prepare(SettingsContainer container) throws IOException {
+		Properties props = new Properties();
+		props.loadFromXML(new FileInputStream(container.configFile));
+		return props;
+	}
+
+	public static void saveSettings(SettingsContainer container)
 			throws FileNotFoundException, IOException {
-		System.out.println("Saving config " + name + ".");
-		prepare(name);
-		for (Setting<?> setting : config_category2) {
+		System.out.println("Saving config " + container.configName + ".");
+		Properties config = prepare(container);
+		for (Setting<?> setting : container.settingsList) {
 			try {
 				switch (setting.type) {
 				case FLOAT, INTEGER, BOOLEAN, STRING -> {
@@ -96,9 +87,9 @@ public class SettingManager {
 					@SuppressWarnings("unchecked")
 					HashSet<Block> s = (HashSet<Block>) setting.getValue();
 					String result = "";
-					
+
 					int iteration = 0;
-					for(Block block : s){
+					for (Block block : s) {
 						Identifier id = Registries.BLOCK.getId(block);
 						result += id.getNamespace() + ":" + id.getPath();
 						if (iteration != s.size() - 1) {
@@ -106,7 +97,7 @@ public class SettingManager {
 						}
 						iteration++;
 					}
-					
+
 					config.setProperty(setting.ID, result);
 				}
 				}
@@ -114,91 +105,91 @@ public class SettingManager {
 				e.printStackTrace();
 			}
 		}
-		config.storeToXML(new FileOutputStream(configFile), null);
+		config.storeToXML(new FileOutputStream(container.configFile), null);
 	}
 
-	public static void loadSettings(String name, List<Setting<?>> config_category2) {
+	public static void loadSettings(SettingsContainer container) {
 		try {
-			System.out.println("Loading config " + name + ".");
-			prepare(name);
-			config.loadFromXML(new FileInputStream(configFile));
+			System.out.println("Loading config " + container.configName + ".");
+			Properties config = prepare(container);
+
+			for (Setting setting : container.settingsList) {
+				try {
+					String value = config.getProperty(setting.ID, null);
+
+					if (DEBUG_STUFF)
+						System.out.println(setting.displayName + " " + setting.value + " " + Double.parseDouble(value));
+
+					if (value == null)
+						break;
+
+					switch (setting.type) {
+					case FLOAT -> {
+						float floatValue = Float.parseFloat(value);
+						if (((FloatSetting) setting).min_value <= floatValue
+								&& ((FloatSetting) setting).max_value >= floatValue) {
+							setting.setValue(Float.parseFloat(value));
+						}
+						break;
+					}
+					case INTEGER -> {
+						int intValue = Integer.parseInt(value);
+						if (((IntegerSetting) setting).min_value <= intValue
+								&& ((IntegerSetting) setting).max_value >= intValue) {
+							setting.setValue(Integer.parseInt(value));
+						}
+						break;
+					}
+					case BOOLEAN -> {
+						setting.setValue(Boolean.parseBoolean(value));
+						break;
+					}
+					case STRING -> {
+						setting.setValue(value);
+						break;
+					}
+					case KEYBIND -> {
+						int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
+						setting.setValue(InputUtil.fromKeyCode(keyCode, 0));
+						break;
+					}
+					case VECTOR2 -> {
+						String[] dimensions = value.split(",");
+						if (dimensions.length == 2) {
+							setting.setValue(new Vector2(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
+						}
+						break;
+					}
+					case COLOR -> {
+						long hexValue = Long.parseLong(value.replace("#", ""), 16);
+						int Alpha = (int) ((hexValue) >> 24) & 0xFF;
+						int R = (int) ((hexValue) >> 16) & 0xFF;
+						int G = (int) ((hexValue) >> 8) & 0xFF;
+						int B = (int) (hexValue) & 0xFF;
+						setting.setValue(new Color(R, G, B, Alpha));
+						break;
+					}
+					case BLOCKS -> {
+						String[] ids = value.split(",");
+						HashSet<Block> result = new HashSet<Block>();
+						for (String str : ids) {
+							Identifier i = Identifier.of(str);
+							result.add(Registries.BLOCK.get(i));
+						}
+						setting.setValue(result);
+						break;
+					}
+					case INDEXEDSTRINGLIST ->
+						throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
+					case STRINGLIST -> throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
+					default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-
-		for (Setting setting : config_category2) {
-			try {
-				String value = config.getProperty(setting.ID, null);
-
-				if (DEBUG_STUFF)
-					System.out.println(setting.displayName + " " + setting.value + " " + Double.parseDouble(value));
-
-				if (value == null)
-					break;
-
-				switch (setting.type) {
-				case FLOAT -> {
-					float floatValue = Float.parseFloat(value);
-					if (((FloatSetting) setting).min_value <= floatValue
-							&& ((FloatSetting) setting).max_value >= floatValue) {
-						setting.setValue(Float.parseFloat(value));
-					}
-					break;
-				}
-				case INTEGER -> {
-					int intValue = Integer.parseInt(value);
-					if (((IntegerSetting) setting).min_value <= intValue
-							&& ((IntegerSetting) setting).max_value >= intValue) {
-						setting.setValue(Integer.parseInt(value));
-					}
-					break;
-				}
-				case BOOLEAN -> {
-					setting.setValue(Boolean.parseBoolean(value));
-					break;
-				}
-				case STRING -> {
-					setting.setValue(value);
-					break;
-				}
-				case KEYBIND -> {
-					int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
-					setting.setValue(InputUtil.fromKeyCode(keyCode, 0));
-					break;
-				}
-				case VECTOR2 -> {
-					String[] dimensions = value.split(",");
-					if (dimensions.length == 2) {
-						setting.setValue(new Vector2(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
-					}
-					break;
-				}
-				case COLOR -> {
-					long hexValue = Long.parseLong(value.replace("#", ""), 16);
-					int Alpha = (int) ((hexValue) >> 24) & 0xFF;
-					int R = (int) ((hexValue) >> 16) & 0xFF;
-					int G = (int) ((hexValue) >> 8) & 0xFF;
-					int B = (int) (hexValue) & 0xFF;
-					setting.setValue(new Color(R, G, B, Alpha));
-					break;
-				}
-				case BLOCKS -> {
-					String[] ids = value.split(",");
-					HashSet<Block> result = new HashSet<Block>();
-					for (String str : ids) {
-						Identifier i = Identifier.of(str);
-						result.add(Registries.BLOCK.get(i));
-					}
-					setting.setValue(result);
-					break;
-				}
-				case INDEXEDSTRINGLIST -> throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
-				case STRINGLIST -> throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
-				default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 	}
 

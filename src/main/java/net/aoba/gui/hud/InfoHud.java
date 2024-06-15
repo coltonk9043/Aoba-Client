@@ -17,14 +17,22 @@
 */
 package net.aoba.gui.hud;
 
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.aoba.gui.GuiManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 
 public class InfoHud extends AbstractHud {
 
@@ -81,8 +89,8 @@ public class InfoHud extends AbstractHud {
 			// Draws background depending on components width and height
 			Vector2 pos = position.getValue();
 			
-			RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
-			RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
+			//RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
+			//RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
 			
 			RenderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, GuiManager.foregroundColor.getValue());
 			RenderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, GuiManager.foregroundColor.getValue());

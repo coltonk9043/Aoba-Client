@@ -56,7 +56,7 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 		this.pinnable = pinnable;
 
 		isPinned = new BooleanSetting(title + "_pinned", "IS PINNED", false);
-		SettingManager.registerSetting(isPinned, Aoba.getInstance().settingManager.hidden_category);
+		SettingManager.registerSetting(isPinned, Aoba.getInstance().settingManager.hiddenContainer);
 	}
 	
 	public ClickGuiTab(String title, int x, int y, boolean pinnable, String iconName) {
@@ -66,7 +66,7 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 		this.pinnable = pinnable;
 
 		isPinned = new BooleanSetting(title + "_pinned", "IS PINNED", false);
-		SettingManager.registerSetting(isPinned, Aoba.getInstance().settingManager.hidden_category);
+		SettingManager.registerSetting(isPinned, Aoba.getInstance().settingManager.hiddenContainer);
 		icon = Identifier.of("aoba", "/textures/" + iconName.trim().toLowerCase() + ".png");
 	}
 

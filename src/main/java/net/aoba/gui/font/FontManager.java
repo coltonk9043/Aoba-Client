@@ -67,7 +67,7 @@ public class FontManager {
 			font.SetRenderer(font.fontRenderers.get(i));
 		});
 		
-		SettingManager.registerSetting(fontSetting, Aoba.getInstance().settingManager.hidden_category);
+		SettingManager.registerSetting(fontSetting, Aoba.getInstance().settingManager.hiddenContainer);
 	}
 
 	public void Initialize() {

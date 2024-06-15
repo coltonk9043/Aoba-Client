@@ -72,7 +72,7 @@ public class CommandManager {
 		
 		PREFIX = new StringSetting("Prefix", "Prefix", ".aoba");
 		 
-		SettingManager.registerSetting(PREFIX, Aoba.getInstance().settingManager.hidden_category);
+		SettingManager.registerSetting(PREFIX, Aoba.getInstance().settingManager.hiddenContainer);
 		
 		try
 		{

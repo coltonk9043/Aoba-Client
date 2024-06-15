@@ -56,7 +56,7 @@ public class GlobalChat {
 	public GlobalChat() {
 		gson = new Gson();
 		enabled = new BooleanSetting("global_chat_enabled", "Whether or not global chat is enabled or disabled.", true);
-		SettingManager.registerSetting(this.enabled, Aoba.getInstance().settingManager.modules_category);
+		SettingManager.registerSetting(this.enabled, Aoba.getInstance().settingManager.modulesContainer);
 	}
 	
 	private void Send(String json) {

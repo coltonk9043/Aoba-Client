@@ -59,7 +59,7 @@ public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener,
 		this.position = new Vector2Setting(ID + "_position", ID + "Position", new Vector2(x, y), (Vector2 vec) -> UpdateAll(vec));
 		this.width = width;
 		this.height = height;
-		SettingManager.registerSetting(position, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(position, Aoba.getInstance().settingManager.configContainer);
 	}
 
 	public void UpdateAll(Vector2 vec) {

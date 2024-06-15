@@ -32,7 +32,7 @@ public class AbstractHud extends AbstractGui {
 		super(ID, x, y, width, height);
 		this.setVisible(true);
 		this.activated = new BooleanSetting(ID + "_activated", ID + " Activated", false, (Boolean val) -> onActivatedChanged(val));
-		SettingManager.registerSetting(activated, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(activated, Aoba.getInstance().settingManager.configContainer);
 	}
 
 	private void onActivatedChanged(Boolean state) {

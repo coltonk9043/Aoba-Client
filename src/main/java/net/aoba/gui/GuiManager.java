@@ -101,10 +101,10 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		foregroundColor = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
 		clickGuiNavBar = new NavigationBar();
 		
-		SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.config_category);
-		SettingManager.registerSetting(backgroundColor, Aoba.getInstance().settingManager.config_category);
-		SettingManager.registerSetting(foregroundColor, Aoba.getInstance().settingManager.config_category);
-		SettingManager.registerSetting(clickGuiButton, Aoba.getInstance().settingManager.modules_category);
+		SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(backgroundColor, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(foregroundColor, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(clickGuiButton, Aoba.getInstance().settingManager.modulesContainer);
 		
 		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
@@ -143,9 +143,9 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		clickGuiNavBar.addPane(hudPane);
 		//clickGuiNavBar.addPane(settingsPane);
 
-		SettingManager.registerSetting(effectSpeed, Aoba.getInstance().settingManager.config_category);
-		SettingManager.registerSetting(rainbow, Aoba.getInstance().settingManager.config_category);
-		SettingManager.registerSetting(ah, Aoba.getInstance().settingManager.config_category);
+		SettingManager.registerSetting(effectSpeed, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(rainbow, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(ah, Aoba.getInstance().settingManager.configContainer);
 		
 		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);

@@ -30,13 +30,14 @@ import net.aoba.gui.font.FontManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
+import net.aoba.settings.FriendsList;
 import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
 public class AobaClient {
 	public static final String NAME = "Aoba";
-	public static final String VERSION = "1.20.5";
+	public static final String VERSION = "1.21";
 	public static final String AOBA_VERSION = "1.4.1";
 	
 	public static MinecraftClient MC;
@@ -49,6 +50,7 @@ public class AobaClient {
 	public GuiManager hudManager;
 	public FontManager fontManager;
 	public SettingManager settingManager;
+	public FriendsList friendsList;
 	public RenderUtils renderUtils;
 	public GlobalChat globalChat;
 	public EventManager eventManager;
@@ -72,6 +74,8 @@ public class AobaClient {
 		renderUtils = new RenderUtils();
 		System.out.println("[Aoba] Reading Settings");
 		settingManager = new SettingManager();
+		System.out.println("[Aoba] Reading Friends List");
+		friendsList = new FriendsList();
 		System.out.println("[Aoba] Initializing Modules");
 		moduleManager = new ModuleManager();
 		System.out.println("[Aoba] Initializing Commands");
@@ -86,9 +90,9 @@ public class AobaClient {
 		altManager = new AltManager();
 		System.out.println("[Aoba] Aoba-chan initialized and ready to play!");
  
-		SettingManager.loadSettings("config_category", settingManager.config_category);
-		SettingManager.loadSettings("modules_category", settingManager.modules_category);
-		SettingManager.loadSettings("hidden_category", settingManager.hidden_category);
+		SettingManager.loadSettings(settingManager.configContainer);
+		SettingManager.loadSettings(settingManager.modulesContainer);
+		SettingManager.loadSettings(settingManager.hiddenContainer);
 
 		globalChat = new GlobalChat();
 		globalChat.StartListener();
@@ -129,10 +133,11 @@ public class AobaClient {
 	 */
 	public void endClient() {
 		try {
-			SettingManager.saveSettings("config_category", settingManager.config_category);
-			SettingManager.saveSettings("modules_category", settingManager.modules_category);
-			SettingManager.saveSettings("hidden_category", settingManager.hidden_category);
+			SettingManager.saveSettings(settingManager.configContainer);
+			SettingManager.saveSettings(settingManager.modulesContainer);
+			SettingManager.saveSettings(settingManager.hiddenContainer);
 			altManager.saveAlts();
+			friendsList.save();
 			moduleManager.modules.forEach(s -> s.onDisable());
 		}catch(Exception e) {
 			e.printStackTrace();
