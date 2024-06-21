@@ -48,7 +48,8 @@ public class Aimbot extends Module implements TickListener, RenderListener {
 	private BooleanSetting targetPlayers;
 	private BooleanSetting targetFriends;
 	private FloatSetting frequency;
-
+	private FloatSetting radius;
+	
 	private int currentTick = 0;
 
 	public Aimbot() {
@@ -61,12 +62,14 @@ public class Aimbot extends Module implements TickListener, RenderListener {
 		targetAnimals = new BooleanSetting("aimbot_target_mobs", "Target Mobs", "Target mobs.", false);
 		targetPlayers = new BooleanSetting("aimbot_target_players", "Target Players", "Target players.", true);
 		targetFriends = new BooleanSetting("aimbot_target_friends", "Target Friends", "Target friends.", false);
-		frequency = new FloatSetting("aimbot_frequency", "Ticks", "How frequent the aimbot updates (Lower = Laggier)",
-				1.0f, 1.0f, 20.0f, 1.0f);
+		frequency = new FloatSetting("aimbot_frequency", "Ticks", "How frequent the aimbot updates (Lower = Laggier)", 1.0f, 1.0f, 20.0f, 1.0f);
+		radius = new FloatSetting("aimbot_radius", "Radius", "Radius", 64.0f, 1.0f, 256.0f, 1.0f);
+				
 		this.addSetting(targetAnimals);
 		this.addSetting(targetPlayers);
 		this.addSetting(targetFriends);
 		this.addSetting(frequency);
+		this.addSetting(radius);
 	}
 
 	@Override
@@ -97,6 +100,9 @@ public class Aimbot extends Module implements TickListener, RenderListener {
 	@Override
 	public void OnUpdate(TickEvent event) {
 		currentTick++;
+		
+		float radiusSqr = radius.getValue() * radius.getValue();
+		
 		if (currentTick >= frequency.getValue()) {
 			LivingEntity entityFound = null;
 
@@ -110,10 +116,8 @@ public class Aimbot extends Module implements TickListener, RenderListener {
 					if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(entity))
 						continue;
 
-					if(entityFound == null) 
-						entityFound = entity;
-					
-					if (entity.squaredDistanceTo(MC.player) < entityFound.squaredDistanceTo(MC.player)) {
+					double entityDistanceToPlayer = entity.squaredDistanceTo(MC.player);
+					if (entityDistanceToPlayer < entityFound.squaredDistanceTo(MC.player) && entityDistanceToPlayer < radiusSqr) {
 						entityFound = entity;
 					}
 				}
@@ -125,20 +129,25 @@ public class Aimbot extends Module implements TickListener, RenderListener {
 						if (entity instanceof ClientPlayerEntity)
 							continue;
 						
-						if (entityFound == null) {
+						double entityDistanceToPlayer = entity.squaredDistanceTo(MC.player);
+						if(entityDistanceToPlayer >= radiusSqr)
+							continue;
+						
+						if(entityFound == null)
+							entityFound = (LivingEntity)entity;
+						else if (entityDistanceToPlayer < entityFound.squaredDistanceTo(MC.player)) {
 							entityFound = (LivingEntity) entity;
-						} else {
-							if (entity.squaredDistanceTo(MC.player) < entityFound.squaredDistanceTo(MC.player)) {
-								entityFound = (LivingEntity) entity;
-							}
 						}
 					}
 				}
 			}
 
 			temp = entityFound;
-
 			currentTick = 0;
+		}else {
+			if(temp != null && temp.squaredDistanceTo(MC.player) >= radiusSqr) {
+				temp = null;
+			}
 		}
 	}
 }

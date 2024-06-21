@@ -25,9 +25,11 @@ import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.mixin.interfaces.IEntity;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.math.Vec3d;
 
 public class NoSlowdown extends Module implements TickListener {
 
@@ -56,6 +58,7 @@ public class NoSlowdown extends Module implements TickListener {
 
 	@Override
 	public void OnUpdate(TickEvent event) {
-		//mc.player.setMotionMultiplier(null, Vec3d.ZERO);
+		IEntity playerEntity = (IEntity)MC.player;
+		playerEntity.setMovementMultiplier(Vec3d.ZERO);
 	}
 }

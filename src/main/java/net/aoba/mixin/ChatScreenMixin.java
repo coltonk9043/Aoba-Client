@@ -112,8 +112,10 @@ public class ChatScreenMixin extends ScreenMixin{
 	public void onSendMessage(String message, boolean addToHistory, CallbackInfo ci) {
 		if (message.startsWith(CommandManager.PREFIX.getValue())) {
 			Aoba.getInstance().commandManager.command(message.split(" "));
+			ci.cancel();	
 		}else if (GlobalChat.chatType == ChatType.Global) {
 			Aoba.getInstance().globalChat.SendMessage(message);
+			ci.cancel();	
 		}
 	}
 }
