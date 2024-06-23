@@ -34,7 +34,8 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	private String text;
 	private Runnable onClick;
 	private Color borderColor = new Color(128, 128, 128);
-	private Color backgroundColor = borderColor;
+	private Color backgroundColor = new Color(96, 96, 96);
+	private Color hoveredBackgroundColor = new Color(156, 156, 156);
 	
 	/**
 	 * Constructor for button component.
@@ -48,6 +49,7 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 		this.setLeft(2);
 		this.setRight(2);
 		this.setHeight(30);
+		this.setBottom(10);
 		
 		this.text = text;
 		this.onClick = onClick;
@@ -59,6 +61,7 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 		this.setLeft(2);
 		this.setRight(2);
 		this.setHeight(30);
+		this.setBottom(10);
 		
 		this.text = text;
 		this.onClick = onClick;
@@ -102,7 +105,11 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 	public void draw(DrawContext drawContext, float partialTicks) {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-		RenderUtils.drawOutlinedBox(matrix4f, actualX + 2, actualY, actualWidth - 4, actualHeight - 2, borderColor, backgroundColor);
+		
+		if(this.hovered)
+			RenderUtils.drawOutlinedBox(matrix4f, actualX + 2, actualY, actualWidth - 4, actualHeight - 4, borderColor, hoveredBackgroundColor);
+		else
+			RenderUtils.drawOutlinedBox(matrix4f, actualX + 2, actualY, actualWidth - 4, actualHeight - 4, borderColor, backgroundColor);
 		RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);
 	}
 

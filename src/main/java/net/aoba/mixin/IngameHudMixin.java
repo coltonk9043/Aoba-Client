@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InGameHud.class)
 public class IngameHudMixin {
 
-	@Inject(at = {@At(value = "HEAD") }, method = {"render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V" })
+	@Inject(at = {@At(value = "TAIL") }, method = {"render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V" })
 	private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
 		Aoba.getInstance().drawHUD(context, tickDelta.getTickDelta(false));
 	}

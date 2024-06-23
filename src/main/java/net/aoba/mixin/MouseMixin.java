@@ -28,6 +28,8 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.events.MouseScrollEvent;
+import net.aoba.event.events.RightMouseDownEvent;
+import net.aoba.event.events.RightMouseUpEvent;
 import net.aoba.event.events.LeftMouseDownEvent;
 import net.aoba.event.events.LeftMouseUpEvent;
 import net.minecraft.client.Mouse;
@@ -62,7 +64,24 @@ public class MouseMixin {
 				}
 				break;
 			case GLFW.GLFW_MOUSE_BUTTON_MIDDLE:
+				
+				break;
+			case GLFW.GLFW_MOUSE_BUTTON_RIGHT:
+				if (action == 1) {
+					RightMouseDownEvent event2 = new RightMouseDownEvent(x, y);
+					aoba.eventManager.Fire(event2);
 
+					if (event2.IsCancelled()) {
+						ci.cancel();
+					}
+				} else {
+					RightMouseUpEvent event2 = new RightMouseUpEvent(x, y);
+					aoba.eventManager.Fire(event2);
+
+					if (event2.IsCancelled()) {
+						ci.cancel();
+					}
+				}
 				break;
 			}
 		}

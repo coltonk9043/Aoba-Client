@@ -26,6 +26,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
+import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
@@ -33,12 +34,18 @@ import net.minecraft.util.math.Vec3d;
 
 public class Spider extends Module implements TickListener {
 
+	private FloatSetting speed;
+	
 	public Spider() {
 		super(new KeybindSetting("key.spider", "Spider Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Spider");
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows players to climb up blocks.");
+		
+		speed = new FloatSetting("spider.speed", "Speed", "Speed that player goes up blocks.", 0.1f, 0.05f, 1.0f, 0.05f);
+		
+		this.addSetting(speed);
 	}
 
 	@Override
@@ -59,10 +66,10 @@ public class Spider extends Module implements TickListener {
 	@Override
 	public void OnUpdate(TickEvent event) {
 		ClientPlayerEntity player = MC.player;
+		
 		if(player.horizontalCollision) {
-			player.getVelocity().multiply(new Vec3d(1,0,1));
-			player.getVelocity().add(new Vec3d(0,0.2,0));
-			player.setOnGround(true);
+			Vec3d playerVelocity = player.getVelocity();
+			MC.player.setVelocity(new Vec3d(playerVelocity.getX(), speed.getValue(), playerVelocity.getZ()));
 		}
 	}
 }

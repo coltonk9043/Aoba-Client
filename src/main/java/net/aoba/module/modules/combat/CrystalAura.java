@@ -26,6 +26,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
+import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.Block;
@@ -46,6 +47,7 @@ import net.minecraft.util.math.Direction;
 public class CrystalAura extends Module implements TickListener {
 	
 	private FloatSetting radius;
+	private BooleanSetting targetFriends;
 	
 	public CrystalAura() {
 		super(new KeybindSetting("key.crystalaura", "Crystal Aura Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -55,7 +57,10 @@ public class CrystalAura extends Module implements TickListener {
 		this.setDescription("Attacks anything within your personal space.");
 		
 		radius = new FloatSetting("crystalaura_radius", "Radius", "Radius, in blocks, that you can place/attack a crystal.", 5f, 1f, 15f, 1f);
+		targetFriends = new BooleanSetting("crystalaura_target_friends", "Target Friends", "Target friends.", false);
+		
 		this.addSetting(radius);
+		this.addSetting(targetFriends);
 	}
 
 	@Override
@@ -76,6 +81,10 @@ public class CrystalAura extends Module implements TickListener {
 	@Override
 	public void OnUpdate(TickEvent event) {
 		for (PlayerEntity player : MC.world.getPlayers()) {
+			
+			if(!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
+				continue;
+			
 			if (player == MC.player || MC.player.distanceTo(player) > this.radius.getValue()) {
 				continue;
 			}

@@ -52,11 +52,17 @@ public abstract class EntityMixin{
 	
 	@Inject(at = {@At("HEAD")}, method = "damage(Lnet/minecraft/entity/damage/DamageSource;F)Z", cancellable = true)
 	public void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
-
+		return;
 	}
 	
 	@Inject(at= {@At("HEAD")}, method = "getStepHeight()F", cancellable=true)
 	public void onGetStepHeight(CallbackInfoReturnable<Float> cir) {
-		
+		return;
 	}
+	
+	@Inject(at= {@At("HEAD")}, method = "getJumpVelocityMultiplier()F", cancellable=true)
+	public void onGetJumpVelocityMultiplier(CallbackInfoReturnable<Float> cir) {
+		return;
+	}
+	
 }

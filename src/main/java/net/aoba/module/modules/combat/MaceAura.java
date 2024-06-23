@@ -51,6 +51,7 @@ public class MaceAura extends Module implements TickListener {
 	private BooleanSetting targetAnimals;
 	private BooleanSetting targetMonsters;
 	private BooleanSetting targetPlayers;
+	private BooleanSetting targetFriends;
 	private MaceState state = MaceState.OnGround;
 	private LivingEntity entityToAttack;
 
@@ -61,14 +62,17 @@ public class MaceAura extends Module implements TickListener {
 		this.setCategory(Category.Combat);
 		this.setDescription("Attacks anything within your personal space.");
 
-		radius = new FloatSetting("killaura_radius", "Radius", "Radius", 5f, 0.1f, 10f, 0.1f);
-		targetAnimals = new BooleanSetting("killaura_target_animals", "Target Animals", "Target animals.", false);
-		targetMonsters = new BooleanSetting("killaura_target_monsters", "Target Monsters", "Target monsters.", true);
-		targetPlayers = new BooleanSetting("killaura_target_players", "Target Players", "Target pplayers.", true);
+		radius = new FloatSetting("maceaura_radius", "Radius", "Radius", 5f, 0.1f, 10f, 0.1f);
+		targetAnimals = new BooleanSetting("maceaura_target_animals", "Target Animals", "Target animals.", false);
+		targetMonsters = new BooleanSetting("maceaura_target_monsters", "Target Monsters", "Target monsters.", true);
+		targetPlayers = new BooleanSetting("maceaura_target_players", "Target Players", "Target pplayers.", true);
+		targetFriends = new BooleanSetting("maceaura_target_friends", "Target Friends", "Target friends.", false);
+		
 		this.addSetting(radius);
 		this.addSetting(targetAnimals);
 		this.addSetting(targetMonsters);
 		this.addSetting(targetPlayers);
+		this.addSetting(targetFriends);
 	}
 
 	@Override
@@ -111,6 +115,9 @@ public class MaceAura extends Module implements TickListener {
 				// Add all potential players to the 'hitlist'
 				if (this.targetPlayers.getValue()) {
 					for (PlayerEntity player : MC.world.getPlayers()) {
+						if(!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
+							continue;
+						
 						if (player == MC.player || MC.player
 								.squaredDistanceTo(player) > (this.radius.getValue() * this.radius.getValue())) {
 							continue;

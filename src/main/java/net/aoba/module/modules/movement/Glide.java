@@ -26,18 +26,25 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
+import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
 
 public class Glide extends Module implements TickListener {
-	private float fallSpeed = .25f;
+	
+	private FloatSetting fallSpeed;
+	
 	public Glide() {
 		super(new KeybindSetting("key.glide", "Glide Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		
 		this.setName("Glide");
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to glide down.");
+		
+		fallSpeed = new FloatSetting("glide_fallspeed", "Fall Speed", "The speed at which the player will fall.", 0.25f, 0.1f, 2.0f, 0.1f);
+		 
+		this.addSetting(fallSpeed);
 	}
 
 	@Override
@@ -59,7 +66,7 @@ public class Glide extends Module implements TickListener {
 	public void OnUpdate(TickEvent event) {
 		ClientPlayerEntity player = MC.player;
 		if(player.getVelocity().y < 0 && (!player.isOnGround() || !player.isInLava() || !player.isSubmergedInWater() || !player.isHoldingOntoLadder())) {
-			player.setVelocity(player.getVelocity().x, Math.max(player.getVelocity().y, -this.fallSpeed), player.getVelocity().z);
+			player.setVelocity(player.getVelocity().x, Math.max(player.getVelocity().y, -fallSpeed.getValue()), player.getVelocity().z);
 		}
 	}
 }

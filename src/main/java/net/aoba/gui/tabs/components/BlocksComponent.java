@@ -93,7 +93,7 @@ public class BlocksComponent extends Component implements MouseScrollListener, L
 					Block block = Registries.BLOCK.get(index);
 					
 					if(blocks.getValue().contains(block)) {
-						RenderUtils.drawBox(matrix4f, ((actualX + (j * 36) + 4) / 2.0f), ((actualY + ((i-scroll) * 36) + 25) / 2.0f), 16, 16, new Color(0, 255, 0, 55));
+						RenderUtils.drawBox(matrix4f, ((actualX + (j * 36) + 4)), ((actualY + ((i-scroll) * 36) + 25)), 32, 32, new Color(0, 255, 0, 55));
 					}
 					drawContext.drawItem(new ItemStack(block.asItem()), (int) ((actualX + (j * 36) + 6) / 2.0f), (int) ((actualY + ((i-scroll) * 36) + 25) / 2.0f) );
 				}

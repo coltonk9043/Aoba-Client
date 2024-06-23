@@ -25,21 +25,25 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.event.events.PlayerHealthEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
+import net.aoba.module.modules.movement.HighJump;
 import net.aoba.module.modules.movement.Step;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.registry.entry.RegistryEntry;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntityMixin {
 	@Shadow
 	private ClientPlayNetworkHandler networkHandler;
-	
+
 	@Inject(at = { @At("HEAD") }, method = "tick()V", cancellable = true)
 	private void onPlayerTick(CallbackInfo ci) {
 		if (Aoba.getInstance().moduleManager.freecam.getState()) {
@@ -102,6 +106,15 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		Step stepHack = (Step) Aoba.getInstance().moduleManager.step;
 		if(stepHack.getState()) {
 			cir.setReturnValue(cir.getReturnValue());
+		}
+	}
+	
+	@Override
+	public void onGetJumpVelocityMultiplier(CallbackInfoReturnable<Float> cir) {
+		AobaClient aoba = Aoba.getInstance();
+		HighJump higherJump = (HighJump)aoba.moduleManager.higherjump;
+		if(higherJump.getState()) {
+			cir.setReturnValue(higherJump.getJumpHeightMultiplier());
 		}
 	}
 }

@@ -33,6 +33,8 @@ import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.Monster;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec2f;
@@ -47,6 +49,7 @@ public class KillAura extends Module implements TickListener {
 	private BooleanSetting targetAnimals;
 	private BooleanSetting targetMonsters;
 	private BooleanSetting targetPlayers;
+	private BooleanSetting targetFriends;
 	private BooleanSetting legit;
 	
 	public KillAura() {
@@ -60,11 +63,14 @@ public class KillAura extends Module implements TickListener {
 		targetAnimals = new BooleanSetting("killaura_target_animals", "Target Animals", "Target animals.", false);
 		targetMonsters = new BooleanSetting("killaura_target_monsters", "Target Monsters", "Target monsters.", true);
 		targetPlayers = new BooleanSetting("killaura_target_players", "Target Players", "Target pplayers.", true);
+		targetFriends = new BooleanSetting("killaura_target_friends", "Target Friends", "Target friends.", false);
 		legit = new BooleanSetting("killaura_legit", "Legit", "Whether or not the player will gradually look at the other player.", false);
+		
 		this.addSetting(radius);
 		this.addSetting(targetAnimals);
 		this.addSetting(targetMonsters);
 		this.addSetting(targetPlayers);
+		this.addSetting(targetFriends);
 		this.addSetting(legit);
 	}
 
@@ -91,19 +97,22 @@ public class KillAura extends Module implements TickListener {
 			boolean found = false;
 			
 			// Add all potential entities to the 'hitlist'
-			//if(this.targetAnimals.getValue() || this.targetMonsters.getValue()) {
-			//	double radiusSqr = this.radius.getValue() * this.radius.getValue();
-			//	for (Entity entity : MC.world.getEntities()) {
-			//		if (MC.player.squaredDistanceTo(entity) > radiusSqr) continue;
-			//		if((entity instanceof AnimalEntity && this.targetAnimals.getValue()) || (entity instanceof Monster && this.targetMonsters.getValue())) {
-			//			hitList.add(entity);
-			//		}	
-			//	}
-			//}
-
+			if(this.targetAnimals.getValue() || this.targetMonsters.getValue()) {
+				double radiusSqr = this.radius.getValue() * this.radius.getValue();
+				for (Entity entity : MC.world.getEntities()) {
+					if (MC.player.squaredDistanceTo(entity) > radiusSqr) continue;
+					if((entity instanceof AnimalEntity && this.targetAnimals.getValue()) || (entity instanceof Monster && this.targetMonsters.getValue())) {
+						hitList.add(entity);
+					}	
+				}
+			}
+			
 			// Add all potential players to the 'hitlist'
 			if(this.targetPlayers.getValue()) {
 				for (PlayerEntity player : MC.world.getPlayers()) {
+					if(!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
+						continue;
+					
 					if (player == MC.player || MC.player.squaredDistanceTo(player) > (this.radius.getValue()*this.radius.getValue())) {
 						continue;
 					}

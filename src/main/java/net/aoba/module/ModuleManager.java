@@ -61,6 +61,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module chestesp = new ChestESP();
 	public Module criticals = new Criticals();
 	public Module crystalaura = new CrystalAura();
+	public Module clickTP = new ClickTP();
 	public Module entityesp = new EntityESP();
 	public Module fastplace = new FastPlace();
 	public Module fastbreak = new FastBreak();
@@ -69,6 +70,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module fullbright = new Fullbright();
 	public Module itemesp = new ItemESP();
 	public Module glide = new Glide();
+	public Module higherjump = new HighJump();
 	public Module jesus = new Jesus();
 	public Module jetpack = new Jetpack();
 	public Module killaura = new KillAura();
@@ -116,6 +118,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(chestesp);
 		addModule(criticals);
 		addModule(crystalaura);
+		addModule(clickTP);
 		addModule(entityesp);
 		addModule(fastplace);
 		addModule(fastbreak);
@@ -123,6 +126,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(freecam);
 		addModule(fullbright);
 		addModule(glide);
+		addModule(higherjump);
 		addModule(itemesp);
 		addModule(jesus);
 		addModule(jetpack);

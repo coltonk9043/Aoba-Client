@@ -111,10 +111,9 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 				Item item = MC.player.getInventory().getStack(i).getItem();
 				
 				// Fix AutoSoup
-				/*
-				 * item.getComponents().contains(FoodComponents.MUSHROOM_STEW); if(item
-				 * instanceof StewItem) { foodSlot = i; break; }
-				 */
+				//if(item.getComponents().contains(FoodComponents.MUSHROOM_STEW)) {
+				//	foodSlot = i; break; 
+				//}
 			}
 			
 			// If a Stew item was found, switch to it and use it.
