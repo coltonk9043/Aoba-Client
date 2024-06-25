@@ -132,7 +132,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(jetpack);
 		addModule(killaura);
 		addModule(maceaura);
-		addModule(nametags);
+		//addModule(nametags);
 		addModule(noclip);
 		addModule(nofall);
 		addModule(nojumpdelay);

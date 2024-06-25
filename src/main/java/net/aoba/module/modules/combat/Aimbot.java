@@ -116,9 +116,13 @@ public class Aimbot extends Module implements TickListener, RenderListener {
 					if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(entity))
 						continue;
 
-					double entityDistanceToPlayer = entity.squaredDistanceTo(MC.player);
-					if (entityDistanceToPlayer < entityFound.squaredDistanceTo(MC.player) && entityDistanceToPlayer < radiusSqr) {
-						entityFound = entity;
+					if(entityFound == null)
+						entityFound = (LivingEntity)entity;
+					else {
+						double entityDistanceToPlayer = entity.squaredDistanceTo(MC.player);
+						if (entityDistanceToPlayer < entityFound.squaredDistanceTo(MC.player) && entityDistanceToPlayer < radiusSqr) {
+							entityFound = entity;
+						}
 					}
 				}
 			}
