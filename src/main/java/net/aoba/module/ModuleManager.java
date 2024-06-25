@@ -49,6 +49,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module anticactus = new AntiCactus();
 	public Module antiinvis = new AntiInvis();
 	public Module antiknockback = new AntiKnockback();
+	public Module antikick = new AntiKick();
 	public Module autoeat = new AutoEat();
 	public Module autofarm = new AutoFarm();
 	public Module autofish = new AutoFish();
@@ -63,6 +64,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module crystalaura = new CrystalAura();
 	public Module clickTP = new ClickTP();
 	public Module entityesp = new EntityESP();
+	public Module fastladder = new FastLadder();
 	public Module fastplace = new FastPlace();
 	public Module fastbreak = new FastBreak();
 	public Module fly = new Fly();
@@ -88,6 +90,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module safewalk = new Safewalk();
 	public Module sneak = new Sneak();
 	public Module spawneresp = new SpawnerESP();
+	public Module speed = new Speed();
 	public Module spider = new Spider();
 	public Module sprint = new Sprint();
 	public Module step = new Step();
@@ -106,6 +109,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(anticactus);
 		addModule(antiinvis);
 		addModule(antiknockback);
+		addModule(antikick);
 		addModule(autoeat);
 		addModule(autofarm);
 		addModule(autofish);
@@ -120,6 +124,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(crystalaura);
 		addModule(clickTP);
 		addModule(entityesp);
+		addModule(fastladder);
 		addModule(fastplace);
 		addModule(fastbreak);
 		addModule(fly);
@@ -145,6 +150,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(safewalk);
 		addModule(sneak);
 		addModule(spawneresp);
+		addModule(speed);
 		addModule(spider);
 		addModule(sprint);
 		addModule(step);
