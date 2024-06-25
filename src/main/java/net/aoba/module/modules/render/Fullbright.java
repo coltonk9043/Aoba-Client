@@ -30,7 +30,7 @@ import net.minecraft.client.util.InputUtil;
 
 public class Fullbright extends Module {
 
-	private double previousValue = 0.0;
+	//private double previousValue = 0.0;
 	public Fullbright() {
 		super(new KeybindSetting("key.fullbright", "Fullbright Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
@@ -41,19 +41,12 @@ public class Fullbright extends Module {
 
 	@Override
 	public void onDisable() {
-		@SuppressWarnings("unchecked")
-		ISimpleOption<Double> gamma =
-				(ISimpleOption<Double>)(Object)MC.options.getGamma();
-		gamma.forceSetValue(previousValue);
+
 	}
 
 	@Override
 	public void onEnable() {
-		this.previousValue = MC.options.getGamma().getValue();
-		@SuppressWarnings("unchecked")
-		ISimpleOption<Double> gamma =
-				(ISimpleOption<Double>)(Object)MC.options.getGamma();
-		gamma.forceSetValue(10000.0);
+
 	}
 
 	@Override

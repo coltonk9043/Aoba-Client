@@ -40,7 +40,7 @@ public class KeyboardMixin {
 			if(action == GLFW.GLFW_PRESS) {
 				KeyDownEvent event = new KeyDownEvent(window, key, scancode, action, modifiers);
 				Aoba.getInstance().eventManager.Fire(event);
-				if(event.IsCancelled()) {
+				if(event.isCancelled()) {
 					ci.cancel();
 				}
 			}

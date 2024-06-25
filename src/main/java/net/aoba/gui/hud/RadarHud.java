@@ -80,12 +80,12 @@ public class RadarHud extends AbstractHud {
 				float ratio_y = (float)((entity.getZ() - mc.player.getZ())) / (distance);
 
 				float fake_x = (pos.x + (width / 2) - (width * ratio_x / 2));
-				float fake_y = (pos.y - 2 + (height / 2) - (width * ratio_y / 2));
+				float fake_y = (pos.y - 1.5f + (height / 2) - (width * ratio_y / 2));
 
 				float radius_x = (float)((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y))) + center_x;
 				float radius_y = (float)((sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))) + center_y;
 
-				RenderUtils.drawBox(matrix4f, (int)(Math.min(pos.x + width - 5, Math.max(pos.x, radius_x))) , (int)(Math.min(pos.y - 5 + height, Math.max(pos.y, radius_y))), 3, 3, c);
+				RenderUtils.drawBox(matrix4f, (int)(Math.min(pos.x + width, Math.max(pos.x, radius_x))) , (int)(Math.min(pos.y + height, Math.max(pos.y, radius_y))), 3, 3, c);
 			}
 
 			// Render Players
@@ -95,12 +95,12 @@ public class RadarHud extends AbstractHud {
 					float ratio_y = (float)((entity.getZ() - mc.player.getZ())) / (distance);
 
 					float fake_x = (pos.x + (width / 2) - (width * ratio_x / 2));
-					float fake_y = (pos.y + 28 + (height / 2) - (width * ratio_y / 2));
+					float fake_y = (pos.y - 1.5f + (height / 2) - (width * ratio_y / 2));
 
 					float radius_x = (float)((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y))) + center_x;
 					float radius_y = (float)((sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))) + center_y;
 
-					RenderUtils.drawBox(matrix4f, (int)(Math.min(pos.x + width - 5, Math.max(pos.x, radius_x))), (int)(Math.min(pos.y + 25 + height, Math.max(pos.y, radius_y))), 3, 3, new Color(255, 255, 255, 255));
+					RenderUtils.drawBox(matrix4f, (int)(Math.min(pos.x + width, Math.max(pos.x, radius_x))), (int)(Math.min(pos.y + height, Math.max(pos.y, radius_y))), 3, 3, new Color(255, 255, 255, 255));
 					RenderUtils.drawStringWithScale(drawContext, entity.getName().getString(), (int)(Math.min(pos.x + width - 5, Math.max(pos.x, radius_x))) - (mc.textRenderer.getWidth(entity.getName()) * 0.5f), (int)(Math.min(pos.y + 25 + height, Math.max(pos.y, radius_y))) - 10, GuiManager.foregroundColor.getValue(), 1.0f);
 				}
 			}

@@ -56,18 +56,12 @@ public class XRay extends Module {
 
 	@Override
 	public void onDisable() {
-		@SuppressWarnings("unchecked")
-		ISimpleOption<Double> gamma = (ISimpleOption<Double>) (Object) MC.options.getGamma();
-		gamma.forceSetValue(1.0);
 		MC.worldRenderer.reload();
 	}
 
 	@Override
 	public void onEnable() {
 		MC.worldRenderer.reload();
-		@SuppressWarnings("unchecked")
-		ISimpleOption<Double> gamma = (ISimpleOption<Double>) (Object) MC.options.getGamma();
-		gamma.forceSetValue(10000.0);
 
 	}
 

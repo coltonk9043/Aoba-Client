@@ -294,7 +294,7 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 	@Override
 	public void OnLeftMouseDown(LeftMouseDownEvent event) {
 		if (this.clickGuiOpen) {
-			event.SetCancelled(true);
+			event.cancel();
 		}
 	}
 

@@ -28,43 +28,20 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.PlayerHealthEvent;
 import net.aoba.gui.GuiManager;
-import net.aoba.misc.FakePlayerEntity;
+import net.aoba.mixin.interfaces.ICamera;
 import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
 import net.aoba.module.modules.movement.HighJump;
 import net.aoba.module.modules.movement.Step;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.client.render.Camera;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntityMixin {
 	@Shadow
 	private ClientPlayNetworkHandler networkHandler;
-
-	@Inject(at = { @At("HEAD") }, method = "tick()V", cancellable = true)
-	private void onPlayerTick(CallbackInfo ci) {
-		if (Aoba.getInstance().moduleManager.freecam.getState()) {
-			Freecam freecam = (Freecam) Aoba.getInstance().moduleManager.freecam;
-			FakePlayerEntity fakePlayer = freecam.getFakePlayer();
-			if(fakePlayer != null) {
-				this.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(fakePlayer.getX(), fakePlayer.getY(),
-						fakePlayer.getZ(), fakePlayer.isOnGround()));
-				this.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(fakePlayer.getYaw(),
-						fakePlayer.getPitch(), fakePlayer.isOnGround()));
-			}
-		}
-	}
-	
-	@Inject(at = {@At("HEAD") }, method="sendMovementPackets()V", cancellable = true)
-	private void sendMovementPackets(CallbackInfo ci) {
-		if (Aoba.getInstance().moduleManager.freecam.getState()) {
-			ci.cancel();
-		}
-	}
-	
 	
 	@Inject (at = {@At("HEAD")}, method="setShowsDeathScreen(Z)V")
 	private void onShowDeathScreen(boolean state, CallbackInfo ci) {
@@ -74,7 +51,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 			hudManager.setClickGuiOpen(false);
 		}
 	}
-
+	
+	@Inject (at = {@At("HEAD")}, method="isCamera()Z", cancellable = true)
+	private void onIsCamera(CallbackInfoReturnable<Boolean> cir) {
+		Freecam freecam = (Freecam)Aoba.getInstance().moduleManager.freecam;
+		if(freecam.getState()) {
+			cir.setReturnValue(true);
+		}
+	}
 	
 	@Override
 	public void onIsSpectator(CallbackInfoReturnable<Boolean> cir) {
@@ -95,9 +79,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		if(Aoba.getInstance().moduleManager.fly.getState()) {
 			Fly fly = (Fly)Aoba.getInstance().moduleManager.fly;
 			cir.setReturnValue((float)fly.getSpeed());
-		}else if(Aoba.getInstance().moduleManager.freecam.getState()) {
-			Freecam freecam = (Freecam)Aoba.getInstance().moduleManager.freecam;
-			cir.setReturnValue((float)freecam.getSpeed());
 		}
 	}
 	
@@ -115,6 +96,32 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		HighJump higherJump = (HighJump)aoba.moduleManager.higherjump;
 		if(higherJump.getState()) {
 			cir.setReturnValue(higherJump.getJumpHeightMultiplier());
+		}
+	}
+	
+	@Override
+	public void onTickNewAi(CallbackInfo ci) {
+		if(Aoba.getInstance().moduleManager.freecam.getState())
+			ci.cancel();
+	}
+	
+	@Override
+	public void onChangeLookDirection(double cursorDeltaX,
+			 double cursorDeltaY,
+			 CallbackInfo ci) {
+		if(Aoba.getInstance().moduleManager.freecam.getState()) {
+			float f = (float)cursorDeltaY * 0.15f;
+	        float g = (float)cursorDeltaX * 0.15f;
+
+	        MinecraftClient mc = MinecraftClient.getInstance();
+	        Camera camera = mc.gameRenderer.getCamera();
+	        ICamera icamera = (ICamera)camera;
+	        
+	        float newYaw = camera.getYaw() + g;
+	        float newPitch = Math.min(90, Math.max(camera.getPitch() + f, -90));
+	        
+	        icamera.setCameraRotation(newYaw, newPitch);
+			ci.cancel();
 		}
 	}
 }

@@ -60,7 +60,7 @@ public class FriendsList {
 	}
 	
 	public void removeFriend(PlayerEntity entity) {
-		
+		removeFriend(entity.getUuid());
 	}
 	
 	public void removeFriend(UUID uuid) {
@@ -73,5 +73,9 @@ public class FriendsList {
 	
 	public boolean contains(UUID uuid) {
 		return friendsList.contains(uuid);
+	}
+	
+	public HashSet<UUID> getFriends(){
+		return friendsList;
 	}
 }

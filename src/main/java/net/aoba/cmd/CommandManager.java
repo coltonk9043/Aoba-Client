@@ -42,6 +42,7 @@ public class CommandManager {
 	public final CmdFastBreak fastbreak = new CmdFastBreak();
 	public final CmdFly fly = new CmdFly();
 	public final CmdFreecam freecam = new CmdFreecam();
+	//public final CmdFriends friends = new CmdFriends();
 	public final CmdFont font = new CmdFont();
 	public final CmdFullbright fullbright = new CmdFullbright();
 	public final CmdHelp help = new CmdHelp();

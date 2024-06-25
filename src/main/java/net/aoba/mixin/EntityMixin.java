@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
 import net.minecraft.entity.Entity;
@@ -65,4 +66,10 @@ public abstract class EntityMixin{
 		return;
 	}
 	
+	@Inject(at= {@At("HEAD")}, method="changeLookDirection(DD)V", cancellable=true)
+	public void onChangeLookDirection(double cursorDeltaX,
+			 double cursorDeltaY,
+			 CallbackInfo ci) {
+		
+	}
 }

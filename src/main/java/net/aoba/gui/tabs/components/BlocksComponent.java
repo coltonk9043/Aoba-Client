@@ -111,7 +111,7 @@ public class BlocksComponent extends Component implements MouseScrollListener, L
 			}else if (event.GetVertical() < 0 && (scroll + visibleRows) < (Registries.BLOCK.size() / visibleColumns)) {
 				scroll++;
 			}
-			event.SetCancelled(true);
+			event.cancel();
 		}
 	}
 	

@@ -43,6 +43,7 @@ public abstract class EntityRendererMixin<T extends Entity> {
 	@Final
 	protected EntityRenderDispatcher dispatcher;
 	
+	// TODO: Add an option to toggle custom nametag rendering in the future in case users would like a noncustom name tag.
 	@Inject(at = @At(value = "HEAD"), 
 			method = "renderLabelIfPresent(Lnet/minecraft/entity/Entity;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IF)V", 
 			cancellable=true)
@@ -52,8 +53,8 @@ public abstract class EntityRendererMixin<T extends Entity> {
 			 VertexConsumerProvider vertexConsumers,
 			 int light,
 			 float tickDelta, CallbackInfo ci) {
-		CustomRenderLabel(entity, text, matrices, vertexConsumers, light);
-			ci.cancel();
+		//CustomRenderLabel(entity, text, matrices, vertexConsumers, light);
+		//	ci.cancel();
 	}
 	
 	@Shadow

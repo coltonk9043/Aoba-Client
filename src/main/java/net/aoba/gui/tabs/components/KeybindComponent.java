@@ -90,7 +90,7 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 			
 			listeningForKey = false;
 			
-			event.SetCancelled(true);
+			event.cancel();
 		}
 	}
 }

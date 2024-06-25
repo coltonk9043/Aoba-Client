@@ -51,14 +51,14 @@ public class MouseMixin {
 					LeftMouseDownEvent event = new LeftMouseDownEvent(x, y);
 					aoba.eventManager.Fire(event);
 
-					if (event.IsCancelled()) {
+					if (event.isCancelled()) {
 						ci.cancel();
 					}
 				} else {
 					LeftMouseUpEvent event = new LeftMouseUpEvent(x, y);
 					aoba.eventManager.Fire(event);
 
-					if (event.IsCancelled()) {
+					if (event.isCancelled()) {
 						ci.cancel();
 					}
 				}
@@ -71,14 +71,14 @@ public class MouseMixin {
 					RightMouseDownEvent event2 = new RightMouseDownEvent(x, y);
 					aoba.eventManager.Fire(event2);
 
-					if (event2.IsCancelled()) {
+					if (event2.isCancelled()) {
 						ci.cancel();
 					}
 				} else {
 					RightMouseUpEvent event2 = new RightMouseUpEvent(x, y);
 					aoba.eventManager.Fire(event2);
 
-					if (event2.IsCancelled()) {
+					if (event2.isCancelled()) {
 						ci.cancel();
 					}
 				}
@@ -94,7 +94,7 @@ public class MouseMixin {
 			MouseScrollEvent event = new MouseScrollEvent(horizontal, vertical);
 			aoba.eventManager.Fire(event);
 
-			if (event.IsCancelled()) {
+			if (event.isCancelled()) {
 				ci.cancel();
 			}
 		}
@@ -113,7 +113,7 @@ public class MouseMixin {
 			MouseMoveEvent event = new MouseMoveEvent(x, y);
 			aoba.eventManager.Fire(event);
 
-			if (event.IsCancelled())
+			if (event.isCancelled())
 				ci.cancel();
 		}
 	}

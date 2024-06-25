@@ -40,7 +40,7 @@ public class DeathScreenMixin{
 		PlayerDeathEvent event = new PlayerDeathEvent();
 		Aoba.getInstance().eventManager.Fire(event);
 			
-		if(event.IsCancelled()) {
+		if(event.isCancelled()) {
 			ci.cancel();
 		}
 	}

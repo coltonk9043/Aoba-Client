@@ -29,12 +29,12 @@ public abstract class AbstractEvent {
 		isCancelled = false;
 	}
 	
-	public boolean IsCancelled() {
+	public boolean isCancelled() {
 		return isCancelled;
 	}
 	
-	public void SetCancelled(boolean state) {
-		this.isCancelled = state;
+	public void cancel() {
+		this.isCancelled = true;
 	}
 	
 	public abstract void Fire(ArrayList<? extends AbstractListener> listeners);

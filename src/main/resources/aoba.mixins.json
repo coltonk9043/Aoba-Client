@@ -8,7 +8,8 @@
 		"interfaces.IExplosionS2CPacket",
 		"interfaces.IEntityVelocityUpdateS2CPacket",
 		"interfaces.IPlayerInteractEntityC2SPacket",
-		"interfaces.IEntity"
+		"interfaces.IEntity",
+		"interfaces.ICamera"
 	  ],
 	  "client": [
 		"AbstractBlockStateMixin",
@@ -18,6 +19,7 @@
 		"BlockMixin",
 		"BlockModelRendererMixin",
 		"CactusBlockMixin",
+		"CameraMixin",
 		"ChatHudMixin",
 		"ChatInputSuggestorMixin",
 		"ChatScreenMixin",
@@ -31,6 +33,7 @@
 		"EntityMixin",
 		"EntityRendererMixin",
 		"FluidBlockMixin",
+		"GameOptionsMixin",
 		"GameRendererMixin",
 		"HungerManagerMixin",
 		"IngameHudMixin",

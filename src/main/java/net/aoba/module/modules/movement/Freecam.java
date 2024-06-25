@@ -22,26 +22,34 @@
 package net.aoba.module.modules.movement;
 
 import java.util.UUID;
+
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.FakePlayerEntity;
+import net.aoba.mixin.interfaces.ICamera;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.Entity.RemovalReason;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-public class Freecam extends Module implements TickListener {
-	private FakePlayerEntity fakePlayer;
+public class Freecam extends Module implements TickListener, RenderListener {
 	private FloatSetting flySpeed;
+
+	private FakePlayerEntity fakePlayer;
+	private Vec3d prevPos;
+	private Vec3d pos;
 	
 	public Freecam() {
 		super(new KeybindSetting("key.freecam", "Freecam Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-		
+
 		this.setName("Freecam");
 		this.setCategory(Category.Movement);
 		this.setDescription("Allows the player to clip through blocks (Only work clientside).");
@@ -52,68 +60,106 @@ public class Freecam extends Module implements TickListener {
 	public void setSpeed(float speed) {
 		this.flySpeed.setValue(speed);
 	}
-	
+
 	public double getSpeed() {
 		return this.flySpeed.getValue();
 	}
-	
+
 	@Override
 	public void onDisable() {
-		if(MC.world == null || fakePlayer == null) return;
-		ClientPlayerEntity player = MC.player;
-		MC.player.noClip = false;
-		player.setVelocity(0, 0, 0);
-		player.copyFrom(fakePlayer);
 		fakePlayer.despawn();
-		MC.world.removeEntity(-3, RemovalReason.DISCARDED);
 		
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+		
 		ClientPlayerEntity player = MC.player;
 		fakePlayer = new FakePlayerEntity();
 		fakePlayer.copyFrom(player);
 		fakePlayer.setUuid(UUID.randomUUID());
 		fakePlayer.headYaw = player.headYaw;
+		fakePlayer.bodyYaw = player.bodyYaw;
+		fakePlayer.setPitch(player.getPitch());
 		MC.world.addEntity(fakePlayer);
 		
-		Aoba.getInstance().moduleManager.fly.setState(false);
-		Aoba.getInstance().moduleManager.noclip.setState(false);
+		Camera camera = MC.gameRenderer.getCamera();
+		ICamera iCamera = (ICamera) camera;
+		iCamera.setFocusedEntity(null);
 		
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Vec3d newPos = MC.player.getPos().add(0, 1.5, 0);
+		prevPos = newPos;
+		pos = newPos;
+		iCamera.setCameraPos(pos);
+		
+		
 	}
 
 	@Override
 	public void onToggle() {
-
-	}
-	
-	public FakePlayerEntity getFakePlayer() {
-		return this.fakePlayer;
 	}
 
 	@Override
 	public void OnUpdate(TickEvent event) {
-		ClientPlayerEntity player = MC.player;
-		player.noClip = true;
-		player.setOnGround(false);
-		float speed = this.flySpeed.getValue().floatValue();
-		if (MC.options.sprintKey.isPressed()) {
-			speed *= 1.5;
-		}
+		Camera camera = MC.gameRenderer.getCamera();
+		Vec3d cameraPos = camera.getPos();
+		prevPos = cameraPos;
 		
-		player.getAbilities().flying = false;
-		player.setVelocity(new Vec3d(0, 0, 0));
-		Vec3d vec = new Vec3d(0,0,0);
-		if (MC.options.jumpKey.isPressed()) {
-			vec = new Vec3d(0,speed * 0.2f,0);
-		}
-		if (MC.options.sneakKey.isPressed()) {
-			vec = new Vec3d(0,-speed * 0.2f,0);
-		}
+		Vec3d forward = Vec3d.fromPolar(0, camera.getYaw());
+        Vec3d right = Vec3d.fromPolar(0, camera.getYaw() + 90);
+        
+        Vec3d velocity = new Vec3d(0, 0, 0);
 
-		player.setVelocity(vec);
+        if(MC.options.forwardKey.isPressed()) {
+        	velocity = velocity.add(forward.multiply(flySpeed.getValue()));
+        }else if (MC.options.backKey.isPressed()) {
+        	velocity = velocity.subtract(forward.multiply(flySpeed.getValue()));
+        }
+        
+        if(MC.options.rightKey.isPressed()) {
+        	velocity = velocity.add(right.multiply(flySpeed.getValue()));
+        }else if(MC.options.leftKey.isPressed()) {
+        	velocity = velocity.subtract(right.multiply(flySpeed.getValue()));
+        }
+        
+        if(MC.options.jumpKey.isPressed()) {
+        	velocity = velocity.add(0, flySpeed.getValue(), 0);
+        }else if(MC.options.sneakKey.isPressed())
+        	velocity = velocity.add(0, -flySpeed.getValue(), 0);
+        
+        pos = cameraPos.add(velocity);
+        
+        ClientPlayerEntity player = MC.player;
+		fakePlayer.setHeadYaw(player.getHeadYaw());
+		fakePlayer.setBodyYaw(player.getBodyYaw());
+		fakePlayer.setVelocity(player.getVelocity());
+        fakePlayer.setPosition(player.getPos());
+	}
+
+	@Override
+	public void OnRender(RenderEvent event) {
+		Camera camera = MC.gameRenderer.getCamera();
+		ICamera iCamera = (ICamera) camera;
+		
+		double tickDelta = event.GetPartialTicks();
+		
+		ClientPlayerEntity player = MC.player;
+		fakePlayer.setPitch(player.getPitch(event.GetPartialTicks()));
+
+		
+		Vec3d interpolatedPos = new Vec3d(
+			MathHelper.lerp(tickDelta, prevPos.x, pos.x),
+			MathHelper.lerp(tickDelta, prevPos.y, pos.y),
+			MathHelper.lerp(tickDelta, prevPos.z, pos.z)
+		);
+		iCamera.setCameraPos(interpolatedPos);
+	}
+	
+	public FakePlayerEntity getFakePlayer() {
+		return this.fakePlayer;
 	}
 }

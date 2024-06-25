@@ -2,13 +2,18 @@ package net.aoba.module.modules.movement;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.event.events.RightMouseDownEvent;
 import net.aoba.event.listeners.RightMouseDownListener;
+import net.aoba.misc.FakePlayerEntity;
+import net.aoba.mixin.interfaces.ICamera;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -16,6 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.RaycastContext;
 
 public class ClickTP extends Module implements RightMouseDownListener {
 
@@ -50,7 +56,16 @@ public class ClickTP extends Module implements RightMouseDownListener {
 
 	@Override
 	public void OnRightMouseDown(RightMouseDownEvent event) {
-		HitResult raycast = MC.player.raycast(distance.getValue(), MC.getRenderTickCounter().getTickDelta(false), false);
+
+		Camera camera = MC.gameRenderer.getCamera();
+		ICamera icamera = (ICamera)camera;
+		
+		Vec3d direction = Vec3d.fromPolar(camera.getPitch(), camera.getYaw()).multiply(210);
+        Vec3d targetPos = camera.getPos().add(direction);
+
+        RaycastContext context = new RaycastContext(camera.getPos(), targetPos, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, MC.player);
+
+        HitResult raycast = MC.world.raycast(context);
         
         if (raycast.getType() == HitResult.Type.BLOCK) {
         	BlockHitResult raycastBlock = (BlockHitResult) raycast;
@@ -65,6 +80,9 @@ public class ClickTP extends Module implements RightMouseDownListener {
             }
 
             MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, true));
+            
+            
+            AobaClient aoba = Aoba.getInstance();
             MC.player.setPosition(newPos);
         }
 	}
