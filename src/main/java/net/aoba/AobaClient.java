@@ -73,8 +73,8 @@ public class AobaClient {
 		renderUtils = new RenderUtils();
 		System.out.println("[Aoba] Reading Settings");
 		settingManager = new SettingManager();
-		//System.out.println("[Aoba] Reading Friends List");
-		//friendsList = new FriendsList();
+		System.out.println("[Aoba] Reading Friends List");
+		friendsList = new FriendsList();
 		System.out.println("[Aoba] Initializing Modules");
 		moduleManager = new ModuleManager();
 		System.out.println("[Aoba] Initializing Commands");
@@ -136,7 +136,7 @@ public class AobaClient {
 			SettingManager.saveSettings(settingManager.modulesContainer);
 			SettingManager.saveSettings(settingManager.hiddenContainer);
 			altManager.saveAlts();
-			//friendsList.save();
+			friendsList.save();
 			moduleManager.modules.forEach(s -> s.onDisable());
 		}catch(Exception e) {
 			e.printStackTrace();
