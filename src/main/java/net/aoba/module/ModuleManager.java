@@ -94,6 +94,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module spider = new Spider();
 	public Module sprint = new Sprint();
 	public Module step = new Step();
+	public Module strafe = new Strafe();
 	public Module surround = new Surround();
 	public Module tilebreaker = new TileBreaker();
 	public Module timer = new Timer();
@@ -154,6 +155,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(spider);
 		addModule(sprint);
 		addModule(step);
+		addModule(strafe);
 		addModule(surround);
 		addModule(tilebreaker);
 		addModule(timer);
