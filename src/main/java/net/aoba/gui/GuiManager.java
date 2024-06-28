@@ -20,11 +20,9 @@ package net.aoba.gui;
 
 import java.util.HashMap;
 import net.aoba.event.events.KeyDownEvent;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.events.LeftMouseUpEvent;
+import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
-import net.aoba.event.listeners.LeftMouseUpListener;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.event.listeners.KeyDownListener;
 import org.joml.Matrix4f;
@@ -51,6 +49,8 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
@@ -58,7 +58,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, KeyDownListener, TickListener {
+public class GuiManager implements MouseClickListener, KeyDownListener, TickListener {
 	protected MinecraftClient mc = MinecraftClient.getInstance();
 
 	public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
@@ -147,9 +147,8 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 		SettingManager.registerSetting(rainbow, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(ah, Aoba.getInstance().settingManager.configContainer);
 		
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
-		
+		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+
 		clickGuiNavBar.setSelectedIndex(0);
 	}
 	
@@ -292,14 +291,13 @@ public class GuiManager implements LeftMouseDownListener, LeftMouseUpListener, K
 	}
 
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if (this.clickGuiOpen) {
-			event.cancel();
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT) {
+			if(event.action == MouseAction.DOWN && this.clickGuiOpen) {
+				event.cancel();
+			}else if(event.action == MouseAction.UP) {
+				currentGrabbed = null;
+			}
 		}
-	}
-
-	@Override
-	public void OnLeftMouseUp(LeftMouseUpEvent event) {
-		currentGrabbed = null;
 	}
 }

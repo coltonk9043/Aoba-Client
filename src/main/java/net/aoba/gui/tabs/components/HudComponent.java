@@ -19,14 +19,16 @@
 package net.aoba.gui.tabs.components;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.misc.RenderUtils;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 
-public class HudComponent extends Component implements LeftMouseDownListener {
+public class HudComponent extends Component implements MouseClickListener {
 	private String text;
 	private AbstractHud hud;
 
@@ -55,19 +57,21 @@ public class HudComponent extends Component implements LeftMouseDownListener {
 	}
 	
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if(this.hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			boolean visibility = hud.activated.getValue();
-			Aoba.getInstance().hudManager.SetHudActive(hud, !visibility);
-		}
-	}
-	
-	@Override
 	public void OnVisibilityChanged() {
 		if(this.isVisible()) {
-			Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 		}else {
-			Aoba.getInstance().eventManager.RemoveListener(LeftMouseDownListener.class, this);
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+		}
+	}
+
+	@Override
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			if(this.hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+				boolean visibility = hud.activated.getValue();
+				Aoba.getInstance().hudManager.SetHudActive(hud, !visibility);
+			}
 		}
 	}
 }

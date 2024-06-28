@@ -19,24 +19,23 @@
 package net.aoba.gui.tabs.components;
 
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.events.LeftMouseUpEvent;
+import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
-import net.aoba.event.listeners.LeftMouseUpListener;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class SliderComponent extends Component implements LeftMouseDownListener, LeftMouseUpListener, MouseMoveListener {
+public class SliderComponent extends Component implements MouseClickListener, MouseMoveListener {
 
 	private String text;
 	private float currentSliderPosition = 0.4f;
@@ -57,8 +56,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 		this.setLeft(4);
 		this.setRight(4);
 
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 	}
 
 	public SliderComponent(IGuiElement parent, FloatSetting slider) {
@@ -72,8 +70,7 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 		this.setLeft(4);
 		this.setRight(4);
 		
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 	}
 
 	public float getSliderPosition() {
@@ -97,17 +94,18 @@ public class SliderComponent extends Component implements LeftMouseDownListener,
 		this.g = g;
 		this.b = b;
 	}
-
-	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			isSliding = true;
-		}
-	}
 	
 	@Override
-	public void OnLeftMouseUp(LeftMouseUpEvent event) {
-		isSliding = false;
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT) {
+			if(event.action == MouseAction.DOWN) {
+				if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+					isSliding = true;
+				}
+			}else if(event.action == MouseAction.UP) {
+				isSliding = false;
+			}
+		}
 	}
 	
 	@Override

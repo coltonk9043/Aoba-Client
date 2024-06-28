@@ -20,14 +20,16 @@ package net.aoba.gui.tabs.components;
 
 import java.util.List;
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.StringSetting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 
-public class ListComponent extends Component implements LeftMouseDownListener {
+public class ListComponent extends Component implements MouseClickListener {
 	private StringSetting listSetting;
 
 	private List<String> options;
@@ -38,7 +40,7 @@ public class ListComponent extends Component implements LeftMouseDownListener {
 		this.setLeft(2);
 		this.setRight(2);
 		this.setHeight(30);
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 
 		this.options = options;
 	}
@@ -51,7 +53,7 @@ public class ListComponent extends Component implements LeftMouseDownListener {
 		this.setRight(2);
 		this.setHeight(30);
 
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 
 		this.options = options;
 	}
@@ -65,23 +67,25 @@ public class ListComponent extends Component implements LeftMouseDownListener {
 		RenderUtils.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4, 0xFFFFFF);
 	}
 
-	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		double mouseX = event.GetMouseX();
-
-		// Mouse is on the left
-		if(this.hovered) {			
-			if (mouseX > actualX && mouseX < (actualX + 32)) {
-				setSelectedIndex(Math.max(--selectedIndex, 0));
-			// Mouse is on the right
-			} else if (mouseX > (actualX + actualWidth - 32) && mouseX < (actualX + actualWidth)) {
-				setSelectedIndex(Math.min(++selectedIndex, options.size() - 1));
-			}
-		}
-	}
-
 	public void setSelectedIndex(int index) {
 		selectedIndex = index;
 		listSetting.setValue(options.get(selectedIndex));
+	}
+
+	@Override
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			double mouseX = event.mouseX;
+
+			// Mouse is on the left
+			if(this.hovered) {			
+				if (mouseX > actualX && mouseX < (actualX + 32)) {
+					setSelectedIndex(Math.max(--selectedIndex, 0));
+				// Mouse is on the right
+				} else if (mouseX > (actualX + actualWidth - 32) && mouseX < (actualX + actualWidth)) {
+					setSelectedIndex(Math.min(++selectedIndex, options.size() - 1));
+				}
+			}
+		}
 	}
 }

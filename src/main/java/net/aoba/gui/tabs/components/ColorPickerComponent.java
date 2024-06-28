@@ -19,24 +19,23 @@
 package net.aoba.gui.tabs.components;
 
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.events.LeftMouseUpEvent;
+import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
-import net.aoba.event.listeners.LeftMouseUpListener;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.ColorSetting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 
-public class ColorPickerComponent extends Component implements LeftMouseDownListener, LeftMouseUpListener, MouseMoveListener {
+public class ColorPickerComponent extends Component implements MouseClickListener, MouseMoveListener {
 
 	private String text;
 	private boolean isSliding = false;
@@ -55,9 +54,6 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		this.setHeight(145);
 		this.setLeft(4);
 		this.setRight(4);
-
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
 	}
 	
 	public ColorPickerComponent(IGuiElement parent, ColorSetting color) {
@@ -74,9 +70,6 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 		this.setHeight(30);
 		this.setLeft(4);
 		this.setRight(4);
-		
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(LeftMouseUpListener.class, this);
 	}
 	
 	public void ensureGuiUpdated(Color newColor) {
@@ -95,26 +88,27 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 	}
 
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		double mouseY = event.GetMouseY();
-		
-		if(hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			if(mouseY < actualY + 29) {
-				collapsed = !collapsed;
-				if(collapsed) 
-					this.setHeight(30);
-				else
-					this.setHeight(145);
-			}else {
-				if(!collapsed)
-					isSliding = true;
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT) {
+			if(event.action == MouseAction.DOWN) {
+				double mouseY = event.mouseY;
+				
+				if(hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+					if(mouseY < actualY + 29) {
+						collapsed = !collapsed;
+						if(collapsed) 
+							this.setHeight(30);
+						else
+							this.setHeight(145);
+					}else {
+						if(!collapsed)
+							isSliding = true;
+					}
+				}
+			}else if(event.action == MouseAction.UP) {
+				isSliding = false;
 			}
 		}
-	}
-	
-	@Override
-	public void OnLeftMouseUp(LeftMouseUpEvent event) {
-		isSliding = false;
 	}
 	
 	@Override
@@ -145,6 +139,15 @@ public class ColorPickerComponent extends Component implements LeftMouseDownList
 	}
 
 
+	@Override
+	public void OnVisibilityChanged() {
+		if(this.isVisible()) {
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+		}else {
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+		}
+	}
+	
 	@Override
 	public void update() {
 		super.update();

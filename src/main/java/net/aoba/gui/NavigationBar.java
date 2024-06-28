@@ -23,16 +23,18 @@ import java.util.List;
 import org.joml.Matrix4f;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class NavigationBar implements LeftMouseDownListener {
+public class NavigationBar implements MouseClickListener {
 	MinecraftClient mc = MinecraftClient.getInstance();
 
 	private List<Page> options;
@@ -40,7 +42,7 @@ public class NavigationBar implements LeftMouseDownListener {
 
 	public NavigationBar() {
 		options = new ArrayList<Page>();
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 	}
 
 	public void addPane(Page pane) {
@@ -97,22 +99,24 @@ public class NavigationBar implements LeftMouseDownListener {
 	}
 
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		AobaClient aoba = Aoba.getInstance();
-		Window window = mc.getWindow();
-		
-		double mouseX = event.GetMouseX();
-		double mouseY = event.GetMouseY();
-		int width = 100 * options.size();
-		int centerX = (window.getWidth() / 2);
-		int x = centerX - (width / 2);
-		
-		if (aoba.hudManager.isClickGuiOpen() && GuiManager.currentGrabbed == null) {
-			if (mouseX >= (x) && mouseX <= (x + width)) {
-				if (mouseY >= (25) && mouseY <= (50)) {
-					int mouseXInt = (int) mouseX;
-					int selection = (mouseXInt - x) / 100; 
-					this.setSelectedIndex(selection);
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			AobaClient aoba = Aoba.getInstance();
+			Window window = mc.getWindow();
+			
+			double mouseX = event.mouseX;
+			double mouseY = event.mouseY;
+			int width = 100 * options.size();
+			int centerX = (window.getWidth() / 2);
+			int x = centerX - (width / 2);
+			
+			if (aoba.hudManager.isClickGuiOpen() && GuiManager.currentGrabbed == null) {
+				if (mouseX >= (x) && mouseX <= (x + width)) {
+					if (mouseY >= (25) && mouseY <= (50)) {
+						int mouseXInt = (int) mouseX;
+						int selection = (mouseXInt - x) / 100; 
+						this.setSelectedIndex(selection);
+					}
 				}
 			}
 		}

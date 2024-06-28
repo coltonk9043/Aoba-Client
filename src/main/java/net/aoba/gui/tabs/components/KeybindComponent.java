@@ -20,21 +20,22 @@ package net.aoba.gui.tabs.components;
 
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
-import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class KeybindComponent extends Component implements LeftMouseDownListener, KeyDownListener {
+public class KeybindComponent extends Component implements MouseClickListener, KeyDownListener {
 	private boolean listeningForKey;
 	private KeybindSetting keyBind;
 	
@@ -42,8 +43,17 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 		super(parent);
 		this.keyBind = keyBind;
 		
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+	}
+	
+	@Override
+	public void OnVisibilityChanged() {
+		if(this.isVisible()) {
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+		}else {
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+		}
 	}
 
 	@Override
@@ -70,12 +80,14 @@ public class KeybindComponent extends Component implements LeftMouseDownListener
 	}
 
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			listeningForKey = !listeningForKey;
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+				listeningForKey = !listeningForKey;
+			}
 		}
 	}
-
+	
 	@Override
 	public void OnKeyDown(KeyDownEvent event) {
 		if(listeningForKey) {
