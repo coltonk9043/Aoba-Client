@@ -35,6 +35,7 @@ import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
@@ -59,6 +60,7 @@ import net.minecraft.world.RaycastContext.FluidHandling;
 public class Trajectory extends Module implements RenderListener {
 
 	private ColorSetting color = new ColorSetting("trajectory_color", "Color", "Color", new Color(0, 1f, 1f));
+	private FloatSetting blipSize = new FloatSetting("trajectory_blipsize", "Blip Size", "Blip Size", 0.15f, 0.05f, 1.0f, 0.05f);
 	
 	public Trajectory() {
 		super(new KeybindSetting("key.trajectory", "Trajectory Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -68,6 +70,7 @@ public class Trajectory extends Module implements RenderListener {
 		this.setDescription("Allows the player to see where they are aiming. (DISABLED)");
 		
 		this.addSetting(color);
+		this.addSetting(blipSize);
 	}
 
 	@Override
@@ -93,15 +96,6 @@ public class Trajectory extends Module implements RenderListener {
 			
 			ItemStack itemStack = MC.player.getActiveItem();
 			if(ModuleUtils.isThrowable(itemStack)) {
-				RenderSystem.setShaderColor(renderColor.getRedFloat(), renderColor.getGreenFloat(), renderColor.getBlueFloat(), renderColor.getAlphaFloat());
-				
-				GL11.glEnable(GL11.GL_BLEND);
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
-				
-				Tessellator tessellator = RenderSystem.renderThreadTesselator();
-				RenderSystem.setShader(GameRenderer::getPositionProgram);
-				BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
-
 				float initialVelocity = (52f * BowItem.getPullProgress(MC.player.getItemUseTime()));
 				
 				Camera camera = MC.gameRenderer.getCamera();
@@ -117,6 +111,15 @@ public class Trajectory extends Module implements RenderListener {
 				Vec3d prevPoint = new Vec3d(0, 0, 0).add(eyePos).subtract(offset).add(right);
 				Vec3d landPosition = null;
 				
+				RenderSystem.setShaderColor(renderColor.getRedFloat(), renderColor.getGreenFloat(), renderColor.getBlueFloat(), renderColor.getAlphaFloat());
+				
+				GL11.glEnable(GL11.GL_BLEND);
+				GL11.glDisable(GL11.GL_DEPTH_TEST);
+				
+				Tessellator tessellator = RenderSystem.renderThreadTesselator();
+				RenderSystem.setShader(GameRenderer::getPositionProgram);
+				BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
+
 				for(int iteration = 0; iteration < 150; iteration++){
 					Vec3d nextPoint = prevPoint.add(velocity.multiply(0.1));
 					bufferBuilder.vertex(matrix, (float) prevPoint.x, (float) prevPoint.y, (float) prevPoint.z);
@@ -124,27 +127,30 @@ public class Trajectory extends Module implements RenderListener {
 					// Check to see if we have collided with a block.
 					RaycastContext context = new RaycastContext(prevPoint, nextPoint, RaycastContext.ShapeType.COLLIDER, FluidHandling.NONE, MC.player);
 					BlockHitResult result = MC.world.raycast(context);
-
 					if(result.getType() != HitResult.Type.MISS) {
+						// Arrow is collided with a block, draw one last vertice and set land position to the raycast result position.
 						landPosition = result.getPos();
 						bufferBuilder.vertex(matrix, (float) landPosition.x, (float) landPosition.y, (float) landPosition.z);
 						break;
 					}else {
+						// We did NOT find a collision with a block, check entities.
 						Box box = new Box(prevPoint, nextPoint);
 						Predicate<Entity> predicate = e -> !e.isSpectator() && e.canHit();
 						EntityHitResult entityResult = ProjectileUtil.raycast(MC.player, prevPoint, nextPoint, box, predicate, 4096);
 						
 						if(entityResult != null && entityResult.getType() != HitResult.Type.MISS) {
+							// Arrow is collided with an entity, draw one last vertice and set land position to the raycast result position.
 							landPosition = entityResult.getPos();
 							bufferBuilder.vertex(matrix, (float) landPosition.x, (float) landPosition.y, (float) landPosition.z);
 							break;
 						}else {
+							// No collisions from raycast, draw next vertice.
 							bufferBuilder.vertex(matrix, (float) nextPoint.x, (float) nextPoint.y, (float) nextPoint.z);
 						}
 					}
 
 					prevPoint = nextPoint;
-					velocity = velocity.multiply(0.999).add(0, -0.05f, 0);
+					velocity = velocity.multiply(0.99).add(0, -0.045f, 0);
 				}
 				
 
@@ -154,9 +160,9 @@ public class Trajectory extends Module implements RenderListener {
 				GL11.glEnable(GL11.GL_DEPTH_TEST);
 				GL11.glDisable(GL11.GL_BLEND);
 				
-				// Draw Cube
+				// Draw Cube if a landing position exists.
 				if(landPosition != null) {
-					float size = 0.25f;
+					float size = blipSize.getValue();
 					Vec3d pos1 = landPosition.add(-size, -size, -size);
 					Vec3d pos2 = landPosition.add(size, size, size);
 					Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
