@@ -32,6 +32,7 @@ import net.aoba.module.modules.misc.*;
 import net.aoba.module.modules.movement.*;
 import net.aoba.module.modules.render.*;
 import net.aoba.module.modules.world.*;
+import net.aoba.pathfinding.PathFindModule;
 import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
@@ -104,7 +105,13 @@ public class ModuleManager implements KeyDownListener {
 	public Module xray = new XRay();
 	public Module zoom = new Zoom();
 	
+	public Module pathFind = new PathFindModule();
+	
 	public ModuleManager() {
+		
+		// TEST Module
+		addModule(pathFind);
+		
 		// Look at all these modules!
 		addModule(aimbot);
 		addModule(anticactus);

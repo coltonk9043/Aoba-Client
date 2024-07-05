@@ -112,7 +112,7 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 
 	public void Initialize() {
 		toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
-		
+		toolsPane.AddHud(new GoToTab("Go To Location", 1220, 550));
 		moduleSelector = new ModuleSelectorHud();
 		armorHud = new ArmorHud(790, 500, 200, 50);
 		radarHud = new RadarHud(590, 500, 180, 180);

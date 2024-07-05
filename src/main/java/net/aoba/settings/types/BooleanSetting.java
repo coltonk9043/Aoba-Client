@@ -34,6 +34,11 @@ public class BooleanSetting extends Setting<Boolean> {
 		type = TYPE.BOOLEAN;
 	}
 	
+	public BooleanSetting(String ID, String displayName, String description, boolean default_value, Consumer<Boolean> onUpdate) {
+		super(ID, displayName, description, default_value, onUpdate);
+		type = TYPE.BOOLEAN;
+	}
+	
 	public BooleanSetting(String ID, String description, boolean default_value, Consumer<Boolean> onUpdate) {
 		super(ID, description, default_value, onUpdate);
 		type = TYPE.BOOLEAN;
