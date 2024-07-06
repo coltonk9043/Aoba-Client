@@ -58,6 +58,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module autoTotem = new AutoTotem();
 	public Module autorespawn = new AutoRespawn();
 	public Module autowalk = new AutoWalk();
+	public Module bowaimbot = new BowAimbot();
 	public Module breadcrumbs = new Breadcrumbs();
 	public Module chestesp = new ChestESP();
 	public Module criticals = new Criticals();
@@ -119,6 +120,7 @@ public class ModuleManager implements KeyDownListener {
 		addModule(autoTotem);
 		addModule(autorespawn);
 		addModule(autowalk);
+		addModule(bowaimbot);
 		addModule(breadcrumbs);
 		addModule(chestesp);
 		addModule(criticals);
