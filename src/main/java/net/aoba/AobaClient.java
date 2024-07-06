@@ -99,29 +99,39 @@ public class AobaClient {
         SettingManager.loadSettings(settingManager.modulesContainer);
         SettingManager.loadSettings(settingManager.hiddenContainer);
 
-        for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("aoba-addon", IAddon.class)) {
+        LogUtils.getLogger().info("[Aoba] Starting addon initialization");
+
+        for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEgntrypointContainers("aoba", IAddon.class)) {
             IAddon addon = entrypoint.getEntrypoint();
 
-            addon.onIntialize();
+            try {
+                LogUtils.getLogger().info("[Aoba] Initializing addon: " + addon.getClass().getName());
+                addon.onIntialize();
+            } catch (Exception e) {
+                LogUtils.getLogger().error("Error initializing addon: " + addon.getClass().getName(), e);
+            }
 
             addon.modules().stream().filter(Objects::nonNull).forEach(module -> {
                 try {
                     moduleManager.modules.add(module);
-                } catch(Exception e){
-                    LogUtils.getLogger().error("Error registering module: " + module.getClass().getName(), e);
+                    LogUtils.getLogger().info("[Aoba] Successfully registered module: " + module.getClass().getName());
+                } catch (Exception e) {
+                    LogUtils.getLogger().error("Error registering module: " + module.getClass().getName() + " for addon: " + addon.getClass().getName(), e);
                 }
-            }
-        );
+            });
+        }
+
+        LogUtils.getLogger().info("[Aoba] Addon initialization completed");
+
+
+        globalChat = new
+
+                GlobalChat();
+        globalChat.StartListener();
+
+        //GuiManager.borderColor.setMode(ColorMode.Rainbow);
+        //GuiManager.foregroundColor.setMode(ColorMode.Random);
     }
-
-    globalChat =new
-
-    GlobalChat();
-		globalChat.StartListener();
-
-    //GuiManager.borderColor.setMode(ColorMode.Rainbow);
-    //GuiManager.foregroundColor.setMode(ColorMode.Random);
-}
 
     /**
      * Renders the HUD every frame
