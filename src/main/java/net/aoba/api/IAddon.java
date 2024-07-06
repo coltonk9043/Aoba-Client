@@ -9,4 +9,5 @@ public interface IAddon {
     void onIntialize();
     List<Module> modules();
     List<Command> commands();
+    String getName();
 }

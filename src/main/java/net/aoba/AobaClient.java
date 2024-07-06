@@ -101,7 +101,7 @@ public class AobaClient {
 
         LogUtils.getLogger().info("[Aoba] Starting addon initialization");
 
-        for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEgntrypointContainers("aoba", IAddon.class)) {
+        for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("aoba", IAddon.class)) {
             IAddon addon = entrypoint.getEntrypoint();
 
             try {
