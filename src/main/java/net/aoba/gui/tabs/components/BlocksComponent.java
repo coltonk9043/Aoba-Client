@@ -19,24 +19,25 @@
 package net.aoba.gui.tabs.components;
 
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseScrollEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.BlocksSetting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 
-public class BlocksComponent extends Component implements MouseScrollListener, LeftMouseDownListener {
+public class BlocksComponent extends Component implements MouseScrollListener, MouseClickListener {
 
 	private BlocksSetting blocks;
 	private String text;
@@ -119,40 +120,42 @@ public class BlocksComponent extends Component implements MouseScrollListener, L
 	public void OnVisibilityChanged() {
 		if(this.isVisible()) {
 			Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
-			Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 		}else {
 			Aoba.getInstance().eventManager.RemoveListener(MouseScrollListener.class, this);
-			Aoba.getInstance().eventManager.RemoveListener(LeftMouseDownListener.class, this);
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
 		}
 	}
 
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		double mouseX = event.GetMouseX();
-		double mouseY = event.GetMouseY();
-		
-		if(mouseX > (actualX + 4) && mouseY < (actualX + (36 * visibleColumns) + 4)) {
-			if(mouseY > actualY && mouseY < actualY + 25) {
-				collapsed = !collapsed;
-				if(collapsed) 
-					this.setHeight(collapsedHeight);
-				else
-					this.setHeight(expandedHeight);
-			}else if(mouseY > (actualY + 25) && mouseY < (actualY + (36 * visibleRows) + 25)) {
-				int col =  (int) (mouseX - actualX - 8) / 36;
-				int row =  (int) ((mouseY - actualY - 24) / 36) + scroll;
-				
-				int index = (row * visibleColumns) + col;
-				if(index > Registries.BLOCK.size())
-					return;
-				
-				Block block = Registries.BLOCK.get(index);
-				if(this.blocks.getValue().contains(block)) {
-					this.blocks.getValue().remove(block);
-					this.blocks.update();
-				}else {
-					this.blocks.getValue().add(block);
-					this.blocks.update();
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			double mouseX = event.mouseX;
+			double mouseY = event.mouseY;
+			
+			if(mouseX > (actualX + 4) && mouseY < (actualX + (36 * visibleColumns) + 4)) {
+				if(mouseY > actualY && mouseY < actualY + 25) {
+					collapsed = !collapsed;
+					if(collapsed) 
+						this.setHeight(collapsedHeight);
+					else
+						this.setHeight(expandedHeight);
+				}else if(mouseY > (actualY + 25) && mouseY < (actualY + (36 * visibleRows) + 25)) {
+					int col =  (int) (mouseX - actualX - 8) / 36;
+					int row =  (int) ((mouseY - actualY - 24) / 36) + scroll;
+					
+					int index = (row * visibleColumns) + col;
+					if(index > Registries.BLOCK.size())
+						return;
+					
+					Block block = Registries.BLOCK.get(index);
+					if(this.blocks.getValue().contains(block)) {
+						this.blocks.getValue().remove(block);
+						this.blocks.update();
+					}else {
+						this.blocks.getValue().add(block);
+						this.blocks.update();
+					}
 				}
 			}
 		}

@@ -23,10 +23,9 @@
 package net.aoba.gui.tabs;
 
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.AbstractGui;
 import net.aoba.gui.GuiManager;
@@ -35,12 +34,14 @@ import net.aoba.gui.tabs.components.Component;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, MouseMoveListener {
+public class ClickGuiTab extends AbstractGui implements MouseClickListener, MouseMoveListener {
 	protected String title;
 
 	protected boolean pinnable = true;
@@ -152,31 +153,33 @@ public class ClickGuiTab extends AbstractGui implements LeftMouseDownListener, M
 			child.draw(drawContext, partialTicks);
 		}
 	}
-
+	
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		double mouseX = mc.mouse.getX();
-		double mouseY = mc.mouse.getY();
-		Vector2 pos = position.getValue();
-		
-		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			// Allow the user to move the clickgui if it within the header bar and NOT pinned.
-			if(!isPinned.getValue()) {
-				if(mouseX >= pos.x && mouseX <= pos.x + width) {
-					if(mouseY >= pos.y && mouseY <= pos.y + 24) {
-						lastClickOffsetX = mouseX - pos.x;
-						lastClickOffsetY = mouseY - pos.y;
-						GuiManager.currentGrabbed = this;
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			double mouseX = mc.mouse.getX();
+			double mouseY = mc.mouse.getY();
+			Vector2 pos = position.getValue();
+			
+			if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
+				// Allow the user to move the clickgui if it within the header bar and NOT pinned.
+				if(!isPinned.getValue()) {
+					if(mouseX >= pos.x && mouseX <= pos.x + width) {
+						if(mouseY >= pos.y && mouseY <= pos.y + 24) {
+							lastClickOffsetX = mouseX - pos.x;
+							lastClickOffsetY = mouseY - pos.y;
+							GuiManager.currentGrabbed = this;
+						}
 					}
 				}
-			}
-			
-			// If the GUI is pinnable, allow the user to click the pin button to pin a gui
-			if (pinnable) {
-				if (mouseX >= (pos.x + width - 24) && mouseX <= (pos.x + width - 2)) {
-					if (mouseY >= (pos.y + 4) && mouseY <= (pos.y + 20)) {
-						GuiManager.currentGrabbed = null;
-						isPinned.silentSetValue(!isPinned.getValue());
+				
+				// If the GUI is pinnable, allow the user to click the pin button to pin a gui
+				if (pinnable) {
+					if (mouseX >= (pos.x + width - 24) && mouseX <= (pos.x + width - 2)) {
+						if (mouseY >= (pos.y + 4) && mouseY <= (pos.y + 20)) {
+							GuiManager.currentGrabbed = null;
+							isPinned.silentSetValue(!isPinned.getValue());
+						}
 					}
 				}
 			}

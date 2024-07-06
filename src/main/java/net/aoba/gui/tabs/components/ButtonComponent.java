@@ -19,17 +19,18 @@
 package net.aoba.gui.tabs.components;
 
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class ButtonComponent extends Component implements LeftMouseDownListener {
+public class ButtonComponent extends Component implements MouseClickListener {
 
 	private String text;
 	private Runnable onClick;
@@ -113,23 +114,21 @@ public class ButtonComponent extends Component implements LeftMouseDownListener 
 		RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);
 	}
 
-	/**
-	 * Triggered when the user clicks the Left Mouse Button (LMB)
-	 * @param event Event fired.
-	 */
-	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if(this.hovered && this.isVisible() && onClick != null)  {
-			this.onClick.run();
-		}
-	}
-	
 	@Override
 	public void OnVisibilityChanged() {
 		if(this.isVisible()) {
-			Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 		}else {
-			Aoba.getInstance().eventManager.RemoveListener(LeftMouseDownListener.class, this);
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+		}
+	}
+
+	@Override
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			if(this.hovered && this.isVisible() && onClick != null)  {
+				this.onClick.run();
+			}
 		}
 	}
 }

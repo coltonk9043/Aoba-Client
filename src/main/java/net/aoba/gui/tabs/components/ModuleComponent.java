@@ -19,11 +19,12 @@
 package net.aoba.gui.tabs.components;
 
 import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.module.Module;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.colors.Color;
@@ -33,7 +34,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class ModuleComponent extends Component implements LeftMouseDownListener {
+public class ModuleComponent extends Component implements MouseClickListener {
 	private String text;
 	private Module module;
 
@@ -73,32 +74,34 @@ public class ModuleComponent extends Component implements LeftMouseDownListener 
 	}
 	
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		double mouseX = event.GetMouseX();
-		if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
-				boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
-				if (isOnOptionsButton) {
-					if(lastSettingsTab == null) {
-						lastSettingsTab = new ModuleSettingsTab(this.module.getName(), this.actualX + this.actualWidth + 1, this.actualY, this.module);
-						lastSettingsTab.setVisible(true);
-						Aoba.getInstance().hudManager.AddHud(lastSettingsTab, "Modules");
-					}else {
-						Aoba.getInstance().hudManager.RemoveHud(lastSettingsTab, "Modules");
-						lastSettingsTab = null;
-					}
-				} else {
-					module.toggle();
-					return;
-				}
-		}
-	}
-	
-	@Override
 	public void OnVisibilityChanged() {
 		if(this.isVisible()) {
-			Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 		}else {
-			Aoba.getInstance().eventManager.RemoveListener(LeftMouseDownListener.class, this);
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+		}
+	}
+
+	@Override
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			double mouseX = event.mouseX;
+			if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+					boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
+					if (isOnOptionsButton) {
+						if(lastSettingsTab == null) {
+							lastSettingsTab = new ModuleSettingsTab(this.module.getName(), this.actualX + this.actualWidth + 1, this.actualY, this.module);
+							lastSettingsTab.setVisible(true);
+							Aoba.getInstance().hudManager.AddHud(lastSettingsTab, "Modules");
+						}else {
+							Aoba.getInstance().hudManager.RemoveHud(lastSettingsTab, "Modules");
+							lastSettingsTab = null;
+						}
+					} else {
+						module.toggle();
+						return;
+					}
+			}
 		}
 	}
 }

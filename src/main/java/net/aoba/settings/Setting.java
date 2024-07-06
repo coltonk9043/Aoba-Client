@@ -58,6 +58,15 @@ public abstract class Setting<T> {
 		this.value = default_value;
 	}
 
+	public Setting(String ID, String displayName, String description, T default_value, Consumer<T> onUpdate) {
+		this.ID = ID;
+		this.displayName = displayName;
+		this.description = description;
+		this.default_value = default_value;
+		this.onUpdate = onUpdate;
+		this.value = default_value;
+	}
+	
 	public Setting(String ID, String description, T default_value, Consumer<T> onUpdate) {
 		this.ID = ID;
 		this.displayName = TextUtils.IDToName(ID);

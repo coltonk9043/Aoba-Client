@@ -85,8 +85,10 @@ public abstract class Module {
 	}
 
 	public void setState(boolean state) {
-		this.onToggle();
 		if(this.state = state) return;
+		
+		this.onToggle();
+
 		if (state) {
 			this.onEnable();
 			this.state = true;

@@ -67,7 +67,8 @@ public class Freecam extends Module implements TickListener, RenderListener {
 
 	@Override
 	public void onDisable() {
-		fakePlayer.despawn();
+		if(fakePlayer != null)
+			fakePlayer.despawn();
 		
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);

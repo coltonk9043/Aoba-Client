@@ -20,18 +20,20 @@ package net.aoba.gui;
 
 import java.util.ArrayList;
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
+import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.tabs.components.Component;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.Vector2Setting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
-public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener, MouseMoveListener {
+public abstract class AbstractGui implements IGuiElement, MouseClickListener, MouseMoveListener {
 	protected static MinecraftClient mc = MinecraftClient.getInstance();
 
 	protected String ID;
@@ -145,10 +147,10 @@ public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener,
 			
 			// Binds/Unbinds respective listeners depending on whether it is visible.
 			if(state) {
-				Aoba.instance.eventManager.AddListener(LeftMouseDownListener.class, this);
+				Aoba.instance.eventManager.AddListener(MouseClickListener.class, this);
 				Aoba.instance.eventManager.AddListener(MouseMoveListener.class, this);
 			}else {
-				Aoba.instance.eventManager.RemoveListener(LeftMouseDownListener.class, this);
+				Aoba.instance.eventManager.RemoveListener(MouseClickListener.class, this);
 				Aoba.instance.eventManager.RemoveListener(MouseMoveListener.class, this);
 			}
 		}
@@ -166,19 +168,21 @@ public abstract class AbstractGui implements IGuiElement, LeftMouseDownListener,
 	public abstract void draw(DrawContext drawContext, float partialTicks);
 
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		double mouseX = event.GetMouseX();
-		double mouseY = event.GetMouseY();
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			double mouseX = event.mouseX;
+			double mouseY = event.mouseY;
 
-		Vector2 pos = position.getValue();
+			Vector2 pos = position.getValue();
 
-		if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			if (GuiManager.currentGrabbed == null) {
-				if (mouseX >= pos.x && mouseX <= (pos.x + width)) {
-					if (mouseY >= pos.y && mouseY <= (pos.y + height)) {
-						GuiManager.currentGrabbed = this;
-						this.lastClickOffsetX = mouseX - pos.x;
-						this.lastClickOffsetY = mouseY - pos.y;
+			if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
+				if (GuiManager.currentGrabbed == null) {
+					if (mouseX >= pos.x && mouseX <= (pos.x + width)) {
+						if (mouseY >= pos.y && mouseY <= (pos.y + height)) {
+							GuiManager.currentGrabbed = this;
+							this.lastClickOffsetX = mouseX - pos.x;
+							this.lastClickOffsetY = mouseY - pos.y;
+						}
 					}
 				}
 			}

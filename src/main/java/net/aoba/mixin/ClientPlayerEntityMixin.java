@@ -32,6 +32,7 @@ import net.aoba.mixin.interfaces.ICamera;
 import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
 import net.aoba.module.modules.movement.HighJump;
+import net.aoba.module.modules.movement.Noclip;
 import net.aoba.module.modules.movement.Step;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -79,6 +80,9 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		if(Aoba.getInstance().moduleManager.fly.getState()) {
 			Fly fly = (Fly)Aoba.getInstance().moduleManager.fly;
 			cir.setReturnValue((float)fly.getSpeed());
+		}else if (Aoba.getInstance().moduleManager.noclip.getState()) {
+			Noclip noclip = (Noclip)Aoba.getInstance().moduleManager.noclip;
+			cir.setReturnValue(noclip.getSpeed());
 		}
 	}
 	

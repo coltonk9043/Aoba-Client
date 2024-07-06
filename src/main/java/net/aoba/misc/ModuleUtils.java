@@ -34,23 +34,9 @@ public class ModuleUtils {
 
 	public static boolean isThrowable(ItemStack stack) {
 		Item item = stack.getItem();
-		return item instanceof BowItem || item instanceof SnowballItem || item instanceof EggItem
+		return item == Items.BOW || item == Items.SNOWBALL || item == Items.EGG
 				|| item instanceof EnderPearlItem || item instanceof SplashPotionItem
 				|| item instanceof LingeringPotionItem || item instanceof FishingRodItem;
-	}
-	
-	public static double throwableGravity(Item item) {
-		if(item instanceof RangedWeaponItem) {
-			return 0.05;
-		}else if(item instanceof ThrowablePotionItem) {
-			return 0.4;
-		}else if(item instanceof FishingRodItem) {
-			return 0.15;
-		}else if(item instanceof TridentItem) {
-			return 0.015;
-		}else {
-			return 0.03;
-		}
 	}
 	
 	public static boolean isPlantable(ItemStack stack) {

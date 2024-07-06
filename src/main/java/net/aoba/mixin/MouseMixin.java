@@ -28,10 +28,9 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.events.MouseScrollEvent;
-import net.aoba.event.events.RightMouseDownEvent;
-import net.aoba.event.events.RightMouseUpEvent;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.events.LeftMouseUpEvent;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
+import net.aoba.event.events.MouseClickEvent;
 import net.minecraft.client.Mouse;
 
 @Mixin(Mouse.class)
@@ -45,44 +44,36 @@ public class MouseMixin {
 	private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
 		AobaClient aoba = Aoba.getInstance();
 		if(aoba != null && aoba.eventManager != null) {
+			MouseClickEvent event = null;
+					
 			switch (button) {
 			case GLFW.GLFW_MOUSE_BUTTON_LEFT:
 				if (action == 1) {
-					LeftMouseDownEvent event = new LeftMouseDownEvent(x, y);
-					aoba.eventManager.Fire(event);
-
-					if (event.isCancelled()) {
-						ci.cancel();
-					}
+					event = new MouseClickEvent(x, y, MouseButton.LEFT, MouseAction.DOWN);
 				} else {
-					LeftMouseUpEvent event = new LeftMouseUpEvent(x, y);
-					aoba.eventManager.Fire(event);
-
-					if (event.isCancelled()) {
-						ci.cancel();
-					}
+					event = new MouseClickEvent(x, y, MouseButton.LEFT, MouseAction.UP);
 				}
 				break;
 			case GLFW.GLFW_MOUSE_BUTTON_MIDDLE:
-				
+				if (action == 1) {
+					event = new MouseClickEvent(x, y, MouseButton.MIDDLE, MouseAction.DOWN);
+				} else {
+					event = new MouseClickEvent(x, y, MouseButton.MIDDLE, MouseAction.UP);
+				}
 				break;
 			case GLFW.GLFW_MOUSE_BUTTON_RIGHT:
 				if (action == 1) {
-					RightMouseDownEvent event2 = new RightMouseDownEvent(x, y);
-					aoba.eventManager.Fire(event2);
-
-					if (event2.isCancelled()) {
-						ci.cancel();
-					}
+					event = new MouseClickEvent(x, y, MouseButton.RIGHT, MouseAction.DOWN);
 				} else {
-					RightMouseUpEvent event2 = new RightMouseUpEvent(x, y);
-					aoba.eventManager.Fire(event2);
-
-					if (event2.isCancelled()) {
-						ci.cancel();
-					}
+					event = new MouseClickEvent(x, y, MouseButton.RIGHT, MouseAction.UP);
 				}
 				break;
+			}
+			
+			aoba.eventManager.Fire(event);
+
+			if (event.isCancelled()) {
+				ci.cancel();
 			}
 		}
 	}

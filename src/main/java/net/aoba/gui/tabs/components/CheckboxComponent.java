@@ -20,16 +20,18 @@ package net.aoba.gui.tabs.components;
 
 import org.joml.Matrix4f;
 import net.aoba.Aoba;
-import net.aoba.event.events.LeftMouseDownEvent;
-import net.aoba.event.listeners.LeftMouseDownListener;
+import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class CheckboxComponent extends Component implements LeftMouseDownListener {
+public class CheckboxComponent extends Component implements MouseClickListener {
 	private String text;
 	private BooleanSetting checkbox;
 	private Runnable onClick;
@@ -42,8 +44,6 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 		this.setLeft(2);
 		this.setRight(2);
 		this.setHeight(30);
-		
-		Aoba.getInstance().eventManager.AddListener(LeftMouseDownListener.class, this);
 	}
 
 	/**
@@ -78,18 +78,24 @@ public class CheckboxComponent extends Component implements LeftMouseDownListene
 	public void update() {
 		super.update();
 	}
-
-	/**
-	 * Triggered when the user clicks the Left Mouse Button (LMB)
-	 * 
-	 * @param event Event fired.
-	 */
+	
 	@Override
-	public void OnLeftMouseDown(LeftMouseDownEvent event) {
-		if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			checkbox.toggle();
-			if(onClick != null) {
-				onClick.run();
+	public void OnVisibilityChanged() {
+		if(this.isVisible()) {
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+		}else {
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+		}
+	}
+
+	@Override
+	public void OnMouseClick(MouseClickEvent event) {
+		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+				checkbox.toggle();
+				if(onClick != null) {
+					onClick.run();
+				}
 			}
 		}
 	}
