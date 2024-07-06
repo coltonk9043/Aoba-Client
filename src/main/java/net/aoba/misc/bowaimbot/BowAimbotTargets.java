@@ -18,10 +18,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public enum BowAimbotTargets
+public class BowAimbotTargets
 {
-    ;
-
     protected static final AobaClient AOBA_CLIENT = Aoba.getInstance();
     protected static final MinecraftClient MC = AobaClient.MC;
 
@@ -62,6 +60,7 @@ public enum BowAimbotTargets
         double z = MathHelper.lerp(partialTicks, e.lastRenderZ, e.getZ());
         return new Vec3d(x, y, z);
     }
+    
     public static Box getLerpedBox(Entity e, float partialTicks)
     {
         if(e.isRemoved())

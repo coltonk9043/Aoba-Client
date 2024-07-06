@@ -6,10 +6,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-public enum BowAimbotUtils {
-
-    ;
-
+public class BowAimbotUtils {
     private static final MinecraftClient MC = AobaClient.MC;
 
     public static Vec3d getEyesPos()
