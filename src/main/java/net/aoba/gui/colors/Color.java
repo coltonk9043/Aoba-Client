@@ -60,6 +60,22 @@ public class Color {
 		this.alpha = alpha;
 	}
 
+	/**
+	 * Interpolates between two colors.
+	 *
+	 * @param color1 The first color.
+	 * @param color2 The second color.
+	 * @param factor The interpolation factor. 0.0 will return color1, 1.0 will return color2.
+	 * @return The interpolated color.
+	 */
+	public static Color interpolate(Color color1, Color color2, float factor) {
+		int r = (int) (color1.r + (color2.r - color1.r) * factor);
+		int g = (int) (color1.g + (color2.g - color1.g) * factor);
+		int b = (int) (color1.b + (color2.b - color1.b) * factor);
+		int alpha = (int) (color1.alpha + (color2.alpha - color1.alpha) * factor);
+		return new Color(r, g, b, alpha);
+	}
+
 	private void HSVFromRGB(int r, int g, int b) {
 		// Calculate HSV value
 		float rPrime = r / 255.0f;

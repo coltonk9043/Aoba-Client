@@ -97,10 +97,8 @@ public class ButtonComponent extends Component implements MouseClickListener {
 	
 	/**
 	 * Draws the button to the screen.
-	 * @param offset The offset (Y location relative to parent) of the Component.
 	 * @param drawContext The current draw context of the game.
 	 * @param partialTicks The partial ticks used for interpolation.
-	 * @param color The current Color of the UI.
 	 */
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {

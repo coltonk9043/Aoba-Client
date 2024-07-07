@@ -35,6 +35,10 @@ public class CheckboxComponent extends Component implements MouseClickListener {
 	private String text;
 	private BooleanSetting checkbox;
 	private Runnable onClick;
+	private boolean isHovered = false;
+	private float animationProgress = 0.0f;
+	private Color hoverBorderColor = new Color(255, 255, 255);
+	private Color clickAnimationColor = new Color(255, 255, 0);
 	
 	public CheckboxComponent(IGuiElement parent, BooleanSetting checkbox) {
 		super(parent);
@@ -48,31 +52,32 @@ public class CheckboxComponent extends Component implements MouseClickListener {
 
 	/**
 	 * Draws the checkbox to the screen.
-	 * @param offset The offset (Y location relative to parent) of the Component.
 	 * @param drawContext The current draw context of the game.
 	 * @param partialTicks The partial ticks used for interpolation.
-	 * @param color The current Color of the UI.
 	 */
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
-		
+
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-		
-		RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 8, 0xFFFFFF);
-		if (this.checkbox.getValue()) {
-			RenderUtils.drawOutlinedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20,
-					new Color(0, 154, 0, 200));
-		} else {
-			RenderUtils.drawOutlinedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20,
-					new Color(154, 0, 0, 200));
+
+		// Determine border color based on hover and click state
+		Color borderColor = isHovered ? hoverBorderColor : new Color(128, 128, 128);
+		if (animationProgress > 0) {
+			borderColor = clickAnimationColor;
+			animationProgress -= partialTicks; // Decrease animation progress
 		}
+
+		// Determine fill color based on checkbox state
+		Color fillColor = this.checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
+
+		RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 8, 0xFFFFFF);
+		RenderUtils.drawOutlinedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, borderColor, fillColor);
 	}
 
 	/**
 	 * Handles updating the Checkbox component.
-	 * @param offset The offset (Y position relative to parent) of the Checkbox.
 	 */
 	@Override
 	public void update() {
@@ -93,6 +98,7 @@ public class CheckboxComponent extends Component implements MouseClickListener {
 		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
 			if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
 				checkbox.toggle();
+				animationProgress = 1.0f; // Reset animation progress on click
 				if(onClick != null) {
 					onClick.run();
 				}

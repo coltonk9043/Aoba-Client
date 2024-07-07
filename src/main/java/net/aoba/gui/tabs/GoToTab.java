@@ -183,8 +183,7 @@ public class GoToTab extends ClickGuiTab implements TickListener, RenderListener
     public void OnUpdate(TickEvent event) {
         MinecraftClient MC = MinecraftClient.getInstance();
 
-        if (currentNodeIndex < nodes.size() - 1) {
-            // Check next position
+        if (nodes != null && currentNodeIndex < nodes.size() - 1) {
             PathNode next = nodes.get(currentNodeIndex + 1);
             BlockPos playerPos = MC.player.getBlockPos();
 
