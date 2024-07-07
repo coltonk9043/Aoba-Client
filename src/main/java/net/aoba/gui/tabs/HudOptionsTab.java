@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
@@ -41,7 +42,7 @@ public class HudOptionsTab extends ClickGuiTab {
         stackPanel.setTop(30);
 
         List<String> fontNames = new ArrayList<String>();
-        HashMap<String, TextRenderer> fontRenderers = Aoba.getInstance().fontManager.fontRenderers;
+        ConcurrentHashMap<String, TextRenderer> fontRenderers = Aoba.getInstance().fontManager.fontRenderers;
         Set<String> set = fontRenderers.keySet();
 
         for (String s : set) {
