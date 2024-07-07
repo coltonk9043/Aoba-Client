@@ -101,7 +101,7 @@ public class AltManager {
                     Alt newAlt = new Alt(alt[0], alt[1], alt[2], Boolean.parseBoolean(alt[3]));
                     alts.add(newAlt);
                 } catch (Exception e) {
-                    System.out.println("Skipping bad option: " + alt[0]);
+                    LogUtils.getLogger().error("Skipping bad option: " + alt[0]);
                 }
             }
         } catch (IOException exception) {
@@ -117,7 +117,7 @@ public class AltManager {
         try {
             // Finds the file and opens it.
             File altFile = new File(mc.runDirectory, "aoba_alts.txt");
-            System.out.println("[Aoba] Saving Alts");
+            LogUtils.getLogger().info("[Aoba] Saving Alts");
             printwriter = new PrintWriter(
                     new OutputStreamWriter(new FileOutputStream(altFile), StandardCharsets.UTF_8));
 
@@ -128,7 +128,7 @@ public class AltManager {
                 printwriter.println(encrypt(str));
             }
         } catch (Exception exception) {
-            System.out.println("[Aoba] Failed to save alts");
+            LogUtils.getLogger().error("[Aoba] Failed to save alts");
         }
         printwriter.close();
     }
@@ -238,7 +238,7 @@ public class AltManager {
 
             Session session = new Session(name, uuid, mcAccessToken, Optional.empty(), Optional.empty(), Session.AccountType.MOJANG);
             iMC.setSession(session);
-            System.out.println("Logged in as " + alt.getUsername());
+            LogUtils.getLogger().info("Logged in as " + alt.getUsername());
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -334,7 +334,7 @@ public class AltManager {
             IMinecraftClient iMC = (IMinecraftClient) this.mc;
             UUID offlineAlt = Uuids.getOfflinePlayerUuid(alt);
             iMC.setSession(new Session(alt, offlineAlt, "", Optional.empty(), Optional.empty(), AccountType.MOJANG));
-            System.out.println("Logged in as " + alt);
+            LogUtils.getLogger().info("Logged in as " + alt);
 
             return true;
         } catch (Exception e) {

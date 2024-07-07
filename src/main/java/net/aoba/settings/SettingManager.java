@@ -72,7 +72,7 @@ public class SettingManager {
 
     public static void saveSettings(SettingsContainer container)
             throws FileNotFoundException, IOException {
-        System.out.println("Saving config " + container.configName + ".");
+        LogUtils.getLogger().info("Saving config " + container.configName + ".");
         Properties config = prepare(container);
         for (Setting<?> setting : container.settingsList) {
             try {
@@ -119,7 +119,7 @@ public class SettingManager {
 
     public static void loadSettings(SettingsContainer container) {
         try {
-            System.out.println("Loading config " + container.configName + ".");
+            LogUtils.getLogger().info("Loading config " + container.configName + ".");
             Properties config = prepare(container);
 
             for (Setting setting : container.settingsList) {
@@ -127,7 +127,7 @@ public class SettingManager {
                     String value = config.getProperty(setting.ID, null);
 
                     if (DEBUG_STUFF)
-                        System.out.println(setting.displayName + " " + setting.value + " " + Double.parseDouble(value));
+                        LogUtils.getLogger().info(setting.displayName + " " + setting.value + " " + Double.parseDouble(value));
 
                     if (value == null)
                         break;

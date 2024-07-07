@@ -70,7 +70,7 @@ public class AobaClient {
     }
 
     public void loadAssets() {
-        System.out.println("[Aoba] Starting Client");
+        LogUtils.getLogger().info("[Aoba] Starting Client");
 
         eventManager = new EventManager();
 
@@ -94,23 +94,23 @@ public class AobaClient {
         LogUtils.getLogger().info("[Aoba] Addon initialization completed");
 
         renderUtils = new RenderUtils();
-        System.out.println("[Aoba] Reading Settings");
+        LogUtils.getLogger().info("[Aoba] Reading Settings");
         settingManager = new SettingManager();
-        System.out.println("[Aoba] Reading Friends List");
+        LogUtils.getLogger().info("[Aoba] Reading Friends List");
         friendsList = new FriendsList();
-        System.out.println("[Aoba] Initializing Modules");
+        LogUtils.getLogger().info("[Aoba] Initializing Modules");
         moduleManager = new ModuleManager(addons);
-        System.out.println("[Aoba] Initializing Commands");
+        LogUtils.getLogger().info("[Aoba] Initializing Commands");
         commandManager = new CommandManager(addons);
-        System.out.println("[Aoba] Initializing Font Manager");
+        LogUtils.getLogger().info("[Aoba] Initializing Font Manager");
         fontManager = new FontManager();
         fontManager.Initialize();
-        System.out.println("[Aoba] Initializing GUI");
+        LogUtils.getLogger().info("[Aoba] Initializing GUI");
         hudManager = new GuiManager();
         hudManager.Initialize();
-        System.out.println("[Aoba] Loading Alts");
+        LogUtils.getLogger().info("[Aoba] Loading Alts");
         altManager = new AltManager();
-        System.out.println("[Aoba] Aoba-chan initialized and ready to play!");
+        LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 
         SettingManager.loadSettings(settingManager.configContainer);
         SettingManager.loadSettings(settingManager.modulesContainer);
@@ -139,6 +139,6 @@ public class AobaClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("[Aoba] Shutting down...");
+        LogUtils.getLogger().info("[Aoba] Shutting down...");
     }
 }

@@ -18,6 +18,7 @@
 
 package net.aoba.gui.tabs;
 
+import com.mojang.logging.LogUtils;
 import net.aoba.gui.tabs.components.ButtonComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
@@ -96,7 +97,7 @@ class AuthCracker {
     private long time = System.currentTimeMillis();
 
     private void RunAuthCracker() {
-        System.out.println("Aoba AuthMe Cracker Started.");
+        LogUtils.getLogger().info("Aoba AuthMe Cracker Started.");
         URL url;
         Scanner s = null;
         try {
@@ -123,13 +124,13 @@ class AuthCracker {
                         mc.player.networkHandler.sendChatCommand("login " + str);
                         time = System.currentTimeMillis();
                     } else {
-                        System.out.println("Network Handler is null");
+                        LogUtils.getLogger().error("Network Handler is null");
                     }
                 }
             }
         }
 
-        System.out.println("Aoba AuthMe Cracker Stopped.");
+        LogUtils.getLogger().info("Aoba AuthMe Cracker Stopped.");
     }
 
     public void Start() {

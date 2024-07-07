@@ -1,5 +1,6 @@
 package net.aoba.mixin;
 
+import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.event.events.FoodLevelEvent;
 import net.minecraft.client.MinecraftClient;
@@ -31,7 +32,7 @@ public class HungerManagerMixin {
             Difficulty difficulty = player.getWorld().getDifficulty();
             if (this.exhaustion > 4.0f) {
                 if (this.saturationLevel <= 0.0f && difficulty != Difficulty.PEACEFUL) {
-                    System.out.println("HUNGER EVENT ");
+                    LogUtils.getLogger().info("HUNGER EVENT ");
                     // Fire Event
                     int newFoodLevel = Math.max(this.foodLevel - 1, 0);
                     FoodLevelEvent event = new FoodLevelEvent(newFoodLevel);

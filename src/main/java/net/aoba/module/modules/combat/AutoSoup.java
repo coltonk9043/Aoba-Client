@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.combat;
 
+import com.mojang.logging.LogUtils;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.PlayerHealthEvent;
@@ -98,12 +99,12 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 
 	@Override
 	public void OnHealthChanged(PlayerHealthEvent readPacketEvent) {
-		System.out.println("autosoup");
+		LogUtils.getLogger().info("autosoup");
 		float playerHealth = readPacketEvent.getHealth();
 		
 		// If the players HP is below the given threshold.
 		if(playerHealth < health.getValue()) {
-			System.out.println("autosoup enabled");
+			LogUtils.getLogger().info("autosoup enabled");
 			// Find the first item in the hotbar that is a Stew item.
 			int foodSlot= -1;
 			for(int i = 0; i< PlayerInventory.getHotbarSize(); i++) {

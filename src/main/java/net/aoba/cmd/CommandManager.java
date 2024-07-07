@@ -21,6 +21,7 @@
  */
 package net.aoba.cmd;
 
+import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.api.IAddon;
 import net.aoba.cmd.commands.*;
@@ -90,15 +91,15 @@ public class CommandManager {
             addons.stream().filter(Objects::nonNull).forEach(addon -> {
                 addon.commands().forEach(command -> {
                     if (commands.containsKey(command.getName())) {
-                        System.out.println("Warning: Duplicate command name \"" + command.getName() + "\" from addon. This command will not be registered.");
+                        LogUtils.getLogger().warn("Warning: Duplicate command name \"" + command.getName() + "\" from addon. This command will not be registered.");
                     } else {
                         commands.put(command.getName(), command);
                     }
                 });
             });
         } catch (Exception e) {
-            System.out.println("Error initializing Aoba commands.");
-            System.out.println(e.getStackTrace().toString());
+            LogUtils.getLogger().error("Error initializing Aoba commands.");
+            LogUtils.getLogger().error(e.getStackTrace().toString());
         }
     }
 

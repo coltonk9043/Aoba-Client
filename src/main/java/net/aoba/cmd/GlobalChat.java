@@ -84,7 +84,7 @@ public class GlobalChat {
 
     public void StartListener() {
         if (started) {
-            System.out.println("Socket listener already started.");
+            LogUtils.getLogger().info("Socket listener already started.");
             return;
         }
 

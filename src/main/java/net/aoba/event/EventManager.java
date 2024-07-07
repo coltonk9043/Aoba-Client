@@ -18,6 +18,7 @@
 
 package net.aoba.event;
 
+import com.mojang.logging.LogUtils;
 import net.aoba.event.events.AbstractEvent;
 import net.aoba.event.listeners.AbstractListener;
 
@@ -44,7 +45,7 @@ public class EventManager {
                 listOfListeners.add(listener);
             }
         } catch (Exception e) {
-            System.out.println("Issue adding listener: " + object.getTypeName() + "...");
+            LogUtils.getLogger().error("Issue adding listener: " + object.getTypeName() + "...");
             e.printStackTrace();
         }
     }
@@ -56,7 +57,7 @@ public class EventManager {
                 listOfListeners.remove(listener);
             }
         } catch (Exception e) {
-            System.out.println("Issue removing listener: " + object.getTypeName() + "...");
+            LogUtils.getLogger().error("Issue removing listener: " + object.getTypeName() + "...");
             e.printStackTrace();
         }
     }
