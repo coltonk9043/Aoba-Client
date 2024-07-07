@@ -47,6 +47,15 @@ public class RadarHud extends AbstractHud {
 
             Vector2 pos = position.getValue();
 
+            if (this.isDragging) {
+                int highlightColor = 0x80FF0000;
+                int x1 = (int) pos.x;
+                int y1 = (int) pos.y;
+                int x2 = (int) (pos.x + this.width);
+                int y2 = (int) (pos.y + this.height);
+                drawContext.fill(x1, y1, x2, y2, highlightColor);
+            }
+
             // Draws background depending on components width and height
             RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
             RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());

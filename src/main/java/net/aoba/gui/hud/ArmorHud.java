@@ -45,12 +45,25 @@ public class ArmorHud extends AbstractHud {
     public void draw(DrawContext drawContext, float partialTicks) {
         if (this.visible) {
             DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
-
             Vector2 pos = position.getValue();
+
+            if (this.isDragging) {
+                int highlightColor = 0x80FF0000;
+                int x1 = (int) pos.x;
+                int y1 = (int) pos.y;
+                int x2 = (int) (pos.x + this.width);
+                int y2 = (int) (pos.y + this.height);
+                drawContext.fill(x1, y1, x2, y2, highlightColor);
+            }
+
             int yOff = 16;
             for (ItemStack armor : armors) {
-                if (armor.getItem() == Items.AIR) continue;
-                drawContext.drawItem(armor, (int) pos.x, (int) (pos.y + this.height - yOff));
+                if (armor.getItem() != Items.AIR) {
+                    drawContext.drawItem(armor, (int) pos.x, (int) (pos.y + this.height - yOff));
+                } else {
+                    int placeholderColor = 0x40404040;
+                    drawContext.fill((int) pos.x, (int) (pos.y + this.height - yOff), (int) (pos.x + this.width), (int) (pos.y + this.height - yOff + 16), placeholderColor);
+                }
                 yOff += 16;
             }
         }

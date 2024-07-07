@@ -72,8 +72,17 @@ public class InfoHud extends AbstractHud {
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
         if (this.visible) {
-            // Draws background depending on components width and height
             Vector2 pos = position.getValue();
+
+            if (this.isDragging) {
+                int highlightColor = 0x80FF0000;
+                int x1 = (int) pos.x;
+                int y1 = (int) pos.y;
+                int x2 = (int) (pos.x + this.width);
+                int y2 = (int) (pos.y + this.height);
+                drawContext.fill(x1, y1, x2, y2, highlightColor);
+            }
+
             RenderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, GuiManager.foregroundColor.getValue());
             RenderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, GuiManager.foregroundColor.getValue());
             RenderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, GuiManager.foregroundColor.getValue());

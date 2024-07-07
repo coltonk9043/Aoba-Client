@@ -56,6 +56,7 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
     protected boolean inheritHeightFromChildren = true;
 
     protected ArrayList<Component> children = new ArrayList<>();
+    protected boolean isDragging = false;
 
     public AbstractGui(String ID, float x, float y, float width, float height) {
         this.ID = ID;
@@ -178,14 +179,17 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
 
             if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
                 if (GuiManager.currentGrabbed == null) {
-                    if (mouseX >= pos.x && mouseX <= (pos.x + width)) {
-                        if (mouseY >= pos.y && mouseY <= (pos.y + height)) {
-                            GuiManager.currentGrabbed = this;
-                            this.lastClickOffsetX = mouseX - pos.x;
-                            this.lastClickOffsetY = mouseY - pos.y;
-                        }
+                    if (mouseX >= pos.x && mouseX <= (pos.x + width) && mouseY >= pos.y && mouseY <= (pos.y + height)) {
+                        GuiManager.currentGrabbed = this;
+                        this.lastClickOffsetX = mouseX - pos.x;
+                        this.lastClickOffsetY = mouseY - pos.y;
+                        this.isDragging = true; // Step 2: Set isDragging to true
                     }
                 }
+            }
+        } else if (event.button == MouseButton.LEFT && event.action == MouseAction.UP) {
+            if (isDragging) {
+                isDragging = false; // Handle mouse release
             }
         }
     }
