@@ -1,24 +1,23 @@
 /*
-* Aoba Hacked Client
-* Copyright (C) 2019-2024 coltonk9043
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Aoba Hacked Client
+ * Copyright (C) 2019-2024 coltonk9043
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package net.aoba.module.modules.combat;
 
-import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
@@ -34,65 +33,66 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
+import org.lwjgl.glfw.GLFW;
 
 public class TriggerBot extends Module implements TickListener {
-	private FloatSetting radius;
-	private BooleanSetting targetAnimals;
-	private BooleanSetting targetMonsters;
-	private BooleanSetting targetPlayers;
+    private FloatSetting radius;
+    private BooleanSetting targetAnimals;
+    private BooleanSetting targetMonsters;
+    private BooleanSetting targetPlayers;
 
-	public TriggerBot() {
-		super(new KeybindSetting("key.triggerbot", "TriggerBot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    public TriggerBot() {
+        super(new KeybindSetting("key.triggerbot", "TriggerBot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
-		this.setName("Triggerbot");
-		this.setCategory(Category.Combat);
-		this.setDescription("Attacks anything you are looking at.");
+        this.setName("Triggerbot");
+        this.setCategory(Category.Combat);
+        this.setDescription("Attacks anything you are looking at.");
 
-		radius = new FloatSetting("triggerbot_radius", "Radius", 5f, 0.1f, 10f, 0.1f);
-		targetAnimals = new BooleanSetting("triggerbot_target_animals", "Target Animals", "Target animals.", false);
-		targetMonsters = new BooleanSetting("triggerbot_target_monsters", "Target Monsters", "Target monsters.", true);
-		targetPlayers = new BooleanSetting("triggerbot_target_players", "Target Players", "Target players.", true);
-		this.addSetting(radius);
-		this.addSetting(targetAnimals);
-		this.addSetting(targetMonsters);
-		this.addSetting(targetPlayers);
-	}
+        radius = new FloatSetting("triggerbot_radius", "Radius", 5f, 0.1f, 10f, 0.1f);
+        targetAnimals = new BooleanSetting("triggerbot_target_animals", "Target Animals", "Target animals.", false);
+        targetMonsters = new BooleanSetting("triggerbot_target_monsters", "Target Monsters", "Target monsters.", true);
+        targetPlayers = new BooleanSetting("triggerbot_target_players", "Target Players", "Target players.", true);
+        this.addSetting(radius);
+        this.addSetting(targetAnimals);
+        this.addSetting(targetMonsters);
+        this.addSetting(targetPlayers);
+    }
 
-	@Override
-	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-	}
+    @Override
+    public void onDisable() {
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+    }
 
-	@Override
-	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-	}
+    @Override
+    public void onEnable() {
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+    }
 
-	@Override
-	public void onToggle() {
+    @Override
+    public void onToggle() {
 
-	}
+    }
 
-	@Override
-	public void OnUpdate(TickEvent event) {
-		if (MC.player.getAttackCooldownProgress(0) == 1) {
-			// Get the current target that the player is looking at.
-			HitResult ray = MC.crosshairTarget;
+    @Override
+    public void OnUpdate(TickEvent event) {
+        if (MC.player.getAttackCooldownProgress(0) == 1) {
+            // Get the current target that the player is looking at.
+            HitResult ray = MC.crosshairTarget;
 
-			// If the target is an Entity, attack it.
-			if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
-				EntityHitResult entityResult = (EntityHitResult) ray;
-				Entity ent = entityResult.getEntity();
-				if (ent instanceof AnimalEntity && !this.targetAnimals.getValue())
-					return;
-				if (ent instanceof PlayerEntity && !this.targetPlayers.getValue())
-					return;
-				if (ent instanceof Monster && !this.targetMonsters.getValue())
-					return;
+            // If the target is an Entity, attack it.
+            if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
+                EntityHitResult entityResult = (EntityHitResult) ray;
+                Entity ent = entityResult.getEntity();
+                if (ent instanceof AnimalEntity && !this.targetAnimals.getValue())
+                    return;
+                if (ent instanceof PlayerEntity && !this.targetPlayers.getValue())
+                    return;
+                if (ent instanceof Monster && !this.targetMonsters.getValue())
+                    return;
 
-				MC.interactionManager.attackEntity(MC.player, entityResult.getEntity());
-				MC.player.swingHand(Hand.MAIN_HAND);
-			}
-		}
-	}
+                MC.interactionManager.attackEntity(MC.player, entityResult.getEntity());
+                MC.player.swingHand(Hand.MAIN_HAND);
+            }
+        }
+    }
 }

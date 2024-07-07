@@ -13,7 +13,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class FastLadder extends Module implements TickListener {
 
-    private FloatSetting ladderSpeed;
+    private final FloatSetting ladderSpeed;
 
     public FastLadder() {
         super(new KeybindSetting("key.fastladder", "FastLadder Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -45,10 +45,10 @@ public class FastLadder extends Module implements TickListener {
     public void OnUpdate(TickEvent event) {
         ClientPlayerEntity player = MC.player;
 
-        if(!player.isClimbing() || !player.horizontalCollision)
+        if (!player.isClimbing() || !player.horizontalCollision)
             return;
 
-        if(player.input.movementForward == 0
+        if (player.input.movementForward == 0
                 && player.input.movementSideways == 0)
             return;
 

@@ -41,7 +41,6 @@ import net.minecraft.client.gui.DrawContext;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class AobaClient {
     public static final String NAME = "Aoba";

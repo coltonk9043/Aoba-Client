@@ -25,7 +25,7 @@ public class Speed extends Module implements TickListener {
         speedSetting = new FloatSetting("speed_setting", "Speed", "Speed", 0.2f, 0.1f, 6f, 0.1f);
 
         speedSetting.setOnUpdate((i) -> {
-            if(this.getState()) {
+            if (this.getState()) {
                 EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
                 attribute.setBaseValue(speedSetting.getValue());
             }
@@ -37,7 +37,7 @@ public class Speed extends Module implements TickListener {
     @Override
     public void onDisable() {
         MC.options.getFovEffectScale().setValue(100.0);
-        if(MC.player != null) {
+        if (MC.player != null) {
             EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
             attribute.setBaseValue(0.1);
         }

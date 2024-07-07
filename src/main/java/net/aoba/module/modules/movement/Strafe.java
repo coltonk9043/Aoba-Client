@@ -42,7 +42,7 @@ public class Strafe extends Module implements TickListener {
 
     @Override
     public void OnUpdate(TickEvent event) {
-        if(MC.player.input.movementForward != 0 || MC.player.input.movementSideways != 0) {
+        if (MC.player.input.movementForward != 0 || MC.player.input.movementSideways != 0) {
 
             if (MC.player.isOnGround() && MC.options.jumpKey.isPressed())
                 MC.player.addVelocity(0, MC.player.getVelocity().y, 0);

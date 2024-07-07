@@ -1,5 +1,5 @@
 package net.aoba.utils.types;
 
-public enum MouseAction{
-	DOWN, UP
+public enum MouseAction {
+    DOWN, UP
 }

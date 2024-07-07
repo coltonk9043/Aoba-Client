@@ -51,14 +51,14 @@ public class AntiKick extends Module implements TickListener {
     public void OnUpdate(TickEvent event) {
         //Basically deactivates and reactivates the Flymodule in the set Period of ticks to avoid being Kicked for "Flying is not enabled on this Server"
         //For now, vertical Movement still can get you kicked if you are not carefull
-        if(i == ticks.getValue() && Aoba.getInstance().moduleManager.fly.getState()) {
+        if (i == ticks.getValue() && Aoba.getInstance().moduleManager.fly.getState()) {
             Aoba.getInstance().moduleManager.fly.toggle();
         }
-        if(i == ticks.getValue() + duration.getValue() && !Aoba.getInstance().moduleManager.fly.getState()) {
+        if (i == ticks.getValue() + duration.getValue() && !Aoba.getInstance().moduleManager.fly.getState()) {
             Aoba.getInstance().moduleManager.fly.toggle();
             i = 0;
         }
-        i ++;
+        i++;
 
     }
 }
