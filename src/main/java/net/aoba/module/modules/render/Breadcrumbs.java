@@ -22,6 +22,7 @@
 package net.aoba.module.modules.render;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import net.aoba.Aoba;
 import net.aoba.event.events.RenderEvent;
@@ -46,11 +47,15 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 
 	public BooleanSetting rainbow = new BooleanSetting("breadcrumbs_rainbow", "Rainbow", "Rainbow", false);
 	public FloatSetting effectSpeed = new FloatSetting("breadcrumbs_effectspeed", "Effect Spd.", "Effect Spd", 4f, 1f, 20f, 0.1f);
-	
-	private float timer = 10;
+	public FloatSetting lineThickness = new FloatSetting("breadcrumbs_linethickness", "Line Thickness", "Line Thickness", 1f, 0.1f, 10f, 0.1f);
+
+	private final float distanceThreshold = 1.0f; // Minimum distance to record a new position
 	private float currentTick = 0;
-	private List<Vec3d> positions = new ArrayList<Vec3d>();
-	
+	private float timer = 10;
+	private final LinkedList<Vec3d> positions = new LinkedList<>();
+	private final int maxPositions = 1000;
+
+
 	public Breadcrumbs() {
 		super(new KeybindSetting("key.breadcrumbs", "Breadcrumbs Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
@@ -62,12 +67,14 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 		this.addSetting(color);
 		this.addSetting(rainbow);
 		this.addSetting(effectSpeed);
+		this.addSetting(lineThickness);
 	}
-	
+
 	@Override
 	public void onDisable() {
 		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		positions.clear();
 	}
 
 	@Override
@@ -80,21 +87,31 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 	public void onToggle() {
 
 	}
-	
+
 	@Override
 	public void OnRender(RenderEvent event) {
-		for(int i = 0; i < this.positions.size() - 1; i++) {
-			RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), this.positions.get(i), this.positions.get(i + 1), this.currentColor);
+		Vec3d prevPosition = null;
+		for (Vec3d position : positions) {
+			if (prevPosition != null) {
+				RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), prevPosition, position, currentColor, lineThickness.getValue().floatValue());
+			}
+			prevPosition = position;
 		}
 	}
 
 	@Override
 	public void OnUpdate(TickEvent event) {
 		currentTick++;
-		if(timer == currentTick) {
+		if (timer == currentTick) {
 			currentTick = 0;
-			if(!Aoba.getInstance().moduleManager.freecam.getState()) {
-				positions.add(MC.player.getPos());
+			if (!Aoba.getInstance().moduleManager.freecam.getState()) {
+				Vec3d currentPosition = MC.player.getPos();
+				if (positions.isEmpty() || positions.getLast().squaredDistanceTo(currentPosition) >= distanceThreshold * distanceThreshold) {
+					if (positions.size() >= maxPositions) {
+						positions.removeFirst();
+					}
+					positions.add(currentPosition);
+				}
 			}
 		}
 	}

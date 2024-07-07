@@ -126,7 +126,6 @@ public class Color {
 	 * 
 	 * @param hue        The hue of the HSV color space.
 	 * @param saturation The saturation of the HSV color space.
-	 * @param value
 	 */
 	public void setHSV(float hue, float saturation, float luminance) {
 		this.hue = hue;
@@ -334,5 +333,4 @@ public class Color {
 		}
 		return null;
 	}
-	
 }

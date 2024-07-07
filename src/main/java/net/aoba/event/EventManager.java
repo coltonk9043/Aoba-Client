@@ -21,15 +21,17 @@ package net.aoba.event;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
 import net.aoba.event.events.AbstractEvent;
 import net.aoba.event.listeners.AbstractListener;
 
 public class EventManager {
 	
-	private final HashMap<Class<AbstractListener>, ArrayList<AbstractListener>> listeners;
+	private final ConcurrentHashMap<Class<AbstractListener>, ArrayList<AbstractListener>> listeners;
 	
 	public EventManager() {
-		listeners = new HashMap<Class<AbstractListener>, ArrayList<AbstractListener>>();
+		listeners = new ConcurrentHashMap<Class<AbstractListener>, ArrayList<AbstractListener>>();
 	}
 	
 	@SuppressWarnings("unchecked")
