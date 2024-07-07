@@ -38,6 +38,11 @@ import net.minecraft.client.util.math.MatrixStack;
 public class TextBoxComponent extends Component implements MouseClickListener, KeyDownListener {
 	private boolean listeningForKey;
 	private StringSetting string;
+	private boolean isFocused = false;
+	private float focusAnimationProgress = 0.0f;
+	private Color focusBorderColor = new Color(255, 255, 255);
+	private Color errorBorderColor = new Color(255, 0, 0);
+	private boolean isErrorState = false;
 
 	public TextBoxComponent(IGuiElement parent, StringSetting stringSetting) {
 		super(parent);
@@ -69,10 +74,18 @@ public class TextBoxComponent extends Component implements MouseClickListener, K
 		
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+
+		if (isFocused) {
+			focusAnimationProgress = Math.min(1.0f, focusAnimationProgress + partialTicks * 0.1f);
+		} else {
+			focusAnimationProgress = Math.max(0.0f, focusAnimationProgress - partialTicks * 0.1f);
+		}
+
+		Color borderColor = isErrorState ? errorBorderColor : new Color(115 + (int)(140 * focusAnimationProgress), 115, 115, 200);
 		
 		RenderUtils.drawString(drawContext, string.displayName, actualX + 8, actualY + 8, 0xFFFFFF);
 		RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY + 2, 143, actualHeight - 4, new Color(115, 115, 115, 200));
-		RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY + 2, 143, actualHeight - 4);
+		RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY + 2, 143, actualHeight - 4, borderColor);
 		
 		String keyBindText = this.string.getValue();
 		if(!keyBindText.isEmpty()) {
@@ -93,6 +106,8 @@ public class TextBoxComponent extends Component implements MouseClickListener, K
 				}
 			}
 		}
+
+		isFocused = listeningForKey;
 	}
 	
 	@Override
@@ -116,4 +131,7 @@ public class TextBoxComponent extends Component implements MouseClickListener, K
 		}
 	}
 
+	public void setErrorState(boolean isError) {
+		this.isErrorState = isError;
+	}
 }
