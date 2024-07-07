@@ -18,6 +18,7 @@
 
 package net.aoba.settings;
 
+import com.mojang.logging.LogUtils;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IntegerSetting;
@@ -32,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 public class SettingManager {
@@ -55,9 +57,15 @@ public class SettingManager {
 		p_category.settingsList.add(p_setting);
 	}
 
-	public static Properties prepare(SettingsContainer container) throws IOException {
+	public static Properties prepare(SettingsContainer container) {
 		Properties props = new Properties();
-		props.loadFromXML(new FileInputStream(container.configFile));
+		try (FileInputStream fis = new FileInputStream(container.configFile)) {
+			props.loadFromXML(fis);
+		} catch (InvalidPropertiesFormatException e) {
+			LogUtils.getLogger().error("Invalid XML format in properties file: " + e.getMessage());
+		} catch (IOException e) {
+			LogUtils.getLogger().error("IOException while loading properties file: " + e.getMessage());
+		}
 		return props;
 	}
 

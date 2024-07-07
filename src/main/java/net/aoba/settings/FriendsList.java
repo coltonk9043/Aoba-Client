@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.UUID;
+
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -37,6 +39,12 @@ public class FriendsList {
 	
 	public void load() {
 		Properties props = new Properties();
+
+		if (!friendsFile.exists()) {
+			LogUtils.getLogger().error("Friends file not found! Cannot load friends!");
+			return;
+		}
+
 		try {
 			props.loadFromXML(new FileInputStream(friendsFile));
 			
