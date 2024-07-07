@@ -21,6 +21,10 @@
  */
 package net.aoba.module.modules.render;
 
+import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.FloatSetting;
+import net.minecraft.util.Rarity;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.RenderEvent;
@@ -37,7 +41,11 @@ import net.minecraft.entity.ItemEntity;
 public class ItemESP extends Module implements RenderListener {
 
 	private ColorSetting color = new ColorSetting("itemesp_color", "Color", "Color", new Color(0, 1f, 1f));
-	
+	private BooleanSetting visibilityToggle = new BooleanSetting("itemesp_visibility", "Visibility", true);
+	private FloatSetting opacity = new FloatSetting("itemesp_opacity", "Opacity", 0.5f, 0.1f, 1.0f, 0.05f);
+	private FloatSetting range = new FloatSetting("itemesp_range", "Range", 100f, 10f, 500f, 5f);
+	private ColorSetting rareItemColor = new ColorSetting("itemesp_rare_color", "Rare Item Color", new Color(1f, 0.5f, 0f));
+	private BooleanSetting colorRarity = new BooleanSetting("itemesp_color_rarity", "Color Rarity", true);
 	
 	public ItemESP() {
 		super(new KeybindSetting("key.itemesp", "ItemESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -66,11 +74,28 @@ public class ItemESP extends Module implements RenderListener {
 
 	@Override
 	public void OnRender(RenderEvent event) {
+		if (!visibilityToggle.getValue()) return;
+
+		Vec3d playerPos = MC.player.getPos();
 		for (Entity entity : MC.world.getEntities()) {
-			if(entity instanceof ItemEntity) {
-				RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), entity.getBoundingBox(), color.getValue());
+			if (entity instanceof ItemEntity) {
+				Vec3d itemPos = entity.getPos();
+				if (playerPos.distanceTo(itemPos) <= range.getValue()) {
+					Color finalColor = colorRarity.getValue() ? getColorBasedOnItemRarity(entity) : color.getValue();
+					RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), entity.getBoundingBox(), finalColor, opacity.getValue(), 1.0f); // Assuming draw3DBox supports opacity
+				}
 			}
 		}
 	}
 
+	private Color getColorBasedOnItemRarity(Entity entity) {
+		boolean isRare = false;
+
+		if (entity instanceof ItemEntity) {
+			ItemEntity itemEntity = (ItemEntity) entity;
+			isRare = itemEntity.getStack().getRarity() == Rarity.RARE;
+		}
+
+		return isRare ? rareItemColor.getValue() : color.getValue();
+	}
 }
