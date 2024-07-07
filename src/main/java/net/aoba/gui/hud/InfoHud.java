@@ -22,8 +22,6 @@ import net.aoba.misc.RenderUtils;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
 
 public class InfoHud extends AbstractHud {
 
@@ -74,15 +72,8 @@ public class InfoHud extends AbstractHud {
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
         if (this.visible) {
-            MatrixStack matrixStack = drawContext.getMatrices();
-            Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
             // Draws background depending on components width and height
             Vector2 pos = position.getValue();
-
-            //RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
-            //RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
-
             RenderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, GuiManager.foregroundColor.getValue());
             RenderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, GuiManager.foregroundColor.getValue());
             RenderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, GuiManager.foregroundColor.getValue());

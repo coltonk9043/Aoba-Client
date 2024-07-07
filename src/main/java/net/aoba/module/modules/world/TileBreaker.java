@@ -22,9 +22,9 @@
 package net.aoba.module.modules.world;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
@@ -45,7 +45,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 
-public class TileBreaker extends Module implements TickListener, RenderListener {
+public class TileBreaker extends Module implements TickListener, Render3DListener {
     private MinecraftClient mc;
     private ArrayList<Block> blocks = new ArrayList<Block>();
     private FloatSetting radius;
@@ -72,13 +72,13 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
         Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
@@ -151,7 +151,7 @@ public class TileBreaker extends Module implements TickListener, RenderListener 
     }
 
     @Override
-    public void OnRender(RenderEvent event) {
+    public void OnRender(Render3DEvent event) {
         int rad = this.radius.getValue().intValue();
         for (int x = -rad; x < rad; x++) {
             for (int y = rad; y > -rad; y--) {

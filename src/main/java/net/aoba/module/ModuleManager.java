@@ -25,7 +25,6 @@ import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.api.IAddon;
 import net.aoba.event.events.KeyDownEvent;
-import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.module.modules.combat.*;
 import net.aoba.module.modules.misc.*;
@@ -36,10 +35,6 @@ import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil.Key;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -193,25 +188,6 @@ public class ModuleManager implements KeyDownListener {
         }
 
         Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
-    }
-
-    public void render(MatrixStack matrices) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-        matrices.push();
-        Vec3d camPos = mc.getBlockEntityRenderDispatcher().camera.getPos();
-        matrices.translate(-camPos.x, -camPos.y, -camPos.z);
-        RenderEvent renderEvent = new RenderEvent(matrices, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
-        Aoba.getInstance().eventManager.Fire(renderEvent);
-        matrices.pop();
-
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_LINE_SMOOTH);
     }
 
     public void addModule(Module module) {

@@ -22,8 +22,8 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.RenderEvent;
-import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.events.Render3DEvent;
+import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
@@ -38,7 +38,7 @@ import net.minecraft.util.Rarity;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class ItemESP extends Module implements RenderListener {
+public class ItemESP extends Module implements Render3DListener {
 
     private ColorSetting color = new ColorSetting("itemesp_color", "Color", "Color", new Color(0, 1f, 1f));
     private BooleanSetting visibilityToggle = new BooleanSetting("itemesp_visibility", "Visibility", true);
@@ -59,12 +59,12 @@ public class ItemESP extends Module implements RenderListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ItemESP extends Module implements RenderListener {
     }
 
     @Override
-    public void OnRender(RenderEvent event) {
+    public void OnRender(Render3DEvent event) {
         if (!visibilityToggle.getValue()) return;
 
         Vec3d playerPos = MC.player.getPos();

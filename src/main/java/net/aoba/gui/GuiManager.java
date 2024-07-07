@@ -22,9 +22,11 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.events.Render2DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.event.listeners.MouseClickListener;
+import net.aoba.event.listeners.Render2DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.RainbowColor;
@@ -55,247 +57,249 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 
-public class GuiManager implements MouseClickListener, KeyDownListener, TickListener {
-    protected MinecraftClient mc = MinecraftClient.getInstance();
+public class GuiManager implements MouseClickListener, KeyDownListener, TickListener, Render2DListener {
+	protected MinecraftClient mc = MinecraftClient.getInstance();
 
-    public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
-    private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
+	public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key",
+			InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
+	private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
 
-    private boolean clickGuiOpen = false;
+	private boolean clickGuiOpen = false;
 
-    public static AbstractGui currentGrabbed = null;
+	public static AbstractGui currentGrabbed = null;
 
-    private HashMap<Object, AbstractHud> pinnedHuds = new HashMap<Object, AbstractHud>();
+	private HashMap<Object, AbstractHud> pinnedHuds = new HashMap<Object, AbstractHud>();
 
-    // Navigation Bar and Pages
-    public NavigationBar clickGuiNavBar;
-    public Page modulesPane = new Page("Modules");
-    public Page toolsPane = new Page("Tools");
-    public Page hudPane = new Page("Hud");
+	// Navigation Bar and Pages
+	public NavigationBar clickGuiNavBar;
+	public Page modulesPane = new Page("Modules");
+	public Page toolsPane = new Page("Tools");
+	public Page hudPane = new Page("Hud");
 
-    // Global HUD Settings
-    public static ColorSetting foregroundColor;
-    public static ColorSetting borderColor;
-    public static ColorSetting backgroundColor;
+	// Global HUD Settings
+	public static ColorSetting foregroundColor;
+	public static ColorSetting borderColor;
+	public static ColorSetting backgroundColor;
 
-    public static RainbowColor rainbowColor = new RainbowColor();
-    public static RandomColor randomColor = new RandomColor();
+	public static RainbowColor rainbowColor = new RainbowColor();
+	public static RandomColor randomColor = new RandomColor();
 
-    public FloatSetting effectSpeed = new FloatSetting("color_speed", "Effect Spd", 4f, 1f, 20f, 0.1f, null);
-    public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
-    public BooleanSetting ah = new BooleanSetting("armorhud_toggle", "ArmorHUD", false, null);
+	public FloatSetting effectSpeed = new FloatSetting("color_speed", "Effect Spd", 4f, 1f, 20f, 0.1f, null);
+	public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
+	public BooleanSetting ah = new BooleanSetting("armorhud_toggle", "ArmorHUD", false, null);
 
-    public ModuleSelectorHud moduleSelector;
-    public ArmorHud armorHud;
-    public RadarHud radarHud;
-    public InfoHud infoHud;
+	public ModuleSelectorHud moduleSelector;
+	public ArmorHud armorHud;
+	public RadarHud radarHud;
+	public InfoHud infoHud;
 
-    public GuiManager() {
-        mc = MinecraftClient.getInstance();
+	public GuiManager() {
+		mc = MinecraftClient.getInstance();
 
-        borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
-        backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(0, 0, 0, 50));
-        foregroundColor = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
-        clickGuiNavBar = new NavigationBar();
+		borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
+		backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(0, 0, 0, 50));
+		foregroundColor = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
+		clickGuiNavBar = new NavigationBar();
 
-        SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(backgroundColor, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(foregroundColor, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(clickGuiButton, Aoba.getInstance().settingManager.modulesContainer);
+		SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(backgroundColor, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(foregroundColor, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(clickGuiButton, Aoba.getInstance().settingManager.modulesContainer);
 
-        Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(Render2DListener.class, this);
+	}
 
-    public void Initialize() {
-        toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
-        toolsPane.AddHud(new GoToTab("Go To Location", 1220, 550));
-        moduleSelector = new ModuleSelectorHud();
-        armorHud = new ArmorHud(790, 500, 200, 50);
-        radarHud = new RadarHud(590, 500, 180, 180);
-        infoHud = new InfoHud(100, 500);
+	public void Initialize() {
+		toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
+		toolsPane.AddHud(new GoToTab("Go To Location", 1220, 550));
+		moduleSelector = new ModuleSelectorHud();
+		armorHud = new ArmorHud(790, 500, 200, 50);
+		radarHud = new RadarHud(590, 500, 180, 180);
+		infoHud = new InfoHud(100, 500);
 
-        hudPane.AddHud(new HudOptionsTab());
-        hudPane.AddHud(new ToggleHudsTab(new AbstractHud[]{moduleSelector, armorHud, radarHud, infoHud}));
-        int xOffset = 50;
-        for (Category category : Module.Category.values()) {
-            ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75, true, category.name());
+		hudPane.AddHud(new HudOptionsTab());
+		hudPane.AddHud(new ToggleHudsTab(new AbstractHud[] { moduleSelector, armorHud, radarHud, infoHud }));
+		int xOffset = 50;
+		for (Category category : Module.Category.values()) {
+			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75, true, category.name());
 
-            StackPanelComponent stackPanel = new StackPanelComponent(tab);
-            stackPanel.setTop(30);
-            for (Module module : Aoba.getInstance().moduleManager.modules) {
-                if (module.getCategory() == category) {
-                    ModuleComponent button = new ModuleComponent(module.getName(), stackPanel, module);
-                    stackPanel.addChild(button);
-                }
-            }
-            tab.addChild(stackPanel);
-            tab.setWidth(180);
-            modulesPane.AddHud(tab);
-            xOffset += tab.getWidth() + 10;
-        }
+			StackPanelComponent stackPanel = new StackPanelComponent(tab);
+			stackPanel.setTop(30);
+			for (Module module : Aoba.getInstance().moduleManager.modules) {
+				if (module.getCategory() == category) {
+					ModuleComponent button = new ModuleComponent(module.getName(), stackPanel, module);
+					stackPanel.addChild(button);
+				}
+			}
+			tab.addChild(stackPanel);
+			tab.setWidth(180);
+			modulesPane.AddHud(tab);
+			xOffset += tab.getWidth() + 10;
+		}
 
-        clickGuiNavBar.addPane(modulesPane);
-        clickGuiNavBar.addPane(toolsPane);
-        clickGuiNavBar.addPane(hudPane);
-        //clickGuiNavBar.addPane(settingsPane);
+		clickGuiNavBar.addPane(modulesPane);
+		clickGuiNavBar.addPane(toolsPane);
+		clickGuiNavBar.addPane(hudPane);
+		// clickGuiNavBar.addPane(settingsPane);
 
-        SettingManager.registerSetting(effectSpeed, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(rainbow, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(ah, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(effectSpeed, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(rainbow, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(ah, Aoba.getInstance().settingManager.configContainer);
 
-        Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 
-        clickGuiNavBar.setSelectedIndex(0);
-    }
+		clickGuiNavBar.setSelectedIndex(0);
+	}
 
-    public void AddHud(AbstractGui hud, String pageName) {
-        for (Page page : clickGuiNavBar.getPanes()) {
-            if (page.getTitle().equals(pageName)) {
-                page.tabs.add(hud);
-                break;
-            }
-        }
-    }
+	public void AddHud(AbstractGui hud, String pageName) {
+		for (Page page : clickGuiNavBar.getPanes()) {
+			if (page.getTitle().equals(pageName)) {
+				page.tabs.add(hud);
+				break;
+			}
+		}
+	}
 
-    public void RemoveHud(AbstractGui hud, String pageName) {
-        for (Page page : clickGuiNavBar.getPanes()) {
-            if (page.getTitle().equals(pageName)) {
-                page.tabs.remove(hud);
-                break;
-            }
-        }
-    }
+	public void RemoveHud(AbstractGui hud, String pageName) {
+		for (Page page : clickGuiNavBar.getPanes()) {
+			if (page.getTitle().equals(pageName)) {
+				page.tabs.remove(hud);
+				break;
+			}
+		}
+	}
 
-    @Override
-    public void OnKeyDown(KeyDownEvent event) {
-        if (clickGuiButton.getValue().getCode() == event.GetKey()) {
-            this.clickGuiOpen = !this.clickGuiOpen;
-            this.toggleMouse();
-        }
-    }
+	@Override
+	public void OnKeyDown(KeyDownEvent event) {
+		if (clickGuiButton.getValue().getCode() == event.GetKey()) {
+			this.clickGuiOpen = !this.clickGuiOpen;
+			this.toggleMouse();
+		}
+	}
 
-    public void SetHudActive(AbstractHud hud, boolean state) {
-        if (state) {
-            this.pinnedHuds.put(hud.getClass(), hud);
-            hud.activated.silentSetValue(true);
-        } else {
-            this.pinnedHuds.remove(hud.getClass());
-            hud.activated.silentSetValue(false);
-        }
-    }
+	public void SetHudActive(AbstractHud hud, boolean state) {
+		if (state) {
+			this.pinnedHuds.put(hud.getClass(), hud);
+			hud.activated.silentSetValue(true);
+		} else {
+			this.pinnedHuds.remove(hud.getClass());
+			hud.activated.silentSetValue(false);
+		}
+	}
 
-    /**
-     * Getter for the current color used by the GUI for text rendering.
-     *
-     * @return Current Color
-     */
-    @Override
-    public void OnUpdate(TickEvent event) {
-        if (!Aoba.getInstance().isGhosted()) {
+	/**
+	 * Getter for the current color used by the GUI for text rendering.
+	 *
+	 * @return Current Color
+	 */
+	@Override
+	public void OnUpdate(TickEvent event) {
+		/**
+		 * Moves the selected Tab to where the user moves their mouse.
+		 */
+		if (this.clickGuiOpen) {
+			clickGuiNavBar.update();
+		}
 
-            /**
-             * Moves the selected Tab to where the user moves their mouse.
-             */
-            if (this.clickGuiOpen) {
-                clickGuiNavBar.update();
-            }
+		/**
+		 * Updates each of the Tab GUIs that are currently on the screen.
+		 */
+		for (AbstractGui hud : pinnedHuds.values()) {
+			hud.update();
+		}
 
-            /**
-             * Updates each of the Tab GUIs that are currently on the screen.
-             */
-            for (AbstractGui hud : pinnedHuds.values()) {
-                hud.update();
-            }
+		if (this.esc.isPressed() && this.clickGuiOpen) {
+			this.clickGuiOpen = !this.clickGuiOpen;
+			this.toggleMouse();
+		}
+	}
 
-            if (this.esc.isPressed() && this.clickGuiOpen) {
-                this.clickGuiOpen = !this.clickGuiOpen;
-                this.toggleMouse();
-            }
-        }
-    }
+	@Override
+	public void OnRender(Render2DEvent event) {
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-    public void draw(DrawContext drawContext, float tickDelta) {
-        GL11.glDisable(GL11.GL_CULL_FACE);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		DrawContext drawContext = event.getDrawContext();
+		float tickDelta = event.getRenderTickCounter().getTickDelta(false);
 
-        MatrixStack matrixStack = drawContext.getMatrices();
-        matrixStack.push();
+		MatrixStack matrixStack = drawContext.getMatrices();
+		matrixStack.push();
 
-        int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
-        matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
+		int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
+		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
 
-        Window window = mc.getWindow();
-        Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+		Window window = mc.getWindow();
+		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 
-        /**
-         * Render ClickGUI and Sidebar
-         */
-        if (this.clickGuiOpen) {
-            RenderUtils.drawBox(matrix, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
-            clickGuiNavBar.draw(drawContext, tickDelta);
-        }
+		/**
+		 * Render ClickGUI and Sidebar
+		 */
+		if (this.clickGuiOpen) {
+			RenderUtils.drawBox(matrix, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
+			clickGuiNavBar.draw(drawContext, tickDelta);
+		}
 
-        // Render HUDS
-        if (!this.clickGuiOpen || this.clickGuiNavBar.getSelectedPage() == this.hudPane) {
-            for (AbstractGui hud : pinnedHuds.values()) {
-                if (hud.getVisible()) {
-                    hud.draw(drawContext, tickDelta);
-                }
-            }
-        }
+		// Render HUDS
+		if (!this.clickGuiOpen || this.clickGuiNavBar.getSelectedPage() == this.hudPane) {
+			for (AbstractGui hud : pinnedHuds.values()) {
+				if (hud.getVisible()) {
+					hud.draw(drawContext, tickDelta);
+				}
+			}
+		}
 
-        // Draws the active mods in the top right of the screen.
-        AobaClient aoba = Aoba.getInstance();
-        int iteration = 0;
-        for (int i = 0; i < aoba.moduleManager.modules.size(); i++) {
-            Module mod = aoba.moduleManager.modules.get(i);
-            if (mod.getState()) {
-                RenderUtils.drawString(drawContext, mod.getName(),
-                        (float) (window.getWidth() - ((mc.textRenderer.getWidth(mod.getName()) + 5) * 2)), 10 + (iteration * 20),
-                        GuiManager.foregroundColor.getValue().getColorAsInt());
-                iteration++;
-            }
-        }
+		// Draws the active mods in the top right of the screen.
+		AobaClient aoba = Aoba.getInstance();
+		int iteration = 0;
+		for (int i = 0; i < aoba.moduleManager.modules.size(); i++) {
+			Module mod = aoba.moduleManager.modules.get(i);
+			if (mod.getState()) {
+				RenderUtils.drawString(drawContext, mod.getName(),
+						(float) (window.getWidth() - ((mc.textRenderer.getWidth(mod.getName()) + 5) * 2)),
+						10 + (iteration * 20), GuiManager.foregroundColor.getValue().getColorAsInt());
+				iteration++;
+			}
+		}
 
+		matrixStack.pop();
+		GL11.glEnable(GL11.GL_CULL_FACE);
+	}
 
-        matrixStack.pop();
-        GL11.glEnable(GL11.GL_CULL_FACE);
-    }
+	/**
+	 * Gets whether or not the Click GUI is currently open.
+	 *
+	 * @return State of the Click GUI.
+	 */
+	public boolean isClickGuiOpen() {
+		return this.clickGuiOpen;
+	}
 
-    /**
-     * Gets whether or not the Click GUI is currently open.
-     *
-     * @return State of the Click GUI.
-     */
-    public boolean isClickGuiOpen() {
-        return this.clickGuiOpen;
-    }
+	public void setClickGuiOpen(boolean state) {
+		this.clickGuiOpen = state;
+		currentGrabbed = null;
+	}
 
-    public void setClickGuiOpen(boolean state) {
-        this.clickGuiOpen = state;
-        currentGrabbed = null;
-    }
+	/**
+	 * Locks and unlocks the Mouse.
+	 */
+	public void toggleMouse() {
+		if (this.mc.mouse.isCursorLocked()) {
+			this.mc.mouse.unlockCursor();
+		} else {
+			this.mc.mouse.lockCursor();
+		}
+	}
 
-    /**
-     * Locks and unlocks the Mouse.
-     */
-    public void toggleMouse() {
-        if (this.mc.mouse.isCursorLocked()) {
-            this.mc.mouse.unlockCursor();
-        } else {
-            this.mc.mouse.lockCursor();
-        }
-    }
-
-    @Override
-    public void OnMouseClick(MouseClickEvent event) {
-        if (event.button == MouseButton.LEFT) {
-            if (event.action == MouseAction.DOWN && this.clickGuiOpen) {
-                event.cancel();
-            } else if (event.action == MouseAction.UP) {
-                currentGrabbed = null;
-            }
-        }
-    }
+	@Override
+	public void OnMouseClick(MouseClickEvent event) {
+		if (event.button == MouseButton.LEFT) {
+			if (event.action == MouseAction.DOWN && this.clickGuiOpen) {
+				event.cancel();
+			} else if (event.action == MouseAction.UP) {
+				currentGrabbed = null;
+			}
+		}
+	}
 }

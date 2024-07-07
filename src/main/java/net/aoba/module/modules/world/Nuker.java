@@ -23,10 +23,10 @@ package net.aoba.module.modules.world;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.BlockStateEvent;
-import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.BlockStateListener;
-import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
@@ -46,7 +46,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 
-public class Nuker extends Module implements RenderListener, TickListener, BlockStateListener {
+public class Nuker extends Module implements Render3DListener, TickListener, BlockStateListener {
     private BooleanSetting creative = new BooleanSetting("nuker_creative", "Creative", "Creative", false);
     private ColorSetting color = new ColorSetting("nuker_color", "Color", "Color", new Color(0, 1f, 1f));
     private FloatSetting radius = new FloatSetting("nuker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
@@ -74,14 +74,14 @@ public class Nuker extends Module implements RenderListener, TickListener, Block
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(BlockStateListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
         Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(BlockStateListener.class, this);
     }
@@ -126,7 +126,7 @@ public class Nuker extends Module implements RenderListener, TickListener, Block
     }
 
     @Override
-    public void OnRender(RenderEvent event) {
+    public void OnRender(Render3DEvent event) {
         if (currentBlockToBreak != null) {
             RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), new Box(currentBlockToBreak), color.getValue());
         }

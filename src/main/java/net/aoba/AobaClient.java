@@ -32,13 +32,11 @@ import net.aoba.gui.font.FontManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
-import net.aoba.settings.FriendsList;
 import net.aoba.settings.SettingManager;
+import net.aoba.settings.friends.FriendsList;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +59,6 @@ public class AobaClient {
     public RenderUtils renderUtils;
     public GlobalChat globalChat;
     public EventManager eventManager;
-
-    private boolean ghostMode;
 
     /**
      * Initializes Aoba Client and creates sub-systems.
@@ -127,35 +123,6 @@ public class AobaClient {
 
         //GuiManager.borderColor.setMode(ColorMode.Rainbow);
         //GuiManager.foregroundColor.setMode(ColorMode.Random);
-    }
-
-    /**
-     * Renders the HUD every frame
-     *
-     * @param context      The current Matrix Stack
-     * @param partialTicks Delta between ticks
-     */
-    public void drawHUD(DrawContext context, float partialTicks) {
-        // If the program is not in Ghost Mode, draw UI.
-        if (!ghostMode) {
-            hudManager.draw(context, partialTicks);
-        }
-    }
-
-    /**
-     * Toggles Ghost Mode. (No UI)
-     */
-    public void toggleGhostMode() {
-        ghostMode = !ghostMode;
-    }
-
-    /**
-     * Returns whether Aoba is currently in Ghost Mode. (No UI)
-     *
-     * @return Ghost Mode
-     */
-    public boolean isGhosted() {
-        return this.ghostMode;
     }
 
     /**

@@ -22,9 +22,9 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
@@ -39,7 +39,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.LinkedList;
 
-public class Breadcrumbs extends Module implements RenderListener, TickListener {
+public class Breadcrumbs extends Module implements Render3DListener, TickListener {
     private Color currentColor;
 
     private ColorSetting color = new ColorSetting("breadcrumbs_color", "Color", "Color", new Color(0, 1f, 1f));
@@ -71,14 +71,14 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
         positions.clear();
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
         Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
@@ -88,7 +88,7 @@ public class Breadcrumbs extends Module implements RenderListener, TickListener 
     }
 
     @Override
-    public void OnRender(RenderEvent event) {
+    public void OnRender(Render3DEvent event) {
         Vec3d prevPosition = null;
         for (Vec3d position : positions) {
             if (prevPosition != null) {

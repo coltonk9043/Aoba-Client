@@ -22,9 +22,9 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.mixin.interfaces.ICamera;
@@ -40,7 +40,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.UUID;
 
-public class Freecam extends Module implements TickListener, RenderListener {
+public class Freecam extends Module implements TickListener, Render3DListener {
     private FloatSetting flySpeed;
 
     private FakePlayerEntity fakePlayer;
@@ -71,13 +71,13 @@ public class Freecam extends Module implements TickListener, RenderListener {
             fakePlayer.despawn();
 
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-        Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
     }
 
     @Override
     public void onEnable() {
         Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
 
         ClientPlayerEntity player = MC.player;
         fakePlayer = new FakePlayerEntity();
@@ -142,7 +142,7 @@ public class Freecam extends Module implements TickListener, RenderListener {
     }
 
     @Override
-    public void OnRender(RenderEvent event) {
+    public void OnRender(Render3DEvent event) {
         Camera camera = MC.gameRenderer.getCamera();
         ICamera iCamera = (ICamera) camera;
 
