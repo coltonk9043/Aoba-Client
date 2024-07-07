@@ -18,6 +18,7 @@
 
 package net.aoba.gui.tabs.components;
 
+import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
@@ -33,6 +34,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 public class ModuleComponent extends Component implements MouseClickListener {
     private String text;
@@ -41,6 +43,8 @@ public class ModuleComponent extends Component implements MouseClickListener {
     private ModuleSettingsTab lastSettingsTab = null;
 
     public final Identifier gear;
+    private boolean spinning = false;
+    private float spinAngle = 0;
 
     public ModuleComponent(String text, IGuiElement parent, Module module) {
         super(parent);
@@ -57,6 +61,16 @@ public class ModuleComponent extends Component implements MouseClickListener {
     @Override
     public void update() {
         super.update();
+        if (spinning) {
+            spinAngle += 5;
+
+            LogUtils.getLogger().info(String.valueOf(spinAngle));
+
+            if (spinAngle >= 360) {
+                spinAngle = 0;
+                spinning = false;
+            }
+        }
     }
 
     @Override
@@ -69,7 +83,17 @@ public class ModuleComponent extends Component implements MouseClickListener {
         RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, module.getState() ? 0x00FF00 : this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
         if (module.hasSettings()) {
             Color hudColor = GuiManager.foregroundColor.getValue();
-            RenderUtils.drawTexturedQuad(matrix4f, gear, (actualX + actualWidth - 20), (actualY + 6), 16, 16, hudColor);
+
+            if (spinning) {
+                matrixStack.push();
+                matrixStack.translate((actualX + actualWidth - 12), (actualY + 14), 0);
+                matrixStack.multiply(new Quaternionf().rotateZ((float) Math.toRadians(spinAngle)));
+                matrixStack.translate(-(actualX + actualWidth - 12), -(actualY + 14), 0);
+                RenderUtils.drawTexturedQuad(matrixStack.peek().getPositionMatrix(), gear, (actualX + actualWidth - 20), (actualY + 6), 16, 16, hudColor);
+                matrixStack.pop();
+            } else {
+                RenderUtils.drawTexturedQuad(matrix4f, gear, (actualX + actualWidth - 20), (actualY + 6), 16, 16, hudColor);
+            }
         }
     }
 
@@ -89,6 +113,7 @@ public class ModuleComponent extends Component implements MouseClickListener {
             if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
                 boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
                 if (isOnOptionsButton) {
+                    spinning = true;
                     if (lastSettingsTab == null) {
                         lastSettingsTab = new ModuleSettingsTab(this.module.getName(), this.actualX + this.actualWidth + 1, this.actualY, this.module);
                         lastSettingsTab.setVisible(true);
