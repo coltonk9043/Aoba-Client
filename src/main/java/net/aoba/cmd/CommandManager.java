@@ -23,7 +23,11 @@ package net.aoba.cmd;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+
 import net.aoba.Aoba;
+import net.aoba.api.IAddon;
 import net.aoba.cmd.commands.*;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.StringSetting;
@@ -69,7 +73,7 @@ public class CommandManager {
 	/**
 	 * Constructor for Command Manager. Initializes all commands.
 	 */
-	public CommandManager() {
+	public CommandManager(List<IAddon> addons) {
 		
 		PREFIX = new StringSetting("Prefix", "Prefix", ".aoba");
 		 
@@ -84,6 +88,16 @@ public class CommandManager {
 				Command cmd = (Command)field.get(this);
 				commands.put(cmd.getName(), cmd);
 			}
+
+			addons.stream().filter(Objects::nonNull).forEach(addon -> {
+				addon.commands().forEach(command -> {
+					if (commands.containsKey(command.getName())) {
+						System.out.println("Warning: Duplicate command name \"" + command.getName() + "\" from addon. This command will not be registered.");
+					} else {
+						commands.put(command.getName(), command);
+					}
+				});
+			});
 		}catch(Exception e)
 		{
 			System.out.println("Error initializing Aoba commands.");

@@ -22,7 +22,12 @@
 package net.aoba.module;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
+import net.aoba.api.IAddon;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.KeyDownListener;
@@ -105,8 +110,7 @@ public class ModuleManager implements KeyDownListener {
 	public Module xray = new XRay();
 	public Module zoom = new Zoom();
 	
-	public ModuleManager() {
-		// Look at all these modules!
+	public ModuleManager(List<IAddon> addons) {
 		addModule(aimbot);
 		addModule(anticactus);
 		addModule(antiinvis);
@@ -166,6 +170,21 @@ public class ModuleManager implements KeyDownListener {
 		addModule(trajectory);
 		addModule(xray);
 		addModule(zoom);
+
+		addons.stream().filter(Objects::nonNull).forEach(addon -> {
+			try {
+				addon.modules().forEach(module -> {
+					try {
+						addModule(module);
+						LogUtils.getLogger().info("[Aoba] Successfully added module: " + module.getClass().getName() + " from addon: " + addon.getClass().getName());
+					} catch (Exception e) {
+						LogUtils.getLogger().error("Error adding module: " + module.getClass().getName() + " from addon: " + addon.getClass().getName(), e);
+					}
+				});
+			} catch (Exception e) {
+				LogUtils.getLogger().error("Error processing modules from addon: " + addon.getClass().getName(), e);
+			}
+		});
 		
 		for(Module module : modules) {
 			for(Setting<?> setting : module.getSettings()) {

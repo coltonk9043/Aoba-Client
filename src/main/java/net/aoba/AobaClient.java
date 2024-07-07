@@ -39,6 +39,8 @@ import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class AobaClient {
@@ -76,15 +78,35 @@ public class AobaClient {
         System.out.println("[Aoba] Starting Client");
 
         eventManager = new EventManager();
+
+        LogUtils.getLogger().info("[Aoba] Starting addon initialization");
+        List<IAddon> addons = new ArrayList<>();
+
+        for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("aoba", IAddon.class)) {
+            IAddon addon = entrypoint.getEntrypoint();
+
+            try {
+                LogUtils.getLogger().info("[Aoba] Initializing addon: " + addon.getClass().getName());
+                addon.onIntialize();
+                LogUtils.getLogger().info("[Aoba] Addon initialized: " + addon.getClass().getName());
+            } catch (Throwable e) {
+                LogUtils.getLogger().error("Error initializing addon: " + addon.getClass().getName(), e);
+            }
+
+            addons.add(addon);
+        }
+
+        LogUtils.getLogger().info("[Aoba] Addon initialization completed");
+
         renderUtils = new RenderUtils();
         System.out.println("[Aoba] Reading Settings");
         settingManager = new SettingManager();
         System.out.println("[Aoba] Reading Friends List");
         friendsList = new FriendsList();
         System.out.println("[Aoba] Initializing Modules");
-        moduleManager = new ModuleManager();
+        moduleManager = new ModuleManager(addons);
         System.out.println("[Aoba] Initializing Commands");
-        commandManager = new CommandManager();
+        commandManager = new CommandManager(addons);
         System.out.println("[Aoba] Initializing Font Manager");
         fontManager = new FontManager();
         fontManager.Initialize();
@@ -98,31 +120,6 @@ public class AobaClient {
         SettingManager.loadSettings(settingManager.configContainer);
         SettingManager.loadSettings(settingManager.modulesContainer);
         SettingManager.loadSettings(settingManager.hiddenContainer);
-
-        LogUtils.getLogger().info("[Aoba] Starting addon initialization");
-
-        for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("aoba", IAddon.class)) {
-            IAddon addon = entrypoint.getEntrypoint();
-
-            try {
-                LogUtils.getLogger().info("[Aoba] Initializing addon: " + addon.getClass().getName());
-                addon.onIntialize();
-            } catch (Exception e) {
-                LogUtils.getLogger().error("Error initializing addon: " + addon.getClass().getName(), e);
-            }
-
-            addon.modules().stream().filter(Objects::nonNull).forEach(module -> {
-                try {
-                    moduleManager.modules.add(module);
-                    LogUtils.getLogger().info("[Aoba] Successfully registered module: " + module.getClass().getName());
-                } catch (Exception e) {
-                    LogUtils.getLogger().error("Error registering module: " + module.getClass().getName() + " for addon: " + addon.getClass().getName(), e);
-                }
-            });
-        }
-
-        LogUtils.getLogger().info("[Aoba] Addon initialization completed");
-
 
         globalChat = new
 
