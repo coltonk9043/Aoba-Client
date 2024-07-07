@@ -23,10 +23,10 @@ package net.aoba.module.modules.world;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.BlockStateEvent;
-import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.BlockStateListener;
-import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
@@ -46,12 +46,21 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 
+<<<<<<< Updated upstream
 public class Nuker extends Module implements RenderListener, TickListener, BlockStateListener {
     private BooleanSetting creative = new BooleanSetting("nuker_creative", "Creative", "Creative", false);
     private ColorSetting color = new ColorSetting("nuker_color", "Color", "Color", new Color(0, 1f, 1f));
     private FloatSetting radius = new FloatSetting("nuker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
     private BlocksSetting blacklist = new BlocksSetting("nuker_blacklist", "Blacklist",
             "Blocks that will not be broken by Nuker.", new HashSet<Block>());
+=======
+public class Nuker extends Module implements Render3DListener, TickListener, BlockStateListener {
+	private BooleanSetting creative = new BooleanSetting("nuker_creative", "Creative", "Creative", false);
+	private ColorSetting color = new ColorSetting("nuker_color", "Color", "Color", new Color(0, 1f, 1f));
+	private FloatSetting radius = new FloatSetting("nuker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
+	private BlocksSetting blacklist = new BlocksSetting("nuker_blacklist", "Blacklist",
+			"Blocks that will not be broken by Nuker.", new HashSet<Block>());
+>>>>>>> Stashed changes
 
     private BlockPos currentBlockToBreak = null;
 
@@ -72,6 +81,7 @@ public class Nuker extends Module implements RenderListener, TickListener, Block
         this.radius.setValue((float) radius);
     }
 
+<<<<<<< Updated upstream
     @Override
     public void onDisable() {
         Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
@@ -85,6 +95,21 @@ public class Nuker extends Module implements RenderListener, TickListener, Block
         Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(BlockStateListener.class, this);
     }
+=======
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(BlockStateListener.class, this);
+	}
+
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(BlockStateListener.class, this);
+	}
+>>>>>>> Stashed changes
 
     @Override
     public void onToggle() {
@@ -109,7 +134,16 @@ public class Nuker extends Module implements RenderListener, TickListener, Block
                 currentBlockToBreak = getNextBlock();
             }
 
+<<<<<<< Updated upstream
             if (currentBlockToBreak != null) {
+=======
+	@Override
+	public void OnRender(Render3DEvent event) {
+		if(currentBlockToBreak != null) {
+			RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), new Box(currentBlockToBreak), color.getValue());
+		}
+	}
+>>>>>>> Stashed changes
 
                 // Check to ensure that the block is not further than we can reach.
                 int range = (int) (Math.floor(radius.getValue()) + 1);

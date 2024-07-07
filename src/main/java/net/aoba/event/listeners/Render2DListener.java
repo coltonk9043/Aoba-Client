@@ -18,8 +18,13 @@
 
 package net.aoba.event.listeners;
 
-import net.aoba.event.events.RenderEvent;
+import net.aoba.event.events.Render2DEvent;
 
+<<<<<<< Updated upstream:src/main/java/net/aoba/event/listeners/RenderListener.java
 public interface RenderListener extends AbstractListener {
     public abstract void OnRender(RenderEvent event);
+=======
+public interface Render2DListener extends AbstractListener {
+	public abstract void OnRender(Render2DEvent event);
+>>>>>>> Stashed changes:src/main/java/net/aoba/event/listeners/Render2DListener.java
 }

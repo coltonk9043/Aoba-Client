@@ -22,8 +22,15 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
+<<<<<<< Updated upstream
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.listeners.RenderListener;
+=======
+import net.aoba.event.events.Render3DEvent;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.listeners.TickListener;
+>>>>>>> Stashed changes
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
@@ -41,6 +48,7 @@ import net.minecraft.util.math.Box;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
+<<<<<<< Updated upstream
 public class EntityESP extends Module implements RenderListener {
     private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color", "Passive Color", new Color(0, 1f, 1f));
     private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
@@ -52,10 +60,23 @@ public class EntityESP extends Module implements RenderListener {
     public FloatSetting effectSpeed = new FloatSetting("entityesp_effectspeed", "Effect Speed", "Effect Speed", 4f, 1f, 20f, 0.1f);
     private FloatSetting opacity = new FloatSetting("entityesp_opacity", "Opacity", "Adjust the opacity of the ESP boxes", 0.5f, 0.1f, 1.0f, 0.05f);
     private FloatSetting lineThickness = new FloatSetting("entityesp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 1f, 5f, 0.1f);
+=======
+public class EntityESP extends Module implements Render3DListener {
+	private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color",  "Passive Color", new Color(0, 1f, 1f));
+	private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
+	private ColorSetting color_misc = new ColorSetting("entityesp_color_misc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
+	
+	public BooleanSetting rainbow = new BooleanSetting("entityesp_rainbow", "Rainbow","Rainbow", false);
+	public FloatSetting effectSpeed = new FloatSetting("entityesp_effectspeed", "Effect Speed", "Effect Speed", 4f, 1f, 20f, 0.1f);
+	
+	public EntityESP() {
+		super(new KeybindSetting("key.entityesp", "EntityESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+>>>>>>> Stashed changes
 
     public EntityESP() {
         super(new KeybindSetting("key.entityesp", "EntityESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
+<<<<<<< Updated upstream
         this.setName("EntityESP");
         this.setCategory(Category.Render);
         this.setDescription("Allows the player to see entities with an ESP.");
@@ -71,6 +92,17 @@ public class EntityESP extends Module implements RenderListener {
         this.addSetting(showEnemies);
         this.addSetting(showMiscEntities);
     }
+=======
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+	}
+
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+	}
+>>>>>>> Stashed changes
 
     @Override
     public void onDisable() {
@@ -82,6 +114,7 @@ public class EntityESP extends Module implements RenderListener {
         Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
     }
 
+<<<<<<< Updated upstream
     @Override
     public void onToggle() {
 
@@ -112,4 +145,26 @@ public class EntityESP extends Module implements RenderListener {
         }
         return null;
     }
+=======
+	@Override
+	public void OnRender(Render3DEvent event) {
+		Matrix4f matrix4f = event.GetMatrix().peek().getPositionMatrix();
+		
+		for (Entity entity : MC.world.getEntities()) {
+			if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
+				
+				Box boundingBox = entity.getBoundingBox(); 
+				//Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(entity, partialTicks);
+				//boundingBox = boundingBox.offset(offset);
+				if (entity instanceof AnimalEntity) {
+					RenderUtils.draw3DBox(matrix4f, boundingBox, color_passive.getValue());
+				} else if (entity instanceof Monster) {
+					RenderUtils.draw3DBox(matrix4f, boundingBox, color_enemies.getValue());
+				} else {
+					RenderUtils.draw3DBox(matrix4f, boundingBox, color_misc.getValue());
+				}
+			}
+		}
+	}
+>>>>>>> Stashed changes
 }

@@ -22,8 +22,8 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.RenderEvent;
-import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.events.Render3DEvent;
+import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RenderUtils;
@@ -43,20 +43,45 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+<<<<<<< Updated upstream
 public class ChestESP extends Module implements RenderListener {
     private ColorSetting color = new ColorSetting("chestesp_color", "Color", "Color", new Color(0, 1f, 1f));
+=======
+public class ChestESP extends Module implements Render3DListener {
+	private ColorSetting color = new ColorSetting("chestesp_color", "Color", "Color", new Color(0, 1f, 1f));
+	
+	public BooleanSetting rainbow = new BooleanSetting("chestesp_rainbow", "Rainbow", "Rainbow", false);
+	public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", "Effect Speed", 4f, 1f, 20f, 0.1f);
+	
+	
+	public ChestESP() {
+		super(new KeybindSetting("key.chestesp", "ChestESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+>>>>>>> Stashed changes
 
     public BooleanSetting rainbow = new BooleanSetting("chestesp_rainbow", "Rainbow", "Rainbow", false);
     public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", "Effect Speed", 4f, 1f, 20f, 0.1f);
 
+<<<<<<< Updated upstream
 
     public ChestESP() {
         super(new KeybindSetting("key.chestesp", "ChestESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+=======
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+	}
+
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+	}
+>>>>>>> Stashed changes
 
         this.setName("ChestESP");
         this.setCategory(Category.Render);
         this.setDescription("Allows the player to see Chests with an ESP.");
 
+<<<<<<< Updated upstream
         this.addSetting(color);
         this.addSetting(rainbow);
         this.addSetting(effectSpeed);
@@ -87,4 +112,18 @@ public class ChestESP extends Module implements RenderListener {
             }
         }
     }
+=======
+	}
+	
+	@Override
+	public void OnRender(Render3DEvent event) {
+		ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities().collect(Collectors.toCollection(ArrayList::new));
+		for(BlockEntity blockEntity : blockEntities) {
+			if(blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity || blockEntity instanceof BarrelBlockEntity) {
+				Box box = new Box(blockEntity.getPos());
+				RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), box, color.getValue());
+			}
+		}
+	}
+>>>>>>> Stashed changes
 }

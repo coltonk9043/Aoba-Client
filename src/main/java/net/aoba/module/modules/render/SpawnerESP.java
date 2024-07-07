@@ -22,8 +22,8 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.RenderEvent;
-import net.aoba.event.listeners.RenderListener;
+import net.aoba.event.events.Render3DEvent;
+import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RenderUtils;
@@ -39,16 +39,28 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class SpawnerESP extends Module implements RenderListener {
+public class SpawnerESP extends Module implements Render3DListener {
 
     private ColorSetting color = new ColorSetting("spawneresp_color", "Color", "Color", new Color(0, 1f, 1f));
 
+<<<<<<< Updated upstream
     public SpawnerESP() {
         super(new KeybindSetting("key.spawneresp", "SpawnerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("SpawnerESP");
         this.setCategory(Category.Render);
         this.setDescription("Allows the player to see spawners with an ESP.");
+=======
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+	}
+
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+	}
+>>>>>>> Stashed changes
 
         this.addSetting(color);
     }
@@ -58,6 +70,7 @@ public class SpawnerESP extends Module implements RenderListener {
         Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
     }
 
+<<<<<<< Updated upstream
     @Override
     public void onEnable() {
         Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
@@ -79,4 +92,17 @@ public class SpawnerESP extends Module implements RenderListener {
             }
         }
     }
+=======
+	@Override
+	public void OnRender(Render3DEvent event) {
+		ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities().collect(Collectors.toCollection(ArrayList::new));
+		
+		for(BlockEntity blockEntity : blockEntities) {
+			if(blockEntity instanceof MobSpawnerBlockEntity) {
+				Box box = new Box(blockEntity.getPos());
+				RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), box, color.getValue());
+			}
+		}
+	}
+>>>>>>> Stashed changes
 }
