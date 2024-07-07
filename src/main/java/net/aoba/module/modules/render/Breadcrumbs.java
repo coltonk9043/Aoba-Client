@@ -22,9 +22,9 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
+import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
@@ -39,19 +39,11 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.LinkedList;
 
-<<<<<<< Updated upstream
 public class Breadcrumbs extends Module implements RenderListener, TickListener {
     private Color currentColor;
-=======
-public class Breadcrumbs extends Module implements Render3DListener, TickListener {
-	private Color currentColor;
-	
-	private ColorSetting color = new ColorSetting("breadcrumbs_color", "Color",  "Color", new Color(0, 1f, 1f));
->>>>>>> Stashed changes
 
     private ColorSetting color = new ColorSetting("breadcrumbs_color", "Color", "Color", new Color(0, 1f, 1f));
 
-<<<<<<< Updated upstream
     public BooleanSetting rainbow = new BooleanSetting("breadcrumbs_rainbow", "Rainbow", "Rainbow", false);
     public FloatSetting effectSpeed = new FloatSetting("breadcrumbs_effectspeed", "Effect Spd.", "Effect Spd", 4f, 1f, 20f, 0.1f);
     public FloatSetting lineThickness = new FloatSetting("breadcrumbs_linethickness", "Line Thickness", "Line Thickness", 1f, 0.1f, 10f, 0.1f);
@@ -61,44 +53,10 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
     private float timer = 10;
     private final LinkedList<Vec3d> positions = new LinkedList<>();
     private final int maxPositions = 1000;
-=======
-		this.setName("Breadcrumbs");
-		this.setCategory(Category.Render);
-		this.setDescription("Shows breadcrumbs of where you last stepped;");
-		currentColor = color.getValue();
-		
-		this.addSetting(color);
-		this.addSetting(rainbow);
-		this.addSetting(effectSpeed);
-	}
-	
-	@Override
-	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-	}
-
-	@Override
-	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-	}
->>>>>>> Stashed changes
 
 
-<<<<<<< Updated upstream
     public Breadcrumbs() {
         super(new KeybindSetting("key.breadcrumbs", "Breadcrumbs Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-=======
-	}
-	
-	@Override
-	public void OnRender(Render3DEvent event) {
-		for(int i = 0; i < this.positions.size() - 1; i++) {
-			RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), this.positions.get(i), this.positions.get(i + 1), this.currentColor);
-		}
-	}
->>>>>>> Stashed changes
 
         this.setName("Breadcrumbs");
         this.setCategory(Category.Render);

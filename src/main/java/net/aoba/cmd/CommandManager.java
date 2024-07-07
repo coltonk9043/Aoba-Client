@@ -38,7 +38,6 @@ import java.util.Objects;
 public class CommandManager {
     private HashMap<String, Command> commands = new HashMap<String, Command>();
 
-<<<<<<< Updated upstream
     public final CmdAimbot aimbot = new CmdAimbot();
     public final CmdAutoEat autoeat = new CmdAutoEat();
     public final CmdChestESP chestesp = new CmdChestESP();
@@ -68,64 +67,6 @@ public class CommandManager {
     public final CmdTP tp = new CmdTP();
     public final CmdTracer tracer = new CmdTracer();
     public final CmdXRay xray = new CmdXRay();
-=======
-	public final CmdAimbot aimbot = new CmdAimbot();
-	public final CmdAutoEat autoeat = new CmdAutoEat();
-	public final CmdChestESP chestesp = new CmdChestESP();
-	public final CmdClickgui clickgui = new CmdClickgui();
-	public final CmdEntityESP entityesp = new CmdEntityESP();
-	public final CmdFastBreak fastbreak = new CmdFastBreak();
-	public final CmdFly fly = new CmdFly();
-	public final CmdFreecam freecam = new CmdFreecam();
-	public final CmdFriends friends = new CmdFriends();
-	public final CmdFont font = new CmdFont();
-	public final CmdFullbright fullbright = new CmdFullbright();
-	public final CmdHelp help = new CmdHelp();
-	public final CmdHud hud = new CmdHud();
-	public final CmdItemESP itemesp = new CmdItemESP();
-	public final CmdNoclip noclip = new CmdNoclip();
-	public final CmdNoFall nofall = new CmdNoFall();
-	public final CmdNoSlowdown noslowdown = new CmdNoSlowdown();
-	public final CmdNuker nuker = new CmdNuker();
-	public final CmdPlayerESP playeresp = new CmdPlayerESP();
-	public final CmdPOV pov = new CmdPOV();
-	public final CmdReach reach = new CmdReach();
-	public final CmdSpam spam = new CmdSpam();
-	public final CmdSprint sprint = new CmdSprint();
-	public final CmdStep step = new CmdStep();
-	public final CmdTileBreaker tilebreaker = new CmdTileBreaker();
-	public final CmdTimer timer = new CmdTimer();
-	public final CmdTP tp = new CmdTP();
-	public final CmdTracer tracer = new CmdTracer();
-	public final CmdXRay xray = new CmdXRay();
-	
-	public static StringSetting PREFIX;
-	
-	/**
-	 * Constructor for Command Manager. Initializes all commands.
-	 */
-	public CommandManager() {
-		
-		PREFIX = new StringSetting("Prefix", "Prefix", ".aoba");
-		 
-		SettingManager.registerSetting(PREFIX, Aoba.getInstance().settingManager.hiddenContainer);
-		
-		try
-		{
-			for(Field field : CommandManager.class.getDeclaredFields())
-			{
-				if (!Command.class.isAssignableFrom(field.getType())) 
-					continue;
-				Command cmd = (Command)field.get(this);
-				commands.put(cmd.getName(), cmd);
-			}
-		}catch(Exception e)
-		{
-			System.out.println("Error initializing Aoba commands.");
-			System.out.println(e.getStackTrace().toString());
-		}
-	}
->>>>>>> Stashed changes
 
     public static StringSetting PREFIX;
 

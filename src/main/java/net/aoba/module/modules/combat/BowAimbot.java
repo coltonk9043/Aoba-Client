@@ -2,9 +2,9 @@ package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.event.events.Render3DEvent;
+import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.RenderUtils;
 import net.aoba.misc.bowaimbot.BowAimbotTargets;
@@ -31,7 +31,7 @@ import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class BowAimbot extends Module implements TickListener, Render3DListener {
+public class BowAimbot extends Module implements TickListener, RenderListener {
 
     private Entity temp = null;
 
@@ -74,7 +74,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
         if(Aoba.getInstance().moduleManager.trajectory.getState())
             Aoba.getInstance().moduleManager.trajectory.toggle();
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
         if(!Aoba.getInstance().moduleManager.trajectory.getState())
             Aoba.getInstance().moduleManager.trajectory.toggle();
         Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
     }
 
     @Override
@@ -193,7 +193,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
     }
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void OnRender(RenderEvent event) {
         if(skip) return;
         if (temp != null) {
             Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());

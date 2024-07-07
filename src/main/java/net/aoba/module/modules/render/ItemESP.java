@@ -22,8 +22,8 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
@@ -38,7 +38,7 @@ import net.minecraft.util.Rarity;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class ItemESP extends Module implements Render3DListener {
+public class ItemESP extends Module implements RenderListener {
 
     private ColorSetting color = new ColorSetting("itemesp_color", "Color", "Color", new Color(0, 1f, 1f));
     private BooleanSetting visibilityToggle = new BooleanSetting("itemesp_visibility", "Visibility", true);
@@ -50,24 +50,12 @@ public class ItemESP extends Module implements Render3DListener {
     public ItemESP() {
         super(new KeybindSetting("key.itemesp", "ItemESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
-<<<<<<< Updated upstream
         this.setName("ItemESP");
         this.setCategory(Category.Render);
         this.setDescription("Allows the player to see items with an ESP.");
 
         this.addSetting(color);
     }
-=======
-	@Override
-	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-	}
-
-	@Override
-	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-	}
->>>>>>> Stashed changes
 
     @Override
     public void onDisable() {
@@ -79,19 +67,8 @@ public class ItemESP extends Module implements Render3DListener {
         Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
     }
 
-<<<<<<< Updated upstream
     @Override
     public void onToggle() {
-=======
-	@Override
-	public void OnRender(Render3DEvent event) {
-		for (Entity entity : MC.world.getEntities()) {
-			if(entity instanceof ItemEntity) {
-				RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), entity.getBoundingBox(), color.getValue());
-			}
-		}
-	}
->>>>>>> Stashed changes
 
     }
 

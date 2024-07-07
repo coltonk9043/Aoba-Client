@@ -28,8 +28,8 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RenderUtils;
@@ -63,7 +63,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.RaycastContext.FluidHandling;
 
-public class Trajectory extends Module implements Render3DListener {
+public class Trajectory extends Module implements RenderListener {
 
 	private ColorSetting color = new ColorSetting("trajectory_color", "Color", "Color", new Color(0, 1f, 1f));
 	private FloatSetting blipSize = new FloatSetting("trajectory_blipsize", "Blip Size", "Blip Size", 0.15f, 0.05f,
@@ -82,12 +82,12 @@ public class Trajectory extends Module implements Render3DListener {
 
 	@Override
 	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class Trajectory extends Module implements Render3DListener {
 	}
 
 	@Override
-	public void OnRender(Render3DEvent event) {
+	public void OnRender(RenderEvent event) {
 		Color renderColor = color.getValue();
 		Matrix4f matrix = event.GetMatrix().peek().getPositionMatrix();
 

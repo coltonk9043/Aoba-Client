@@ -23,8 +23,8 @@ package net.aoba.module.modules.render;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
@@ -40,7 +40,7 @@ import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.math.Vec3d;
 
-public class Tracer extends Module implements Render3DListener {
+public class Tracer extends Module implements RenderListener {
 	private ColorSetting color_player = new ColorSetting("tracer_color_player", "Player Color",  "Player Color", new Color(1f, 1f, 0f));
 	private ColorSetting color_passive = new ColorSetting("tracer_color_passive", "Passive Color",  "Passive Color", new Color(0, 1f, 1f));
 	private ColorSetting color_enemies = new ColorSetting("tracer_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
@@ -61,12 +61,12 @@ public class Tracer extends Module implements Render3DListener {
 
 	@Override
 	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class Tracer extends Module implements Render3DListener {
 	}
 	
 	@Override
-	public void OnRender(Render3DEvent event) {
+	public void OnRender(RenderEvent event) {
 		Vec3d eyePosition = new Vec3d(0, 0, 1);
 		Camera camera = MC.gameRenderer.getCamera();
 		Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(MC.cameraEntity, event.GetPartialTicks());

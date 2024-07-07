@@ -22,9 +22,9 @@
 package net.aoba.module.modules.world;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
+import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
@@ -45,26 +45,13 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 
-<<<<<<< Updated upstream
 public class TileBreaker extends Module implements TickListener, RenderListener {
     private MinecraftClient mc;
     private ArrayList<Block> blocks = new ArrayList<Block>();
     private FloatSetting radius;
-=======
-public class TileBreaker extends Module implements TickListener, Render3DListener {
-	private MinecraftClient mc;
-	private ArrayList<Block> blocks = new ArrayList<Block>();
-	private FloatSetting radius;
-	
-	private ColorSetting color = new ColorSetting("tilebreaker_color", "Color", "Color", new Color(0, 1f, 1f));
-	
-	public TileBreaker() {
-		super(new KeybindSetting("key.tilebreaker", "TileBreaker Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
->>>>>>> Stashed changes
 
     private ColorSetting color = new ColorSetting("tilebreaker_color", "Color", "Color", new Color(0, 1f, 1f));
 
-<<<<<<< Updated upstream
     public TileBreaker() {
         super(new KeybindSetting("key.tilebreaker", "TileBreaker Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
@@ -75,23 +62,6 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
         this.radius = new FloatSetting("tilebreaker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
         this.addSetting(radius);
         mc = MinecraftClient.getInstance();
-=======
-	public void setRadius(int radius) {
-		this.radius.setValue((float)radius);
-	}
-	
-	@Override
-	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-	}
-
-	@Override
-	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-	}
->>>>>>> Stashed changes
 
         this.addSetting(color);
     }
@@ -106,7 +76,6 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
-<<<<<<< Updated upstream
     @Override
     public void onEnable() {
         Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
@@ -198,23 +167,4 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
             }
         }
     }
-=======
-	@Override
-	public void OnRender(Render3DEvent event) {
-		int rad = this.radius.getValue().intValue();
-		for (int x = -rad; x < rad; x++) {
-			for (int y = rad; y > -rad; y--) {
-				for (int z = -rad; z < rad; z++) {
-					BlockPos blockpos = new BlockPos((int) mc.player.getBlockX() + x,
-							 mc.player.getBlockY() + y,
-							 mc.player.getBlockZ() + z);
-					Block block = mc.world.getBlockState(blockpos).getBlock();
-					if (this.isTileBreakerBlock(block)) {
-						RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), new Box(blockpos), color.getValue());
-					}
-				}
-			}
-		}
-	}
->>>>>>> Stashed changes
 }

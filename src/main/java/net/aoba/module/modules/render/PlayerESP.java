@@ -22,8 +22,8 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.events.RenderEvent;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
@@ -33,48 +33,24 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
-<<<<<<< Updated upstream
 public class PlayerESP extends Module implements RenderListener {
-=======
-public class PlayerESP extends Module implements Render3DListener {
-	
-	private ColorSetting color_default = new ColorSetting("playeresp_color_default", "Default Color",  "Default Color", new Color(1f, 1f, 0f));
-	private ColorSetting color_friendly = new ColorSetting("playeresp_color_friendly", "Friendly Color",  "Friendly Color", new Color(0f, 1f, 0f));
-	private ColorSetting color_enemy = new ColorSetting("playeresp_color_enemy", "Enemy Color", "Enemy Color", new Color(1f, 0f, 0f));
-	
-	public PlayerESP() {
-		super(new KeybindSetting("key.playeresp", "PlayerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
->>>>>>> Stashed changes
 
     private ColorSetting color_default = new ColorSetting("playeresp_color_default", "Default Color", "Default Color", new Color(1f, 1f, 0f));
     private ColorSetting color_friendly = new ColorSetting("playeresp_color_friendly", "Friendly Color", "Friendly Color", new Color(0f, 1f, 0f));
     private ColorSetting color_enemy = new ColorSetting("playeresp_color_enemy", "Enemy Color", "Enemy Color", new Color(1f, 0f, 0f));
 
-<<<<<<< Updated upstream
     public PlayerESP() {
         super(new KeybindSetting("key.playeresp", "PlayerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("PlayerESP");
         this.setCategory(Category.Render);
         this.setDescription("Allows the player to see other players with an ESP.");
-=======
-	@Override
-	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-	}
-
-	@Override
-	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-	}
->>>>>>> Stashed changes
 
         this.addSetting(color_default);
         this.addSetting(color_friendly);
         this.addSetting(color_enemy);
     }
 
-<<<<<<< Updated upstream
     @Override
     public void onDisable() {
         Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
@@ -98,16 +74,4 @@ public class PlayerESP extends Module implements Render3DListener {
             }
         }
     }
-=======
-	}
-	
-	@Override
-	public void OnRender(Render3DEvent event) {
-		for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
-			if(entity != MC.player) {
-				RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), entity.getBoundingBox(), color_default.getValue());
-			}
-		}
-	}
->>>>>>> Stashed changes
 }

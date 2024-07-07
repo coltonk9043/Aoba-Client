@@ -22,9 +22,9 @@
 package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
+import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
@@ -40,7 +40,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class Aimbot extends Module implements TickListener, Render3DListener {
+public class Aimbot extends Module implements TickListener, RenderListener {
 
     private LivingEntity temp = null;
 
@@ -59,7 +59,6 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
         this.setCategory(Category.Combat);
         this.setDescription("Locks your crosshair towards a desired player or entity.");
 
-<<<<<<< Updated upstream
         targetAnimals = new BooleanSetting("aimbot_target_mobs", "Target Mobs", "Target mobs.", false);
         targetPlayers = new BooleanSetting("aimbot_target_players", "Target Players", "Target players.", true);
         targetFriends = new BooleanSetting("aimbot_target_friends", "Target Friends", "Target friends.", false);
@@ -72,19 +71,6 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
         this.addSetting(frequency);
         this.addSetting(radius);
     }
-=======
-	@Override
-	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-	}
-
-	@Override
-	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-	}
->>>>>>> Stashed changes
 
     @Override
     public void onDisable() {
@@ -98,18 +84,8 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
         Aoba.getInstance().eventManager.AddListener(RenderListener.class, this);
     }
 
-<<<<<<< Updated upstream
     @Override
     public void onToggle() {
-=======
-	@Override
-	public void OnRender(Render3DEvent event) {
-		if (temp != null) {
-			Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
-			MC.player.lookAt(EntityAnchor.EYES, temp.getEyePos().add(offset));
-		}
-	}
->>>>>>> Stashed changes
 
     }
 

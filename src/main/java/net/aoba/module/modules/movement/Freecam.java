@@ -22,9 +22,9 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
+import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.mixin.interfaces.ICamera;
@@ -40,13 +40,8 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.UUID;
 
-<<<<<<< Updated upstream
 public class Freecam extends Module implements TickListener, RenderListener {
     private FloatSetting flySpeed;
-=======
-public class Freecam extends Module implements TickListener, Render3DListener {
-	private FloatSetting flySpeed;
->>>>>>> Stashed changes
 
     private FakePlayerEntity fakePlayer;
     private Vec3d prevPos;
@@ -66,7 +61,6 @@ public class Freecam extends Module implements TickListener, Render3DListener {
         this.flySpeed.setValue(speed);
     }
 
-<<<<<<< Updated upstream
     public double getSpeed() {
         return this.flySpeed.getValue();
     }
@@ -75,42 +69,6 @@ public class Freecam extends Module implements TickListener, Render3DListener {
     public void onDisable() {
         if (fakePlayer != null)
             fakePlayer.despawn();
-=======
-	@Override
-	public void onDisable() {
-		if(fakePlayer != null)
-			fakePlayer.despawn();
-		
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-	}
-
-	@Override
-	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-		
-		ClientPlayerEntity player = MC.player;
-		fakePlayer = new FakePlayerEntity();
-		fakePlayer.copyFrom(player);
-		fakePlayer.setUuid(UUID.randomUUID());
-		fakePlayer.headYaw = player.headYaw;
-		fakePlayer.bodyYaw = player.bodyYaw;
-		fakePlayer.setPitch(player.getPitch());
-		MC.world.addEntity(fakePlayer);
-		
-		Camera camera = MC.gameRenderer.getCamera();
-		ICamera iCamera = (ICamera) camera;
-		iCamera.setFocusedEntity(null);
-		
-		Vec3d newPos = MC.player.getPos().add(0, 1.5, 0);
-		prevPos = newPos;
-		pos = newPos;
-		iCamera.setCameraPos(pos);
-		
-		
-	}
->>>>>>> Stashed changes
 
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(RenderListener.class, this);
@@ -183,22 +141,10 @@ public class Freecam extends Module implements TickListener, Render3DListener {
         fakePlayer.setPosition(player.getPos());
     }
 
-<<<<<<< Updated upstream
     @Override
     public void OnRender(RenderEvent event) {
         Camera camera = MC.gameRenderer.getCamera();
         ICamera iCamera = (ICamera) camera;
-=======
-	@Override
-	public void OnRender(Render3DEvent event) {
-		Camera camera = MC.gameRenderer.getCamera();
-		ICamera iCamera = (ICamera) camera;
-		
-		double tickDelta = event.GetPartialTicks();
-		
-		ClientPlayerEntity player = MC.player;
-		fakePlayer.setPitch(player.getPitch(event.GetPartialTicks()));
->>>>>>> Stashed changes
 
         double tickDelta = event.GetPartialTicks();
 

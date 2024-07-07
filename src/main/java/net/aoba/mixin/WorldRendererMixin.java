@@ -18,19 +18,8 @@
 
 package net.aoba.mixin;
 
-<<<<<<< Updated upstream
-=======
-import org.lwjgl.opengl.GL11;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
->>>>>>> Stashed changes
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -38,7 +27,6 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
-<<<<<<< Updated upstream
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -55,35 +43,6 @@ public class WorldRendererMixin {
             Aoba.getInstance().moduleManager.render(matrices);
         }
     }
-=======
-import net.minecraft.util.math.Vec3d;
-
-@Mixin(WorldRenderer.class)
-public class WorldRendererMixin {
-	@Inject(at = @At("HEAD"), method = "renderChunkDebugInfo(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/Camera;)V", cancellable = true)
-	private void onRenderChunkDebugInfo(MatrixStack matrices,
-			 VertexConsumerProvider vertexConsumers,
-			 Camera camera, CallbackInfo ci) {
-		MinecraftClient MC = MinecraftClient.getInstance();
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-		matrices.push();
-		Vec3d camPos = MC.getBlockEntityRenderDispatcher().camera.getPos();
-		matrices.translate(-camPos.x, -camPos.y, -camPos.z);
-		Render3DEvent renderEvent = new Render3DEvent(matrices, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
-		Aoba.getInstance().eventManager.Fire(renderEvent);
-		matrices.pop();
-		
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-	}
-	
->>>>>>> Stashed changes
 
 
     @Inject(at = @At("HEAD"), method = "hasBlindnessOrDarkness(Lnet/minecraft/client/render/Camera;)Z", cancellable = true)

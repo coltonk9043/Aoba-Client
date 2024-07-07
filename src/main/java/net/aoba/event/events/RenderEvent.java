@@ -19,10 +19,9 @@
 package net.aoba.event.events;
 
 import net.aoba.event.listeners.AbstractListener;
-import net.aoba.event.listeners.Render3DListener;
+import net.aoba.event.listeners.RenderListener;
 import net.minecraft.client.util.math.MatrixStack;
 
-<<<<<<< Updated upstream:src/main/java/net/aoba/event/events/RenderEvent.java
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,35 +55,4 @@ public class RenderEvent extends AbstractEvent {
     public Class<RenderListener> GetListenerClassType() {
         return RenderListener.class;
     }
-=======
-public class Render3DEvent extends AbstractEvent {
-	MatrixStack matrices; 
-	float partialTicks;
-	
-	public MatrixStack GetMatrix() {
-		return matrices;
-	}
-	public float GetPartialTicks() {
-		return partialTicks;
-	}
-	
-	public Render3DEvent(MatrixStack matrix4f, float partialTicks) {
-		this.matrices = matrix4f;
-		this.partialTicks = partialTicks;
-	}
-	
-	@Override
-	public void Fire(ArrayList<? extends AbstractListener> listeners) {
-		for(AbstractListener listener : List.copyOf(listeners)) {
-			Render3DListener renderListener = (Render3DListener) listener;
-			renderListener.OnRender(this);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Class<Render3DListener> GetListenerClassType() {
-		return Render3DListener.class;
-	}
->>>>>>> Stashed changes:src/main/java/net/aoba/event/events/Render3DEvent.java
 }
