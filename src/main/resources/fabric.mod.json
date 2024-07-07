@@ -12,7 +12,7 @@
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/aoba/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
 		"main": [
 			"net.aoba.Aoba"

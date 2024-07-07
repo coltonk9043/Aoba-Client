@@ -32,6 +32,7 @@ import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.InputUtil;
 
 public abstract class Module {
 	private String name;
@@ -44,7 +45,15 @@ public abstract class Module {
 	
 	protected final MinecraftClient MC = AobaClient.MC;
 	protected final IMinecraftClient IMC = AobaClient.IMC;
-	
+
+	public Module() {
+		this(new KeybindSetting("default.key", "Default Key", InputUtil.UNKNOWN_KEY));
+	}
+
+	public Module(String keyName, String keyDescription, int keyCode) {
+		this(new KeybindSetting(keyName, keyDescription, InputUtil.fromKeyCode(keyCode, 0)));
+	}
+
 	public Module(KeybindSetting keyBind) {
 		this.keyBind = keyBind;
 		this.addSetting(keyBind);
