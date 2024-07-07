@@ -46,7 +46,7 @@ public class ModuleSettingsTab extends AbstractGui {
         super(title + "_tab", x, y, 180, 0);
         this.title = title + " Settings";
         this.module = module;
-        this.setWidth(260);
+        this.setWidth(280);
 
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setTop(30);
@@ -122,16 +122,16 @@ public class ModuleSettingsTab extends AbstractGui {
 
         Vector2 pos = position.getValue();
 
-        // Draws background depending on components width and height
-        RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height + 30, 6, GuiManager.backgroundColor.getValue());
-        RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height + 30, 6, GuiManager.borderColor.getValue());
+        Color backgroundColor = new Color(0, 0, 0, 200); // Half-transparent black
 
+        RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height + 30, 6, backgroundColor);
+        RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height + 30, 6, backgroundColor);
         RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, GuiManager.foregroundColor.getValue());
         RenderUtils.drawLine(matrix4f, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
-
         RenderUtils.drawLine(matrix4f, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255, 0, 0, 255));
         RenderUtils.drawLine(matrix4f, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255, 0, 0, 255));
 
+        // Draw child components
         for (Component child : children) {
             child.draw(drawContext, partialTicks);
         }

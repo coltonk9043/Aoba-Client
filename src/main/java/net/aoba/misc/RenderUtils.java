@@ -363,6 +363,31 @@ public class RenderUtils {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
+    public static void fill(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
+        float red = color.getRedFloat();
+        float green = color.getGreenFloat();
+        float blue = color.getBlueFloat();
+        float alpha = color.getAlphaFloat();
+
+        RenderSystem.setShaderColor(red, green, blue, alpha);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        Tessellator tessellator = RenderSystem.renderThreadTesselator();
+        RenderSystem.setShader(GameRenderer::getPositionProgram); // Ensure the correct shader is set
+
+        BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
+        bufferBuilder.vertex(matrix4f, x, y, 0).color(red, green, blue, alpha);
+        bufferBuilder.vertex(matrix4f, x + width, y, 0).color(red, green, blue, alpha);
+        bufferBuilder.vertex(matrix4f, x + width, y + height, 0).color(red, green, blue, alpha);
+        bufferBuilder.vertex(matrix4f, x, y + height, 0).color(red, green, blue, alpha);
+        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+
+
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
     public static void draw3DBox(Matrix4f matrix4f, Box box, Color color) {
         RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), 1.0f);
 
