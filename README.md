@@ -6,6 +6,7 @@ A custom hacked client for Minecraft 1.21 using Fabric .
 - Working Command System.
 - ClickGui with moveable/pinnable windows and customization.
 - Plenty of hacks with rebindable keybinds.
+- Addon system similar to Meteor Client
 
 ## Default Keybinds:
 ~ - Toggle ClickGUI.\
