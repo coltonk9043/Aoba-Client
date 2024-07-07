@@ -1,25 +1,23 @@
 /*
-* Aoba Hacked Client
-* Copyright (C) 2019-2024 coltonk9043
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Aoba Hacked Client
+ * Copyright (C) 2019-2024 coltonk9043
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package net.aoba.gui.tabs.components;
 
-import org.joml.Matrix4f;
-import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.MouseClickEvent;
@@ -34,74 +32,76 @@ import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
+import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
 
 public class KeybindComponent extends Component implements MouseClickListener, KeyDownListener {
-	private boolean listeningForKey;
-	private KeybindSetting keyBind;
-	
-	public KeybindComponent(IGuiElement parent, KeybindSetting keyBind) {
-		super(parent);
-		this.keyBind = keyBind;
-	}
-	
-	@Override
-	public void OnVisibilityChanged() {
-		if(this.isVisible()) {
-			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-			Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
-		}else {
-			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
-			Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
-		}
-	}
+    private boolean listeningForKey;
+    private KeybindSetting keyBind;
 
-	@Override
-	public void update() {
-		super.update();
-	}
-	
-	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
-		
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-		
-		RenderUtils.drawString(drawContext, "Keybind", actualX + 8, actualY + 8, 0xFFFFFF);
-		RenderUtils.drawBox(matrix4f, actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4, new Color(115, 115, 115, 200));
-		RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4);
-		
-		String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
-		if(keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
-			keyBindText = "N/A";
-		
-		RenderUtils.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 8, 0xFFFFFF);
-	}
+    public KeybindComponent(IGuiElement parent, KeybindSetting keyBind) {
+        super(parent);
+        this.keyBind = keyBind;
+    }
 
-	@Override
-	public void OnMouseClick(MouseClickEvent event) {
-		if(event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-			if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
-				listeningForKey = !listeningForKey;
-			}
-		}
-	}
-	
-	@Override
-	public void OnKeyDown(KeyDownEvent event) {
-		if(listeningForKey) {
-			int key = event.GetKey();
-			int scanCode = event.GetScanCode();
-			
-			if(key == GLFW.GLFW_KEY_ESCAPE) {
-				keyBind.setValue(InputUtil.UNKNOWN_KEY);
-			}else {
-				keyBind.setValue(InputUtil.fromKeyCode(key, scanCode));
-			}
-			
-			listeningForKey = false;
-			
-			event.cancel();
-		}
-	}
+    @Override
+    public void OnVisibilityChanged() {
+        if (this.isVisible()) {
+            Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+            Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+        } else {
+            Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+            Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
+        }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+    }
+
+    @Override
+    public void draw(DrawContext drawContext, float partialTicks) {
+        super.draw(drawContext, partialTicks);
+
+        MatrixStack matrixStack = drawContext.getMatrices();
+        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+
+        RenderUtils.drawString(drawContext, "Keybind", actualX + 8, actualY + 8, 0xFFFFFF);
+        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4, new Color(115, 115, 115, 200));
+        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4);
+
+        String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
+        if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
+            keyBindText = "N/A";
+
+        RenderUtils.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 8, 0xFFFFFF);
+    }
+
+    @Override
+    public void OnMouseClick(MouseClickEvent event) {
+        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+            if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+                listeningForKey = !listeningForKey;
+            }
+        }
+    }
+
+    @Override
+    public void OnKeyDown(KeyDownEvent event) {
+        if (listeningForKey) {
+            int key = event.GetKey();
+            int scanCode = event.GetScanCode();
+
+            if (key == GLFW.GLFW_KEY_ESCAPE) {
+                keyBind.setValue(InputUtil.UNKNOWN_KEY);
+            } else {
+                keyBind.setValue(InputUtil.fromKeyCode(key, scanCode));
+            }
+
+            listeningForKey = false;
+
+            event.cancel();
+        }
+    }
 }

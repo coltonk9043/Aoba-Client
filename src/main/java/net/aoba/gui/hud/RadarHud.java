@@ -1,23 +1,22 @@
 /*
-* Aoba Hacked Client
-* Copyright (C) 2019-2024 coltonk9043
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Aoba Hacked Client
+ * Copyright (C) 2019-2024 coltonk9043
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.aoba.gui.hud;
 
-import org.joml.Matrix4f;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
@@ -30,85 +29,87 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import org.joml.Matrix4f;
 
 public class RadarHud extends AbstractHud {
 
-	float distance = 50;
-	public RadarHud( int x, int y, int width, int height) {
-		super("RadarHud", x, y, width, height);
-	}
+    float distance = 50;
 
-	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		if(this.visible) {
-			MatrixStack matrixStack = drawContext.getMatrices();
-			Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-			
-			Vector2 pos = position.getValue();
-			
-			// Draws background depending on components width and height
-			RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
-			RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
+    public RadarHud(int x, int y, int width, int height) {
+        super("RadarHud", x, y, width, height);
+    }
 
-			// Draw the 'Radar'
-			RenderUtils.drawBox(matrix4f, pos.x , pos.y + (height / 2), width - 1, 1, new Color(128,128,128, 255));
-			RenderUtils.drawBox(matrix4f, pos.x + (width / 2), pos.y, 1, height, new Color(128,128,128, 255));
-			RenderUtils.drawBox(matrix4f, pos.x + (width / 2) - 2, pos.y + (height / 2) - 2, 5, 5, GuiManager.foregroundColor.getValue());
+    @Override
+    public void draw(DrawContext drawContext, float partialTicks) {
+        if (this.visible) {
+            MatrixStack matrixStack = drawContext.getMatrices();
+            Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-			float sin_theta = (float) Math.sin(Math.toRadians(-mc.player.getRotationClient().y));
-			float cos_theta = (float) Math.cos(Math.toRadians(-mc.player.getRotationClient().y));
+            Vector2 pos = position.getValue();
 
-			float center_x = pos.x + (width / 2);
-			float center_y = pos.y - 2 + (height / 2);
+            // Draws background depending on components width and height
+            RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
+            RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
 
-			// Render Entities
-			for (Entity entity : mc.world.getEntities()) {
-				Color c ;
-				if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
-					if (entity instanceof AnimalEntity) {
-						c = new Color(0, 255, 0);
-					} else if (entity instanceof Monster) {
-						c = new Color(255, 0, 0);
-					} else {
-						c = new Color(0, 0, 255);
-					}
-				}else {
-					continue;
-				}
+            // Draw the 'Radar'
+            RenderUtils.drawBox(matrix4f, pos.x, pos.y + (height / 2), width - 1, 1, new Color(128, 128, 128, 255));
+            RenderUtils.drawBox(matrix4f, pos.x + (width / 2), pos.y, 1, height, new Color(128, 128, 128, 255));
+            RenderUtils.drawBox(matrix4f, pos.x + (width / 2) - 2, pos.y + (height / 2) - 2, 5, 5, GuiManager.foregroundColor.getValue());
 
-				float ratio_x = (float)((entity.getX() - mc.player.getX())) / (distance);
-				float ratio_y = (float)((entity.getZ() - mc.player.getZ())) / (distance);
+            float sin_theta = (float) Math.sin(Math.toRadians(-mc.player.getRotationClient().y));
+            float cos_theta = (float) Math.cos(Math.toRadians(-mc.player.getRotationClient().y));
 
-				float fake_x = (pos.x + (width / 2) - (width * ratio_x / 2));
-				float fake_y = (pos.y - 1.5f + (height / 2) - (width * ratio_y / 2));
+            float center_x = pos.x + (width / 2);
+            float center_y = pos.y - 2 + (height / 2);
 
-				float radius_x = (float)((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y))) + center_x;
-				float radius_y = (float)((sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))) + center_y;
+            // Render Entities
+            for (Entity entity : mc.world.getEntities()) {
+                Color c;
+                if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
+                    if (entity instanceof AnimalEntity) {
+                        c = new Color(0, 255, 0);
+                    } else if (entity instanceof Monster) {
+                        c = new Color(255, 0, 0);
+                    } else {
+                        c = new Color(0, 0, 255);
+                    }
+                } else {
+                    continue;
+                }
 
-				RenderUtils.drawBox(matrix4f, (int)(Math.min(pos.x + width, Math.max(pos.x, radius_x))) , (int)(Math.min(pos.y + height, Math.max(pos.y, radius_y))), 3, 3, c);
-			}
+                float ratio_x = (float) ((entity.getX() - mc.player.getX())) / (distance);
+                float ratio_y = (float) ((entity.getZ() - mc.player.getZ())) / (distance);
 
-			// Render Players
-			for (AbstractClientPlayerEntity entity : mc.world.getPlayers()) {
-				if(entity != mc.player) {
-					float ratio_x = (float)((entity.getX() - mc.player.getX())) / (distance);
-					float ratio_y = (float)((entity.getZ() - mc.player.getZ())) / (distance);
+                float fake_x = (pos.x + (width / 2) - (width * ratio_x / 2));
+                float fake_y = (pos.y - 1.5f + (height / 2) - (width * ratio_y / 2));
 
-					float fake_x = (pos.x + (width / 2) - (width * ratio_x / 2));
-					float fake_y = (pos.y - 1.5f + (height / 2) - (width * ratio_y / 2));
+                float radius_x = (float) ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y))) + center_x;
+                float radius_y = (float) ((sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))) + center_y;
 
-					float radius_x = (float)((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y))) + center_x;
-					float radius_y = (float)((sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))) + center_y;
+                RenderUtils.drawBox(matrix4f, (int) (Math.min(pos.x + width, Math.max(pos.x, radius_x))), (int) (Math.min(pos.y + height, Math.max(pos.y, radius_y))), 3, 3, c);
+            }
 
-					RenderUtils.drawBox(matrix4f, (int)(Math.min(pos.x + width, Math.max(pos.x, radius_x))), (int)(Math.min(pos.y + height, Math.max(pos.y, radius_y))), 3, 3, new Color(255, 255, 255, 255));
-					RenderUtils.drawStringWithScale(drawContext, entity.getName().getString(), (int)(Math.min(pos.x + width - 5, Math.max(pos.x, radius_x))) - (mc.textRenderer.getWidth(entity.getName()) * 0.5f), (int)(Math.min(pos.y + 25 + height, Math.max(pos.y, radius_y))) - 10, GuiManager.foregroundColor.getValue(), 1.0f);
-				}
-			}
-		}
-	}
+            // Render Players
+            for (AbstractClientPlayerEntity entity : mc.world.getPlayers()) {
+                if (entity != mc.player) {
+                    float ratio_x = (float) ((entity.getX() - mc.player.getX())) / (distance);
+                    float ratio_y = (float) ((entity.getZ() - mc.player.getZ())) / (distance);
 
-	@Override
-	public void update() {
+                    float fake_x = (pos.x + (width / 2) - (width * ratio_x / 2));
+                    float fake_y = (pos.y - 1.5f + (height / 2) - (width * ratio_y / 2));
 
-	}
+                    float radius_x = (float) ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y))) + center_x;
+                    float radius_y = (float) ((sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))) + center_y;
+
+                    RenderUtils.drawBox(matrix4f, (int) (Math.min(pos.x + width, Math.max(pos.x, radius_x))), (int) (Math.min(pos.y + height, Math.max(pos.y, radius_y))), 3, 3, new Color(255, 255, 255, 255));
+                    RenderUtils.drawStringWithScale(drawContext, entity.getName().getString(), (int) (Math.min(pos.x + width - 5, Math.max(pos.x, radius_x))) - (mc.textRenderer.getWidth(entity.getName()) * 0.5f), (int) (Math.min(pos.y + 25 + height, Math.max(pos.y, radius_y))) - 10, GuiManager.foregroundColor.getValue(), 1.0f);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void update() {
+
+    }
 }

@@ -18,23 +18,17 @@
 
 package net.aoba.gui.tabs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.hud.AbstractHud;
-import net.aoba.gui.tabs.components.ColorPickerComponent;
-import net.aoba.gui.tabs.components.HudComponent;
-import net.aoba.gui.tabs.components.KeybindComponent;
-import net.aoba.gui.tabs.components.ListComponent;
-import net.aoba.gui.tabs.components.StackPanelComponent;
-import net.aoba.gui.tabs.components.StringComponent;
+import net.aoba.gui.tabs.components.*;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HudsTab extends ClickGuiTab {
     public HudsTab(AbstractHud[] abstractHuds) {

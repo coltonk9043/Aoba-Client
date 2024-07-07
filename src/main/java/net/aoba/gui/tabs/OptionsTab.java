@@ -80,7 +80,6 @@ public class OptionsTab extends AbstractGui implements MouseScrollListener {
 
         if (event.GetVertical() > 0)
             this.currentScroll = Math.min(currentScroll + 1, modules.size() - visibleScrollElements - 1);
-        else if (event.GetVertical() < 0)
-            this.currentScroll = Math.max(currentScroll - 1, 0);
+        else if (event.GetVertical() < 0) this.currentScroll = Math.max(currentScroll - 1, 0);
     }
 }

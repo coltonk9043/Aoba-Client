@@ -18,19 +18,19 @@
 
 package net.aoba.gui.tabs;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
-
 import net.aoba.gui.tabs.components.ButtonComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.aoba.gui.tabs.components.StringComponent;
 import net.aoba.settings.types.FloatSetting;
 import net.minecraft.client.MinecraftClient;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class AuthCrackerTab extends ClickGuiTab {
     private ButtonComponent start;

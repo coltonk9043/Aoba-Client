@@ -22,7 +22,6 @@
 
 package net.aoba.gui.tabs;
 
-import org.joml.Matrix4f;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
@@ -40,6 +39,7 @@ import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import org.joml.Matrix4f;
 
 public class ClickGuiTab extends AbstractGui implements MouseClickListener, MouseMoveListener {
     protected String title;

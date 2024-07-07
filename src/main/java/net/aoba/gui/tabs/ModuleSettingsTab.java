@@ -18,22 +18,13 @@
 
 package net.aoba.gui.tabs;
 
-import org.joml.Matrix4f;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.AbstractGui;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
-import net.aoba.gui.tabs.components.BlocksComponent;
-import net.aoba.gui.tabs.components.CheckboxComponent;
-import net.aoba.gui.tabs.components.ColorPickerComponent;
-import net.aoba.gui.tabs.components.Component;
-import net.aoba.gui.tabs.components.KeybindComponent;
-import net.aoba.gui.tabs.components.SliderComponent;
-import net.aoba.gui.tabs.components.StackPanelComponent;
+import net.aoba.gui.tabs.components.*;
 import net.aoba.misc.RenderUtils;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.aoba.module.Module;
 import net.aoba.settings.Setting;
 import net.aoba.settings.types.BlocksSetting;
@@ -43,6 +34,9 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.aoba.utils.types.Vector2;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
+import org.joml.Matrix4f;
 
 public class ModuleSettingsTab extends AbstractGui {
     protected String title;

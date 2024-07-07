@@ -7,30 +7,25 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.joml.Quaternionf;
 
-public record BowAimbotRotation(float yaw, float pitch)
-{
+public record BowAimbotRotation(float yaw, float pitch) {
     private static final MinecraftClient MC = AobaClient.MC;
 
-    public void applyToClientPlayer()
-    {
+    public void applyToClientPlayer() {
         float adjustedYaw = BowAimbotUtils.limitAngleChange(MC.player.getYaw(), yaw, 0);
         MC.player.setYaw(adjustedYaw);
         MC.player.setPitch(pitch);
     }
 
-    public void sendPlayerLookPacket()
-    {
+    public void sendPlayerLookPacket() {
         sendPlayerLookPacket(MC.player.isOnGround());
     }
 
-    public void sendPlayerLookPacket(boolean onGround)
-    {
+    public void sendPlayerLookPacket(boolean onGround) {
         MC.player.networkHandler.sendPacket(
                 new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, onGround));
     }
 
-    public double getAngleTo(BowAimbotRotation other)
-    {
+    public double getAngleTo(BowAimbotRotation other) {
         float yaw1 = MathHelper.wrapDegrees(yaw);
         float yaw2 = MathHelper.wrapDegrees(other.yaw);
         float diffYaw = MathHelper.wrapDegrees(yaw1 - yaw2);
@@ -42,18 +37,15 @@ public record BowAimbotRotation(float yaw, float pitch)
         return Math.sqrt(diffYaw * diffYaw + diffPitch * diffPitch);
     }
 
-    public BowAimbotRotation withYaw(float yaw)
-    {
+    public BowAimbotRotation withYaw(float yaw) {
         return new BowAimbotRotation(yaw, pitch);
     }
 
-    public BowAimbotRotation withPitch(float pitch)
-    {
+    public BowAimbotRotation withPitch(float pitch) {
         return new BowAimbotRotation(yaw, pitch);
     }
 
-    public Vec3d toLookVec()
-    {
+    public Vec3d toLookVec() {
         float radPerDeg = MathHelper.RADIANS_PER_DEGREE;
         float pi = MathHelper.PI;
 
@@ -68,8 +60,7 @@ public record BowAimbotRotation(float yaw, float pitch)
         return new Vec3d(sinYaw * nCosPitch, sinPitch, cosYaw * nCosPitch);
     }
 
-    public Quaternionf toQuaternion()
-    {
+    public Quaternionf toQuaternion() {
         float radPerDeg = MathHelper.RADIANS_PER_DEGREE;
         float yawRad = -MathHelper.wrapDegrees(yaw) * radPerDeg;
         float pitchRad = MathHelper.wrapDegrees(pitch) * radPerDeg;
@@ -87,8 +78,7 @@ public record BowAimbotRotation(float yaw, float pitch)
         return new Quaternionf(x, y, z, w);
     }
 
-    public static BowAimbotRotation wrapped(float yaw, float pitch)
-    {
+    public static BowAimbotRotation wrapped(float yaw, float pitch) {
         return new BowAimbotRotation(MathHelper.wrapDegrees(yaw),
                 MathHelper.wrapDegrees(pitch));
     }

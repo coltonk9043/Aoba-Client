@@ -40,16 +40,16 @@ public class NavigationBar implements MouseClickListener {
 
     private List<Page> options;
     private int selectedIndex;
-	private float currentSelectionX;
-	private float targetSelectionX;
-	private final float animationSpeed = 0.1f;
+    private float currentSelectionX;
+    private float targetSelectionX;
+    private final float animationSpeed = 0.1f;
 
-	public NavigationBar() {
-		options = new ArrayList<>();
-		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-		currentSelectionX = 0;
-		targetSelectionX = 0;
-	}
+    public NavigationBar() {
+        options = new ArrayList<>();
+        Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+        currentSelectionX = 0;
+        targetSelectionX = 0;
+    }
 
     public void addPane(Page pane) {
         options.add(pane);
@@ -67,14 +67,14 @@ public class NavigationBar implements MouseClickListener {
         return options.get(selectedIndex);
     }
 
-	public void setSelectedIndex(int index) {
-		if (index < this.options.size()) {
-			this.options.get(selectedIndex).setVisible(false);
-			this.selectedIndex = index;
-			this.options.get(selectedIndex).setVisible(true);
-			targetSelectionX = index * 100; // Update target position for animation
-		}
-	}
+    public void setSelectedIndex(int index) {
+        if (index < this.options.size()) {
+            this.options.get(selectedIndex).setVisible(false);
+            this.selectedIndex = index;
+            this.options.get(selectedIndex).setVisible(true);
+            targetSelectionX = index * 100; // Update target position for animation
+        }
+    }
 
     public void update() {
         if (options.size() > 0) {
@@ -82,30 +82,30 @@ public class NavigationBar implements MouseClickListener {
         }
     }
 
-	public void draw(DrawContext drawContext, float partialTicks) {
-		Window window = mc.getWindow();
-		int centerX = (window.getWidth() / 2);
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
-		int width = 100 * options.size();
+    public void draw(DrawContext drawContext, float partialTicks) {
+        Window window = mc.getWindow();
+        int centerX = (window.getWidth() / 2);
+        MatrixStack matrixStack = drawContext.getMatrices();
+        Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+        int width = 100 * options.size();
 
-		// Animate selection box movement
-		currentSelectionX += (targetSelectionX - currentSelectionX) * animationSpeed * partialTicks;
+        // Animate selection box movement
+        currentSelectionX += (targetSelectionX - currentSelectionX) * animationSpeed * partialTicks;
 
-		RenderUtils.drawRoundedBox(matrix, centerX - (width / 2), 25, width, 25, 6, GuiManager.backgroundColor.getValue());
-		RenderUtils.drawRoundedOutline(matrix, centerX - (width / 2), 25, width, 25, 6, GuiManager.borderColor.getValue());
+        RenderUtils.drawRoundedBox(matrix, centerX - (width / 2), 25, width, 25, 6, GuiManager.backgroundColor.getValue());
+        RenderUtils.drawRoundedOutline(matrix, centerX - (width / 2), 25, width, 25, 6, GuiManager.borderColor.getValue());
 
-		// Use currentSelectionX for animated position
-		RenderUtils.drawRoundedBox(matrix, centerX - (width / 2) + currentSelectionX, 25, 100, 25, 5, new Color(150, 150, 150, 100));
+        // Use currentSelectionX for animated position
+        RenderUtils.drawRoundedBox(matrix, centerX - (width / 2) + currentSelectionX, 25, 100, 25, 5, new Color(150, 150, 150, 100));
 
-		for (int i = 0; i < options.size(); i++) {
-			Page pane = options.get(i);
-			if (i == selectedIndex) {
-				pane.render(drawContext, partialTicks);
-			}
-			RenderUtils.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, GuiManager.foregroundColor.getValue());
-		}
-	}
+        for (int i = 0; i < options.size(); i++) {
+            Page pane = options.get(i);
+            if (i == selectedIndex) {
+                pane.render(drawContext, partialTicks);
+            }
+            RenderUtils.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, GuiManager.foregroundColor.getValue());
+        }
+    }
 
     @Override
     public void OnMouseClick(MouseClickEvent event) {

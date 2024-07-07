@@ -1,21 +1,12 @@
 package net.aoba.gui.tabs;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang3.math.NumberUtils;
-
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.aoba.event.events.RenderEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.RenderListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Colors;
-import net.aoba.gui.tabs.components.ButtonComponent;
-import net.aoba.gui.tabs.components.CheckboxComponent;
-import net.aoba.gui.tabs.components.StackPanelComponent;
-import net.aoba.gui.tabs.components.StringComponent;
-import net.aoba.gui.tabs.components.TextBoxComponent;
+import net.aoba.gui.tabs.components.*;
 import net.aoba.misc.RenderUtils;
 import net.aoba.pathfinding.PathManager;
 import net.aoba.pathfinding.PathNode;
@@ -27,6 +18,9 @@ import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import java.util.ArrayList;
 
 public class GoToTab extends ClickGuiTab implements TickListener, RenderListener {
     private ButtonComponent startButton;
