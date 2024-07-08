@@ -49,9 +49,20 @@ public abstract class TitleScreenMixin extends Screen {
         } else {
             int yOffset = 10;
             for (IAddon addon : AobaClient.addons) {
-                String addonName = addon.getName() + " by " + addon.getAuthor();
-                int textWidth = this.textRenderer.getWidth(addonName);
-                context.drawTextWithShadow(this.textRenderer, addonName, this.width - textWidth - 2, yOffset, 0xFFFFFF);
+                String addonName = addon.getName();
+                String byText = " by ";
+                String author = addon.getAuthor();
+
+                int addonNameWidth = this.textRenderer.getWidth(addonName);
+                int byTextWidth = this.textRenderer.getWidth(byText);
+                int authorWidth = this.textRenderer.getWidth(author);
+
+                context.drawTextWithShadow(this.textRenderer, addonName, this.width - addonNameWidth - byTextWidth - authorWidth - 2, yOffset, 0x50C878);
+
+                context.drawTextWithShadow(this.textRenderer, byText, this.width - byTextWidth - authorWidth - 2, yOffset, 0xFFFFFF);
+
+                context.drawTextWithShadow(this.textRenderer, author, this.width - authorWidth - 2, yOffset, 0xFF0000);
+
                 yOffset += 10;
             }
         }
