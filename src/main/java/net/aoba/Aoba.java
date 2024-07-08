@@ -16,13 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * A class to initialize and hold the Singleton of Aoba Client.
- */
+
 package net.aoba;
 
 import net.fabricmc.api.ModInitializer;
 
+/**
+ * A class to initialize and hold the Singleton of Aoba Client.
+ */
 public class Aoba implements ModInitializer {
     public static AobaClient instance;
 

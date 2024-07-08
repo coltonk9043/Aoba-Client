@@ -121,8 +121,6 @@ public class Surround extends Module implements TickListener {
                     }
                 }
             }
-
-
         }
 
         // Return Selected Slot back to original slot.

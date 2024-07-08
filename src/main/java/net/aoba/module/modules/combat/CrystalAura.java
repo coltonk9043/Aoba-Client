@@ -4,7 +4,10 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
-import net.aoba.settings.types.*;
+import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.EnumSetting;
+import net.aoba.settings.types.FloatSetting;
+import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.entity.DamageUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -193,6 +196,7 @@ public class CrystalAura extends Module implements TickListener {
                     MC.player.networkHandler.sendPacket(new PlayerInteractItemC2SPacket(Hand.MAIN_HAND, 0, MC.player.getYaw(), MC.player.getPitch()));
                 }
 
+                lastPlaceTime = System.currentTimeMillis();
                 break;
             }
         }
