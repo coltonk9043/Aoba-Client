@@ -20,6 +20,7 @@ package net.aoba.settings;
 
 import com.mojang.logging.LogUtils;
 import net.aoba.gui.colors.Color;
+import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IntegerSetting;
 import net.aoba.utils.types.Vector2;
@@ -109,6 +110,9 @@ public class SettingManager {
 
                         config.setProperty(setting.ID, result);
                     }
+                    case ENUM -> {
+                        config.setProperty(setting.ID, ((Enum<?>) setting.getValue()).name());
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -192,6 +196,13 @@ public class SettingManager {
                                 throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
                         case STRINGLIST ->
                                 throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
+                        case ENUM -> {
+                            String enumName = config.getProperty(setting.ID, null);
+                            if (enumName != null) {
+                                Enum<?> enumValue = Enum.valueOf(((EnumSetting<?>) setting).getValue().getDeclaringClass(), enumName);
+                                setting.setValue(enumValue);
+                            }
+                        }
                         default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
                     }
                 } catch (Exception e) {

@@ -1,0 +1,119 @@
+package net.aoba.gui.tabs.components;
+
+import net.aoba.Aoba;
+import net.aoba.event.events.KeyDownEvent;
+import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.listeners.KeyDownListener;
+import net.aoba.event.listeners.MouseClickListener;
+import net.aoba.gui.IGuiElement;
+import net.aoba.gui.colors.Color;
+import net.aoba.misc.RenderUtils;
+import net.aoba.settings.types.EnumSetting;
+import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.types.MouseButton;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
+import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
+
+public class EnumComponent<T extends Enum<T>> extends Component implements MouseClickListener, KeyDownListener {
+    private boolean listeningForKey;
+    private EnumSetting<T> enumSetting;
+    private boolean isFocused = false;
+    private float focusAnimationProgress = 0.0f;
+    private Color focusBorderColor = new Color(255, 255, 255);
+    private Color errorBorderColor = new Color(255, 0, 0);
+    private boolean isErrorState = false;
+
+    public EnumComponent(IGuiElement parent, EnumSetting<T> enumSetting) {
+        super(parent);
+        this.enumSetting = enumSetting;
+
+        this.setHeight(30);
+
+        Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+    }
+
+    @Override
+    public void OnVisibilityChanged() {
+        if (this.isVisible()) {
+            Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+        } else {
+            Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+        }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+    }
+
+    @Override
+    public void draw(DrawContext drawContext, float partialTicks) {
+        super.draw(drawContext, partialTicks);
+
+        MatrixStack matrixStack = drawContext.getMatrices();
+        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+
+        if (isFocused) {
+            focusAnimationProgress = Math.min(1.0f, focusAnimationProgress + partialTicks * 0.1f);
+        } else {
+            focusAnimationProgress = Math.max(0.0f, focusAnimationProgress - partialTicks * 0.1f);
+        }
+
+        Color borderColor = isErrorState ? errorBorderColor : new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
+
+        RenderUtils.drawString(drawContext, enumSetting.displayName, actualX + 8, actualY + 8, 0xFFFFFF);
+        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY + 2, 143, actualHeight - 4, new Color(115, 115, 115, 200));
+        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY + 2, 143, actualHeight - 4, borderColor);
+
+        String enumValue = this.enumSetting.getValue().toString();
+        RenderUtils.drawString(drawContext, enumValue, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
+    }
+
+    @Override
+    public void OnMouseClick(MouseClickEvent event) {
+        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+            if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
+                if (hovered) {
+                    listeningForKey = true;
+                } else {
+                    listeningForKey = false;
+                }
+            }
+        }
+
+        isFocused = listeningForKey;
+    }
+
+    @Override
+    public void OnKeyDown(KeyDownEvent event) {
+        if (listeningForKey) {
+            int key = event.GetKey();
+
+            if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_ESCAPE) {
+                listeningForKey = false;
+            } else {
+                T currentValue = enumSetting.getValue();
+                T[] enumConstants = currentValue.getDeclaringClass().getEnumConstants();
+                int currentIndex = java.util.Arrays.asList(enumConstants).indexOf(currentValue);
+                int enumCount = enumConstants.length;
+
+                if (key == GLFW.GLFW_KEY_RIGHT) {
+                    currentIndex = (currentIndex + 1) % enumCount;
+                } else if (key == GLFW.GLFW_KEY_LEFT) {
+                    currentIndex = (currentIndex - 1 + enumCount) % enumCount;
+                }
+
+                enumSetting.setValue(enumConstants[currentIndex]);
+            }
+
+            event.cancel();
+        }
+    }
+
+    public void setErrorState(boolean isError) {
+        this.isErrorState = isError;
+    }
+}

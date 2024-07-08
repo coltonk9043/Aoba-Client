@@ -27,10 +27,7 @@ import net.aoba.gui.tabs.components.*;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.Setting;
-import net.aoba.settings.types.BlocksSetting;
-import net.aoba.settings.types.BooleanSetting;
-import net.aoba.settings.types.ColorSetting;
-import net.aoba.settings.types.FloatSetting;
+import net.aoba.settings.types.*;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.aoba.utils.types.Vector2;
@@ -67,6 +64,8 @@ public class ModuleSettingsTab extends AbstractGui {
                 c = new ColorPickerComponent(stackPanel, (ColorSetting) setting);
             } else if (setting instanceof BlocksSetting) {
                 c = new BlocksComponent(stackPanel, (BlocksSetting) setting);
+            } else if (setting instanceof EnumSetting) {
+                c = new EnumComponent<>(stackPanel, (EnumSetting) setting);
             } else {
                 c = null;
             }
