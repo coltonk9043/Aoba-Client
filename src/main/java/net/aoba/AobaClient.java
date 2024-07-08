@@ -82,7 +82,7 @@ public class AobaClient {
 
             try {
                 LogUtils.getLogger().info("[Aoba] Initializing addon: " + addon.getClass().getName());
-                addon.onIntialize();
+                addon.onInitialize();
                 LogUtils.getLogger().info("[Aoba] Addon initialized: " + addon.getClass().getName());
             } catch (Throwable e) {
                 LogUtils.getLogger().error("Error initializing addon: " + addon.getClass().getName(), e);
