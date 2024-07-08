@@ -27,6 +27,7 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -40,6 +41,9 @@ public class TriggerBot extends Module implements TickListener {
     private BooleanSetting targetAnimals;
     private BooleanSetting targetMonsters;
     private BooleanSetting targetPlayers;
+    private FloatSetting attackDelay;
+
+    private long lastAttackTime;
 
     public TriggerBot() {
         super(new KeybindSetting("key.triggerbot", "TriggerBot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -52,10 +56,15 @@ public class TriggerBot extends Module implements TickListener {
         targetAnimals = new BooleanSetting("triggerbot_target_animals", "Target Animals", "Target animals.", false);
         targetMonsters = new BooleanSetting("triggerbot_target_monsters", "Target Monsters", "Target monsters.", true);
         targetPlayers = new BooleanSetting("triggerbot_target_players", "Target Players", "Target players.", true);
+        attackDelay = new FloatSetting("triggerbot_attack_delay", "Attack Delay", "Delay in milliseconds between attacks.", 0, 0, 500, 10);
+
+        this.addSetting(attackDelay);
         this.addSetting(radius);
         this.addSetting(targetAnimals);
         this.addSetting(targetMonsters);
         this.addSetting(targetPlayers);
+
+        this.lastAttackTime = 0L;
     }
 
     @Override
@@ -76,13 +85,16 @@ public class TriggerBot extends Module implements TickListener {
     @Override
     public void OnUpdate(TickEvent event) {
         if (MC.player.getAttackCooldownProgress(0) == 1) {
-            // Get the current target that the player is looking at.
             HitResult ray = MC.crosshairTarget;
 
-            // If the target is an Entity, attack it.
             if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
                 EntityHitResult entityResult = (EntityHitResult) ray;
                 Entity ent = entityResult.getEntity();
+
+                if (!(ent instanceof LivingEntity)) {
+                    return;
+                }
+
                 if (ent instanceof AnimalEntity && !this.targetAnimals.getValue())
                     return;
                 if (ent instanceof PlayerEntity && !this.targetPlayers.getValue())
@@ -90,8 +102,11 @@ public class TriggerBot extends Module implements TickListener {
                 if (ent instanceof Monster && !this.targetMonsters.getValue())
                     return;
 
-                MC.interactionManager.attackEntity(MC.player, entityResult.getEntity());
-                MC.player.swingHand(Hand.MAIN_HAND);
+                if (System.currentTimeMillis() - this.lastAttackTime >= attackDelay.getValue()) {
+                    MC.interactionManager.attackEntity(MC.player, entityResult.getEntity());
+                    MC.player.swingHand(Hand.MAIN_HAND);
+                    this.lastAttackTime = System.currentTimeMillis();
+                }
             }
         }
     }
