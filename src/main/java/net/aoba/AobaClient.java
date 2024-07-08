@@ -59,6 +59,7 @@ public class AobaClient {
     public RenderUtils renderUtils;
     public GlobalChat globalChat;
     public EventManager eventManager;
+    public static List<IAddon> addons = new ArrayList<>();
 
     /**
      * Initializes Aoba Client and creates sub-systems.
@@ -75,7 +76,6 @@ public class AobaClient {
         eventManager = new EventManager();
 
         LogUtils.getLogger().info("[Aoba] Starting addon initialization");
-        List<IAddon> addons = new ArrayList<>();
 
         for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("aoba", IAddon.class)) {
             IAddon addon = entrypoint.getEntrypoint();
