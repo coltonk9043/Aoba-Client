@@ -38,6 +38,7 @@ import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
@@ -90,11 +91,17 @@ public class EntityESP extends Module implements Render3DListener {
     @Override
     public void OnRender(Render3DEvent event) {
         Matrix4f matrix4f = event.GetMatrix().peek().getPositionMatrix();
+        float partialTicks = event.GetPartialTicks();
 
         for (Entity entity : MC.world.getEntities()) {
             if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
-                Box boundingBox = entity.getBoundingBox();
-                Color color = getColorForEntity(entity); // Determine color based on entity type
+                double interpolatedX = MathHelper.lerp(partialTicks, entity.prevX, entity.getX());
+                double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
+                double interpolatedZ = MathHelper.lerp(partialTicks, entity.prevZ, entity.getZ());
+
+                Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(), interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
+
+                Color color = getColorForEntity(entity);
                 if (color != null) {
                     RenderUtils.draw3DBox(matrix4f, boundingBox, color, opacity.getValue(), lineThickness.getValue());
                 }
@@ -112,4 +119,5 @@ public class EntityESP extends Module implements Render3DListener {
         }
         return null;
     }
+
 }
