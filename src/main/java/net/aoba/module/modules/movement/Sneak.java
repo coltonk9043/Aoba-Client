@@ -26,13 +26,14 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
 import org.lwjgl.glfw.GLFW;
 
 public class Sneak extends Module implements TickListener {
+
+    private final MinecraftClient MC = MinecraftClient.getInstance();
 
     public Sneak() {
         super(new KeybindSetting("key.sneakhack", "Sneak Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -45,8 +46,8 @@ public class Sneak extends Module implements TickListener {
     @Override
     public void onDisable() {
         ClientPlayerEntity player = MC.player;
-        if (player != null && player.networkHandler != null) {
-            player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.RELEASE_SHIFT_KEY));
+        if (player != null) {
+            MC.options.sneakKey.setPressed(false);
         }
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
@@ -64,8 +65,8 @@ public class Sneak extends Module implements TickListener {
     @Override
     public void OnUpdate(TickEvent event) {
         ClientPlayerEntity player = MC.player;
-        MC.player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.PRESS_SHIFT_KEY));
-        MC.player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, Mode.RELEASE_SHIFT_KEY));
+        if (player != null) {
+            MC.options.sneakKey.setPressed(true);
+        }
     }
 }
-
