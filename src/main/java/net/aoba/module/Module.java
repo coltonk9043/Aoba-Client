@@ -127,6 +127,16 @@ public abstract class Module {
 
     public abstract void onToggle();
 
+    public boolean isKeyPressed(int button) {
+        if (button == -1)
+            return false;
+
+        if (button < 10) // check
+            return false;
+
+        return InputUtil.isKeyPressed(MC.getWindow().getHandle(), button);
+    }
+
     public void toggle() {
         if (this.state) {
             this.onDisable();
