@@ -139,6 +139,7 @@ public class Freecam extends Module implements TickListener, Render3DListener {
         fakePlayer.setBodyYaw(player.getBodyYaw());
         fakePlayer.setVelocity(player.getVelocity());
         fakePlayer.setPosition(player.getPos());
+        fakePlayer.setUuid(player.getUuid());
     }
 
     @Override
