@@ -64,8 +64,6 @@ public class ModuleComponent extends Component implements MouseClickListener {
         if (spinning) {
             spinAngle += 5;
 
-            LogUtils.getLogger().info(String.valueOf(spinAngle));
-
             if (spinAngle >= 360) {
                 spinAngle = 0;
                 spinning = false;
