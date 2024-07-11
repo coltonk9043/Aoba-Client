@@ -163,7 +163,7 @@ public class SliderComponent extends Component implements MouseClickListener, Mo
 
         // Draw the slider value
         String valueText = String.format("%.02f", this.slider.getValue());
-        int textSize = mc.textRenderer.getWidth(valueText) * mc.options.getGuiScale().getValue();
+        int textSize = mc.textRenderer.getWidth(valueText) * 2;
         RenderUtils.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
     }
 }
