@@ -54,6 +54,11 @@ public class Surround extends Module implements TickListener {
     public BooleanSetting autoDisable;
     public BooleanSetting legit;
 
+    private static final List<Block> BREAKABLE_BLOCKS = Lists.newArrayList(
+            Blocks.TALL_GRASS, Blocks.FERN, Blocks.LARGE_FERN, Blocks.DEAD_BUSH,
+            Blocks.VINE, Blocks.WHEAT, Blocks.CARROTS, Blocks.POTATOES, Blocks.BEETROOTS
+    );
+
     public Surround() {
         super(new KeybindSetting("key.surround", "Surround Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
@@ -65,7 +70,6 @@ public class Surround extends Module implements TickListener {
         alignCharacter = new BooleanSetting("surround_align", "Align", "Aligns the character to the nearest block.", false);
         autoDisable = new BooleanSetting("surround_autodisable", "Auto-Disable", "Disables the module when the blocks have finished placing.", false);
         legit = new BooleanSetting("surround_legit", "Legit", "Whether or not to simulate a player looking and clicking to place.", false);
-
 
         this.addSetting(placeHeight);
         this.addSetting(alignCharacter);
@@ -97,28 +101,31 @@ public class Surround extends Module implements TickListener {
     public void OnUpdate(TickEvent event) {
         int foundBlockSlot = getBlockInventorySlot();
         int oldSlot = MC.player.getInventory().selectedSlot;
-        // Disable the module is no block was found in the inventory.
+
+        // Disable the module if no block was found in the inventory.
         if (foundBlockSlot == -1) {
             this.setState(false);
             return;
-        } else {
-            // Change the selected slot and determien which hand it is in.
-            MC.player.getInventory().selectedSlot = foundBlockSlot;
-            MC.player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(foundBlockSlot));
-            Hand hand = foundBlockSlot == 40 ? Hand.OFF_HAND : Hand.MAIN_HAND;
+        }
 
-            // Get the block positions around the player and place the blocks.
-            BlockPos playerPosition = MC.player.getBlockPos();
+        // Change the selected slot and determine which hand it is in.
+        MC.player.getInventory().selectedSlot = foundBlockSlot;
+        MC.player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(foundBlockSlot));
+        Hand hand = foundBlockSlot == 40 ? Hand.OFF_HAND : Hand.MAIN_HAND;
 
-            int height = placeHeight.getValue().intValue();
+        // Get the block positions around the player and place the blocks.
+        BlockPos playerPosition = MC.player.getBlockPos();
+        int height = placeHeight.getValue().intValue();
 
-            for (int i = 0; i < (height - 1); i++) {
-                BlockPos newPos = playerPosition.add(0, i, 0);
-                List<BlockPos> placePositions = Lists.newArrayList(newPos.north(), newPos.east(), newPos.south(), newPos.west());
-                for (BlockPos pos : placePositions) {
-                    if (MC.world.getBlockState(pos).isReplaceable()) {
-                        placeBlock(pos, hand);
-                    }
+        for (int i = 0; i < height; i++) {
+            BlockPos newPos = playerPosition.add(0, i, 0);
+            List<BlockPos> placePositions = Lists.newArrayList(newPos.north(), newPos.east(), newPos.south(), newPos.west());
+            for (BlockPos pos : placePositions) {
+                if (MC.world.getBlockState(pos).isReplaceable()) {
+                    placeBlock(pos, hand);
+                } else if (BREAKABLE_BLOCKS.contains(MC.world.getBlockState(pos).getBlock())) {
+                    breakBlock(pos, hand);
+                    placeBlock(pos, hand);
                 }
             }
         }
@@ -127,17 +134,12 @@ public class Surround extends Module implements TickListener {
         MC.player.getInventory().selectedSlot = oldSlot;
         MC.player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(oldSlot));
 
-        // Disable state is auto disable is enabled.
+        // Disable state if auto-disable is enabled.
         if (autoDisable.getValue()) {
             setState(false);
         }
     }
 
-    /**
-     * Get the inventory slot containing the blocks.
-     *
-     * @return Slot containing item.
-     */
     private int getBlockInventorySlot() {
         for (int i = 0; i < 36; i++) {
             ItemStack stack = MC.player.getInventory().getStack(i);
@@ -148,25 +150,31 @@ public class Surround extends Module implements TickListener {
         return -1;
     }
 
-    /**
-     * Places the block at a specific position.
-     *
-     * @param pos  Position of the block to place.
-     * @param hand Hand to place with.
-     */
     private void placeBlock(BlockPos pos, Hand hand) {
         for (Direction direction : Direction.values()) {
-            if (!MC.world.isInBuildLimit(pos.offset(direction)))
+            BlockPos offsetPos = pos.offset(direction);
+            if (!MC.world.isInBuildLimit(offsetPos))
                 continue;
 
-            if (legit.getValue()) {
-                MC.player.swingHand(hand);
-            } else {
-                MC.player.networkHandler.sendPacket(new HandSwingC2SPacket(hand));
-            }
+            if (MC.world.getBlockState(offsetPos).isSolidBlock(MC.world, offsetPos)) {
+                if (legit.getValue()) {
+                    MC.player.swingHand(hand);
+                } else {
+                    MC.player.networkHandler.sendPacket(new HandSwingC2SPacket(hand));
+                }
 
-            MC.interactionManager.interactBlock(MC.player, hand, new BlockHitResult(Vec3d.ofCenter(pos), direction.getOpposite(), pos.offset(direction), false));
-            break;
+                MC.interactionManager.interactBlock(MC.player, hand, new BlockHitResult(Vec3d.ofCenter(pos), direction.getOpposite(), pos, false));
+                break;
+            }
+        }
+    }
+
+    private void breakBlock(BlockPos pos, Hand hand) {
+        MC.interactionManager.attackBlock(pos, Direction.UP);
+        if (legit.getValue()) {
+            MC.player.swingHand(hand);
+        } else {
+            MC.player.networkHandler.sendPacket(new HandSwingC2SPacket(hand));
         }
     }
 }
