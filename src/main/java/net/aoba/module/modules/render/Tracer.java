@@ -90,18 +90,18 @@ public class Tracer extends Module implements Render3DListener {
 			if(entity instanceof LivingEntity && (entity != MC.player)) {
 				Vec3d interpolated = RenderUtils.getEntityPositionInterpolated(entity, tickDelta);
 				if (entity instanceof AnimalEntity) {
-					RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_passive.getValue());
+					RenderUtils.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_passive.getValue(), 1.0f);
 				} else if (entity instanceof Monster) {
-					RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_enemies.getValue());
+					RenderUtils.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_enemies.getValue(), 1.0f);
 				} else {
-					RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_misc.getValue());
+					RenderUtils.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_misc.getValue(), 1.0f);
 				}
 			}
 		}
 		
 		for(AbstractClientPlayerEntity player : MC.world.getPlayers()) {
 			Vec3d interpolated = RenderUtils.getEntityPositionInterpolated(player, tickDelta);
-			RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), eyePosition, interpolated, color_player.getValue());
+			RenderUtils.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_player.getValue(), 1.0f);
 		}
 	}
 }

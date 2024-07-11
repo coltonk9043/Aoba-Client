@@ -123,10 +123,11 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 		hudPane.AddHud(new ToggleHudsTab(new AbstractHud[] { moduleSelector, armorHud, radarHud, infoHud }));
 		int xOffset = 50;
 		for (Category category : Module.Category.values()) {
-			ClickGuiTab tab = new ClickGuiTab(category.name(), xOffset, 75, true, category.name());
+			AbstractTab tab = new AbstractTab(category.name(), xOffset, 75, true, category.name());
 
 			StackPanelComponent stackPanel = new StackPanelComponent(tab);
-			stackPanel.setTop(30);
+			stackPanel.setMargin(new Margin(null, 30f, null, null));
+
 			for (Module module : Aoba.getInstance().moduleManager.modules) {
 				if (module.getCategory() == category) {
 					ModuleComponent button = new ModuleComponent(module.getName(), stackPanel, module);
@@ -136,7 +137,7 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 			tab.addChild(stackPanel);
 			tab.setWidth(180);
 			modulesPane.AddHud(tab);
-			xOffset += tab.getWidth() + 10;
+			xOffset += tab.getActualSize().getWidth() + 10;
 		}
 
 		clickGuiNavBar.addPane(modulesPane);

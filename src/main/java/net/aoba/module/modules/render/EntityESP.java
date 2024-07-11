@@ -32,6 +32,7 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -39,20 +40,18 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 public class EntityESP extends Module implements Render3DListener {
     private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color", "Passive Color", new Color(0, 1f, 1f));
     private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
     private ColorSetting color_misc = new ColorSetting("entityesp_color_misc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
-    private BooleanSetting showPassiveEntities = new BooleanSetting("entityesp_show_passive", "Show Passive Entities", true);
-    private BooleanSetting showEnemies = new BooleanSetting("entityesp_show_enemies", "Show Enemies", true);
-    private BooleanSetting showMiscEntities = new BooleanSetting("entityesp_show_misc", "Show Misc Entities", true);
+    private BooleanSetting showPassiveEntities = new BooleanSetting("entityesp_show_passive", "Show Passive Entities", "Show Passive Entities", true);
+    private BooleanSetting showEnemies = new BooleanSetting("entityesp_show_enemies", "Show Enemies", "Show Enemies", true);
+    private BooleanSetting showMiscEntities = new BooleanSetting("entityesp_show_misc", "Show Misc Entities", "Show Misc Entities", true);
     public BooleanSetting rainbow = new BooleanSetting("entityesp_rainbow", "Rainbow", "Rainbow", false);
     public FloatSetting effectSpeed = new FloatSetting("entityesp_effectspeed", "Effect Speed", "Effect Speed", 4f, 1f, 20f, 0.1f);
-    private FloatSetting opacity = new FloatSetting("entityesp_opacity", "Opacity", "Adjust the opacity of the ESP boxes", 0.5f, 0.1f, 1.0f, 0.05f);
-    private FloatSetting lineThickness = new FloatSetting("entityesp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 1f, 5f, 0.1f);
+    private FloatSetting lineThickness = new FloatSetting("entityesp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
 
     public EntityESP() {
         super(new KeybindSetting("key.entityesp", "EntityESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -66,7 +65,6 @@ public class EntityESP extends Module implements Render3DListener {
         this.addSetting(color_misc);
         this.addSetting(rainbow);
         this.addSetting(effectSpeed);
-        this.addSetting(opacity);
         this.addSetting(lineThickness);
         this.addSetting(showPassiveEntities);
         this.addSetting(showEnemies);
@@ -90,7 +88,7 @@ public class EntityESP extends Module implements Render3DListener {
 
     @Override
     public void OnRender(Render3DEvent event) {
-        Matrix4f matrix4f = event.GetMatrix().peek().getPositionMatrix();
+        MatrixStack matrixStack = event.GetMatrix();
         float partialTicks = event.GetPartialTicks();
 
         for (Entity entity : MC.world.getEntities()) {
@@ -103,7 +101,7 @@ public class EntityESP extends Module implements Render3DListener {
 
                 Color color = getColorForEntity(entity);
                 if (color != null) {
-                    RenderUtils.draw3DBox(matrix4f, boundingBox, color, opacity.getValue(), lineThickness.getValue());
+                    RenderUtils.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
                 }
             }
         }

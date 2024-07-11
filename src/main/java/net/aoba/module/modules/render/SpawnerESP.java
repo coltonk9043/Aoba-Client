@@ -29,6 +29,7 @@ import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 public class SpawnerESP extends Module implements Render3DListener {
 
     private ColorSetting color = new ColorSetting("spawneresp_color", "Color", "Color", new Color(0, 1f, 1f));
+    private FloatSetting lineThickness = new FloatSetting("spawneresp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
 
     public SpawnerESP() {
         super(new KeybindSetting("key.spawneresp", "SpawnerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -50,6 +52,7 @@ public class SpawnerESP extends Module implements Render3DListener {
         this.setDescription("Allows the player to see spawners with an ESP.");
 
         this.addSetting(color);
+        this.addSetting(lineThickness);
     }
 
     @Override
@@ -74,7 +77,7 @@ public class SpawnerESP extends Module implements Render3DListener {
         for (BlockEntity blockEntity : blockEntities) {
             if (blockEntity instanceof MobSpawnerBlockEntity) {
                 Box box = new Box(blockEntity.getPos());
-                RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), box, color.getValue());
+                RenderUtils.draw3DBox(event.GetMatrix(), box, color.getValue(), lineThickness.getValue().floatValue());
             }
         }
     }

@@ -22,6 +22,8 @@ import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.utils.types.MouseAction;
@@ -46,24 +48,18 @@ public class ButtonComponent extends Component implements MouseClickListener {
      * @param onClick OnClick delegate that will run when the button is pressed.
      */
     public ButtonComponent(IGuiElement parent, String text, Runnable onClick) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 38f));
 
-        this.setLeft(2);
-        this.setRight(2);
-        this.setHeight(30);
-        this.setBottom(10);
+        this.setMargin(new Margin(8f, 4f, 8f, 4f));
 
         this.text = text;
         this.onClick = onClick;
     }
 
     public ButtonComponent(IGuiElement parent, String text, Runnable onClick, Color borderColor, Color backgroundColor) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 38f));
 
-        this.setLeft(2);
-        this.setRight(2);
-        this.setHeight(30);
-        this.setBottom(10);
+        this.setMargin(new Margin(8f, 4f, 8f, 4f));
 
         this.text = text;
         this.onClick = onClick;
@@ -71,7 +67,13 @@ public class ButtonComponent extends Component implements MouseClickListener {
         this.borderColor = borderColor;
         this.backgroundColor = backgroundColor;
     }
-
+    
+	@Override
+	public void onChildChanged(IGuiElement child) {}
+	
+	@Override
+	public void onChildAdded(IGuiElement child) {}
+	
     /**
      * Sets the text of the button.
      *
@@ -109,15 +111,20 @@ public class ButtonComponent extends Component implements MouseClickListener {
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+        float actualHeight = this.getActualSize().getHeight();
+        
         if (this.hovered)
-            RenderUtils.drawOutlinedBox(matrix4f, actualX + 2, actualY, actualWidth - 4, actualHeight - 4, borderColor, hoveredBackgroundColor);
+            RenderUtils.drawOutlinedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, borderColor, hoveredBackgroundColor);
         else
-            RenderUtils.drawOutlinedBox(matrix4f, actualX + 2, actualY, actualWidth - 4, actualHeight - 4, borderColor, backgroundColor);
-        RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);
+            RenderUtils.drawOutlinedBox(matrix4f, actualX , actualY, actualWidth, actualHeight, borderColor, backgroundColor);
+        RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
     }
 
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
         } else {
@@ -128,7 +135,7 @@ public class ButtonComponent extends Component implements MouseClickListener {
     @Override
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (this.hovered && this.isVisible() && onClick != null) {
+            if (this.hovered && onClick != null) {
                 this.onClick.run();
             }
         }

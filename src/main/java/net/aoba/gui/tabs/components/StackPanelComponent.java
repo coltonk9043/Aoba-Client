@@ -19,6 +19,7 @@
 package net.aoba.gui.tabs.components;
 
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Rectangle;
 
 public class StackPanelComponent extends Component {
     public enum StackType {
@@ -37,36 +38,36 @@ public class StackPanelComponent extends Component {
     }
 
     @Override
-    public void OnChildAdded(IGuiElement child) {
+    public void onChildAdded(IGuiElement child) {
         this.RecalculateHeight();
     }
 
     @Override
-    public void OnChildChanged(IGuiElement child) {
+    public void onChildChanged(IGuiElement child) {
         this.RecalculateHeight();
     }
 
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         this.RecalculateHeight();
     }
 
     public void RecalculateHeight() {
-        int height = 0;
+    	float height = 0;
         for (int i = 0; i < children.size(); i++) {
             Component iChild = children.get(i);
 
             // If the child is visible, increase the height of the StackPanel.
-            if (iChild.isVisible()) {
-                height += iChild.getHeight();
-            }
-
+            if (iChild.isVisible())
+                height += iChild.getSize().getHeight();
+            
             // Move the Top of the child below to the top + height of the previous element.
             if (i + 1 != children.size()) {
-                Component childBelow = children.get(i + 1);
-                childBelow.setTop(height);
+            	 Component childBelow = children.get(i + 1);
+                 Rectangle position = childBelow.getSize();
+                 childBelow.setSize(new Rectangle(position.getX(), actualSize.getY() + height, position.getWidth(), position.getHeight()));
             }
         }
-        setHeight(height);
+        setHeight(height + margin.getTop());
     }
 }

@@ -22,324 +22,185 @@ import net.aoba.Aoba;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.IGuiElement;
-import net.aoba.misc.RenderUtils;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
-
 import java.util.ArrayList;
 
 public abstract class Component implements IGuiElement, MouseMoveListener {
-    private static boolean DEBUG = false;
-
-    private boolean visible = false;
+	protected boolean visible = false;
     protected boolean hovered = false;
 
     // NEW ui variables.
     protected IGuiElement parent;
     protected ArrayList<Component> children;
+    
+    protected Rectangle preferredSize = null;
+    protected Rectangle size;
+    protected Margin margin;
+    protected Rectangle actualSize;
 
-    // These are positions that the UI designer will input to enforce specific
-    // options.
-    // These will take precedence over the top/bottom/left/right positions.
-    protected float x;
-    protected float y;
-    protected float width;
-    protected float height;
-
-    protected boolean autoWidth;
-    protected boolean autoHeight;
-
-    private float top = -1;
-    private float bottom = -1;
-    private float left = -1;
-    private float right = -1;
-
-    // The actual screen space positions of the HUD elements.
-    protected float actualX;
-    protected float actualY;
-    protected float actualHeight;
-    protected float actualWidth;
 
     public Component(IGuiElement parent) {
         this.parent = parent;
         this.children = new ArrayList<Component>();
 
-        // Assumes that the component will take up the entire space of the parent unless
-        // otherwise specified.
-        this.setTop(0);
-        this.setLeft(0);
-        this.setRight(0);
-        this.setBottom(0);
+        this.preferredSize = new Rectangle(null, null, null, null);
+        this.size = preferredSize;
+        this.margin = new Margin();
+
+        remeasure();
+    }
+    
+    public Component(IGuiElement parent, Rectangle preferredSize) {
+        this.parent = parent;
+        this.children = new ArrayList<Component>();
+
+        this.preferredSize = preferredSize;
+        this.size = preferredSize;
+        this.margin = new Margin();
+
+        remeasure();
     }
 
-    /**
-     * Gets the X position of the component.
-     *
-     * @return X position of the component as a float.
-     */
+    
     @Override
-    public float getX() {
-        return actualX;
+    public Rectangle getSize() {
+    	return this.size;
     }
-
-    /**
-     * Gets the Y position of the component.
-     *
-     * @return Y position of the component as a float.
-     */
+    
     @Override
-    public float getY() {
-        return actualY;
+    public Rectangle getActualSize() {
+    	return this.actualSize;
+    }
+    
+    public Margin getMargin(){
+        return this.margin;
     }
 
-    /**
-     * Gets the Width of the component.
-     *
-     * @return Width of the component as a float.
-     */
+    
     @Override
-    public float getWidth() {
-        return actualWidth;
+    public void setSize(Rectangle newSize) {
+    	if(size == null || !size.equals(newSize)) {
+        	this.size = newSize;
+        	remeasure();
+    	}
     }
-
-    /**
-     * Gets the height of the component.
-     *
-     * @return Height of the component as a float.
-     */
+    
+    private void setActualSize(Rectangle newSize) {
+    	if(actualSize == null || !actualSize.equals(newSize)) {
+    		this.actualSize = newSize;
+    		
+        	// If parent is not null, notify the parent.
+            if (parent != null) {
+               this.parent.onChildChanged(this);
+            }
+            
+            // Notify all of the children.
+            for(Component child : children){
+            	child.onParentChanged();
+            }
+    	}
+    }
+    
+    public void setMargin(Margin margin) {
+    	if(!this.margin.equals(margin)) {
+        	this.margin = margin;
+        	remeasure();
+    	}
+    }
+    
     @Override
-    public float getHeight() {
-        return actualHeight;
+    public void onParentChanged() {
+    	remeasure();
     }
-
-    public float getTop() {
-        return top;
-    }
-
-    public float getBottom() {
-        return bottom;
-    }
-
-    public float getLeft() {
-        return left;
-    }
-
-    public float getRight() {
-        return right;
-    }
-
-    public void setX(float x) {
-        if (this.x != x) {
-            this.x = x;
-            this.setActualX(x);
-
-            if (this.parent != null) {
-                this.parent.OnChildChanged(this);
-            }
-        }
-    }
-
-    public void setY(float y) {
-        if (this.y != y) {
-            this.y = y;
-            this.setActualY(y);
-
-            // If parent is not null, notify the parent.
-            if (parent != null) {
-                this.parent.OnChildChanged(this);
-            }
-        }
-    }
-
-    public void setWidth(float width) {
-        if (this.width != width) {
-            this.width = width;
-            this.setActualWidth(width);
-
-            // If parent is not null, notify the parent.
-            if (parent != null) {
-                this.parent.OnChildChanged(this);
-            }
-        }
-    }
-
+    
     /**
-     * Sets the height of the component.
-     *
-     * @param height The height to set.
+     * Remeasures the size of this component relative to it's parent.
      */
-    @Override
-    public void setHeight(float height) {
-        if (this.height != height) {
-            this.height = height;
-            this.setActualHeight(height);
+    public void remeasure() {
+    	if(this.size == null)
+    		return;
+    	
+    	// Set X
+    	Float actualX = this.size.getX();
+    	if(parent != null && actualX == null) 
+    		actualX = this.parent.getActualSize().getX();
+    	
+    	if(actualX != null) {
+    		if(margin.getLeft() != null)
+    			actualX += margin.getLeft();
+    	}else
+    		actualX = 0f;
+    	
+    	// Set Y
+    	Float actualY = this.size.getY();
+    	if(parent != null && actualY == null) 
+    		actualY = this.parent.getActualSize().getY();
+    	
+        if(actualY != null) {
+        	if(margin.getTop() != null)
+        		actualY += margin.getTop();
+        }else
+        	actualY = 0f;
 
-            // If parent is not null, notify the parent.
-            if (parent != null) {
-                this.parent.OnChildChanged(this);
-            }
-        }
+    	// Set Width
+    	Float actualWidth = this.size.getWidth();
+    	if(parent != null && actualWidth == null) 
+    		actualWidth = this.parent.getActualSize().getWidth();
+    	
+    	if(actualWidth != null) {
+        	if(margin.getLeft() != null)
+        		actualWidth -= margin.getLeft();
+        	
+        	if(margin.getRight() != null)
+        		actualWidth -= margin.getRight();
+    	}else
+    		actualWidth = 0.0f;
+
+    	// Set Height
+    	Float actualHeight = this.size.getHeight();
+    	if(parent != null && actualHeight == null) 
+    		actualHeight = this.parent.getActualSize().getHeight();
+    	
+    	if(actualHeight != null) {
+        	if(margin.getTop() != null)
+        		actualHeight -= margin.getTop();
+        	
+        	if(margin.getBottom() != null)
+        		actualHeight -= margin.getBottom();
+    	}else
+    		actualHeight = 0.0f;
+
+
+    	this.setActualSize(new Rectangle(actualX, actualY, actualWidth, actualHeight));
     }
-
-    public void setTop(float top) {
-        if (this.top != top) {
-            this.top = top;
-
-            // If parent is not null, notify the parent and use it's positioning.
-            if (parent != null) {
-                if (y == 0.0f) {
-                    this.setActualY(parent.getY() + top);
-                }
-
-                if (height == 0.0f) {
-                    this.setActualHeight(parent.getHeight() - top - bottom);
-                }
-
-                this.parent.OnChildChanged(this);
-            } else {
-                if (y == 0.0f) {
-                    this.setActualY(top);
-                }
-
-                if (height == 0.0f) {
-                    this.setActualHeight(top - bottom);
-                }
-            }
-        }
+    
+    public void setX(Float x) {
+    	Rectangle oldRect = this.size;
+    	this.setSize(new Rectangle(x, oldRect.getY(), oldRect.getWidth(), oldRect.getHeight()));
     }
-
-    public void setBottom(float bottom) {
-        if (this.bottom != bottom) {
-            this.bottom = bottom;
-
-
-            // If parent is not null, notify the parent.
-            if (parent != null) {
-                if (height == 0.0) {
-                    this.setActualHeight(parent.getHeight() - top - bottom);
-                }
-                this.parent.OnChildChanged(this);
-            } else {
-                if (height == 0.0) {
-                    this.setActualHeight(top - bottom);
-                }
-            }
-        }
+    
+    public void setY(Float y) {
+    	Rectangle oldRect = this.size;
+    	this.setSize(new Rectangle(oldRect.getX(), y, oldRect.getWidth(), oldRect.getHeight()));
     }
-
-    public void setLeft(float left) {
-        if (this.left != left) {
-            this.left = left;
-
-            // If parent is not null, notify the parent.
-            if (parent != null) {
-                if (x == 0.0) {
-                    this.setActualX(parent.getX() + left);
-                }
-                if (width == 0.0f) {
-                    this.setActualWidth(parent.getWidth() - left - right);
-                }
-                this.parent.OnChildChanged(this);
-            } else {
-                if (x == 0.0) {
-                    this.setActualX(left);
-                }
-                if (width == 0.0f) {
-                    this.setActualWidth(left - right);
-                }
-            }
-        }
+    
+    public void setWidth(Float width) {
+    	Rectangle oldRect = this.size;
+    	this.setSize(new Rectangle(oldRect.getX(), oldRect.getY(), width, oldRect.getHeight()));
     }
-
-    public void setRight(float right) {
-        if (this.right != right) {
-            this.right = right;
-
-            // If parent is not null, notify the parent.
-            if (parent != null) {
-                if (width == 0.0f) {
-                    this.setActualWidth(parent.getWidth() - right - left);
-                }
-
-                this.parent.OnChildChanged(this);
-            } else {
-                if (width == 0.0f) {
-                    this.setActualWidth(right - left);
-                }
-            }
-        }
+    
+    public void setHeight(Float height) {
+    	Rectangle oldRect = this.size;
+    	this.setSize(new Rectangle(oldRect.getX(), oldRect.getY(), oldRect.getWidth(), height));
     }
-
-    private void setActualX(float value) {
-        if (actualX == value)
-            return;
-
-        actualX = value;
-        for (Component child : children) {
-            child.OnParentXChanged();
-        }
-    }
-
-    private void setActualY(float value) {
-        if (actualY == value)
-            return;
-
-        actualY = value;
-        for (Component child : children) {
-            child.OnParentYChanged();
-        }
-    }
-
-    private void setActualWidth(float value) {
-        if (actualWidth == value)
-            return;
-
-        actualWidth = value;
-        for (Component child : children) {
-            child.OnParentWidthChanged();
-        }
-    }
-
-    private void setActualHeight(float value) {
-        if (actualHeight == value)
-            return;
-
-        actualHeight = value;
-        for (Component child : children) {
-            child.OnParentHeightChanged();
-        }
-    }
-
+    
     public void addChild(Component component) {
         this.children.add(component);
-        this.OnChildAdded(component);
+        this.onChildAdded(component);
     }
-
-    public void OnParentXChanged() {
-        if (x == 0.0) {
-            setActualX(parent.getX() + left);
-        }
-    }
-
-    public void OnParentYChanged() {
-        if (y == 0.0f) {
-            setActualY(parent.getY() + top);
-        }
-    }
-
-    public void OnParentWidthChanged() {
-        if (width == 0.0f) {
-            setActualWidth(parent.getWidth() - left - right);
-        }
-    }
-
-    public void OnParentHeightChanged() {
-        if (height == 0.0f) {
-            setActualHeight(parent.getHeight() - top - bottom);
-        }
-    }
-
+    
     /**
      * Returns the parent of the Component.
      *
@@ -367,7 +228,7 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
 
         // If parent is not null, notify the parent.
         if (parent != null) {
-            this.parent.OnChildChanged(this);
+            this.parent.onChildChanged(this);
         }
 
 
@@ -378,7 +239,7 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
             Aoba.getInstance().eventManager.RemoveListener(MouseMoveListener.class, this);
         }
 
-        this.OnVisibilityChanged();
+        this.onVisibilityChanged();
     }
 
     /**
@@ -413,13 +274,6 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
      */
     public void draw(DrawContext drawContext, float partialTicks) {
         if (this.visible) {
-            if (this.hovered && DEBUG) {
-                MatrixStack matrixStack = drawContext.getMatrices();
-                Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-                RenderUtils.drawOutline(matrix4f, this.actualX, this.actualY, this.actualWidth,
-                        this.actualHeight);
-            }
-
             for (Component child : children) {
                 if (child.visible) {
                     child.draw(drawContext, partialTicks);
@@ -439,24 +293,15 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
             this.hovered = false;
         } else {
 
-            double mouseX = mouseMoveEvent.GetHorizontal();
-            double mouseY = mouseMoveEvent.GetVertical();
+            double mouseX = mouseMoveEvent.getX();
+            double mouseY = mouseMoveEvent.getY();
 
-            this.hovered = ((mouseX >= actualX && mouseX <= (actualX + actualWidth))
-                    && (mouseY >= (actualY) && mouseY <= (actualY + actualHeight)));
+            float actualX = actualSize.getX();
+            float actualY = actualSize.getY();
+            float actualWidth = actualSize.getWidth();
+            float actualHeight = actualSize.getHeight();
+            
+            this.hovered = ((mouseX >= actualX && mouseX <= (actualX + actualWidth)) && (mouseY >= (actualY) && mouseY <= (actualY + actualHeight)));
         }
-    }
-
-    public void OnChildAdded(IGuiElement child) {
-
-    }
-
-    @Override
-    public void OnChildChanged(IGuiElement child) {
-
-    }
-
-    public void OnVisibilityChanged() {
-
     }
 }

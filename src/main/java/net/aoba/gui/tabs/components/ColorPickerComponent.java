@@ -25,6 +25,8 @@ import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.ColorSetting;
@@ -48,16 +50,14 @@ public class ColorPickerComponent extends Component implements MouseClickListene
     private ColorSetting color;
 
     public ColorPickerComponent(String text, IGuiElement parent) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 30f));
         this.text = text;
 
-        this.setHeight(145);
-        this.setLeft(4);
-        this.setRight(4);
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
     }
 
     public ColorPickerComponent(IGuiElement parent, ColorSetting color) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 30f));
 
         this.text = color.displayName;
         this.color = color;
@@ -67,9 +67,7 @@ public class ColorPickerComponent extends Component implements MouseClickListene
         this.saturation = color.getValue().saturation;
         this.luminance = color.getValue().luminance;
 
-        this.setHeight(30);
-        this.setLeft(4);
-        this.setRight(4);
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
     }
 
     public void ensureGuiUpdated(Color newColor) {
@@ -92,14 +90,14 @@ public class ColorPickerComponent extends Component implements MouseClickListene
         if (event.button == MouseButton.LEFT) {
             if (event.action == MouseAction.DOWN) {
                 double mouseY = event.mouseY;
-
+                float actualY = this.getActualSize().getY();
                 if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
                     if (mouseY < actualY + 29) {
                         collapsed = !collapsed;
                         if (collapsed)
-                            this.setHeight(30);
+                            this.setHeight(30f);
                         else
-                            this.setHeight(145);
+                            this.setHeight(145f);
                     } else {
                         if (!collapsed)
                             isSliding = true;
@@ -115,21 +113,26 @@ public class ColorPickerComponent extends Component implements MouseClickListene
     public void OnMouseMove(MouseMoveEvent event) {
         super.OnMouseMove(event);
 
-        double mouseX = event.GetHorizontal();
-        double mouseY = event.GetVertical();
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+        float actualHeight = this.getActualSize().getHeight();
+        
+        double mouseX = event.getX();
+        double mouseY = event.getY();
         if (Aoba.getInstance().hudManager.isClickGuiOpen() && this.isSliding) {
 
             float vertical = (float) Math.min(Math.max(1.0f - (((mouseY - (actualY + 29)) - 1) / (actualHeight - 33)), 0.0f), 1.0f);
 
             // If inside of saturation/lightness box.
-            if (mouseX >= actualX + 4 && mouseX <= actualX + actualWidth - 68) {
-                float horizontal = (float) Math.min(Math.max(((mouseX - (actualX + 4)) - 1) / (actualWidth - 68), 0.0f), 1.0f);
+            if (mouseX >= actualX && mouseX <= actualX + actualWidth - 76) {
+                float horizontal = (float) Math.min(Math.max(((mouseX - (actualX)) - 1) / (actualWidth - 76), 0.0f), 1.0f);
 
                 this.luminance = vertical;
                 this.saturation = horizontal;
-            } else if (mouseX >= actualX + actualWidth - 72 && mouseX <= actualX + actualWidth - 38) {
+            } else if (mouseX >= actualX + actualWidth - 68 && mouseX <= actualX + actualWidth - 34) {
                 this.hue = (1.0f - vertical) * 360.0f;
-            } else if (mouseX >= actualX + actualWidth - 34 && mouseX <= actualX + actualWidth - 4) {
+            } else if (mouseX >= actualX + actualWidth - 30 && mouseX <= actualX + actualWidth) {
                 this.alpha = (vertical) * 255.0f;
             }
 
@@ -140,7 +143,7 @@ public class ColorPickerComponent extends Component implements MouseClickListene
 
 
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
         } else {
@@ -158,17 +161,22 @@ public class ColorPickerComponent extends Component implements MouseClickListene
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-        RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
-        RenderUtils.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6, GuiManager.foregroundColor.getValue().getColorAsInt());
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+        float actualHeight = this.getActualSize().getHeight();
+        
+        RenderUtils.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
+        RenderUtils.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 8, GuiManager.foregroundColor.getValue().getColorAsInt());
 
         if (!collapsed) {
             Color newColor = new Color(255, 0, 0);
             newColor.setHSV(this.hue, 1.0f, 1.0f);
-            RenderUtils.drawHorizontalGradient(matrix4f, actualX + 4, actualY + 29, actualWidth - 76, actualHeight - 33, new Color(255, 255, 255), newColor);
-            RenderUtils.drawVerticalGradient(matrix4f, actualX + 4, actualY + 29, actualWidth - 76, actualHeight - 33, new Color(0, 0, 0, 0), new Color(0, 0, 0));
+            RenderUtils.drawHorizontalGradient(matrix4f, actualX, actualY + 29, actualWidth - 76, actualHeight - 33, new Color(255, 255, 255), newColor);
+            RenderUtils.drawVerticalGradient(matrix4f, actualX, actualY + 29, actualWidth - 76, actualHeight - 33, new Color(0, 0, 0, 0), new Color(0, 0, 0));
 
             // Draw Hue Rectangle
-            float increment = ((this.actualHeight - 33) / 6.0f);
+            float increment = ((actualHeight - 33) / 6.0f);
             RenderUtils.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 29, 30, increment, new Color(255, 0, 0), new Color(255, 255, 0));
             RenderUtils.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 29 + increment, 30, increment, new Color(255, 255, 0), new Color(0, 255, 0));
             RenderUtils.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 29 + (2 * increment), 30, increment, new Color(0, 255, 0), new Color(0, 255, 255));
@@ -177,17 +185,23 @@ public class ColorPickerComponent extends Component implements MouseClickListene
             RenderUtils.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 29 + (5 * increment), 30, increment, new Color(255, 0, 255), new Color(255, 0, 0));
 
             // Draw Alpha Rectangle
-            RenderUtils.drawVerticalGradient(matrix4f, actualX + actualWidth - 34, actualY + 29, 30, actualHeight - 33, new Color(255, 255, 255), new Color(0, 0, 0));
+            RenderUtils.drawVerticalGradient(matrix4f, actualX + actualWidth - 30, actualY + 29, 30, actualHeight - 33, new Color(255, 255, 255), new Color(0, 0, 0));
 
             // Draw Outlines
-            RenderUtils.drawOutline(matrix4f, actualX + 4, actualY + 29, actualWidth - 76, actualHeight - 33);
+            RenderUtils.drawOutline(matrix4f, actualX, actualY + 29, actualWidth - 76, actualHeight - 33);
             RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 68, actualY + 29, 30, actualHeight - 33);
-            RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 34, actualY + 29, 30, actualHeight - 33);
+            RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 30, actualY + 29, 30, actualHeight - 33);
 
             // Draw Indicators
-            RenderUtils.drawCircle(matrix4f, actualX + 4 + (saturation * (actualWidth - 72)), actualY + 29 + ((1.0f - luminance) * (actualHeight - 33)), 3, new Color(255, 255, 255, 255));
+            RenderUtils.drawCircle(matrix4f, actualX + (saturation * (actualWidth - 72)), actualY + 29 + ((1.0f - luminance) * (actualHeight - 33)), 3, new Color(255, 255, 255, 255));
             RenderUtils.drawOutlinedBox(matrix4f, actualX + actualWidth - 68, actualY + 29 + ((hue / 360.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
-            RenderUtils.drawOutlinedBox(matrix4f, actualX + actualWidth - 34, actualY + 29 + (((255.0f - alpha) / 255.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
+            RenderUtils.drawOutlinedBox(matrix4f, actualX + actualWidth - 30, actualY + 29 + (((255.0f - alpha) / 255.0f) * (actualHeight - 33)), 30, 3, new Color(255, 255, 255, 255));
         }
     }
+
+	@Override
+	public void onChildChanged(IGuiElement child) {}
+
+	@Override
+	public void onChildAdded(IGuiElement child) {}
 }

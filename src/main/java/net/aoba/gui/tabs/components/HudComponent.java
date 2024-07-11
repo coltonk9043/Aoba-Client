@@ -22,6 +22,8 @@ import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.misc.RenderUtils;
 import net.aoba.utils.types.MouseAction;
@@ -33,13 +35,19 @@ public class HudComponent extends Component implements MouseClickListener {
     private AbstractHud hud;
 
     public HudComponent(String text, IGuiElement parent, AbstractHud hud) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 30f));
         this.text = text;
         this.hud = hud;
-
-        this.setHeight(30);
+        
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
     }
+    
+	@Override
+	public void onChildChanged(IGuiElement child) { }
 
+	@Override
+	public void onChildAdded(IGuiElement child) { }
+    
     @Override
     public void update() {
         super.update();
@@ -48,16 +56,21 @@ public class HudComponent extends Component implements MouseClickListener {
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
         super.draw(drawContext, partialTicks);
-        RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, 0xFFFFFF);
+        
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+        
+        RenderUtils.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
         if (this.hud.activated.getValue()) {
-            RenderUtils.drawString(drawContext, "-", actualX + actualWidth - 16, actualY + 8, 0xFF0000);
+            RenderUtils.drawString(drawContext, "-", actualX + actualWidth - 12, actualY + 8, 0xFF0000);
         } else {
-            RenderUtils.drawString(drawContext, "+", actualX + actualWidth - 16, actualY + 8, 0x00FF00);
+            RenderUtils.drawString(drawContext, "+", actualX + actualWidth - 12, actualY + 8, 0x00FF00);
         }
     }
 
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
         } else {

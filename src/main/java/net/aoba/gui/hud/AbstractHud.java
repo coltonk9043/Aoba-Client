@@ -20,14 +20,20 @@ package net.aoba.gui.hud;
 
 import net.aoba.Aoba;
 import net.aoba.gui.AbstractGui;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.Rectangle;
+import net.aoba.gui.colors.Color;
+import net.aoba.misc.RenderUtils;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.minecraft.client.gui.DrawContext;
 
-public class AbstractHud extends AbstractGui {
+public abstract class AbstractHud extends AbstractGui {
 
     public BooleanSetting activated;
 
+    private static Color dragColor = new Color(255, 0, 0, 165);
+    
     public AbstractHud(String ID, float x, float y, float width, float height) {
         super(ID, x, y, width, height);
         this.setVisible(true);
@@ -46,6 +52,19 @@ public class AbstractHud extends AbstractGui {
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-
+    	if(visible) {
+        	if (isMoving) {
+        		Rectangle pos = position.getValue();
+        		
+        		if(pos.isDrawable()) {
+            		float x = pos.getX().floatValue();
+            		float y = pos.getY().floatValue();
+            		float width = pos.getWidth().floatValue();
+            		float height = pos.getHeight().floatValue();
+                    
+                    RenderUtils.drawRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height, 6, dragColor);
+        		}
+            }
+    	}
     }
 }

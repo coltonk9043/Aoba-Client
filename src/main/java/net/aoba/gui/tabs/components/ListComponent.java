@@ -22,6 +22,8 @@ import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.types.MouseAction;
@@ -37,31 +39,47 @@ public class ListComponent extends Component implements MouseClickListener {
     private int selectedIndex;
 
     public ListComponent(IGuiElement parent, List<String> options) {
-        super(parent);
-        this.setLeft(2);
-        this.setRight(2);
-        this.setHeight(30);
-        Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-
+        super(parent, new Rectangle(null, null, null, 30f));
+        this.setMargin(new Margin(2f, null, 2f, null));
         this.options = options;
     }
 
     public ListComponent(IGuiElement parent, List<String> options, StringSetting listSetting) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 30f));
         this.listSetting = listSetting;
-
-        this.setLeft(2);
-        this.setRight(2);
-        this.setHeight(30);
-
-        Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-
+        this.setMargin(new Margin(2f, null, 2f, null));
         this.options = options;
     }
 
+	@Override
+	public void onChildChanged(IGuiElement child) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onVisibilityChanged() {
+		if(this.isVisible())
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+		else
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+	}
+
+	@Override
+	public void onChildAdded(IGuiElement child) {
+		// TODO Auto-generated method stub
+		
+	}
+
+    
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
         float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(listSetting.getValue());
+        
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+        
         RenderUtils.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
                 actualY + 8, 0xFFFFFF);
         RenderUtils.drawString(drawContext, "<<", actualX + 8, actualY + 4, 0xFFFFFF);
@@ -80,6 +98,9 @@ public class ListComponent extends Component implements MouseClickListener {
 
             // Mouse is on the left
             if (this.hovered) {
+                float actualX = this.getActualSize().getX();
+                float actualWidth = this.getActualSize().getWidth();
+                
                 if (mouseX > actualX && mouseX < (actualX + 32)) {
                     setSelectedIndex(Math.max(--selectedIndex, 0));
                     // Mouse is on the right
@@ -89,4 +110,5 @@ public class ListComponent extends Component implements MouseClickListener {
             }
         }
     }
+
 }

@@ -178,7 +178,7 @@ public class Trajectory extends Module implements Render3DListener {
 				Vec3d pos1 = landPosition.add(-size, -size, -size);
 				Vec3d pos2 = landPosition.add(size, size, size);
 				Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
-				RenderUtils.draw3DBox(matrix, box, renderColor);
+				RenderUtils.draw3DBox(event.GetMatrix(), box, renderColor, 1.0f);
 			}
 		}
 	}

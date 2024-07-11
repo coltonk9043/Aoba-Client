@@ -24,11 +24,14 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Matrix4f;
@@ -44,17 +47,17 @@ public class TextBoxComponent extends Component implements MouseClickListener, K
     private boolean isErrorState = false;
 
     public TextBoxComponent(IGuiElement parent, StringSetting stringSetting) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 30f));
         this.string = stringSetting;
-
-        this.setHeight(30);
-
+        
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
+        
         Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
     }
 
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
         } else {
@@ -70,10 +73,14 @@ public class TextBoxComponent extends Component implements MouseClickListener, K
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
         super.draw(drawContext, partialTicks);
-
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+        float actualHeight = this.getActualSize().getHeight();
+        
         if (isFocused) {
             focusAnimationProgress = Math.min(1.0f, focusAnimationProgress + partialTicks * 0.1f);
         } else {
@@ -82,9 +89,9 @@ public class TextBoxComponent extends Component implements MouseClickListener, K
 
         Color borderColor = isErrorState ? errorBorderColor : new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
 
-        RenderUtils.drawString(drawContext, string.displayName, actualX + 8, actualY + 8, 0xFFFFFF);
-        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY + 2, 143, actualHeight - 4, new Color(115, 115, 115, 200));
-        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY + 2, 143, actualHeight - 4, borderColor);
+        RenderUtils.drawString(drawContext, string.displayName, actualX, actualY + 8, 0xFFFFFF);
+        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, new Color(115, 115, 115, 200));
+        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
 
         String keyBindText = this.string.getValue();
         if (!keyBindText.isEmpty()) {
@@ -133,4 +140,10 @@ public class TextBoxComponent extends Component implements MouseClickListener, K
     public void setErrorState(boolean isError) {
         this.isErrorState = isError;
     }
+
+	@Override
+	public void onChildChanged(IGuiElement child) {}
+
+	@Override
+	public void onChildAdded(IGuiElement child) {}
 }

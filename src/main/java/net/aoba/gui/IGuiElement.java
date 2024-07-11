@@ -20,22 +20,12 @@
 package net.aoba.gui;
 
 public interface IGuiElement {
-
-    public float getX();
-
-    public float getY();
-
-    public float getWidth();
-
-    public float getHeight();
-
-    public void setX(float x);
-
-    public void setY(float y);
-
-    public void setWidth(float width);
-
-    public void setHeight(float height);
-
-    public void OnChildChanged(IGuiElement child);
+    public Rectangle getSize();
+    public Rectangle getActualSize();
+    public void setSize(Rectangle size);
+    
+    public void onChildChanged(IGuiElement child);
+    public void onParentChanged();
+    public void onVisibilityChanged();
+    public void onChildAdded(IGuiElement child);
 }

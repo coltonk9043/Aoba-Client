@@ -25,6 +25,8 @@ import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.BlocksSetting;
@@ -39,6 +41,9 @@ import org.joml.Matrix4f;
 
 public class BlocksComponent extends Component implements MouseScrollListener, MouseClickListener {
 
+	private static final float COLLAPSED_HEIGHT = 30f;
+	private static final float EXPANDED_HEIGHT = 135f;
+	
     private BlocksSetting blocks;
     private String text;
     private int visibleRows;
@@ -46,8 +51,6 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
     private int scroll = 0;
 
     private boolean collapsed = true;
-    private float collapsedHeight = 30;
-    private float expandedHeight = 135;
 
     /**
      * Constructor for button component.
@@ -57,18 +60,22 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
      * @param onClick OnClick delegate that will run when the button is pressed.
      */
     public BlocksComponent(IGuiElement parent, BlocksSetting setting) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, COLLAPSED_HEIGHT));
         this.text = setting.displayName;
         blocks = setting;
 
-        this.setLeft(2);
-        this.setRight(2);
-        this.setHeight(collapsedHeight);
+        this.setMargin(new Margin(4f, null, 4f, null));
 
-        visibleRows = (int) expandedHeight / 36;
-        visibleColumns = (int) actualWidth / 36;
+        visibleRows = (int) EXPANDED_HEIGHT / 36;
+        visibleColumns = (int) (actualSize.getWidth() / 36);
     }
 
+	@Override
+	public void onChildChanged(IGuiElement child) {}
+	
+	@Override
+	public void onChildAdded(IGuiElement child) {}
+	
     /**
      * Draws the button to the screen.
      *
@@ -81,6 +88,10 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
     public void draw(DrawContext drawContext, float partialTicks) {
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
 
         RenderUtils.drawString(drawContext, text, actualX + 6, actualY + 6, 0xFFFFFF);
         RenderUtils.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6, GuiManager.foregroundColor.getValue().getColorAsInt());
@@ -97,9 +108,9 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
                     Block block = Registries.BLOCK.get(index);
 
                     if (blocks.getValue().contains(block)) {
-                        RenderUtils.drawBox(matrix4f, ((actualX + (j * 36) + 4)), ((actualY + ((i - scroll) * 36) + 25)), 32, 32, new Color(0, 255, 0, 55));
+                        RenderUtils.drawBox(matrix4f, ((actualX + (j * 36))), ((actualY + ((i - scroll) * 36) + 25)), 32, 32, new Color(0, 255, 0, 55));
                     }
-                    drawContext.drawItem(new ItemStack(block.asItem()), (int) ((actualX + (j * 36) + 6) / 2.0f), (int) ((actualY + ((i - scroll) * 36) + 25) / 2.0f));
+                    drawContext.drawItem(new ItemStack(block.asItem()), (int) ((actualX + (j * 36) + 2) / 2.0f), (int) ((actualY + ((i - scroll) * 36) + 25) / 2.0f));
                 }
             }
 
@@ -120,7 +131,7 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
     }
 
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
@@ -136,13 +147,17 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
             double mouseX = event.mouseX;
             double mouseY = event.mouseY;
 
+            float actualX = this.getActualSize().getX();
+            float actualY = this.getActualSize().getY();
+
             if (mouseX > (actualX + 4) && mouseY < (actualX + (36 * visibleColumns) + 4)) {
                 if (mouseY > actualY && mouseY < actualY + 25) {
                     collapsed = !collapsed;
-                    if (collapsed)
-                        this.setHeight(collapsedHeight);
+                    if (collapsed) {
+                    	this.setHeight(COLLAPSED_HEIGHT);
+                    }
                     else
-                        this.setHeight(expandedHeight);
+                        this.setHeight(EXPANDED_HEIGHT);
                 } else if (mouseY > (actualY + 25) && mouseY < (actualY + (36 * visibleRows) + 25)) {
                     int col = (int) (mouseX - actualX - 8) / 36;
                     int row = (int) ((mouseY - actualY - 24) / 36) + scroll;

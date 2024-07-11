@@ -6,6 +6,8 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.EnumSetting;
@@ -26,24 +28,23 @@ public class EnumComponent<T extends Enum<T>> extends Component implements Mouse
     private boolean isErrorState = false;
 
     public EnumComponent(IGuiElement parent, EnumSetting<T> enumSetting) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 30f));
         this.enumSetting = enumSetting;
 
-        this.setHeight(30);
-
-        Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
     }
 
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+            Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
         } else {
             Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+            Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
         }
     }
-
+	
     @Override
     public void update() {
         super.update();
@@ -56,6 +57,11 @@ public class EnumComponent<T extends Enum<T>> extends Component implements Mouse
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
+        float actualX = actualSize.getX();
+        float actualY = actualSize.getY();
+        float actualWidth = actualSize.getWidth();
+        float actualHeight = actualSize.getHeight();
+        
         if (isFocused) {
             focusAnimationProgress = Math.min(1.0f, focusAnimationProgress + partialTicks * 0.1f);
         } else {
@@ -64,9 +70,9 @@ public class EnumComponent<T extends Enum<T>> extends Component implements Mouse
 
         Color borderColor = isErrorState ? errorBorderColor : new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
 
-        RenderUtils.drawString(drawContext, enumSetting.displayName, actualX + 8, actualY + 8, 0xFFFFFF);
-        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY + 2, 143, actualHeight - 4, new Color(115, 115, 115, 200));
-        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY + 2, 143, actualHeight - 4, borderColor);
+        RenderUtils.drawString(drawContext, enumSetting.displayName, actualX, actualY + 8, 0xFFFFFF);
+        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, new Color(115, 115, 115, 200));
+        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
 
         String enumValue = this.enumSetting.getValue().toString();
         RenderUtils.drawString(drawContext, enumValue, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
@@ -116,4 +122,16 @@ public class EnumComponent<T extends Enum<T>> extends Component implements Mouse
     public void setErrorState(boolean isError) {
         this.isErrorState = isError;
     }
+
+	@Override
+	public void onChildChanged(IGuiElement child) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onChildAdded(IGuiElement child) {
+		// TODO Auto-generated method stub
+		
+	}
 }

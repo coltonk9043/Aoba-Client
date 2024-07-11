@@ -128,7 +128,7 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
     @Override
     public void OnRender(Render3DEvent event) {
         if (currentBlockToBreak != null) {
-            RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), new Box(currentBlockToBreak), color.getValue());
+            RenderUtils.draw3DBox(event.GetMatrix(), new Box(currentBlockToBreak), color.getValue(), 1.0f);
         }
     }
 

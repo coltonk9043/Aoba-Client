@@ -20,6 +20,7 @@ package net.aoba.gui.hud;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.Rectangle;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
@@ -109,64 +110,63 @@ public class ModuleSelectorHud extends AbstractHud {
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
+    	super.draw(drawContext, partialTicks);
+    	
         // Gets the client and window.
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-        Vector2 pos = position.getValue();
+        Rectangle pos = position.getValue();
 
-        if (this.isDragging) {
-            int highlightColor = 0x80FF0000;
-            int x1 = (int) pos.x;
-            int y1 = (int) pos.y;
-            int x2 = (int) (pos.x + this.width);
-            int y2 = (int) (pos.y + this.height);
-            drawContext.fill(x1, y1, x2, y2, highlightColor);
-        }
+        if(pos.isDrawable()) {
+        	 float x = pos.getX().floatValue();
+        	 float y = pos.getY().floatValue();
+        	 float width = pos.getWidth().floatValue();
+        	 float height = pos.getHeight().floatValue();
+        	 
+             // Draws the top bar including "Aoba x.x"
+             RenderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, GuiManager.foregroundColor.getValue());
 
-        // Draws the top bar including "Aoba x.x"
-        RenderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, GuiManager.foregroundColor.getValue());
+             // Draws the table including all of the categories.
+             RenderUtils.drawRoundedBox(matrix4f, x, y, width, height * this.categories.length, 6f,
+                     GuiManager.backgroundColor.getValue());
+             RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height * this.categories.length, 6f,
+                     GuiManager.borderColor.getValue());
 
-        // Draws the table including all of the categories.
-        RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height * this.categories.length, 6f,
-                GuiManager.backgroundColor.getValue());
-        RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height * this.categories.length, 6f,
-                GuiManager.borderColor.getValue());
+             // For every category, draw a cell for it.
+             for (int i = 0; i < this.categories.length; i++) {
+                 RenderUtils.drawString(drawContext, ">>", x + width - 24, y + (height * i) + 8,
+                         GuiManager.foregroundColor.getValue());
+                 // Draws the name of the category dependent on whether it is selected.
+                 if (this.index == i) {
+                     RenderUtils.drawString(drawContext, "> " + this.categories[i].name(), x + 8,
+                             y + (height * i) + 8, GuiManager.foregroundColor.getValue());
+                 } else {
+                     RenderUtils.drawString(drawContext, this.categories[i].name(), x + 8, y + (height * i) + 8, 0xFFFFFF);
+                 }
+             }
 
-        // For every category, draw a cell for it.
-        for (int i = 0; i < this.categories.length; i++) {
-            RenderUtils.drawString(drawContext, ">>", pos.x + width - 24, pos.y + (height * i) + 8,
-                    GuiManager.foregroundColor.getValue());
-            // Draws the name of the category dependent on whether it is selected.
-            if (this.index == i) {
-                RenderUtils.drawString(drawContext, "> " + this.categories[i].name(), pos.x + 8,
-                        pos.y + (height * i) + 8, GuiManager.foregroundColor.getValue());
-            } else {
-                RenderUtils.drawString(drawContext, this.categories[i].name(), pos.x + 8, pos.y + (height * i) + 8,
-                        0xFFFFFF);
-            }
-        }
+             // If any particular category menu is open.
+             if (isCategoryMenuOpen) {
+                 // Draw the table underneath
+                 RenderUtils.drawRoundedBox(matrix4f, x + width, y + (height * this.index), 165,
+                         height * modules.size(), 6f, GuiManager.backgroundColor.getValue());
+                 RenderUtils.drawRoundedOutline(matrix4f, x + width, y + (height * this.index), 165,
+                         height * modules.size(), 6f, GuiManager.borderColor.getValue());
 
-        // If any particular category menu is open.
-        if (isCategoryMenuOpen) {
-            // Draw the table underneath
-            RenderUtils.drawRoundedBox(matrix4f, pos.x + width, pos.y + (height * this.index), 165,
-                    height * modules.size(), 6f, GuiManager.backgroundColor.getValue());
-            RenderUtils.drawRoundedOutline(matrix4f, pos.x + width, pos.y + (height * this.index), 165,
-                    height * modules.size(), 6f, GuiManager.borderColor.getValue());
-
-            // For every mod, draw a cell for it.
-            for (int i = 0; i < modules.size(); i++) {
-                if (this.indexMods == i) {
-                    RenderUtils.drawString(drawContext, "> " + modules.get(i).getName(), pos.x + width + 5,
-                            pos.y + (i * height) + (this.index * height) + 8, modules.get(i).getState() ? 0x00FF00
-                                    : GuiManager.foregroundColor.getValue().getColorAsInt());
-                } else {
-                    RenderUtils.drawString(drawContext, modules.get(i).getName(), pos.x + width + 5,
-                            pos.y + (i * height) + (this.index * height) + 8,
-                            modules.get(i).getState() ? 0x00FF00 : 0xFFFFFF);
-                }
-            }
+                 // For every mod, draw a cell for it.
+                 for (int i = 0; i < modules.size(); i++) {
+                     if (this.indexMods == i) {
+                         RenderUtils.drawString(drawContext, "> " + modules.get(i).getName(), x + width + 5,
+                                 y + (i * height) + (this.index * height) + 8, modules.get(i).getState() ? 0x00FF00
+                                         : GuiManager.foregroundColor.getValue().getColorAsInt());
+                     } else {
+                         RenderUtils.drawString(drawContext, modules.get(i).getName(), x + width + 5,
+                                 y + (i * height) + (this.index * height) + 8,
+                                 modules.get(i).getState() ? 0x00FF00 : 0xFFFFFF);
+                     }
+                 }
+             }
         }
     }
 }

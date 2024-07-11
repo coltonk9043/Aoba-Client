@@ -1,10 +1,8 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
-import net.aoba.mixin.interfaces.ICamera;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -56,8 +54,6 @@ public class ClickTP extends Module implements MouseClickListener {
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
             Camera camera = MC.gameRenderer.getCamera();
-            ICamera icamera = (ICamera) camera;
-
             Vec3d direction = Vec3d.fromPolar(camera.getPitch(), camera.getYaw()).multiply(210);
             Vec3d targetPos = camera.getPos().add(direction);
 
@@ -78,9 +74,6 @@ public class ClickTP extends Module implements MouseClickListener {
                 }
 
                 MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, true));
-
-
-                AobaClient aoba = Aoba.getInstance();
                 MC.player.setPosition(newPos);
             }
         }

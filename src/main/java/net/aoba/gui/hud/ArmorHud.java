@@ -22,6 +22,7 @@
 
 package net.aoba.gui.hud;
 
+import net.aoba.gui.Rectangle;
 import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
@@ -31,9 +32,7 @@ import net.minecraft.util.collection.DefaultedList;
 public class ArmorHud extends AbstractHud {
 
     public ArmorHud(int x, int y, int width, int height) {
-        super("ArmorHud", x, y, width, height);
-        this.width = 60;
-        this.height = 256;
+        super("ArmorHud", x, y, 60, 256);
     }
 
     @Override
@@ -43,28 +42,27 @@ public class ArmorHud extends AbstractHud {
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
+    	super.draw(drawContext, partialTicks);
         if (this.visible) {
-            DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
-            Vector2 pos = position.getValue();
+        	Rectangle pos = position.getValue();
 
-            if (this.isDragging) {
-                int highlightColor = 0x80FF0000;
-                int x1 = (int) pos.x;
-                int y1 = (int) pos.y;
-                int x2 = (int) (pos.x + this.width);
-                int y2 = (int) (pos.y + this.height);
-                drawContext.fill(x1, y1, x2, y2, highlightColor);
-            }
+            if(pos.isDrawable()) {
+                DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
 
-            int yOff = 16;
-            for (ItemStack armor : armors) {
-                if (armor.getItem() != Items.AIR) {
-                    drawContext.drawItem(armor, (int) pos.x, (int) (pos.y + this.height - yOff));
-                } else {
-                    int placeholderColor = 0x40404040;
-                    drawContext.fill((int) pos.x, (int) (pos.y + this.height - yOff), (int) (pos.x + this.width), (int) (pos.y + this.height - yOff + 16), placeholderColor);
+            	int x1 = pos.getX().intValue();
+                int x2 = pos.getX().intValue() + pos.getWidth().intValue();
+                int y2 = pos.getY().intValue() + pos.getHeight().intValue();
+                
+                int yOff = 16;
+                for (ItemStack armor : armors) {
+                    if (armor.getItem() != Items.AIR) {
+                        drawContext.drawItem(armor, x1, y2 - yOff);
+                    } else {
+                        int placeholderColor = 0x40404040;
+                        drawContext.fill(x1, y2 - yOff, x2, y2 - yOff + 16, placeholderColor);
+                    }
+                    yOff += 16;
                 }
-                yOff += 16;
             }
         }
     }

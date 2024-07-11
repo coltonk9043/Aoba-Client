@@ -24,6 +24,8 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.KeybindSetting;
@@ -40,12 +42,19 @@ public class KeybindComponent extends Component implements MouseClickListener, K
     private KeybindSetting keyBind;
 
     public KeybindComponent(IGuiElement parent, KeybindSetting keyBind) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 30f));
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
         this.keyBind = keyBind;
     }
 
+	@Override
+	public void onChildChanged(IGuiElement child) { }
+
+	@Override
+	public void onChildAdded(IGuiElement child) { }
+
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
             Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
@@ -67,15 +76,20 @@ public class KeybindComponent extends Component implements MouseClickListener, K
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-        RenderUtils.drawString(drawContext, "Keybind", actualX + 8, actualY + 8, 0xFFFFFF);
-        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4, new Color(115, 115, 115, 200));
-        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 100, actualY + 2, 98, actualHeight - 4);
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+        float actualHeight = this.getActualSize().getHeight();
+        
+        RenderUtils.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
+        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, new Color(115, 115, 115, 200));
+        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight);
 
         String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
         if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
             keyBindText = "N/A";
 
-        RenderUtils.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 8, 0xFFFFFF);
+        RenderUtils.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 6, 0xFFFFFF);
     }
 
     @Override

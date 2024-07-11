@@ -28,6 +28,7 @@ import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
@@ -38,6 +39,7 @@ public class PlayerESP extends Module implements Render3DListener {
     private ColorSetting color_default = new ColorSetting("playeresp_color_default", "Default Color", "Default Color", new Color(1f, 1f, 0f));
     private ColorSetting color_friendly = new ColorSetting("playeresp_color_friendly", "Friendly Color", "Friendly Color", new Color(0f, 1f, 0f));
     private ColorSetting color_enemy = new ColorSetting("playeresp_color_enemy", "Enemy Color", "Enemy Color", new Color(1f, 0f, 0f));
+    private FloatSetting lineThickness = new FloatSetting("playeresp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
 
     public PlayerESP() {
         super(new KeybindSetting("key.playeresp", "PlayerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -49,6 +51,7 @@ public class PlayerESP extends Module implements Render3DListener {
         this.addSetting(color_default);
         this.addSetting(color_friendly);
         this.addSetting(color_enemy);
+        this.addSetting(lineThickness);
     }
 
     @Override
@@ -70,7 +73,7 @@ public class PlayerESP extends Module implements Render3DListener {
     public void OnRender(Render3DEvent event) {
         for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
             if (entity != MC.player) {
-                RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), entity.getBoundingBox(), color_default.getValue());
+                RenderUtils.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), color_default.getValue(), lineThickness.getValue().floatValue());
             }
         }
     }

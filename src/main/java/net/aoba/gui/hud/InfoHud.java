@@ -18,8 +18,8 @@
 package net.aoba.gui.hud;
 
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.Rectangle;
 import net.aoba.misc.RenderUtils;
-import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
@@ -60,7 +60,7 @@ public class InfoHud extends AbstractHud {
         fpsText = "FPS: " + mc.fpsDebugString.split(" ", 2)[0] + " Day: " + (int) (mc.world.getTime() / 24000);
 
         int newWidth = (int) (mc.textRenderer.getWidth(positionText) * 2) + 20;
-        if (this.getWidth() != newWidth) {
+        if (this.getSize().getWidth() != newWidth) {
             if (newWidth >= 190) {
                 this.setWidth(newWidth);
             } else {
@@ -71,21 +71,15 @@ public class InfoHud extends AbstractHud {
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
+    	super.draw(drawContext, partialTicks);
         if (this.visible) {
-            Vector2 pos = position.getValue();
+            Rectangle pos = position.getValue();
 
-            if (this.isDragging) {
-                int highlightColor = 0x80FF0000;
-                int x1 = (int) pos.x;
-                int y1 = (int) pos.y;
-                int x2 = (int) (pos.x + this.width);
-                int y2 = (int) (pos.y + this.height);
-                drawContext.fill(x1, y1, x2, y2, highlightColor);
+            if(pos.isDrawable()) {
+                RenderUtils.drawString(drawContext, positionText, pos.getX().intValue() + 5, pos.getY().intValue() + 4, GuiManager.foregroundColor.getValue());
+                RenderUtils.drawString(drawContext, timeText, pos.getX().intValue() + 5, pos.getY().intValue() + 24, GuiManager.foregroundColor.getValue());
+                RenderUtils.drawString(drawContext, fpsText, pos.getX().intValue() + 5, pos.getY().intValue() + 44, GuiManager.foregroundColor.getValue());
             }
-
-            RenderUtils.drawString(drawContext, positionText, pos.x + 5, pos.y + 4, GuiManager.foregroundColor.getValue());
-            RenderUtils.drawString(drawContext, timeText, pos.x + 5, pos.y + 24, GuiManager.foregroundColor.getValue());
-            RenderUtils.drawString(drawContext, fpsText, pos.x + 5, pos.y + 44, GuiManager.foregroundColor.getValue());
         }
     }
 }

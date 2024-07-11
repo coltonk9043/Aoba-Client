@@ -25,204 +25,272 @@ import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.tabs.components.Component;
 import net.aoba.settings.SettingManager;
-import net.aoba.settings.types.Vector2Setting;
+import net.aoba.settings.types.RectangleSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.aoba.utils.types.Vector2;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-
 import java.util.ArrayList;
 
 public abstract class AbstractGui implements IGuiElement, MouseClickListener, MouseMoveListener {
-    protected static MinecraftClient mc = MinecraftClient.getInstance();
+	protected static MinecraftClient mc = MinecraftClient.getInstance();
 
-    protected String ID;
+	protected String ID;
 
-    protected Vector2Setting position;
+	protected RectangleSetting position;
+	protected Float minWidth = 180.0f;
+	protected Float minHeight = 50.0f;
+	protected Float maxWidth = null;
+	protected Float maxHeight = null;
+	
+	protected boolean isMouseOver = false;
+	public boolean moveable = true;
+	public boolean resizeable = true;
+	protected Direction grabDirection = Direction.None;
+	protected boolean alwaysVisible = false;
+	protected boolean visible = false;
 
-    protected float width;
-    protected float height;
+	// Mouse Variables
+	protected boolean inheritHeightFromChildren = true;
 
-    protected boolean isMouseOver = false;
-    public boolean moveable = true;
+	protected ArrayList<Component> children = new ArrayList<>();
+	protected boolean isMoving = false;
+	protected boolean isResizing = false;
 
-    protected boolean alwaysVisible = false;
-    protected boolean visible = false;
+	public AbstractGui(String ID, float x, float y, float width, float height) {
+		this.ID = ID;
+		this.position = new RectangleSetting(ID + "_position", ID + "Position", new Rectangle(x, y, width, height),
+				(Rectangle vec) -> UpdateAll(vec));
+		SettingManager.registerSetting(position, Aoba.getInstance().settingManager.configContainer);
+	}
 
-    // Mouse Variables
-    protected double lastClickOffsetX;
-    protected double lastClickOffsetY;
-    protected boolean inheritHeightFromChildren = true;
+	public void UpdateAll(Rectangle vec) {
+		for (Component component : this.children) {
+			component.onParentChanged();
+		}
+	}
 
-    protected ArrayList<Component> children = new ArrayList<>();
-    protected boolean isDragging = false;
+	public String getID() {
+		return ID;
+	}
 
-    public AbstractGui(String ID, float x, float y, float width, float height) {
-        this.ID = ID;
-        this.position = new Vector2Setting(ID + "_position", ID + "Position", new Vector2(x, y), (Vector2 vec) -> UpdateAll(vec));
-        this.width = width;
-        this.height = height;
-        SettingManager.registerSetting(position, Aoba.getInstance().settingManager.configContainer);
-    }
+	@Override
+	public Rectangle getSize() {
+		Rectangle position = this.position.getValue();
+		return position;
+	}
 
-    public void UpdateAll(Vector2 vec) {
-        for (Component component : this.children) {
-            component.OnParentXChanged();
-            component.OnParentYChanged();
-        }
-    }
+	@Override
+	public Rectangle getActualSize() {
+		Rectangle position = this.position.getValue();
+		return position;
+	}
 
-    public String getID() {
-        return ID;
-    }
+	@Override
+	public void setSize(Rectangle size) {
+		this.position.setValue(size);
+	}
 
-    @Override
-    public float getHeight() {
-        return this.height;
-    }
+	public void setX(float x) {
+		position.setX(x);
+	}
 
-    @Override
-    public float getX() {
-        return position.getValue().x;
-    }
+	public void setY(float y) {
+		position.setY(y);
+	}
 
-    @Override
-    public float getY() {
-        return position.getValue().y;
-    }
+	public void setWidth(float width) {
+		position.setWidth(width);
+	}
 
-    @Override
-    public float getWidth() {
-        return this.width;
-    }
+	public void setHeight(float height) {
+		position.setHeight(height);
+	}
 
-    @Override
-    public void setX(float x) {
-        if (this.position.getValue().x != x) {
-            position.silentSetX(x);
-            for (Component component : this.children) {
-                component.OnParentXChanged();
-            }
-        }
-    }
+	@Override
+	public void onParentChanged() {
+		// Do nothing because this should always be top level!!!
+	}
 
-    public void setY(float y) {
-        if (this.position.getValue().y != y) {
-            position.silentSetY(y);
-            for (Component component : this.children) {
-                component.OnParentYChanged();
-            }
-        }
-    }
+	@Override
+	public void onChildChanged(IGuiElement child) {
+		// Do nothing...
+	}
 
-    public void setWidth(float width) {
-        if (this.width != width) {
-            this.width = width;
-            for (Component component : this.children) {
-                component.OnParentWidthChanged();
-            }
-        }
-    }
+	@Override
+	public void onVisibilityChanged() {
+		// Do nothing...
+	}
 
-    public void setHeight(float height) {
-        if (this.height != height) {
-            this.height = height;
-            for (Component component : this.children) {
-                component.OnParentHeightChanged();
-            }
-        }
-    }
+	@Override
+	public void onChildAdded(IGuiElement child) {
+		// Do nothing...
+	}
 
-    public boolean getVisible() {
-        return this.visible;
-    }
+	public boolean getVisible() {
+		return this.visible;
+	}
 
-    public void setVisible(boolean state) {
-        if (alwaysVisible) state = true;
+	public void setVisible(boolean state) {
+		if (alwaysVisible)
+			state = true;
 
-        if (visible != state) {
-            this.visible = state;
-            for (Component component : children) {
-                component.setVisible(state);
-            }
+		if (visible != state) {
+			this.visible = state;
+			for (Component component : children) {
+				component.setVisible(state);
+			}
 
-            // Binds/Unbinds respective listeners depending on whether it is visible.
-            if (state) {
-                Aoba.instance.eventManager.AddListener(MouseClickListener.class, this);
-                Aoba.instance.eventManager.AddListener(MouseMoveListener.class, this);
-            } else {
-                Aoba.instance.eventManager.RemoveListener(MouseClickListener.class, this);
-                Aoba.instance.eventManager.RemoveListener(MouseMoveListener.class, this);
-            }
-        }
-    }
+			// Binds/Unbinds respective listeners depending on whether it is visible.
+			if (state) {
+				Aoba.instance.eventManager.AddListener(MouseClickListener.class, this);
+				Aoba.instance.eventManager.AddListener(MouseMoveListener.class, this);
+			} else {
+				Aoba.instance.eventManager.RemoveListener(MouseClickListener.class, this);
+				Aoba.instance.eventManager.RemoveListener(MouseMoveListener.class, this);
+			}
+		}
+	}
 
-    public void setAlwaysVisible(boolean state) {
-        this.alwaysVisible = state;
-        if (this.alwaysVisible) {
-            this.setVisible(true);
-        }
-    }
+	public void setAlwaysVisible(boolean state) {
+		this.alwaysVisible = state;
+		if (this.alwaysVisible) {
+			this.setVisible(true);
+		}
+	}
 
-    public abstract void update();
+	public abstract void update();
 
-    public abstract void draw(DrawContext drawContext, float partialTicks);
+	public abstract void draw(DrawContext drawContext, float partialTicks);
 
-    @Override
-    public void OnMouseClick(MouseClickEvent event) {
-        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            double mouseX = event.mouseX;
-            double mouseY = event.mouseY;
+	@Override
+	public void OnMouseClick(MouseClickEvent event) {
+		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			float mouseX = (float)event.mouseX;
+			float mouseY = (float)event.mouseY;
 
-            Vector2 pos = position.getValue();
+			Rectangle pos = position.getValue();
 
-            if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-                if (GuiManager.currentGrabbed == null) {
-                    if (mouseX >= pos.x && mouseX <= (pos.x + width) && mouseY >= pos.y && mouseY <= (pos.y + height)) {
-                        GuiManager.currentGrabbed = this;
-                        this.lastClickOffsetX = mouseX - pos.x;
-                        this.lastClickOffsetY = mouseY - pos.y;
-                        this.isDragging = true; // Step 2: Set isDragging to true
-                    }
-                }
-            }
-        } else if (event.button == MouseButton.LEFT && event.action == MouseAction.UP) {
-            if (isDragging) {
-                isDragging = false; // Handle mouse release
-            }
-        }
-    }
+			if (Aoba.getInstance().hudManager.isClickGuiOpen() && GuiManager.currentGrabbed == null) {
+				if(resizeable) {
+					Rectangle topHitbox = new Rectangle(pos.getX(), pos.getY() - 8, pos.getWidth(), 8.0f);
+					Rectangle leftHitbox = new Rectangle(pos.getX() - 8, pos.getY(), 8.0f, pos.getHeight());
+					Rectangle rightHitbox = new Rectangle(pos.getX() + pos.getWidth(), pos.getY(),  8.0f, pos.getHeight());
+					Rectangle bottomHitbox = new Rectangle(pos.getX(), pos.getY() + pos.getHeight(), pos.getWidth(), 8.0f);
+					
+					if(leftHitbox.intersects(mouseX, mouseY))
+						setResizing(true, mouseX, mouseY, Direction.Left);
+					else if (rightHitbox.intersects(mouseX, mouseY))
+						setResizing(true, mouseX, mouseY, Direction.Right);
+					else if (topHitbox.intersects(mouseX, mouseY))
+						setResizing(true, mouseX, mouseY, Direction.Top);
+					else if(bottomHitbox.intersects(mouseX, mouseY))
+						setResizing(true, mouseX, mouseY, Direction.Bottom);
+					else
+						setResizing(false, mouseX, mouseY, Direction.None);
+				}
+				
+				if (moveable && !isResizing) {
+					if (mouseX >= pos.getX() && mouseX <= (pos.getX() + pos.getWidth()) && mouseY >= pos.getY()
+							&& mouseY <= (pos.getY() + pos.getHeight())) {
+						GuiManager.currentGrabbed = this;
+						isMoving = true;
+					}
+				}
+			} 
+		} else if (event.button == MouseButton.LEFT && event.action == MouseAction.UP) {
+			isMoving = false; // Handle mouse release
+			isResizing = false;
+		}
+	}
 
-    @Override
-    public void OnMouseMove(MouseMoveEvent event) {
-        if (this.visible && Aoba.getInstance().hudManager.isClickGuiOpen()) {
-            double mouseX = event.GetHorizontal();
-            double mouseY = event.GetVertical();
+	
+	protected void setResizing(boolean state, double mouseX, double mouseY, Direction direction) {
+		if(state) 
+			GuiManager.currentGrabbed = this;
 
-            Vector2 pos = position.getValue();
+		isResizing = state;
+		grabDirection = direction;
+	}
+	
+	@Override
+	public void OnMouseMove(MouseMoveEvent event) {
+		if (this.visible) {
+			double mouseX = event.getX();
+			double mouseY = event.getY();
+			double mouseDeltaX = event.getDeltaX();
+			double mouseDeltaY = event.getDeltaY();
+			
+			Rectangle pos = position.getValue();
 
-            if (GuiManager.currentGrabbed == this && this.moveable) {
-                this.setX((float) (mouseX - this.lastClickOffsetX));
-                this.setY((float) (mouseY - this.lastClickOffsetY));
-            }
+			if (GuiManager.currentGrabbed == this) {
+				if(this.isMoving) {
+					this.setX(this.getSize().getX() + (float) mouseDeltaX);
+					this.setY(this.getSize().getY() + (float) mouseDeltaY);
+				}else if(this.isResizing) {
+					switch(grabDirection) {
+						case Direction.Top:
+							float newHeightTop = getSize().getHeight() - (float) mouseDeltaY;
+							
+							if(minHeight != null && newHeightTop < minHeight.floatValue())
+								break;
 
-            if (mouseX >= pos.x && mouseX <= pos.x + width) {
-                if (mouseY >= pos.y && mouseY <= pos.y + height) {
-                    isMouseOver = true;
-                } else {
-                    isMouseOver = false;
-                }
-            } else {
-                isMouseOver = false;
-            }
-        } else {
-            isMouseOver = false;
-        }
-    }
+							if(maxHeight != null && newHeightTop > maxHeight.floatValue())
+								break;
+							
+							setY(getSize().getY() + (float) mouseDeltaY);
+							setHeight(newHeightTop);
+							
+							break;
+						case Direction.Bottom:
+							float newHeightBottom = getSize().getHeight() + (float) mouseDeltaY;
+							
+							if(minHeight != null && newHeightBottom < minHeight.floatValue())
+								break;
 
-    @Override
-    public void OnChildChanged(IGuiElement child) {
+							if(maxHeight != null && newHeightBottom > maxHeight.floatValue())
+								break;
+							
+							setHeight(newHeightBottom);
+							break;
+						case Direction.Left:
+							float newWidthLeft = getSize().getWidth() - (float) mouseDeltaX;
+							if(minWidth != null && newWidthLeft < minWidth.floatValue())
+								break;
 
-    }
+							if(maxWidth != null && newWidthLeft > maxWidth.floatValue())
+								break;
+							
+							setX(getSize().getX() + (float) mouseDeltaX);
+							setWidth(newWidthLeft);
+							break;
+						case Direction.Right:
+							float newWidthRight = getSize().getWidth() + (float) mouseDeltaX;
+							if(minWidth != null && newWidthRight < minWidth.floatValue())
+								break;
+
+							if(maxWidth != null && newWidthRight > maxWidth.floatValue())
+								break;
+							
+							setWidth(newWidthRight);
+							break;
+					default:
+						break;
+					}
+				}
+			}
+
+			if (mouseX >= pos.getX() && mouseX <= pos.getX() + pos.getWidth()) {
+				if (mouseY >= pos.getY() && mouseY <= pos.getY() + pos.getHeight()) {
+					isMouseOver = true;
+				} else {
+					isMouseOver = false;
+				}
+			} else {
+				isMouseOver = false;
+			}
+		} else {
+			isMouseOver = false;
+		}
+	}
 }

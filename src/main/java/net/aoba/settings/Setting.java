@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 public abstract class Setting<T> {
 
     public enum TYPE {
-        BOOLEAN, FLOAT, STRING, INTEGER, STRINGLIST, INDEXEDSTRINGLIST, VECTOR2, KEYBIND, COLOR, BLOCKS, ENUM
+        BOOLEAN, FLOAT, STRING, INTEGER, STRINGLIST, INDEXEDSTRINGLIST, VECTOR2, KEYBIND, COLOR, BLOCKS, ENUM, RECTANGLE
     }
 
     public final String ID;

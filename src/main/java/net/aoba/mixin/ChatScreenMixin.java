@@ -22,6 +22,7 @@ import net.aoba.Aoba;
 import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
 import net.aoba.cmd.GlobalChat.ChatType;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.components.ButtonComponent;
 import net.minecraft.client.MinecraftClient;
@@ -58,10 +59,7 @@ public class ChatScreenMixin extends ScreenMixin {
                 globalChatButton.setBackgroundColor(new Color(128, 128, 128));
             }
         }, new Color(192, 192, 192), new Color(56, 56, 56));
-        serverChatButton.setX(chatField.getX() * guiScale);
-        serverChatButton.setY((chatField.getY() - chatField.getHeight() - 10) * guiScale);
-        serverChatButton.setWidth(140);
-        serverChatButton.setHeight(30);
+        serverChatButton.setSize(new Rectangle((float)(chatField.getX() * guiScale), (float)((chatField.getY() - chatField.getHeight() - 10) * guiScale), 140f, 30f));
 
         // Create global chat button
         globalChatButton = new ButtonComponent(null, "Global Chat", new Runnable() {
@@ -72,11 +70,8 @@ public class ChatScreenMixin extends ScreenMixin {
                 serverChatButton.setBackgroundColor(new Color(128, 128, 128));
             }
         }, new Color(192, 192, 192), new Color(128, 128, 128));
-        globalChatButton.setX((chatField.getX() + 80) * guiScale);
-        globalChatButton.setY((chatField.getY() - chatField.getHeight() - 10) * guiScale);
-        globalChatButton.setWidth(140);
-        globalChatButton.setHeight(30);
-
+        serverChatButton.setSize(new Rectangle((float)((chatField.getX()  + 80 * guiScale)), (float)((chatField.getY() - chatField.getHeight() - 10) * guiScale), 140f, 30f));
+        
         serverChatButton.setVisible(true);
         globalChatButton.setVisible(true);
     }

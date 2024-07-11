@@ -24,6 +24,7 @@ import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IntegerSetting;
 import net.aoba.utils.types.Vector2;
+import net.aoba.gui.Rectangle;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.InputUtil.Key;
@@ -88,6 +89,12 @@ public class SettingManager {
                     case VECTOR2 -> {
                         config.setProperty(setting.ID, String.valueOf(((Vector2) setting.getValue()).x) + ","
                                 + String.valueOf(((Vector2) setting.getValue()).y));
+                    }
+                    case RECTANGLE -> {
+                        config.setProperty(setting.ID, String.valueOf(((Rectangle) setting.getValue()).getX()) + ","
+                                + String.valueOf(((Rectangle) setting.getValue()).getY()) + ","
+                                + String.valueOf(((Rectangle) setting.getValue()).getWidth()) + ","
+                                + String.valueOf(((Rectangle) setting.getValue()).getHeight()));
                     }
                     case COLOR -> {
                         String s = ((Color) setting.getValue()).getColorAsHex();
@@ -172,6 +179,17 @@ public class SettingManager {
                                 setting.setValue(new Vector2(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
                             }
                             break;
+                        }
+                        case RECTANGLE -> {
+                        	 String[] dimensions = value.split(",");
+                        	 if(dimensions.length == 4) {
+                        		 Float x = dimensions[0].equals("null") ? null : Float.parseFloat(dimensions[0]);
+                        		 Float y = dimensions[1].equals("null") ? null : Float.parseFloat(dimensions[1]);
+                        		 Float width = dimensions[2].equals("null") ? null : Float.parseFloat(dimensions[2]);
+                        		 Float height = dimensions[3].equals("null") ? null : Float.parseFloat(dimensions[3]);
+                        		 
+                        		 setting.setValue(new Rectangle(x, y, width, height));
+                        	 }
                         }
                         case COLOR -> {
                             long hexValue = Long.parseLong(value.replace("#", ""), 16);

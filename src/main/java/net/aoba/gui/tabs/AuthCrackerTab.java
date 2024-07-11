@@ -19,6 +19,9 @@
 package net.aoba.gui.tabs;
 
 import com.mojang.logging.LogUtils;
+
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.tabs.components.ButtonComponent;
 import net.aoba.gui.tabs.components.SliderComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
@@ -33,7 +36,7 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class AuthCrackerTab extends ClickGuiTab {
+public class AuthCrackerTab extends AbstractTab {
     private ButtonComponent start;
 
     private FloatSetting delay = new FloatSetting("authcracker_delay", "Delay", 100, 50, 50000, 1, null);
@@ -44,12 +47,11 @@ public class AuthCrackerTab extends ClickGuiTab {
     Runnable endRunnable;
 
     public AuthCrackerTab(String title, int x, int y) {
-        super(title, x, y, false);
-        this.width = 360.0f;
-
+        super(title, x, y, 360, false);
+        
         StackPanelComponent stackPanel = new StackPanelComponent(this);
-        stackPanel.setTop(30);
-
+        stackPanel.setMargin(new Margin(null, 30f, null, null));
+        
         StringComponent label = new StringComponent("This panel can be used to break Auth passwords used in cracked servers.", stackPanel);
         stackPanel.addChild(label);
 

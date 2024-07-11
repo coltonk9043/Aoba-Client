@@ -22,6 +22,8 @@ import net.aoba.Aoba;
 import net.aoba.event.events.FontChangedEvent;
 import net.aoba.event.listeners.FontChangedListener;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.misc.RenderUtils;
@@ -41,7 +43,7 @@ public class StringComponent extends Component implements FontChangedListener {
         setText(text);
         this.color = Colors.White;
         this.bold = false;
-
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
         Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
     }
 
@@ -50,7 +52,7 @@ public class StringComponent extends Component implements FontChangedListener {
         setText(text);
         this.color = Colors.White;
         this.bold = bold;
-
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
         Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
     }
 
@@ -59,18 +61,22 @@ public class StringComponent extends Component implements FontChangedListener {
         setText(text);
         this.color = color;
         this.bold = bold;
-
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
         Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
     }
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
         int i = 0;
+        
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        
         for (String str : text) {
             if (bold)
                 str = Formatting.BOLD + str;
-            RenderUtils.drawString(drawContext, str, actualX + 8, actualY + 8 + i, this.color.getColorAsInt());
-            i += 30;
+            RenderUtils.drawString(drawContext, str, actualX, actualY + i, this.color.getColorAsInt());
+            i += 25;
         }
     }
 
@@ -80,22 +86,24 @@ public class StringComponent extends Component implements FontChangedListener {
      * @param text The text to set.
      */
     public void setText(String text) {
-        this.originalText = text;
-        this.text = new ArrayList<String>();
+    	if(actualSize != null) {
+    		this.originalText = text;
+            this.text = new ArrayList<String>();
 
-        float textWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(text) * 2.0f;
-        int strings = (int) Math.ceil(textWidth / this.actualWidth);
-        if (strings == 0) {
-            this.text.add(text);
-            this.setHeight(30);
-        } else {
-            int lengthOfEachSegment = text.length() / strings;
+            float textWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(text) * 2.0f;
+            int strings = (int) Math.ceil(textWidth / this.actualSize.getWidth());
+            if (strings == 0) {
+                this.text.add(text);
+                this.setHeight(25f);
+            } else {
+                int lengthOfEachSegment = text.length() / strings;
 
-            for (int i = 0; i < strings; i++) {
-                this.text.add(text.substring(lengthOfEachSegment * i, (lengthOfEachSegment * i) + lengthOfEachSegment));
+                for (int i = 0; i < strings; i++) {
+                    this.text.add(text.substring(lengthOfEachSegment * i, (lengthOfEachSegment * i) + lengthOfEachSegment));
+                }
+                this.setHeight(strings * 25f);
             }
-            this.setHeight(strings * 30);
-        }
+    	}
     }
 
     /**
@@ -114,7 +122,8 @@ public class StringComponent extends Component implements FontChangedListener {
     }
 
     @Override
-    public void OnParentWidthChanged() {
+    public void onParentChanged() {
+    	super.onParentChanged();
         setText(originalText);
     }
 
@@ -122,4 +131,13 @@ public class StringComponent extends Component implements FontChangedListener {
     public void OnFontChanged(FontChangedEvent event) {
         setText(this.originalText);
     }
+
+	@Override
+	public void onChildChanged(IGuiElement child) { }
+
+	@Override
+	public void onVisibilityChanged() { }
+
+	@Override
+	public void onChildAdded(IGuiElement child) { }
 }

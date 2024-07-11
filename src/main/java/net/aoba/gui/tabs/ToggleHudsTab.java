@@ -18,17 +18,18 @@
 
 package net.aoba.gui.tabs;
 
+import net.aoba.gui.Margin;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.gui.tabs.components.HudComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
 import net.minecraft.client.gui.DrawContext;
 
-public class ToggleHudsTab extends ClickGuiTab {
+public class ToggleHudsTab extends AbstractTab {
     public ToggleHudsTab(AbstractHud[] abstractHuds) {
         super("Toggle HUDs", 50, 50, false);
 
         StackPanelComponent stackPanel = new StackPanelComponent(this);
-        stackPanel.setTop(30);
+        stackPanel.setMargin(new Margin(null, 30f, null, null));
 
         for (AbstractHud hud : abstractHuds) {
             HudComponent hudComponent = new HudComponent(hud.getID(), stackPanel, hud);

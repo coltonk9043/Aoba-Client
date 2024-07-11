@@ -22,6 +22,8 @@ import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.types.BooleanSetting;
@@ -39,16 +41,20 @@ public class CheckboxComponent extends Component implements MouseClickListener {
     private float animationProgress = 0.0f;
     private Color hoverBorderColor = new Color(255, 255, 255);
     private Color clickAnimationColor = new Color(255, 255, 0);
-
+    
     public CheckboxComponent(IGuiElement parent, BooleanSetting checkbox) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 30f));
         this.text = checkbox.displayName;
         this.checkbox = checkbox;
 
-        this.setLeft(2);
-        this.setRight(2);
-        this.setHeight(30);
+        this.setMargin(new Margin(8f, 2f, 8f, 2f));
     }
+
+	@Override
+	public void onChildChanged(IGuiElement child) {}
+	
+	@Override
+	public void onChildAdded(IGuiElement child) {}
 
     /**
      * Draws the checkbox to the screen.
@@ -63,6 +69,10 @@ public class CheckboxComponent extends Component implements MouseClickListener {
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+
         // Determine border color based on hover and click state
         Color borderColor = isHovered ? hoverBorderColor : new Color(128, 128, 128);
         if (animationProgress > 0) {
@@ -73,7 +83,7 @@ public class CheckboxComponent extends Component implements MouseClickListener {
         // Determine fill color based on checkbox state
         Color fillColor = this.checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
 
-        RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 8, 0xFFFFFF);
+        RenderUtils.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
         RenderUtils.drawOutlinedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, borderColor, fillColor);
     }
 
@@ -86,7 +96,7 @@ public class CheckboxComponent extends Component implements MouseClickListener {
     }
 
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
         } else {

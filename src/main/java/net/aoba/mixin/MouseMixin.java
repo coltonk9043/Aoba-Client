@@ -39,7 +39,7 @@ public class MouseMixin {
     private double x;
     @Shadow
     private double y;
-
+    
     @Inject(at = {@At("HEAD")}, method = {"onMouseButton(JIII)V"}, cancellable = true)
     private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
         AobaClient aoba = Aoba.getInstance();
@@ -101,7 +101,10 @@ public class MouseMixin {
     private void onCursorPos(long window, double x, double y, CallbackInfo ci) {
         AobaClient aoba = Aoba.getInstance();
         if (aoba != null && aoba.eventManager != null) {
-            MouseMoveEvent event = new MouseMoveEvent(x, y);
+        	double cursorDeltaX = x - this.x;
+        	double cursorDeltaY = y - this.y;
+        
+            MouseMoveEvent event = new MouseMoveEvent(x, y, cursorDeltaX, cursorDeltaY);
             aoba.eventManager.Fire(event);
 
             if (event.isCancelled())

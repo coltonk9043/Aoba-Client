@@ -29,23 +29,16 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
-import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.LinkedList;
 
 public class Breadcrumbs extends Module implements Render3DListener, TickListener {
-    private Color currentColor;
-
     private ColorSetting color = new ColorSetting("breadcrumbs_color", "Color", "Color", new Color(0, 1f, 1f));
-
-    public BooleanSetting rainbow = new BooleanSetting("breadcrumbs_rainbow", "Rainbow", "Rainbow", false);
-    public FloatSetting effectSpeed = new FloatSetting("breadcrumbs_effectspeed", "Effect Spd.", "Effect Spd", 4f, 1f, 20f, 0.1f);
     public FloatSetting lineThickness = new FloatSetting("breadcrumbs_linethickness", "Line Thickness", "Line Thickness", 1f, 0.1f, 10f, 0.1f);
 
     private final float distanceThreshold = 1.0f; // Minimum distance to record a new position
@@ -57,15 +50,10 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 
     public Breadcrumbs() {
         super(new KeybindSetting("key.breadcrumbs", "Breadcrumbs Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-
         this.setName("Breadcrumbs");
         this.setCategory(Category.Render);
         this.setDescription("Shows breadcrumbs of where you last stepped;");
-        currentColor = color.getValue();
-
         this.addSetting(color);
-        this.addSetting(rainbow);
-        this.addSetting(effectSpeed);
         this.addSetting(lineThickness);
     }
 
@@ -92,7 +80,7 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
         Vec3d prevPosition = null;
         for (Vec3d position : positions) {
             if (prevPosition != null) {
-                RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), prevPosition, position, currentColor, lineThickness.getValue().floatValue());
+                RenderUtils.drawLine3D(event.GetMatrix(), prevPosition, position, color.getValue(), lineThickness.getValue().floatValue());
             }
             prevPosition = position;
         }

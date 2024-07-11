@@ -48,7 +48,7 @@ public class ChestESP extends Module implements Render3DListener {
 
     public BooleanSetting rainbow = new BooleanSetting("chestesp_rainbow", "Rainbow", "Rainbow", false);
     public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", "Effect Speed", 4f, 1f, 20f, 0.1f);
-
+    private FloatSetting lineThickness = new FloatSetting("chestesp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
 
     public ChestESP() {
         super(new KeybindSetting("key.chestesp", "ChestESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -60,6 +60,7 @@ public class ChestESP extends Module implements Render3DListener {
         this.addSetting(color);
         this.addSetting(rainbow);
         this.addSetting(effectSpeed);
+        this.addSetting(lineThickness);
     }
 
     @Override
@@ -83,7 +84,7 @@ public class ChestESP extends Module implements Render3DListener {
         for (BlockEntity blockEntity : blockEntities) {
             if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity || blockEntity instanceof BarrelBlockEntity) {
                 Box box = new Box(blockEntity.getPos());
-                RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), box, color.getValue());
+                RenderUtils.draw3DBox(event.GetMatrix(), box, color.getValue(), lineThickness.getValue().floatValue());
             }
         }
     }

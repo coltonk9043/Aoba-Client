@@ -23,6 +23,7 @@ import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.AbstractGui;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.RenderUtils;
 import net.aoba.module.Module;
@@ -50,7 +51,7 @@ public class OptionsTab extends AbstractGui implements MouseScrollListener {
         this.setWidth(window.getWidth() - 240);
         this.setHeight(window.getHeight() - 240);
 
-        visibleScrollElements = (int) ((this.height - 30) / 30);
+        visibleScrollElements = (int) ((this.getSize().getHeight() - 30) / 30);
     }
 
     @Override
@@ -58,19 +59,27 @@ public class OptionsTab extends AbstractGui implements MouseScrollListener {
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-        Vector2 pos = position.getValue();
+        Rectangle pos = position.getValue();
+       
+        if(pos.isDrawable()) {
+        	
+        	float x = pos.getX().floatValue();
+       	 	float y = pos.getY().floatValue();
+       	 	float width = pos.getWidth().floatValue();
+       	 	float height = pos.getHeight().floatValue();
+       	 	
+        	RenderUtils.drawRoundedBox(matrix4f, x, y, width, height, 6, GuiManager.backgroundColor.getValue());
+            RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height, 6, GuiManager.borderColor.getValue());
+            RenderUtils.drawLine(matrix4f, x + 480, y, x + 480, y + height, new Color(0, 0, 0, 200));
 
-        RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.backgroundColor.getValue());
-        RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height, 6, GuiManager.borderColor.getValue());
-        RenderUtils.drawLine(matrix4f, pos.x + 480, pos.y, pos.x + 480, pos.y + height, new Color(0, 0, 0, 200));
+            ArrayList<Module> modules = Aoba.getInstance().moduleManager.modules;
 
-        ArrayList<Module> modules = Aoba.getInstance().moduleManager.modules;
-
-        int yHeight = 30;
-        for (int i = currentScroll; i < Math.min(modules.size(), currentScroll + visibleScrollElements); i++) {
-            Module module = modules.get(i);
-            RenderUtils.drawString(drawContext, module.getName(), pos.x + 10, pos.y + yHeight, GuiManager.foregroundColor.getValue());
-            yHeight += 30;
+            int yHeight = 30;
+            for (int i = currentScroll; i < Math.min(modules.size(), currentScroll + visibleScrollElements); i++) {
+                Module module = modules.get(i);
+                RenderUtils.drawString(drawContext, module.getName(), x + 10, y + yHeight, GuiManager.foregroundColor.getValue());
+                yHeight += 30;
+            }
         }
     }
 

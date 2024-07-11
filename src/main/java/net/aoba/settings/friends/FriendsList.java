@@ -1,9 +1,7 @@
 package net.aoba.settings.friends;
 
-import com.mojang.logging.LogUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

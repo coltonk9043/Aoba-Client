@@ -5,6 +5,7 @@ import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.gui.Margin;
 import net.aoba.gui.colors.Colors;
 import net.aoba.gui.tabs.components.*;
 import net.aoba.misc.RenderUtils;
@@ -22,7 +23,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 
-public class GoToTab extends ClickGuiTab implements TickListener, Render3DListener {
+public class GoToTab extends AbstractTab implements TickListener, Render3DListener {
 	private ButtonComponent startButton;
 	private ButtonComponent setPositionButton;
 
@@ -43,8 +44,8 @@ public class GoToTab extends ClickGuiTab implements TickListener, Render3DListen
 	private boolean isStarted = false;
 
 	public GoToTab(String title, int x, int y){
-		super(title, x, y, false);
-		this.width = 360.0f;
+		super(title, x, y, 360, false);
+
 
 		flyEnabled = new BooleanSetting("goto_fly_enabled", "Fly Enabled", "Fly Enabled", false, var -> {
 			pathManager.setFlyAllowed(var);
@@ -63,8 +64,8 @@ public class GoToTab extends ClickGuiTab implements TickListener, Render3DListen
 		SettingManager.registerSetting(this.locationZ, Aoba.getInstance().settingManager.configContainer);
 
 		StackPanelComponent stackPanel = new StackPanelComponent(this);
-		stackPanel.setTop(30);
-
+		stackPanel.setMargin(new Margin(null, 30f, null, null));
+		
 		StringComponent label = new StringComponent("GoTo will automatically walk/fly your player to specific coordinates.", stackPanel);
 		stackPanel.addChild(label);
 
@@ -162,13 +163,13 @@ public class GoToTab extends ClickGuiTab implements TickListener, Render3DListen
 			Box startBox = new Box(start);
 			Box endBox = new Box(end);
 
-			RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), startBox, Colors.Red);
-			RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), endBox, Colors.Red);
+			RenderUtils.draw3DBox(event.GetMatrix(), startBox, Colors.Red, 1.0f);
+			RenderUtils.draw3DBox(event.GetMatrix(), endBox, Colors.Red, 1.0f);
 
 			for(int i = 0; i < nodes.size() - 1; i++) {
 				PathNode first = nodes.get(i);
 				PathNode second = nodes.get(i + 1);
-				RenderUtils.drawLine3D(event.GetMatrix().peek().getPositionMatrix(), first.pos.toCenterPos(), second.pos.toCenterPos(), Colors.Red);
+				RenderUtils.drawLine3D(event.GetMatrix(), first.pos.toCenterPos(), second.pos.toCenterPos(), Colors.Red, 1.0f);
 			}
 		}
 	}

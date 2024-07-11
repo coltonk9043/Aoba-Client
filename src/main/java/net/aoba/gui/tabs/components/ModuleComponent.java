@@ -24,6 +24,8 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.ModuleSettingsTab;
 import net.aoba.misc.RenderUtils;
@@ -47,17 +49,21 @@ public class ModuleComponent extends Component implements MouseClickListener {
     private float spinAngle = 0;
 
     public ModuleComponent(String text, IGuiElement parent, Module module) {
-        super(parent);
+        super(parent, new Rectangle(null, null, null, 30f));
 
         gear = Identifier.of("aoba", "/textures/gear.png");
         this.text = text;
         this.module = module;
 
-        this.setLeft(2);
-        this.setRight(2);
-        this.setHeight(30);
+        this.setMargin(new Margin(8f, null, 8f, null));
     }
 
+	@Override
+	public void onChildChanged(IGuiElement child) { }
+
+	@Override
+	public void onChildAdded(IGuiElement child) {}
+    
     @Override
     public void update() {
         super.update();
@@ -78,7 +84,11 @@ public class ModuleComponent extends Component implements MouseClickListener {
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-        RenderUtils.drawString(drawContext, this.text, actualX + 8, actualY + 8, module.getState() ? 0x00FF00 : this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
+        float actualX = this.getActualSize().getX();
+        float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+        
+        RenderUtils.drawString(drawContext, this.text, actualX, actualY + 8, module.getState() ? 0x00FF00 : this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
         if (module.hasSettings()) {
             Color hudColor = GuiManager.foregroundColor.getValue();
 
@@ -87,16 +97,16 @@ public class ModuleComponent extends Component implements MouseClickListener {
                 matrixStack.translate((actualX + actualWidth - 12), (actualY + 14), 0);
                 matrixStack.multiply(new Quaternionf().rotateZ((float) Math.toRadians(spinAngle)));
                 matrixStack.translate(-(actualX + actualWidth - 12), -(actualY + 14), 0);
-                RenderUtils.drawTexturedQuad(matrixStack.peek().getPositionMatrix(), gear, (actualX + actualWidth - 20), (actualY + 6), 16, 16, hudColor);
+                RenderUtils.drawTexturedQuad(matrixStack.peek().getPositionMatrix(), gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16, hudColor);
                 matrixStack.pop();
             } else {
-                RenderUtils.drawTexturedQuad(matrix4f, gear, (actualX + actualWidth - 20), (actualY + 6), 16, 16, hudColor);
+                RenderUtils.drawTexturedQuad(matrix4f, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16, hudColor);
             }
         }
     }
 
     @Override
-    public void OnVisibilityChanged() {
+    public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
         } else {
@@ -108,12 +118,16 @@ public class ModuleComponent extends Component implements MouseClickListener {
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
             double mouseX = event.mouseX;
-            if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+            if (hovered) {
+            	float actualX = this.getActualSize().getX();
+                float actualY = this.getActualSize().getY();
+                float actualWidth = this.getActualSize().getWidth();
+                
                 boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
                 if (isOnOptionsButton) {
                     spinning = true;
                     if (lastSettingsTab == null) {
-                        lastSettingsTab = new ModuleSettingsTab(this.module.getName(), this.actualX + this.actualWidth + 1, this.actualY, this.module);
+                        lastSettingsTab = new ModuleSettingsTab(this.module.getName(), actualX + actualWidth + 1, actualY, this.module);
                         lastSettingsTab.setVisible(true);
                         Aoba.getInstance().hudManager.AddHud(lastSettingsTab, "Modules");
                     } else {

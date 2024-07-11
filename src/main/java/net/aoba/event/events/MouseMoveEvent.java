@@ -25,23 +25,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MouseMoveEvent extends AbstractEvent {
-    private double horizontal;
-    private double vertical;
-
-    public MouseMoveEvent(double x, double y) {
+    private double x;
+    private double y;
+    private double deltaX;
+    private double deltaY;
+    
+    public MouseMoveEvent(double x, double y, double deltaX, double deltaY) {
         super();
-        this.horizontal = x;
-        this.vertical = y;
+        this.x = x;
+        this.y = y;
+        this.deltaX = deltaX;
+        this.deltaY = deltaY;
     }
 
-    public double GetVertical() {
-        return vertical;
+    public double getY() {
+        return y;
     }
 
-    public double GetHorizontal() {
-        return horizontal;
+    public double getX() {
+        return x;
     }
 
+    public double getDeltaX() {
+    	return this.deltaX;
+    }
+    
+    public double getDeltaY() {
+    	return this.deltaY;
+    }
+    
     @Override
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {

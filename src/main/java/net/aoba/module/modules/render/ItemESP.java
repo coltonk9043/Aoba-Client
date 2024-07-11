@@ -42,11 +42,11 @@ public class ItemESP extends Module implements Render3DListener {
 
     private ColorSetting color = new ColorSetting("itemesp_color", "Color", "Color", new Color(0, 1f, 1f));
     private BooleanSetting visibilityToggle = new BooleanSetting("itemesp_visibility", "Visibility", true);
-    private FloatSetting opacity = new FloatSetting("itemesp_opacity", "Opacity", 0.5f, 0.1f, 1.0f, 0.05f);
     private FloatSetting range = new FloatSetting("itemesp_range", "Range", 100f, 10f, 500f, 5f);
     private ColorSetting rareItemColor = new ColorSetting("itemesp_rare_color", "Rare Item Color", new Color(1f, 0.5f, 0f));
     private BooleanSetting colorRarity = new BooleanSetting("itemesp_color_rarity", "Color Rarity", true);
-
+    private FloatSetting lineThickness = new FloatSetting("itemesp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
+    
     public ItemESP() {
         super(new KeybindSetting("key.itemesp", "ItemESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
@@ -55,6 +55,7 @@ public class ItemESP extends Module implements Render3DListener {
         this.setDescription("Allows the player to see items with an ESP.");
 
         this.addSetting(color);
+        this.addSetting(lineThickness);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class ItemESP extends Module implements Render3DListener {
                 Vec3d itemPos = entity.getPos();
                 if (playerPos.distanceTo(itemPos) <= range.getValue()) {
                     Color finalColor = colorRarity.getValue() ? getColorBasedOnItemRarity(entity) : color.getValue();
-                    RenderUtils.draw3DBox(event.GetMatrix().peek().getPositionMatrix(), entity.getBoundingBox(), finalColor, opacity.getValue(), 1.0f); // Assuming draw3DBox supports opacity
+                    RenderUtils.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), finalColor, lineThickness.getValue().floatValue());
                 }
             }
         }

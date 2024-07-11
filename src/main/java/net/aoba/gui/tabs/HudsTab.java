@@ -20,6 +20,8 @@ package net.aoba.gui.tabs;
 
 import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.hud.AbstractHud;
 import net.aoba.gui.tabs.components.*;
 import net.minecraft.client.font.TextRenderer;
@@ -30,12 +32,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class HudsTab extends ClickGuiTab {
+public class HudsTab extends AbstractTab {
     public HudsTab(AbstractHud[] abstractHuds) {
         super("Hud Options", 50, 50, false);
 
         StackPanelComponent stackPanel = new StackPanelComponent(this);
-        stackPanel.setTop(30);
+        stackPanel.setMargin(new Margin(null, 30f, null, null));
 
         List<String> test = new ArrayList<String>();
 
@@ -58,7 +60,8 @@ public class HudsTab extends ClickGuiTab {
         stackPanel.addChild(new StringComponent("Keybinds", stackPanel, GuiManager.foregroundColor.getValue(), true));
 
         KeybindComponent clickGuiKeybindComponent = new KeybindComponent(stackPanel, Aoba.getInstance().hudManager.clickGuiButton);
-        clickGuiKeybindComponent.setHeight(30);
+        clickGuiKeybindComponent.setSize(new Rectangle(null, null, null, 30f));
+        
         stackPanel.addChild(clickGuiKeybindComponent);
 
         // Hud Font Header

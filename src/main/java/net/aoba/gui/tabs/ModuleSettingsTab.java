@@ -18,10 +18,14 @@
 
 package net.aoba.gui.tabs;
 
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
-import net.aoba.gui.AbstractGui;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.IGuiElement;
+import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.components.*;
 import net.aoba.misc.RenderUtils;
@@ -30,26 +34,23 @@ import net.aoba.settings.Setting;
 import net.aoba.settings.types.*;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
 
-public class ModuleSettingsTab extends AbstractGui {
+public class ModuleSettingsTab extends AbstractTab {
     protected String title;
     protected Module module;
 
     public ModuleSettingsTab(String title, float x, float y, Module module) {
-        super(title + "_tab", x, y, 180, 0);
-        this.title = title + " Settings";
+        super(title + " Settings", x, y, 350.0f, 0.0f, false);
         this.module = module;
-        this.setWidth(280);
 
         StackPanelComponent stackPanel = new StackPanelComponent(this);
-        stackPanel.setTop(30);
+        stackPanel.setMargin(new Margin(null, 30f, null, null));
 
         KeybindComponent keybindComponent = new KeybindComponent(stackPanel, module.getBind());
-        keybindComponent.setHeight(30);
+        keybindComponent.setSize(new Rectangle(null, null, null, 30f));
+
         stackPanel.addChild(keybindComponent);
 
         for (Setting<?> setting : this.module.getSettings()) {
@@ -77,88 +78,44 @@ public class ModuleSettingsTab extends AbstractGui {
 
         this.addChild(stackPanel);
     }
-
-    public final String getTitle() {
-        return title;
-    }
-
-    public final void setTitle(String title) {
-
-        this.title = title;
-    }
-
-    public final void addChild(Component component) {
-        this.children.add(component);
-    }
-
+    
     @Override
-    public void update() {
-        if (this.inheritHeightFromChildren) {
-            float tempHeight = 0;
-            for (Component child : children) {
-                tempHeight += (child.getHeight());
-            }
-            this.setHeight(tempHeight);
-        }
+    public void draw(DrawContext drawContext, float partialTicks) {
+    	super.draw(drawContext, partialTicks);
+    	MatrixStack matrixStack = drawContext.getMatrices();
+        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-        if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-            for (Component child : this.children) {
-                child.update();
-            }
-        }
+        Rectangle pos = position.getValue();
+
+    	RenderUtils.drawLine(matrix4f, pos.getX() + pos.getWidth() - 23, pos.getY() + 8, pos.getX() + pos.getWidth() - 8, pos.getY() + 23, new Color(255, 0, 0, 255));
+        RenderUtils.drawLine(matrix4f, pos.getX() + pos.getWidth() - 23, pos.getY() + 23, pos.getX() + pos.getWidth() - 8, pos.getY() + 8, new Color(255, 0, 0, 255));
     }
+    
+    @Override
+    public void OnMouseClick(MouseClickEvent event) {
+    	if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+            double mouseX = mc.mouse.getX();
+            double mouseY = mc.mouse.getY();
+            Rectangle pos = position.getValue();
 
+            if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
+            	if (mouseX >= (pos.getX() + pos.getWidth() - 24) && mouseX <= (pos.getX() + pos.getWidth() - 2)) {
+                    if (mouseY >= (pos.getY() + 4) && mouseY <= (pos.getY() + 20)) {
+                        GuiManager.currentGrabbed = null;
+                        Aoba.getInstance().hudManager.RemoveHud(this, "Modules");
+                        return;
+                    }
+                }
+            }
+    	}
+    	
+    	// If we did not hit the X, perform the regular AbstractGUI mouse click logic.
+    	super.OnMouseClick(event);
+    }
+    
     public void preupdate() {
     }
 
     public void postupdate() {
-    }
-
-    @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
-        MatrixStack matrixStack = drawContext.getMatrices();
-        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
-        Vector2 pos = position.getValue();
-
-        Color backgroundColor = new Color(0, 0, 0, 200); // Half-transparent black
-
-        RenderUtils.drawRoundedBox(matrix4f, pos.x, pos.y, width, height + 30, 6, backgroundColor);
-        RenderUtils.drawRoundedOutline(matrix4f, pos.x, pos.y, width, height + 30, 6, backgroundColor);
-        RenderUtils.drawString(drawContext, this.title, pos.x + 8, pos.y + 8, GuiManager.foregroundColor.getValue());
-        RenderUtils.drawLine(matrix4f, pos.x, pos.y + 30, pos.x + width, pos.y + 30, new Color(0, 0, 0, 100));
-        RenderUtils.drawLine(matrix4f, pos.x + width - 23, pos.y + 8, pos.x + width - 8, pos.y + 23, new Color(255, 0, 0, 255));
-        RenderUtils.drawLine(matrix4f, pos.x + width - 23, pos.y + 23, pos.x + width - 8, pos.y + 8, new Color(255, 0, 0, 255));
-
-        // Draw child components
-        for (Component child : children) {
-            child.draw(drawContext, partialTicks);
-        }
-    }
-
-    @Override
-    public void OnMouseClick(MouseClickEvent event) {
-        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            double mouseX = mc.mouse.getX();
-            double mouseY = mc.mouse.getY();
-            Vector2 pos = position.getValue();
-
-            if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-                if (mouseX >= pos.x && mouseX <= pos.x + width) {
-                    if (mouseY >= pos.y && mouseY <= pos.y + 24) {
-                        this.lastClickOffsetX = mouseX - pos.x;
-                        this.lastClickOffsetY = mouseY - pos.y;
-                        GuiManager.currentGrabbed = this;
-                    }
-                }
-
-                if (mouseX >= (pos.x + width - 24) && mouseX <= (pos.x + width - 2)) {
-                    if (mouseY >= (pos.y + 4) && mouseY <= (pos.y + 20)) {
-                        GuiManager.currentGrabbed = null;
-                        Aoba.getInstance().hudManager.RemoveHud(this, "Modules");
-                    }
-                }
-            }
-        }
     }
 }
