@@ -3,12 +3,15 @@
 	"id": "aoba",
 	"version": "1.4.2",
 	"name": "Aoba Hacked Client",
-	"description": "Custom hacked client running on Fabric 1.21",
+	"description": "A Minecraft Fabric 1.21 utility mod.",
 	"authors": [
 		"Cocolots"
 	],
 	"contact": {
-		"sources": "https://github.com/coltonk9043/Aoba-MC-Hacked-Client"
+		"homepage": "https://aobaclient.com",
+		"sources": "https://github.com/coltonk9043/Aoba-MC-Hacked-Client",
+		"issues": "https://github.com/coltonk9043/Aoba-MC-Hacked-Client/issues",
+		"discord": "https://discord.gg/bVwuXQea"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/aoba/icon.png",
