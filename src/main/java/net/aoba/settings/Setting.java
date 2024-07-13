@@ -98,6 +98,14 @@ public abstract class Setting<T> {
     }
 
     /**
+     * Resets the value of the setting to the default value.
+     */
+    public void resetToDefault() {
+        resetValue();
+        update();
+    }
+
+    /**
      * Setter for the current value that does not call update.
      *
      * @param value The value to set.
