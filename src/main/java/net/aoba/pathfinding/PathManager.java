@@ -96,49 +96,51 @@ public class PathManager {
     }
 
     private ArrayList<PathNode> recalculateFly(BlockPos pos) {
-        if (target != null) {
-            PriorityQueue<PathFinderEntry> queue = new PriorityQueue<>(Comparator.comparing(e -> e.cost));
-
-            HashMap<PathNode, PathNode> parentMap = new HashMap<PathNode, PathNode>();
-            HashSet<PathNode> visited = new HashSet<PathNode>();
-            HashMap<PathNode, Float> distances = new HashMap<PathNode, Float>();
-
-            PathNode startNode = new PathNode(pos);
-
-            distances.put(startNode, 0f);
-            queue.add(new PathFinderEntry(startNode, heuristicFly(startNode, target)));
-
-            while (!queue.isEmpty()) {
-                PathFinderEntry current = queue.poll();
-
-                if (current.node.pos.equals(target)) {
-                    return reconstructPath(startNode, new PathNode(target), parentMap);
-                }
-
-                visited.add(current.node);
-                float distanceToStart = heuristicFly(current.node, startNode.pos);
-
-                ArrayList<PathNode> list = getNeighbouringBlocks(current.node);
-                for (PathNode node : list) {
-                    if (visited.contains(node))
-                        continue;
-
-                    float predictedDistanceToTarget = heuristicFly(node, target);
-                    float totalDistance = distanceToStart + predictedDistanceToTarget;
-
-                    if (!distances.containsKey(node) || totalDistance < distances.get(node)) {
-                        distances.put(node, totalDistance);
-                        queue.add(new PathFinderEntry(node, predictedDistanceToTarget));
-                        parentMap.put(node, current.node);
-                    }
-                }
-            }
-
-            isFinished = true;
+        if (target == null) {
+            return null;
         }
 
+        PriorityQueue<PathFinderEntry> queue = new PriorityQueue<>(Comparator.comparing(e -> e.cost));
+        HashMap<PathNode, PathNode> parentMap = new HashMap<>();
+        HashSet<PathNode> visited = new HashSet<>();
+        HashMap<PathNode, Float> distances = new HashMap<>();
+
+        PathNode startNode = new PathNode(pos);
+        distances.put(startNode, 0f);
+        queue.add(new PathFinderEntry(startNode, heuristicFly(startNode, target)));
+
+        while (!queue.isEmpty()) {
+            PathFinderEntry current = queue.poll();
+
+            // Check if the target node has been reached
+            if (current.node.pos.equals(target)) {
+                return reconstructPath(startNode, new PathNode(target), parentMap);
+            }
+
+            visited.add(current.node);
+            float distanceToStart = heuristicFly(current.node, startNode.pos);
+
+            for (PathNode neighbor : getNeighbouringBlocks(current.node)) {
+                if (visited.contains(neighbor)) {
+                    continue;
+                }
+
+                float predictedDistanceToTarget = heuristicFly(neighbor, target);
+                float totalDistance = distanceToStart + predictedDistanceToTarget;
+
+                // Update distances and queue if this path is better
+                if (!distances.containsKey(neighbor) || totalDistance < distances.get(neighbor)) {
+                    distances.put(neighbor, totalDistance);
+                    queue.add(new PathFinderEntry(neighbor, predictedDistanceToTarget));
+                    parentMap.put(neighbor, current.node);
+                }
+            }
+        }
+
+        isFinished = true;
         return null;
     }
+
 
     private ArrayList<PathNode> reconstructPath(PathNode start, PathNode target, HashMap<PathNode, PathNode> parentMap) {
         ArrayList<PathNode> path = new ArrayList<>();
@@ -152,28 +154,38 @@ public class PathManager {
     }
 
     private float heuristic(PathNode position, BlockPos target) {
-        float dx = (float) Math.pow((position.pos.getX() - target.getX()), 2);
-        float dy = (float) Math.pow((position.pos.getY() - target.getY()), 2);
-        float dz = (float) Math.pow((position.pos.getZ() - target.getZ()), 2);
+        if (position == null || target == null) {
+            throw new IllegalArgumentException("Position and target must not be null");
+        }
 
-        // Return the result all of the positions combined.
+        float dx = (float) Math.pow(position.pos.getX() - target.getX(), 2);
+        float dy = (float) Math.pow(position.pos.getY() - target.getY(), 2);
+        float dz = (float) Math.pow(position.pos.getZ() - target.getZ(), 2);
+
+        // Return the combined result of the squared differences
         return dx + dy + dz;
     }
 
-    private float heuristicFly(PathNode position, BlockPos target) {
-        float dx = (float) Math.pow((position.pos.getX() - target.getX()), 2);
 
-        float dy = (float) Math.pow((position.pos.getY() - target.getY()), 2);
+    private float heuristicFly(PathNode position, BlockPos target) {
+        if (position == null || target == null) {
+            throw new IllegalArgumentException("Position and target must not be null");
+        }
+
+        float dx = (float) Math.pow(position.pos.getX() - target.getX(), 2);
+        float dy = (float) Math.pow(position.pos.getY() - target.getY(), 2);
+
+        // Apply a larger weight for upward movement
         if (position.pos.getY() < target.getY()) {
             dy *= 1024f;
         }
 
+        float dz = (float) Math.pow(position.pos.getZ() - target.getZ(), 2);
 
-        float dz = (float) Math.pow((position.pos.getZ() - target.getZ()), 2);
-
-        // Return the result all of the positions combined.
+        // Return the combined heuristic value
         return dx + dy + dz;
     }
+
 
     private ArrayList<PathNode> getNeighbouringBlocks(PathNode node) {
         ArrayList<PathNode> result = new ArrayList<PathNode>();
@@ -237,30 +249,21 @@ public class PathManager {
     }
 
     private static boolean isPlayerPassableDiagonal(BlockPos prevPos, BlockPos pos) {
-        // East = positive X, West = negative X, North = negative Z, South = positive Z
-        int dx = (prevPos.getX() - pos.getX());
-        int dz = (prevPos.getZ() - pos.getZ());
+        // Calculate the difference in coordinates
+        int dx = prevPos.getX() - pos.getX();
+        int dz = prevPos.getZ() - pos.getZ();
 
-        BlockPos pos1 = null;
-        BlockPos pos2 = null;
+        // Determine neighboring positions
+        BlockPos adjacentPosX = (dx < 0) ? pos.west() : (dx > 0) ? pos.east() : null;
+        BlockPos adjacentPosZ = (dz < 0) ? pos.north() : (dz > 0) ? pos.south() : null;
 
-        // Check West and East.
-        if (dx < 0)
-            pos1 = pos.west();
-        else if (dx > 0)
-            pos1 = pos.east();
-
-        // Check North and South
-        if (dz < 0)
-            pos2 = pos.north();
-        else if (dz > 0)
-            pos2 = pos.south();
-
-        if (pos1 == null || pos2 == null)
-            return false;
-        else
-            return checkBodyAndHeadPos(pos) && checkBodyAndHeadPos(pos1) && checkBodyAndHeadPos(pos2);
+        // Check if both adjacent positions are valid and if the current and adjacent positions are passable
+        return adjacentPosX != null && adjacentPosZ != null &&
+                checkBodyAndHeadPos(pos) &&
+                checkBodyAndHeadPos(adjacentPosX) &&
+                checkBodyAndHeadPos(adjacentPosZ);
     }
+
 
     private static boolean checkBodyAndHeadPos(BlockPos feetPos) {
         BlockPos headPos = feetPos.up();
