@@ -18,12 +18,9 @@
 
 package net.aoba.gui.tabs;
 
-import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
@@ -36,6 +33,7 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+import org.joml.Matrix4f;
 
 public class ModuleSettingsTab extends AbstractTab {
     protected String title;
@@ -67,6 +65,8 @@ public class ModuleSettingsTab extends AbstractTab {
                 c = new BlocksComponent(stackPanel, (BlocksSetting) setting);
             } else if (setting instanceof EnumSetting) {
                 c = new EnumComponent<>(stackPanel, (EnumSetting) setting);
+            } else if (setting instanceof Vec3dSetting) {
+                c = new Vec3dComponent(stackPanel, (Vec3dSetting) setting);
             } else {
                 c = null;
             }
@@ -78,28 +78,28 @@ public class ModuleSettingsTab extends AbstractTab {
 
         this.addChild(stackPanel);
     }
-    
+
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-    	super.draw(drawContext, partialTicks);
-    	MatrixStack matrixStack = drawContext.getMatrices();
+        super.draw(drawContext, partialTicks);
+        MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
         Rectangle pos = position.getValue();
 
-    	RenderUtils.drawLine(matrix4f, pos.getX() + pos.getWidth() - 23, pos.getY() + 8, pos.getX() + pos.getWidth() - 8, pos.getY() + 23, new Color(255, 0, 0, 255));
+        RenderUtils.drawLine(matrix4f, pos.getX() + pos.getWidth() - 23, pos.getY() + 8, pos.getX() + pos.getWidth() - 8, pos.getY() + 23, new Color(255, 0, 0, 255));
         RenderUtils.drawLine(matrix4f, pos.getX() + pos.getWidth() - 23, pos.getY() + 23, pos.getX() + pos.getWidth() - 8, pos.getY() + 8, new Color(255, 0, 0, 255));
     }
-    
+
     @Override
     public void OnMouseClick(MouseClickEvent event) {
-    	if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
             double mouseX = mc.mouse.getX();
             double mouseY = mc.mouse.getY();
             Rectangle pos = position.getValue();
 
             if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-            	if (mouseX >= (pos.getX() + pos.getWidth() - 24) && mouseX <= (pos.getX() + pos.getWidth() - 2)) {
+                if (mouseX >= (pos.getX() + pos.getWidth() - 24) && mouseX <= (pos.getX() + pos.getWidth() - 2)) {
                     if (mouseY >= (pos.getY() + 4) && mouseY <= (pos.getY() + 20)) {
                         GuiManager.currentGrabbed = null;
                         Aoba.getInstance().hudManager.RemoveHud(this, "Modules");
@@ -107,12 +107,12 @@ public class ModuleSettingsTab extends AbstractTab {
                     }
                 }
             }
-    	}
-    	
-    	// If we did not hit the X, perform the regular AbstractGUI mouse click logic.
-    	super.OnMouseClick(event);
+        }
+
+        // If we did not hit the X, perform the regular AbstractGUI mouse click logic.
+        super.OnMouseClick(event);
     }
-    
+
     public void preupdate() {
     }
 

@@ -59,7 +59,7 @@ public abstract class AbstractHud extends AbstractGui {
         		if(pos.isDrawable()) {
             		float x = pos.getX().floatValue();
             		float y = pos.getY().floatValue();
-            		float width = pos.getWidth().floatValue();
+                    float width = pos.getWidth().floatValue();
             		float height = pos.getHeight().floatValue();
                     
                     RenderUtils.drawRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height, 6, dragColor);

@@ -253,8 +253,6 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
 
     /**
      * Updates the offset (y position relative to parent) of the component.
-     *
-     * @param offset Offset
      */
     public void update() {
         for (Component child : children) {
@@ -267,10 +265,8 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
     /**
      * Abstract method for drawing components onto the screen.
      *
-     * @param offset       Offset of the module.
      * @param drawContext  DrawContext of the game.
      * @param partialTicks Partial Ticks of the game.
-     * @param color        Color of the UI.
      */
     public void draw(DrawContext drawContext, float partialTicks) {
         if (this.visible) {

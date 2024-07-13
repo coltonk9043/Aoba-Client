@@ -19,17 +19,18 @@
 package net.aoba.settings;
 
 import com.mojang.logging.LogUtils;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IntegerSetting;
 import net.aoba.utils.types.Vector2;
-import net.aoba.gui.Rectangle;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.InputUtil.Key;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -120,6 +121,10 @@ public class SettingManager {
                     case ENUM -> {
                         config.setProperty(setting.ID, ((Enum<?>) setting.getValue()).name());
                     }
+                    case VEC3D -> {
+                        Vec3d vec = (Vec3d) setting.getValue();
+                        config.setProperty(setting.ID, vec.x + "," + vec.y + "," + vec.z);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -181,15 +186,15 @@ public class SettingManager {
                             break;
                         }
                         case RECTANGLE -> {
-                        	 String[] dimensions = value.split(",");
-                        	 if(dimensions.length == 4) {
-                        		 Float x = dimensions[0].equals("null") ? null : Float.parseFloat(dimensions[0]);
-                        		 Float y = dimensions[1].equals("null") ? null : Float.parseFloat(dimensions[1]);
-                        		 Float width = dimensions[2].equals("null") ? null : Float.parseFloat(dimensions[2]);
-                        		 Float height = dimensions[3].equals("null") ? null : Float.parseFloat(dimensions[3]);
-                        		 
-                        		 setting.setValue(new Rectangle(x, y, width, height));
-                        	 }
+                            String[] dimensions = value.split(",");
+                            if (dimensions.length == 4) {
+                                Float x = dimensions[0].equals("null") ? null : Float.parseFloat(dimensions[0]);
+                                Float y = dimensions[1].equals("null") ? null : Float.parseFloat(dimensions[1]);
+                                Float width = dimensions[2].equals("null") ? null : Float.parseFloat(dimensions[2]);
+                                Float height = dimensions[3].equals("null") ? null : Float.parseFloat(dimensions[3]);
+
+                                setting.setValue(new Rectangle(x, y, width, height));
+                            }
                         }
                         case COLOR -> {
                             long hexValue = Long.parseLong(value.replace("#", ""), 16);
@@ -219,6 +224,15 @@ public class SettingManager {
                             if (enumName != null) {
                                 Enum<?> enumValue = Enum.valueOf(((EnumSetting<?>) setting).getValue().getDeclaringClass(), enumName);
                                 setting.setValue(enumValue);
+                            }
+                        }
+                        case VEC3D -> {
+                            String[] components = value.split(",");
+                            if (components.length == 3) {
+                                float x = Float.parseFloat(components[0]);
+                                float y = Float.parseFloat(components[1]);
+                                float z = Float.parseFloat(components[2]);
+                                setting.setValue(new Vec3d(x, y, z));
                             }
                         }
                         default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);

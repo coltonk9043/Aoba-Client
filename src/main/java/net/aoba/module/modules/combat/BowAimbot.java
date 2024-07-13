@@ -13,6 +13,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
+import net.aoba.settings.types.Vec3dSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
@@ -49,6 +50,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
     private float neededPitch;
     private double d;
     private float neededYaw;
+
 
 
     public BowAimbot() {

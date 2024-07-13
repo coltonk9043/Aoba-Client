@@ -108,21 +108,19 @@ public class SliderComponent extends Component implements MouseClickListener, Mo
 
         if (Aoba.getInstance().hudManager.isClickGuiOpen() && this.isSliding) {
             double mouseX = event.getX();
-            
+
             float actualX = this.getActualSize().getX();
             float actualWidth = this.getActualSize().getWidth();
-            
-            // Calculate the target position based on the mouse X position
-            float targetPosition = (float) Math.min((((mouseX - (actualX)) - 1) / (actualWidth)), 1f);
+
+            float targetPosition = (float) Math.min(((mouseX - actualX) / actualWidth), 1f);
             targetPosition = Math.max(0f, targetPosition);
 
-            // Interpolate current slider position towards the target position for smoother movement
-            this.currentSliderPosition += (targetPosition - this.currentSliderPosition) * 0.1f;
+            this.currentSliderPosition = targetPosition;
 
-            // Update the slider value based on the new position
             this.slider.setValue((this.currentSliderPosition * (slider.max_value - slider.min_value)) + slider.min_value);
         }
     }
+
 
 
     @Override
@@ -132,7 +130,6 @@ public class SliderComponent extends Component implements MouseClickListener, Mo
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-        // Early exit if slider is null
         if (this.slider == null) {
             return;
         }
@@ -144,24 +141,19 @@ public class SliderComponent extends Component implements MouseClickListener, Mo
         float actualX = this.getActualSize().getX();
         float actualY = this.getActualSize().getY();
         float actualWidth = this.getActualSize().getWidth();
-        
-        // Calculate the length of the filled part of the slider
+
         float sliderProgress = (slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value);
+        sliderProgress = Math.min(Math.max(sliderProgress, 0f), 1f);
         float filledLength = actualWidth * sliderProgress;
 
-        // Draw the filled part of the slider
         RenderUtils.drawBox(matrix4f, actualX, actualY + 35, filledLength, 2, GuiManager.foregroundColor.getValue());
 
-        // Draw the unfilled part of the slider
         RenderUtils.drawBox(matrix4f, actualX + filledLength, actualY + 35, (actualWidth - filledLength), 2, new Color(255, 255, 255, 255));
 
-        // Draw the slider knob
         RenderUtils.drawCircle(matrix4f, actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
 
-        // Draw the slider text
         RenderUtils.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
 
-        // Draw the slider value
         String valueText = String.format("%.02f", this.slider.getValue());
         int textSize = mc.textRenderer.getWidth(valueText) * 2;
         RenderUtils.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
