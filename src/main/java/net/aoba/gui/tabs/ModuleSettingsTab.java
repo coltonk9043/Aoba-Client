@@ -65,8 +65,6 @@ public class ModuleSettingsTab extends AbstractTab {
                 c = new BlocksComponent(stackPanel, (BlocksSetting) setting);
             } else if (setting instanceof EnumSetting) {
                 c = new EnumComponent<>(stackPanel, (EnumSetting) setting);
-            } else if (setting instanceof Vec3dSetting) {
-                c = new Vec3dComponent(stackPanel, (Vec3dSetting) setting);
             } else {
                 c = null;
             }
