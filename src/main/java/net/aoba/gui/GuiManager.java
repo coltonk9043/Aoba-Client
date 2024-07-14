@@ -81,6 +81,7 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 	public static ColorSetting borderColor;
 	public static ColorSetting backgroundColor;
 	public static FloatSetting roundingRadius;
+	public static FloatSetting dragSmoothening;
 
 	public static RainbowColor rainbowColor = new RainbowColor();
 	public static RandomColor randomColor = new RandomColor();
@@ -101,6 +102,7 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 		backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(0, 0, 0, 50));
 		foregroundColor = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
 		roundingRadius = new FloatSetting("hud_rounding_radius", "The radius of the rounding on hud.", 6f, 0f, 10f, 1f);
+		dragSmoothening = new FloatSetting("gui_drag_smoothening", "The value for the dragging smoothening", 1f, 0.1f, 2f, 0.1f);
 		clickGuiNavBar = new NavigationBar();
 
 		SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.configContainer);

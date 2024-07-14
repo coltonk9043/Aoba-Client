@@ -77,6 +77,24 @@ public class RectangleSetting extends Setting<Rectangle> {
 	    	update();
     	}
     }
+
+    /**
+     * Getter for the Rectangle X location.
+     *
+     * @return X Coordinate.
+     */
+    public Float getX() {
+        return value.getX();
+    }
+
+    /**
+     * Getter for the Rectangle Y location.
+     *
+     * @return Y Coordinate.
+     */
+    public Float getY() {
+        return value.getY();
+    }
     
     /**
      * Setter for the Rectangle width.

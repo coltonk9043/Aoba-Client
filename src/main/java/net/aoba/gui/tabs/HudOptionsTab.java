@@ -70,6 +70,10 @@ public class HudOptionsTab extends AbstractTab {
 
         stackPanel.addChild(new SliderComponent(stackPanel, GuiManager.roundingRadius));
 
+        stackPanel.addChild(new StringComponent("GUI / HUD Responsiveness", stackPanel, GuiManager.foregroundColor.getValue(), true));
+
+        stackPanel.addChild(new SliderComponent(stackPanel, GuiManager.dragSmoothening));
+
         this.children.add(stackPanel);
         this.setWidth(300);
     }

@@ -26,11 +26,15 @@ import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.gui.tabs.components.Component;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.RectangleSetting;
+import net.aoba.utils.input.CursorStyle;
+import net.aoba.utils.input.Input;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class AbstractGui implements IGuiElement, MouseClickListener, MouseMoveListener {
@@ -98,6 +102,14 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
 
     public void setY(float y) {
         position.setY(y);
+    }
+
+    public float getX() {
+        return position.getX();
+    }
+
+    public float getY() {
+        return position.getY();
     }
 
     public void setWidth(float width) {
@@ -207,12 +219,18 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
 
 
     protected void setResizing(boolean state, double mouseX, double mouseY, Direction direction) {
-        if (state)
+        if (state) {
             GuiManager.currentGrabbed = this;
+            Input.setCursorStyle(CursorStyle.Click);
+        } else {
+            GuiManager.currentGrabbed = null;
+            Input.setCursorStyle(CursorStyle.Default);
+        }
 
         isResizing = state;
         grabDirection = direction;
     }
+
 
     @Override
     public void OnMouseMove(MouseMoveEvent event) {
@@ -226,8 +244,17 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
 
             if (GuiManager.currentGrabbed == this) {
                 if (this.isMoving) {
-                    this.setX(this.getSize().getX() + (float) mouseDeltaX);
-                    this.setY(this.getSize().getY() + (float) mouseDeltaY);
+                    float targetX = this.getSize().getX() + (float) mouseDeltaX;
+                    float targetY = this.getSize().getY() + (float) mouseDeltaY;
+
+                    float currentX = this.getX();
+                    float currentY = this.getY();
+
+                    float interpolatedX = lerp(currentX, targetX, GuiManager.dragSmoothening.getValue());
+                    float interpolatedY = lerp(currentY, targetY, GuiManager.dragSmoothening.getValue());
+
+                    this.setX(interpolatedX);
+                    this.setY(interpolatedY);
                 } else if (this.isResizing) {
                     switch (grabDirection) {
                         case Direction.Top:
@@ -293,5 +320,9 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
         } else {
             isMouseOver = false;
         }
+    }
+
+    private float lerp(float start, float end, float alpha) {
+        return start + alpha * (end - start);
     }
 }
