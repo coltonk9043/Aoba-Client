@@ -55,11 +55,11 @@ public class InfoHud extends AbstractHud {
             sm = "0" + minutes;
         }
         timeString = hours + ":" + sm.charAt(0) + sm.charAt(1) + suffix;
-        positionText = "XYZ: " + (int) mc.player.getBlockX() + ", " + (int) mc.player.getBlockY() + ", " + (int) mc.player.getBlockZ();
+        positionText = "XYZ: " + mc.player.getBlockX() + ", " + mc.player.getBlockY() + ", " + mc.player.getBlockZ();
         timeText = "Time: " + timeString;
         fpsText = "FPS: " + mc.fpsDebugString.split(" ", 2)[0] + " Day: " + (int) (mc.world.getTime() / 24000);
 
-        int newWidth = (int) (mc.textRenderer.getWidth(positionText) * 2) + 20;
+        int newWidth = (mc.textRenderer.getWidth(positionText) * 2) + 20;
         if (this.getSize().getWidth() != newWidth) {
             if (newWidth >= 190) {
                 this.setWidth(newWidth);
