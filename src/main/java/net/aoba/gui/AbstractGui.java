@@ -208,12 +208,12 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
                             && mouseY <= (pos.getY() + pos.getHeight())) {
                         GuiManager.currentGrabbed = this;
                         isMoving = true;
+                        Input.setCursorStyle(CursorStyle.Click);
                     }
                 }
             }
         } else if (event.button == MouseButton.LEFT && event.action == MouseAction.UP) {
-            isMoving = false; // Handle mouse release
-            isResizing = false;
+            Input.setCursorStyle(CursorStyle.Default);
         }
     }
 
