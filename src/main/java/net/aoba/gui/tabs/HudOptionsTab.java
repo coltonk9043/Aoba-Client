@@ -66,6 +66,10 @@ public class HudOptionsTab extends AbstractTab {
         stackPanel.addChild(new ColorPickerComponent(stackPanel, GuiManager.backgroundColor));
         stackPanel.addChild(new ColorPickerComponent(stackPanel, GuiManager.borderColor));
 
+        stackPanel.addChild(new StringComponent("Hud Styling", stackPanel, GuiManager.foregroundColor.getValue(), true));
+
+        stackPanel.addChild(new SliderComponent(stackPanel, GuiManager.roundingRadius));
+
         this.children.add(stackPanel);
         this.setWidth(300);
     }

@@ -150,9 +150,9 @@ public class ModuleSelectorHud extends AbstractHud {
              if (isCategoryMenuOpen) {
                  // Draw the table underneath
                  RenderUtils.drawRoundedBox(matrix4f, x + width, y + (height * this.index), 165,
-                         height * modules.size(), 6f, GuiManager.backgroundColor.getValue());
+                         height * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
                  RenderUtils.drawRoundedOutline(matrix4f, x + width, y + (height * this.index), 165,
-                         height * modules.size(), 6f, GuiManager.borderColor.getValue());
+                         height * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
                  // For every mod, draw a cell for it.
                  for (int i = 0; i < modules.size(); i++) {

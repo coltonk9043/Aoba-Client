@@ -80,6 +80,7 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 	public static ColorSetting foregroundColor;
 	public static ColorSetting borderColor;
 	public static ColorSetting backgroundColor;
+	public static FloatSetting roundingRadius;
 
 	public static RainbowColor rainbowColor = new RainbowColor();
 	public static RandomColor randomColor = new RandomColor();
@@ -99,12 +100,14 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 		borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
 		backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(0, 0, 0, 50));
 		foregroundColor = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
+		roundingRadius = new FloatSetting("hud_rounding_radius", "The radius of the rounding on hud.", 6f, 0f, 10f, 1f);
 		clickGuiNavBar = new NavigationBar();
 
 		SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(backgroundColor, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(foregroundColor, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(clickGuiButton, Aoba.getInstance().settingManager.modulesContainer);
+		SettingManager.registerSetting(roundingRadius, Aoba.getInstance().settingManager.configContainer);
 
 		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);

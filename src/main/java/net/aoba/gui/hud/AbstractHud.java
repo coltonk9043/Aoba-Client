@@ -62,7 +62,7 @@ public abstract class AbstractHud extends AbstractGui {
                     float width = pos.getWidth().floatValue();
             		float height = pos.getHeight().floatValue();
                     
-                    RenderUtils.drawRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height, 6, dragColor);
+                    RenderUtils.drawRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height, GuiManager.roundingRadius.getValue(), dragColor);
         		}
             }
     	}

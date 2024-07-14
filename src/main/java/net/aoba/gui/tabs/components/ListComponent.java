@@ -21,6 +21,7 @@ package net.aoba.gui.tabs.components;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
@@ -82,8 +83,8 @@ public class ListComponent extends Component implements MouseClickListener {
         
         RenderUtils.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
                 actualY + 8, 0xFFFFFF);
-        RenderUtils.drawString(drawContext, "<<", actualX + 8, actualY + 4, 0xFFFFFF);
-        RenderUtils.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4, 0xFFFFFF);
+        RenderUtils.drawString(drawContext, "<<", actualX + 8, actualY + 4, GuiManager.foregroundColor.getValue());
+        RenderUtils.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4, GuiManager.foregroundColor.getValue());
     }
 
     public void setSelectedIndex(int index) {

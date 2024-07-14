@@ -92,11 +92,11 @@ public class NavigationBar implements MouseClickListener {
         // Animate selection box movement
         currentSelectionX += (targetSelectionX - currentSelectionX) * animationSpeed * partialTicks;
 
-        RenderUtils.drawRoundedBox(matrix, centerX - (width / 2), 25, width, 25, 6, GuiManager.backgroundColor.getValue());
-        RenderUtils.drawRoundedOutline(matrix, centerX - (width / 2), 25, width, 25, 6, GuiManager.borderColor.getValue());
+        RenderUtils.drawRoundedBox(matrix, centerX - (width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
+        RenderUtils.drawRoundedOutline(matrix, centerX - (width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
         // Use currentSelectionX for animated position
-        RenderUtils.drawRoundedBox(matrix, centerX - (width / 2) + currentSelectionX, 25, 100, 25, 5, new Color(150, 150, 150, 100));
+        RenderUtils.drawRoundedBox(matrix, centerX - (width / 2) + currentSelectionX, 25, 100, 25, GuiManager.roundingRadius.getValue() - 1, new Color(150, 150, 150, 100));
 
         for (int i = 0; i < options.size(); i++) {
             Page pane = options.get(i);

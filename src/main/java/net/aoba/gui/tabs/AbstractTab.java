@@ -151,8 +151,8 @@ public class AbstractTab extends AbstractGui implements MouseClickListener, Mous
         	
         	if (drawBorder) {
                 // Draws background depending on components width and height
-                RenderUtils.drawRoundedBox(matrix4f, x, y, width, height, 6, GuiManager.backgroundColor.getValue());
-                RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height, 6, GuiManager.borderColor.getValue());
+                RenderUtils.drawRoundedBox(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
+                RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
                 if (icon != null) {
                     RenderUtils.drawTexturedQuad(matrix4f, icon, x + 8, y + 4, 22, 22, GuiManager.foregroundColor.getValue());
@@ -164,11 +164,11 @@ public class AbstractTab extends AbstractGui implements MouseClickListener, Mous
 
                 if (this.pinnable) {
                     if (this.isPinned.getValue()) {
-                        RenderUtils.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, 6f, new Color(154, 0, 0, 200));
-                        RenderUtils.drawRoundedOutline(matrix4f,x + width - 23, y + 8, 15, 15, 6f, new Color(0, 0, 0, 200));
+                        RenderUtils.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(154, 0, 0, 200));
+                        RenderUtils.drawRoundedOutline(matrix4f,x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 200));
                     } else {
-                        RenderUtils.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, 6f, new Color(128, 128, 128, 50));
-                        RenderUtils.drawRoundedOutline(matrix4f, x + width - 23, y + 8, 15, 15, 6f, new Color(0, 0, 0, 50));
+                        RenderUtils.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(128, 128, 128, 50));
+                        RenderUtils.drawRoundedOutline(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 50));
                     }
                 }
             }
