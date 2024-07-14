@@ -221,15 +221,19 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
     protected void setResizing(boolean state, double mouseX, double mouseY, Direction direction) {
         if (state) {
             GuiManager.currentGrabbed = this;
-            Input.setCursorStyle(CursorStyle.Click);
-        } else {
-            GuiManager.currentGrabbed = null;
-            Input.setCursorStyle(CursorStyle.Default);
         }
 
         isResizing = state;
+
+        if (isResizing) {
+            Input.setCursorStyle(CursorStyle.Click);
+        } else {
+            Input.setCursorStyle(CursorStyle.Default);
+        }
+
         grabDirection = direction;
     }
+
 
 
     @Override
