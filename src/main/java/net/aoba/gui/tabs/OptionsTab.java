@@ -68,8 +68,8 @@ public class OptionsTab extends AbstractGui implements MouseScrollListener {
        	 	float width = pos.getWidth().floatValue();
        	 	float height = pos.getHeight().floatValue();
        	 	
-        	RenderUtils.drawRoundedBox(matrix4f, x, y, width, height, 6, GuiManager.backgroundColor.getValue());
-            RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height, 6, GuiManager.borderColor.getValue());
+        	RenderUtils.drawRoundedBox(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
+            RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
             RenderUtils.drawLine(matrix4f, x + 480, y, x + 480, y + height, new Color(0, 0, 0, 200));
 
             ArrayList<Module> modules = Aoba.getInstance().moduleManager.modules;

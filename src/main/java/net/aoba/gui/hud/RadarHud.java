@@ -58,9 +58,9 @@ public class RadarHud extends AbstractHud {
 				float height = pos.getHeight().floatValue();
 
 				// Draws background depending on components width and height
-				RenderUtils.drawRoundedBox(matrix4f, x, y, width, height, 6,
+				RenderUtils.drawRoundedBox(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
 						GuiManager.backgroundColor.getValue());
-				RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height, 6,
+				RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
 						GuiManager.borderColor.getValue());
 
 				// Draw the 'Radar'
