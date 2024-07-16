@@ -43,6 +43,8 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.input.CursorStyle;
+import net.aoba.utils.input.Input;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.MinecraftClient;
@@ -57,17 +59,16 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 
-public class GuiManager implements MouseClickListener, KeyDownListener, TickListener, Render2DListener {
-	protected MinecraftClient mc = MinecraftClient.getInstance();
-
+public class GuiManager implements KeyDownListener, TickListener, Render2DListener {
+	private static MinecraftClient MC = MinecraftClient.getInstance();
+	private static CursorStyle currentCursor = CursorStyle.Default;
+	
 	public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key",
 			InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
 	private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
 
 	private boolean clickGuiOpen = false;
-
-	public static AbstractGui currentGrabbed = null;
-
+	
 	private HashMap<Object, AbstractHud> pinnedHuds = new HashMap<Object, AbstractHud>();
 
 	// Navigation Bar and Pages
@@ -96,8 +97,6 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 	public InfoHud infoHud;
 
 	public GuiManager() {
-		mc = MinecraftClient.getInstance();
-
 		borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
 		backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(0, 0, 0, 50));
 		foregroundColor = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
@@ -155,11 +154,18 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 		SettingManager.registerSetting(rainbow, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(ah, Aoba.getInstance().settingManager.configContainer);
 
-		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-
 		clickGuiNavBar.setSelectedIndex(0);
 	}
 
+	public static CursorStyle getCursor() {
+		return currentCursor;
+	}
+	
+	public static void setCursor(CursorStyle cursor) {
+		currentCursor = cursor;
+		Input.setCursorStyle(currentCursor);
+	}
+	
 	public void AddHud(AbstractGui hud, String pageName) {
 		for (Page page : clickGuiNavBar.getPanes()) {
 			if (page.getTitle().equals(pageName)) {
@@ -225,6 +231,7 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 
 	@Override
 	public void OnRender(Render2DEvent event) {
+		
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -234,10 +241,10 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 
-		int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
+		int guiScale = MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(), MC.forcesUnicodeFont());
 		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
 
-		Window window = mc.getWindow();
+		Window window = MC.getWindow();
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 
 		/**
@@ -264,7 +271,7 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 			Module mod = aoba.moduleManager.modules.get(i);
 			if (mod.getState()) {
 				RenderUtils.drawString(drawContext, mod.getName(),
-						(float) (window.getWidth() - ((mc.textRenderer.getWidth(mod.getName()) + 5) * 2)),
+						(float) (window.getWidth() - ((MC.textRenderer.getWidth(mod.getName()) + 5) * 2)),
 						10 + (iteration * 20), GuiManager.foregroundColor.getValue().getColorAsInt());
 				iteration++;
 			}
@@ -285,28 +292,16 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 
 	public void setClickGuiOpen(boolean state) {
 		this.clickGuiOpen = state;
-		currentGrabbed = null;
 	}
 
 	/**
 	 * Locks and unlocks the Mouse.
 	 */
 	public void toggleMouse() {
-		if (this.mc.mouse.isCursorLocked()) {
-			this.mc.mouse.unlockCursor();
+		if (MC.mouse.isCursorLocked()) {
+			MC.mouse.unlockCursor();
 		} else {
-			this.mc.mouse.lockCursor();
-		}
-	}
-
-	@Override
-	public void OnMouseClick(MouseClickEvent event) {
-		if (event.button == MouseButton.LEFT) {
-			if (event.action == MouseAction.DOWN && this.clickGuiOpen) {
-				event.cancel();
-			} else if (event.action == MouseAction.UP) {
-				currentGrabbed = null;
-			}
+			MC.mouse.lockCursor();
 		}
 	}
 }

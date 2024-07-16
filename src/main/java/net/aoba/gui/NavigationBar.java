@@ -119,12 +119,13 @@ public class NavigationBar implements MouseClickListener {
             int centerX = (window.getWidth() / 2);
             int x = centerX - (width / 2);
 
-            if (aoba.hudManager.isClickGuiOpen() && GuiManager.currentGrabbed == null) {
+            if (aoba.hudManager.isClickGuiOpen()) {
                 if (mouseX >= (x) && mouseX <= (x + width)) {
                     if (mouseY >= (25) && mouseY <= (50)) {
                         int mouseXInt = (int) mouseX;
                         int selection = (mouseXInt - x) / 100;
                         this.setSelectedIndex(selection);
+                        event.cancel();
                     }
                 }
             }

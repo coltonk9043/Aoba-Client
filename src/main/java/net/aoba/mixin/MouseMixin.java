@@ -72,7 +72,7 @@ public class MouseMixin {
 
             aoba.eventManager.Fire(event);
 
-            if (event.isCancelled()) {
+            if (aoba.hudManager.isClickGuiOpen() || event.isCancelled()) {
                 ci.cancel();
             }
         }

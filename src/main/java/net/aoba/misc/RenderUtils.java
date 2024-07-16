@@ -516,8 +516,7 @@ public class RenderUtils {
         MatrixStack.Entry entry = matrixStack.peek();
         Matrix4f matrix4f = entry.getPositionMatrix();
 
-        Vec3d normal = getNormal(x1, y1, z1, x2, y2, z1);
-
+        Vec3d normalized = new Vec3d(x2 - x1, y2 - y1, z2 - z1).normalize();
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
 
@@ -529,8 +528,8 @@ public class RenderUtils {
         float g = color.getGreenFloat();
         float b = color.getBlueFloat();
 
-        bufferBuilder.vertex(matrix4f, x1, y1, z1).color(r, g, b, 1.0f).normal(entry, (float) normal.x, (float) normal.y, (float) normal.z);
-        bufferBuilder.vertex(matrix4f, x2, y2, z2).color(r, g, b, 1.0f).normal(entry, (float) normal.x, (float) normal.y, (float) normal.z);
+        bufferBuilder.vertex(matrix4f, x1, y1, z1).color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
+        bufferBuilder.vertex(matrix4f, x2, y2, z2).color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
 
         BufferRenderer.draw(bufferBuilder.end());
 
@@ -548,27 +547,14 @@ public class RenderUtils {
         MatrixStack.Entry entry = matrixStack.peek();
         Matrix4f matrix4f = entry.getPositionMatrix();
 
-        Vec3d normal = getNormal(x1, y1, z1, x2, y2, z1);
+        Vec3d normalized = new Vec3d(x2 - x1, y2 - y1, z2 - z1).normalize();
 
         float r = color.getRedFloat();
         float g = color.getGreenFloat();
         float b = color.getBlueFloat();
 
-        bufferBuilder.vertex(matrix4f, x1, y1, z1).color(r, g, b, 1.0f).normal(entry, (float) normal.x, (float) normal.y, (float) normal.z);
-        bufferBuilder.vertex(matrix4f, x2, y2, z2).color(r, g, b, 1.0f).normal(entry, (float) normal.x, (float) normal.y, (float) normal.z);
-    }
-
-    public static Vec3d getNormal(Vec3d line1, Vec3d line2) {
-        return getNormal((float) line1.x, (float) line1.y, (float) line1.z, (float) line2.x, (float) line2.y, (float) line2.z);
-    }
-
-    public static Vec3d getNormal(float x1, float y1, float z1, float x2, float y2, float z2) {
-        float deltaX = x2 - x1;
-        float deltaY = y2 - y1;
-        float deltaZ = z2 - z1;
-        float normalSqrt = MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-        return new Vec3d(deltaX / normalSqrt, deltaY / normalSqrt, deltaZ / normalSqrt).normalize();
+        bufferBuilder.vertex(matrix4f, x1, y1, z1).color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
+        bufferBuilder.vertex(matrix4f, x2, y2, z2).color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
     }
 
     public static void drawString(DrawContext drawContext, String text, float x, float y, Color color) {

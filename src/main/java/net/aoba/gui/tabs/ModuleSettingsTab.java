@@ -99,8 +99,8 @@ public class ModuleSettingsTab extends AbstractTab {
             if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
                 if (mouseX >= (pos.getX() + pos.getWidth() - 24) && mouseX <= (pos.getX() + pos.getWidth() - 2)) {
                     if (mouseY >= (pos.getY() + 4) && mouseY <= (pos.getY() + 20)) {
-                        GuiManager.currentGrabbed = null;
                         Aoba.getInstance().hudManager.RemoveHud(this, "Modules");
+                        event.cancel();
                         return;
                     }
                 }

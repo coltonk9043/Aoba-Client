@@ -36,6 +36,7 @@ import net.aoba.gui.tabs.components.Component;
 import net.aoba.misc.RenderUtils;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
@@ -110,10 +111,6 @@ public class AbstractTab extends AbstractGui implements MouseClickListener, Mous
         this.title = title;
     }
 
-    public final boolean isGrabbed() {
-        return (GuiManager.currentGrabbed == this);
-    }
-
     public final void addChild(Component component) {
         this.children.add(component);
     }
@@ -181,8 +178,9 @@ public class AbstractTab extends AbstractGui implements MouseClickListener, Mous
     @Override
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            double mouseX = mc.mouse.getX();
-            double mouseY = mc.mouse.getY();
+            float mouseX = (float)event.mouseX;
+            float mouseY = (float)event.mouseY;
+            
             Rectangle pos = position.getValue();
 
             if(pos.isDrawable()) {
@@ -192,41 +190,59 @@ public class AbstractTab extends AbstractGui implements MouseClickListener, Mous
            	 	float width = pos.getWidth().floatValue();
            	 	
             	if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-                    // Allow the user to move the clickgui if it within the header bar and NOT pinned.
-                    if (!isPinned.getValue()) {
-                        if (mouseX >= x && mouseX <= x + width) {
-                            if (mouseY >= y && mouseY <= y + 24) {
-                                GuiManager.currentGrabbed = this;
-                                isMoving = true;
-                            }
-                        }
-                    }
+            		
+            		if (resizeable) {
+    					Rectangle topHitbox = new Rectangle(pos.getX(), pos.getY() - 8, pos.getWidth(), 8.0f);
+    					Rectangle leftHitbox = new Rectangle(pos.getX() - 8, pos.getY(), 8.0f, pos.getHeight());
+    					Rectangle rightHitbox = new Rectangle(pos.getX() + pos.getWidth(), pos.getY(), 8.0f,
+    							pos.getHeight());
+    					Rectangle bottomHitbox = new Rectangle(pos.getX(), pos.getY() + pos.getHeight(), pos.getWidth(),
+    							8.0f);
 
-                    // If the GUI is pinnable, allow the user to click the pin button to pin a gui
-                    if (pinnable) {
-                        if (mouseX >= (x + width - 24) && mouseX <= (x + width - 2)) {
-                            if (mouseY >= (y + 4) && mouseY <= (y + 20)) {
-                                GuiManager.currentGrabbed = null;
-                                isPinned.silentSetValue(!isPinned.getValue());
-                            }
-                        }
-                    }
-                    
-                    if(resizeable) {
-                    	if(mouseX <= pos.getX() && mouseX >= pos.getX() - 8 && mouseY >= pos.getY() && mouseY <= (pos.getY() + pos.getHeight())) 
-    						setResizing(true, mouseX, mouseY, Direction.Left);
-    					else if(mouseX >= pos.getX() + pos.getWidth() && mouseX <= pos.getX() + pos.getWidth() + 8 && mouseY >= pos.getY() && mouseY <= (pos.getY() + pos.getHeight()))
-    						setResizing(true, mouseX, mouseY, Direction.Right);
-    					else if(mouseY <= pos.getY() && mouseY >= pos.getY() - 8 && mouseX >= pos.getX() && mouseX <= (pos.getX() + pos.getWidth()))
-    						setResizing(true, mouseX, mouseY, Direction.Top);
-    					else if(mouseY >= pos.getY() + pos.getHeight() && mouseY <= pos.getY() + pos.getHeight() + 8 && mouseX >= pos.getX() && mouseX <= (pos.getX() + pos.getWidth()))
-    						setResizing(true, mouseX, mouseY, Direction.Bottom);
+    					if (leftHitbox.intersects(mouseX, mouseY))
+    						setResizing(true, event, Direction.Left);
+    					else if (rightHitbox.intersects(mouseX, mouseY))
+    						setResizing(true, event, Direction.Right);
+    					else if (topHitbox.intersects(mouseX, mouseY))
+    						setResizing(true, event, Direction.Top);
+    					else if (bottomHitbox.intersects(mouseX, mouseY))
+    						setResizing(true, event, Direction.Bottom);
     					else
-    						setResizing(false, mouseX, mouseY, Direction.None);
+    						setResizing(false, event, Direction.None);
+    				}
+
+    				if (!isResizing) {
+    					boolean allowMove = true;
+    					// If the GUI is pinnable, allow the user to click the pin button to pin a gui
+                        if (pinnable) {
+                        	Rectangle rect = new Rectangle(x + width - 24, (y + 4), 18.0f, 18.0f);
+                        	if(rect.intersects(mouseX, mouseY)) {
+                        		isPinned.silentSetValue(!isPinned.getValue());
+                                isMoving = false;
+                                isResizing = false;
+                                allowMove = false;
+                                event.cancel();
+                        	}
+                        }
+                        
+    					 // Allow the user to move the clickgui if it within the header bar and NOT pinned.
+                        if (allowMove && !isPinned.getValue()) {
+                        	Rectangle rect = new Rectangle(x, y, width, 24.0f);
+                        	if(rect.intersects(mouseX, mouseY)) {
+                        		 isMoving = true;
+                                 isResizing = false;
+                                 GuiManager.setCursor(CursorStyle.Click);
+                                 event.cancel();
+                        	}
+                        }
     				}
                 }
             }
-        }
+        }else if (event.button == MouseButton.LEFT && event.action == MouseAction.UP) {
+			isMoving = false;
+			isResizing = false;
+			GuiManager.setCursor(CursorStyle.Default);
+		}
     }
 
 	@Override

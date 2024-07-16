@@ -29,6 +29,9 @@ public class MouseClickEvent extends AbstractEvent {
         for (AbstractListener listener : List.copyOf(listeners)) {
             MouseClickListener mouseClickListener = (MouseClickListener) listener;
             mouseClickListener.OnMouseClick(this);
+            
+            if(this.isCancelled)
+            	break;
         }
     }
 

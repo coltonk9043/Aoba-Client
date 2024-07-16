@@ -177,7 +177,9 @@ public class GoToTab extends AbstractTab implements TickListener, Render3DListen
 	@Override
 	public void OnUpdate(TickEvent event) {
 		MinecraftClient MC = MinecraftClient.getInstance();
-
+		if(nodes == null)
+			return;
+		
 		if(currentNodeIndex < nodes.size() - 1) {
 			// Check next position
 			PathNode next = nodes.get(currentNodeIndex + 1);
