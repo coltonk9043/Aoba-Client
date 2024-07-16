@@ -43,6 +43,7 @@ public class NoFall extends Module implements TickListener {
 		this.setDescription("Prevents fall damage.");
 
 		fallDistance = new FloatSetting("nofall_falldistance", "Fall Distance", "No-Fall Distance", 2f, 1f, 20f, 1f);
+		this.addSetting(fallDistance);
 	}
 
 	@Override
