@@ -36,6 +36,9 @@ import org.lwjgl.glfw.GLFW;
 public class Fly extends Module implements TickListener {
 
     private FloatSetting flySpeed;
+    private FloatSetting sprintSpeedMultiplier;
+    private FloatSetting jumpMotionY;
+    private FloatSetting sneakMotionY;
 
     public Fly() {
         super(new KeybindSetting("key.fly", "Fly Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0)));
@@ -45,7 +48,14 @@ public class Fly extends Module implements TickListener {
         this.setDescription("Allows the player to fly.");
 
         flySpeed = new FloatSetting("fly_speed", "Speed", "Fly speed.", 2f, 0.1f, 15f, 0.5f);
+        sprintSpeedMultiplier = new FloatSetting("sprint_speed_multiplier", "Sprint Speed Multiplier", "Speed multiplier when sprinting.", 1.5f, 1.0f, 3.0f, 0.1f);
+        jumpMotionY = new FloatSetting("jump_motion_y", "Jump Motion Y", "Upward motion when jump key is pressed.", 0.3f, 0.1f, 2.0f, 0.1f);
+        sneakMotionY = new FloatSetting("sneak_motion_y", "Sneak Motion Y", "Downward motion when sneak key is pressed.", -0.3f, -2.0f, 0.0f, 0.1f);
+
         this.addSetting(flySpeed);
+        this.addSetting(sprintSpeedMultiplier);
+        this.addSetting(jumpMotionY);
+        this.addSetting(sneakMotionY);
     }
 
     public void setSpeed(float speed) {
@@ -79,23 +89,23 @@ public class Fly extends Module implements TickListener {
         if (MC.player.isRiding()) {
             Entity riding = MC.player.getRootVehicle();
             Vec3d velocity = riding.getVelocity();
-            double motionY = MC.options.jumpKey.isPressed() ? 0.3 : 0;
+            double motionY = MC.options.jumpKey.isPressed() ? jumpMotionY.getValue() : 0;
             riding.setVelocity(velocity.x, motionY, velocity.z);
         } else {
+            float sprintMultiplier = this.sprintSpeedMultiplier.getValue().floatValue();
             if (MC.options.sprintKey.isPressed()) {
-                speed *= 1.5;
+                speed *= sprintMultiplier;
             }
             player.getAbilities().flying = false;
             player.setVelocity(new Vec3d(0, 0, 0));
 
             Vec3d vec = new Vec3d(0, 0, 0);
 
-
             if (MC.options.jumpKey.isPressed()) {
                 vec = new Vec3d(0, speed, 0);
             }
             if (MC.options.sneakKey.isPressed()) {
-                vec = new Vec3d(0, -speed, 0);
+                vec = new Vec3d(0, sneakMotionY.getValue(), 0);
             }
             player.setVelocity(vec);
         }

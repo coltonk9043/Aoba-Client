@@ -14,6 +14,8 @@ import org.lwjgl.glfw.GLFW;
 public class FastLadder extends Module implements TickListener {
 
     private final FloatSetting ladderSpeed;
+    private final FloatSetting accelerationBoost;
+    private final FloatSetting decelerationPenalty;
 
     public FastLadder() {
         super(new KeybindSetting("key.fastladder", "FastLadder Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
@@ -23,7 +25,12 @@ public class FastLadder extends Module implements TickListener {
         this.setDescription("Allows players to climb up Ladders faster");
 
         ladderSpeed = new FloatSetting("fastladder_speed", "Speed", "Speed for FastLadder Module", 0.2f, 0.1f, 0.5f, 0.1f);
+        accelerationBoost = new FloatSetting("acceleration_boost", "Acceleration Boost", "Extra speed applied when moving upwards on ladders.", 0.08f, 0.01f, 0.2f, 0.01f);
+        decelerationPenalty = new FloatSetting("deceleration_penalty", "Deceleration Penalty", "Speed reduction when moving sideways or not moving on ladders.", 0.08f, 0.01f, 0.2f, 0.01f);
+
         this.addSetting(ladderSpeed);
+        this.addSetting(accelerationBoost);
+        this.addSetting(decelerationPenalty);
     }
 
     @Override
@@ -48,11 +55,16 @@ public class FastLadder extends Module implements TickListener {
         if (!player.isClimbing() || !player.horizontalCollision)
             return;
 
-        if (player.input.movementForward == 0
-                && player.input.movementSideways == 0)
+        if (player.input.movementForward == 0 && player.input.movementSideways == 0)
             return;
 
         Vec3d velocity = player.getVelocity();
-        player.setVelocity(velocity.x, ladderSpeed.getValue() + 0.08, velocity.z);
+        double yVelocity = ladderSpeed.getValue() + accelerationBoost.getValue();
+
+        if (player.input.movementForward == 0 && player.input.movementSideways != 0) {
+            yVelocity -= decelerationPenalty.getValue();
+        }
+
+        player.setVelocity(velocity.x, yVelocity, velocity.z);
     }
 }
