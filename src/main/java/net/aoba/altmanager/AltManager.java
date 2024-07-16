@@ -21,6 +21,7 @@
  */
 package net.aoba.altmanager;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.mojang.logging.LogUtils;
 import net.aoba.AobaClient;
@@ -40,6 +41,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -85,25 +87,21 @@ public class AltManager {
     public void readAlts() {
         try {
             // Finds the file and opens it.
-            File altFile = new File(mc.runDirectory, "aoba_alts.txt");
+            File altFile = new File(mc.runDirectory, "aoba_alts.json");
             if (!altFile.exists()) {
                 LogUtils.getLogger().error("Alts file not found! Cannot load alts.");
                 return;
             }
 
-            List<String> list = IOUtils.readLines(new FileInputStream(altFile), StandardCharsets.UTF_8);
+            // Read the JSON from the file
+            FileReader reader = new FileReader(altFile);
+            Gson gson = new Gson();
+            Type altListType = new TypeToken<List<Alt>>(){}.getType();
+            List<Alt> altList = gson.fromJson(reader, altListType);
+            reader.close();
 
-            // For every line in the file, decrypt and read the account information.
-            for (String s : list) {
-                String str = decrypt(s);
-                String[] alt = str.split(":");
-                try {
-                    Alt newAlt = new Alt(alt[0], alt[1], alt[2], Boolean.parseBoolean(alt[3]));
-                    alts.add(newAlt);
-                } catch (Exception e) {
-                    LogUtils.getLogger().error("Skipping bad option: " + alt[0]);
-                }
-            }
+            // Add the alts to the current alt list
+            alts.addAll(altList);
         } catch (IOException exception) {
             exception.printStackTrace();
         }
@@ -113,24 +111,23 @@ public class AltManager {
      * Saves the Alts to a file.
      */
     public void saveAlts() {
-        PrintWriter printwriter = null;
         try {
             // Finds the file and opens it.
-            File altFile = new File(mc.runDirectory, "aoba_alts.txt");
+            File altFile = new File(mc.runDirectory, "aoba_alts.json");
             LogUtils.getLogger().info("[Aoba] Saving Alts");
-            printwriter = new PrintWriter(
-                    new OutputStreamWriter(new FileOutputStream(altFile), StandardCharsets.UTF_8));
 
-            // For every Alt in the current Alt list, print it to the file and encrypt it.
-            for (Alt alt : alts) {
-                String str = alt.getEmail() + ":" + alt.getPassword() + ":" + alt.getUsername() + ":"
-                        + alt.isMicrosoft();
-                printwriter.println(encrypt(str));
-            }
-        } catch (Exception exception) {
+            // Convert the alt list to JSON
+            Gson gson = new Gson();
+            String json = gson.toJson(alts);
+
+            // Write the JSON to the file
+            FileWriter writer = new FileWriter(altFile);
+            writer.write(json);
+            writer.close();
+        } catch (IOException exception) {
             LogUtils.getLogger().error("[Aoba] Failed to save alts");
+            exception.printStackTrace();
         }
-        printwriter.close();
     }
 
     /**
