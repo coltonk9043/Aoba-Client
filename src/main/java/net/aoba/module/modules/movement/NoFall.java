@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.movement;
 
+import net.aoba.settings.types.FloatSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
@@ -32,12 +33,16 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly;
 
 public class NoFall extends Module implements TickListener {
 
+	private FloatSetting fallDistance;
+
 	public NoFall() {
 		super(new KeybindSetting("key.nofall", "NoFall Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		
 		this.setName("No-Fall");
 		this.setCategory(Category.Movement);
 		this.setDescription("Prevents fall damage.");
+
+		fallDistance = new FloatSetting("nofall_falldistance", "Fall Distance", "No-Fall Distance", 2f, 1f, 20f, 1f);
 	}
 
 	@Override
@@ -57,7 +62,7 @@ public class NoFall extends Module implements TickListener {
 
 	@Override
 	public void OnUpdate(TickEvent event) {
-		if(MC.player.fallDistance > 2f) {
+		if(MC.player.fallDistance > fallDistance.getValue()) {
 			MC.player.networkHandler.sendPacket(new OnGroundOnly(true));
 		}
 	}

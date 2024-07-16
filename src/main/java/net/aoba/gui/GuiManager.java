@@ -124,6 +124,7 @@ public class GuiManager implements MouseClickListener, KeyDownListener, TickList
 		radarHud = new RadarHud(590, 500, 180, 180);
 		infoHud = new InfoHud(100, 500);
 
+
 		hudPane.AddHud(new HudOptionsTab());
 		hudPane.AddHud(new ToggleHudsTab(new AbstractHud[] { moduleSelector, armorHud, radarHud, infoHud }));
 		int xOffset = 50;
