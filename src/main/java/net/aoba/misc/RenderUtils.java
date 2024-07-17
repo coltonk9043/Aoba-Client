@@ -416,20 +416,10 @@ public class RenderUtils {
     	MatrixStack matrixStack = drawContext.getMatrices();
     	matrixStack.push();
     	matrixStack.translate(x + 8, y + 8, 150);
-    	
-    	try {
-            matrixStack.scale(16.0f, -16.0f, 16.0f);
-            DiffuseLighting.disableGuiDepthLighting();
-            MC.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI, false, matrixStack, drawContext.getVertexConsumers(), 0xFFFFFF, OverlayTexture.DEFAULT_UV, bakedModel);
-            DiffuseLighting.enableGuiDepthLighting();
-        } catch (Throwable throwable) {
-            CrashReport crashReport = CrashReport.create(throwable, "Rendering item");
-            CrashReportSection crashReportSection = crashReport.addElement("Item being rendered");
-            crashReportSection.add("Item Type", () -> String.valueOf(stack.getItem()));
-            crashReportSection.add("Item Components", () -> String.valueOf(stack.getComponents()));
-            crashReportSection.add("Item Foil", () -> String.valueOf(stack.hasGlint()));
-            throw new CrashException(crashReport);
-        }
+        matrixStack.scale(16.0f, -16.0f, 16.0f);
+        DiffuseLighting.disableGuiDepthLighting();
+        MC.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI, false, matrixStack, drawContext.getVertexConsumers(), 0xFFFFFF, OverlayTexture.DEFAULT_UV, bakedModel);
+        DiffuseLighting.enableGuiDepthLighting();
     	matrixStack.pop();
     }
 
