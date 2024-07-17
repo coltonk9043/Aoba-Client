@@ -23,8 +23,9 @@
 package net.aoba.gui.hud;
 
 import net.aoba.gui.Rectangle;
-import net.aoba.utils.types.Vector2;
+import net.aoba.misc.RenderUtils;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.collection.DefaultedList;
@@ -32,7 +33,7 @@ import net.minecraft.util.collection.DefaultedList;
 public class ArmorHud extends AbstractHud {
 
     public ArmorHud(int x, int y, int width, int height) {
-        super("ArmorHud", x, y, 60, 256);
+        super("ArmorHud", x, y, 16, 256);
     }
 
     @Override
@@ -49,20 +50,22 @@ public class ArmorHud extends AbstractHud {
             if(pos.isDrawable()) {
                 DefaultedList<ItemStack> armors = mc.player.getInventory().armor;
 
-            	int x1 = pos.getX().intValue();
-                int x2 = pos.getX().intValue() + pos.getWidth().intValue();
-                int y2 = pos.getY().intValue() + pos.getHeight().intValue();
-                
-                int yOff = 16;
+                float scale = this.getActualSize().getHeight() / 64.0f;
+
+            	float x1 = pos.getX() / scale;
+                float y2 = (pos.getY() + pos.getHeight()) / scale;
+                float yOff = 0;
+                MatrixStack matrixStack = drawContext.getMatrices();
+                matrixStack.push();
+                matrixStack.scale(scale, scale, scale);
+               
                 for (ItemStack armor : armors) {
                     if (armor.getItem() != Items.AIR) {
-                        drawContext.drawItem(armor, x1, y2 - yOff);
-                    } else {
-                        int placeholderColor = 0x40404040;
-                        drawContext.fill(x1, y2 - yOff, x2, y2 - yOff + 16, placeholderColor);
+                    	RenderUtils.drawItem(drawContext, armor, x1, y2 - yOff - 16);
                     }
-                    yOff += 16;
+                    yOff += (16.0f);
                 }
+                matrixStack.pop();
             }
         }
     }

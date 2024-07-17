@@ -26,11 +26,18 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.crash.CrashException;
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -401,29 +408,31 @@ public class RenderUtils {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    public static void fill(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
-        float red = color.getRedFloat();
-        float green = color.getGreenFloat();
-        float blue = color.getBlueFloat();
-        float alpha = color.getAlphaFloat();
-
-        RenderSystem.setShaderColor(red, green, blue, alpha);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        Tessellator tessellator = RenderSystem.renderThreadTesselator();
-        RenderSystem.setShader(GameRenderer::getPositionProgram); // Ensure the correct shader is set
-
-        BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
-        bufferBuilder.vertex(matrix4f, x, y, 0).color(red, green, blue, alpha);
-        bufferBuilder.vertex(matrix4f, x + width, y, 0).color(red, green, blue, alpha);
-        bufferBuilder.vertex(matrix4f, x + width, y + height, 0).color(red, green, blue, alpha);
-        bufferBuilder.vertex(matrix4f, x, y + height, 0).color(red, green, blue, alpha);
-        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+    
+    public static void drawItem(DrawContext drawContext, ItemStack stack, float x, float y) {
+    	MinecraftClient MC = MinecraftClient.getInstance();
+    	BakedModel bakedModel = MC.getItemRenderer().getModel(stack, null, null, 0);
+    	
+    	MatrixStack matrixStack = drawContext.getMatrices();
+    	matrixStack.push();
+    	matrixStack.translate(x + 8, y + 8, 150);
+    	
+    	try {
+            matrixStack.scale(16.0f, -16.0f, 16.0f);
+            DiffuseLighting.disableGuiDepthLighting();
+            MC.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI, false, matrixStack, drawContext.getVertexConsumers(), 0xFFFFFF, OverlayTexture.DEFAULT_UV, bakedModel);
+            DiffuseLighting.enableGuiDepthLighting();
+        } catch (Throwable throwable) {
+            CrashReport crashReport = CrashReport.create(throwable, "Rendering item");
+            CrashReportSection crashReportSection = crashReport.addElement("Item being rendered");
+            crashReportSection.add("Item Type", () -> String.valueOf(stack.getItem()));
+            crashReportSection.add("Item Components", () -> String.valueOf(stack.getComponents()));
+            crashReportSection.add("Item Foil", () -> String.valueOf(stack.hasGlint()));
+            throw new CrashException(crashReport);
+        }
+    	matrixStack.pop();
     }
+
 
     public static void draw3DBox(MatrixStack matrixStack, Box box, Color color, float lineThickness) {
         RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
@@ -637,7 +646,7 @@ public class RenderUtils {
             bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0);
         }
     }
-
+    
     /**
      * Gets the interpolated position of the entity given a tick delta.
      *
