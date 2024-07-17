@@ -38,112 +38,116 @@ import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 public class TextBoxComponent extends Component implements MouseClickListener, KeyDownListener {
-    private boolean listeningForKey;
-    private StringSetting string;
-    private boolean isFocused = false;
-    private float focusAnimationProgress = 0.0f;
-    private Color focusBorderColor = new Color(255, 255, 255);
-    private Color errorBorderColor = new Color(255, 0, 0);
-    private boolean isErrorState = false;
+	private boolean listeningForKey;
+	private StringSetting string;
+	private boolean isFocused = false;
+	private float focusAnimationProgress = 0.0f;
+	private Color focusBorderColor = new Color(255, 255, 255);
+	private Color errorBorderColor = new Color(255, 0, 0);
+	private boolean isErrorState = false;
 
-    public TextBoxComponent(IGuiElement parent, StringSetting stringSetting) {
-        super(parent, new Rectangle(null, null, null, 30f));
-        this.string = stringSetting;
-        
-        this.setMargin(new Margin(8f, 2f, 8f, 2f));
-        
-        Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
-    }
+	public TextBoxComponent(IGuiElement parent, StringSetting stringSetting) {
+		super(parent, new Rectangle(null, null, null, 30f));
+		this.string = stringSetting;
 
-    @Override
-    public void onVisibilityChanged() {
-        if (this.isVisible()) {
-            Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-        } else {
-            Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
-        }
-    }
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 
-    @Override
-    public void update() {
-        super.update();
-    }
-
-    @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
-        super.draw(drawContext, partialTicks);
-        MatrixStack matrixStack = drawContext.getMatrices();
-        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
-        float actualX = this.getActualSize().getX();
-        float actualY = this.getActualSize().getY();
-        float actualWidth = this.getActualSize().getWidth();
-        float actualHeight = this.getActualSize().getHeight();
-        
-        if (isFocused) {
-            focusAnimationProgress = Math.min(1.0f, focusAnimationProgress + partialTicks * 0.1f);
-        } else {
-            focusAnimationProgress = Math.max(0.0f, focusAnimationProgress - partialTicks * 0.1f);
-        }
-
-        Color borderColor = isErrorState ? errorBorderColor : new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
-
-        RenderUtils.drawString(drawContext, string.displayName, actualX, actualY + 8, 0xFFFFFF);
-        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, new Color(115, 115, 115, 200));
-        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
-
-        String keyBindText = this.string.getValue();
-        if (!keyBindText.isEmpty()) {
-            int visibleStringLength = 120 / 10;
-            String visibleString = keyBindText.substring(Math.max(0, keyBindText.length() - visibleStringLength - 1), keyBindText.length());
-            RenderUtils.drawString(drawContext, visibleString, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
-        }
-    }
-
-    @Override
-    public void OnMouseClick(MouseClickEvent event) {
-        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (Aoba.getInstance().hudManager.isClickGuiOpen()) {
-                if (hovered) {
-                    listeningForKey = true;
-                } else {
-                    listeningForKey = false;
-                }
-            }
-        }
-
-        isFocused = listeningForKey;
-    }
-
-    @Override
-    public void OnKeyDown(KeyDownEvent event) {
-        if (listeningForKey) {
-            int key = event.GetKey();
-
-            if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_ESCAPE) {
-                listeningForKey = false;
-            } else if (key == GLFW.GLFW_KEY_BACKSPACE) {
-                String currentVal = string.getValue();
-                if (currentVal.length() > 0)
-                    string.setValue(currentVal.substring(0, currentVal.length() - 1));
-            } else {
-                String currentVal = string.getValue();
-                currentVal += "" + (char) key;
-                string.setValue(currentVal);
-            }
-
-            event.cancel();
-        }
-    }
-
-    public void setErrorState(boolean isError) {
-        this.isErrorState = isError;
-    }
+		Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+	}
 
 	@Override
-	public void onChildChanged(IGuiElement child) {}
+	public void onVisibilityChanged() {
+		if (this.isVisible()) {
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+		} else {
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+		}
+	}
 
 	@Override
-	public void onChildAdded(IGuiElement child) {}
+	public void update() {
+		super.update();
+	}
+
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks) {
+		super.draw(drawContext, partialTicks);
+		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+
+		float actualX = this.getActualSize().getX();
+		float actualY = this.getActualSize().getY();
+		float actualWidth = this.getActualSize().getWidth();
+		float actualHeight = this.getActualSize().getHeight();
+
+		if (isFocused) {
+			focusAnimationProgress = Math.min(1.0f, focusAnimationProgress + partialTicks * 0.1f);
+		} else {
+			focusAnimationProgress = Math.max(0.0f, focusAnimationProgress - partialTicks * 0.1f);
+		}
+
+		Color borderColor = isErrorState ? errorBorderColor
+				: new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
+
+		RenderUtils.drawString(drawContext, string.displayName, actualX, actualY + 8, 0xFFFFFF);
+		RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight,
+				new Color(115, 115, 115, 200));
+		RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
+
+		String keyBindText = this.string.getValue();
+		if (!keyBindText.isEmpty()) {
+			int visibleStringLength = 120 / 10;
+			String visibleString = keyBindText.substring(Math.max(0, keyBindText.length() - visibleStringLength - 1),
+					keyBindText.length());
+			RenderUtils.drawString(drawContext, visibleString, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
+		}
+	}
+
+	@Override
+	public void OnMouseClick(MouseClickEvent event) {
+		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			if (hovered) {
+				listeningForKey = true;
+				event.cancel();
+			} else {
+				listeningForKey = false;
+			}
+		}
+
+		isFocused = listeningForKey;
+	}
+
+	@Override
+	public void OnKeyDown(KeyDownEvent event) {
+		if (listeningForKey) {
+			int key = event.GetKey();
+
+			if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_ESCAPE) {
+				listeningForKey = false;
+			} else if (key == GLFW.GLFW_KEY_BACKSPACE) {
+				String currentVal = string.getValue();
+				if (currentVal.length() > 0)
+					string.setValue(currentVal.substring(0, currentVal.length() - 1));
+			} else {
+				String currentVal = string.getValue();
+				currentVal += "" + (char) key;
+				string.setValue(currentVal);
+			}
+
+			event.cancel();
+		}
+	}
+
+	public void setErrorState(boolean isError) {
+		this.isErrorState = isError;
+	}
+
+	@Override
+	public void onChildChanged(IGuiElement child) {
+	}
+
+	@Override
+	public void onChildAdded(IGuiElement child) {
+	}
 }

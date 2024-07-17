@@ -135,8 +135,10 @@ public class ButtonComponent extends Component implements MouseClickListener {
     @Override
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (this.hovered && onClick != null) {
-                this.onClick.run();
+            if (this.hovered) {
+            	if( onClick != null)
+                	onClick.run();
+                event.cancel();
             }
         }
     }

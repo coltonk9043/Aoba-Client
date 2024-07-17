@@ -107,12 +107,12 @@ public class CheckboxComponent extends Component implements MouseClickListener {
     @Override
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+            if (hovered) {
                 checkbox.toggle();
                 animationProgress = 1.0f; // Reset animation progress on click
-                if (onClick != null) {
+                if (onClick != null) 
                     onClick.run();
-                }
+                event.cancel();
             }
         }
     }

@@ -123,17 +123,6 @@ public class AbstractTab extends AbstractGui implements MouseClickListener, Mous
     }
 
     @Override
-    public void onChildChanged(IGuiElement updatedChild) {
-    	if (this.inheritHeightFromChildren) {
-            float tempHeight = 0;
-            for (Component child : children) {
-                tempHeight += (child.getSize().getHeight());
-            }
-            this.setHeight(tempHeight);
-        }
-    }
-
-    @Override
     public void draw(DrawContext drawContext, float partialTicks) {
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();

@@ -95,8 +95,9 @@ public class KeybindComponent extends Component implements MouseClickListener, K
     @Override
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+            if (hovered) {
                 listeningForKey = !listeningForKey;
+                event.cancel();
             }
         }
     }

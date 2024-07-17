@@ -95,19 +95,19 @@ public class ListComponent extends Component implements MouseClickListener {
     @Override
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            double mouseX = event.mouseX;
-
-            // Mouse is on the left
             if (this.hovered) {
+                float mouseX = (float)event.mouseX;
                 float actualX = this.getActualSize().getX();
                 float actualWidth = this.getActualSize().getWidth();
                 
                 if (mouseX > actualX && mouseX < (actualX + 32)) {
                     setSelectedIndex(Math.max(--selectedIndex, 0));
                     // Mouse is on the right
-                } else if (mouseX > (actualX + actualWidth - 32) && mouseX < (actualX + actualWidth)) {
+                    
+                } else if (mouseX > (actualX + actualWidth - 32) && mouseX < (actualX + actualWidth))
                     setSelectedIndex(Math.min(++selectedIndex, options.size() - 1));
-                }
+                
+                event.cancel();
             }
         }
     }

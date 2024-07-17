@@ -117,11 +117,11 @@ public class ModuleComponent extends Component implements MouseClickListener {
     @Override
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            double mouseX = event.mouseX;
             if (hovered) {
-            	float actualX = this.getActualSize().getX();
-                float actualY = this.getActualSize().getY();
-                float actualWidth = this.getActualSize().getWidth();
+            	float mouseX = (float)event.mouseX;
+            	float actualX = actualSize.getX();
+                float actualY = actualSize.getY();
+                float actualWidth = actualSize.getWidth();
                 
                 boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
                 if (isOnOptionsButton) {
@@ -136,8 +136,9 @@ public class ModuleComponent extends Component implements MouseClickListener {
                     }
                 } else {
                     module.toggle();
-                    return;
                 }
+                
+                event.cancel();
             }
         }
     }

@@ -94,7 +94,8 @@ public class SliderComponent extends Component implements MouseClickListener, Mo
         if (event.button == MouseButton.LEFT) {
             if (event.action == MouseAction.DOWN) {
                 if (hovered) {
-                    isSliding = true;
+                	 isSliding = true;
+                	event.cancel();
                 }
             } else if (event.action == MouseAction.UP) {
                 isSliding = false;

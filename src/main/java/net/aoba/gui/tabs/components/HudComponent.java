@@ -81,7 +81,7 @@ public class HudComponent extends Component implements MouseClickListener {
     @Override
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (this.hovered && Aoba.getInstance().hudManager.isClickGuiOpen()) {
+            if (this.hovered) {
                 boolean visibility = hud.activated.getValue();
                 Aoba.getInstance().hudManager.SetHudActive(hud, !visibility);
             }

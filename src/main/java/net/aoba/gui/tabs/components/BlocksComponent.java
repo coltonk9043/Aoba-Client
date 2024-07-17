@@ -144,38 +144,44 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
     @Override
     public void OnMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            double mouseX = event.mouseX;
-            double mouseY = event.mouseY;
+            if(hovered) {
+                double mouseX = event.mouseX;
+                double mouseY = event.mouseY;
+                
+            	float actualX = actualSize.getX();
+                float actualY = actualSize.getY();
 
-            float actualX = this.getActualSize().getX();
-            float actualY = this.getActualSize().getY();
+                if (mouseX > (actualX + 4) && mouseY < (actualX + (36 * visibleColumns) + 4)) {
+                    if (mouseY > actualY && mouseY < actualY + 25) {
+                        collapsed = !collapsed;
+                        if (collapsed) 
+                        	this.setHeight(COLLAPSED_HEIGHT);
+                        else
+                            this.setHeight(EXPANDED_HEIGHT);
+                        event.cancel();
+                    } else if (mouseY > (actualY + 25) && mouseY < (actualY + (36 * visibleRows) + 25)) {
+                        int col = (int) (mouseX - actualX - 8) / 36;
+                        int row = (int) ((mouseY - actualY - 24) / 36) + scroll;
 
-            if (mouseX > (actualX + 4) && mouseY < (actualX + (36 * visibleColumns) + 4)) {
-                if (mouseY > actualY && mouseY < actualY + 25) {
-                    collapsed = !collapsed;
-                    if (collapsed) {
-                    	this.setHeight(COLLAPSED_HEIGHT);
-                    }
-                    else
-                        this.setHeight(EXPANDED_HEIGHT);
-                } else if (mouseY > (actualY + 25) && mouseY < (actualY + (36 * visibleRows) + 25)) {
-                    int col = (int) (mouseX - actualX - 8) / 36;
-                    int row = (int) ((mouseY - actualY - 24) / 36) + scroll;
+                        int index = (row * visibleColumns) + col;
+                        if (index > Registries.BLOCK.size())
+                            return;
 
-                    int index = (row * visibleColumns) + col;
-                    if (index > Registries.BLOCK.size())
-                        return;
-
-                    Block block = Registries.BLOCK.get(index);
-                    if (this.blocks.getValue().contains(block)) {
-                        this.blocks.getValue().remove(block);
-                        this.blocks.update();
-                    } else {
-                        this.blocks.getValue().add(block);
-                        this.blocks.update();
+                        Block block = Registries.BLOCK.get(index);
+                        if(block != null) {
+                            if (this.blocks.getValue().contains(block)) {
+                                this.blocks.getValue().remove(block);
+                                this.blocks.update();
+                            } else {
+                                this.blocks.getValue().add(block);
+                                this.blocks.update();
+                            }
+                        }
                     }
                 }
-            }
+                
+                event.cancel();
+            } 
         }
     }
 }

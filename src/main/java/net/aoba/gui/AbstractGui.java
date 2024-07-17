@@ -127,8 +127,15 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
 	}
 
 	@Override
-	public void onChildChanged(IGuiElement child) {
-		// Do nothing...
+	public void onChildChanged(IGuiElement changedChild) {
+		if (this.inheritHeightFromChildren) {
+            float tempHeight = 0;
+            for (Component child : children) {
+                tempHeight += (child.getSize().getHeight());
+            }
+            setHeight(tempHeight);
+            minHeight = tempHeight;
+        }
 	}
 
 	@Override

@@ -285,19 +285,14 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
      */
     @Override
     public void OnMouseMove(MouseMoveEvent mouseMoveEvent) {
-        if (!visible || (parent != null && !Aoba.getInstance().hudManager.isClickGuiOpen())) {
+        if (!visible || !Aoba.getInstance().hudManager.isClickGuiOpen()) {
             this.hovered = false;
         } else {
 
-            double mouseX = mouseMoveEvent.getX();
-            double mouseY = mouseMoveEvent.getY();
+            float mouseX = (float)mouseMoveEvent.getX();
+            float mouseY = (float)mouseMoveEvent.getY();
 
-            float actualX = actualSize.getX();
-            float actualY = actualSize.getY();
-            float actualWidth = actualSize.getWidth();
-            float actualHeight = actualSize.getHeight();
-            
-            this.hovered = ((mouseX >= actualX && mouseX <= (actualX + actualWidth)) && (mouseY >= (actualY) && mouseY <= (actualY + actualHeight)));
+            this.hovered = actualSize.intersects(mouseX, mouseY);
         }
     }
 }
