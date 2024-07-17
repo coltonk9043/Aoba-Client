@@ -19,6 +19,7 @@
 package net.aoba.mixin;
 
 import net.aoba.gui.screens.AltScreen;
+import net.aoba.gui.screens.ProxyScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -39,6 +40,9 @@ public class MultiplayerScreenMixin extends Screen {
     private void onInit(CallbackInfo ci) {
         this.addDrawableChild(ButtonWidget.builder(Text.of("Alt Manager"), b -> client.setScreen(new AltScreen((MultiplayerScreen) (Object) this)))
                 .dimensions(this.width / 2 + 4 + 50, 7, 100, 20).build());
+
+        this.addDrawableChild(ButtonWidget.builder(Text.of("Proxy Manager"), b -> client.setScreen(new ProxyScreen((MultiplayerScreen) (Object) this)))
+                .dimensions(this.width / 2 + 4 + 160, 7, 100, 20).build());
     }
 
 }
