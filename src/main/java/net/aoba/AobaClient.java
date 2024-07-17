@@ -37,6 +37,7 @@ import net.aoba.settings.friends.FriendsList;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.MinecraftClient;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,9 +117,7 @@ public class AobaClient {
         SettingManager.loadSettings(settingManager.modulesContainer);
         SettingManager.loadSettings(settingManager.hiddenContainer);
 
-        globalChat = new
-
-                GlobalChat();
+        globalChat = new GlobalChat();
         globalChat.StartListener();
 
         //GuiManager.borderColor.setMode(ColorMode.Rainbow);

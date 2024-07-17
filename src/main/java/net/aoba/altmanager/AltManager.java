@@ -30,6 +30,7 @@ import net.aoba.altmanager.exceptions.APIErrorException;
 import net.aoba.altmanager.exceptions.InvalidResponseException;
 import net.aoba.altmanager.exceptions.InvalidTokenException;
 import net.aoba.mixin.interfaces.IMinecraftClient;
+import net.aoba.utils.system.HWIDUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.session.Session;
 import net.minecraft.client.session.Session.AccountType;
@@ -54,7 +55,7 @@ public class AltManager {
     private final String apiURL = "https://auth.mcleaks.net/v1/";
 
     private ArrayList<Alt> alts = new ArrayList<Alt>();
-    private String encryptKey = "B&E)H@McQeThWmZq";
+    private String encryptKey;
     private String MCLeaksSession;
 
     // Big thanks to Wurst for the URLs and REGEX. What are you doing Microsoft?
@@ -78,7 +79,24 @@ public class AltManager {
      */
     public AltManager() {
         mc = AobaClient.MC;
+        this.encryptKey = generateEncryptionKey();
         readAlts();
+    }
+
+    /**
+     * Generates a unique encryption key based on HWID.
+     *
+     * @return A unique encryption key.
+     */
+    private String generateEncryptionKey() {
+        String hwid = HWIDUtil.getHWID();
+        if (hwid != null) {
+            // Use the first 16 bytes of the HWID as the encryption key
+            return hwid.length() >= 16 ? hwid.substring(0, 16) : String.format("%-16s", hwid).replace(' ', '0');
+        } else {
+            // Fallback to a default key if HWID retrieval fails
+            return "B&E)H@McQeThWmZq";
+        }
     }
 
     /**
@@ -87,7 +105,7 @@ public class AltManager {
     public void readAlts() {
         try {
             // Finds the file and opens it.
-            File altFile = new File(mc.runDirectory, "aoba_alts.json");
+            File altFile = new File("aoba_alts.json");
             if (!altFile.exists()) {
                 LogUtils.getLogger().error("Alts file not found! Cannot load alts.");
                 return;
@@ -96,12 +114,16 @@ public class AltManager {
             // Read the JSON from the file
             FileReader reader = new FileReader(altFile);
             Gson gson = new Gson();
-            Type altListType = new TypeToken<List<Alt>>(){}.getType();
-            List<Alt> altList = gson.fromJson(reader, altListType);
+            Type altListType = new TypeToken<List<String>>(){}.getType();
+            List<String> encryptedAltList = gson.fromJson(reader, altListType);
             reader.close();
 
-            // Add the alts to the current alt list
-            alts.addAll(altList);
+            // Decrypt the alts and add them to the current alt list
+            for (String encryptedAlt : encryptedAltList) {
+                String decryptedAlt = decrypt(encryptedAlt);
+                Alt alt = gson.fromJson(decryptedAlt, Alt.class);
+                alts.add(alt);
+            }
         } catch (IOException exception) {
             exception.printStackTrace();
         }
@@ -113,12 +135,18 @@ public class AltManager {
     public void saveAlts() {
         try {
             // Finds the file and opens it.
-            File altFile = new File(mc.runDirectory, "aoba_alts.json");
+            File altFile = new File("aoba_alts.json");
             LogUtils.getLogger().info("[Aoba] Saving Alts");
 
-            // Convert the alt list to JSON
+            // Encrypt the alts and convert the alt list to JSON
             Gson gson = new Gson();
-            String json = gson.toJson(alts);
+            List<String> encryptedAltList = new ArrayList<>();
+            for (Alt alt : alts) {
+                String altJson = gson.toJson(alt);
+                String encryptedAlt = encrypt(altJson);
+                encryptedAltList.add(encryptedAlt);
+            }
+            String json = gson.toJson(encryptedAltList);
 
             // Write the JSON to the file
             FileWriter writer = new FileWriter(altFile);
