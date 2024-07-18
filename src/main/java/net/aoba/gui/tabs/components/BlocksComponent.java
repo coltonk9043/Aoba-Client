@@ -28,7 +28,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.settings.types.BlocksSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -93,8 +93,8 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
         float actualY = this.getActualSize().getY();
         float actualWidth = this.getActualSize().getWidth();
 
-        RenderUtils.drawString(drawContext, text, actualX + 6, actualY + 6, 0xFFFFFF);
-        RenderUtils.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6, GuiManager.foregroundColor.getValue().getColorAsInt());
+        Render2D.drawString(drawContext, text, actualX + 6, actualY + 6, 0xFFFFFF);
+        Render2D.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6, GuiManager.foregroundColor.getValue().getColorAsInt());
 
         if (!collapsed) {
             matrixStack.push();
@@ -108,7 +108,7 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
                     Block block = Registries.BLOCK.get(index);
 
                     if (blocks.getValue().contains(block)) {
-                        RenderUtils.drawBox(matrix4f, ((actualX + (j * 36))), ((actualY + ((i - scroll) * 36) + 25)), 32, 32, new Color(0, 255, 0, 55));
+                    	Render2D.drawBox(matrix4f, ((actualX + (j * 36))), ((actualY + ((i - scroll) * 36) + 25)), 32, 32, new Color(0, 255, 0, 55));
                     }
                     drawContext.drawItem(new ItemStack(block.asItem()), (int) ((actualX + (j * 36) + 2) / 2.0f), (int) ((actualY + ((i - scroll) * 36) + 25) / 2.0f));
                 }

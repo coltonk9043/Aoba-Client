@@ -26,7 +26,7 @@ import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.ModuleUtils;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
@@ -84,7 +84,7 @@ public class ChestESP extends Module implements Render3DListener {
         for (BlockEntity blockEntity : blockEntities) {
             if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity || blockEntity instanceof BarrelBlockEntity) {
                 Box box = new Box(blockEntity.getPos());
-                RenderUtils.draw3DBox(event.GetMatrix(), box, color.getValue(), lineThickness.getValue().floatValue());
+                Render3D.draw3DBox(event.GetMatrix(), box, color.getValue(), lineThickness.getValue().floatValue());
             }
         }
     }

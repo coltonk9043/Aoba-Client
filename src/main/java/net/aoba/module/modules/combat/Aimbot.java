@@ -26,7 +26,7 @@ import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -92,7 +92,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
     @Override
     public void OnRender(Render3DEvent event) {
         if (temp != null) {
-            Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
+            Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
             MC.player.lookAt(EntityAnchor.EYES, temp.getEyePos().add(offset));
         }
     }

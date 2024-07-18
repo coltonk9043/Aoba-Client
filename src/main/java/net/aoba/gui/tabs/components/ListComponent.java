@@ -25,7 +25,7 @@ import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -68,8 +68,7 @@ public class ListComponent extends Component implements MouseClickListener {
 
 	@Override
 	public void onChildAdded(IGuiElement child) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
     
@@ -81,10 +80,9 @@ public class ListComponent extends Component implements MouseClickListener {
         float actualY = this.getActualSize().getY();
         float actualWidth = this.getActualSize().getWidth();
         
-        RenderUtils.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
-                actualY + 8, 0xFFFFFF);
-        RenderUtils.drawString(drawContext, "<<", actualX + 8, actualY + 4, GuiManager.foregroundColor.getValue());
-        RenderUtils.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4, GuiManager.foregroundColor.getValue());
+        Render2D.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth, actualY + 8, 0xFFFFFF);
+        Render2D.drawString(drawContext, "<<", actualX + 8, actualY + 4, GuiManager.foregroundColor.getValue());
+        Render2D.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4, GuiManager.foregroundColor.getValue());
     }
 
     public void setSelectedIndex(int index) {

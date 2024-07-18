@@ -23,10 +23,9 @@ import net.aoba.event.events.FontChangedEvent;
 import net.aoba.event.listeners.FontChangedListener;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
-import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Formatting;
 
@@ -75,7 +74,7 @@ public class StringComponent extends Component implements FontChangedListener {
         for (String str : text) {
             if (bold)
                 str = Formatting.BOLD + str;
-            RenderUtils.drawString(drawContext, str, actualX, actualY + i, this.color.getColorAsInt());
+            Render2D.drawString(drawContext, str, actualX, actualY + i, this.color.getColorAsInt());
             i += 25;
         }
     }

@@ -23,7 +23,8 @@ import net.aoba.AobaClient;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
+import net.aoba.misc.Render3D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.MinecraftClient;
@@ -92,18 +93,18 @@ public class NavigationBar implements MouseClickListener {
         // Animate selection box movement
         currentSelectionX += (targetSelectionX - currentSelectionX) * animationSpeed * partialTicks;
 
-        RenderUtils.drawRoundedBox(matrix, centerX - (width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-        RenderUtils.drawRoundedOutline(matrix, centerX - (width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
+        Render2D.drawRoundedBox(matrix, centerX - (width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
+        Render2D.drawRoundedOutline(matrix, centerX - (width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
         // Use currentSelectionX for animated position
-        RenderUtils.drawRoundedBox(matrix, centerX - (width / 2) + currentSelectionX, 25, 100, 25, GuiManager.roundingRadius.getValue() - 1, new Color(150, 150, 150, 100));
+        Render2D.drawRoundedBox(matrix, centerX - (width / 2) + currentSelectionX, 25, 100, 25, GuiManager.roundingRadius.getValue() - 1, new Color(150, 150, 150, 100));
 
         for (int i = 0; i < options.size(); i++) {
             Page pane = options.get(i);
             if (i == selectedIndex) {
                 pane.render(drawContext, partialTicks);
             }
-            RenderUtils.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, GuiManager.foregroundColor.getValue());
+            Render2D.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, GuiManager.foregroundColor.getValue());
         }
     }
 

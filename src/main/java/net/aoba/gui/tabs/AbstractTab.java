@@ -33,7 +33,8 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.components.Component;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
+import net.aoba.misc.Render3D;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.utils.input.CursorStyle;
@@ -137,24 +138,24 @@ public class AbstractTab extends AbstractGui implements MouseClickListener, Mous
         	
         	if (drawBorder) {
                 // Draws background depending on components width and height
-                RenderUtils.drawRoundedBox(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-                RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
+        		Render2D.drawRoundedBox(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
+        		Render2D.drawRoundedOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
                 if (icon != null) {
-                    RenderUtils.drawTexturedQuad(matrix4f, icon, x + 8, y + 4, 22, 22, GuiManager.foregroundColor.getValue());
-                    RenderUtils.drawString(drawContext, this.title, x + 38, y + 8, GuiManager.foregroundColor.getValue());
+                	Render2D.drawTexturedQuad(matrix4f, icon, x + 8, y + 4, 22, 22, GuiManager.foregroundColor.getValue());
+                    Render2D.drawString(drawContext, this.title, x + 38, y + 8, GuiManager.foregroundColor.getValue());
                 } else
-                    RenderUtils.drawString(drawContext, this.title, x + 8, y + 8, GuiManager.foregroundColor.getValue());
+                	Render2D.drawString(drawContext, this.title, x + 8, y + 8, GuiManager.foregroundColor.getValue());
 
-                RenderUtils.drawLine(matrix4f, x, y + 30, x + width, y + 30, new Color(0, 0, 0, 100));
+                Render2D.drawLine(matrix4f, x, y + 30, x + width, y + 30, new Color(0, 0, 0, 100));
 
                 if (this.pinnable) {
                     if (this.isPinned.getValue()) {
-                        RenderUtils.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(154, 0, 0, 200));
-                        RenderUtils.drawRoundedOutline(matrix4f,x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 200));
+                    	Render2D.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(154, 0, 0, 200));
+                        Render2D.drawRoundedOutline(matrix4f,x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 200));
                     } else {
-                        RenderUtils.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(128, 128, 128, 50));
-                        RenderUtils.drawRoundedOutline(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 50));
+                    	Render2D.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(128, 128, 128, 50));
+                        Render2D.drawRoundedOutline(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 50));
                     }
                 }
             }

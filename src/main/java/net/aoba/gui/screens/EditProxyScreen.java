@@ -84,13 +84,12 @@ public class EditProxyScreen extends Screen {
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(drawContext, mouseX, mouseY, partialTicks);
+    	super.render(drawContext, mouseX, mouseY, partialTicks);
         drawContext.drawCenteredTextWithShadow(textRenderer, "Edit Proxy", this.width / 2, 20, 16777215);
         drawContext.drawTextWithShadow(textRenderer, "IP:", this.width / 2 - 100, height / 2 - 90, 16777215);
         drawContext.drawTextWithShadow(textRenderer, "Port:", this.width / 2 - 100, height / 2 - 50, 16777215);
         drawContext.drawTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 10, 16777215);
         drawContext.drawTextWithShadow(textRenderer, "Password:", this.width / 2 - 100, height / 2 + 30, 16777215);
-        super.render(drawContext, mouseX, mouseY, partialTicks);
     }
 
     private void onButtonProxyEditPressed() {

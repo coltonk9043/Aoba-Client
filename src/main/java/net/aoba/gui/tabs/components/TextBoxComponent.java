@@ -27,7 +27,8 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
+import net.aoba.misc.Render3D;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -90,17 +91,17 @@ public class TextBoxComponent extends Component implements MouseClickListener, K
 		Color borderColor = isErrorState ? errorBorderColor
 				: new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
 
-		RenderUtils.drawString(drawContext, string.displayName, actualX, actualY + 8, 0xFFFFFF);
-		RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight,
+		Render2D.drawString(drawContext, string.displayName, actualX, actualY + 8, 0xFFFFFF);
+		Render2D.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight,
 				new Color(115, 115, 115, 200));
-		RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
+		Render2D.drawOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
 
 		String keyBindText = this.string.getValue();
 		if (!keyBindText.isEmpty()) {
 			int visibleStringLength = 120 / 10;
 			String visibleString = keyBindText.substring(Math.max(0, keyBindText.length() - visibleStringLength - 1),
 					keyBindText.length());
-			RenderUtils.drawString(drawContext, visibleString, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
+			Render2D.drawString(drawContext, visibleString, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
 		}
 	}
 

@@ -21,16 +21,14 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
-import net.aoba.utils.types.Vector2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.ArrayList;
 
 public class ModuleSelectorHud extends AbstractHud {
@@ -125,43 +123,43 @@ public class ModuleSelectorHud extends AbstractHud {
         	 float height = pos.getHeight().floatValue();
         	 
              // Draws the top bar including "Aoba x.x"
-             RenderUtils.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, GuiManager.foregroundColor.getValue());
+        	 Render2D.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, GuiManager.foregroundColor.getValue());
 
              // Draws the table including all of the categories.
-             RenderUtils.drawRoundedBox(matrix4f, x, y, width, height * this.categories.length, 6f,
+        	 Render2D.drawRoundedBox(matrix4f, x, y, width, height * this.categories.length, 6f,
                      GuiManager.backgroundColor.getValue());
-             RenderUtils.drawRoundedOutline(matrix4f, x, y, width, height * this.categories.length, 6f,
+        	 Render2D.drawRoundedOutline(matrix4f, x, y, width, height * this.categories.length, 6f,
                      GuiManager.borderColor.getValue());
 
              // For every category, draw a cell for it.
              for (int i = 0; i < this.categories.length; i++) {
-                 RenderUtils.drawString(drawContext, ">>", x + width - 24, y + (height * i) + 8,
+            	 Render2D.drawString(drawContext, ">>", x + width - 24, y + (height * i) + 8,
                          GuiManager.foregroundColor.getValue());
                  // Draws the name of the category dependent on whether it is selected.
                  if (this.index == i) {
-                     RenderUtils.drawString(drawContext, "> " + this.categories[i].name(), x + 8,
+                	 Render2D.drawString(drawContext, "> " + this.categories[i].name(), x + 8,
                              y + (height * i) + 8, GuiManager.foregroundColor.getValue());
                  } else {
-                     RenderUtils.drawString(drawContext, this.categories[i].name(), x + 8, y + (height * i) + 8, 0xFFFFFF);
+                	 Render2D.drawString(drawContext, this.categories[i].name(), x + 8, y + (height * i) + 8, 0xFFFFFF);
                  }
              }
 
              // If any particular category menu is open.
              if (isCategoryMenuOpen) {
                  // Draw the table underneath
-                 RenderUtils.drawRoundedBox(matrix4f, x + width, y + (height * this.index), 165,
+            	 Render2D.drawRoundedBox(matrix4f, x + width, y + (height * this.index), 165,
                          height * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-                 RenderUtils.drawRoundedOutline(matrix4f, x + width, y + (height * this.index), 165,
+            	 Render2D.drawRoundedOutline(matrix4f, x + width, y + (height * this.index), 165,
                          height * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
                  // For every mod, draw a cell for it.
                  for (int i = 0; i < modules.size(); i++) {
                      if (this.indexMods == i) {
-                         RenderUtils.drawString(drawContext, "> " + modules.get(i).getName(), x + width + 5,
+                    	 Render2D.drawString(drawContext, "> " + modules.get(i).getName(), x + width + 5,
                                  y + (i * height) + (this.index * height) + 8, modules.get(i).getState() ? 0x00FF00
                                          : GuiManager.foregroundColor.getValue().getColorAsInt());
                      } else {
-                         RenderUtils.drawString(drawContext, modules.get(i).getName(), x + width + 5,
+                    	 Render2D.drawString(drawContext, modules.get(i).getName(), x + width + 5,
                                  y + (i * height) + (this.index * height) + 8,
                                  modules.get(i).getState() ? 0x00FF00 : 0xFFFFFF);
                      }

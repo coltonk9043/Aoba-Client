@@ -28,7 +28,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -147,16 +147,16 @@ public class SliderComponent extends Component implements MouseClickListener, Mo
         sliderProgress = Math.min(Math.max(sliderProgress, 0f), 1f);
         float filledLength = actualWidth * sliderProgress;
 
-        RenderUtils.drawBox(matrix4f, actualX, actualY + 35, filledLength, 2, GuiManager.foregroundColor.getValue());
+        Render2D.drawBox(matrix4f, actualX, actualY + 35, filledLength, 2, GuiManager.foregroundColor.getValue());
 
-        RenderUtils.drawBox(matrix4f, actualX + filledLength, actualY + 35, (actualWidth - filledLength), 2, new Color(255, 255, 255, 255));
+        Render2D.drawBox(matrix4f, actualX + filledLength, actualY + 35, (actualWidth - filledLength), 2, new Color(255, 255, 255, 255));
 
-        RenderUtils.drawCircle(matrix4f, actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
+        Render2D.drawCircle(matrix4f, actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
 
-        RenderUtils.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
+        Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
 
         String valueText = String.format("%.02f", this.slider.getValue());
         int textSize = mc.textRenderer.getWidth(valueText) * 2;
-        RenderUtils.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
+        Render2D.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
     }
 }

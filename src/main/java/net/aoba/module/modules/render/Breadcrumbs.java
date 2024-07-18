@@ -27,7 +27,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -80,7 +80,7 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
         Vec3d prevPosition = null;
         for (Vec3d position : positions) {
             if (prevPosition != null) {
-                RenderUtils.drawLine3D(event.GetMatrix(), prevPosition, position, color.getValue(), lineThickness.getValue().floatValue());
+                Render3D.drawLine3D(event.GetMatrix(), prevPosition, position, color.getValue(), lineThickness.getValue().floatValue());
             }
             prevPosition = position;
         }

@@ -18,7 +18,6 @@
 
 package net.aoba.gui.tabs.components;
 
-import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
@@ -28,7 +27,7 @@ import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.ModuleSettingsTab;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.module.Module;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -88,7 +87,7 @@ public class ModuleComponent extends Component implements MouseClickListener {
         float actualY = this.getActualSize().getY();
         float actualWidth = this.getActualSize().getWidth();
         
-        RenderUtils.drawString(drawContext, this.text, actualX, actualY + 8, module.getState() ? 0x00FF00 : this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
+        Render2D.drawString(drawContext, this.text, actualX, actualY + 8, module.getState() ? 0x00FF00 : this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
         if (module.hasSettings()) {
             Color hudColor = GuiManager.foregroundColor.getValue();
 
@@ -97,10 +96,10 @@ public class ModuleComponent extends Component implements MouseClickListener {
                 matrixStack.translate((actualX + actualWidth - 12), (actualY + 14), 0);
                 matrixStack.multiply(new Quaternionf().rotateZ((float) Math.toRadians(spinAngle)));
                 matrixStack.translate(-(actualX + actualWidth - 12), -(actualY + 14), 0);
-                RenderUtils.drawTexturedQuad(matrixStack.peek().getPositionMatrix(), gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16, hudColor);
+                Render2D.drawTexturedQuad(matrixStack.peek().getPositionMatrix(), gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16, hudColor);
                 matrixStack.pop();
             } else {
-                RenderUtils.drawTexturedQuad(matrix4f, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16, hudColor);
+            	Render2D.drawTexturedQuad(matrix4f, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16, hudColor);
             }
         }
     }

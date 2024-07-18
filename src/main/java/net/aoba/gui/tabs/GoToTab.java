@@ -8,7 +8,7 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Margin;
 import net.aoba.gui.colors.Colors;
 import net.aoba.gui.tabs.components.*;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.pathfinding.PathManager;
 import net.aoba.pathfinding.PathNode;
 import net.aoba.settings.SettingManager;
@@ -163,13 +163,13 @@ public class GoToTab extends AbstractTab implements TickListener, Render3DListen
 			Box startBox = new Box(start);
 			Box endBox = new Box(end);
 
-			RenderUtils.draw3DBox(event.GetMatrix(), startBox, Colors.Red, 1.0f);
-			RenderUtils.draw3DBox(event.GetMatrix(), endBox, Colors.Red, 1.0f);
+			Render3D.draw3DBox(event.GetMatrix(), startBox, Colors.Red, 1.0f);
+			Render3D.draw3DBox(event.GetMatrix(), endBox, Colors.Red, 1.0f);
 
 			for(int i = 0; i < nodes.size() - 1; i++) {
 				PathNode first = nodes.get(i);
 				PathNode second = nodes.get(i + 1);
-				RenderUtils.drawLine3D(event.GetMatrix(), first.pos.toCenterPos(), second.pos.toCenterPos(), Colors.Red, 1.0f);
+				Render3D.drawLine3D(event.GetMatrix(), first.pos.toCenterPos(), second.pos.toCenterPos(), Colors.Red, 1.0f);
 			}
 		}
 	}

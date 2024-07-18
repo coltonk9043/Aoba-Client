@@ -20,7 +20,7 @@ package net.aoba.mixin;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.proxy.Socks5ProxyHandler;
+//import io.netty.handler.proxy.Socks5ProxyHandler;
 import net.aoba.Aoba;
 import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.events.SendPacketEvent;
@@ -62,7 +62,7 @@ public class ClientConnectionMixin {
         Socks5Proxy proxy = Aoba.getInstance().proxyManager.getActiveProxy();
 
         if (proxy != null && side == NetworkSide.CLIENTBOUND && !local) {
-            pipeline.addFirst(new Socks5ProxyHandler(new InetSocketAddress(proxy.getIp(), proxy.getPort()), proxy.getUsername(), proxy.getPassword()));
+            //pipeline.addFirst(new Socks5ProxyHandler(new InetSocketAddress(proxy.getIp(), proxy.getPort()), proxy.getUsername(), proxy.getPassword()));
         }
     }
 }

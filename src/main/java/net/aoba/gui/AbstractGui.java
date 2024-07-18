@@ -62,8 +62,7 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
 
     public AbstractGui(String ID, float x, float y, float width, float height) {
         this.ID = ID;
-        this.position = new RectangleSetting(ID + "_position", ID + "Position", new Rectangle(x, y, width, height),
-                (Rectangle vec) -> UpdateAll(vec));
+        this.position = new RectangleSetting(ID + "_position", ID + "Position", new Rectangle(x, y, width, height), (Rectangle vec) -> UpdateAll(vec));
         SettingManager.registerSetting(position, Aoba.getInstance().settingManager.configContainer);
     }
 

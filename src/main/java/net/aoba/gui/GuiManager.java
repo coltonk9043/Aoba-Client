@@ -35,7 +35,8 @@ import net.aoba.gui.hud.*;
 import net.aoba.gui.tabs.*;
 import net.aoba.gui.tabs.components.ModuleComponent;
 import net.aoba.gui.tabs.components.StackPanelComponent;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
+import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
 import net.aoba.settings.SettingManager;
@@ -63,12 +64,10 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	private static MinecraftClient MC = MinecraftClient.getInstance();
 	private static CursorStyle currentCursor = CursorStyle.Default;
 	
-	public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key",
-			InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
+	public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
 	private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
 
 	private boolean clickGuiOpen = false;
-	
 	private HashMap<Object, AbstractHud> pinnedHuds = new HashMap<Object, AbstractHud>();
 
 	// Navigation Bar and Pages
@@ -251,7 +250,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		 * Render ClickGUI and Sidebar
 		 */
 		if (this.clickGuiOpen) {
-			RenderUtils.drawBox(matrix, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
+			Render2D.drawBox(matrix, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
 			clickGuiNavBar.draw(drawContext, tickDelta);
 		}
 
@@ -270,7 +269,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		for (int i = 0; i < aoba.moduleManager.modules.size(); i++) {
 			Module mod = aoba.moduleManager.modules.get(i);
 			if (mod.getState()) {
-				RenderUtils.drawString(drawContext, mod.getName(),
+				Render2D.drawString(drawContext, mod.getName(),
 						(float) (window.getWidth() - ((MC.textRenderer.getWidth(mod.getName()) + 5) * 2)),
 						10 + (iteration * 20), GuiManager.foregroundColor.getValue().getColorAsInt());
 				iteration++;

@@ -23,7 +23,8 @@
 package net.aoba.gui.hud;
 
 import net.aoba.gui.Rectangle;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
+import net.aoba.misc.Render3D;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -61,7 +62,7 @@ public class ArmorHud extends AbstractHud {
                
                 for (ItemStack armor : armors) {
                     if (armor.getItem() != Items.AIR) {
-                    	RenderUtils.drawItem(drawContext, armor, x1, y2 - yOff - 16);
+                    	Render2D.drawItem(drawContext, armor, x1, y2 - yOff - 16);
                     }
                     yOff += (16.0f);
                 }

@@ -25,7 +25,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -73,7 +73,7 @@ public class PlayerESP extends Module implements Render3DListener {
     public void OnRender(Render3DEvent event) {
         for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
             if (entity != MC.player) {
-                RenderUtils.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), color_default.getValue(), lineThickness.getValue().floatValue());
+                Render3D.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), color_default.getValue(), lineThickness.getValue().floatValue());
             }
         }
     }

@@ -25,7 +25,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -83,8 +83,8 @@ public class CheckboxComponent extends Component implements MouseClickListener {
         // Determine fill color based on checkbox state
         Color fillColor = this.checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
 
-        RenderUtils.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
-        RenderUtils.drawOutlinedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, borderColor, fillColor);
+        Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
+        Render2D.drawOutlinedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, borderColor, fillColor);
     }
 
     /**

@@ -9,7 +9,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -71,13 +71,13 @@ public class EnumComponent<T extends Enum<T>> extends Component implements Mouse
 		Color borderColor = isErrorState ? errorBorderColor
 				: new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
 
-		RenderUtils.drawString(drawContext, enumSetting.displayName, actualX, actualY + 8, 0xFFFFFF);
-		RenderUtils.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight,
+		Render2D.drawString(drawContext, enumSetting.displayName, actualX, actualY + 8, 0xFFFFFF);
+		Render2D.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight,
 				new Color(115, 115, 115, 200));
-		RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
+		Render2D.drawOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
 
 		String enumValue = this.enumSetting.getValue().toString();
-		RenderUtils.drawString(drawContext, enumValue, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
+		Render2D.drawString(drawContext, enumValue, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
 	}
 
 	@Override

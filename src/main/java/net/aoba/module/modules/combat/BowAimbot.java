@@ -6,14 +6,13 @@ import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.misc.bowaimbot.BowAimbotTargets;
 import net.aoba.misc.bowaimbot.BowAimbotUtils;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
-import net.aoba.settings.types.Vec3dSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
@@ -26,7 +25,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.Comparator;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
@@ -198,7 +196,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
     public void OnRender(Render3DEvent event) {
         if(skip) return;
         if (temp != null) {
-            Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
+            Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
             MC.player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, temp.getEyePos().add(offset).add(posX, posY, posZ));
             MC.player.setYaw(neededYaw);
             MC.player.setPitch(neededPitch);

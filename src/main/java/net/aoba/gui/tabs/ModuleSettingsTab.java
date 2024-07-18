@@ -25,7 +25,8 @@ import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.tabs.components.*;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
+import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.settings.Setting;
 import net.aoba.settings.types.*;
@@ -85,8 +86,8 @@ public class ModuleSettingsTab extends AbstractTab {
 
         Rectangle pos = position.getValue();
 
-        RenderUtils.drawLine(matrix4f, pos.getX() + pos.getWidth() - 23, pos.getY() + 8, pos.getX() + pos.getWidth() - 8, pos.getY() + 23, new Color(255, 0, 0, 255));
-        RenderUtils.drawLine(matrix4f, pos.getX() + pos.getWidth() - 23, pos.getY() + 23, pos.getX() + pos.getWidth() - 8, pos.getY() + 8, new Color(255, 0, 0, 255));
+        Render2D.drawLine(matrix4f, pos.getX() + pos.getWidth() - 23, pos.getY() + 8, pos.getX() + pos.getWidth() - 8, pos.getY() + 23, new Color(255, 0, 0, 255));
+        Render2D.drawLine(matrix4f, pos.getX() + pos.getWidth() - 23, pos.getY() + 23, pos.getX() + pos.getWidth() - 8, pos.getY() + 8, new Color(255, 0, 0, 255));
     }
 
     @Override

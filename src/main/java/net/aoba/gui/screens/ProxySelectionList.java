@@ -1,6 +1,9 @@
 package net.aoba.gui.screens;
 
+import net.aoba.Aoba;
 import net.aoba.altmanager.Alt;
+import net.aoba.gui.colors.Color;
+import net.aoba.misc.Render2D;
 import net.aoba.proxymanager.Socks5Proxy;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -74,7 +77,7 @@ public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Ent
 
             int lineHeight = 12; // Adjust this based on your font size and line spacing
             int textY = y + (entryHeight - lineHeight * 4) / 2; // Centering vertically
-
+            
             drawContext.drawTextWithShadow(textRenderer, "IP: " + this.proxy.getIp(), x + 32 + 3, textY, 16777215);
             drawContext.drawTextWithShadow(textRenderer, "Port: " + this.proxy.getPort(), x + 32 + 3, textY + lineHeight, 16777215);
             drawContext.drawTextWithShadow(textRenderer, "Username: " + this.proxy.getUsername(), x + 32 + 3, textY + lineHeight * 2, 16777215);

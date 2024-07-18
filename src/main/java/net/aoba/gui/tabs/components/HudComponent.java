@@ -25,7 +25,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.hud.AbstractHud;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
@@ -61,11 +61,11 @@ public class HudComponent extends Component implements MouseClickListener {
         float actualY = this.getActualSize().getY();
         float actualWidth = this.getActualSize().getWidth();
         
-        RenderUtils.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
+        Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
         if (this.hud.activated.getValue()) {
-            RenderUtils.drawString(drawContext, "-", actualX + actualWidth - 12, actualY + 8, 0xFF0000);
+        	Render2D.drawString(drawContext, "-", actualX + actualWidth - 12, actualY + 8, 0xFF0000);
         } else {
-            RenderUtils.drawString(drawContext, "+", actualX + actualWidth - 12, actualY + 8, 0x00FF00);
+        	Render2D.drawString(drawContext, "+", actualX + actualWidth - 12, actualY + 8, 0x00FF00);
         }
     }
 

@@ -25,7 +25,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
@@ -117,10 +117,10 @@ public class ButtonComponent extends Component implements MouseClickListener {
         float actualHeight = this.getActualSize().getHeight();
         
         if (this.hovered)
-            RenderUtils.drawOutlinedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, borderColor, hoveredBackgroundColor);
+        	Render2D.drawOutlinedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, borderColor, hoveredBackgroundColor);
         else
-            RenderUtils.drawOutlinedBox(matrix4f, actualX , actualY, actualWidth, actualHeight, borderColor, backgroundColor);
-        RenderUtils.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
+        	Render2D.drawOutlinedBox(matrix4f, actualX , actualY, actualWidth, actualHeight, borderColor, backgroundColor);
+        Render2D.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
     }
 
     @Override

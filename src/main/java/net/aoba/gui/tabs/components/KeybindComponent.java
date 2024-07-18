@@ -27,7 +27,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
 import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -81,15 +81,15 @@ public class KeybindComponent extends Component implements MouseClickListener, K
         float actualWidth = this.getActualSize().getWidth();
         float actualHeight = this.getActualSize().getHeight();
         
-        RenderUtils.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
-        RenderUtils.drawBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, new Color(115, 115, 115, 200));
-        RenderUtils.drawOutline(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight);
+        Render2D.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
+        Render2D.drawBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, new Color(115, 115, 115, 200));
+        Render2D.drawOutline(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight);
 
         String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
         if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
             keyBindText = "N/A";
 
-        RenderUtils.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 6, 0xFFFFFF);
+        Render2D.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 6, 0xFFFFFF);
     }
 
     @Override

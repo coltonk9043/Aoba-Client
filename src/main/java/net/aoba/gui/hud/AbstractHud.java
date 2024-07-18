@@ -23,7 +23,8 @@ import net.aoba.gui.AbstractGui;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
+import net.aoba.misc.Render3D;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.minecraft.client.gui.DrawContext;
@@ -62,7 +63,7 @@ public abstract class AbstractHud extends AbstractGui {
                     float width = pos.getWidth().floatValue();
             		float height = pos.getHeight().floatValue();
                     
-                    RenderUtils.drawRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height, GuiManager.roundingRadius.getValue(), dragColor);
+            		Render2D.drawRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height, GuiManager.roundingRadius.getValue(), dragColor);
         		}
             }
     	}

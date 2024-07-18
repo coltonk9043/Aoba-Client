@@ -25,7 +25,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
@@ -83,7 +83,7 @@ public class ItemESP extends Module implements Render3DListener {
                 Vec3d itemPos = entity.getPos();
                 if (playerPos.distanceTo(itemPos) <= range.getValue()) {
                     Color finalColor = colorRarity.getValue() ? getColorBasedOnItemRarity(entity) : color.getValue();
-                    RenderUtils.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), finalColor, lineThickness.getValue().floatValue());
+                    Render3D.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), finalColor, lineThickness.getValue().floatValue());
                 }
             }
         }

@@ -19,7 +19,8 @@ package net.aoba.gui.hud;
 
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render2D;
+import net.aoba.misc.Render3D;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
@@ -76,9 +77,9 @@ public class InfoHud extends AbstractHud {
             Rectangle pos = position.getValue();
 
             if(pos.isDrawable()) {
-                RenderUtils.drawString(drawContext, positionText, pos.getX().intValue() + 5, pos.getY().intValue() + 4, GuiManager.foregroundColor.getValue());
-                RenderUtils.drawString(drawContext, timeText, pos.getX().intValue() + 5, pos.getY().intValue() + 24, GuiManager.foregroundColor.getValue());
-                RenderUtils.drawString(drawContext, fpsText, pos.getX().intValue() + 5, pos.getY().intValue() + 44, GuiManager.foregroundColor.getValue());
+            	Render2D.drawString(drawContext, positionText, pos.getX().intValue() + 5, pos.getY().intValue() + 4, GuiManager.foregroundColor.getValue());
+            	Render2D.drawString(drawContext, timeText, pos.getX().intValue() + 5, pos.getY().intValue() + 24, GuiManager.foregroundColor.getValue());
+            	Render2D.drawString(drawContext, fpsText, pos.getX().intValue() + 5, pos.getY().intValue() + 44, GuiManager.foregroundColor.getValue());
             }
         }
     }

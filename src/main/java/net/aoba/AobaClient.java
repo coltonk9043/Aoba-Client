@@ -29,7 +29,7 @@ import net.aoba.cmd.GlobalChat;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
 import net.aoba.proxymanager.ProxyManager;
@@ -59,7 +59,7 @@ public class AobaClient {
     public FontManager fontManager;
     public SettingManager settingManager;
     public FriendsList friendsList;
-    public RenderUtils renderUtils;
+    public Render3D renderUtils;
     public GlobalChat globalChat;
     public EventManager eventManager;
     public static List<IAddon> addons = new ArrayList<>();
@@ -96,7 +96,7 @@ public class AobaClient {
 
         LogUtils.getLogger().info("[Aoba] Addon initialization completed");
 
-        renderUtils = new RenderUtils();
+        renderUtils = new Render3D();
         LogUtils.getLogger().info("[Aoba] Reading Settings");
         settingManager = new SettingManager();
         LogUtils.getLogger().info("[Aoba] Reading Friends List");

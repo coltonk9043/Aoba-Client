@@ -29,7 +29,7 @@ import net.aoba.event.listeners.BlockStateListener;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.settings.types.*;
 import net.minecraft.block.Block;
@@ -128,7 +128,7 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
     @Override
     public void OnRender(Render3DEvent event) {
         if (currentBlockToBreak != null) {
-            RenderUtils.draw3DBox(event.GetMatrix(), new Box(currentBlockToBreak), color.getValue(), 1.0f);
+            Render3D.draw3DBox(event.GetMatrix(), new Box(currentBlockToBreak), color.getValue(), 1.0f);
         }
     }
 

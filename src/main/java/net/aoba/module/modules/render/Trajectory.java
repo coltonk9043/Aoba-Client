@@ -32,7 +32,7 @@ import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.ModuleUtils;
-import net.aoba.misc.RenderUtils;
+import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -105,7 +105,7 @@ public class Trajectory extends Module implements Render3DListener {
 				initialVelocity *= BowItem.getPullProgress(MC.player.getItemUseTime());
 
 			Camera camera = MC.gameRenderer.getCamera();
-			Vec3d offset = RenderUtils.getEntityPositionOffsetInterpolated(MC.cameraEntity, event.GetPartialTicks());
+			Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity, event.GetPartialTicks());
 			Vec3d eyePos = MC.cameraEntity.getEyePos();
 
 			// Calculate look direction.
@@ -178,7 +178,7 @@ public class Trajectory extends Module implements Render3DListener {
 				Vec3d pos1 = landPosition.add(-size, -size, -size);
 				Vec3d pos2 = landPosition.add(size, size, size);
 				Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
-				RenderUtils.draw3DBox(event.GetMatrix(), box, renderColor, 1.0f);
+				Render3D.draw3DBox(event.GetMatrix(), box, renderColor, 1.0f);
 			}
 		}
 	}

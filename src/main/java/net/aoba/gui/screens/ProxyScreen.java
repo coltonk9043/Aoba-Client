@@ -24,23 +24,24 @@ public class ProxyScreen extends Screen {
     public void init() {
         super.init();
 
-        this.proxyListSelector = new ProxySelectionList(this, this.client, this.width, this.height, 32, this.height - 64);
+        this.proxyListSelector = new ProxySelectionList(this, this.client, this.width, this.height, 32, 64);
         this.proxyListSelector.updateProxies();
+        this.proxyListSelector.setDimensionsAndPosition(this.width, this.height - 70, 0, 32);
         this.addDrawableChild(this.proxyListSelector);
 
+        this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(this.parentScreen))
+                .dimensions(this.width / 2 - 205, this.height - 28, 100, 20).build());
+
         this.deleteButton = ButtonWidget.builder(Text.of("Delete Proxy"), b -> this.deleteSelected())
-                .dimensions(this.width / 2 - 154, this.height - 28, 100, 20).build();
+                .dimensions(this.width / 2 - 100, this.height - 28, 100, 20).build();
         this.deleteButton.active = false;
         this.addDrawableChild(this.deleteButton);
 
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(this.parentScreen))
-                .dimensions(this.width / 2 + 54, this.height - 28, 100, 20).build());
-
         this.addDrawableChild(ButtonWidget.builder(Text.of("Add Proxy"), b -> client.setScreen(new AddProxyScreen(this)))
-                .dimensions(this.width / 2 + 4 + 50, this.height - 52, 100, 20).build());
+                .dimensions(this.width / 2 + 5, this.height - 28, 100, 20).build());
 
         this.editButton = ButtonWidget.builder(Text.of("Edit Alt"), b -> this.editSelected())
-                .dimensions(this.width / 2 - 50, this.height - 28, 100, 20).build();
+                .dimensions(this.width / 2 + 110, this.height - 28, 100, 20).build();
         this.editButton.active = false;
         this.addDrawableChild(this.editButton);
     }
@@ -88,7 +89,6 @@ public class ProxyScreen extends Screen {
         }
 
         Socks5Proxy proxy = ((ProxySelectionList.NormalEntry) proxyListSelectorSelectedOrNull).getProxyData();
-
         Aoba.getInstance().proxyManager.setActiveProxy(proxy);
     }
 

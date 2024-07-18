@@ -41,10 +41,10 @@ public class AltScreen extends Screen {
 
     public void init() {
         super.init();
-        //this.client.keyboard.setRepeatEvents(true);
 
-        this.altListSelector = new AltSelectionList(this, this.client, this.width, this.height, 32, this.height - 64);
+        this.altListSelector = new AltSelectionList(this, this.client, this.width, this.height, 32, 64);
         this.altListSelector.updateAlts();
+        this.altListSelector.setDimensionsAndPosition(this.width, this.height - 64 - 32, 0, 32);
         this.addDrawableChild(this.altListSelector);
 
         this.deleteButton = ButtonWidget.builder(Text.of("Delete Alt"), b -> this.deleteSelected())
