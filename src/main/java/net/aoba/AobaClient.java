@@ -32,6 +32,7 @@ import net.aoba.gui.font.FontManager;
 import net.aoba.misc.RenderUtils;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
+import net.aoba.proxymanager.ProxyManager;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.friends.FriendsList;
 import net.fabricmc.loader.api.FabricLoader;
@@ -53,6 +54,7 @@ public class AobaClient {
     public ModuleManager moduleManager;
     public CommandManager commandManager;
     public AltManager altManager;
+    public ProxyManager proxyManager;
     public GuiManager hudManager;
     public FontManager fontManager;
     public SettingManager settingManager;
@@ -111,6 +113,7 @@ public class AobaClient {
         hudManager.Initialize();
         LogUtils.getLogger().info("[Aoba] Loading Alts");
         altManager = new AltManager();
+        proxyManager = new ProxyManager();
         LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 
         SettingManager.loadSettings(settingManager.configContainer);

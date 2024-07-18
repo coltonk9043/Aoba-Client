@@ -41,7 +41,6 @@
 	  "LightmapTextureManagerMixin",
 	  "LivingEntityMixin",
 	  "MinecraftClientMixin",
-	  "MixinClientConnection",
 	  "MouseMixin",
 	  "MultiplayerScreenMixin",
 	  "PlayerEntityMixin",

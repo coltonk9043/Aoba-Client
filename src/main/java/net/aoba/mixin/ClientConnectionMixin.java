@@ -19,17 +19,24 @@
 package net.aoba.mixin;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
+import io.netty.handler.proxy.Socks5ProxyHandler;
 import net.aoba.Aoba;
 import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.events.SendPacketEvent;
+import net.aoba.proxymanager.Socks5Proxy;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.NetworkSide;
 import net.minecraft.network.PacketCallbacks;
+import net.minecraft.network.handler.PacketSizeLogger;
 import net.minecraft.network.packet.Packet;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.net.InetSocketAddress;
 
 @Mixin(ClientConnection.class)
 public class ClientConnectionMixin {
@@ -47,6 +54,15 @@ public class ClientConnectionMixin {
 
         if (event.isCancelled()) {
             ci.cancel();
+        }
+    }
+
+    @Inject(method = "addHandlers", at = @At("RETURN"))
+    private static void addHandlersHook(ChannelPipeline pipeline, NetworkSide side, boolean local, PacketSizeLogger packetSizeLogger, CallbackInfo ci) {
+        Socks5Proxy proxy = Aoba.getInstance().proxyManager.getActiveProxy();
+
+        if (proxy != null && side == NetworkSide.CLIENTBOUND && !local) {
+            pipeline.addFirst(new Socks5ProxyHandler(new InetSocketAddress(proxy.getIp(), proxy.getPort()), proxy.getUsername(), proxy.getPassword()));
         }
     }
 }

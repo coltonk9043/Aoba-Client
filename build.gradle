@@ -18,6 +18,11 @@ repositories {
 	// for more information about repositories.
 }
 
+configurations {
+	libImpl
+	modImpl
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -26,7 +31,18 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
+
+	libImpl("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }
+	libImpl("io.netty:netty-codec-socks:${project.netty_version}") { transitive = false }
+
+	configurations.libImpl.dependencies.each {
+		implementation(it)
+	}
+
+	configurations.modImpl.dependencies.each {
+		modImplementation(it)
+		include(it)
+	}
 }
 
 processResources {
@@ -54,6 +70,9 @@ java {
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+	from {
+		configurations.libImpl.collect { it.isDirectory() ? it : zipTree(it) }
 	}
 }
 
