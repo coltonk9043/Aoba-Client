@@ -31,9 +31,12 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GoToTab extends AbstractTab implements TickListener, Render3DListener {
 	private static MinecraftClient MC = MinecraftClient.getInstance();
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private ButtonComponent startButton;
 	private ButtonComponent setPositionButton;
@@ -65,7 +68,7 @@ public class GoToTab extends AbstractTab implements TickListener, Render3DListen
 			else
 				pathManager = new WalkingPathManager();
 			if (isStarted)
-				recalculatePath();
+				recalculatePathAsync();
 		});
 
 		locationX = new StringSetting("goto_location_x", "X Coord.", "X Coordinate", "");
@@ -107,7 +110,7 @@ public class GoToTab extends AbstractTab implements TickListener, Render3DListen
 				startButton.setText("Cancel");
 				startButton.setOnClick(clearRunnable);
 				isStarted = true;
-				recalculatePath();
+				recalculatePathAsync();
 				registerEvents();
 			}
 		};
@@ -143,6 +146,10 @@ public class GoToTab extends AbstractTab implements TickListener, Render3DListen
 
 		
 		pathManager = new WalkingPathManager();
+	}
+
+	private void recalculatePathAsync() {
+		executor.submit(this::recalculatePath);
 	}
 
 	private void registerEvents() {
@@ -296,7 +303,7 @@ public class GoToTab extends AbstractTab implements TickListener, Render3DListen
 		} else {
 			// Check to see if we actually reached the destination. If not, we want to recalculate the path.
 			if (!actualEnd.equals(end)) {
-				recalculatePath();
+				recalculatePathAsync();
 			} else {
 				Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
 				Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
