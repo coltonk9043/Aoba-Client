@@ -120,20 +120,21 @@ public class Render3D {
     }
 
     public static void drawLine3D(MatrixStack matrixStack, float x1, float y1, float z1, float x2, float y2, float z2, Color color, float lineWidth) {
+
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableCull();
         RenderSystem.disableDepthTest();
-
+        
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
-        RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
 
+        RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
         RenderSystem.lineWidth(lineWidth);
 
         BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
         buildLine3d(matrixStack, bufferBuilder, x1, y1, z1, x2, y2, z2, color);
-        BufferRenderer.draw(bufferBuilder.end());
-
+        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.enableCull();
         RenderSystem.lineWidth(1f);
         RenderSystem.enableDepthTest();
