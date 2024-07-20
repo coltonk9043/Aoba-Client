@@ -11,7 +11,7 @@ jobs:
           21,    # Current Java LTS & minimum supported by Minecraft
         ]
         # and run on both Linux and Windows
-        os: [ubuntu-22.04, windows-2022]
+        os: ubuntu-22.04
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -41,5 +41,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: my-artifact
+          name: Aoba-1.4.3
           path: build/libs/*.jar
