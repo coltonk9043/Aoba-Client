@@ -16,12 +16,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
-          java-version: '21'
+          java-version: ${{ matrix.java }}
           distribution: 'microsoft'
 
       - name: Build with Gradle
@@ -39,7 +39,7 @@ jobs:
           prerelease: true
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: my-artifact
           path: build/libs/*.jar
