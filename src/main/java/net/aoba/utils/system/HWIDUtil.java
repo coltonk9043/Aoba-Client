@@ -1,30 +1,28 @@
 package net.aoba.utils.system;
 
+import com.mojang.authlib.minecraft.client.MinecraftClient;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class HWIDUtil {
-    public static String getHWID() {
-        try {
-            String os = System.getProperty("os.name").toLowerCase();
-            String command;
-            if (os.contains("win")) {
-                command = "wmic csproduct get UUID";
-            } else if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
-                command = "cat /sys/class/dmi/id/product_uuid";
-            } else {
-                throw new UnsupportedOperationException("Unsupported operating system: " + os);
-            }
+import static net.aoba.AobaClient.MC;
 
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            if (os.contains("win")) {
-                reader.readLine();
-            }
-            return reader.readLine().trim();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+public class HWIDUtil {
+    // I know its called getHWID, we just arent using the HWID anymore and i havent renamed it.
+    public static String getHWID() {
+        return DigestUtils.sha256Hex(DigestUtils.sha256Hex(System.getenv("os")
+                + System.getProperty("os.name")
+                + System.getProperty("os.arch")
+                + System.getProperty("user.name")
+                + System.getenv("SystemRoot")
+                + System.getenv("HOMEDRIVE")
+                + System.getenv("PROCESSOR_LEVEL")
+                + System.getenv("PROCESSOR_REVISION")
+                + System.getenv("PROCESSOR_IDENTIFIER")
+                + System.getenv("PROCESSOR_ARCHITECTURE")
+                + System.getenv("PROCESSOR_ARCHITEW6432")
+                + System.getenv("NUMBER_OF_PROCESSORS")
+        )) + MC.getSession().getUsername();
     }
 }
