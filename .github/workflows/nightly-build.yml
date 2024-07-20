@@ -1,8 +1,6 @@
 name: Nightly Build
 
-on:
-  schedule:
-    - cron: '43 23 * * *'
+on: [pull_request, push]
 
 jobs:
   build:
