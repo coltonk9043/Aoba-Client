@@ -36,8 +36,12 @@ jobs:
           draft: false
           prerelease: true
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Jar Files
+        id: upload_jars
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Aoba-1.4.3
-          path: build/libs/*.jar
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/libs/*.jar
+          asset_name: Aoba-1.4.3.jar
