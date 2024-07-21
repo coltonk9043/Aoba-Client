@@ -33,7 +33,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: nightly-${{ github.run_number }}
-          prerelease: false
+          prerelease: true
           title: Nightly Build ${{ github.run_number }}
           files: |
             ./build/libs/*.jar
