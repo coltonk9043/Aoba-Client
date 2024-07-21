@@ -48,7 +48,8 @@
 	  "SimpleOptionMixin",
 	  "TitleScreenMixin",
 	  "WorldChunkMixin",
-	  "WorldRendererMixin"
+	  "WorldRendererMixin",
+	  "InGameOverlayRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

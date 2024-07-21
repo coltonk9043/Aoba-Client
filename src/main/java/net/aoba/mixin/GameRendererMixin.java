@@ -19,8 +19,11 @@
 package net.aoba.mixin;
 
 import net.aoba.Aoba;
+import net.aoba.module.modules.render.NoRender;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,5 +48,13 @@ public class GameRendererMixin {
             return 0;
 
         return MathHelper.lerp(delta, first, second);
+    }
+
+    @Inject(method = "showFloatingItem", at = @At("HEAD"), cancellable = true)
+    private void onShowFloatingItem(ItemStack floatingItem, CallbackInfo info) {
+        NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+        if (floatingItem.getItem() == Items.TOTEM_OF_UNDYING && norender.getState() &&  norender.getNoTotemAnimation()) {
+            info.cancel();
+        }
     }
 }
