@@ -132,11 +132,5 @@ public class StringComponent extends Component implements FontChangedListener {
     }
 
 	@Override
-	public void onChildChanged(IGuiElement child) { }
-
-	@Override
 	public void onVisibilityChanged() { }
-
-	@Override
-	public void onChildAdded(IGuiElement child) { }
 }

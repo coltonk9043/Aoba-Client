@@ -50,12 +50,6 @@ public class CheckboxComponent extends Component implements MouseClickListener {
         this.setMargin(new Margin(8f, 2f, 8f, 2f));
     }
 
-	@Override
-	public void onChildChanged(IGuiElement child) {}
-	
-	@Override
-	public void onChildAdded(IGuiElement child) {}
-
     /**
      * Draws the checkbox to the screen.
      *

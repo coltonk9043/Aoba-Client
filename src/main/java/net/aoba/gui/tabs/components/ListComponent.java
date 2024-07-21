@@ -53,24 +53,12 @@ public class ListComponent extends Component implements MouseClickListener {
     }
 
 	@Override
-	public void onChildChanged(IGuiElement child) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void onVisibilityChanged() {
 		if(this.isVisible())
 			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 		else
 			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
 	}
-
-	@Override
-	public void onChildAdded(IGuiElement child) {
-
-	}
-
     
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {

@@ -195,12 +195,19 @@ public abstract class Component implements IGuiElement, MouseMoveListener {
     	Rectangle oldRect = this.size;
     	this.setSize(new Rectangle(oldRect.getX(), oldRect.getY(), oldRect.getWidth(), height));
     }
-    
-    public void addChild(Component component) {
-        this.children.add(component);
-        this.onChildAdded(component);
+   
+    @Override
+    public void addChild(Component child) {
+        children.add(child);
+        onChildAdded(child);
     }
     
+	@Override
+	public void onChildChanged(Component child) { }
+
+	@Override
+	public void onChildAdded(Component child) { }
+	
     /**
      * Returns the parent of the Component.
      *

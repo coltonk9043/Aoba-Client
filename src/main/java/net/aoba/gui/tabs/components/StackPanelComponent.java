@@ -38,12 +38,12 @@ public class StackPanelComponent extends Component {
     }
 
     @Override
-    public void onChildAdded(IGuiElement child) {
+    public void onChildAdded(Component child) {
         this.RecalculateHeight();
     }
 
     @Override
-    public void onChildChanged(IGuiElement child) {
+    public void onChildChanged(Component child) {
         this.RecalculateHeight();
     }
 

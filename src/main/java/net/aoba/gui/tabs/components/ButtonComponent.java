@@ -67,12 +67,6 @@ public class ButtonComponent extends Component implements MouseClickListener {
         this.borderColor = borderColor;
         this.backgroundColor = backgroundColor;
     }
-    
-	@Override
-	public void onChildChanged(IGuiElement child) {}
-	
-	@Override
-	public void onChildAdded(IGuiElement child) {}
 	
     /**
      * Sets the text of the button.

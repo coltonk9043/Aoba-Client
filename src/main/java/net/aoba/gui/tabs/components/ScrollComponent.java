@@ -48,16 +48,6 @@ public class ScrollComponent extends Component implements MouseScrollListener {
     }
 
     @Override
-    public void onChildAdded(IGuiElement child) {
-        this.RecalculateHeight();
-    }
-
-    @Override
-    public void onChildChanged(IGuiElement child) {
-        this.RecalculateHeight();
-    }
-
-    @Override
     public void onVisibilityChanged() {
         if(this.isVisible())
         	Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);

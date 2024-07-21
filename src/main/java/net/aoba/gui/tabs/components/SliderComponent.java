@@ -66,13 +66,7 @@ public class SliderComponent extends Component implements MouseClickListener, Mo
 		else
 			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
 	}
-
-	@Override
-	public void onChildChanged(IGuiElement child) {}
 	
-	@Override
-	public void onChildAdded(IGuiElement child) {}
-
     public float getSliderPosition() {
         return this.currentSliderPosition;
     }

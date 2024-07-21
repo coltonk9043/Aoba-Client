@@ -123,16 +123,4 @@ public class EnumComponent<T extends Enum<T>> extends Component implements Mouse
 	public void setErrorState(boolean isError) {
 		this.isErrorState = isError;
 	}
-
-	@Override
-	public void onChildChanged(IGuiElement child) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onChildAdded(IGuiElement child) {
-		// TODO Auto-generated method stub
-
-	}
 }

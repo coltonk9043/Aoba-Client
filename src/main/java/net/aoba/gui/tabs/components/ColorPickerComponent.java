@@ -215,11 +215,5 @@ public class ColorPickerComponent extends Component implements MouseClickListene
 		}
 	}
 
-	@Override
-	public void onChildChanged(IGuiElement child) {
-	}
 
-	@Override
-	public void onChildAdded(IGuiElement child) {
-	}
 }

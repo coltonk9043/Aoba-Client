@@ -69,12 +69,6 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
         visibleRows = (int) EXPANDED_HEIGHT / 36;
         visibleColumns = (int) (actualSize.getWidth() / 36);
     }
-
-	@Override
-	public void onChildChanged(IGuiElement child) {}
-	
-	@Override
-	public void onChildAdded(IGuiElement child) {}
 	
     /**
      * Draws the button to the screen.

@@ -46,13 +46,7 @@ public class KeybindComponent extends Component implements MouseClickListener, K
         this.setMargin(new Margin(8f, 2f, 8f, 2f));
         this.keyBind = keyBind;
     }
-
-	@Override
-	public void onChildChanged(IGuiElement child) { }
-
-	@Override
-	public void onChildAdded(IGuiElement child) { }
-
+    
     @Override
     public void onVisibilityChanged() {
         if (this.isVisible()) {

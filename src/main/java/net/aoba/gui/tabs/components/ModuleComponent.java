@@ -57,12 +57,6 @@ public class ModuleComponent extends Component implements MouseClickListener {
         this.setMargin(new Margin(8f, null, 8f, null));
     }
 
-	@Override
-	public void onChildChanged(IGuiElement child) { }
-
-	@Override
-	public void onChildAdded(IGuiElement child) {}
-    
     @Override
     public void update() {
         super.update();

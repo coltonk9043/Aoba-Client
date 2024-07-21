@@ -143,12 +143,4 @@ public class TextBoxComponent extends Component implements MouseClickListener, K
 	public void setErrorState(boolean isError) {
 		this.isErrorState = isError;
 	}
-
-	@Override
-	public void onChildChanged(IGuiElement child) {
-	}
-
-	@Override
-	public void onChildAdded(IGuiElement child) {
-	}
 }
