@@ -14,6 +14,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -84,7 +85,6 @@ public class CrystalAura extends Module implements TickListener {
 	private long lastAttackTime;
 	private long lastPlaceTime;
 	private BlockPos placePos;
-	private final int explosionRadius = 6;
 
 	public CrystalAura() {
 		super(new KeybindSetting("key.crystalaura", "Crystal Aura Key",
@@ -345,7 +345,8 @@ public class CrystalAura extends Module implements TickListener {
 		}
 
 		if (bestCrystal != null) {
-			// Handling rotation mode
+			Vec3d targetPos = bestCrystal.getPos().add(0, bestCrystal.getBoundingBox().getLengthY() / 2.0, 0);
+
 			switch (rotationMode.getValue()) {
 			case NONE:
 				MC.player.networkHandler
@@ -353,16 +354,13 @@ public class CrystalAura extends Module implements TickListener {
 				MC.player.swingHand(Hand.MAIN_HAND);
 				break;
 			case INSTANT:
-				Vec3d lookVec = bestCrystal.getPos().subtract(MC.player.getPos()).normalize();
-				MC.player.setYaw((float) Math.toDegrees(Math.atan2(lookVec.z, lookVec.x)) - 90);
-				MC.player.setPitch((float) -Math
-						.toDegrees(Math.atan2(lookVec.y, Math.sqrt(lookVec.x * lookVec.x + lookVec.z * lookVec.z))));
+				MC.player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, targetPos);
 				MC.player.networkHandler
 						.sendPacket(PlayerInteractEntityC2SPacket.attack(bestCrystal, MC.player.isSneaking()));
 				break;
 			case SMOOTH:
-				Vec3d targetPos = bestCrystal.getPos().add(0, bestCrystal.getBoundingBox().getLengthY() / 2.0, 0);
-				smoothLookAt(targetPos.x, targetPos.y, targetPos.z);
+				// Instant rotation for now because im too dumb to figure out smooth rotation
+				MC.player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, targetPos);
 
 				MC.player.networkHandler
 						.sendPacket(PlayerInteractEntityC2SPacket.attack(bestCrystal, MC.player.isSneaking()));
