@@ -74,6 +74,7 @@ public class ModuleManager implements KeyDownListener {
     public Module fullbright = new Fullbright();
     public Module itemesp = new ItemESP();
     public Module norender = new NoRender();
+    public FocusFps focusfps = new FocusFps();
     public Module glide = new Glide();
     public Module guimove = new GuiMove();
     public Module higherjump = new HighJump();
@@ -141,6 +142,7 @@ public class ModuleManager implements KeyDownListener {
         addModule(higherjump);
         addModule(itemesp);
         addModule(norender);
+        addModule(focusfps);
         addModule(jesus);
         addModule(jetpack);
         addModule(killaura);

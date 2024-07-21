@@ -21,8 +21,10 @@ package net.aoba.mixin;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.TickEvent;
+import net.aoba.module.modules.render.FocusFps;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.session.Session;
 import net.minecraft.client.world.ClientWorld;
 import org.objectweb.asm.Opcodes;
@@ -52,6 +54,10 @@ public abstract class MinecraftClientMixin {
     public ClientWorld world;
 
     private Session aobaSession;
+
+    @Shadow public abstract boolean isWindowFocused();
+    @Shadow @Final public GameOptions options;
+
 
     @Inject(at = @At("HEAD"), method = "onFinishedLoading(Lnet/minecraft/client/MinecraftClient$LoadingContext;)V")
     private void onfinishedloading(CallbackInfo info) {
@@ -93,5 +99,11 @@ public abstract class MinecraftClientMixin {
         if (aoba.hudManager != null) {
             Aoba.getInstance().hudManager.setClickGuiOpen(false);
         }
+    }
+
+    @Inject(method = "getFramerateLimit", at = @At("HEAD"), cancellable = true)
+    private void onGetFramerateLimit(CallbackInfoReturnable<Integer> info) {
+        FocusFps focusfps = (FocusFps) Aoba.getInstance().moduleManager.focusfps;
+        if (focusfps.getState() && !isWindowFocused()) info.setReturnValue(Math.min(focusfps.getFps().intValue(), this.options.getMaxFps().getValue()));
     }
 }
