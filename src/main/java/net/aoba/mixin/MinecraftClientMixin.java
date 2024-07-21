@@ -103,7 +103,11 @@ public abstract class MinecraftClientMixin {
 
     @Inject(method = "getFramerateLimit", at = @At("HEAD"), cancellable = true)
     private void onGetFramerateLimit(CallbackInfoReturnable<Integer> info) {
-        FocusFps focusfps = (FocusFps) Aoba.getInstance().moduleManager.focusfps;
-        if (focusfps.getState() && !isWindowFocused()) info.setReturnValue(Math.min(focusfps.getFps().intValue(), this.options.getMaxFps().getValue()));
+        if (Aoba.getInstance().moduleManager != null) {
+            FocusFps focusfps = (FocusFps) Aoba.getInstance().moduleManager.focusfps;
+            if (focusfps.getState() && !isWindowFocused()) {
+                info.setReturnValue(Math.min(focusfps.getFps().intValue(), this.options.getMaxFps().getValue()));
+            }
+        }
     }
 }

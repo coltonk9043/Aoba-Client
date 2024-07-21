@@ -94,6 +94,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public ArmorHud armorHud;
 	public RadarHud radarHud;
 	public InfoHud infoHud;
+	public ModuleArrayListHud moduleArrayListHud;
 
 	public GuiManager() {
 		borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
@@ -121,10 +122,11 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		armorHud = new ArmorHud(790, 500, 200, 50);
 		radarHud = new RadarHud(590, 500, 180, 180);
 		infoHud = new InfoHud(100, 500);
+		moduleArrayListHud = new ModuleArrayListHud(400, 500);
 
 
 		hudPane.AddHud(new HudOptionsTab());
-		hudPane.AddHud(new ToggleHudsTab(new AbstractHud[] { moduleSelector, armorHud, radarHud, infoHud }));
+		hudPane.AddHud(new ToggleHudsTab(new AbstractHud[] { moduleSelector, armorHud, radarHud, infoHud, moduleArrayListHud }));
 		int xOffset = 50;
 		for (Category category : Module.Category.values()) {
 			AbstractTab tab = new AbstractTab(category.name(), xOffset, 75, true, category.name());
@@ -260,19 +262,6 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 				if (hud.getVisible()) {
 					hud.draw(drawContext, tickDelta);
 				}
-			}
-		}
-
-		// Draws the active mods in the top right of the screen.
-		AobaClient aoba = Aoba.getInstance();
-		int iteration = 0;
-		for (int i = 0; i < aoba.moduleManager.modules.size(); i++) {
-			Module mod = aoba.moduleManager.modules.get(i);
-			if (mod.getState()) {
-				Render2D.drawString(drawContext, mod.getName(),
-						(float) (window.getWidth() - ((MC.textRenderer.getWidth(mod.getName()) + 5) * 2)),
-						10 + (iteration * 20), GuiManager.foregroundColor.getValue().getColorAsInt());
-				iteration++;
 			}
 		}
 
