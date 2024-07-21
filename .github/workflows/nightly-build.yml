@@ -43,6 +43,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/*.jar
+          asset_path: /build/libs/*.jar
           asset_name: Aoba-1.4.3.jar
           asset_content_type: application/java-archive
