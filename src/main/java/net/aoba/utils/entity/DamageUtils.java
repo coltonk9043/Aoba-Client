@@ -10,6 +10,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult.Type;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -128,15 +129,13 @@ public class DamageUtils {
                 for (double y = startY; y <= endY; y += yStep) {
                     for (double z = startZ; z <= endZ; z += zStep) {
                         Vec3d position = new Vec3d(x, y, z);
-
-                        if (raycast(new ExposureRaycastContext(position, source), raycastFactory) == null) misses++;
-
+                        BlockHitResult raycastResult = raycast(new ExposureRaycastContext(position, source), raycastFactory);
+                        if (raycastResult == null || raycastResult.getType() == Type.MISS) misses++;
                         hits++;
                     }
                 }
             }
-
-            return (float) misses / hits;
+            return misses / hits;
         }
 
         return 0f;
