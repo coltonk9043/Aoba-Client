@@ -1,6 +1,8 @@
 name: Java CI with Gradle
 
-on: [ push,pull_request ]
+on:
+  schedule:
+    - cron: "0 22 * * *"
 
 concurrency:
   group: "latest"
