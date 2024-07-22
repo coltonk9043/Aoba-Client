@@ -95,6 +95,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public RadarHud radarHud;
 	public InfoHud infoHud;
 	public ModuleArrayListHud moduleArrayListHud;
+	public WatermarkHud watermarkHud;
 
 	public GuiManager() {
 		borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
@@ -123,10 +124,11 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		radarHud = new RadarHud(590, 500, 180, 180);
 		infoHud = new InfoHud(100, 500);
 		moduleArrayListHud = new ModuleArrayListHud(400, 500);
+		watermarkHud = new WatermarkHud(300, 500);
 
 
 		hudPane.AddHud(new HudOptionsTab());
-		hudPane.AddHud(new ToggleHudsTab(new AbstractHud[] { moduleSelector, armorHud, radarHud, infoHud, moduleArrayListHud }));
+		hudPane.AddHud(new ToggleHudsTab(new AbstractHud[] { moduleSelector, armorHud, radarHud, infoHud, moduleArrayListHud, watermarkHud }));
 		int xOffset = 50;
 		for (Category category : Module.Category.values()) {
 			AbstractTab tab = new AbstractTab(category.name(), xOffset, 75, true, category.name());

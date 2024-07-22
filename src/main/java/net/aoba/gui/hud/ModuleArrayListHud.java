@@ -40,7 +40,7 @@ public class ModuleArrayListHud extends AbstractHud {
                     }
                 }
 
-                this.setWidth(maxWidth + 10);
+                this.setWidth(maxWidth * 2 + 10);
                 this.setHeight(totalHeight + 10);
 
                 aoba.moduleManager.modules.stream()
@@ -48,7 +48,7 @@ public class ModuleArrayListHud extends AbstractHud {
                         .sorted(Comparator.comparingInt(mod -> -MC.textRenderer.getWidth(mod.getName())))
                         .forEachOrdered(mod -> {
                             int textWidth = MC.textRenderer.getWidth(mod.getName());
-                            int centeredX = (int) (pos.getX().intValue() + (pos.getWidth() - textWidth) / 2);
+                            int centeredX = (int) (pos.getX().intValue() + (pos.getWidth() - textWidth) / 2) - 18;
                             int yPosition = pos.getY().intValue() + 10 + (iteration[0] * 20);
 
                             Render2D.drawString(drawContext, mod.getName(),
