@@ -49,7 +49,10 @@
 	  "TitleScreenMixin",
 	  "WorldChunkMixin",
 	  "WorldRendererMixin",
-	  "InGameOverlayRendererMixin"
+	  "InGameOverlayRendererMixin",
+	  "SoundSystemMixin",
+	  "ParticleManagerMixin",
+	  "ClientPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
