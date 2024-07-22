@@ -37,6 +37,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
@@ -49,6 +50,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
     private BooleanSetting targetFriends;
     private FloatSetting frequency;
     private FloatSetting radius;
+    private FloatSetting rotationSpeed;
 
     private int currentTick = 0;
 
@@ -64,7 +66,9 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
         targetFriends = new BooleanSetting("aimbot_target_friends", "Target Friends", "Target friends.", false);
         frequency = new FloatSetting("aimbot_frequency", "Ticks", "How frequent the aimbot updates (Lower = Laggier)", 1.0f, 1.0f, 20.0f, 1.0f);
         radius = new FloatSetting("aimbot_radius", "Radius", "Radius", 64.0f, 1.0f, 256.0f, 1.0f);
+        rotationSpeed = new FloatSetting("aimbot_rotation_speed", "Rotation Speed", "Speed of the rotation.", 1.0f, 0.1f, 5.0f, 0.1f);
 
+        this.addSetting(rotationSpeed);
         this.addSetting(targetAnimals);
         this.addSetting(targetPlayers);
         this.addSetting(targetFriends);
@@ -93,7 +97,30 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
     public void OnRender(Render3DEvent event) {
         if (temp != null) {
             Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
-            MC.player.lookAt(EntityAnchor.EYES, temp.getEyePos().add(offset));
+            Vec3d targetPos = temp.getEyePos().add(offset);
+            Vec3d playerPos = MC.player.getEyePos();
+            Vec3d direction = targetPos.subtract(playerPos).normalize();
+
+            float yaw = (float) Math.toDegrees(Math.atan2(direction.z, direction.x)) - 90F;
+            float pitch = (float) -Math.toDegrees(Math.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z)));
+
+
+            float currentYaw = MC.player.getYaw();
+            float currentPitch = MC.player.getPitch();
+
+            float deltaYaw = MathHelper.wrapDegrees(yaw - currentYaw);
+            float deltaPitch = MathHelper.wrapDegrees(pitch - currentPitch);
+
+            float speed = rotationSpeed.getValue();
+            float smoothYaw = currentYaw + MathHelper.clamp(deltaYaw, -speed, speed);
+            float smoothPitch = currentPitch + MathHelper.clamp(deltaPitch, -speed, speed);
+
+            if (Math.abs(deltaYaw) > 180) {
+                smoothYaw = currentYaw - MathHelper.clamp(deltaYaw, -speed, speed);
+            }
+
+            MC.player.setYaw(smoothYaw);
+            MC.player.setPitch(smoothPitch);
         }
     }
 
