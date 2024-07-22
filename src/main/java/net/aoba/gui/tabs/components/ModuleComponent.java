@@ -31,11 +31,14 @@ import net.aoba.misc.Render2D;
 import net.aoba.module.Module;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+
+import static net.aoba.AobaClient.MC;
 
 public class ModuleComponent extends Component implements MouseClickListener {
     private String text;
@@ -96,6 +99,18 @@ public class ModuleComponent extends Component implements MouseClickListener {
             	Render2D.drawTexturedQuad(matrix4f, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16, hudColor);
             }
         }
+
+        if (this.hovered) {
+            int mouseX = (int) MC.mouse.getX();
+            int mouseY = (int) MC.mouse.getY();
+            String tooltip = module.getDescription();
+            int tooltipWidth = Render2D.getStringWidth(tooltip);
+            int tooltipHeight = 10;
+
+            Render2D.drawRoundedBox(matrix4f, mouseX, mouseY + 12, (tooltipWidth + 4) * 2, (tooltipHeight + 4) * 2, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
+            Render2D.drawString(drawContext, tooltip, mouseX + 4, mouseY + 16, GuiManager.foregroundColor.getValue());
+        }
+
     }
 
     @Override

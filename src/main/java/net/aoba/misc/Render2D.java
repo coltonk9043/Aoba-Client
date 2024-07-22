@@ -1,5 +1,6 @@
 package net.aoba.misc;
 
+import net.minecraft.client.font.TextRenderer;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -69,6 +70,11 @@ public class Render2D {
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
+	}
+
+	public static int getStringWidth(String text) {
+		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+		return textRenderer.getWidth(text);
 	}
 
 	public static void drawCircle(Matrix4f matrix4f, float x, float y, float radius, Color color) {
