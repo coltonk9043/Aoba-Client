@@ -125,7 +125,7 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
     @Override
     public void onChildChanged(Component changedChild) {
         if (this.inheritHeightFromChildren) {
-        	applyInherittedHeight();
+            applyInherittedHeight();
         }
     }
 
@@ -137,7 +137,14 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
     @Override
     public void onChildAdded(Component child) {
         if (this.inheritHeightFromChildren) {
-        	applyInherittedHeight();
+            applyInherittedHeight();
+        }
+    }
+
+    @Override
+    public void onChildRemoved(Component child) {
+        if (this.inheritHeightFromChildren) {
+            applyInherittedHeight();
         }
     }
 
@@ -146,16 +153,22 @@ public abstract class AbstractGui implements IGuiElement, MouseClickListener, Mo
         children.add(child);
         onChildAdded(child);
     }
-    
+
+    @Override
+    public void removeChild(Component child) {
+        children.remove(child);
+        onChildRemoved(child);
+    }
+
     private void applyInherittedHeight() {
-    	float tempHeight = 0;
+        float tempHeight = 0;
         for (Component child : children) {
             tempHeight += (child.getSize().getHeight());
         }
         setHeight(tempHeight);
         minHeight = tempHeight;
     }
-    
+
     public boolean getVisible() {
         return this.visible;
     }

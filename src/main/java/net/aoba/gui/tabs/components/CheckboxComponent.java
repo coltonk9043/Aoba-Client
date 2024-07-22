@@ -90,6 +90,16 @@ public class CheckboxComponent extends Component implements MouseClickListener {
     }
 
     @Override
+    public void removeChild(Component child) {
+
+    }
+
+    @Override
+    public void onChildRemoved(Component child) {
+
+    }
+
+    @Override
     public void onVisibilityChanged() {
         if (this.isVisible()) {
             Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
@@ -109,5 +119,14 @@ public class CheckboxComponent extends Component implements MouseClickListener {
                 event.cancel();
             }
         }
+    }
+
+    public void setChecked(boolean checked) {
+        checkbox.setValue(checked);
+        animationProgress = 1.0f;
+    }
+
+    public boolean isChecked() {
+        return checkbox.getValue();
     }
 }

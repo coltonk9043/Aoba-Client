@@ -56,8 +56,6 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
      * Constructor for button component.
      *
      * @param parent  Parent Tab that this Component resides in.
-     * @param text    Text contained in this button element.
-     * @param onClick OnClick delegate that will run when the button is pressed.
      */
     public BlocksComponent(IGuiElement parent, BlocksSetting setting) {
         super(parent, new Rectangle(null, null, null, COLLAPSED_HEIGHT));
@@ -73,10 +71,8 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
     /**
      * Draws the button to the screen.
      *
-     * @param offset       The offset (Y location relative to parent) of the Component.
      * @param drawContext  The current draw context of the game.
      * @param partialTicks The partial ticks used for interpolation.
-     * @param color        The current Color of the UI.
      */
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
@@ -122,6 +118,16 @@ public class BlocksComponent extends Component implements MouseScrollListener, M
             }
             event.cancel();
         }
+    }
+
+    @Override
+    public void removeChild(Component child) {
+
+    }
+
+    @Override
+    public void onChildRemoved(Component child) {
+
     }
 
     @Override

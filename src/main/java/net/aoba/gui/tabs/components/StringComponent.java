@@ -121,6 +121,16 @@ public class StringComponent extends Component implements FontChangedListener {
     }
 
     @Override
+    public void removeChild(Component child) {
+
+    }
+
+    @Override
+    public void onChildRemoved(Component child) {
+
+    }
+
+    @Override
     public void onParentChanged() {
     	super.onParentChanged();
         setText(originalText);

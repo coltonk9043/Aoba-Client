@@ -58,8 +58,18 @@ public class SliderComponent extends Component implements MouseClickListener, Mo
         this.currentSliderPosition = (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value));
         this.setMargin(new Margin(8f, 2f, 8f, 2f));
     }
-    
-	@Override
+
+    @Override
+    public void removeChild(Component child) {
+
+    }
+
+    @Override
+    public void onChildRemoved(Component child) {
+
+    }
+
+    @Override
 	public void onVisibilityChanged() {
 		if(this.isVisible())
 			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);

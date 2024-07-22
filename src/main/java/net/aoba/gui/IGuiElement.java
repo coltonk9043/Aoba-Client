@@ -29,6 +29,8 @@ public interface IGuiElement {
     public void addChild(Component child);
     public void onChildAdded(Component child);
     public void onChildChanged(Component child);
+    public void removeChild(Component child);
+    public void onChildRemoved(Component child);
     public void onParentChanged();
     public void onVisibilityChanged();
 

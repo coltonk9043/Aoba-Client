@@ -21,7 +21,7 @@ package net.aoba.gui.tabs.components;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Rectangle;
 
-public class StackPanelComponent extends Component {
+public  class StackPanelComponent extends Component {
     public enum StackType {
         Horizontal, Vertical
     }
@@ -45,6 +45,16 @@ public class StackPanelComponent extends Component {
     @Override
     public void onChildChanged(Component child) {
         this.RecalculateHeight();
+    }
+
+    @Override
+    public void removeChild(Component child) {
+
+    }
+
+    @Override
+    public void onChildRemoved(Component child) {
+
     }
 
     @Override

@@ -145,6 +145,16 @@ public class ColorPickerComponent extends Component implements MouseClickListene
 	}
 
 	@Override
+	public void removeChild(Component child) {
+
+	}
+
+	@Override
+	public void onChildRemoved(Component child) {
+
+	}
+
+	@Override
 	public void onVisibilityChanged() {
 		if (this.isVisible()) {
 			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);

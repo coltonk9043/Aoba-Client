@@ -48,6 +48,16 @@ public class ScrollComponent extends Component implements MouseScrollListener {
     }
 
     @Override
+    public void removeChild(Component child) {
+
+    }
+
+    @Override
+    public void onChildRemoved(Component child) {
+
+    }
+
+    @Override
     public void onVisibilityChanged() {
         if(this.isVisible())
         	Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
