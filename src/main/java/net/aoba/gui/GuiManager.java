@@ -189,7 +189,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 	@Override
 	public void OnKeyDown(KeyDownEvent event) {
-		if (clickGuiButton.getValue().getCode() == event.GetKey()) {
+		if (clickGuiButton.getValue().getCode() == event.GetKey() && MC.currentScreen == null) {
 			this.clickGuiOpen = !this.clickGuiOpen;
 			this.toggleMouse();
 		}

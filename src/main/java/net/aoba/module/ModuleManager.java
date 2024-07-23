@@ -35,6 +35,8 @@ import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil.Key;
+
+import javax.tools.Tool;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -108,6 +110,7 @@ public class ModuleManager implements KeyDownListener {
     public Module triggerbot = new TriggerBot();
     public Module xray = new XRay();
     public Module zoom = new Zoom();
+    public Module tooltips = new Tooltips();
 
     public ModuleManager(List<IAddon> addons) {
         addModule(aimbot);
@@ -173,6 +176,7 @@ public class ModuleManager implements KeyDownListener {
         addModule(trajectory);
         addModule(xray);
         addModule(zoom);
+        addModule(tooltips);
 
         addons.stream().filter(Objects::nonNull).forEach(addon -> {
             try {

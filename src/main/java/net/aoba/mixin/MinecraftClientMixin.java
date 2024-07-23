@@ -96,6 +96,7 @@ public abstract class MinecraftClientMixin {
     @Inject(at = {@At(value = "HEAD")}, method = {"openGameMenu(Z)V"})
     private void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
         AobaClient aoba = Aoba.getInstance();
+
         if (aoba.hudManager != null) {
             Aoba.getInstance().hudManager.setClickGuiOpen(false);
         }
