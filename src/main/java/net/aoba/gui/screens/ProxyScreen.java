@@ -81,6 +81,10 @@ public class ProxyScreen extends Screen {
         this.deleteButton.active = true;
     }
 
+    public boolean isActiveProxy(Socks5Proxy proxy) {
+        return Aoba.getInstance().proxyManager.getActiveProxy() == proxy;
+    }
+
     public void setActive() {
         ProxySelectionList.Entry proxyListSelectorSelectedOrNull = this.proxyListSelector.getSelectedOrNull();
 

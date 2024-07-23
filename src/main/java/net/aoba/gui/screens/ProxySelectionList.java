@@ -75,13 +75,15 @@ public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Ent
                            int mouseX, int mouseY, boolean hovered, float tickDelta) {
             TextRenderer textRenderer = this.mc.textRenderer;
 
-            int lineHeight = 12; // Adjust this based on your font size and line spacing
-            int textY = y + (entryHeight - lineHeight * 4) / 2; // Centering vertically
-            
-            drawContext.drawTextWithShadow(textRenderer, "IP: " + this.proxy.getIp(), x + 32 + 3, textY, 16777215);
-            drawContext.drawTextWithShadow(textRenderer, "Port: " + this.proxy.getPort(), x + 32 + 3, textY + lineHeight, 16777215);
-            drawContext.drawTextWithShadow(textRenderer, "Username: " + this.proxy.getUsername(), x + 32 + 3, textY + lineHeight * 2, 16777215);
-            drawContext.drawText(textRenderer, "*".repeat(this.proxy.getPassword().length()), x + 32 + 3, textY + lineHeight * 3, 0x00FF00, true);
+            int lineHeight = 12;
+            int textY = y + (entryHeight - lineHeight * 4) / 2;
+
+            int textColor = this.owner.isActiveProxy(this.proxy) ? 0x00FF00 : 16777215;
+
+            drawContext.drawTextWithShadow(textRenderer, "IP: " + this.proxy.getIp(), x + 32 + 3, textY, textColor);
+            drawContext.drawTextWithShadow(textRenderer, "Port: " + this.proxy.getPort(), x + 32 + 3, textY + lineHeight, textColor);
+            drawContext.drawTextWithShadow(textRenderer, "Username: " + this.proxy.getUsername(), x + 32 + 3, textY + lineHeight * 2, textColor);
+            drawContext.drawText(textRenderer, "*".repeat(this.proxy.getPassword().length()), x + 32 + 3, textY + lineHeight * 3, textColor, true);
         }
 
         @Override
@@ -106,10 +108,16 @@ public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Ent
             }
             this.owner.setSelected(this);
             if (Util.getMeasuringTimeMs() - this.lastClickTime < 250L) {
-                this.owner.setActive();
+                Socks5Proxy proxy = this.getProxyData();
+                if (this.owner.isActiveProxy(proxy)) {
+                    this.owner.resetActive();
+                } else {
+                    this.owner.setActive();
+                }
             }
             this.lastClickTime = Util.getMeasuringTimeMs();
             return false;
         }
+
     }
 }
