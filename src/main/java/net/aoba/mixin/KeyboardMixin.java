@@ -22,11 +22,16 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.KeyDownEvent;
 import net.minecraft.client.Keyboard;
+import net.minecraft.client.gui.screen.ChatScreen;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.awt.event.KeyEvent;
+
+import static net.aoba.AobaClient.MC;
 
 @Mixin(Keyboard.class)
 public class KeyboardMixin {
@@ -42,6 +47,12 @@ public class KeyboardMixin {
                 if (event.isCancelled()) {
                     ci.cancel();
                 }
+            }
+        }
+
+        if (MC.currentScreen == null && MC.getOverlay() == null) {
+            if (key == KeyEvent.VK_PERIOD) {
+                MC.setScreen(new ChatScreen(""));
             }
         }
     }

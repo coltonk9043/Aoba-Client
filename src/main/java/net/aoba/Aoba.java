@@ -41,6 +41,4 @@ public class Aoba implements ModInitializer {
     public static AobaClient getInstance() {
         return instance;
     }
-
-
 }
