@@ -448,12 +448,12 @@ public class Render2D {
         MatrixStack matrixStack = drawContext.getMatrices();
         matrixStack.push();
         matrixStack.scale(scale, scale, 1.0f);
-        if (scale > 1.0f) {
-            matrixStack.translate(-x / scale, -y / scale, 0.0f);
-        } else {
-            matrixStack.translate(x / scale, y * scale, 0.0f);
-        }
-        drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color, false);
+		if (scale > 1.0f) {
+			matrixStack.translate(-x / scale, -y / scale, 0.0f);
+		} else {
+			matrixStack.translate((x / scale) - x, (y * scale) - y, 0.0f);
+		}
+		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color, false);
         matrixStack.pop();
     }
 

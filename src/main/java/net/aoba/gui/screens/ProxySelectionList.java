@@ -80,10 +80,10 @@ public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Ent
 
             int textColor = this.owner.isActiveProxy(this.proxy) ? 0x00FF00 : 16777215;
 
-            drawContext.drawTextWithShadow(textRenderer, "IP: " + this.proxy.getIp(), x + 32 + 3, textY, textColor);
-            drawContext.drawTextWithShadow(textRenderer, "Port: " + this.proxy.getPort(), x + 32 + 3, textY + lineHeight, textColor);
-            drawContext.drawTextWithShadow(textRenderer, "Username: " + this.proxy.getUsername(), x + 32 + 3, textY + lineHeight * 2, textColor);
-            drawContext.drawText(textRenderer, "*".repeat(this.proxy.getPassword().length()), x + 32 + 3, textY + lineHeight * 3, textColor, true);
+            Render2D.drawStringWithScale(drawContext, "IP: " + this.proxy.getIp(), x + 32 + 3, textY, textColor, 1.0f);
+            Render2D.drawStringWithScale(drawContext, "Port: " + this.proxy.getPort(), x + 32 + 3, textY + lineHeight, textColor, 1.0f);
+            Render2D.drawStringWithScale(drawContext, "Username: " + this.proxy.getUsername(), x + 32 + 3, textY + lineHeight * 2, textColor, 1.0f);
+            Render2D.drawStringWithScale(drawContext, "*".repeat(this.proxy.getPassword().length()), x + 32 + 3, textY + lineHeight * 3, textColor, 1.0f);
         }
 
         @Override
