@@ -219,8 +219,8 @@ public class AltManager {
     }
 
     /**
-     * @param alt
-     * @return
+     * @param alt Alt
+     * @return login success state
      */
     public boolean login(Alt alt) {
         // Log in to the correct service depending on the Alt type.

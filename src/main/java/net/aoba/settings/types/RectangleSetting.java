@@ -125,14 +125,14 @@ public class RectangleSetting extends Setting<Rectangle> {
     /**
      * Setter for the Rectangle size without calling the update function.
      *
-     * @param x X Coordinate.
+     * @param size Size Coordinate.
      */
     public void silentSetSize(Rectangle size) {
         value = size;
     }
 
     /**
-     * Checks whether or not a value is with this setting's valid range.
+     * Checks whether a value is with this setting's valid range.
      */
     @Override
     protected boolean isValueValid(Rectangle value) {

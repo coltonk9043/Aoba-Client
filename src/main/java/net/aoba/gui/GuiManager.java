@@ -222,7 +222,6 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
     /**
      * Getter for the current color used by the GUI for text rendering.
      *
-     * @return Current Color
      */
     @Override
     public void OnUpdate(TickEvent event) {
