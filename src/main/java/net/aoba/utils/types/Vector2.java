@@ -79,8 +79,8 @@ public class Vector2 {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Vector2)) return false;
-        Vector2 other = (Vector2) obj;
+        if (!(obj instanceof Vector2 other)) return false;
+
         return Float.compare(other.x, x) == 0 && Float.compare(other.y, y) == 0;
     }
 
@@ -89,6 +89,7 @@ public class Vector2 {
     public int hashCode() {
         int result = Float.hashCode(x);
         result = 31 * result + Float.hashCode(y);
+
         return result;
     }
 }

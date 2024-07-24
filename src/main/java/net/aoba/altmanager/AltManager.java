@@ -230,7 +230,7 @@ public class AltManager {
     /**
      * Logs in to a Microsoft Account.
      *
-     * @param alt The Alt to be signed into.
+     * @param alt The Alt to be signed in to.
      * @return A boolean signifying that the operation has completed.
      */
     private boolean loginMicrosoft(Alt alt) {
