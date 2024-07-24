@@ -87,6 +87,15 @@ jar {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 }
 
+task printJavaVersion {
+    doLast {
+        println "Java version: ${System.getProperty('java.version')}"
+    }
+}
+
+printJavaVersion.dependsOn(tasks.withType(JavaCompile))
+
+
 // configure the maven publication
 publishing {
     publications {
