@@ -39,13 +39,11 @@ public class HudsTab extends Window {
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setMargin(new Margin(null, 30f, null, null));
 
-        List<String> test = new ArrayList<String>();
-
 
         ConcurrentHashMap<String, TextRenderer> fontRenderers = Aoba.getInstance().fontManager.fontRenderers;
         Set<String> set = fontRenderers.keySet();
 
-        test.addAll(set);
+        List<String> test = new ArrayList<>(set);
 
         stackPanel.addChild(new StringComponent("Toggle HUD", stackPanel, GuiManager.foregroundColor.getValue(), true));
 

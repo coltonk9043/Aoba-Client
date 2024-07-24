@@ -38,11 +38,10 @@ public class HudOptionsTab extends Window {
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setMargin(new Margin(null, 30f, null, null));
 
-        List<String> fontNames = new ArrayList<String>();
         ConcurrentHashMap<String, TextRenderer> fontRenderers = Aoba.getInstance().fontManager.fontRenderers;
         Set<String> set = fontRenderers.keySet();
 
-        fontNames.addAll(set);
+        List<String> fontNames = new ArrayList<>(set);
 
         // Keybinds Header
         stackPanel.addChild(new StringComponent("Keybinds", stackPanel, GuiManager.foregroundColor.getValue(), true));
