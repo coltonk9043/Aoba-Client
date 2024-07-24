@@ -24,6 +24,7 @@ package net.aoba.module.modules.movement;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -44,7 +45,7 @@ public class Fly extends Module implements TickListener {
         super(new KeybindSetting("key.fly", "Fly Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0)));
 
         this.setName("Fly");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to fly.");
 
         flySpeed = new FloatSetting("fly_speed", "Speed", "Fly speed.", 2f, 0.1f, 15f, 0.5f);

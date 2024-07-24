@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.misc;
 
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
@@ -32,7 +33,7 @@ public class AntiCactus extends Module {
         super(new KeybindSetting("key.anticactus", "AntiCactus Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("AntiCactus");
-        this.setCategory(Category.Misc);
+        this.setCategory(Category.of("Misc"));
         this.setDescription("Prevents blocks from hurting you.");
     }
 

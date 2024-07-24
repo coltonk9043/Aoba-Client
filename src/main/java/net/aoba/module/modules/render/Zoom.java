@@ -21,6 +21,7 @@ package net.aoba.module.modules.render;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -38,7 +39,7 @@ public class Zoom extends Module implements TickListener {
         super(new KeybindSetting("key.zoom", "Zoom Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Zoom");
-        this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
         this.setDescription("Zooms the players camera to see further.");
 
         zoomFactor = new FloatSetting("zoom_factor", "Factor", "The zoom factor that the zoom will use.", 2.0f, 1.0f, 3.6f, 0.1f);

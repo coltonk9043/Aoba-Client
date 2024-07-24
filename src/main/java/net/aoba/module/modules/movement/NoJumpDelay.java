@@ -22,6 +22,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.mixin.interfaces.ILivingEntity;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -36,7 +37,7 @@ public class NoJumpDelay extends Module implements TickListener {
         super(new KeybindSetting("key.nojumpdelay", "NoJumpDelay Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("NoJumpDelay");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Makes it so the user can jump very quickly.");
 
         delay = new FloatSetting("nojumpdelay_delay", "Delay", "NoJumpDelay Delay", 1f, 0.0f, 20.0f, 1f);

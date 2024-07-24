@@ -28,6 +28,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.FakePlayerEntity;
 import net.aoba.mixin.interfaces.ICamera;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -51,7 +52,7 @@ public class Freecam extends Module implements TickListener, Render3DListener {
         super(new KeybindSetting("key.freecam", "Freecam Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Freecam");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to clip through blocks (Only work clientside).");
         flySpeed = new FloatSetting("freecam_speed", "Speed", "Speed of the Freecam.", 2f, 0.1f, 15f, 0.5f);
         this.addSetting(flySpeed);

@@ -28,6 +28,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.Render3D;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -51,7 +52,7 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
     public Breadcrumbs() {
         super(new KeybindSetting("key.breadcrumbs", "Breadcrumbs Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
         this.setName("Breadcrumbs");
-        this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
         this.setDescription("Shows breadcrumbs of where you last stepped;");
         this.addSetting(color);
         this.addSetting(lineThickness);

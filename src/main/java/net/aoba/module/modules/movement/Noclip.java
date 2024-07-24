@@ -24,6 +24,7 @@ package net.aoba.module.modules.movement;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -47,7 +48,7 @@ public class Noclip extends Module implements TickListener {
         super(new KeybindSetting("key.noclip", "Noclip Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Noclip");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to clip through blocks (Only work clientside).");
 
         flySpeed = new FloatSetting("noclip_speed", "Speed", "Fly speed.", 2f, 0.1f, 15f, 0.5f);

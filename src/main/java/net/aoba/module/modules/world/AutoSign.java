@@ -22,6 +22,7 @@
 package net.aoba.module.modules.world;
 
 import net.aoba.cmd.CommandManager;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
@@ -34,7 +35,7 @@ public class AutoSign extends Module {
         super(new KeybindSetting("key.autosign", "AutoSign Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("AutoSign");
-        this.setCategory(Category.World);
+        this.setCategory(Category.of("World"));
         this.setDescription("Automatically places sign.");
     }
 

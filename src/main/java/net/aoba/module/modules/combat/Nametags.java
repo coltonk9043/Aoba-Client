@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.combat;
 
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -38,7 +39,7 @@ public class Nametags extends Module {
         super(new KeybindSetting("key.nametags", "NameTags Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Nametags");
-        this.setCategory(Category.Combat);
+        this.setCategory(Category.of("Combat"));
         this.setDescription("Scales the nametags to be larger.");
 
         scale = new FloatSetting("nametags_scale", "Scale", "Scale of the NameTags", 1.25f, 0f, 5f, 0.25f);

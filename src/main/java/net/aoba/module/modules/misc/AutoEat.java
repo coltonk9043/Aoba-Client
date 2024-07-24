@@ -24,6 +24,7 @@ package net.aoba.module.modules.misc;
 import net.aoba.Aoba;
 import net.aoba.event.events.FoodLevelEvent;
 import net.aoba.event.listeners.FoodLevelListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -40,7 +41,7 @@ public class AutoEat extends Module implements FoodLevelListener {
         super(new KeybindSetting("key.autoeat", "AutoEat Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("AutoEat");
-        this.setCategory(Category.Misc);
+        this.setCategory(Category.of("Misc"));
         this.setDescription("Automatically eats the best food in your inventory.");
 
         hungerSetting = new FloatSetting("autoeat_hunger", "Hunger", "Determines when AutoEat will trigger.", 6, 1, 20, 1);

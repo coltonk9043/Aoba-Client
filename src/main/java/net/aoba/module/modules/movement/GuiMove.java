@@ -3,6 +3,7 @@ package net.aoba.module.modules.movement;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.gui.screen.ChatScreen;
@@ -15,8 +16,8 @@ public class GuiMove extends Module implements TickListener {
         super(new KeybindSetting("key.guimove", "GuiMove Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("GuiMove");
-        this.setCategory(Category.Movement);
-        this.setDescription("Lets the player move inside of menus.");
+        this.setCategory(Category.of("Movement"));
+        this.setDescription("Lets the player move while inside of menus.");
     }
 
     @Override

@@ -24,6 +24,7 @@ package net.aoba.module.modules.misc;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
@@ -34,7 +35,7 @@ public class AutoWalk extends Module implements TickListener {
         super(new KeybindSetting("key.autowalk", "AutoWalk Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("AutoWalk");
-        this.setCategory(Category.Misc);
+        this.setCategory(Category.of("Misc"));
         this.setDescription("Automatically walks for you.");
     }
 

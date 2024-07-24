@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -63,7 +64,7 @@ public class Surround extends Module implements TickListener {
         super(new KeybindSetting("key.surround", "Surround Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Surround");
-        this.setCategory(Category.World);
+        this.setCategory(Category.of("World"));
         this.setDescription("Surrounds the player with blocks.");
 
         placeHeight = new FloatSetting("surround_height", "Height", "Height that surround walls will go.", 1f, 1f, 3f, 1.0f);

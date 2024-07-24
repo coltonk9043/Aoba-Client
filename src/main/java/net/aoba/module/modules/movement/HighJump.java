@@ -1,5 +1,6 @@
 package net.aoba.module.modules.movement;
 
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -14,7 +15,7 @@ public class HighJump extends Module {
         super(new KeybindSetting("key.higheump", "Higher Jump Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("HighJump");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to jump super high!");
 
         multiplier = new FloatSetting("highjump.jumpmultiplier", "Jump Multiplier", "The height that the player will jump.", 1.5f, 0.1f, 10.0f, 0.1f);

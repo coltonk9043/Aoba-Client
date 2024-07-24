@@ -3,6 +3,7 @@ package net.aoba.module.modules.movement;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -27,7 +28,7 @@ public class ClickTP extends Module implements MouseClickListener {
         super(new KeybindSetting("key.clicktp", "ClickTP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("ClickTP");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the user to teleport where they are looking.");
 
         distance = new FloatSetting("clicktp.distance", "Max Distance", "Max Distance to teleport.", 10.0f, 1.0f, 200.0f, 1.0f);

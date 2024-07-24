@@ -1,5 +1,6 @@
 package net.aoba.module.modules.render;
 
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -19,7 +20,7 @@ public class NoRender extends Module {
         super(new KeybindSetting("key.norender", "NoRender Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("NoRender");
-        this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
         this.setDescription("Stops certain things from rendering.");
 
         this.addSetting(noEatParticles);

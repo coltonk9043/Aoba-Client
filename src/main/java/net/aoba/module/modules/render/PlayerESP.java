@@ -26,6 +26,7 @@ import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.Render3D;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -45,7 +46,7 @@ public class PlayerESP extends Module implements Render3DListener {
         super(new KeybindSetting("key.playeresp", "PlayerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("PlayerESP");
-        this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
         this.setDescription("Allows the player to see other players with an ESP.");
 
         this.addSetting(color_default);

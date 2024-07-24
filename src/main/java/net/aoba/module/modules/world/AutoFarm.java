@@ -25,6 +25,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.ModuleUtils;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -49,7 +50,7 @@ public class AutoFarm extends Module implements TickListener {
         super(new KeybindSetting("key.autofarm", "AutoFarm Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("AutoFarm");
-        this.setCategory(Category.World);
+        this.setCategory(Category.of("World"));
         this.setDescription("Destroys blocks that can be instantly broken around the player.");
         this.radius = new FloatSetting("autofarm_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
         this.addSetting(radius);

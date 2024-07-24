@@ -3,6 +3,7 @@ package net.aoba.module.modules.movement;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -21,7 +22,7 @@ public class FastLadder extends Module implements TickListener {
         super(new KeybindSetting("key.fastladder", "FastLadder Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("FastLadder");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Allows players to climb up Ladders faster");
 
         ladderSpeed = new FloatSetting("fastladder_speed", "Speed", "Speed for FastLadder Module", 0.2f, 0.1f, 0.5f, 0.1f);

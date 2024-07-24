@@ -9,6 +9,7 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.Render3D;
 import net.aoba.misc.bowaimbot.BowAimbotTargets;
 import net.aoba.misc.bowaimbot.BowAimbotUtils;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -55,7 +56,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
         super(new KeybindSetting("key.bowaimbot", "BowAimbot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("BowAimbot");
-        this.setCategory(Category.Combat);
+        this.setCategory(Category.of("Combat"));
         this.setDescription("BowAimbot");
 
         targetAnimals = new BooleanSetting("bowaimbot_target_mobs", "Target Mobs", "Target mobs.", false);

@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.render;
 
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
@@ -33,7 +34,7 @@ public class Fullbright extends Module {
         super(new KeybindSetting("key.fullbright", "Fullbright Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Fullbright");
-        this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
         this.setDescription("Maxes out the brightness.");
     }
 

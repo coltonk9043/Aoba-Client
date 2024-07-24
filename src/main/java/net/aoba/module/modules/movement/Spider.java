@@ -24,6 +24,7 @@ package net.aoba.module.modules.movement;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -40,7 +41,7 @@ public class Spider extends Module implements TickListener {
         super(new KeybindSetting("key.spider", "Spider Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Spider");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Allows players to climb up blocks.");
 
         speed = new FloatSetting("spider.speed", "Speed", "Speed that player goes up blocks.", 0.1f, 0.05f, 1.0f, 0.05f);

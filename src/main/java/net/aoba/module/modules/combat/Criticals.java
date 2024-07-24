@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.combat;
 
+import net.aoba.module.Category;
 import org.lwjgl.glfw.GLFW;
 import io.netty.buffer.Unpooled;
 import net.aoba.Aoba;
@@ -51,7 +52,7 @@ public class Criticals extends Module implements SendPacketListener {
 		super(new KeybindSetting("key.criticals", "Criticals Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Criticals");
-		this.setCategory(Category.Combat);
+        this.setCategory(Category.of("Combat"));
 		this.setDescription("Makes all attacks into critical strikes.");
 		
 		legit = new BooleanSetting("criticals_legit", "Legit", "Whether or not we will use the 'legit' mode.", false);

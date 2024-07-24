@@ -3,6 +3,7 @@ package net.aoba.module.modules.movement;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -17,7 +18,7 @@ public class Strafe extends Module implements TickListener {
         super(new KeybindSetting("key.strafe", "Strafe Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Strafe");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Makes the user able to change directions mid-air");
 
         intensity = new FloatSetting("strafe_intensity", "Intensity", "Strafe intensity", 0.1f, 0.0f, 0.3f, 0.1f);

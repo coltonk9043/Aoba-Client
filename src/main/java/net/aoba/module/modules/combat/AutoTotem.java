@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.combat;
 
+import net.aoba.module.Category;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
@@ -54,7 +55,7 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 		super(new KeybindSetting("key.autototem", "AutoTotem Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		
 		this.setName("AutoTotem");
-		this.setCategory(Category.Combat);
+        this.setCategory(Category.of("Combat"));
 		this.setDescription("Automatically replaced totems.");
 		
 		healthTrigger = new FloatSetting("autototem_health", "Health", "The health at which the totem will be placed into your hand.", 6.0f, 1.0f, 20.0f, 1.0f);

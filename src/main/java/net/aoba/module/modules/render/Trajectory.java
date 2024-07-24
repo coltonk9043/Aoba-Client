@@ -23,6 +23,7 @@ package net.aoba.module.modules.render;
 
 import java.util.function.Predicate;
 
+import net.aoba.module.Category;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -69,7 +70,7 @@ public class Trajectory extends Module implements Render3DListener {
 		super(new KeybindSetting("key.trajectory", "Trajectory Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Trajectory");
-		this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
 		this.setDescription("Allows the player to see where they are aiming. (DISABLED)");
 
 		this.addSetting(color);

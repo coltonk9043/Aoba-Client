@@ -22,6 +22,7 @@
 package net.aoba.module.modules.render;
 
 import com.google.common.collect.Lists;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BlocksSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -39,7 +40,7 @@ public class XRay extends Module {
         super(new KeybindSetting("key.xray", "XRay Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("XRay");
-        this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
         this.setDescription("Allows the player to see ores.");
 
 

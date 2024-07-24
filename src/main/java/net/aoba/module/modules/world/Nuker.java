@@ -30,6 +30,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.Render3D;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.*;
 import net.minecraft.block.Block;
@@ -59,7 +60,7 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
         super(new KeybindSetting("key.nuker", "Nuker Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Nuker");
-        this.setCategory(Category.World);
+        this.setCategory(Category.of("World"));
         this.setDescription("Destroys blocks around the player.");
 
         this.addSetting(creative);

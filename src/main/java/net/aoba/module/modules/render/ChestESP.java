@@ -27,6 +27,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.ModuleUtils;
 import net.aoba.misc.Render3D;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
@@ -54,7 +55,7 @@ public class ChestESP extends Module implements Render3DListener {
         super(new KeybindSetting("key.chestesp", "ChestESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("ChestESP");
-        this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
         this.setDescription("Allows the player to see Chests with an ESP.");
 
         this.addSetting(color);

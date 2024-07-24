@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.movement;
 
+import net.aoba.module.Category;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
@@ -46,7 +47,7 @@ public class Jetpack extends Module implements TickListener {
 		super(new KeybindSetting("key.jetpack", "Jetpack Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Jetpack");
-		this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
 		this.setDescription("Like fly, but a lot more fun!");
 
 		jetpackSpeed = new FloatSetting("jetpack_speed", "Speed", "Jetpack Speed", 0.5f, 0.1f, 5.0f, 0.1f);

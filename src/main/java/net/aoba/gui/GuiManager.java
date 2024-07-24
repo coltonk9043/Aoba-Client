@@ -41,8 +41,8 @@ import net.aoba.gui.navigation.windows.GoToWindow;
 import net.aoba.gui.navigation.windows.HudOptionsTab;
 import net.aoba.gui.navigation.windows.ToggleHudsTab;
 import net.aoba.misc.Render2D;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.module.Module.Category;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
@@ -60,6 +60,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class GuiManager implements KeyDownListener, TickListener, Render2DListener {
     private static MinecraftClient MC = MinecraftClient.getInstance();
@@ -139,20 +140,23 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
         speedHud = new SpeedHud(0, 0);
 
         hudPane.AddWindow(new HudOptionsTab());
-        hudPane.AddWindow(new ToggleHudsTab(new HudWindow[]{moduleSelector, armorHud, radarHud, infoHud, moduleArrayListHud, watermarkHud, coordsHud, netherCoordsHud, fpsHud, pingHud, speedHud}));
+        Map<String, Category> categories = Category.getAllCategories();
         float xOffset = 50;
-        for (Category category : Module.Category.values()) {
-            PinnableWindow tab = new PinnableWindow(category.name(), xOffset, 75.0f, 180f, 180f);
+
+        for (Category category : categories.values()) {
+            PinnableWindow tab = new PinnableWindow(category.getName(), xOffset, 75.0f, 180f, 180f);
 
             StackPanelComponent stackPanel = new StackPanelComponent(tab);
             stackPanel.setMargin(new Margin(null, 30f, null, null));
 
+            // Loop through modules and add them to the correct category
             for (Module module : Aoba.getInstance().moduleManager.modules) {
-                if (module.getCategory() == category) {
+                if (module.getCategory().equals(category)) {
                     ModuleComponent button = new ModuleComponent(module.getName(), stackPanel, module);
                     stackPanel.addChild(button);
                 }
             }
+
             tab.addChild(stackPanel);
             tab.setWidth(180);
             modulesPane.AddWindow(tab);
@@ -221,7 +225,6 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
     /**
      * Getter for the current color used by the GUI for text rendering.
-     *
      */
     @Override
     public void OnUpdate(TickEvent event) {

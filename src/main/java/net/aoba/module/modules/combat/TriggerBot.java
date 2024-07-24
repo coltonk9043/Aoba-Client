@@ -21,6 +21,7 @@ package net.aoba.module.modules.combat;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -49,7 +50,7 @@ public class TriggerBot extends Module implements TickListener {
         super(new KeybindSetting("key.triggerbot", "TriggerBot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Triggerbot");
-        this.setCategory(Category.Combat);
+        this.setCategory(Category.of("Combat"));
         this.setDescription("Attacks anything you are looking at.");
 
         radius = new FloatSetting("triggerbot_radius", "Radius", 5f, 0.1f, 10f, 0.1f);

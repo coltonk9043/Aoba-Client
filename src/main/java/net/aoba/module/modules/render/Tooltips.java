@@ -1,5 +1,6 @@
 package net.aoba.module.modules.render;
 
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -14,7 +15,7 @@ public class Tooltips extends Module {
         super(new KeybindSetting("key.tooltips", "Tooltips Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Tooltips");
-        this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
         this.setDescription("Renders custom item tooltips");
 
         this.addSetting(storage);

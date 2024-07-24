@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.misc;
 
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -34,7 +35,7 @@ public class Timer extends Module {
         super(new KeybindSetting("key.timer", "Timer Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Timer");
-        this.setCategory(Category.Misc);
+        this.setCategory(Category.of("Misc"));
         this.setDescription("Increases the speed of Minecraft.");
 
         this.multiplier = new FloatSetting("timer_multiplier", "Multiplier", "The multiplier that will affect the game speed.", 1f, 0.1f, 15f, 0.1f);

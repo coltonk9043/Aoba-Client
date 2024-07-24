@@ -7,6 +7,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.Render3D;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.*;
 import net.aoba.utils.entity.DamageUtils;
@@ -106,7 +107,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
         super(new KeybindSetting("key.crystalaura", "Crystal Aura Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("CrystalAura");
-        this.setCategory(Category.Combat);
+        this.setCategory(Category.of("Combat"));
         this.setDescription("Attacks anything within your personal space.");
 
         radius = new FloatSetting("crystalaura_radius", "Radius", "Radius, in blocks, that you can place/attack a crystal.", 5f, 1f, 15f, 1f);

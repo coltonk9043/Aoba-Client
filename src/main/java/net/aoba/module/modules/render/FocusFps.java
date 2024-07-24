@@ -1,5 +1,6 @@
 package net.aoba.module.modules.render;
 
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -13,7 +14,7 @@ public class FocusFps extends Module {
         super(new KeybindSetting("key.focusfps", "FocusFPS Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("FocusFPS");
-        this.setCategory(Category.Render);
+        this.setCategory(Category.of("Render"));
         this.setDescription("Limits the FPS of the game when it is not focused.");
     }
 

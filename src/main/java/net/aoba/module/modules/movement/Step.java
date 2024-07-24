@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.movement;
 
+import net.aoba.module.Category;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -37,7 +38,7 @@ public class Step extends Module {
 		super(new KeybindSetting("key.step", "Step Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
 		this.setName("Step");
-		this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
 		this.setDescription("Steps up blocks.");
 		
 		stepHeight = new FloatSetting("step_height", "Height", "Height that the player will step up.", 1f, 0.0f, 2f, 0.5f);

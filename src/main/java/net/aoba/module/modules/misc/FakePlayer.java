@@ -1,6 +1,7 @@
 package net.aoba.module.modules.misc;
 
 import com.mojang.authlib.GameProfile;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -32,7 +33,7 @@ public class FakePlayer extends Module {
     public FakePlayer() {
         super(new KeybindSetting("key.fakeplayer", "FakePlayer Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
         this.setName("FakePlayer");
-        this.setCategory(Category.Misc);
+        this.setCategory(Category.of("Misc"));
         this.setDescription("Creates a fake player entity.");
 
         playerName = new StringSetting("fakeplayer_name", "Player Name", "Name of the fake player.", "cvs0");

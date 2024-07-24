@@ -27,6 +27,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.misc.Render3D;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -56,9 +57,9 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 
     public Aimbot() {
         super(new KeybindSetting("key.aimbot", "Aimbot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-        this.setName("Aimbot");
 
-        this.setCategory(Category.Combat);
+        this.setName("Aimbot");
+        this.setCategory(Category.of("Combat"));
         this.setDescription("Locks your crosshair towards a desired player or entity.");
 
         targetAnimals = new BooleanSetting("aimbot_target_mobs", "Target Mobs", "Target mobs.", false);

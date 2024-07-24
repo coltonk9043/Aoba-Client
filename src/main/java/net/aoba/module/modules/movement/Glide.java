@@ -24,6 +24,7 @@ package net.aoba.module.modules.movement;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -39,7 +40,7 @@ public class Glide extends Module implements TickListener {
         super(new KeybindSetting("key.glide", "Glide Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("Glide");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to glide down.");
 
         fallSpeed = new FloatSetting("glide_fallspeed", "Fall Speed", "The speed at which the player will fall.", 0.25f, 0.1f, 2.0f, 0.1f);

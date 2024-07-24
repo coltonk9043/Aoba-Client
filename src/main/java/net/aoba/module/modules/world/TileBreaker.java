@@ -28,6 +28,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.misc.Render3D;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -56,14 +57,16 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
         super(new KeybindSetting("key.tilebreaker", "TileBreaker Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("TileBreaker");
-        this.setCategory(Category.World);
+        this.setCategory(Category.of("World"));
         this.setDescription("Destroys blocks that can be instantly broken around the player.");
+
         this.loadTileBreakerBlocks();
-        this.radius = new FloatSetting("tilebreaker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
-        this.addSetting(radius);
         mc = MinecraftClient.getInstance();
 
+        this.radius = new FloatSetting("tilebreaker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
+
         this.addSetting(color);
+        this.addSetting(radius);
     }
 
     public void setRadius(int radius) {

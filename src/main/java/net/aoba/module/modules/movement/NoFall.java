@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.movement;
 
+import net.aoba.module.Category;
 import net.aoba.settings.types.FloatSetting;
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
@@ -39,7 +40,7 @@ public class NoFall extends Module implements TickListener {
 		super(new KeybindSetting("key.nofall", "NoFall Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 		
 		this.setName("No-Fall");
-		this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
 		this.setDescription("Prevents fall damage.");
 
 		fallDistance = new FloatSetting("nofall_falldistance", "Fall Distance", "No-Fall Distance", 2f, 1f, 20f, 1f);

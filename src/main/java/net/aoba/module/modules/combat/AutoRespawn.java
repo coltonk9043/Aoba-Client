@@ -26,6 +26,7 @@ import net.aoba.event.events.PlayerDeathEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.PlayerDeathListener;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -41,7 +42,7 @@ public class AutoRespawn extends Module implements PlayerDeathListener, TickList
     public AutoRespawn() {
         super(new KeybindSetting("key.autorespawn", "AutoRespawn Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
         this.setName("AutoRespawn");
-        this.setCategory(Category.Combat);
+        this.setCategory(Category.of("Combat"));
         this.setDescription("Automatically respawns when you die.");
 
         respawnDelay = new FloatSetting("autorespawn_delay", "Delay", "The delay between dying and automatically respawning.", 0.0f, 0.0f, 100.0f, 1.0f);

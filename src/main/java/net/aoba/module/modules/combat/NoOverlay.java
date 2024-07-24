@@ -21,6 +21,7 @@
  */
 package net.aoba.module.modules.combat;
 
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
@@ -32,7 +33,7 @@ public class NoOverlay extends Module {
         super(new KeybindSetting("key.nooverlay", "NoOverlay Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("NoOverlay");
-        this.setCategory(Category.Combat);
+        this.setCategory(Category.of("Combat"));
         this.setDescription("Disables all overlays and potion effects.");
     }
 

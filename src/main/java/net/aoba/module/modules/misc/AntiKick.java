@@ -3,6 +3,7 @@ package net.aoba.module.modules.misc;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -22,7 +23,7 @@ public class AntiKick extends Module implements TickListener {
         super(new KeybindSetting("key.antikick", "AntiKick Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("AntiKick");
-        this.setCategory(Category.Misc);
+        this.setCategory(Category.of("Misc"));
         this.setDescription("Avoids being kicked for 'Flying is not enabled on this Server'");
 
         ticks = new FloatSetting("ticks", "Ticks", "Amount of Ticks between Execution", 40f, 10f, 50f, 10f);

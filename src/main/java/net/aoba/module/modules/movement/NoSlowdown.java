@@ -25,6 +25,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.mixin.interfaces.IEntity;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
@@ -37,7 +38,7 @@ public class NoSlowdown extends Module implements TickListener {
         super(new KeybindSetting("key.noslowdown", "NoSlowdown Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("NoSlowdown");
-        this.setCategory(Category.Movement);
+        this.setCategory(Category.of("Movement"));
         this.setDescription("Prevents the player from being slowed down by blocks.");
     }
 

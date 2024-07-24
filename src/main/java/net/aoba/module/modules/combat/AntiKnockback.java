@@ -26,6 +26,7 @@ import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.mixin.interfaces.IEntityVelocityUpdateS2CPacket;
 import net.aoba.mixin.interfaces.IExplosionS2CPacket;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
@@ -41,8 +42,7 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
         super(new KeybindSetting("key.antiknockback", "AntiKnockback Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("AntiKnockback");
-
-        this.setCategory(Category.Combat);
+        this.setCategory(Category.of("Combat"));
         this.setDescription("Prevents knockback.");
     }
 

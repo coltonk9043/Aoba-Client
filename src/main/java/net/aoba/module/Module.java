@@ -116,19 +116,19 @@ public abstract class Module {
     /**
      * Retrieves the category of the module.
      *
-     * @return The {@link Module.Category} assigned to this module.
+     * @return The {@link Category} assigned to this module.
      */
-    public Module.Category getCategory() {
+    public Category getCategory() {
         return this.category;
     }
 
     /**
      * Sets the category for the module.
      *
-     * @param category The {@link Module.Category} to assign to this module,
+     * @param category The {@link Category} to assign to this module,
      *                 categorizing it for organizational purposes.
      */
-    public void setCategory(Module.Category category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 
@@ -302,12 +302,12 @@ public abstract class Module {
     /**
      * Checks if the module belongs to a specified category.
      *
-     * @param category The {@link Module.Category} to check against this module's category.
+     * @param category The {@link Category} to check against this module's category.
      * @return {@code true} if the module is in the specified category;
      *         {@code false} otherwise.
      */
-    public final boolean isCategory(Module.Category category) {
-        return category == this.category;
+    public final boolean isCategory(Category category) {
+        return category.equals(this.category);
     }
 
     /**
@@ -330,25 +330,13 @@ public abstract class Module {
         String description();
 
         /**
-         * @return The {@link Module.Category} to which the module belongs.
+         * @return The category which the module belongs to.
          */
-        Module.Category category();
+        String category();
 
         /**
          * @return The keybind integer associated with the module.
          */
         int bind();
-    }
-
-    /**
-     * Enum representing the various categories a module can belong to.
-     */
-    public static enum Category {
-        Combat(), Movement(), Render(), World(), Misc();
-
-        Module module;
-
-        private Category() {
-        }
     }
 }
