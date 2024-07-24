@@ -42,9 +42,7 @@ public class HudOptionsTab extends Window {
         ConcurrentHashMap<String, TextRenderer> fontRenderers = Aoba.getInstance().fontManager.fontRenderers;
         Set<String> set = fontRenderers.keySet();
 
-        for (String s : set) {
-            fontNames.add(s);
-        }
+        fontNames.addAll(set);
 
         // Keybinds Header
         stackPanel.addChild(new StringComponent("Keybinds", stackPanel, GuiManager.foregroundColor.getValue(), true));

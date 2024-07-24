@@ -85,7 +85,7 @@ public class ModuleSelectorHud extends HudWindow {
             this.keybindDown.setPressed(false);
         } else if (this.keybindRight.isPressed()) {
             if (!isCategoryMenuOpen) {
-                isCategoryMenuOpen = !isCategoryMenuOpen;
+                isCategoryMenuOpen = true;
                 if (modules.isEmpty()) {
                     for (Module module : aoba.moduleManager.modules) {
                         if (module.isCategory(this.categories[this.index])) {

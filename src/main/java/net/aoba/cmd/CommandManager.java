@@ -32,6 +32,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -99,7 +100,7 @@ public class CommandManager {
             });
         } catch (Exception e) {
             LogUtils.getLogger().error("Error initializing Aoba commands.");
-            LogUtils.getLogger().error(e.getStackTrace().toString());
+            LogUtils.getLogger().error(Arrays.toString(e.getStackTrace()));
         }
     }
 

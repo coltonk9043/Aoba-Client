@@ -45,9 +45,7 @@ public class HudsTab extends Window {
         ConcurrentHashMap<String, TextRenderer> fontRenderers = Aoba.getInstance().fontManager.fontRenderers;
         Set<String> set = fontRenderers.keySet();
 
-        for (String s : set) {
-            test.add(s);
-        }
+        test.addAll(set);
 
         stackPanel.addChild(new StringComponent("Toggle HUD", stackPanel, GuiManager.foregroundColor.getValue(), true));
 

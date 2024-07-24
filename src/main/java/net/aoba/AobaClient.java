@@ -59,7 +59,6 @@ public class AobaClient {
     public FontManager fontManager;
     public SettingManager settingManager;
     public FriendsList friendsList;
-    public Render3D renderUtils;
     public GlobalChat globalChat;
     public EventManager eventManager;
     public static List<IAddon> addons = new ArrayList<>();
@@ -96,7 +95,6 @@ public class AobaClient {
 
         LogUtils.getLogger().info("[Aoba] Addon initialization completed");
 
-        renderUtils = new Render3D();
         LogUtils.getLogger().info("[Aoba] Reading Settings");
         settingManager = new SettingManager();
         LogUtils.getLogger().info("[Aoba] Reading Friends List");
