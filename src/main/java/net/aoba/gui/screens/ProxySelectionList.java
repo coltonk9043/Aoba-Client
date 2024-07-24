@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Entry> {
     private final ProxyScreen owner;
-    private final List<ProxySelectionList.NormalEntry> proxyList = new ArrayList();
+    private final List<ProxySelectionList.NormalEntry> proxyList = new ArrayList<>();
 
     public ProxySelectionList(ProxyScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l) {
         super(minecraftClient, i, j, k, l);

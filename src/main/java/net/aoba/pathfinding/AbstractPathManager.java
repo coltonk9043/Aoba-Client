@@ -66,18 +66,16 @@ public abstract class AbstractPathManager {
 
 
     protected ArrayList<PathNode> getNeighbouringBlocks(PathNode node) {
-        ArrayList<PathNode> result = new ArrayList<PathNode>();
+        ArrayList<PathNode> result = new ArrayList<>();
 
-        // Check first if the player is in the air. If so, we want to only allow the player to go down
-        // unless fly is enabled, in which case we can go any direction.
         BlockPos bottom = node.pos.down();
 
         boolean canPassBottom = !node.getWasJump() && isPlayerPassable(bottom);
         boolean needsToJump = false;
 
-        if (canPassBottom)
+        if (canPassBottom) {
             result.add(new PathNode(bottom));
-        else {
+        } else {
             BlockPos north = node.pos.north();
             BlockPos east = node.pos.east();
             BlockPos south = node.pos.south();
@@ -92,39 +90,41 @@ public abstract class AbstractPathManager {
             List<BlockPos> diagonalBlocks = List.of(northEast, southEast, southWest, northWest);
 
             for (BlockPos currentBlock : adjacentBlocks) {
-            	ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
-          
-            	if(!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z)) {
-            		continue;
-            	}
-            	
-                if (isPlayerPassable(currentBlock))
+                ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
+
+                if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z)) {
+                    continue;
+                }
+
+                if (isPlayerPassable(currentBlock)) {
                     result.add(new PathNode(currentBlock));
-                else {
+                } else {
                     // Check to see if the player can jump
                     BlockPos above = currentBlock.up();
-                    needsToJump |= isPlayerPassable(above);
+                    if (isPlayerPassable(above)) {
+                        needsToJump = true;
+                    }
                 }
             }
 
             for (BlockPos currentBlock : diagonalBlocks) {
-            	ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
-                
-            	if(!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z)) {
-            		continue;
-            	}
-            	
-                if (isPlayerPassableDiagonal(node.pos, currentBlock))
+                ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
+
+                if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z)) {
+                    continue;
+                }
+
+                if (isPlayerPassableDiagonal(node.pos, currentBlock)) {
                     result.add(new PathNode(currentBlock));
+                }
             }
         }
-
 
         if (needsToJump && !node.getWasJump()) {
             BlockPos top = node.pos.up();
             if (isPlayerPassable(top)) {
                 PathNode topNode = new PathNode(top);
-                topNode.setWasJump(needsToJump);
+                topNode.setWasJump(true);
                 result.add(topNode);
             }
         }

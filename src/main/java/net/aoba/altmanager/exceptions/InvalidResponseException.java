@@ -18,7 +18,10 @@
 
 package net.aoba.altmanager.exceptions;
 
+import java.io.Serial;
+
 public class InvalidResponseException extends Exception {
+    @Serial
     private static final long serialVersionUID = -4593254916052579608L;
     private final String response;
 

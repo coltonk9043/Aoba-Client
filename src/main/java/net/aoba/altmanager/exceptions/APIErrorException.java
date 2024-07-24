@@ -18,8 +18,11 @@
 
 package net.aoba.altmanager.exceptions;
 
+import java.io.Serial;
+
 public class APIErrorException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = -1133030777452596952L;
     private final String errorMessage;
 

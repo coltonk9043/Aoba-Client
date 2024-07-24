@@ -18,7 +18,10 @@
 
 package net.aoba.cmd;
 
+import java.io.Serial;
+
 public abstract class CommandException extends Exception {
+    @Serial
     private static final long serialVersionUID = 1L;
     protected Command cmd;
 

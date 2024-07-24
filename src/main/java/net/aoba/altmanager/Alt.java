@@ -25,7 +25,7 @@ public class Alt {
     private String email;
     private String username;
     private String password;
-    private boolean microsoft = false;
+    private final boolean microsoft;
     private boolean isCracked = false;
 
     /**

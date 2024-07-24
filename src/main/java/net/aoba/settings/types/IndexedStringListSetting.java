@@ -64,11 +64,9 @@ public class IndexedStringListSetting extends StringListSetting {
      * @param newValue The new index to set the current index to.
      */
     public void setIndex(int newValue) {
-        if (index > value.size())
+        if (newValue >= value.size()) {
             index = value.size() - 1;
-        if (index < 0)
-            index = 0;
-        index = newValue;
+        } else index = Math.max(newValue, 0);
     }
 
     /**

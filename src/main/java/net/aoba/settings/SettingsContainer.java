@@ -17,10 +17,12 @@ public class SettingsContainer {
         configFolder = new File(MinecraftClient.getInstance().runDirectory + File.separator + "aoba");
         configFile = new File(configFolder + File.separator + configName + ".xml");
 
-        if (!configFolder.exists())
-            configFolder.mkdirs();
+        if (!configFolder.exists() && !configFolder.mkdirs()) {
+            throw new IOException("Failed to create config folder: " + configFolder.getAbsolutePath());
+        }
 
-        if (!configFile.exists())
-            configFile.createNewFile();
+        if (!configFile.exists() && !configFile.createNewFile()) {
+            throw new IOException("Failed to create config file: " + configFile.getAbsolutePath());
+        }
     }
 }

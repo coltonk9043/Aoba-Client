@@ -23,7 +23,10 @@ package net.aoba.cmd;
 
 import net.minecraft.util.Formatting;
 
+import java.io.Serial;
+
 public class InvalidSyntaxException extends CommandException {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public InvalidSyntaxException(Command cmd) {

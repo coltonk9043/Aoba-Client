@@ -2,6 +2,8 @@ package net.aoba.gui;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class Rectangle {
     private Float x = null;
     private Float y = null;
@@ -40,25 +42,17 @@ public class Rectangle {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof Rectangle) {
-            Rectangle otherRect = (Rectangle) other;
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
 
-            if (x == null && x != otherRect.x)
-                return false;
+        Rectangle otherRect = (Rectangle) other;
 
-            if (y == null && y != otherRect.y)
-                return false;
-
-            if (width == null && width != otherRect.width)
-                return false;
-
-            if (height == null && height != otherRect.height)
-                return false;
-
-            return (x == null || x.equals(otherRect.x)) && (y == null || y.equals(otherRect.y)) && (width == null || width.equals(otherRect.width)) && (height == null || height.equals(otherRect.height));
-        } else
-            return false;
+        if (!Objects.equals(x, otherRect.x)) return false;
+        if (!Objects.equals(y, otherRect.y)) return false;
+        if (!Objects.equals(width, otherRect.width)) return false;
+        return Objects.equals(height, otherRect.height);
     }
+
 
     public boolean intersects(Rectangle rectangle) {
         return (Math.abs(x - rectangle.x) * 2 < (width + rectangle.width)) &&
