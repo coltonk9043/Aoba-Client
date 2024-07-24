@@ -63,14 +63,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GuiManager implements KeyDownListener, TickListener, Render2DListener {
-    private static MinecraftClient MC = MinecraftClient.getInstance();
+    private static final MinecraftClient MC = MinecraftClient.getInstance();
     private static CursorStyle currentCursor = CursorStyle.Default;
 
     public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
-    private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
+    private final KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
 
     private boolean clickGuiOpen = false;
-    private HashMap<Object, Window> pinnedHuds = new HashMap<Object, Window>();
+    private final HashMap<Object, Window> pinnedHuds = new HashMap<Object, Window>();
 
     // Navigation Bar and Pages
     public NavigationBar clickGuiNavBar;
