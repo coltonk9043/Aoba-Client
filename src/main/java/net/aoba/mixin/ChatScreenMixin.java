@@ -24,7 +24,7 @@ import net.aoba.cmd.GlobalChat;
 import net.aoba.cmd.GlobalChat.ChatType;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.gui.tabs.components.ButtonComponent;
+import net.aoba.gui.components.ButtonComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;

@@ -20,7 +20,6 @@ package net.aoba.mixin;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
-//import io.netty.handler.proxy.Socks5ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
 import net.aoba.Aoba;
 import net.aoba.event.events.ReceivePacketEvent;

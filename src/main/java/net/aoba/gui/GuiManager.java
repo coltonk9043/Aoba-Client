@@ -19,24 +19,33 @@
 package net.aoba.gui;
 
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.aoba.event.events.KeyDownEvent;
-import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.Render2DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.KeyDownListener;
-import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.Render2DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.RainbowColor;
 import net.aoba.gui.colors.RandomColor;
-import net.aoba.gui.hud.*;
-import net.aoba.gui.tabs.*;
-import net.aoba.gui.tabs.components.ModuleComponent;
-import net.aoba.gui.tabs.components.StackPanelComponent;
+import net.aoba.gui.components.ModuleComponent;
+import net.aoba.gui.components.StackPanelComponent;
+import net.aoba.gui.navigation.HudWindow;
+import net.aoba.gui.navigation.NavigationBar;
+import net.aoba.gui.navigation.Page;
+import net.aoba.gui.navigation.PinnableWindow;
+import net.aoba.gui.navigation.Window;
+import net.aoba.gui.navigation.huds.ArmorHud;
+import net.aoba.gui.navigation.huds.InfoHud;
+import net.aoba.gui.navigation.huds.ModuleArrayListHud;
+import net.aoba.gui.navigation.huds.ModuleSelectorHud;
+import net.aoba.gui.navigation.huds.RadarHud;
+import net.aoba.gui.navigation.huds.WatermarkHud;
+import net.aoba.gui.navigation.windows.AuthCrackerWindow;
+import net.aoba.gui.navigation.windows.GoToWindow;
+import net.aoba.gui.navigation.windows.HudOptionsTab;
+import net.aoba.gui.navigation.windows.ToggleHudsTab;
 import net.aoba.misc.Render2D;
-import net.aoba.misc.Render3D;
 import net.aoba.module.Module;
 import net.aoba.module.Module.Category;
 import net.aoba.settings.SettingManager;
@@ -46,13 +55,10 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.input.Input;
-import net.aoba.utils.types.MouseAction;
-import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
@@ -68,7 +74,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	private KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
 
 	private boolean clickGuiOpen = false;
-	private HashMap<Object, AbstractHud> pinnedHuds = new HashMap<Object, AbstractHud>();
+	private HashMap<Object, Window> pinnedHuds = new HashMap<Object, Window>();
 
 	// Navigation Bar and Pages
 	public NavigationBar clickGuiNavBar;
@@ -117,8 +123,8 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	}
 
 	public void Initialize() {
-		toolsPane.AddHud(new AuthCrackerTab("Auth Cracker", 810, 500));
-		toolsPane.AddHud(new GoToTab("Go To Location", 1220, 550));
+		toolsPane.AddWindow(new AuthCrackerWindow("Auth Cracker", 810, 500));
+		toolsPane.AddWindow(new GoToWindow("Go To Location", 1220, 550));
 		moduleSelector = new ModuleSelectorHud();
 		armorHud = new ArmorHud(790, 500, 200, 50);
 		radarHud = new RadarHud(590, 500, 180, 180);
@@ -127,11 +133,11 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		watermarkHud = new WatermarkHud(300, 500);
 
 
-		hudPane.AddHud(new HudOptionsTab());
-		hudPane.AddHud(new ToggleHudsTab(new AbstractHud[] { moduleSelector, armorHud, radarHud, infoHud, moduleArrayListHud, watermarkHud }));
-		int xOffset = 50;
+		hudPane.AddWindow(new HudOptionsTab());
+		hudPane.AddWindow(new ToggleHudsTab(new HudWindow[] { moduleSelector, armorHud, radarHud, infoHud, moduleArrayListHud, watermarkHud }));
+		float xOffset = 50;
 		for (Category category : Module.Category.values()) {
-			AbstractTab tab = new AbstractTab(category.name(), xOffset, 75, true, category.name());
+			PinnableWindow tab = new PinnableWindow(category.name(), xOffset, 75.0f, 180f, 180f);
 
 			StackPanelComponent stackPanel = new StackPanelComponent(tab);
 			stackPanel.setMargin(new Margin(null, 30f, null, null));
@@ -144,7 +150,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			}
 			tab.addChild(stackPanel);
 			tab.setWidth(180);
-			modulesPane.AddHud(tab);
+			modulesPane.AddWindow(tab);
 			xOffset += tab.getActualSize().getWidth() + 10;
 		}
 
@@ -169,19 +175,20 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		Input.setCursorStyle(currentCursor);
 	}
 	
-	public void AddHud(AbstractGui hud, String pageName) {
+	public void AddWindow(Window hud, String pageName) {
 		for (Page page : clickGuiNavBar.getPanes()) {
 			if (page.getTitle().equals(pageName)) {
-				page.tabs.add(hud);
+				page.AddWindow(hud);
+				page.moveToFront(hud);
 				break;
 			}
 		}
 	}
 
-	public void RemoveHud(AbstractGui hud, String pageName) {
+	public void RemoveWindow(Window hud, String pageName) {
 		for (Page page : clickGuiNavBar.getPanes()) {
 			if (page.getTitle().equals(pageName)) {
-				page.tabs.remove(hud);
+				page.RemoveWindow(hud);
 				break;
 			}
 		}
@@ -195,12 +202,14 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		}
 	}
 
-	public void SetHudActive(AbstractHud hud, boolean state) {
+	public void SetHudActive(HudWindow hud, boolean state) {
 		if (state) {
-			this.pinnedHuds.put(hud.getClass(), hud);
+			pinnedHuds.put(hud.getClass(), hud);
+			hudPane.AddWindow(hud);
 			hud.activated.silentSetValue(true);
 		} else {
 			this.pinnedHuds.remove(hud.getClass());
+			hudPane.RemoveWindow(hud);
 			hud.activated.silentSetValue(false);
 		}
 	}
@@ -222,7 +231,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		/**
 		 * Updates each of the Tab GUIs that are currently on the screen.
 		 */
-		for (AbstractGui hud : pinnedHuds.values()) {
+		for (Window hud : pinnedHuds.values()) {
 			hud.update();
 		}
 
@@ -247,7 +256,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		int guiScale = MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(), MC.forcesUnicodeFont());
 		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
 
-		Window window = MC.getWindow();
+		net.minecraft.client.util.Window window = (net.minecraft.client.util.Window) MC.getWindow();
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 
 		/**
@@ -259,11 +268,9 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		}
 
 		// Render HUDS
-		if (!this.clickGuiOpen || this.clickGuiNavBar.getSelectedPage() == this.hudPane) {
-			for (AbstractGui hud : pinnedHuds.values()) {
-				if (hud.getVisible()) {
-					hud.draw(drawContext, tickDelta);
-				}
+		if (!this.clickGuiOpen) {
+			for (Window hud : pinnedHuds.values()) {
+				hud.draw(drawContext, tickDelta);
 			}
 		}
 

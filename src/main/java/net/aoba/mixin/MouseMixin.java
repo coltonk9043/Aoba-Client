@@ -72,7 +72,7 @@ public class MouseMixin {
 
             aoba.eventManager.Fire(event);
 
-            if (aoba.hudManager.isClickGuiOpen() || event.isCancelled()) {
+            if (aoba.hudManager.isClickGuiOpen()) {
                 ci.cancel();
             }
         }
@@ -107,8 +107,13 @@ public class MouseMixin {
             MouseMoveEvent event = new MouseMoveEvent(x, y, cursorDeltaX, cursorDeltaY);
             aoba.eventManager.Fire(event);
 
-            if (event.isCancelled())
-                ci.cancel();
+            if (event.isCancelled()) {
+            	// Update the XY but not the delta (used for camera movements);
+            	this.x = x;
+                this.y = y;
+            	ci.cancel();
+            }
+                
         }
     }
 }

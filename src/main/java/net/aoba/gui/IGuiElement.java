@@ -19,7 +19,7 @@
 // An interface containing the most abstract definition of a Hud Element that will appear on the screen. 
 package net.aoba.gui;
 
-import net.aoba.gui.tabs.components.Component;
+import net.aoba.gui.components.Component;
 
 public interface IGuiElement {
     public Rectangle getSize();
@@ -33,5 +33,4 @@ public interface IGuiElement {
     public void onChildRemoved(Component child);
     public void onParentChanged();
     public void onVisibilityChanged();
-
 }
