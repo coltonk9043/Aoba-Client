@@ -102,4 +102,40 @@ public class ProxyManager {
     public void clearActiveProxy() {
         activeProxy = null;
     }
+
+    public void clearProxies() {
+        proxies.clear();
+        activeProxy = null;
+        saveProxies();
+    }
+
+    public void updateProxy(Socks5Proxy oldProxy, Socks5Proxy newProxy) {
+        int index = proxies.indexOf(oldProxy);
+        if (index != -1) {
+            proxies.set(index, newProxy);
+            saveProxies();
+        } else {
+            throw new IllegalArgumentException("Proxy not found in the manager");
+        }
+    }
+
+    public List<Socks5Proxy> getInactiveProxies() {
+        List<Socks5Proxy> inactiveProxies = new ArrayList<>();
+        for (Socks5Proxy proxy : proxies) {
+            if (!proxy.equals(activeProxy)) {
+                inactiveProxies.add(proxy);
+            }
+        }
+        return inactiveProxies;
+    }
+
+    public void updateProxyPort(String ip, int newPort) {
+        Socks5Proxy proxy = getProxyByIp(ip);
+        if (proxy != null) {
+            proxy.setPort(newPort);
+            saveProxies();
+        } else {
+            throw new IllegalArgumentException("Proxy not found in the manager");
+        }
+    }
 }

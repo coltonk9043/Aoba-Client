@@ -35,7 +35,7 @@ public class AutoWalk extends Module implements TickListener {
 
         this.setName("AutoWalk");
         this.setCategory(Category.Misc);
-        this.setDescription("Places blocks exceptionally fast");
+        this.setDescription("Automatically walks for you.");
     }
 
     @Override
