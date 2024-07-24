@@ -21,6 +21,7 @@ package net.aoba.mixin;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.KeyDownEvent;
+import net.aoba.event.events.KeyUpEvent;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.gui.screen.ChatScreen;
 import org.lwjgl.glfw.GLFW;
@@ -40,19 +41,32 @@ public class KeyboardMixin {
     private void OnKeyDown(long window, int key, int scancode,
                            int action, int modifiers, CallbackInfo ci) {
         AobaClient aoba = Aoba.getInstance();
-        if (aoba != null && aoba.eventManager != null) {
-            if (action == GLFW.GLFW_PRESS) {
+
+        if (action == GLFW.GLFW_PRESS) {
+            if (aoba != null && aoba.eventManager != null) {
                 KeyDownEvent event = new KeyDownEvent(window, key, scancode, action, modifiers);
+                
                 Aoba.getInstance().eventManager.Fire(event);
+
                 if (event.isCancelled()) {
                     ci.cancel();
                 }
             }
-        }
 
-        if (MC.currentScreen == null && MC.getOverlay() == null) {
-            if (key == KeyEvent.VK_PERIOD) {
-                MC.setScreen(new ChatScreen(""));
+            if (MC.currentScreen == null && MC.getOverlay() == null) {
+                if (key == KeyEvent.VK_PERIOD) {
+                    MC.setScreen(new ChatScreen(""));
+                }
+            }
+        } else if (action == GLFW.GLFW_RELEASE) {
+            if (aoba != null && aoba.eventManager != null) {
+                KeyUpEvent event = new KeyUpEvent(window, key, scancode, action, modifiers);
+
+                Aoba.getInstance().eventManager.Fire(event);
+
+                if (event.isCancelled()) {
+                    ci.cancel();
+                }
             }
         }
     }
