@@ -2,6 +2,7 @@ package net.aoba.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.Aoba;
+import net.aoba.misc.Render2D;
 import net.aoba.module.modules.render.Tooltips;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.utils.render.TextureBank;
@@ -69,7 +70,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     private void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         Tooltips tooltips = (Tooltips) Aoba.getInstance().moduleManager.tooltips;
 
-        if (focusedSlot != null && !focusedSlot.getStack().isEmpty() && client.player.playerScreenHandler.getCursorStack().isEmpty()) {
+        if (tooltips.getState() && focusedSlot != null && !focusedSlot.getStack().isEmpty() && client.player.playerScreenHandler.getCursorStack().isEmpty()) {
             if (hasItems(focusedSlot.getStack()) && tooltips.getStorage()) {
                 renderShulkerToolTip(context, mouseX, mouseY, 0, 0, focusedSlot.getStack());
             } else if (focusedSlot.getStack().getItem() == Items.FILLED_MAP && tooltips.getMap()) {
@@ -94,12 +95,27 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
                     colors = new float[]{1F, 1F, 1F};
                 }
             }
-            draw(context, compoundTag.stream().toList(), offsetX, offsetY, mouseX, mouseY, colors);
+
+            int tooltipWidth = 150;
+            int nameHeight = 12;
+
+            RenderSystem.disableDepthTest();
+            Render2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 10, offsetY - 10, new Color(255, 255, 255).getRGB(), 1.0f);
+            RenderSystem.enableDepthTest();
+
+            draw(context, compoundTag.stream().toList(), offsetX, offsetY + nameHeight, mouseX, mouseY, colors);
+
+            RenderSystem.disableDepthTest();
+            context.fill(offsetX, offsetY - nameHeight, offsetX + tooltipWidth, offsetY, new Color(0, 0, 0, 128).getRGB());
+            Render2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 5, offsetY - 10, new Color(255, 255, 255).getRGB(), 1.0f);
+            RenderSystem.enableDepthTest();
+
         } catch (Exception ignore) {
             return false;
         }
         return true;
     }
+
 
     @Unique
     private void draw(DrawContext context, List<ItemStack> itemStacks, int offsetX, int offsetY, int mouseX, int mouseY, float[] colors) {
@@ -172,7 +188,8 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         Tooltips tooltips = (Tooltips) Aoba.getInstance().moduleManager.tooltips;
 
         if (focusedSlot != null && !focusedSlot.getStack().isEmpty() && client.player.playerScreenHandler.getCursorStack().isEmpty()) {
-            if (focusedSlot.getStack().getItem() == Items.FILLED_MAP && tooltips.getStorage() && tooltips.getMap()) ci.cancel();
+            if (focusedSlot.getStack().getItem() == Items.FILLED_MAP && tooltips.getState() && tooltips.getMap()) ci.cancel();
+            else if (focusedSlot.getStack().getItem() instanceof BlockItem && ((BlockItem) focusedSlot.getStack().getItem()).getBlock() instanceof ShulkerBoxBlock && tooltips.getState() && tooltips.getStorage()) ci.cancel();
         }
     }
 }
