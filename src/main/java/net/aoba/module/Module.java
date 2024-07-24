@@ -164,7 +164,7 @@ public abstract class Module {
      *              {@code false} to disable.
      */
     public void setState(boolean state) {
-        if (this.state = state) return;
+        if (this.state == state) return;
 
         this.onToggle();
 

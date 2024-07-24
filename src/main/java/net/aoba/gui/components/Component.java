@@ -39,7 +39,7 @@ public abstract class Component implements IGuiElement {
 	protected IGuiElement parent;
 	protected ArrayList<Component> children;
 
-	protected Rectangle preferredSize = null;
+	protected Rectangle preferredSize;
 	protected Rectangle size;
 	protected Margin margin;
 	protected Rectangle actualSize;

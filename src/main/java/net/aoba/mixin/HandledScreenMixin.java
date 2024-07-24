@@ -164,7 +164,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
         int y1 = y - 12;
         int x1 = x + 8;
-        int z = 300;
+        int z;
 
         MapState mapState = FilledMapItem.getMapState(stack, client.world);
 

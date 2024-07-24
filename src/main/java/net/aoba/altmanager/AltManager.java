@@ -90,13 +90,9 @@ public class AltManager {
      */
     private String generateEncryptionKey() {
         String hwid = HWIDUtil.getHWID();
-        if (hwid != null) {
-            // Use the first 16 bytes of the HWID as the encryption key
-            return hwid.length() >= 16 ? hwid.substring(0, 16) : String.format("%-16s", hwid).replace(' ', '0');
-        } else {
-            // Fallback to a default key if HWID retrieval fails
-            return "B&E)H@McQeThWmZq";
-        }
+
+        // Use the first 16 bytes of the HWID as the encryption key
+        return hwid.length() >= 16 ? hwid.substring(0, 16) : String.format("%-16s", hwid).replace(' ', '0');
     }
 
     /**

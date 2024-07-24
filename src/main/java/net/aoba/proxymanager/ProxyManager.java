@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProxyManager {
-    private ArrayList<Socks5Proxy> proxies = new ArrayList<Socks5Proxy>();
+    private ArrayList<Socks5Proxy> proxies;
     private Socks5Proxy activeProxy;
 
     public ProxyManager() {

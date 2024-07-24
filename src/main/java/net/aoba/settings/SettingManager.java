@@ -104,19 +104,19 @@ public class SettingManager {
                     case BLOCKS -> {
                         @SuppressWarnings("unchecked")
                         HashSet<Block> s = (HashSet<Block>) setting.getValue();
-                        String result = "";
+                        StringBuilder result = new StringBuilder();
 
                         int iteration = 0;
                         for (Block block : s) {
                             Identifier id = Registries.BLOCK.getId(block);
-                            result += id.getNamespace() + ":" + id.getPath();
+                            result.append(id.getNamespace()).append(":").append(id.getPath());
                             if (iteration != s.size() - 1) {
-                                result += ",";
+                                result.append(",");
                             }
                             iteration++;
                         }
 
-                        config.setProperty(setting.ID, result);
+                        config.setProperty(setting.ID, result.toString());
                     }
                     case ENUM -> {
                         config.setProperty(setting.ID, ((Enum<?>) setting.getValue()).name());

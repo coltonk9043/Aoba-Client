@@ -126,7 +126,7 @@ public abstract class ChatHudMixin {
             int y = x + p;
             context.getMatrices().push();
             context.getMatrices().translate(0.0f, 0.0f, 50.0f);
-            context.fill(-4, x - lineHeight, 0 + k + 4 + 4, x, v << 24);
+            context.fill(-4, x - lineHeight, k + 4 + 4, x, v << 24);
             MessageIndicator messageIndicator = visible.indicator();
             if (messageIndicator != null) {
                 int z = messageIndicator.indicatorColor() | u << 24;

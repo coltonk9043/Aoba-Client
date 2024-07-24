@@ -92,18 +92,18 @@ public class NavigationBar implements MouseClickListener {
         // Animate selection box movement
         currentSelectionX += (targetSelectionX - currentSelectionX) * animationSpeed * partialTicks;
 
-        Render2D.drawRoundedBox(matrix, centerX - (width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-        Render2D.drawRoundedOutline(matrix, centerX - (width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
+        Render2D.drawRoundedBox(matrix, centerX - ((float) width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
+        Render2D.drawRoundedOutline(matrix, centerX - ((float) width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
         // Use currentSelectionX for animated position
-        Render2D.drawRoundedBox(matrix, centerX - (width / 2) + currentSelectionX, 25, 100, 25, GuiManager.roundingRadius.getValue() - 1, new Color(150, 150, 150, 100));
+        Render2D.drawRoundedBox(matrix, centerX - ((float) width / 2) + currentSelectionX, 25, 100, 25, GuiManager.roundingRadius.getValue() - 1, new Color(150, 150, 150, 100));
 
         for (int i = 0; i < options.size(); i++) {
             Page pane = options.get(i);
             if (i == selectedIndex) {
                 pane.render(drawContext, partialTicks);
             }
-            Render2D.drawString(drawContext, pane.title, centerX - (width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, GuiManager.foregroundColor.getValue());
+            Render2D.drawString(drawContext, pane.title, centerX - ((float) width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, GuiManager.foregroundColor.getValue());
         }
     }
 

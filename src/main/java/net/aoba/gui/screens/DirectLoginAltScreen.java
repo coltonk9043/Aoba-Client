@@ -53,14 +53,13 @@ public class DirectLoginAltScreen extends Screen {
 
         this.textFieldAltPassword = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20, Text.of("Enter Password"));
         textFieldAltPassword.setRenderTextProvider((text, n) -> {
-            String str = "";
-            for (int i = 0; i < text.length(); i++)
-                str += "*";
-            return OrderedText.styledForwardsVisitedString(str, Style.EMPTY);
+            StringBuilder str = new StringBuilder();
+            str.append("*".repeat(text.length()));
+            return OrderedText.styledForwardsVisitedString(str.toString(), Style.EMPTY);
         });
         this.addDrawableChild(this.textFieldAltPassword);
 
-        this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 + -12).build();
+        this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
         this.addDrawableChild(this.toggleMicrosoft);
 
         this.buttonLoginAlt = ButtonWidget.builder(Text.of("Login"), b -> this.onButtonLoginPressed())
@@ -72,7 +71,7 @@ public class DirectLoginAltScreen extends Screen {
     }
 
     private void onButtonLoginPressed() {
-        boolean loggedIn = false;
+        boolean loggedIn;
         if (this.textFieldAltPassword.getText().isEmpty()) {
             Aoba.getInstance().altManager.loginCracked(this.textFieldAltUsername.getText());
             client.setScreen(this.parent);

@@ -55,10 +55,7 @@ public class Rectangle {
             if (height == null && height != otherRect.height)
                 return false;
 
-            return ((x == null && otherRect.x == null) || x.equals(otherRect.x)) &&
-                    ((y == null && otherRect.y == null) || y.equals(otherRect.y)) &&
-                    ((width == null && otherRect.width == null) || width.equals(otherRect.width)) &&
-                    ((height == null && otherRect.height == null) || height.equals(otherRect.height));
+            return (x == null || x.equals(otherRect.x)) && (y == null || y.equals(otherRect.y)) && (width == null || width.equals(otherRect.width)) && (height == null || height.equals(otherRect.height));
         } else
             return false;
     }

@@ -148,11 +148,7 @@ public class CommandManager {
             else {
                 // Otherwise, create a new parameter list.
                 String[] parameterList = new String[commandIn.length - 2];
-                if (commandIn.length > 1) {
-                    for (int i = 2; i < commandIn.length; i++) {
-                        parameterList[i - 2] = commandIn[i];
-                    }
-                }
+                System.arraycopy(commandIn, 2, parameterList, 0, commandIn.length - 2);
 
                 // Runs the command.
                 command.runCommand(parameterList);

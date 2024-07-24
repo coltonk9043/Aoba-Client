@@ -114,16 +114,14 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
         public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight,
                            int mouseX, int mouseY, boolean hovered, float tickDelta) {
 
-            String password = "";
+            StringBuilder password = new StringBuilder();
             String description;
 
             // Generates string for the password of an alt.
             if (!this.alt.isCracked()) {
-                for (int i = 0; i < this.alt.getPassword().toCharArray().length; i++) {
-                    password = password + "*";
-                }
+                password.append("*".repeat(this.alt.getPassword().toCharArray().length));
             } else {
-                password = "None";
+                password = new StringBuilder("None");
             }
 
             // Generates the description of an alt.

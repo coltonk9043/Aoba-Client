@@ -150,9 +150,8 @@ public class KillAura extends Module implements TickListener {
                     //float camYaw = MC.cameraEntity.getYaw();
 
                     Vec2f vec2 = new Vec2f((float) (MC.player.getX() - entityToAttack.getX()), (float) (MC.player.getZ() - entityToAttack.getZ()));
-                    vec2 = vec2.normalize();
-
-                    //double angleFromPlayer = Math.atan2(vec2.y, vec2.x);
+//                    vec2 = vec2.normalize();
+//                    double angleFromPlayer = Math.atan2(vec2.y, vec2.x);
                 }
                 MC.interactionManager.attackEntity(MC.player, entityToAttack);
                 MC.player.swingHand(Hand.MAIN_HAND);

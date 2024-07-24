@@ -91,7 +91,8 @@ public abstract class EntityRendererMixin<T extends Entity> {
         matrices.multiply(dispatcher.getRotation());
         matrices.scale(-0.025f, -0.025f, 0.025f);
         if (aoba.moduleManager.nametags.getState()) {
-            float scale = 1.0f;
+            float scale;
+
             Nametags nameTagsModule = (Nametags) aoba.moduleManager.nametags;
             scale = (float) nameTagsModule.getNametagScale();
             matrices.scale(scale, scale, scale);
@@ -100,7 +101,7 @@ public abstract class EntityRendererMixin<T extends Entity> {
         float g = mc.options.getTextBackgroundOpacity(0.25f);
         int j = (int) (g * 255.0f) << 24;
         TextRenderer textRenderer = this.getTextRenderer();
-        float h = -textRenderer.getWidth(text) / 2;
+        float h = (float) -textRenderer.getWidth(text) / 2;
         textRenderer.draw(text, h, (float) i, 0x20FFFFFF, false, matrix4f, vertexConsumers, bl ? TextRenderer.TextLayerType.SEE_THROUGH : TextRenderer.TextLayerType.NORMAL, j, light);
         if (bl) {
             textRenderer.draw(text, h, (float) i, -1, false, matrix4f, vertexConsumers, TextRenderer.TextLayerType.NORMAL, 0, light);

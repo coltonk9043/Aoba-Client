@@ -240,7 +240,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
         }
 
         if (this.esc.isPressed() && this.clickGuiOpen) {
-            this.clickGuiOpen = !this.clickGuiOpen;
+            this.clickGuiOpen = false;
             this.toggleMouse();
         }
     }

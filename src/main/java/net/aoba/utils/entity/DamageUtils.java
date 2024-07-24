@@ -135,7 +135,7 @@ public class DamageUtils {
                     }
                 }
             }
-            return misses / hits;
+            return (float) misses / hits;
         }
 
         return 0f;

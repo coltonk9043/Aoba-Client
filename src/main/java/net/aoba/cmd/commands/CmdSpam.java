@@ -33,14 +33,14 @@ public class CmdSpam extends Command {
             throw new InvalidSyntaxException(this);
 
         // Combines the "parameters" into a string to be printed.
-        String message = "";
+        StringBuilder message = new StringBuilder();
         for (int msg = 1; msg < parameters.length; msg++) {
-            message = message + parameters[msg] + " ";
+            message.append(parameters[msg]).append(" ");
         }
 
         // Prints out that message X number of times.
         for (int i = 0; i < Integer.parseInt(parameters[0]); i++) {
-            mc.player.networkHandler.sendChatMessage(message);
+            mc.player.networkHandler.sendChatMessage(message.toString());
         }
 
     }

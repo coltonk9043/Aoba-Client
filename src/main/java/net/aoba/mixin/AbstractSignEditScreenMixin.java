@@ -46,8 +46,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
         AutoSign mod = (AutoSign) Aoba.getInstance().moduleManager.autosign;
         String[] newText = mod.getText();
         if (newText != null) {
-            for (int i = 0; i < 4; i++)
-                messages[i] = newText[i];
+            System.arraycopy(newText, 0, messages, 0, 4);
             finishEditing();
         }
     }

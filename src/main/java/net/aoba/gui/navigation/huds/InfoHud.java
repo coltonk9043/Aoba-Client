@@ -41,11 +41,11 @@ public class InfoHud extends HudWindow {
 
         int time = ((int) mc.world.getTime() + 6000) % 24000;
         String suffix = time >= 12000 ? "PM" : "AM";
-        String timeString = (time / 10) % 1200 + "";
+        StringBuilder timeString = new StringBuilder((time / 10) % 1200 + "");
         for (int n = timeString.length(); n < 4; ++n) {
-            timeString = "0" + timeString;
+            timeString.insert(0, "0");
         }
-        final String[] strsplit = timeString.split("");
+        final String[] strsplit = timeString.toString().split("");
         String hours = strsplit[0] + strsplit[1];
         if (hours.equalsIgnoreCase("00")) {
             hours = "12";
@@ -55,7 +55,7 @@ public class InfoHud extends HudWindow {
         if (minutes < 10) {
             sm = "0" + minutes;
         }
-        timeString = hours + ":" + sm.charAt(0) + sm.charAt(1) + suffix;
+        timeString = new StringBuilder(hours + ":" + sm.charAt(0) + sm.charAt(1) + suffix);
         positionText = "XYZ: " + mc.player.getBlockX() + ", " + mc.player.getBlockY() + ", " + mc.player.getBlockZ();
         timeText = "Time: " + timeString;
         fpsText = "FPS: " + mc.fpsDebugString.split(" ", 2)[0] + " Day: " + (int) (mc.world.getTime() / 24000);

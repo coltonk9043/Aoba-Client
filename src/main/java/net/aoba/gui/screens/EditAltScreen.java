@@ -56,14 +56,13 @@ public class EditAltScreen extends Screen {
                 Text.of("Enter Password"));
         this.textFieldAltPassword.setText(this.alt == null ? "" : alt.getPassword());
         textFieldAltPassword.setRenderTextProvider((text, n) -> {
-            String str = "";
-            for (int i = 0; i < text.length(); i++)
-                str += "*";
-            return OrderedText.styledForwardsVisitedString(str, Style.EMPTY);
+            StringBuilder str = new StringBuilder();
+            str.append("*".repeat(text.length()));
+            return OrderedText.styledForwardsVisitedString(str.toString(), Style.EMPTY);
         });
         this.addDrawableChild(this.textFieldAltPassword);
 
-        this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 + -12).build();
+        this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
         this.addDrawableChild(this.toggleMicrosoft);
 
 

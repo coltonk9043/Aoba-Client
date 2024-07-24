@@ -56,13 +56,13 @@ public class AddAltScreen extends Screen {
         this.textFieldAltPassword.setText("");
         this.addDrawableChild(this.textFieldAltPassword);
         textFieldAltPassword.setRenderTextProvider((text, n) -> {
-            String str = "";
+            StringBuilder str = new StringBuilder();
             for (int i = 0; i < text.length(); i++)
-                str += "*";
-            return OrderedText.styledForwardsVisitedString(str, Style.EMPTY);
+                str.append("*");
+            return OrderedText.styledForwardsVisitedString(str.toString(), Style.EMPTY);
         });
 
-        this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 + -12).build();
+        this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
         this.addDrawableChild(this.toggleMicrosoft);
 
         this.buttonAddAlt = ButtonWidget.builder(Text.of("Add Alt"), b -> this.onButtonAltAddPressed())
@@ -75,7 +75,7 @@ public class AddAltScreen extends Screen {
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-    	super.render(drawContext, mouseX, mouseY, delta);
+        super.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawCenteredTextWithShadow(textRenderer, "Add Alternate Account", this.width / 2, 20, 16777215);
         drawContext.drawCenteredTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
         drawContext.drawCenteredTextWithShadow(textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);

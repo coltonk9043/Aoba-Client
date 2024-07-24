@@ -86,11 +86,11 @@ public class CmdXRay extends Command {
                         mc.worldRenderer.reload();
                         break;
                     case "list":
-                        String blockList = "";
+                        StringBuilder blockList = new StringBuilder();
                         for (Block block : module.blocks.getValue()) {
-                            blockList += block.getName().getString() + ", ";
+                            blockList.append(block.getName().getString()).append(", ");
                         }
-                        blockList = blockList.substring(0, blockList.length() - 2);
+                        blockList = new StringBuilder(blockList.substring(0, blockList.length() - 2));
                         CommandManager.sendChatMessage("Block List: " + blockList);
                         break;
                 }
