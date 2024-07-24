@@ -1,4 +1,4 @@
-package net.aoba.misc;
+package net.aoba.utils.render;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.AbstractClientPlayerEntity;

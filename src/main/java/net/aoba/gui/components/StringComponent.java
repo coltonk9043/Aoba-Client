@@ -25,7 +25,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
-import net.aoba.misc.Render2D;
+import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Formatting;
 

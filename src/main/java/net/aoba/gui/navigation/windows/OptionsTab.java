@@ -25,7 +25,7 @@ import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.navigation.Window;
-import net.aoba.misc.Render2D;
+import net.aoba.utils.render.Render2D;
 import net.aoba.module.Module;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;

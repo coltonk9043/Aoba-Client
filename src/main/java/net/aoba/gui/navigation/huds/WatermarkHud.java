@@ -3,8 +3,7 @@ package net.aoba.gui.navigation.huds;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.navigation.HudWindow;
-import net.aoba.misc.Render2D;
-import net.minecraft.client.gui.DrawContext;
+import net.aoba.utils.render.Render2D;import net.minecraft.client.gui.DrawContext;
 
 public class WatermarkHud extends HudWindow {
 

@@ -1,8 +1,8 @@
-package net.aoba.misc.bowaimbot;
+package net.aoba.utils.bowaimbot;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.misc.FakePlayerEntity;
+import net.aoba.utils.entity.FakePlayerEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

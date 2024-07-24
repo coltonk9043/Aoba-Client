@@ -4,7 +4,7 @@ import org.joml.Matrix4f;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.Render2D;
+import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;

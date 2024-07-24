@@ -24,7 +24,7 @@ package net.aoba.module.modules.world;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.misc.ModuleUtils;
+import net.aoba.utils.ModuleUtils;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;

@@ -1,4 +1,4 @@
-package net.aoba.misc.bowaimbot;
+package net.aoba.utils.bowaimbot;
 
 import net.aoba.AobaClient;
 import net.minecraft.client.MinecraftClient;

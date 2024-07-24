@@ -5,8 +5,8 @@ import net.aoba.AobaClient;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.navigation.HudWindow;
-import net.aoba.misc.Render2D;
 import net.aoba.module.Module;
+import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 import java.util.Comparator;
 

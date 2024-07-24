@@ -1,6 +1,5 @@
 package net.aoba.utils.entity;
 
-import net.aoba.misc.FakePlayerEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.DamageUtil;
 import net.minecraft.entity.LivingEntity;

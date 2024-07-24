@@ -19,7 +19,7 @@
 /**
  * A class to represent a fake player.
  */
-package net.aoba.misc;
+package net.aoba.utils.entity;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;

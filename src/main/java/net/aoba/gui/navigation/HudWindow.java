@@ -5,9 +5,9 @@ import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.components.Component;
-import net.aoba.misc.Render2D;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 
 public class HudWindow extends Window {

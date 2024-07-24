@@ -19,7 +19,7 @@
 /**
  * A class that contains all of the drawing functions.
  */
-package net.aoba.misc;
+package net.aoba.utils.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.gui.colors.Color;

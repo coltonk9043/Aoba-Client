@@ -26,7 +26,7 @@ import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.navigation.CloseableWindow;
-import net.aoba.misc.Render2D;
+import net.aoba.utils.render.Render2D;
 import net.aoba.module.Module;
 import net.aoba.settings.Setting;
 import net.aoba.settings.types.BlocksSetting;

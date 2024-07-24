@@ -9,7 +9,7 @@ import net.aoba.gui.Margin;
 import net.aoba.gui.colors.Colors;
 import net.aoba.gui.components.*;
 import net.aoba.gui.navigation.Window;
-import net.aoba.misc.Render3D;
+import net.aoba.utils.render.Render3D;
 import net.aoba.pathfinding.AbstractPathManager;
 import net.aoba.pathfinding.FlyPathManager;
 import net.aoba.pathfinding.PathNode;

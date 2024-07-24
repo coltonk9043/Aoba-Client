@@ -19,7 +19,7 @@
 /**
  * A helper class that contains several useful functions.
  */
-package net.aoba.misc;
+package net.aoba.utils;
 
 import net.aoba.AobaClient;
 import net.minecraft.block.entity.BlockEntity;

@@ -24,7 +24,7 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
-import net.aoba.misc.Render2D;
+import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.MinecraftClient;

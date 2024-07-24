@@ -1,9 +1,6 @@
 package net.aoba.gui.screens;
 
-import net.aoba.Aoba;
-import net.aoba.altmanager.Alt;
-import net.aoba.gui.colors.Color;
-import net.aoba.misc.Render2D;
+import net.aoba.utils.render.Render2D;
 import net.aoba.proxymanager.Socks5Proxy;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -11,7 +8,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ElementListWidget;
-import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.util.Util;
 
 import java.util.ArrayList;
@@ -34,7 +30,7 @@ public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Ent
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         ProxySelectionList.Entry ProxySelectionList$entry = this.getSelectedOrNull();
         return ProxySelectionList$entry != null && ProxySelectionList$entry.keyPressed(keyCode, scanCode, modifiers)
-                || super.keyPressed(keyCode, scanCode, modifiers);
+            || super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     public void updateProxies() {

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.aoba.misc;
+package net.aoba.utils.render;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

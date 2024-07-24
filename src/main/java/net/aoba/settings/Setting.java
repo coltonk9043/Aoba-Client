@@ -18,7 +18,7 @@
 
 package net.aoba.settings;
 
-import net.aoba.misc.TextUtils;
+import net.aoba.utils.render.TextUtils;
 
 import java.util.function.Consumer;
 

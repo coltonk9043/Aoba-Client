@@ -24,7 +24,7 @@ package net.aoba.module.modules.render;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.misc.FakePlayerEntity;
+import net.aoba.utils.entity.FakePlayerEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
