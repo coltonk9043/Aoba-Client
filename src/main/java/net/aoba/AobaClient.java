@@ -29,7 +29,6 @@ import net.aoba.cmd.GlobalChat;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
-import net.aoba.misc.Render3D;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
 import net.aoba.proxymanager.ProxyManager;
