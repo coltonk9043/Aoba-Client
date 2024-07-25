@@ -458,7 +458,8 @@ public class Render2D {
         matrixStack.pop();
     }
 
-    private static void buildFilledArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius, float startAngle, float sweepAngle) {
+    private static void buildFilledArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius,
+                                       float startAngle, float sweepAngle) {
         double roundedInterval = (sweepAngle / ROUND_QUALITY);
 
         for (int i = 0; i < ROUND_QUALITY; i++) {
@@ -469,9 +470,9 @@ public class Render2D {
             float radiusX2 = (float) Math.cos(angle2) * radius;
             float radiusY2 = (float) Math.sin(angle2) * radius;
 
-            bufferBuilder.vertex(matrix, x, y, 0)
-                .vertex(matrix, x + radiusX1, y + radiusY1, 0)
-                .vertex(matrix, x + radiusX2, y + radiusY2, 0);
+            bufferBuilder.vertex(matrix, x, y, 0);
+            bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0);
+            bufferBuilder.vertex(matrix, x + radiusX2, y + radiusY2, 0);
         }
     }
 

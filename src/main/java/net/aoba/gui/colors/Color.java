@@ -282,15 +282,28 @@ public class Color {
      * @param hex Color as Hex.
      * @return Color from Hex Code.
      */
-    public static Color convertHextoRGB(String hex) {
-        String RString = hex.charAt(1) + "" + hex.charAt(2);
-        String GString = hex.charAt(3) + "" + hex.charAt(4);
-        String BString = hex.charAt(5) + "" + hex.charAt(6);
-
-        float r = Integer.valueOf(RString, 16);
-        float g = Integer.valueOf(GString, 16);
-        float b = Integer.valueOf(BString, 16);
-        return new Color(r, g, b);
+    /**
+     * Converts Hex to RGB.
+     *
+     * @param hexColor The color as Hex.
+     * @return The color as an RGB vector.
+     */
+    public static Color convertHextoRGB(String hexColor) {
+        hexColor = hexColor.replace("#", "");
+        if (hexColor.length() == 6) {
+            int r = Integer.valueOf(hexColor.substring(0, 2), 16);
+            int g = Integer.valueOf(hexColor.substring(2, 4), 16);
+            int b = Integer.valueOf(hexColor.substring(4, 6), 16);
+            return new Color(r, g, b);
+        } else if (hexColor.length() == 8) {
+            int alpha = Integer.valueOf(hexColor.substring(0, 2), 16);
+            int r = Integer.valueOf(hexColor.substring(2, 4), 16);
+            int g = Integer.valueOf(hexColor.substring(4, 6), 16);
+            int b = Integer.valueOf(hexColor.substring(6, 8), 16);
+            return new Color(r, g, b, alpha);
+        } else {
+            throw new IllegalArgumentException("Invalid hex color format. Expected 6 or 8 characters.");
+        }
     }
 
     /**

@@ -21,6 +21,7 @@ package net.aoba.mixin;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
+import net.aoba.gui.screens.MainMenuScreen;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -30,6 +31,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static net.aoba.AobaClient.MC;
+
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
 
@@ -37,33 +40,8 @@ public abstract class TitleScreenMixin extends Screen {
         super(title);
     }
 
-    @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/GameVersion;getName()Ljava/lang/String;", ordinal = 0)}, method = "render(Lnet/minecraft/client/gui/DrawContext;IIF)V")
-    public void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        context.drawTextWithShadow(this.textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, this.height - 20, 0xFF00FF);
-
-        if (AobaClient.addons.isEmpty()) {
-            String noAddonsText = "No addons loaded";
-            int textWidth = this.textRenderer.getWidth(noAddonsText);
-            context.drawTextWithShadow(this.textRenderer, noAddonsText, this.width - textWidth - 2, 10, 0xFFFFFF);
-        } else {
-            int yOffset = 10;
-            for (IAddon addon : AobaClient.addons) {
-                String addonName = addon.getName();
-                String byText = " by ";
-                String author = addon.getAuthor();
-
-                int addonNameWidth = this.textRenderer.getWidth(addonName);
-                int byTextWidth = this.textRenderer.getWidth(byText);
-                int authorWidth = this.textRenderer.getWidth(author);
-
-                context.drawTextWithShadow(this.textRenderer, addonName, this.width - addonNameWidth - byTextWidth - authorWidth - 2, yOffset, 0x50C878);
-
-                context.drawTextWithShadow(this.textRenderer, byText, this.width - byTextWidth - authorWidth - 2, yOffset, 0xFFFFFF);
-
-                context.drawTextWithShadow(this.textRenderer, author, this.width - authorWidth - 2, yOffset, 0xFF0000);
-
-                yOffset += 10;
-            }
-        }
+    @Inject(method = "init", at = @At("RETURN"))
+    public void postInitHook(CallbackInfo ci) {
+        MC.setScreen(new MainMenuScreen());
     }
 }
