@@ -35,30 +35,21 @@ public class MainMenuScreen extends Screen {
         int startX = (this.width - totalGridWidth) / 2;
         int startY = (this.height - totalGridHeight) / 2;
 
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Multiplayer"), b -> client.setScreen(new MultiplayerScreen(this)))
-            .dimensions(startX, startY, buttonWidth, buttonHeight).build());
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Singleplayer"), b -> client.setScreen(new SelectWorldScreen(this)))
-            .dimensions(startX + buttonWidth + spacing, startY, buttonWidth, buttonHeight).build());
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Settings"), b -> client.setScreen(new OptionsScreen(this, MC.options)))
-            .dimensions(startX, startY + buttonHeight + spacing, buttonWidth, buttonHeight).build());
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Quit"), b -> client.stop())
-            .dimensions(startX + buttonWidth + spacing, startY + buttonHeight + spacing, buttonWidth, buttonHeight).build());
-//        Not implented yet.
-//        this.addDrawableChild(ButtonWidget.builder(Text.of("ClickGui"), b -> client.setScreen(new ClickGuiScreen(this)))
-//            .dimensions(xPosition, startY + 4 * (buttonHeight + spacing), buttonWidth, buttonHeight).build());
+        AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX, startY, buttonWidth, buttonHeight, Text.of("Multiplayer"));
+        multiplayerButton.setPressAction(b -> client.setScreen(new MultiplayerScreen(this)));
+        this.addDrawableChild(multiplayerButton);
 
-        int creditsButtonWidth = 20;
-        int creditsButtonHeight = 20;
-        int creditsButtonX = this.width - creditsButtonWidth - 10; // 10 pixels from the right edge
-        int creditsButtonY = this.height - creditsButtonHeight - 10; // 10 pixels from the bottom edge
-        this.addDrawableChild(ButtonWidget.builder(Text.of(""), b -> {
-                // Add action for Credits button here
-            })
-            .dimensions(creditsButtonX, creditsButtonY, creditsButtonWidth, creditsButtonHeight).build());
-        
-        AobaButtonWidget aobaButtonWidget = new AobaButtonWidget(40, 80, 120, 20);
-        
-        this.addDrawableChild(aobaButtonWidget);
+        AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX + buttonWidth + spacing, startY, buttonWidth, buttonHeight, Text.of("Singleplayer"));
+        singleplayerButton.setPressAction(b -> client.setScreen(new SelectWorldScreen(this)));
+        this.addDrawableChild(singleplayerButton);
+
+        AobaButtonWidget settingsButton = new AobaButtonWidget(startX, startY + buttonHeight + spacing, buttonWidth, buttonHeight, Text.of("Settings"));
+        settingsButton.setPressAction(b -> client.setScreen(new OptionsScreen(this, MC.options)));
+        this.addDrawableChild(settingsButton);
+
+        AobaButtonWidget quitButton = new AobaButtonWidget(startX + buttonWidth + spacing, startY + buttonHeight + spacing, buttonWidth, buttonHeight, Text.of("Quit"));
+        quitButton.setPressAction(b -> client.stop());
+        this.addDrawableChild(quitButton);
     }
 
 
@@ -69,7 +60,7 @@ public class MainMenuScreen extends Screen {
         drawContext.drawTexture(TextureBank.mainmenu_logo, (this.width - 154) / 2, 20, 0, 0, 154, 67, 154, 67);
         drawContext.drawTextWithShadow(this.textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, this.height - 10, 0xFF00FF);
 
-        
+
         int creditsButtonWidth = 20;
         int creditsButtonHeight = 20;
         int creditsButtonX = this.width - creditsButtonWidth - 10;

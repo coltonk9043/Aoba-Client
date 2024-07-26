@@ -1,5 +1,6 @@
 package net.aoba.gui.components.widgets;
 
+import net.minecraft.client.gui.widget.PressableWidget;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
@@ -13,26 +14,67 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 
-public class AobaButtonWidget extends ClickableWidget {
-    public AobaButtonWidget(int x, int y, int width, int height) {
-        super(x, y, width, height, Text.empty());
+import java.util.function.Consumer;
+
+import static net.aoba.AobaClient.MC;
+
+public class AobaButtonWidget extends PressableWidget {
+    private Consumer<AobaButtonWidget> pressAction;
+    private long hoverStartTime = 0;
+    private static final long HOVER_ANIMATION_DURATION = 200;
+
+    public AobaButtonWidget(int x, int y, int width, int height, Text message) {
+        super(x, y, width, height, message);
+    }
+
+    public void setPressAction(Consumer<AobaButtonWidget> pressAction) {
+        this.pressAction = pressAction;
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-    	Matrix4f matrix = context.getMatrices().peek().getPositionMatrix();
-    	
-    	RenderSystem.disableCull();
-    	
-    	RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		Render2D.drawRoundedBox(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), Color.convertHextoRGB("FF000000"));
-		Render2D.drawRoundedOutline(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), Color.convertHextoRGB("FFFFFF"));
-		RenderSystem.enableCull();
+    public void onPress() {
+        if (pressAction != null) {
+            pressAction.accept(this);
+        }
     }
-    
+
+
     @Override
-	protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-		// For brevity, we'll just skip this for now - if you want to add narration to your widget, you can do so here.
-		return;
-	}
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        Matrix4f matrix = context.getMatrices().peek().getPositionMatrix();
+
+        if (isHovered() && hoverStartTime == 0) {
+            hoverStartTime = System.currentTimeMillis();
+        } else if (!isHovered()) {
+            hoverStartTime = 0;
+        }
+
+        long currentTime = System.currentTimeMillis();
+        float hoverProgress = hoverStartTime > 0 ? (currentTime - hoverStartTime) / (float) HOVER_ANIMATION_DURATION : 0;
+        hoverProgress = Math.min(hoverProgress, 1.0f);
+        hoverProgress = (float) Math.sin(hoverProgress * Math.PI / 2);
+
+        Color boxColor = Color.interpolate(Color.convertHextoRGB("FF000000"), Color.convertHextoRGB("FFC0C0C0"), hoverProgress);
+        Color outlineColor = Color.interpolate(Color.convertHextoRGB("FFFFFF"), Color.convertHextoRGB("C0C0C0"), hoverProgress);
+
+        RenderSystem.disableCull();
+
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        Render2D.drawRoundedBox(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), boxColor);
+        Render2D.drawRoundedOutline(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), outlineColor);
+        RenderSystem.enableCull();
+
+        int textWidth = MC.textRenderer.getWidth(getMessage().getString());
+        int textHeight = MC.textRenderer.fontHeight;
+        int textX = getX() + (width - textWidth) / 2;
+        int textY = getY() + (height - textHeight) / 2 - (int) (2 * hoverProgress);
+
+        Render2D.drawStringWithScale(context, getMessage().getString(), textX, textY, Color.convertHextoRGB("FFFFFF"), 1.0f);
+    }
+
+    @Override
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+        // For brevity, we'll just skip this for now - if you want to add narration to your widget, you can do so here.
+        return;
+    }
 }
