@@ -224,7 +224,7 @@ public class Window implements IGuiElement {
 			// Draws background depending on components width and height
 			Render2D.drawRoundedBox(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
 					GuiManager.backgroundColor.getValue());
-			Render2D.drawRoundedOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
+			Render2D.drawRoundedBoxOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
 					GuiManager.borderColor.getValue());
 
 			if (icon != null) {

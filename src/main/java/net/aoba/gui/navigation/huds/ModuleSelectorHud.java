@@ -131,7 +131,7 @@ public class ModuleSelectorHud extends HudWindow {
             // Draws the table including all of the categories.
             Render2D.drawRoundedBox(matrix4f, x, y, width, height * this.categories.size(), 6f,
                 GuiManager.backgroundColor.getValue());
-            Render2D.drawRoundedOutline(matrix4f, x, y, width, height * this.categories.size(), 6f,
+            Render2D.drawRoundedBoxOutline(matrix4f, x, y, width, height * this.categories.size(), 6f,
                 GuiManager.borderColor.getValue());
 
             // For every category, draw a cell for it.
@@ -153,7 +153,7 @@ public class ModuleSelectorHud extends HudWindow {
                 // Draw the table underneath
                 Render2D.drawRoundedBox(matrix4f, x + width, y + (height * this.index), 165,
                     height * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-                Render2D.drawRoundedOutline(matrix4f, x + width, y + (height * this.index), 165,
+                Render2D.drawRoundedBoxOutline(matrix4f, x + width, y + (height * this.index), 165,
                     height * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
                 // For every mod, draw a cell for it.

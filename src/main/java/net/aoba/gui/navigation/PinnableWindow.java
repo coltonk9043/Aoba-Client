@@ -76,12 +76,12 @@ public class PinnableWindow extends Window {
 			if (this.isPinned.getValue()) {
 				Render2D.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(),
 						new Color(154, 0, 0, 200));
-				Render2D.drawRoundedOutline(matrix4f, x + width - 23, y + 8, 15, 15,
+				Render2D.drawRoundedBoxOutline(matrix4f, x + width - 23, y + 8, 15, 15,
 						GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 200));
 			} else {
 				Render2D.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(),
 						new Color(128, 128, 128, 50));
-				Render2D.drawRoundedOutline(matrix4f, x + width - 23, y + 8, 15, 15,
+				Render2D.drawRoundedBoxOutline(matrix4f, x + width - 23, y + 8, 15, 15,
 						GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 50));
 			}
 		}

@@ -26,6 +26,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
+import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
 import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.types.MouseAction;
@@ -75,7 +76,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
         
         Render2D.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
         Render2D.drawBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, new Color(115, 115, 115, 200));
-        Render2D.drawOutline(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight);
+        Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, Colors.Black);
 
         String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
         if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))

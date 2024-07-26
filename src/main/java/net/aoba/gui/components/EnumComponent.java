@@ -75,7 +75,7 @@ public class EnumComponent<T extends Enum<T>> extends Component implements KeyDo
 		Render2D.drawString(drawContext, enumSetting.displayName, actualX, actualY + 8, 0xFFFFFF);
 		Render2D.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight,
 				new Color(115, 115, 115, 200));
-		Render2D.drawOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
+		Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
 
 		String enumValue = this.enumSetting.getValue().toString();
 		Render2D.drawString(drawContext, enumValue, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);

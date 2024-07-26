@@ -93,7 +93,7 @@ public class NavigationBar implements MouseClickListener {
         currentSelectionX += (targetSelectionX - currentSelectionX) * animationSpeed * partialTicks;
 
         Render2D.drawRoundedBox(matrix, centerX - ((float) width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-        Render2D.drawRoundedOutline(matrix, centerX - ((float) width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
+        Render2D.drawRoundedBoxOutline(matrix, centerX - ((float) width / 2), 25, width, 25, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
         // Use currentSelectionX for animated position
         Render2D.drawRoundedBox(matrix, centerX - ((float) width / 2) + currentSelectionX, 25, 100, 25, GuiManager.roundingRadius.getValue() - 1, new Color(150, 150, 150, 100));
