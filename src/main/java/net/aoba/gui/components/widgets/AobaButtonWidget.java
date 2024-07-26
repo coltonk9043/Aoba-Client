@@ -54,8 +54,8 @@ public class AobaButtonWidget extends PressableWidget {
         hoverProgress = Math.min(hoverProgress, 1.0f);
         hoverProgress = (float) Math.sin(hoverProgress * Math.PI / 2);
 
-        Color boxColor = Color.interpolate(Color.convertHextoRGB("FF000000"), Color.convertHextoRGB("FFC0C0C0"), hoverProgress);
-        Color outlineColor = Color.interpolate(Color.convertHextoRGB("FFFFFF"), Color.convertHextoRGB("C0C0C0"), hoverProgress);
+        Color boxColor = Color.interpolate(GuiManager.backgroundColor.getValue(), Color.convertHextoRGB("FFC0C0C0"), hoverProgress);
+        Color outlineColor = Color.interpolate(GuiManager.borderColor.getValue(), Color.convertHextoRGB("C0C0C0"), hoverProgress);
 
         RenderSystem.disableCull();
 
@@ -69,7 +69,7 @@ public class AobaButtonWidget extends PressableWidget {
         int textX = getX() + (width - textWidth) / 2;
         int textY = getY() + (height - textHeight) / 2 - (int) (2 * hoverProgress);
 
-        Render2D.drawStringWithScale(context, getMessage().getString(), textX, textY, Color.convertHextoRGB("FFFFFF"), 1.0f);
+        Render2D.drawStringWithScale(context, getMessage().getString(), textX, textY, GuiManager.foregroundColor.getValue(), 1.0f);
     }
 
     @Override
