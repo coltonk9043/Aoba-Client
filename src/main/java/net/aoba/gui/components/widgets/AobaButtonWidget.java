@@ -1,5 +1,11 @@
 package net.aoba.gui.components.widgets;
 
+import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
@@ -14,8 +20,14 @@ public class AobaButtonWidget extends ClickableWidget {
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        Render2D.drawRoundedBox(context.getMatrices().peek().getPositionMatrix(), getX(), getY(), getX() + this.width, getY() + this.height, 6, Color.convertHextoRGB("FF000000"));
-        Render2D.drawRoundedOutline(context.getMatrices().peek().getPositionMatrix(), getX(), getY(), this.width, this.height, 6, Color.convertHextoRGB("FFFFFFFF"));
+    	Matrix4f matrix = context.getMatrices().peek().getPositionMatrix();
+    	
+    	RenderSystem.disableCull();
+    	
+    	RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		Render2D.drawRoundedBox(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), Color.convertHextoRGB("FF000000"));
+		Render2D.drawRoundedOutline(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), Color.convertHextoRGB("FFFFFF"));
+		RenderSystem.enableCull();
     }
     
     @Override

@@ -54,8 +54,8 @@ public class Render2D {
         RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
             color.getAlphaFloat());
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
 
@@ -69,8 +69,9 @@ public class Render2D {
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static int getStringWidth(String text) {
@@ -82,8 +83,8 @@ public class Render2D {
         RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
             color.getAlphaFloat());
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getPositionProgram);
@@ -106,8 +107,9 @@ public class Render2D {
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height, float radius,
@@ -115,8 +117,8 @@ public class Render2D {
         RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
             color.getAlphaFloat());
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getPositionProgram);
@@ -180,8 +182,9 @@ public class Render2D {
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawRoundedOutline(Matrix4f matrix4f, float x, float y, float width, float height, float radius,
@@ -189,9 +192,9 @@ public class Render2D {
         RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
             color.getAlphaFloat());
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getPositionProgram);
 
@@ -219,15 +222,16 @@ public class Render2D {
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawTranslucentBlurredRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height,
                                                         float radius, Color color) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
-
         for (int i = 0; i < 5; i++) {
             RenderSystem.setShader(GameRenderer::getPositionColorProgram);
             float alpha = color.getAlphaFloat() * (1.0f / (i + 1)); // Adjust alpha for each blur layer
@@ -243,8 +247,9 @@ public class Render2D {
         drawRoundedBox(matrix4f, x, y, width, height, radius, color);
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawOutlinedBox(Matrix4f matrix4f, float x, float y, float width, float height,
@@ -252,9 +257,9 @@ public class Render2D {
         RenderSystem.setShaderColor(backgroundColor.getRedFloat(), backgroundColor.getGreenFloat(),
             backgroundColor.getBlueFloat(), backgroundColor.getAlphaFloat());
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getPositionProgram);
 
@@ -278,9 +283,9 @@ public class Render2D {
 
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.setShaderColor(1, 1, 1, 1);
-
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawOutlinedBox(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
@@ -291,9 +296,9 @@ public class Render2D {
         RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
             color.getAlphaFloat());
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getPositionProgram);
 
@@ -303,16 +308,16 @@ public class Render2D {
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
-
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawHorizontalGradient(Matrix4f matrix4f, float x, float y, float width, float height,
                                               Color startColor, Color endColor) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 
@@ -323,15 +328,16 @@ public class Render2D {
         bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(startColor.getColorAsInt());
 
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawVerticalGradient(Matrix4f matrix4f, float x, float y, float width, float height,
                                             Color startColor, Color endColor) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 
@@ -342,16 +348,17 @@ public class Render2D {
         bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(endColor.getColorAsInt());
 
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawOutline(Matrix4f matrix4f, float x, float y, float width, float height) {
         RenderSystem.setShaderColor(0, 0, 0, 1);
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getPositionProgram);
 
@@ -364,18 +371,18 @@ public class Render2D {
 
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.setShaderColor(1, 1, 1, 1);
-
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawOutline(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
         RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
             color.getAlphaFloat());
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
+        RenderSystem.enableBlend();
+        RenderSystem.disableDepthTest();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
         Tessellator tessellator = RenderSystem.renderThreadTesselator();
         RenderSystem.setShader(GameRenderer::getPositionProgram);
 
@@ -388,9 +395,9 @@ public class Render2D {
 
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.setShaderColor(1, 1, 1, 1);
-
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     public static void drawItem(DrawContext drawContext, ItemStack stack, float x, float y) {

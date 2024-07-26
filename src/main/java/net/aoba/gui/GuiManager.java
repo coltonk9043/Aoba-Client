@@ -59,6 +59,8 @@ import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -251,8 +253,8 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
     @Override
     public void OnRender(Render2DEvent event) {
 
-        GL11.glDisable(GL11.GL_CULL_FACE);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    	RenderSystem.disableCull();
+    	RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         DrawContext drawContext = event.getDrawContext();
         float tickDelta = event.getRenderTickCounter().getTickDelta(false);
@@ -282,7 +284,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
         }
 
         matrixStack.pop();
-        GL11.glEnable(GL11.GL_CULL_FACE);
+        RenderSystem.enableCull();
     }
 
     /**

@@ -18,11 +18,7 @@
 
 package net.aoba.mixin;
 
-import net.aoba.Aoba;
-import net.aoba.AobaClient;
-import net.aoba.api.IAddon;
 import net.aoba.gui.screens.MainMenuScreen;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.text.Text;
