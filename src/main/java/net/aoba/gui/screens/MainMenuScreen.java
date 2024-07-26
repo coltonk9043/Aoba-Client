@@ -4,17 +4,23 @@ import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
 import net.aoba.gui.components.widgets.AobaButtonWidget;
 import net.aoba.utils.render.TextureBank;
+import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 import static net.aoba.AobaClient.MC;
 
+import org.lwjgl.opengl.GL11;
+
 public class MainMenuScreen extends Screen {
+	protected static final CubeMapRenderer AOBA_PANORAMA_RENDERER = new CubeMapRenderer(TextureBank.mainmenu_panorama);
+	protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(AOBA_PANORAMA_RENDERER);
+	
     public MainMenuScreen() {
         super(Text.of("Aoba Client Main Menu"));
     }
@@ -35,13 +41,13 @@ public class MainMenuScreen extends Screen {
         int startX = (this.width - totalGridWidth) / 2;
         int startY = (this.height - totalGridHeight) / 2;
 
-        AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX, startY, buttonWidth, buttonHeight, Text.of("Multiplayer"));
-        multiplayerButton.setPressAction(b -> client.setScreen(new MultiplayerScreen(this)));
-        this.addDrawableChild(multiplayerButton);
-
-        AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX + buttonWidth + spacing, startY, buttonWidth, buttonHeight, Text.of("Singleplayer"));
+        AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX , startY, buttonWidth, buttonHeight, Text.of("Singleplayer"));
         singleplayerButton.setPressAction(b -> client.setScreen(new SelectWorldScreen(this)));
         this.addDrawableChild(singleplayerButton);
+        
+        AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX + buttonWidth + spacing, startY, buttonWidth, buttonHeight, Text.of("Multiplayer"));
+        multiplayerButton.setPressAction(b -> client.setScreen(new MultiplayerScreen(this)));
+        this.addDrawableChild(multiplayerButton);
 
         AobaButtonWidget settingsButton = new AobaButtonWidget(startX, startY + buttonHeight + spacing, buttonWidth, buttonHeight, Text.of("Settings"));
         settingsButton.setPressAction(b -> client.setScreen(new OptionsScreen(this, MC.options)));
@@ -57,7 +63,8 @@ public class MainMenuScreen extends Screen {
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, mouseX, mouseY, delta);
 
-        drawContext.drawTexture(TextureBank.mainmenu_logo, (this.width - 154) / 2, 20, 0, 0, 154, 67, 154, 67);
+        
+        drawContext.drawTexture(TextureBank.mainmenu_logo, (this.width - 185) / 2, 20, 0, 0, 185, 70, 185, 70);
         drawContext.drawTextWithShadow(this.textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, this.height - 10, 0xFF00FF);
 
 
@@ -65,7 +72,9 @@ public class MainMenuScreen extends Screen {
         int creditsButtonHeight = 20;
         int creditsButtonX = this.width - creditsButtonWidth - 10;
         int creditsButtonY = this.height - creditsButtonHeight - 10;
+        
         drawContext.drawTexture(TextureBank.aoba, creditsButtonX, creditsButtonY, 0, 0, creditsButtonWidth, creditsButtonHeight, creditsButtonWidth, creditsButtonHeight);
+
         if (AobaClient.addons.isEmpty()) {
             String noAddonsText = "No addons loaded";
             int textWidth = this.textRenderer.getWidth(noAddonsText);
@@ -90,5 +99,10 @@ public class MainMenuScreen extends Screen {
                 yOffset += 10;
             }
         }
+    }
+    
+    @Override
+    protected void renderPanoramaBackground(DrawContext context, float delta) {
+    	AOBA_ROTATING_PANORAMA_RENDERER.render(context, this.width, this.height, 1.0f, delta);
     }
 }
