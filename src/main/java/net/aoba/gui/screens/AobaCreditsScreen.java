@@ -38,36 +38,36 @@ public class AobaCreditsScreen extends Screen {
     }
 
     @Override
-public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-    super.render(context, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
 
-    animationProgress += delta / (ANIMATION_DURATION / 1000.0f);
-    if (animationProgress >= 1.0f) {
-        animationProgress = 0.0f;
-        currentContributorIndex = (currentContributorIndex + 1) % CONTRIBUTORS.size();
+        animationProgress += delta / (ANIMATION_DURATION / 1000.0f);
+        if (animationProgress >= 1.0f) {
+            animationProgress = 0.0f;
+            currentContributorIndex = (currentContributorIndex + 1) % CONTRIBUTORS.size();
+        }
+
+        int textHeight = this.textRenderer.fontHeight;
+        int totalHeight = CONTRIBUTORS.size() * (textHeight + 10);
+        int startY = this.height;
+        int endY = -totalHeight;
+
+        int baseY = (int) (startY + (endY - startY) * animationProgress);
+        int logoHeight = 70;
+        int logoY = baseY + 20;
+
+        context.drawTexture(TextureBank.mainmenu_logo, (this.width - 185) / 2, logoY - 100, 0, 0, 185, logoHeight, 185, logoHeight);
+
+
+        int textWidth = this.textRenderer.getWidth(CONTRIBUTORS.get(0));
+        int textX = (this.width - textWidth) / 2;
+
+        for (int i = 0; i < CONTRIBUTORS.size(); i++) {
+            int textY = baseY + i * (textHeight + 10);
+            float alpha = getFadeAlpha(textY);
+            drawContributorName(context, CONTRIBUTORS.get(i), textX, textY, alpha);
+        }
     }
-
-    int textHeight = this.textRenderer.fontHeight;
-    int totalHeight = CONTRIBUTORS.size() * (textHeight + 10);
-    int startY = this.height;
-    int endY = -totalHeight;
-
-    int baseY = (int) (startY + (endY - startY) * animationProgress);
-    int logoHeight = 70;
-    int logoY = baseY + 20; 
-    
-    context.drawTexture(TextureBank.mainmenu_logo, (this.width - 185) / 2, logoY - 100, 0, 0, 185, logoHeight, 185, logoHeight);
-
-
-    int textWidth = this.textRenderer.getWidth(CONTRIBUTORS.get(0));
-    int textX = (this.width - textWidth) / 2;
-
-    for (int i = 0; i < CONTRIBUTORS.size(); i++) {
-        int textY = baseY + i * (textHeight + 10);
-        float alpha = getFadeAlpha(textY);
-        drawContributorName(context, CONTRIBUTORS.get(i), textX, textY, alpha);
-    }
-}
 
 
     private float getFadeAlpha(int y) {
@@ -86,7 +86,7 @@ public void render(DrawContext context, int mouseX, int mouseY, float delta) {
     private void drawContributorName(DrawContext context, String contributor, int x, int y, float alpha) {
         Render2D.drawString(context, contributor, (float) x, (float) y, GuiManager.foregroundColor.getValue());
     }
-    
+
     @Override
     protected void renderPanoramaBackground(DrawContext context, float delta) {
         AOBA_ROTATING_PANORAMA_RENDERER.render(context, this.width, this.height, 1.0f, delta);

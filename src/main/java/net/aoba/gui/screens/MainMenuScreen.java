@@ -3,6 +3,7 @@ package net.aoba.gui.screens;
 import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
 import net.aoba.gui.components.widgets.AobaButtonWidget;
+import net.aoba.gui.components.widgets.AobaImageButtonWidget;
 import net.aoba.utils.render.TextureBank;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -58,14 +59,9 @@ public class MainMenuScreen extends Screen {
         quitButton.setPressAction(b -> client.stop());
         this.addDrawableChild(quitButton);
 
-        int creditsButtonWidth = 20;
-        int creditsButtonHeight = 20;
-        int creditsButtonX = this.width - creditsButtonWidth - 10;
-        int creditsButtonY = this.height - creditsButtonHeight - 10;
-        this.addDrawableChild(ButtonWidget.builder(Text.of(""), b -> {
-                MC.setScreen(new AobaCreditsScreen());
-            })
-            .dimensions(creditsButtonX, creditsButtonY, creditsButtonWidth, creditsButtonHeight).build());
+        AobaImageButtonWidget creditsButton = new AobaImageButtonWidget(this.width - 20 - 10, this.height - 20 - 10, 20, 20, TextureBank.aoba);
+        creditsButton.setPressAction(b -> MC.setScreen(new AobaCreditsScreen()));
+        this.addDrawableChild(creditsButton);
     }
 
 
@@ -76,13 +72,6 @@ public class MainMenuScreen extends Screen {
 
         drawContext.drawTexture(TextureBank.mainmenu_logo, (this.width - 185) / 2, 20, 0, 0, 185, 70, 185, 70);
         drawContext.drawTextWithShadow(this.textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, this.height - 10, 0xFF00FF);
-
-        int creditsButtonWidth = 20;
-        int creditsButtonHeight = 20;
-        int creditsButtonX = this.width - creditsButtonWidth - 10;
-        int creditsButtonY = this.height - creditsButtonHeight - 10;
-
-        drawContext.drawTexture(TextureBank.aoba, creditsButtonX, creditsButtonY, 0, 0, creditsButtonWidth, creditsButtonHeight, creditsButtonWidth, creditsButtonHeight);
 
         if (AobaClient.addons.isEmpty()) {
             String noAddonsText = "No addons loaded";
