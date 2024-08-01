@@ -125,9 +125,6 @@ public class ModuleSelectorHud extends HudWindow {
             float width = pos.getWidth().floatValue();
             float height = pos.getHeight().floatValue();
 
-            // Draws the top bar including "Aoba x.x"
-            Render2D.drawString(drawContext, "Aoba " + AobaClient.VERSION, 8, 8, GuiManager.foregroundColor.getValue());
-
             // Draws the table including all of the categories.
             Render2D.drawRoundedBox(matrix4f, x, y, width, height * this.categories.size(), 6f,
                 GuiManager.backgroundColor.getValue());

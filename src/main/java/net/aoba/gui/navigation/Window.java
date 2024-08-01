@@ -271,7 +271,7 @@ public class Window implements IGuiElement {
 			tabIterator.next().onMouseMove(event);
 		}
 
-		if (!event.isCancelled() && visible) {
+		if (!event.isCancelled() && getVisible()) {
 			double mouseX = event.getX();
 			double mouseY = event.getY();
 			double mouseDeltaX = event.getDeltaX();
