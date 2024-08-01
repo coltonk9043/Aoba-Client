@@ -74,7 +74,7 @@ public class SettingManager {
     }
 
     public static void saveSettings(SettingsContainer container)
-            throws FileNotFoundException, IOException {
+        throws FileNotFoundException, IOException {
         LogUtils.getLogger().info("Saving config " + container.configName + ".");
         Properties config = prepare(container);
         for (Setting<?> setting : container.settingsList) {
@@ -88,14 +88,14 @@ public class SettingManager {
                         config.setProperty(setting.ID, String.valueOf(key.getCode()));
                     }
                     case VECTOR2 -> {
-                        config.setProperty(setting.ID, String.valueOf(((Vector2) setting.getValue()).x) + ","
-                                + String.valueOf(((Vector2) setting.getValue()).y));
+                        config.setProperty(setting.ID, ((Vector2) setting.getValue()).x + ","
+                            + ((Vector2) setting.getValue()).y);
                     }
                     case RECTANGLE -> {
-                        config.setProperty(setting.ID, String.valueOf(((Rectangle) setting.getValue()).getX()) + ","
-                                + String.valueOf(((Rectangle) setting.getValue()).getY()) + ","
-                                + String.valueOf(((Rectangle) setting.getValue()).getWidth()) + ","
-                                + String.valueOf(((Rectangle) setting.getValue()).getHeight()));
+                        config.setProperty(setting.ID, ((Rectangle) setting.getValue()).getX() + ","
+                            + ((Rectangle) setting.getValue()).getY() + ","
+                            + ((Rectangle) setting.getValue()).getWidth() + ","
+                            + ((Rectangle) setting.getValue()).getHeight());
                     }
                     case COLOR -> {
                         String s = ((Color) setting.getValue()).getColorAsHex();
@@ -152,38 +152,32 @@ public class SettingManager {
                         case FLOAT -> {
                             float floatValue = Float.parseFloat(value);
                             if (((FloatSetting) setting).min_value <= floatValue
-                                    && ((FloatSetting) setting).max_value >= floatValue) {
+                                && ((FloatSetting) setting).max_value >= floatValue) {
                                 setting.setValue(Float.parseFloat(value));
                             }
-                            break;
                         }
                         case INTEGER -> {
                             int intValue = Integer.parseInt(value);
                             if (((IntegerSetting) setting).min_value <= intValue
-                                    && ((IntegerSetting) setting).max_value >= intValue) {
+                                && ((IntegerSetting) setting).max_value >= intValue) {
                                 setting.setValue(Integer.parseInt(value));
                             }
-                            break;
                         }
                         case BOOLEAN -> {
                             setting.setValue(Boolean.parseBoolean(value));
-                            break;
                         }
                         case STRING -> {
                             setting.setValue(value);
-                            break;
                         }
                         case KEYBIND -> {
                             int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
                             setting.setValue(InputUtil.fromKeyCode(keyCode, 0));
-                            break;
                         }
                         case VECTOR2 -> {
                             String[] dimensions = value.split(",");
                             if (dimensions.length == 2) {
                                 setting.setValue(new Vector2(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
                             }
-                            break;
                         }
                         case RECTANGLE -> {
                             String[] dimensions = value.split(",");
@@ -203,7 +197,6 @@ public class SettingManager {
                             int G = (int) ((hexValue) >> 8) & 0xFF;
                             int B = (int) (hexValue) & 0xFF;
                             setting.setValue(new Color(R, G, B, Alpha));
-                            break;
                         }
                         case BLOCKS -> {
                             String[] ids = value.split(",");
@@ -213,12 +206,9 @@ public class SettingManager {
                                 result.add(Registries.BLOCK.get(i));
                             }
                             setting.setValue(result);
-                            break;
                         }
-                        case INDEXEDSTRINGLIST ->
-                                throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
-                        case STRINGLIST ->
-                                throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
+                        case INDEXEDSTRINGLIST, STRINGLIST ->
+                            throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
                         case ENUM -> {
                             String enumName = config.getProperty(setting.ID, null);
                             if (enumName != null) {
@@ -238,11 +228,11 @@ public class SettingManager {
                         default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LogUtils.getLogger().error(e.getMessage());
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.getLogger().error(e.getMessage());
         }
     }
 

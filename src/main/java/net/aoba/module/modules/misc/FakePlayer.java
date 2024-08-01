@@ -19,19 +19,20 @@ import java.util.UUID;
 public class FakePlayer extends Module {
     public static OtherClientPlayerEntity fakePlayer;
 
-    private StringSetting playerName;
-    private BooleanSetting enableRegen;
-    private FloatSetting regenDuration;
-    private FloatSetting regenAmplifier;
-    private BooleanSetting enableAbsorption;
-    private FloatSetting absorptionDuration;
-    private FloatSetting absorptionAmplifier;
-    private BooleanSetting enableResistance;
-    private FloatSetting resistanceDuration;
-    private FloatSetting resistanceAmplifier;
+    private final StringSetting playerName;
+    private final BooleanSetting enableRegen;
+    private final FloatSetting regenDuration;
+    private final FloatSetting regenAmplifier;
+    private final BooleanSetting enableAbsorption;
+    private final FloatSetting absorptionDuration;
+    private final FloatSetting absorptionAmplifier;
+    private final BooleanSetting enableResistance;
+    private final FloatSetting resistanceDuration;
+    private final FloatSetting resistanceAmplifier;
 
     public FakePlayer() {
         super(new KeybindSetting("key.fakeplayer", "FakePlayer Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+
         this.setName("FakePlayer");
         this.setCategory(Category.of("Misc"));
         this.setDescription("Creates a fake player entity.");
@@ -62,6 +63,7 @@ public class FakePlayer extends Module {
     @Override
     public void onDisable() {
         if (fakePlayer == null) return;
+
         fakePlayer.kill();
         fakePlayer.setRemoved(Entity.RemovalReason.KILLED);
         fakePlayer.onRemoved();
@@ -76,10 +78,10 @@ public class FakePlayer extends Module {
         MC.world.addEntity(fakePlayer);
 
         if (enableRegen.getValue()) {
-            fakePlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, (int) (regenDuration.getValue() * 20), (int) regenAmplifier.getValue().intValue()));
+            fakePlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, (int) (regenDuration.getValue() * 20), regenAmplifier.getValue().intValue()));
         }
         if (enableAbsorption.getValue()) {
-            fakePlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, (int) (absorptionDuration.getValue() * 20), (int) absorptionAmplifier.getValue().intValue()));
+            fakePlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, (int) (absorptionDuration.getValue() * 20), absorptionAmplifier.getValue().intValue()));
         }
         if (enableResistance.getValue()) {
             fakePlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, (int) (resistanceDuration.getValue() * 20), resistanceAmplifier.getValue().intValue()));

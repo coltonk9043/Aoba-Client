@@ -3,6 +3,7 @@ package net.aoba.proxymanager;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.logging.LogUtils;
 import net.aoba.altmanager.Alt;
 
 import java.io.File;
@@ -36,7 +37,7 @@ public class ProxyManager {
             proxies = gson.fromJson(reader, proxiesListType);
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtils.getLogger().error(e.getMessage());
         }
     }
 

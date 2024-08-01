@@ -75,12 +75,12 @@ public class SliderComponent extends Component {
 
     @Override
     public void onMouseClick(MouseClickEvent event) {
-    	super.onMouseClick(event);
+        super.onMouseClick(event);
         if (event.button == MouseButton.LEFT) {
             if (event.action == MouseAction.DOWN) {
                 if (hovered) {
-                	 isSliding = true;
-                	event.cancel();
+                    isSliding = true;
+                    event.cancel();
                 }
             } else if (event.action == MouseAction.UP) {
                 isSliding = false;
@@ -106,7 +106,6 @@ public class SliderComponent extends Component {
             slider.setValue((currentSliderPosition * (slider.max_value - slider.min_value)) + slider.min_value);
         }
     }
-
 
 
     @Override

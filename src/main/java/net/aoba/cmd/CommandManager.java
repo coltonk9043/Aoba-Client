@@ -99,8 +99,7 @@ public class CommandManager {
                 });
             });
         } catch (Exception e) {
-            LogUtils.getLogger().error("Error initializing Aoba commands.");
-            LogUtils.getLogger().error(Arrays.toString(e.getStackTrace()));
+            LogUtils.getLogger().error("Error initializing Aoba commands: " + e.getMessage());
         }
     }
 
@@ -117,7 +116,7 @@ public class CommandManager {
     /**
      * Gets all of the Commands currently registered.
      *
-     * @return List of registered Command Objects.
+     * @return HashMap<String, Command> of registered Command Objects.
      */
     public HashMap<String, Command> getCommands() {
         return this.commands;

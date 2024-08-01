@@ -34,14 +34,14 @@ public class ModuleUtils {
 
     public static boolean isThrowable(ItemStack stack) {
         Item item = stack.getItem();
-        return item == Items.BOW || item == Items.SNOWBALL || item == Items.EGG
-                || item instanceof EnderPearlItem || item instanceof SplashPotionItem
-                || item instanceof LingeringPotionItem || item instanceof FishingRodItem;
+        return item == Items.BOW || item == Items.SNOWBALL || item == Items.EGG || item == Items.FIRE_CHARGE || item == Items.TRIDENT || item instanceof EnderPearlItem || item instanceof SplashPotionItem || item instanceof LingeringPotionItem || item instanceof FishingRodItem || item instanceof EnderEyeItem;
     }
 
     public static boolean isPlantable(ItemStack stack) {
         Item item = stack.getItem();
-        return item == Items.WHEAT_SEEDS || item == Items.CARROT || item == Items.POTATO;
+        return item == Items.WHEAT_SEEDS || item == Items.CARROT || item == Items.POTATO
+                || item == Items.BEETROOT_SEEDS || item == Items.MELON_SEEDS || item == Items.COCOA_BEANS
+                || item == Items.NETHER_WART;
     }
 
     public static Stream<BlockEntity> getTileEntities() {
@@ -57,20 +57,18 @@ public class ModuleUtils {
         ChunkPos max = new ChunkPos(center.x + radius, center.z + radius);
 
         Stream<WorldChunk> stream = Stream.<ChunkPos>iterate(min, pos -> {
-                    int x = pos.x;
-                    int z = pos.z;
-                    x++;
+            int x = pos.x;
+            int z = pos.z;
+            x++;
 
-                    if (x > max.x) {
-                        x = min.x;
-                        z++;
-                    }
+            if (x > max.x) {
+                x = min.x;
+                z++;
+            }
 
-                    return new ChunkPos(x, z);
+            return new ChunkPos(x, z);
 
-                }).limit((long) diameter * diameter)
-                .filter(c -> AobaClient.MC.world.isChunkLoaded(c.x, c.z))
-                .map(c -> AobaClient.MC.world.getChunk(c.x, c.z)).filter(Objects::nonNull);
+        }).limit((long) diameter * diameter).filter(c -> AobaClient.MC.world.isChunkLoaded(c.x, c.z)).map(c -> AobaClient.MC.world.getChunk(c.x, c.z)).filter(Objects::nonNull);
 
         return stream;
     }

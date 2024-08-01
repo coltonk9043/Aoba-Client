@@ -42,20 +42,19 @@ import net.minecraft.util.Identifier;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
+import static net.aoba.utils.render.TextureBank.gear;
+
 public class ModuleComponent extends Component {
     private String text;
     private Module module;
 
     private CloseableWindow lastSettingsTab = null;
-
-    public final Identifier gear;
     private boolean spinning = false;
     private float spinAngle = 0;
 
     public ModuleComponent(String text, IGuiElement parent, Module module) {
         super(parent, new Rectangle(null, null, null, 30f));
 
-        gear = Identifier.of("aoba", "/textures/gear.png");
         this.text = text;
         this.module = module;
 

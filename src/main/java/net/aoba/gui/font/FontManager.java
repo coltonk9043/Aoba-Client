@@ -18,6 +18,7 @@
 
 package net.aoba.gui.font;
 
+import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.event.events.FontChangedEvent;
 import net.aoba.settings.SettingManager;
@@ -82,7 +83,7 @@ public class FontManager {
                         }
                     } catch (Exception e) {
                         System.err.println("Failed to load font: " + file.getName());
-                        e.printStackTrace();
+                        LogUtils.getLogger().error(e.getMessage());
                     }
                 }
             }

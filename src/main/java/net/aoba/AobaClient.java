@@ -26,6 +26,7 @@ import net.aoba.altmanager.AltManager;
 import net.aoba.api.IAddon;
 import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
+import net.aoba.combatmanager.CombatManager;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
@@ -34,6 +35,7 @@ import net.aoba.module.ModuleManager;
 import net.aoba.proxymanager.ProxyManager;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.friends.FriendsList;
+import net.aoba.utils.discord.RPCManager;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.MinecraftClient;
@@ -56,6 +58,8 @@ public class AobaClient {
     public ProxyManager proxyManager;
     public GuiManager hudManager;
     public FontManager fontManager;
+    public CombatManager combatManager;
+    public RPCManager rpcManager;
     public SettingManager settingManager;
     public FriendsList friendsList;
     public GlobalChat globalChat;
@@ -82,11 +86,11 @@ public class AobaClient {
             IAddon addon = entrypoint.getEntrypoint();
 
             try {
-                LogUtils.getLogger().info("[Aoba] Initializing addon: " + addon.getClass().getName());
+                LogUtils.getLogger().info("[Aoba] Initializing addon: " + addon.getName());
                 addon.onInitialize();
-                LogUtils.getLogger().info("[Aoba] Addon initialized: " + addon.getClass().getName());
+                LogUtils.getLogger().info("[Aoba] Addon initialized: " + addon.getName());
             } catch (Throwable e) {
-                LogUtils.getLogger().error("Error initializing addon: " + addon.getClass().getName(), e);
+                LogUtils.getLogger().error("Error initializing addon: " + addon.getName(), e.getMessage());
             }
 
             addons.add(addon);
@@ -105,12 +109,17 @@ public class AobaClient {
         LogUtils.getLogger().info("[Aoba] Initializing Font Manager");
         fontManager = new FontManager();
         fontManager.Initialize();
+        LogUtils.getLogger().info("[Aoba] Initializing Combat Manager");
+        combatManager = new CombatManager();
         LogUtils.getLogger().info("[Aoba] Initializing GUI");
         hudManager = new GuiManager();
         hudManager.Initialize();
         LogUtils.getLogger().info("[Aoba] Loading Alts");
         altManager = new AltManager();
         proxyManager = new ProxyManager();
+        LogUtils.getLogger().info("[Aoba] Starting Discord RPC");
+        rpcManager = new RPCManager();
+        rpcManager.startRpc();
         LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 
         SettingManager.loadSettings(settingManager.configContainer);
@@ -136,7 +145,7 @@ public class AobaClient {
             friendsList.save();
             moduleManager.modules.forEach(s -> s.onDisable());
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtils.getLogger().error(e.getMessage());
         }
         LogUtils.getLogger().info("[Aoba] Shutting down...");
     }
