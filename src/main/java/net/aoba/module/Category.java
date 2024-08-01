@@ -13,7 +13,10 @@ public class Category {
     }
 
     public static Category of(String name) {
-        return CATEGORIES.computeIfAbsent(name.toLowerCase(), Category::new);
+    	String capitalized = name.toLowerCase();
+    	if(name.length() >= 2)
+    		capitalized = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        return CATEGORIES.computeIfAbsent(capitalized, Category::new);
     }
 
     public String getName() {

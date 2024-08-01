@@ -20,7 +20,7 @@ public class CoordsHud extends HudWindow {
     public void draw(DrawContext drawContext, float partialTicks) {
         super.draw(drawContext, partialTicks);
 
-        if (this.visible) {
+        if (getVisible()) {
             Rectangle pos = position.getValue();
             if (pos.isDrawable()) {
                 String coordsText = String.format("X: %.1f, Y: %.1f, Z: %.1f",

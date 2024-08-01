@@ -18,6 +18,8 @@
 
 package net.aoba.gui.navigation.windows;
 
+import java.util.ArrayList;
+
 import net.aoba.gui.Margin;
 import net.aoba.gui.components.HudComponent;
 import net.aoba.gui.components.StackPanelComponent;
@@ -26,13 +28,13 @@ import net.aoba.gui.navigation.Window;
 import net.minecraft.client.gui.DrawContext;
 
 public class ToggleHudsTab extends Window {
-    public ToggleHudsTab(HudWindow[] abstractHuds) {
+    public ToggleHudsTab(ArrayList<HudWindow> huds) {
         super("Toggle HUDs", 0, 0, 50, 50);
 
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setMargin(new Margin(null, 30f, null, null));
 
-        for (HudWindow hud : abstractHuds) {
+        for (HudWindow hud : huds) {
             HudComponent hudComponent = new HudComponent(hud.getID(), stackPanel, hud);
             stackPanel.addChild(hudComponent);
         }

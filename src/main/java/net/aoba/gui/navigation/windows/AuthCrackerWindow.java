@@ -44,8 +44,8 @@ public class AuthCrackerWindow extends Window {
     Runnable startRunnable;
     Runnable endRunnable;
 
-    public AuthCrackerWindow(String title, int x, int y) {
-        super(title, x, y, 180, 360);
+    public AuthCrackerWindow() {
+        super("Auth Cracker", 810, 500, 280, 360);
         
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setMargin(new Margin(null, 30f, null, null));

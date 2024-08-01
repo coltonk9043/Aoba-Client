@@ -48,28 +48,28 @@ public class Window implements IGuiElement {
 	protected String title;
 	protected Page parent;
 
-	protected RectangleSetting position;
-	protected Float minWidth = 180.0f;
-	protected Float minHeight = 50.0f;
-	protected Float maxWidth = null;
-	protected Float maxHeight = null;
+	public RectangleSetting position;
+	public Float minWidth = 180.0f;
+	public Float minHeight = 50.0f;
+	public Float maxWidth = null;
+	public Float maxHeight = null;
 
-	protected boolean isMouseOver = false;
-	protected boolean isMoving = false;
-	protected boolean isResizing = false;
+	public boolean isMouseOver = false;
+	public boolean isMoving = false;
+	public boolean isResizing = false;
 
 	private Identifier icon = null;
 
 	public boolean moveable = true;
 	public boolean resizeable = true;
 
-	protected Direction grabDirection = Direction.None;
+	public Direction grabDirection = Direction.None;
 	protected boolean visible = false;
 
 	// Mouse Variables
 	protected boolean inheritHeightFromChildren = true;
 
-	protected ArrayList<Component> children = new ArrayList<>();
+	public ArrayList<Component> children = new ArrayList<>();
 
 	public Window(String ID, float x, float y, float width, float height) {
 		this.parent = null;
@@ -138,15 +138,8 @@ public class Window implements IGuiElement {
 	}
 
 	@Override
-	public void onChildChanged(Component changedChild) {
-		if (this.inheritHeightFromChildren) {
-			applyInherittedHeight();
-		}
-	}
-
-	@Override
 	public void onVisibilityChanged() {
-		// Do nothing...
+		// Do nothing?
 	}
 
 	@Override
@@ -158,6 +151,13 @@ public class Window implements IGuiElement {
 
 	@Override
 	public void onChildRemoved(Component child) {
+		if (this.inheritHeightFromChildren) {
+			applyInherittedHeight();
+		}
+	}
+	
+	@Override
+	public void onChildChanged(Component changedChild) {
 		if (this.inheritHeightFromChildren) {
 			applyInherittedHeight();
 		}
@@ -263,8 +263,8 @@ public class Window implements IGuiElement {
 		isResizing = state;
 		grabDirection = direction;
 	}
-
-	public void OnMouseMove(MouseMoveEvent event) {
+	
+	public void onMouseMove(MouseMoveEvent event) {
 		// Propagate to children.
 		Iterator<Component> tabIterator = children.iterator();
 		while (tabIterator.hasNext()) {
@@ -405,7 +405,7 @@ public class Window implements IGuiElement {
 		}
 	}
 
-	private float lerp(float start, float end, float alpha) {
+	public float lerp(float start, float end, float alpha) {
 		return start + alpha * (end - start);
 	}
 }

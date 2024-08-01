@@ -40,6 +40,7 @@ import net.aoba.gui.navigation.windows.AuthCrackerWindow;
 import net.aoba.gui.navigation.windows.GoToWindow;
 import net.aoba.gui.navigation.windows.HudOptionsTab;
 import net.aoba.gui.navigation.windows.ToggleHudsTab;
+import net.aoba.mixin.interfaces.IGameRenderer;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.SettingManager;
@@ -55,12 +56,16 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.resource.ResourceFactory;
+
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -124,12 +129,12 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
         Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(Render2DListener.class, this);
     }
-
+    
     public void Initialize() {
-        toolsPane.AddWindow(new AuthCrackerWindow("Auth Cracker", 810, 500));
+        toolsPane.AddWindow(new AuthCrackerWindow());
         toolsPane.AddWindow(new GoToWindow("Go To Location", 1220, 550));
+        
         moduleSelector = new ModuleSelectorHud();
-
         armorHud = new ArmorHud(0, 0, 200, 50);
         radarHud = new RadarHud(0, 0, 180, 180);
         infoHud = new InfoHud(0, 0);
@@ -141,7 +146,11 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
         pingHud = new PingHud(0, 0);
         speedHud = new SpeedHud(0, 0);
 
+    
+        ArrayList<HudWindow> huds = Lists.newArrayList(moduleSelector, armorHud, radarHud, infoHud, moduleArrayListHud, watermarkHud, coordsHud, netherCoordsHud, fpsHud, pingHud, speedHud);
         hudPane.AddWindow(new HudOptionsTab());
+        hudPane.AddWindow(new ToggleHudsTab(huds));
+        
         Map<String, Category> categories = Category.getAllCategories();
         float xOffset = 50;
 

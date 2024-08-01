@@ -47,7 +47,7 @@ public class RadarHud extends HudWindow {
 	public void draw(DrawContext drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 		
-		if (this.visible) {
+		if (getVisible()) {
 			MatrixStack matrixStack = drawContext.getMatrices();
 			Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 

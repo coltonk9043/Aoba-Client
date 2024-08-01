@@ -17,25 +17,29 @@ public class HudWindow extends Window {
 	public HudWindow(String ID, float x, float y, float width, float height) {
 		super(ID, x, y, width, height);
 
-		activated = new BooleanSetting(ID + "_activated", ID + " Activated", false,
-				(Boolean val) -> onActivatedChanged(val));
+		activated = new BooleanSetting(ID + "_activated", ID + " Activated", false, (Boolean val) -> onActivatedChanged(val));
 		SettingManager.registerSetting(activated, Aoba.getInstance().settingManager.configContainer);
 	}
 
 	private void onActivatedChanged(Boolean state) {
-		visible = state.booleanValue();
 		Aoba.getInstance().hudManager.SetHudActive(this, state.booleanValue());
 	}
 
+	@Override
+	public boolean getVisible() {
+		return activated.getValue().booleanValue();
+	}
+	
+	
 	// Override to do nothing.. We want it to be visible based off of whether it is activated.
 	@Override
 	public void setVisible(boolean state) {
-		visible = activated.getValue();
+
 	}
 	
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		if (visible) {
+		if (getVisible()) {
 			if (isMoving) {
 				Rectangle pos = position.getValue();
 

@@ -20,7 +20,7 @@ public class FPSHud extends HudWindow {
     public void draw(DrawContext drawContext, float partialTicks) {
         super.draw(drawContext, partialTicks);
 
-        if (this.visible) {
+        if (getVisible()) {
             Rectangle pos = position.getValue();
             if (pos.isDrawable()) {
                 int fps = MC.getCurrentFps();

@@ -41,7 +41,6 @@ public class FlyPathManager extends AbstractPathManager {
 
         while (!queue.isEmpty()) {
             PathFinderEntry current = queue.poll();
-
             // Check if the target node has been reached
             if (current.node.pos.equals(target)) {
                 return reconstructPath(startNode, new PathNode(target), parentMap);

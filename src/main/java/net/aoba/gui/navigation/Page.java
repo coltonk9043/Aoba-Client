@@ -99,7 +99,7 @@ public class Page implements MouseMoveListener, MouseClickListener{
 	@Override
 	public void OnMouseMove(MouseMoveEvent mouseMoveEvent) {
 		if(Aoba.getInstance().hudManager.isClickGuiOpen()) {
-			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.OnMouseMove(mouseMoveEvent));
+			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.onMouseMove(mouseMoveEvent));
 		}
 	}
 

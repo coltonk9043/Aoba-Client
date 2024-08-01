@@ -73,7 +73,7 @@ public class InfoHud extends HudWindow {
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
     	super.draw(drawContext, partialTicks);
-        if (this.visible) {
+    	if (getVisible()) {
             Rectangle pos = position.getValue();
 
             if(pos.isDrawable()) {
