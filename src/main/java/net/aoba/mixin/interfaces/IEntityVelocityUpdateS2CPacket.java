@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(EntityVelocityUpdateS2CPacket.class)
+@Mixin(value = EntityVelocityUpdateS2CPacket.class, remap = false)
 public interface IEntityVelocityUpdateS2CPacket {
     @Mutable
     @Accessor("velocityX")
@@ -37,7 +37,7 @@ public interface IEntityVelocityUpdateS2CPacket {
     @Accessor("velocityZ")
     void setVelocityZ(int velocityZ);
 
-    @Accessor("id")
+    @Accessor("entityId")
     int getId();
 
     @Accessor("velocityX")
