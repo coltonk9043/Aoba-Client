@@ -37,7 +37,7 @@ public class Speed extends Module implements TickListener {
 
     @Override
     public void onDisable() {
-        MC.options.getFovEffectScale().setValue(100.0);
+        MC.options.getFovEffectScale().setValue(Math.min(1.0, Math.max(0.0, 1.0)));
         if (MC.player != null) {
             EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
             attribute.setBaseValue(0.1);
@@ -47,7 +47,7 @@ public class Speed extends Module implements TickListener {
 
     @Override
     public void onEnable() {
-        MC.options.getFovEffectScale().setValue(0.0);
+        MC.options.getFovEffectScale().setValue(Math.min(1.0, Math.max(0.0, 0.0)));
         EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         attribute.setBaseValue(speedSetting.getValue());
         Aoba.getInstance().eventManager.AddListener(TickListener.class, this);

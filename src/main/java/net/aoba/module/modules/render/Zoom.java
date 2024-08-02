@@ -49,7 +49,7 @@ public class Zoom extends Module implements TickListener {
 
     @Override
     public void onDisable() {
-        MC.options.getFov().setValue(lastFov);
+        MC.options.getFov().setValue((int) Math.max(30, Math.min(110, lastFov)));
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
@@ -67,7 +67,7 @@ public class Zoom extends Module implements TickListener {
     @Override
     public void OnUpdate(TickEvent event) {
         SimpleOption<Integer> fov = MC.options.getFov();
-        int newZoom = (int) (lastFov / zoomFactor.getValue());
+        int newZoom = (int) Math.max(30, Math.min(110, lastFov / zoomFactor.getValue()));
         fov.setValue(newZoom);
     }
 }
