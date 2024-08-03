@@ -40,7 +40,6 @@ import net.aoba.gui.navigation.windows.AuthCrackerWindow;
 import net.aoba.gui.navigation.windows.GoToWindow;
 import net.aoba.gui.navigation.windows.HudOptionsTab;
 import net.aoba.gui.navigation.windows.ToggleHudsTab;
-import net.aoba.mixin.interfaces.IGameRenderer;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.SettingManager;
