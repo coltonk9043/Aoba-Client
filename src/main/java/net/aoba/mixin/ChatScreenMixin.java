@@ -42,44 +42,46 @@ public class ChatScreenMixin extends ScreenMixin {
     @Shadow
     protected TextFieldWidget chatField;
 
-    protected ButtonComponent serverChatButton;
-    protected ButtonComponent globalChatButton;
+    //protected ButtonComponent serverChatButton;
+    //protected ButtonComponent globalChatButton;
 
     @Inject(at = {@At("TAIL")}, method = {"init()V"}, cancellable = true)
     public void onInit(CallbackInfo ci) {
         MinecraftClient mc = MinecraftClient.getInstance();
         int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
 
-        // Create server chat button.
-        serverChatButton = new ButtonComponent(null, "Server Chat", new Runnable() {
-            @Override
-            public void run() {
-                GlobalChat.chatType = GlobalChat.ChatType.Minecraft;
-                serverChatButton.setBackgroundColor(new Color(56, 56, 56));
-                globalChatButton.setBackgroundColor(new Color(128, 128, 128));
-            }
-        }, new Color(192, 192, 192), new Color(56, 56, 56));
-        serverChatButton.setSize(new Rectangle((float)(chatField.getX() * guiScale), (float)((chatField.getY() - chatField.getHeight() - 10) * guiScale), 140f, 30f));
-
-        // Create global chat button
-        globalChatButton = new ButtonComponent(null, "Global Chat", new Runnable() {
-            @Override
-            public void run() {
-                GlobalChat.chatType = GlobalChat.ChatType.Global;
-                globalChatButton.setBackgroundColor(new Color(56, 56, 56));
-                serverChatButton.setBackgroundColor(new Color(128, 128, 128));
-            }
-        }, new Color(192, 192, 192), new Color(128, 128, 128));
-        serverChatButton.setSize(new Rectangle((float)((chatField.getX()  + 80 * guiScale)), (float)((chatField.getY() - chatField.getHeight() - 10) * guiScale), 140f, 30f));
-        
-        serverChatButton.setVisible(true);
-        globalChatButton.setVisible(true);
+		/*
+		 * // Create server chat button. serverChatButton = new ButtonComponent(null,
+		 * "Server Chat", new Runnable() {
+		 * 
+		 * @Override public void run() { GlobalChat.chatType =
+		 * GlobalChat.ChatType.Minecraft; serverChatButton.setBackgroundColor(new
+		 * Color(56, 56, 56)); globalChatButton.setBackgroundColor(new Color(128, 128,
+		 * 128)); } }, new Color(192, 192, 192), new Color(56, 56, 56));
+		 * serverChatButton.setSize(new Rectangle((float)(chatField.getX() * guiScale),
+		 * (float)((chatField.getY() - chatField.getHeight() - 10) * guiScale), 140f,
+		 * 30f));
+		 * 
+		 * // Create global chat button globalChatButton = new ButtonComponent(null,
+		 * "Global Chat", new Runnable() {
+		 * 
+		 * @Override public void run() { GlobalChat.chatType =
+		 * GlobalChat.ChatType.Global; globalChatButton.setBackgroundColor(new Color(56,
+		 * 56, 56)); serverChatButton.setBackgroundColor(new Color(128, 128, 128)); } },
+		 * new Color(192, 192, 192), new Color(128, 128, 128));
+		 * serverChatButton.setSize(new Rectangle((float)((chatField.getX() + 80 *
+		 * guiScale)), (float)((chatField.getY() - chatField.getHeight() - 10) *
+		 * guiScale), 140f, 30f));
+		 * 
+		 * serverChatButton.setVisible(true); globalChatButton.setVisible(true);
+		 */
     }
 
     @Override
     protected void onClose(CallbackInfo ci) {
-        serverChatButton.setVisible(false);
-        globalChatButton.setVisible(false);
+		/*
+		 * serverChatButton.setVisible(false); globalChatButton.setVisible(false);
+		 */
     }
 
     @Override
@@ -95,8 +97,9 @@ public class ChatScreenMixin extends ScreenMixin {
 
         int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
         matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
-        serverChatButton.draw(context, delta);
-        globalChatButton.draw(context, delta);
+		/*
+		 * serverChatButton.draw(context, delta); globalChatButton.draw(context, delta);
+		 */
         matrixStack.pop();
         GL11.glEnable(GL11.GL_CULL_FACE);
     }
