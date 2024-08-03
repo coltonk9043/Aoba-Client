@@ -39,10 +39,10 @@ public class MultiplayerScreenMixin extends Screen {
     @Inject(at = {@At("TAIL")}, method = {"init()V"})
     private void onInit(CallbackInfo ci) {
         this.addDrawableChild(ButtonWidget.builder(Text.of("Alt Manager"), b -> client.setScreen(new AltScreen((MultiplayerScreen) (Object) this)))
-                .dimensions(this.width / 2 + 4 + 50, 7, 100, 20).build());
+                .dimensions(this.width / 2 + 69, 5, 85, 20).build());
 
         this.addDrawableChild(ButtonWidget.builder(Text.of("Proxy Manager"), b -> client.setScreen(new ProxyScreen((MultiplayerScreen) (Object) this)))
-                .dimensions(this.width / 2 + 4 + 160, 7, 100, 20).build());
+                .dimensions(this.width / 2 - 154, 5, 85, 20).build());
     }
 
 }

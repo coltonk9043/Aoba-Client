@@ -41,7 +41,7 @@ public class MainMenuScreen extends Screen {
         int totalGridHeight = gridRows * buttonHeight + (gridRows - 1) * spacing;
 
         int startX = (this.width - totalGridWidth) / 2;
-        int startY = (this.height - totalGridHeight) / 2;
+        int startY = ((this.height - totalGridHeight) / 2) + 5;
 
         AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX, startY, buttonWidth, buttonHeight, Text.of("Singleplayer"));
         singleplayerButton.setPressAction(b -> client.setScreen(new SelectWorldScreen(this)));

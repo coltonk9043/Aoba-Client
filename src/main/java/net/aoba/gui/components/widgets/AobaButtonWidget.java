@@ -60,14 +60,14 @@ public class AobaButtonWidget extends PressableWidget {
         RenderSystem.disableCull();
 
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        Render2D.drawRoundedBox(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), boxColor);
-        Render2D.drawRoundedBoxOutline(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), outlineColor);
+        
+        Render2D.drawOutlinedRoundedBox(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), outlineColor, boxColor);
         RenderSystem.enableCull();
 
         int textWidth = MC.textRenderer.getWidth(getMessage().getString());
         int textHeight = MC.textRenderer.fontHeight;
         int textX = getX() + (width - textWidth) / 2;
-        int textY = getY() + (height - textHeight) / 2 - (int) (2 * hoverProgress);
+        int textY = getY() + (height - textHeight) / 2 - (int) (2 * hoverProgress) + 2;
 
         Render2D.drawStringWithScale(context, getMessage().getString(), textX, textY, GuiManager.foregroundColor.getValue(), 1.0f);
     }

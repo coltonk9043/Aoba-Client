@@ -75,8 +75,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
         float actualHeight = this.getActualSize().getHeight();
         
         Render2D.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
-        Render2D.drawBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, new Color(115, 115, 115, 200));
-        Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, Colors.Black);
+        Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f, Colors.Black, new Color(115, 115, 115, 200));
 
         String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
         if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))

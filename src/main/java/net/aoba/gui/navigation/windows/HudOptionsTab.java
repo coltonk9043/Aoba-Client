@@ -33,8 +33,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class HudOptionsTab extends Window {
     public HudOptionsTab() {
-        super("Hud Options", 600, 200, 260, 50);
-
+        super("Hud Options", 600, 200, 340, 50);
+        this.minWidth = 340.0f;
+        
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setMargin(new Margin(null, 30f, null, null));
 
@@ -72,7 +73,6 @@ public class HudOptionsTab extends Window {
         stackPanel.addChild(new SliderComponent(stackPanel, GuiManager.dragSmoothening));
 
         this.children.add(stackPanel);
-        this.setWidth(300);
     }
 
     @Override

@@ -35,19 +35,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModuleSelectorHud extends HudWindow {
+    private static final AobaClient AOBA = Aoba.getInstance();;
+    private static final float ROW_HEIGHT = 30.0f;
+    
     private KeyBinding keybindUp;
     private KeyBinding keybindDown;
     private KeyBinding keybindLeft;
     private KeyBinding keybindRight;
 
-    private AobaClient aoba;
+    private int index = 0;
+    private int indexMods = 0;
+    private boolean isCategoryMenuOpen = false;
 
-    int index = 0;
-    int indexMods = 0;
-    boolean isCategoryMenuOpen = false;
-
-    List<Category> categories = new ArrayList<>();
-    ArrayList<Module> modules = new ArrayList<Module>();
+    private List<Category> categories = new ArrayList<>();
+    private ArrayList<Module> modules = new ArrayList<Module>();
 
     public ModuleSelectorHud() {
         super("ModuleSelectorHud", 0, 0, 150, 30);
@@ -58,7 +59,9 @@ public class ModuleSelectorHud extends HudWindow {
 
         categories.addAll(Category.getAllCategories().values());
 
-        this.aoba = Aoba.getInstance();
+        this.inheritHeightFromChildren = false;
+        this.resizeable = false;
+        this.setHeight(categories.size() * ROW_HEIGHT);
     }
 
     @Override
@@ -89,7 +92,7 @@ public class ModuleSelectorHud extends HudWindow {
             if (!isCategoryMenuOpen) {
                 isCategoryMenuOpen = true;
                 if (modules.isEmpty()) {
-                    for (Module module : aoba.moduleManager.modules) {
+                    for (Module module : AOBA.moduleManager.modules) {
                         if (module.isCategory(this.categories.get(this.index))) {
                             modules.add(module);
                         }
@@ -126,42 +129,39 @@ public class ModuleSelectorHud extends HudWindow {
             float height = pos.getHeight().floatValue();
 
             // Draws the table including all of the categories.
-            Render2D.drawRoundedBox(matrix4f, x, y, width, height * this.categories.size(), 6f,
+            Render2D.drawRoundedBox(matrix4f, x, y, width, height, 6f,
                 GuiManager.backgroundColor.getValue());
-            Render2D.drawRoundedBoxOutline(matrix4f, x, y, width, height * this.categories.size(), 6f,
+            Render2D.drawRoundedBoxOutline(matrix4f, x, y, width, height, 6f,
                 GuiManager.borderColor.getValue());
 
             // For every category, draw a cell for it.
             for (int i = 0; i < this.categories.size(); i++) {
-                Render2D.drawString(drawContext, ">>", x + width - 24, y + (height * i) + 8,
-                    GuiManager.foregroundColor.getValue());
+                Render2D.drawString(drawContext, ">>", x + width - 24, y + (ROW_HEIGHT * i) + 8, GuiManager.foregroundColor.getValue());
+                
                 // Draws the name of the category dependent on whether it is selected.
-                if (this.index == i) {
-                    Render2D.drawString(drawContext, "> " + this.categories.get(i).getName(), x + 8,
-                        y + (height * i) + 8, GuiManager.foregroundColor.getValue());
-                } else {
-                    Render2D.drawString(drawContext, this.categories.get(i).getName(), x + 8, y + (height * i) + 8,
-                        0xFFFFFF);
-                }
+                if (this.index == i)
+                    Render2D.drawString(drawContext, "> " + this.categories.get(i).getName(), x + 8, y + (ROW_HEIGHT * i) + 8, GuiManager.foregroundColor.getValue());
+                 else 
+                    Render2D.drawString(drawContext, this.categories.get(i).getName(), x + 8, y + (ROW_HEIGHT * i) + 8, 0xFFFFFF);
             }
 
             // If any particular category menu is open.
             if (isCategoryMenuOpen) {
                 // Draw the table underneath
-                Render2D.drawRoundedBox(matrix4f, x + width, y + (height * this.index), 165,
-                    height * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-                Render2D.drawRoundedBoxOutline(matrix4f, x + width, y + (height * this.index), 165,
-                    height * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
+                Render2D.drawRoundedBox(matrix4f, x + width, y + (ROW_HEIGHT * index), 165,
+                		ROW_HEIGHT * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
+                Render2D.drawRoundedBoxOutline(matrix4f, x + width, y + (ROW_HEIGHT * index), 165,
+                		ROW_HEIGHT * modules.size(), GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
                 // For every mod, draw a cell for it.
                 for (int i = 0; i < modules.size(); i++) {
                     if (this.indexMods == i) {
                         Render2D.drawString(drawContext, "> " + modules.get(i).getName(), x + width + 5,
-                            y + (i * height) + (this.index * height) + 8, modules.get(i).getState() ? 0x00FF00
+                            y + (i * ROW_HEIGHT) + (index * ROW_HEIGHT) + 8, modules.get(i).getState() ? 0x00FF00
                                 : GuiManager.foregroundColor.getValue().getColorAsInt());
                     } else {
                         Render2D.drawString(drawContext, modules.get(i).getName(), x + width + 5,
-                            y + (i * height) + (this.index * height) + 8,
+                            y + (i * ROW_HEIGHT) + (index * ROW_HEIGHT) + 8,
                             modules.get(i).getState() ? 0x00FF00 : 0xFFFFFF);
                     }
                 }

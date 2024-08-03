@@ -82,6 +82,9 @@ public class Window implements IGuiElement {
 	}
 
 	public void UpdateAll(Rectangle vec) {
+		if (this.inheritHeightFromChildren) {
+			applyInherittedHeight();
+		}
 		for (Component component : this.children) {
 			component.onParentChanged();
 		}
@@ -206,7 +209,9 @@ public class Window implements IGuiElement {
 	}
 
 	public void update() {
-
+		for (Component child : children) {
+			child.update();
+		}
 	}
 
 	public void draw(DrawContext drawContext, float partialTicks) {

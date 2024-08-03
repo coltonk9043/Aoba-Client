@@ -4,7 +4,6 @@ import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
-import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
@@ -37,13 +36,11 @@ public class EnumComponent<T extends Enum<T>> extends Component implements KeyDo
 	@Override
 	public void onVisibilityChanged() {
 		super.onVisibilityChanged();
-		if (this.isVisible()) {
-			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+		
+		if (this.isVisible())
 			Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
-		} else {
-			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+		else
 			Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
-		}
 	}
 
 	@Override
@@ -73,9 +70,9 @@ public class EnumComponent<T extends Enum<T>> extends Component implements KeyDo
 				: new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
 
 		Render2D.drawString(drawContext, enumSetting.displayName, actualX, actualY + 8, 0xFFFFFF);
-		Render2D.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight,
-				new Color(115, 115, 115, 200));
-		Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
+		
+		// Right Text
+		Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, 3.0f, borderColor, new Color(115, 115, 115, 200));
 
 		String enumValue = this.enumSetting.getValue().toString();
 		Render2D.drawString(drawContext, enumValue, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
@@ -84,7 +81,7 @@ public class EnumComponent<T extends Enum<T>> extends Component implements KeyDo
 	@Override
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
-		
+
 		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
 			if (hovered) {
 				listeningForKey = true;

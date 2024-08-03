@@ -39,7 +39,7 @@ public class OptionsTab extends Window implements MouseScrollListener {
 	int currentScroll;
 
 	public OptionsTab() {
-		super("Options", 40, 220, 100, 100);
+		super("Options", 40, 220, 160, 100);
 		Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
 	}
 

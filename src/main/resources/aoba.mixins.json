@@ -10,7 +10,9 @@
 		"interfaces.IExplosionS2CPacket",
 		"interfaces.ILivingEntity",
 		"interfaces.IMinecraftClient",
-		"interfaces.IPlayerInteractEntityC2SPacket"
+		"interfaces.IPlayerInteractEntityC2SPacket",
+		"interfaces.IModelPart",
+		"interfaces.ICuboid"
 	],
 	"client": [
 		"AbstractBlockStateMixin",

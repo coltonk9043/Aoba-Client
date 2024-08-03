@@ -36,6 +36,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -93,6 +94,8 @@ public class EntityESP extends Module implements Render3DListener {
         float partialTicks = event.GetPartialTicks();
 
         for (Entity entity : MC.world.getEntities()) {
+        	
+        	
             if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
                 double interpolatedX = MathHelper.lerp(partialTicks, entity.prevX, entity.getX());
                 double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
@@ -102,6 +105,7 @@ public class EntityESP extends Module implements Render3DListener {
 
                 Color color = getColorForEntity(entity);
                 if (color != null) {
+                	//Render3D.drawEntityModel(matrixStack, entity, color, lineThickness.getValue());
                     Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
                 }
             }

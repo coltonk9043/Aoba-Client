@@ -108,10 +108,11 @@ public class ButtonComponent extends Component {
         float actualWidth = this.getActualSize().getWidth();
         float actualHeight = this.getActualSize().getHeight();
         
-        if (this.hovered)
-        	Render2D.drawOutlinedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, borderColor, hoveredBackgroundColor);
-        else
-        	Render2D.drawOutlinedBox(matrix4f, actualX , actualY, actualWidth, actualHeight, borderColor, backgroundColor);
+        Color color = backgroundColor;
+        if(hovered)
+        	color = hoveredBackgroundColor;
+        
+        Render2D.drawOutlinedRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor, color);
         Render2D.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
     }
 

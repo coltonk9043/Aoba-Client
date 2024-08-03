@@ -24,7 +24,7 @@ public class NetherCoordsHud extends HudWindow {
             Rectangle pos = position.getValue();
             if (pos.isDrawable()) {
                 String coordsText = String.format("X: %.1f, Y: %.1f, Z: %.1f",
-                        MC.player.getX() * 8, MC.player.getY() * 8, MC.player.getZ() * 8);
+                        MC.player.getX() * 8, MC.player.getY(), MC.player.getZ() * 8);
 
                 int textWidth = MC.textRenderer.getWidth(coordsText);
                 int textHeight = MC.textRenderer.fontHeight;

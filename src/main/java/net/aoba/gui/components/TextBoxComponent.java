@@ -77,9 +77,9 @@ public class TextBoxComponent extends Component implements KeyDownListener {
             : new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
 
         Render2D.drawString(drawContext, string.displayName, actualX, actualY + 8, 0xFFFFFF);
-        Render2D.drawBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight,
-            new Color(115, 115, 115, 200));
-        Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, borderColor);
+        
+        // Text Box on right.
+        Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, 3.0f, borderColor, new Color(115, 115, 115, 200));
 
         String keyBindText = this.string.getValue();
         if (!keyBindText.isEmpty()) {

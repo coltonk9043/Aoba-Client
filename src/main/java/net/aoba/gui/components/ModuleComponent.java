@@ -65,12 +65,7 @@ public class ModuleComponent extends Component {
     public void update() {
         super.update();
         if (spinning) {
-            spinAngle += 5;
-
-            if (spinAngle >= 360) {
-                spinAngle = 0;
-                spinning = false;
-            }
+            spinAngle = (spinAngle + 5) % 360;
         }
     }
 
@@ -91,9 +86,9 @@ public class ModuleComponent extends Component {
 
             if (spinning) {
                 matrixStack.push();
-                matrixStack.translate((actualX + actualWidth - 12), (actualY + 14), 0);
+                matrixStack.translate((actualX + actualWidth - 8), (actualY + 14), 0);
                 matrixStack.multiply(new Quaternionf().rotateZ((float) Math.toRadians(spinAngle)));
-                matrixStack.translate(-(actualX + actualWidth - 12), -(actualY + 14), 0);
+                matrixStack.translate(-(actualX + actualWidth - 8), -(actualY + 14), 0);
                 Render2D.drawTexturedQuad(matrixStack.peek().getPositionMatrix(), gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16, hudColor);
                 matrixStack.pop();
             } else {
@@ -128,7 +123,8 @@ public class ModuleComponent extends Component {
                 if (isOnOptionsButton) {
                     spinning = true;
                     if (lastSettingsTab == null) {
-                        lastSettingsTab = new CloseableWindow(this.module.getName(), actualX + actualWidth + 1, actualY, 240.0f, 0.0f);
+                        lastSettingsTab = new CloseableWindow(this.module.getName(), actualX + actualWidth + 1, actualY, 320.0f, 0.0f);
+                        lastSettingsTab.minWidth = 320.0f;
                         StackPanelComponent stackPanel = new StackPanelComponent(lastSettingsTab);
                         stackPanel.setMargin(new Margin(null, 30f, null, null));
 
@@ -162,10 +158,14 @@ public class ModuleComponent extends Component {
 
                         lastSettingsTab.addChild(stackPanel);
                         
+                        lastSettingsTab.setOnClose(() -> {spinning = false;});
+                        
                         lastSettingsTab.setVisible(true);
                         Aoba.getInstance().hudManager.AddWindow(lastSettingsTab, "Modules");
+                        spinning = true;
                     } else {
                         Aoba.getInstance().hudManager.RemoveWindow(lastSettingsTab, "Modules");
+                        spinning = false;
                         lastSettingsTab = null;
                     }
                 } else {

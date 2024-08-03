@@ -12,6 +12,8 @@ import net.minecraft.client.util.math.MatrixStack;
 
 public class CloseableWindow extends Window {
 
+	private Runnable onClose;
+	
 	public CloseableWindow(String ID, float x, float y, float width, float height) {
 		super(ID, x, y, width, height);
 	}
@@ -28,6 +30,9 @@ public class CloseableWindow extends Window {
 				
 				Rectangle closeHitbox = new Rectangle(pos.getX() + pos.getWidth() - 24, pos.getY() + 4, 16.0f, 16.0f);
 				if (closeHitbox.intersects(mouseX, mouseY)) {
+					if(onClose != null) 
+						onClose.run();
+					
 					parent.RemoveWindow(this);
 					event.cancel();
 					return;
@@ -54,5 +59,9 @@ public class CloseableWindow extends Window {
 			Render2D.drawLine(matrix4f, x + width - 23, y + 8, x + width - 8, y + 23, new Color(255, 0, 0, 255));
 			Render2D.drawLine(matrix4f, x + pos.getWidth() - 23, pos.getY() + 23, x + width - 8, y + 8, new Color(255, 0, 0, 255));
 		}
+	}
+	
+	public void setOnClose(Runnable runnable) {
+		onClose = runnable;
 	}
 }

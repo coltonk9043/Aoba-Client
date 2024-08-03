@@ -25,8 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public class Render2D {
-	private static final float ROUND_QUALITY = 10;
-
 	/**
 	 ** FILLED BOXES
 	 **/
@@ -431,6 +429,119 @@ public class Render2D {
 	 * @param radius   Corner radius of the box outline.
 	 * @param color    Color of the outline of the box.
 	 */
+	public static void drawOutlinedRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height, float radius, Color outlineColor, Color backgroundColor) {
+		RenderSystem.enableBlend();
+		RenderSystem.disableDepthTest();
+		GL11.glEnable(GL11.GL_LINE_SMOOTH);
+		
+		RenderSystem.setShaderColor(backgroundColor.getRedFloat(), backgroundColor.getGreenFloat(),
+				backgroundColor.getBlueFloat(), backgroundColor.getAlphaFloat());
+
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		Tessellator tessellator = RenderSystem.renderThreadTesselator();
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
+
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
+		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
+		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f);
+		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
+		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f);
+
+		// |---
+		bufferBuilder.vertex(matrix4f, x + radius, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
+
+		// ---|
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
+
+		// _||
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
+
+		// |||
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
+
+		/// __|
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+
+		// |__
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
+
+		// |||
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
+
+		/// ||-
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+
+		/// |-/
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+
+		/// /_|
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
+
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+		
+		RenderSystem.setShaderColor(outlineColor.getRedFloat(), outlineColor.getGreenFloat(), outlineColor.getBlueFloat(), outlineColor.getAlphaFloat());
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
+
+		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+		// Top Left Arc and Top
+		buildArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
+		bufferBuilder.vertex(matrix4f, x + radius, y, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
+
+		// Top Right Arc and Right
+		buildArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f);
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0);
+
+		// Bottom Right
+		buildArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0);
+
+		// Bottom Left
+		buildArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f);
+		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
+
+		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+
+		RenderSystem.setShaderColor(1, 1, 1, 1);
+		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		RenderSystem.disableBlend();
+		RenderSystem.enableDepthTest();
+	}
+
+	/**
+	 * Draws the outline of a rounded box.
+	 * 
+	 * @param matrix4f Transformation matrix
+	 * @param x        X position of the box.
+	 * @param y        Y position of the box.
+	 * @param width    Width of the box.
+	 * @param height   Height of the box.
+	 * @param radius   Corner radius of the box outline.
+	 * @param color    Color of the outline of the box.
+	 */
 	public static void drawRoundedBoxOutline(Matrix4f matrix4f, float x, float y, float width, float height,
 			float radius, Color color) {
 		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
@@ -470,7 +581,7 @@ public class Render2D {
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
 	}
-
+	
 	/**
 	 * Draws a line from Point A to Point B
 	 * 
@@ -718,9 +829,9 @@ public class Render2D {
 	 */
 	private static void buildFilledArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius,
 			float startAngle, float sweepAngle) {
-		double roundedInterval = (sweepAngle / ROUND_QUALITY);
+		double roundedInterval = (sweepAngle / radius);
 
-		for (int i = 0; i < ROUND_QUALITY; i++) {
+		for (int i = 0; i < radius; i++) {
 			double angle = Math.toRadians(startAngle + (i * roundedInterval));
 			double angle2 = Math.toRadians(startAngle + ((i + 1) * roundedInterval));
 			float radiusX1 = (float) (Math.cos(angle) * radius);
@@ -747,9 +858,9 @@ public class Render2D {
 	 */
 	private static void buildArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius,
 			float startAngle, float sweepAngle) {
-		double roundedInterval = (sweepAngle / ROUND_QUALITY);
+		float roundedInterval = (sweepAngle / radius);
 
-		for (int i = 0; i < ROUND_QUALITY; i++) {
+		for (int i = 0; i < radius; i++) {
 			double angle = Math.toRadians(startAngle + (i * roundedInterval));
 			float radiusX1 = (float) (Math.cos(angle) * radius);
 			float radiusY1 = (float) Math.sin(angle) * radius;

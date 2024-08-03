@@ -35,12 +35,18 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 @Mixin(InGameHud.class)
 public class IngameHudMixin {
 
-    @Inject(at = {@At(value = "TAIL")}, method = {"render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"})
+    //@Inject(at = {@At(value = "TAIL")}, method = {"render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"})
+    //private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
+    //	 Render2DEvent renderEvent = new Render2DEvent(context, tickDelta);
+    //     Aoba.getInstance().eventManager.Fire(renderEvent);
+    //}
+
+    @Inject(at = {@At(value = "TAIL")}, method = {"renderAutosaveIndicator(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"})
     private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
     	 Render2DEvent renderEvent = new Render2DEvent(context, tickDelta);
          Aoba.getInstance().eventManager.Fire(renderEvent);
     }
-
+	
     @Inject(method = "renderVignetteOverlay", at = @At("HEAD"), cancellable = true)
     private void onRenderVignetteOverlay(DrawContext context, Entity entity, CallbackInfo ci) {
         NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
@@ -64,8 +70,12 @@ public class IngameHudMixin {
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void onRenderCrosshair(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
-
-        if (norender.getState() && norender.getNoCrosshair()) ci.cancel();
+        if(Aoba.getInstance().hudManager.isClickGuiOpen()) {
+        	ci.cancel();
+        	return;
+        }
+        	NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+        if (norender.getState() && norender.getNoCrosshair()) 
+        	ci.cancel();
     }
 }
