@@ -26,6 +26,7 @@ import net.aoba.gui.Margin;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Formatting;
 
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 
 public class StringComponent extends Component implements FontChangedListener {
     private String originalText;
-    private ArrayList<String> text;
+    private ArrayList<String> text = new ArrayList<String>();
     private boolean bold;
     private Color color;
 
@@ -86,21 +87,50 @@ public class StringComponent extends Component implements FontChangedListener {
      */
     public void setText(String text) {
     	if(actualSize != null) {
+    		TextRenderer textRenderer = Aoba.getInstance().fontManager.GetRenderer();
     		this.originalText = text;
-            this.text = new ArrayList<String>();
+            this.text.clear();
 
-            float textWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(text) * 2.0f;
-            int strings = (int) Math.ceil(textWidth / this.actualSize.getWidth());
-            if (strings == 0) {
+            float width = actualSize.getWidth().floatValue();
+            float textWidth = textRenderer.getWidth(text) * 2.0f;
+            if (textWidth < width) {
                 this.text.add(text);
                 this.setHeight(25f);
             } else {
-                int lengthOfEachSegment = text.length() / strings;
-
-                for (int i = 0; i < strings; i++) {
-                    this.text.add(text.substring(lengthOfEachSegment * i, (lengthOfEachSegment * i) + lengthOfEachSegment));
+            	// Single there are multiple lines, we will want to split them in a spot that makes the most sense.
+                StringBuilder buffer = new StringBuilder();
+                int lastSplit = 0;
+                int lastSpace = -1;
+                for(int i = 0; i < text.length();) {
+                	char c = text.charAt(i);
+                	buffer.append(c);
+                
+                	float wordBufferWidth = textRenderer.getWidth(buffer.toString()) * 2.0f;
+                	if(wordBufferWidth >= width) {
+                		if(lastSpace == -1) {
+                			this.text.add(text.substring(lastSplit));
+                			lastSplit = i - 1;
+                    		++i;
+                		}else {
+                			this.text.add(text.substring(lastSplit, lastSpace));
+                			lastSplit = lastSpace + 1;
+                			i = lastSplit;
+                    		lastSpace = -1;
+                		}
+                		buffer.setLength(0);
+                		continue;
+                	}
+                	
+                	if(c == ' ') {
+                		lastSpace = i;
+                	}
+                	++i;
                 }
-                this.setHeight(strings * 25f);
+                
+                if(lastSplit < text.length())
+                	this.text.add(text.substring(lastSplit));
+                
+                this.setHeight(this.text.size() * 25f);
             }
     	}
     }
