@@ -57,7 +57,8 @@
 		"WorldChunkMixin",
 		"WorldRendererMixin",
 		"ShulkerBoxBlockMixin",
-		"HandledScreenMixin"
+		"HandledScreenMixin",
+		"HorseBaseEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

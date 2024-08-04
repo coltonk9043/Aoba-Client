@@ -88,6 +88,7 @@ public class ModuleManager implements KeyDownListener {
     public Module noclip = new Noclip();
     public Module nofall = new NoFall();
     public Module nojumpdelay = new NoJumpDelay();
+    public Module reverseStep = new ReverseStep();
     public Module nooverlay = new NoOverlay();
     public Module noslowdown = new NoSlowdown();
     public Module nuker = new Nuker();
@@ -102,6 +103,7 @@ public class ModuleManager implements KeyDownListener {
     public Module sprint = new Sprint();
     public Module step = new Step();
     public Module strafe = new Strafe();
+    public Module entityControl = new EntityControl();
     public Module surround = new Surround();
     public Module tilebreaker = new TileBreaker();
     public Module timer = new Timer();
@@ -154,6 +156,7 @@ public class ModuleManager implements KeyDownListener {
         addModule(noclip);
         addModule(nofall);
         addModule(nojumpdelay);
+        addModule(reverseStep);
         addModule(nooverlay);
         addModule(noslowdown);
         addModule(nuker);
@@ -168,6 +171,7 @@ public class ModuleManager implements KeyDownListener {
         addModule(sprint);
         addModule(step);
         addModule(strafe);
+        addModule(entityControl);
         addModule(surround);
         addModule(tilebreaker);
         addModule(timer);
