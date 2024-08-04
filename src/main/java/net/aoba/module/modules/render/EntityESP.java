@@ -94,8 +94,6 @@ public class EntityESP extends Module implements Render3DListener {
         float partialTicks = event.GetPartialTicks();
 
         for (Entity entity : MC.world.getEntities()) {
-        	
-        	
             if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
                 double interpolatedX = MathHelper.lerp(partialTicks, entity.prevX, entity.getX());
                 double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
@@ -105,8 +103,8 @@ public class EntityESP extends Module implements Render3DListener {
 
                 Color color = getColorForEntity(entity);
                 if (color != null) {
-                	//Render3D.drawEntityModel(matrixStack, entity, color, lineThickness.getValue());
-                    Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
+                	Render3D.drawEntityModel(matrixStack, partialTicks, entity, color, lineThickness.getValue());
+                    //Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
                 }
             }
         }

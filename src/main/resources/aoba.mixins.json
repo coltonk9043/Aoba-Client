@@ -12,7 +12,10 @@
 		"interfaces.IMinecraftClient",
 		"interfaces.IPlayerInteractEntityC2SPacket",
 		"interfaces.IModelPart",
-		"interfaces.ICuboid"
+		"interfaces.ICuboid",
+		"interfaces.IRabbitEntityModel",
+		"interfaces.IAnimalModel",
+		"interfaces.ILlamaEntityModel"
 	],
 	"client": [
 		"AbstractBlockStateMixin",
