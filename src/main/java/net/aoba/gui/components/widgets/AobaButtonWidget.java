@@ -49,7 +49,7 @@ public class AobaButtonWidget extends PressableWidget {
             hoverStartTime = 0;
         }
 
-        long currentTime = System.currentTimeMillis();
+        long currentTime = System.nanoTime();
         float hoverProgress = hoverStartTime > 0 ? (currentTime - hoverStartTime) / (float) HOVER_ANIMATION_DURATION : 0;
         hoverProgress = Math.min(hoverProgress, 1.0f);
         hoverProgress = (float) Math.sin(hoverProgress * Math.PI / 2);
