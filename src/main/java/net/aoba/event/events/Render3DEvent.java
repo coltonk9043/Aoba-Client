@@ -20,12 +20,14 @@ package net.aoba.event.events;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.Render3DListener;
+import net.minecraft.client.render.Frustum;
 import net.minecraft.client.util.math.MatrixStack;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Render3DEvent extends AbstractEvent {
 	MatrixStack matrices; 
+	Frustum frustum;
 	float partialTicks;
 	
 	public MatrixStack GetMatrix() {
@@ -35,9 +37,14 @@ public class Render3DEvent extends AbstractEvent {
 		return partialTicks;
 	}
 	
-	public Render3DEvent(MatrixStack matrix4f, float partialTicks) {
+	public Frustum getFrustum() {
+		return frustum;
+	}
+	
+	public Render3DEvent(MatrixStack matrix4f, Frustum frustum, float partialTicks) {
 		this.matrices = matrix4f;
 		this.partialTicks = partialTicks;
+		this.frustum = frustum;
 	}
 	
 	@Override

@@ -23,6 +23,7 @@ import net.aoba.event.events.Render3DEvent;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
@@ -30,8 +31,12 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -39,6 +44,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
+	@Shadow
+	private Frustum frustum;
+	
+	@Shadow
+	private Vector3d capturedFrustumPosition;
+	
+	@Shadow
+	@Nullable
+    private Frustum capturedFrustum;
+	
     @Inject(at = @At("HEAD"), method = "renderChunkDebugInfo(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/Camera;)V", cancellable = true)
     private void onRenderChunkDebugInfo(MatrixStack matrices,
                                         VertexConsumerProvider vertexConsumers,
@@ -50,10 +65,20 @@ public class WorldRendererMixin {
             GL11.glEnable(GL11.GL_CULL_FACE);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
 
+            
+            Frustum cameraFrustum = null;
+            boolean bl = this.capturedFrustum != null;
+            if (bl) {
+            	cameraFrustum = this.capturedFrustum;
+            	cameraFrustum.setPosition(this.capturedFrustumPosition.x, this.capturedFrustumPosition.y, this.capturedFrustumPosition.z);
+            } else {
+            	cameraFrustum = this.frustum;
+            }
+            
             matrices.push();
             Vec3d camPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getPos();
             matrices.translate(-camPos.x, -camPos.y, -camPos.z);
-            Render3DEvent renderEvent = new Render3DEvent(matrices, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+            Render3DEvent renderEvent = new Render3DEvent(matrices, cameraFrustum, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
             Aoba.getInstance().eventManager.Fire(renderEvent);
             matrices.pop();
 

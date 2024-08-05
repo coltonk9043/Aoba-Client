@@ -32,6 +32,9 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.Frustum;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -42,9 +45,12 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+
 import org.lwjgl.glfw.GLFW;
 
 public class EntityESP extends Module implements Render3DListener {
+	
     private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color", "Passive Color", new Color(0, 1f, 1f));
     private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
     private ColorSetting color_misc = new ColorSetting("entityesp_color_misc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
@@ -94,19 +100,25 @@ public class EntityESP extends Module implements Render3DListener {
         float partialTicks = event.GetPartialTicks();
 
         for (Entity entity : MC.world.getEntities()) {
-            if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
-                double interpolatedX = MathHelper.lerp(partialTicks, entity.prevX, entity.getX());
-                double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
-                double interpolatedZ = MathHelper.lerp(partialTicks, entity.prevZ, entity.getZ());
+        	
+        	Frustum frustum = event.getFrustum();
+        	Camera camera = MC.gameRenderer.getCamera();
+        	Vec3d cameraPosition = camera.getPos();
+        	if(MC.getEntityRenderDispatcher().shouldRender(entity, frustum, cameraPosition.getX(), cameraPosition.getY(), cameraPosition.getZ())) {
+        		if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
+                    //double interpolatedX = MathHelper.lerp(partialTicks, entity.prevX, entity.getX());
+                    //double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
+                    //double interpolatedZ = MathHelper.lerp(partialTicks, entity.prevZ, entity.getZ());
 
-                Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(), interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
+                    //Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(), interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
 
-                Color color = getColorForEntity(entity);
-                if (color != null) {
-                	Render3D.drawEntityModel(matrixStack, partialTicks, entity, color, lineThickness.getValue());
-                    //Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
+                    Color color = getColorForEntity(entity);
+                    if (color != null) {
+                    	Render3D.drawEntityModel(matrixStack, partialTicks, entity, color, lineThickness.getValue());
+                        //Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
+                    }
                 }
-            }
+        	}
         }
     }
 
