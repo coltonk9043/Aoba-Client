@@ -21,7 +21,7 @@ import static net.aoba.AobaClient.MC;
 public class AobaButtonWidget extends PressableWidget {
     private Consumer<AobaButtonWidget> pressAction;
     private long hoverStartTime = 0;
-    private static final long HOVER_ANIMATION_DURATION = 200;
+    private static final long HOVER_ANIMATION_DURATION = 200000000;
 
     public AobaButtonWidget(int x, int y, int width, int height, Text message) {
         super(x, y, width, height, message);
@@ -44,12 +44,12 @@ public class AobaButtonWidget extends PressableWidget {
         Matrix4f matrix = context.getMatrices().peek().getPositionMatrix();
 
         if (isHovered() && hoverStartTime == 0) {
-            hoverStartTime = System.currentTimeMillis();
+            hoverStartTime = System.nanoTime();
         } else if (!isHovered()) {
             hoverStartTime = 0;
         }
 
-        long currentTime = System.currentTimeMillis();
+        long currentTime = System.nanoTime();
         float hoverProgress = hoverStartTime > 0 ? (currentTime - hoverStartTime) / (float) HOVER_ANIMATION_DURATION : 0;
         hoverProgress = Math.min(hoverProgress, 1.0f);
         hoverProgress = (float) Math.sin(hoverProgress * Math.PI / 2);
