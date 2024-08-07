@@ -15,7 +15,8 @@
 		"interfaces.ICuboid",
 		"interfaces.IRabbitEntityModel",
 		"interfaces.IAnimalModel",
-		"interfaces.ILlamaEntityModel"
+		"interfaces.ILlamaEntityModel",
+		"interfaces.IPlayerMoveC2SPacket"
 	],
 	"client": [
 		"AbstractBlockStateMixin",
@@ -61,7 +62,7 @@
 		"WorldRendererMixin",
 		"ShulkerBoxBlockMixin",
 		"HandledScreenMixin",
-		"HorseBaseEntityMixin"
+		"HorseBaseEntityMixin",
 	],
 	"injectors": {
 		"defaultRequire": 1

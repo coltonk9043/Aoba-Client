@@ -21,6 +21,7 @@ package net.aoba.mixin;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.PlayerHealthEvent;
+import net.aoba.event.events.SendMovementPacketEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.mixin.interfaces.ICamera;
 import net.aoba.module.modules.movement.*;
@@ -39,6 +40,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntityMixin {
     @Shadow
     private ClientPlayNetworkHandler networkHandler;
+
+    @Shadow protected abstract void sendMovementPackets();
 
     @Inject(at = {@At("HEAD")}, method = "setShowsDeathScreen(Z)V")
     private void onShowDeathScreen(boolean state, CallbackInfo ci) {
@@ -123,5 +126,33 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
             icamera.setCameraRotation(newYaw, newPitch);
             ci.cancel();
         }
+    }
+
+    @Inject(method = "sendMovementPackets", at = @At("HEAD"))
+    private void onSendMovementPacketsHead(CallbackInfo info) {
+        SendMovementPacketEvent.Pre sendMovementPacketPreEvent = new SendMovementPacketEvent.Pre();
+
+        Aoba.getInstance().eventManager.Fire(sendMovementPacketPreEvent);
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V", ordinal = 0))
+    private void onTickHasVehicleBeforeSendPackets(CallbackInfo info) {
+        SendMovementPacketEvent.Pre sendMovementPacketPreEvent = new SendMovementPacketEvent.Pre();
+
+        Aoba.getInstance().eventManager.Fire(sendMovementPacketPreEvent);
+    }
+
+    @Inject(method = "sendMovementPackets", at = @At("TAIL"))
+    private void onSendMovementPacketsTail(CallbackInfo info) {
+        SendMovementPacketEvent.Post sendMovementPacketPostEvent = new SendMovementPacketEvent.Post();
+
+        Aoba.getInstance().eventManager.Fire(sendMovementPacketPostEvent);
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V", ordinal = 1, shift = At.Shift.AFTER))
+    private void onTickHasVehicleAfterSendPackets(CallbackInfo info) {
+        SendMovementPacketEvent.Post sendMovementPacketPostEvent = new SendMovementPacketEvent.Post();
+
+        Aoba.getInstance().eventManager.Fire(sendMovementPacketPostEvent);
     }
 }

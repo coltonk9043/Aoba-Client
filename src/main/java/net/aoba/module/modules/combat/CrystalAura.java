@@ -6,6 +6,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
+import net.aoba.utils.FindItemResult;
 import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -187,21 +188,12 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
     private void placeCrystal() {
         List<AbstractClientPlayerEntity> players = MC.world.getPlayers();
-        ItemStack[] inventory = MC.player.getInventory().main.toArray(new ItemStack[0]);
-        boolean switchSlot = autoSwitch.getValue();
 
         Hand hand = handSetting.getValue() == HandSetting.MAIN_HAND ? Hand.MAIN_HAND : Hand.OFF_HAND;
 
-        int crystalSlot = -1;
-        if (switchSlot) {
-            for (int slot = 0; slot < 9; slot++) {
-                if (inventory[slot].getItem() == Items.END_CRYSTAL) {
-                    crystalSlot = slot;
-                    break;
-                }
-            }
-            if (crystalSlot == -1) return;
-        }
+        FindItemResult result = Module.find(Items.END_CRYSTAL);
+
+        if (!result.found() && !result.isHotbar()) return;
 
         double radiusSquared = radius.getValue() * radius.getValue();
         for (PlayerEntity player : players) {
@@ -215,8 +207,8 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
                 double damage = DamageUtils.crystalDamage(player, Vec3d.of(placePos.add(0, 1, 0)));
                 if (damage < minDamage.getValue()) continue;
 
-                if (switchSlot) {
-                    MC.player.getInventory().selectedSlot = crystalSlot;
+                if (autoSwitch.getValue()) {
+                    Module.swap(result.slot(), false);
                 }
 
                 if (multiPlace.getValue()) {

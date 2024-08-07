@@ -6,11 +6,16 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.interfaces.IHorseBaseEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.settings.types.KeybindSetting;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AbstractHorseEntity;
+import org.lwjgl.glfw.GLFW;
 
 public class EntityControl extends Module implements TickListener {
     public EntityControl() {
+        super(new KeybindSetting("key.entitycontrol", "EntityControl Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+
         this.setName("EntityControl");
         this.setDescription("Allows you to control entities without needing a saddle.");
         this.setCategory(Category.of("Movement"));

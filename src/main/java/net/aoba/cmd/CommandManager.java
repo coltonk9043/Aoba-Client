@@ -32,13 +32,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class CommandManager {
     private HashMap<String, Command> commands = new HashMap<String, Command>();
+    private List<String> commandHistory = new ArrayList<>();
 
     public final CmdAimbot aimbot = new CmdAimbot();
     public final CmdAutoEat autoeat = new CmdAutoEat();
@@ -69,6 +67,7 @@ public class CommandManager {
     public final CmdTP tp = new CmdTP();
     public final CmdTracer tracer = new CmdTracer();
     public final CmdXRay xray = new CmdXRay();
+    public final CmdHistory history = new CmdHistory();
 
     public static StringSetting PREFIX;
 
@@ -138,6 +137,7 @@ public class CommandManager {
      */
     public void command(String[] commandIn) {
         try {
+            commandHistory.add(String.join(" ", commandIn));
 
             // Get the command from the user's message. (Index 0 is Username)
             Command command = commands.get(commandIn[1]);
@@ -158,6 +158,10 @@ public class CommandManager {
         } catch (InvalidSyntaxException e) {
             e.PrintToChat();
         }
+    }
+
+    public List<String> getCommandHistory() {
+        return commandHistory;
     }
 
     /**
