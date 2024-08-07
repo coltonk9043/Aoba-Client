@@ -18,11 +18,21 @@
 
 package net.aoba.mixin;
 
+import net.aoba.interfaces.IClientPlayerInteractionManager;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ClientPlayerInteractionManager.class)
-public class ClientPlayerInteractionManagerMixin {
+public abstract class ClientPlayerInteractionManagerMixin implements IClientPlayerInteractionManager {
+    @Shadow
+    protected abstract void syncSelectedSlot();
+
+    @Override
+    public void aoba$syncSelected() {
+        syncSelectedSlot();
+    }
+
     // TODO Reach?
     /*
      * @Inject(at = { @At("HEAD") }, method = { "getReachDistance()F" }, cancellable

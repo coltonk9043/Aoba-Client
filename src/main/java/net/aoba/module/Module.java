@@ -23,17 +23,25 @@ package net.aoba.module;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
+import net.aoba.interfaces.IClientPlayerInteractionManager;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.FindItemResult;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public abstract class Module {
     private String name;
@@ -44,7 +52,7 @@ public abstract class Module {
     protected KeybindSetting keyBind;
     private List<Setting<?>> settings = new ArrayList<Setting<?>>();
 
-    protected final MinecraftClient MC = AobaClient.MC;
+    protected static final MinecraftClient MC = AobaClient.MC;
     protected final IMinecraftClient IMC = AobaClient.IMC;
 
     /**
@@ -136,7 +144,7 @@ public abstract class Module {
      * Retrieves the keybind associated with the module.
      *
      * @return The {@link KeybindSetting} that represents the keybinding
-     *         for this module.
+     * for this module.
      */
     public KeybindSetting getBind() {
         return this.keyBind;
@@ -146,7 +154,7 @@ public abstract class Module {
      * Gets the current state of the module.
      *
      * @return {@code true} if the module is enabled;
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     public boolean getState() {
         return this.state;
@@ -304,7 +312,7 @@ public abstract class Module {
      *
      * @param category The {@link Category} to check against this module's category.
      * @return {@code true} if the module is in the specified category;
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     public final boolean isCategory(Category category) {
         return category.equals(this.category);
@@ -338,5 +346,135 @@ public abstract class Module {
          * @return The keybind integer associated with the module.
          */
         int bind();
+    }
+
+    public static int previousSlot = -1;
+
+    public static FindItemResult findInHotbar(Item... items) {
+        return findInHotbar(itemStack -> {
+            for (Item item : items) {
+                if (itemStack.getItem() == item) return true;
+            }
+            return false;
+        });
+    }
+
+    public static FindItemResult findInHotbar(Predicate<ItemStack> isGood) {
+        if (testInOffHand(isGood)) {
+            return new FindItemResult(45, MC.player.getOffHandStack().getCount());
+        }
+
+        if (testInMainHand(isGood)) {
+            return new FindItemResult(MC.player.getInventory().selectedSlot, MC.player.getMainHandStack().getCount());
+        }
+
+        return find(isGood, 0, 8);
+    }
+
+    public static FindItemResult find(Predicate<ItemStack> isGood) {
+        if (MC.player == null) {
+            return new FindItemResult(0, 0);
+        }
+
+        return find(isGood, 0, MC.player.getInventory().size());
+    }
+
+    public static FindItemResult find(Predicate<ItemStack> isGood, int start, int end) {
+        if (MC.player == null) {
+            return new FindItemResult(0, 0);
+        }
+
+        int slot = -1;
+        int count = 0;
+
+        for (int i = start; i <= end; i++) {
+            ItemStack stack = MC.player.getInventory().getStack(i);
+
+            if (isGood.test(stack)) {
+                if (slot == -1) {
+                    slot = i;
+                }
+                count += stack.getCount();
+            }
+        }
+
+        return new FindItemResult(slot, count);
+    }
+
+    public static FindItemResult findFastestTool(BlockState state) {
+        float bestScore = 1;
+        int slot = -1;
+
+        for (int i = 0; i < 9; i++) {
+            ItemStack stack = MC.player.getInventory().getStack(i);
+
+            if (stack.isSuitableFor(state)) {
+                float score = stack.getMiningSpeedMultiplier(state);
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    slot = i;
+                }
+            }
+        }
+
+        return new FindItemResult(slot, 1);
+    }
+
+    public static boolean testInMainHand(Predicate<ItemStack> predicate) {
+        return predicate.test(MC.player.getMainHandStack());
+    }
+
+    public static boolean testInOffHand(Predicate<ItemStack> predicate) {
+        return predicate.test(MC.player.getOffHandStack());
+    }
+
+    public static boolean swap(int slot, boolean swapBack) {
+        if (slot == 45) {
+            return true;
+        }
+
+        if (slot < 0 || slot > 8) {
+            return false;
+        }
+
+        if (swapBack) {
+            if (previousSlot == -1) {
+                previousSlot = MC.player.getInventory().selectedSlot;
+            }
+        } else {
+            previousSlot = -1;
+        }
+
+        MC.player.getInventory().selectedSlot = slot;
+        ((IClientPlayerInteractionManager) MC.interactionManager).aoba$syncSelected();
+        return true;
+    }
+
+    public static boolean swapBack() {
+        if (previousSlot == -1) {
+            return false;
+        }
+
+        boolean result = swap(previousSlot, false);
+        previousSlot = -1;
+        return result;
+    }
+
+
+    public static void rotatePitch(float degrees) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        PlayerEntity player = client.player;
+
+        if (player != null) {
+            float currentPitch = player.getPitch();
+            float newPitch = currentPitch + degrees;
+
+            newPitch = Math.max(-90.0F, Math.min(90.0F, newPitch));
+
+            player.setPitch(newPitch);
+
+            client.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(player.getYaw(), newPitch, player.isOnGround()));
+        }
     }
 }

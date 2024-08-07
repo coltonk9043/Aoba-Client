@@ -113,6 +113,8 @@ public class ModuleManager implements KeyDownListener {
     public Module xray = new XRay();
     public Module zoom = new Zoom();
     public Module tooltips = new Tooltips();
+    public Module antihunger = new AntiHunger();
+    public Module expthrower = new EXPThrower();
 
     public ModuleManager(List<IAddon> addons) {
         addModule(aimbot);
@@ -181,6 +183,8 @@ public class ModuleManager implements KeyDownListener {
         addModule(xray);
         addModule(zoom);
         addModule(tooltips);
+        addModule(antihunger);
+        addModule(expthrower);
 
         addons.stream().filter(Objects::nonNull).forEach(addon -> {
             try {
