@@ -36,6 +36,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -461,6 +463,14 @@ public abstract class Module {
         return result;
     }
 
+    public static FindItemResult find(Item... items) {
+        return find(itemStack -> {
+            for (Item item : items) {
+                if (itemStack.getItem() == item) return true;
+            }
+            return false;
+        });
+    }
 
     public static void rotatePitch(float degrees) {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -475,6 +485,13 @@ public abstract class Module {
             player.setPitch(newPitch);
 
             client.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(player.getYaw(), newPitch, player.isOnGround()));
+        }
+    }
+
+    public static void sendChatMessage(String message) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.inGameHud != null) {
+            mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "Aoba" + Formatting.DARK_PURPLE + "] " + Formatting.RESET + message));
         }
     }
 }

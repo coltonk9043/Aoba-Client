@@ -36,7 +36,6 @@ import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil.Key;
 
-import javax.tools.Tool;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -115,6 +114,7 @@ public class ModuleManager implements KeyDownListener {
     public Module tooltips = new Tooltips();
     public Module antihunger = new AntiHunger();
     public Module expthrower = new EXPThrower();
+    public Module mcf = new MCA();
 
     public ModuleManager(List<IAddon> addons) {
         addModule(aimbot);
@@ -185,6 +185,7 @@ public class ModuleManager implements KeyDownListener {
         addModule(tooltips);
         addModule(antihunger);
         addModule(expthrower);
+        addModule(mcf);
 
         addons.stream().filter(Objects::nonNull).forEach(addon -> {
             try {
