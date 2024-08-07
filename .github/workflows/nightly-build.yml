@@ -26,7 +26,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Fetch Build Time
-        run: echo "time=$(date + "%Y-%m-%d")" >> $GITHUB_ENV
+        run: echo "time=$(date +%Y-%m-%d)" >> $GITHUB_ENV
 
       - name: Build
         run: ./gradlew build
