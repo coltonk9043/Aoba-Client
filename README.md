@@ -1,5 +1,5 @@
 ## !!! Notice !!!
-If you plan on downloading Aoba for Java Edition on PC or Pojav Launcher on Android/iOS, PLEASE download it from this [repo](https://github.com/coltonk9043/Aoba-MC-Hacked-Client/releases) or our own [website](https://www.aobaclient.com/). We have NEVER HAVE and NEVER WILL use MediaFire, Mega, Google Drive, or ANY other provider to host downloads for the client. Please always use caution when downloading from these third-party websites.
+If you plan on downloading Aoba for Java Edition on PC or Pojav Launcher on Android/iOS, PLEASE download it from this [repo](https://github.com/coltonk9043/Aoba-MC-Hacked-Client/releases) or our own [website](https://www.aobaclient.com/). We NEVER HAVE and NEVER WILL use MediaFire, Mega, Google Drive, or ANY other provider to host downloads for the client. Please always use caution when downloading from these third-party websites.
 
 # Aoba Client (1.21)
 A custom utility mod for Minecraft 1.21 using Fabric.
