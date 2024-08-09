@@ -46,6 +46,7 @@ import java.util.Optional;
 public class CrystalAura extends Module implements TickListener, Render3DListener {
 
     private final FloatSetting radius;
+    private final FloatSetting placeRadius;
     private final BooleanSetting targetFriends;
     private final FloatSetting attackDelay;
     private final BooleanSetting autoSwitch;
@@ -59,7 +60,6 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
     public enum HandSetting {
         MAIN_HAND, OFF_HAND
     }
-
 
     private final EnumSetting<HandSetting> handSetting;
 
@@ -112,6 +112,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
         this.setDescription("Attacks anything within your personal space.");
 
         radius = new FloatSetting("crystalaura_radius", "Radius", "Radius, in blocks, that you can place/attack a crystal.", 5f, 1f, 15f, 1f);
+        placeRadius = new FloatSetting("crystalaura_place_radius", "Place Radius", "Radius, in blocks, that you can place/attack a crystal.", 5f, 1f, 15f, 1f);
         targetFriends = new BooleanSetting("crystalaura_target_friends", "Target Friends", "Target friends.", false);
         attackDelay = new FloatSetting("crystalaura_attack_delay", "Attack Delay", "Delay between attacks in milliseconds.", 500, 0, 2000, 50);
         autoSwitch = new BooleanSetting("crystalaura_auto_switch", "Auto Switch", "Automatically switch to End Crystal.", true);
@@ -133,6 +134,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
         this.addSetting(swingHand);
         this.addSetting(handSetting);
         this.addSetting(radius);
+        this.addSetting(placeRadius);
         this.addSetting(targetFriends);
         this.addSetting(attackDelay);
         this.addSetting(autoSwitch);
@@ -171,7 +173,6 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
     @Override
     public void OnUpdate(TickEvent event) {
-        // No changes needed here for the box removal logic
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastPlaceTime >= placeDelay.getValue()) {
@@ -240,20 +241,44 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
     private Optional<BlockPos> findBestCrystalPlacement(PlayerEntity player) {
         BlockPos playerPos = player.getBlockPos();
-        BlockPos[] positionsToCheck = {playerPos.north(), playerPos.south(), playerPos.east(), playerPos.west(), playerPos.north().down(), playerPos.south().down(), playerPos.east().down(), playerPos.west().down()};
-
         double maxDamage = 0;
+        double minDistance = Double.MAX_VALUE;
         BlockPos bestPos = null;
 
-        for (BlockPos pos : positionsToCheck) {
-            BlockState blockState = MC.world.getBlockState(pos);
-            Block block = blockState.getBlock();
-            if (block != Blocks.OBSIDIAN && block != Blocks.BEDROCK) continue;
+        int radius = placeRadius.getValue().intValue();
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    BlockPos pos = playerPos.add(x, y, z);
+                    BlockState blockState = MC.world.getBlockState(pos);
+                    Block block = blockState.getBlock();
+                    if (block != Blocks.OBSIDIAN && block != Blocks.BEDROCK) continue;
 
-            double damage = DamageUtils.crystalDamage(player, Vec3d.of(pos));
-            if (damage > maxDamage) {
-                maxDamage = damage;
-                bestPos = pos;
+                    // Ensure the block above is air
+                    BlockPos abovePos = pos.up();
+                    BlockState aboveBlockState = MC.world.getBlockState(abovePos);
+                    if (!aboveBlockState.isAir()) continue;
+
+                    // Ensure there is air two blocks above the potential placement
+                    BlockPos abovePos2 = pos.up(2);
+                    BlockState aboveBlockState2 = MC.world.getBlockState(abovePos2);
+                    if (!aboveBlockState2.isAir()) continue;
+
+                    if (pos.getY() > playerPos.getY() + 1) continue;
+
+                    double damage = DamageUtils.crystalDamage(player, Vec3d.of(pos));
+                    double distance = playerPos.getSquaredDistance(pos);
+
+                    if (pos.getY() == playerPos.getY()) {
+                        damage *= 1.5;
+                    }
+
+                    if (damage > maxDamage || (damage == maxDamage && distance < minDistance)) {
+                        maxDamage = damage;
+                        minDistance = distance;
+                        bestPos = pos;
+                    }
+                }
             }
         }
 
@@ -395,10 +420,9 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
         long currentTime = System.currentTimeMillis();
 
         displayedBoxes.entrySet().removeIf(entry -> {
-            BlockPos pos = entry.getKey();
             long renderTime = entry.getValue();
             if (currentTime - renderTime >= BOX_DISPLAY_TIME_MS) {
-                return true; // Remove the entry if the display time has elapsed
+                return true;
             }
             return false;
         });
