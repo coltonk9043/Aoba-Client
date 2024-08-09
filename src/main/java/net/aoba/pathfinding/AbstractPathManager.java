@@ -16,9 +16,9 @@ public abstract class AbstractPathManager {
 	protected static MinecraftClient MC = MinecraftClient.getInstance();
     protected BlockPos target;
 
-    protected boolean allowWater = false;
-    protected boolean allowLava = false;
-
+    protected boolean avoidWater = false;
+    protected boolean avoidLava = true;
+ 
     public AbstractPathManager() {
 
     }
@@ -34,7 +34,23 @@ public abstract class AbstractPathManager {
     public void setTarget(BlockPos target) {
         this.target = target;
     }
+    
+    public boolean getAvoidWater() {
+    	return avoidWater;
+    }
+    
+    public void setAvoidWater(boolean state) {
+    	avoidWater = state;
+    }
 
+    public boolean getAvoidLava() {
+    	return avoidLava;
+    }
+    
+    public void setAvoidLava(boolean state) {
+    	avoidLava = state;
+    }
+    
     public abstract ArrayList<PathNode> recalculatePath(BlockPos pos);
     
     protected abstract float heuristic(PathNode position, BlockPos target);
@@ -65,72 +81,7 @@ public abstract class AbstractPathManager {
     }
 
 
-    protected ArrayList<PathNode> getNeighbouringBlocks(PathNode node) {
-        ArrayList<PathNode> result = new ArrayList<>();
-
-        BlockPos bottom = node.pos.down();
-
-        boolean canPassBottom = !node.getWasJump() && isPlayerPassable(bottom);
-        boolean needsToJump = false;
-
-        if (canPassBottom) {
-            result.add(new PathNode(bottom));
-        } else {
-            BlockPos north = node.pos.north();
-            BlockPos east = node.pos.east();
-            BlockPos south = node.pos.south();
-            BlockPos west = node.pos.west();
-
-            BlockPos northEast = north.east();
-            BlockPos southEast = south.east();
-            BlockPos southWest = south.west();
-            BlockPos northWest = north.west();
-
-            List<BlockPos> adjacentBlocks = List.of(north, east, south, west);
-            List<BlockPos> diagonalBlocks = List.of(northEast, southEast, southWest, northWest);
-
-            for (BlockPos currentBlock : adjacentBlocks) {
-                ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
-
-                if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z)) {
-                    continue;
-                }
-
-                if (isPlayerPassable(currentBlock)) {
-                    result.add(new PathNode(currentBlock));
-                } else {
-                    // Check to see if the player can jump
-                    BlockPos above = currentBlock.up();
-                    if (isPlayerPassable(above)) {
-                        needsToJump = true;
-                    }
-                }
-            }
-
-            for (BlockPos currentBlock : diagonalBlocks) {
-                ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
-
-                if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z)) {
-                    continue;
-                }
-
-                if (isPlayerPassableDiagonal(node.pos, currentBlock)) {
-                    result.add(new PathNode(currentBlock));
-                }
-            }
-        }
-
-        if (needsToJump && !node.getWasJump()) {
-            BlockPos top = node.pos.up();
-            if (isPlayerPassable(top)) {
-                PathNode topNode = new PathNode(top);
-                topNode.setWasJump(true);
-                result.add(topNode);
-            }
-        }
-
-        return result;
-    }
+    protected abstract ArrayList<PathNode> getNeighbouringBlocks(PathNode node);
 
     protected static boolean isPlayerPassable(BlockPos pos) {
         return checkBodyAndHeadPos(pos);

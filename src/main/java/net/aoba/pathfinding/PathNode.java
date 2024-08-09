@@ -1,5 +1,8 @@
 package net.aoba.pathfinding;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -12,7 +15,11 @@ public class PathNode {
     public final BlockPos pos;
     // A flag indicating if the node was reached by a jump
     private boolean wasJump = false;
-
+    // A flag indicating that this node is in water.
+    private boolean isInWater = false;
+    // A flag indicating that this node is in lava.
+    private boolean isInLava = false;
+    
     /**
      * Constructs a PathNode with specified coordinates.
      *
@@ -21,7 +28,11 @@ public class PathNode {
      * @param z The z-coordinate of the node.
      */
     public PathNode(int x, int y, int z) {
+    	MinecraftClient MC = MinecraftClient.getInstance();
         this.pos = new BlockPos(x, y, z);
+        FluidState fluidState = MC.world.getFluidState(pos);
+        isInWater = fluidState.isIn(FluidTags.WATER);
+        isInLava = fluidState.isIn(FluidTags.LAVA);
     }
 
     /**
@@ -30,7 +41,11 @@ public class PathNode {
      * @param pos The BlockPos representing the node's position.
      */
     public PathNode(BlockPos pos) {
+    	MinecraftClient MC = MinecraftClient.getInstance();
         this.pos = pos;
+        FluidState fluidState = MC.world.getFluidState(pos);
+        isInWater = fluidState.isIn(FluidTags.WATER);
+        isInLava = fluidState.isIn(FluidTags.LAVA);
     }
 
     /**
@@ -39,7 +54,7 @@ public class PathNode {
      * @return True if the node was reached by a jump, false otherwise.
      */
     public boolean getWasJump() {
-        return this.wasJump;
+        return wasJump;
     }
 
     /**
@@ -48,9 +63,41 @@ public class PathNode {
      * @param state The new state of the wasJump flag.
      */
     public void setWasJump(boolean state) {
-        this.wasJump = state;
+        wasJump = state;
     }
 
+    /**
+     * Gets the state of the isInwater flag
+     * @return True if the node is in water, false otherwise.
+     */
+    public boolean getIsInWater() {
+    	return isInWater;
+    }
+    
+    /**
+     * Sets the state of the isInWater flag
+     * @param state The new state of the isInWater flag.
+     */
+    public void setIsInWater(boolean state) {
+    	isInWater = state;
+    }
+    
+    /**
+     * Gets the state of the isInLava flag
+     * @return True if the node is in lava, false otherwise.
+     */
+    public boolean getIsInLava() {
+    	return isInLava;
+    }
+    
+    /**
+     * Sets the state of the isInLava flag.
+     * @param state The new state of the isInLava flag.
+     */
+    public void setIsInLava(boolean state) {
+    	isInLava = state;
+    }
+    
     /**
      * Generates a hash code for this PathNode. The hash code is based on the x and z
      * coordinates of the position.

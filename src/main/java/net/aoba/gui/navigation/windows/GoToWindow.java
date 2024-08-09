@@ -39,6 +39,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	private ButtonComponent setPositionButton;
 
 	private BooleanSetting flyEnabled;
+	private BooleanSetting avoidWater;
+	private BooleanSetting avoidLava;
 	private StringSetting locationX;
 	private StringSetting locationY;
 	private StringSetting locationZ;
@@ -63,17 +65,32 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			if(var)
 				pathManager = new FlyPathManager();
 			else
-				pathManager = new WalkingPathManager();
+				pathManager = new WalkingPathManager(); 
+			if (isStarted)
+				recalculatePathAsync();
+		});
+		
+		avoidWater = new BooleanSetting("goto_avoid_water", "Avoid Water", "Avoid Water", false, var -> {
+			pathManager.setAvoidWater(var);
 			if (isStarted)
 				recalculatePathAsync();
 		});
 
+		avoidLava = new BooleanSetting("goto_avoid_lava", "Avoid Lava", "Avoid Lava", true, var -> {
+			pathManager.setAvoidLava(var);
+			if (isStarted)
+				recalculatePathAsync();
+		});
+		
 		locationX = new StringSetting("goto_location_x", "X Coord.", "X Coordinate", "");
 		locationY = new StringSetting("goto_location_y", "Y Coord.", "Y Coordinate", "");
 		locationZ = new StringSetting("goto_location_z", "Z Coord.", "Z Coordinate", "");
 		maxSpeed = new FloatSetting("goto_max_speed", "Max Speed", "Max Speed", 4.0f, 0.5f, 15.0f, 0.5f);
+		
+		// Register Settings
 		SettingManager.registerSetting(this.flyEnabled, Aoba.getInstance().settingManager.configContainer);
-
+		SettingManager.registerSetting(this.avoidWater, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(this.avoidLava, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.locationX, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.locationY, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.locationZ, Aoba.getInstance().settingManager.configContainer);
@@ -89,6 +106,12 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		CheckboxComponent flyEnabledCheckBox = new CheckboxComponent(stackPanel, flyEnabled);
 		stackPanel.addChild(flyEnabledCheckBox);
 
+		CheckboxComponent avoidWaterCheckbox = new CheckboxComponent(stackPanel, avoidWater);
+		stackPanel.addChild(avoidWaterCheckbox);
+		
+		CheckboxComponent avoidLavaCheckbox = new CheckboxComponent(stackPanel, avoidLava);
+		stackPanel.addChild(avoidLavaCheckbox);
+		
 		SliderComponent flyMaxSpeed = new SliderComponent(stackPanel, maxSpeed);
 		stackPanel.addChild(flyMaxSpeed);
 		
@@ -101,7 +124,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		TextBoxComponent locationZTextBox = new TextBoxComponent(stackPanel, locationZ);
 		stackPanel.addChild(locationZTextBox);
 
-		this.startRunnable = new Runnable() {
+		startRunnable = new Runnable() {
 			@Override
 			public void run() {
 				startButton.setText("Cancel");
@@ -112,7 +135,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			}
 		};
 
-		this.clearRunnable = new Runnable() {
+		clearRunnable = new Runnable() {
 			@Override
 			public void run() {
 				unregisterEvents();
@@ -122,7 +145,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			}
 		};
 
-		this.setPositionRunnable = new Runnable() {
+		setPositionRunnable = new Runnable() {
 			@Override
 			public void run() {
 				MinecraftClient MC = MinecraftClient.getInstance();
@@ -139,9 +162,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		setPositionButton = new ButtonComponent(stackPanel, "Set Position", setPositionRunnable);
 		stackPanel.addChild(setPositionButton);
 
-		this.children.add(stackPanel);
+		children.add(stackPanel);
 
-		
 		pathManager = new WalkingPathManager();
 	}
 
@@ -290,9 +312,10 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				Vec3d direction = nextCenterPos.subtract(MC.player.getPos()).normalize().multiply(velocity);
 				MC.player.setVelocity(direction);
 			} else {
+				MC.player.getAbilities().flying = false;
 				MC.player.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
 				MC.options.forwardKey.setPressed(true);
-				if (next.getWasJump() || MC.player.horizontalCollision)
+				if (next.getIsInWater() || next.getIsInLava() || next.getWasJump() || MC.player.horizontalCollision)
 					MC.options.jumpKey.setPressed(true);
 				else
 					MC.options.jumpKey.setPressed(false);
