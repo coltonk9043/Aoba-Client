@@ -95,6 +95,24 @@ public class RectangleSetting extends Setting<Rectangle> {
     public Float getY() {
         return value.getY();
     }
+
+    /**
+     * Getter for the Rectangle width.
+     *
+     * @return Width Coordinate.
+     */
+    public Float getWidth() {
+        return value.getWidth();
+    }
+
+    /**
+     * Getter for the Rectangle height.
+     *
+     * @return Height Coordinate.
+     */
+    public Float getHeight() {
+        return value.getHeight();
+    }
     
     /**
      * Setter for the Rectangle width.

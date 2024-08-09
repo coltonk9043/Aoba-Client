@@ -175,7 +175,15 @@ public class Window implements IGuiElement {
 	@Override
 	public void removeChild(Component child) {
 		children.remove(child);
+		child.dispose();
 		onChildRemoved(child);
+	}
+
+	public void dispose() {
+		for (Component child : children) {
+			child.dispose();
+		}
+		children.clear();
 	}
 
 	private void applyInherittedHeight() {

@@ -318,6 +318,15 @@ public abstract class Component implements IGuiElement {
 		}
 	}
 
+	/**
+	 * Dispose method to release resources.
+	 */
+	public void dispose() {
+		for (Component child : children) {
+			child.dispose();
+		}
+		children.clear();
+	}
 	
 	public void onMouseClick(MouseClickEvent event) {
 		// Propagate to children.
