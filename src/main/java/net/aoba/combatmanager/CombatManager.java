@@ -19,6 +19,10 @@ import static net.aoba.AobaClient.MC;
 public class CombatManager implements TickListener, ReceivePacketListener {
     public HashMap<String, Integer> popList = new HashMap<>();
 
+    public CombatManager() {
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(ReceivePacketListener.class, this);
+    }
 
     @Override
     public void OnReceivePacket(ReceivePacketEvent event) {
