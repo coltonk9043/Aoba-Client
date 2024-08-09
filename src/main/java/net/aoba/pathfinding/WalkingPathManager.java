@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.PriorityQueue;
 
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ChunkSectionPos;
 
 /**
  * The WalkingPathManager class is responsible for managing and calculating
@@ -74,6 +78,97 @@ public class WalkingPathManager extends AbstractPathManager {
         return null;
 	}
 
+	@Override
+	protected ArrayList<PathNode> getNeighbouringBlocks(PathNode node) {
+        ArrayList<PathNode> result = new ArrayList<>();
+
+        BlockPos bottom = node.pos.down();
+
+        boolean canPassBottom = !node.getWasJump() && isPlayerPassable(bottom) && !node.getIsInWater();
+        boolean needsToJump = false;
+
+        if (canPassBottom) {
+        	PathNode bottomNode = new PathNode(bottom);
+        	
+            if(avoidWater && bottomNode.getIsInWater())
+            	return new ArrayList<PathNode>();
+            
+            boolean isInLava = MC.world.getFluidState(bottom).isIn(FluidTags.LAVA);
+            if(avoidLava && isInLava)
+            	return new ArrayList<PathNode>();
+            
+            result.add(bottomNode);
+        } else {
+            BlockPos north = node.pos.north();
+            BlockPos east = node.pos.east();
+            BlockPos south = node.pos.south();
+            BlockPos west = node.pos.west();
+
+            BlockPos northEast = north.east();
+            BlockPos southEast = south.east();
+            BlockPos southWest = south.west();
+            BlockPos northWest = north.west();
+
+            List<BlockPos> adjacentBlocks = List.of(north, east, south, west);
+            List<BlockPos> diagonalBlocks = List.of(northEast, southEast, southWest, northWest);
+
+            for (BlockPos currentBlock : adjacentBlocks) {
+                ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
+
+                if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z))
+                    continue;
+
+                PathNode newNode = new PathNode(currentBlock); 
+                
+                if(avoidWater && newNode.getIsInWater())
+                	continue;
+               
+                if(avoidLava && newNode.getIsInLava())
+                	continue;
+                
+                if (isPlayerPassable(currentBlock))    	
+                    result.add(newNode);
+                else {
+                    // Check to see if the player can jump
+                    BlockPos above = currentBlock.up();
+                    if (isPlayerPassable(above)) {
+                        needsToJump = true;
+                    }
+                }
+            }
+
+            for (BlockPos currentBlock : diagonalBlocks) {
+                ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
+
+                if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z))
+                    continue;
+
+                PathNode newNode = new PathNode(currentBlock); 
+                
+                if(avoidWater && newNode.getIsInWater())
+                	continue;
+                
+                if(avoidLava && newNode.getIsInLava())
+                	continue;
+                
+                if (isPlayerPassableDiagonal(node.pos, currentBlock)) {
+                    result.add(new PathNode(currentBlock));
+                }
+            }
+        }
+
+        if (needsToJump && !node.getWasJump()) {
+            BlockPos top = node.pos.up();
+            if (isPlayerPassable(top)) {
+                PathNode topNode = new PathNode(top);
+                topNode.setWasJump(true);
+                result.add(topNode);
+            }
+        }
+
+        return result;
+    }
+	
     /**
      * Calculates the heuristic cost from the given position to the target.
      *
@@ -88,10 +183,14 @@ public class WalkingPathManager extends AbstractPathManager {
         }
 
         // Calculate the squared differences in x, y, and z coordinates
-        float dx = (float) Math.pow(position.pos.getX() - target.getX(), 2);
-        float dy = (float) Math.pow(position.pos.getY() - target.getY(), 2);
-        float dz = (float) Math.pow(position.pos.getZ() - target.getZ(), 2);
+        float dx = (float) Math.abs(position.pos.getX() - target.getX());
+        float dy = (float) Math.abs(position.pos.getY() - target.getY());
+        float dz = (float) Math.abs(position.pos.getZ() - target.getZ());
 
+        if(avoidWater && MC.world.isWater(target)) {
+        	dy += 65536;
+        }
+        
         // Return the combined result of the squared differences
         return dx + dy + dz;
 	}
