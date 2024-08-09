@@ -26,8 +26,11 @@ import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.FindItemResult;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.item.Items;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
@@ -36,12 +39,21 @@ import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
 
 public class AutoFish extends Module implements ReceivePacketListener {
+    private BooleanSetting autoSwitch;
+    private BooleanSetting autoToggle;
+
     public AutoFish() {
         super(new KeybindSetting("key.autofish", "AutoFish Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("AutoFish");
         this.setCategory(Category.of("Misc"));
         this.setDescription("Automatically fishes for you.");
+
+        autoSwitch = new BooleanSetting("autofish_autoswitch", "Auto Switch", "Automatically switch to fishing rod before casting.", true);
+        autoToggle = new BooleanSetting("autofish_autotoggle", "Auto Toggle", "Automatically toggles off if no fishing rod is found in the hotbar.", true);
+
+        this.addSetting(autoSwitch);
+        this.addSetting(autoToggle);
     }
 
     @Override
@@ -52,6 +64,18 @@ public class AutoFish extends Module implements ReceivePacketListener {
     @Override
     public void onEnable() {
         Aoba.getInstance().eventManager.AddListener(ReceivePacketListener.class, this);
+
+        FindItemResult rod = find(Items.FISHING_ROD);
+
+        if (autoSwitch.getValue()) {
+            if (rod.found() && rod.isHotbar()) {
+                swap(rod.slot(), false);
+            } else {
+                if (!autoToggle.getValue()) return;
+
+                toggle();
+            }
+        }
     }
 
     @Override
@@ -59,11 +83,22 @@ public class AutoFish extends Module implements ReceivePacketListener {
 
     }
 
-    private void recastRod() {
-        // todo: eNSURE that this is correct
-        PlayerInteractItemC2SPacket packetTryUse = new PlayerInteractItemC2SPacket(Hand.MAIN_HAND, 0, MC.player.getYaw(), MC.player.getPitch());
-        MC.player.networkHandler.sendPacket(packetTryUse);
-        MC.player.networkHandler.sendPacket(packetTryUse);
+    private void castRod(int count) {
+        FindItemResult rod = find(Items.FISHING_ROD);
+
+        if (autoSwitch.getValue()) {
+            if (rod.found() && rod.isHotbar()) {
+                swap(rod.slot(), false);
+            } else {
+                if (!autoToggle.getValue()) return;
+
+                toggle();
+            }
+        }
+
+        for (int i = 0; i < count; i++) {
+            MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+        }
     }
 
     @Override
@@ -73,9 +108,8 @@ public class AutoFish extends Module implements ReceivePacketListener {
         if (packet instanceof PlaySoundS2CPacket) {
             PlaySoundS2CPacket soundPacket = (PlaySoundS2CPacket) packet;
             if (soundPacket.getSound().value().equals(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH)) {
-                recastRod();
+                castRod(2);
             }
         }
     }
-
 }
