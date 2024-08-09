@@ -55,6 +55,38 @@ public interface IAddon {
      */
     String getId();
 
+    /**
+     * Returns the description of the addon.
+     * This provides a brief overview of what the addon does.
+     *
+     * @return the description of the addon
+     */
+    String getDescription();
+
+    /**
+     * Returns the license of the addon.
+     * This indicates the licensing terms under which the addon is distributed.
+     *
+     * @return the license of the addon
+     */
+    String getLicense();
+
+    /**
+     * Returns the homepage URL of the addon.
+     * This provides a link to the addon's homepage for more information.
+     *
+     * @return the homepage URL of the addon
+     */
+    String getHomepageURL();
+
+    /**
+     * Returns the issue tracker URL of the addon.
+     * This provides a link to the addon's issue tracker for reporting bugs or requesting features.
+     *
+     * @return the issue tracker URL of the addon
+     */
+    String getIssueTrackerURL();
+
 
     /**
      * Returns the author of the addon.
