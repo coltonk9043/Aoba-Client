@@ -5,6 +5,7 @@ import net.aoba.module.Module;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.minecraft.util.Identifier;
 
 import java.util.List;
 import java.util.Optional;
@@ -109,5 +110,14 @@ public interface IAddon {
             return metadata.getVersion().getFriendlyString();
         }
         return "Unknown";
+    }
+    
+    default Optional<String> getIcon() {
+    	Optional<ModContainer> modContainer = FabricLoader.getInstance().getModContainer(getId());
+        if (modContainer.isPresent()) {
+            ModMetadata metadata = modContainer.get().getMetadata();
+            return metadata.getIconPath(64);
+        }
+        return Optional.ofNullable("Unknown");
     }
 }
