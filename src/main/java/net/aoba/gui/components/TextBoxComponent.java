@@ -18,6 +18,7 @@
 
 package net.aoba.gui.components;
 
+import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
@@ -95,10 +96,10 @@ public class TextBoxComponent extends Component implements KeyDownListener {
         super.onMouseClick(event);
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
             if (hovered) {
-                listeningForKey = true;
+            	setListeningForKey(true);
                 event.cancel();
             } else {
-                listeningForKey = false;
+            	setListeningForKey(false);
             }
         }
 
@@ -111,7 +112,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
             int key = event.GetKey();
 
             if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_ESCAPE) {
-                listeningForKey = false;
+            	setListeningForKey(false);
             } else if (key == GLFW.GLFW_KEY_BACKSPACE) {
                 String currentVal = string.getValue();
                 if (!currentVal.isEmpty())
@@ -128,5 +129,14 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 
     public void setErrorState(boolean isError) {
         this.isErrorState = isError;
+    }
+    
+    private void setListeningForKey(boolean state) {
+    	listeningForKey = state;
+    	if(listeningForKey) {
+    		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+    	}else {
+    		Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
+    	}
     }
 }
