@@ -43,7 +43,7 @@ public abstract class CactusBlockMixin extends Block {
             "getCollisionShape(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;"}, cancellable = true)
     private void onGetCollisionShape(BlockState blockState_1, BlockView blockView_1, BlockPos blockPos_1,
                                      ShapeContext entityContext_1, CallbackInfoReturnable<VoxelShape> cir) {
-        if (Aoba.getInstance() != null) {
+        if (Aoba.getInstance() != null && Aoba.getInstance().moduleManager != null) {
             if (Aoba.getInstance().moduleManager.anticactus.getState()) {
                 cir.setReturnValue(VoxelShapes.fullCube());
             }
