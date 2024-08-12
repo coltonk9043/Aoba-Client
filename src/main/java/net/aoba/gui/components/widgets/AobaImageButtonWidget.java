@@ -61,8 +61,8 @@ public class AobaImageButtonWidget extends PressableWidget {
         if (background) {
             RenderSystem.disableCull();
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            Render2D.drawRoundedBox(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-            Render2D.drawRoundedBoxOutline(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
+            Render2D.drawOutlinedRoundedBox(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(), GuiManager.backgroundColor.getValue());
+
             RenderSystem.enableCull();
         }
 

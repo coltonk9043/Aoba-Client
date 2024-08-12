@@ -1,16 +1,20 @@
-package net.aoba.gui.screens;
+package net.aoba.gui.screens.proxy;
 
 import net.aoba.Aoba;
-import net.aoba.altmanager.Alt;
 import net.aoba.proxymanager.Socks5Proxy;
+import net.aoba.utils.render.TextureBank;
+import net.minecraft.client.gui.CubeMapRenderer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class ProxyScreen extends Screen {
+	protected static final CubeMapRenderer AOBA_PANORAMA_RENDERER = new CubeMapRenderer(TextureBank.mainmenu_panorama);
+	protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(AOBA_PANORAMA_RENDERER);
+	
     private final Screen parentScreen;
     private ProxySelectionList proxyListSelector;
     private ButtonWidget editButton;
@@ -29,21 +33,22 @@ public class ProxyScreen extends Screen {
         this.proxyListSelector.setDimensionsAndPosition(this.width, this.height - 70, 0, 32);
         this.addDrawableChild(this.proxyListSelector);
 
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(this.parentScreen))
-                .dimensions(this.width / 2 - 205, this.height - 28, 100, 20).build());
-
-        this.deleteButton = ButtonWidget.builder(Text.of("Delete Proxy"), b -> this.deleteSelected())
-                .dimensions(this.width / 2 - 100, this.height - 28, 100, 20).build();
-        this.deleteButton.active = false;
-        this.addDrawableChild(this.deleteButton);
 
         this.addDrawableChild(ButtonWidget.builder(Text.of("Add Proxy"), b -> client.setScreen(new AddProxyScreen(this)))
-                .dimensions(this.width / 2 + 5, this.height - 28, 100, 20).build());
+                .dimensions(this.width / 2 - 205, this.height - 28, 100, 20).build());
 
         this.editButton = ButtonWidget.builder(Text.of("Edit Alt"), b -> this.editSelected())
-                .dimensions(this.width / 2 + 110, this.height - 28, 100, 20).build();
+                .dimensions(this.width / 2 - 100 , this.height - 28, 100, 20).build();
         this.editButton.active = false;
         this.addDrawableChild(this.editButton);
+        
+        this.deleteButton = ButtonWidget.builder(Text.of("Delete Proxy"), b -> this.deleteSelected())
+                .dimensions(this.width / 2 + 5, this.height - 28, 100, 20).build();
+        this.deleteButton.active = false;
+        this.addDrawableChild(this.deleteButton);
+        
+        this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(this.parentScreen))
+                .dimensions(this.width / 2 + 110, this.height - 28, 100, 20).build());
     }
 
     public ArrayList<Socks5Proxy> getProxyList() {
@@ -99,4 +104,9 @@ public class ProxyScreen extends Screen {
     public void resetActive() {
         Aoba.getInstance().proxyManager.setActiveProxy(null);
     }
+    
+	@Override
+	protected void renderPanoramaBackground(DrawContext context, float delta) {
+		AOBA_ROTATING_PANORAMA_RENDERER.render(context, this.width, this.height, 1.0f, delta);
+	}
 }

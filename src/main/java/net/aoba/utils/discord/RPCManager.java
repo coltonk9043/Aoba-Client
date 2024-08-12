@@ -1,8 +1,13 @@
 package net.aoba.utils.discord;
 
-import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.screens.*;
+import net.aoba.gui.screens.alts.AddAltScreen;
+import net.aoba.gui.screens.alts.AltScreen;
+import net.aoba.gui.screens.alts.EditAltScreen;
+import net.aoba.gui.screens.proxy.AddProxyScreen;
+import net.aoba.gui.screens.proxy.EditProxyScreen;
+import net.aoba.gui.screens.proxy.ProxyScreen;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.AddServerScreen;
@@ -11,9 +16,6 @@ import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.screen.world.EditWorldScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
-
-import java.util.Objects;
-
 import static net.aoba.AobaClient.MC;
 
 public class RPCManager {

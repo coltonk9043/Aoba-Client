@@ -3,19 +3,14 @@ package net.aoba.gui.components.widgets;
 import net.minecraft.client.gui.widget.PressableWidget;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
-
 import java.util.function.Consumer;
-
 import static net.aoba.AobaClient.MC;
 
 public class AobaButtonWidget extends PressableWidget {
@@ -69,7 +64,7 @@ public class AobaButtonWidget extends PressableWidget {
         int textX = getX() + (width - textWidth) / 2;
         int textY = getY() + (height - textHeight) / 2 - (int) (2 * hoverProgress) + 2;
 
-        Render2D.drawStringWithScale(context, getMessage().getString(), textX, textY, GuiManager.foregroundColor.getValue(), 1.0f);
+        Render2D.drawStringWithScale(context, getMessage().getString(), textX, textY, GuiManager.foregroundColor.getValue(), 1f);
     }
 
     @Override

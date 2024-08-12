@@ -16,35 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.aoba.gui.screens;
+package net.aoba.gui.screens.alts;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.altmanager.Alt;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.Uuids;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> {
+public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelectionList.Entry> {
     private final AltScreen owner;
-    private final List<AltSelectionList.NormalEntry> altList = new ArrayList<AltSelectionList.NormalEntry>();
+    private final List<NormalEntry> altList = new ArrayList<AltSelectionList.NormalEntry>();
 
     public AltSelectionList(AltScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l) {
         super(minecraftClient, i, j, k, l);
-        this.owner = ownerIn;
+        this.owner = ownerIn;      
     }
 
     public void updateAlts() {
@@ -60,21 +59,24 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
         this.altList.forEach(this::addEntry);
     }
 
-    public void setSelected(@Nullable AltSelectionList.Entry entry) {
+    public void setSelected(@Nullable Entry entry) {
         super.setSelected(entry);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        AltSelectionList.Entry AltSelectionList$entry = this.getSelectedOrNull();
+        Entry AltSelectionList$entry = this.getSelectedOrNull();
         return AltSelectionList$entry != null && AltSelectionList$entry.keyPressed(keyCode, scanCode, modifiers)
                 || super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    public abstract static class Entry extends ElementListWidget.Entry<AltSelectionList.Entry> {
+    @Environment(value=EnvType.CLIENT)
+    public static abstract class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> implements AutoCloseable {
+        @Override
+        public void close() {}
     }
 
-    public class NormalEntry extends AltSelectionList.Entry {
+    public class NormalEntry extends Entry {
         private final AltScreen owner;
         private final MinecraftClient mc;
         private final Alt alt;
@@ -92,9 +94,7 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
                     name = "Steve";
                 }
 
-
-                UUID uuid = Uuids.getOfflinePlayerUuid(name);
-                ;
+                UUID uuid = Uuids.getOfflinePlayerUuid(name);;
                 entry = new PlayerListEntry(new GameProfile(uuid, name), false);
 
             } catch (Exception e) {
@@ -117,6 +117,7 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
             StringBuilder password = new StringBuilder();
             String description;
 
+ 
             // Generates string for the password of an alt.
             if (!this.alt.isCracked()) {
                 password.append("*".repeat(this.alt.getPassword().toCharArray().length));
@@ -172,16 +173,6 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
         }
 
         @Override
-        public List<? extends Element> children() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<? extends Selectable> selectableChildren() {
-            return Collections.emptyList();
-        }
-
-        @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             double d0 = mouseX - (double) AltSelectionList.this.getRowLeft();
 
@@ -199,5 +190,10 @@ public class AltSelectionList extends ElementListWidget<AltSelectionList.Entry> 
             this.lastClickTime = Util.getMeasuringTimeMs();
             return false;
         }
+
+		@Override
+		public Text getNarration() {
+			return Text.of(alt.getUsername());
+		}
     }
 }

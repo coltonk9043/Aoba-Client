@@ -16,12 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.aoba.gui.screens;
+package net.aoba.gui.screens.alts;
 
 import net.aoba.Aoba;
 import net.aoba.altmanager.Alt;
+import net.aoba.utils.render.TextureBank;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
@@ -29,6 +32,9 @@ import net.minecraft.text.Text;
 import java.util.List;
 
 public class AltScreen extends Screen {
+	protected static final CubeMapRenderer AOBA_PANORAMA_RENDERER = new CubeMapRenderer(TextureBank.mainmenu_panorama);
+	protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(AOBA_PANORAMA_RENDERER);
+	
     private final Screen parentScreen;
     private ButtonWidget editButton;
     private ButtonWidget deleteButton;
@@ -42,7 +48,7 @@ public class AltScreen extends Screen {
     public void init() {
         super.init();
 
-        this.altListSelector = new AltSelectionList(this, this.client, this.width, this.height, 32, 64);
+        this.altListSelector = new AltSelectionList(this, this.client, this.width, this.height, 32, 36);
         this.altListSelector.updateAlts();
         this.altListSelector.setDimensionsAndPosition(this.width, this.height - 64 - 32, 0, 32);
         this.addDrawableChild(this.altListSelector);
@@ -138,4 +144,9 @@ public class AltScreen extends Screen {
         Aoba.getInstance().altManager.removeAlt(alt);
         this.refreshAltList();
     }
+    
+	@Override
+	protected void renderPanoramaBackground(DrawContext context, float delta) {
+		AOBA_ROTATING_PANORAMA_RENDERER.render(context, this.width, this.height, 1.0f, delta);
+	}
 }

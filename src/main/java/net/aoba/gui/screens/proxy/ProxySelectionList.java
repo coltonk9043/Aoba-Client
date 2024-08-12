@@ -1,20 +1,19 @@
-package net.aoba.gui.screens;
+package net.aoba.gui.screens.proxy;
 
 import net.aoba.utils.render.Render2D;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.aoba.proxymanager.Socks5Proxy;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
+import net.minecraft.text.Text;
 import net.minecraft.util.Util;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Entry> {
+public class ProxySelectionList extends AlwaysSelectedEntryListWidget<ProxySelectionList.Entry> {
     private final ProxyScreen owner;
     private final List<ProxySelectionList.NormalEntry> proxyList = new ArrayList<>();
 
@@ -23,8 +22,6 @@ public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Ent
         this.owner = ownerIn;
     }
 
-    public abstract static class Entry extends ElementListWidget.Entry<ProxySelectionList.Entry> {
-    }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -46,6 +43,13 @@ public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Ent
         this.proxyList.forEach(this::addEntry);
     }
 
+    
+    @Environment(value=EnvType.CLIENT)
+    public static abstract class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> implements AutoCloseable {
+        @Override
+        public void close() {}
+    }
+    
     public class NormalEntry extends ProxySelectionList.Entry {
         private final ProxyScreen owner;
         private final MinecraftClient mc;
@@ -83,16 +87,6 @@ public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Ent
         }
 
         @Override
-        public List<? extends Element> children() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<? extends Selectable> selectableChildren() {
-            return Collections.emptyList();
-        }
-
-        @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             double d0 = mouseX - (double) ProxySelectionList.this.getRowLeft();
 
@@ -115,5 +109,9 @@ public class ProxySelectionList extends ElementListWidget<ProxySelectionList.Ent
             return false;
         }
 
+		@Override
+		public Text getNarration() {
+			return Text.of(proxy.getIp());
+		}
     }
 }

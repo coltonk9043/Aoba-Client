@@ -18,8 +18,8 @@
 
 package net.aoba.mixin;
 
-import net.aoba.gui.screens.AltScreen;
-import net.aoba.gui.screens.ProxyScreen;
+import net.aoba.gui.screens.alts.AltScreen;
+import net.aoba.gui.screens.proxy.ProxyScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;

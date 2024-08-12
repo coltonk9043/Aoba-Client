@@ -1,4 +1,4 @@
-package net.aoba.gui.screens;
+package net.aoba.gui.screens.proxy;
 
 import net.aoba.Aoba;
 import net.aoba.proxymanager.Socks5Proxy;

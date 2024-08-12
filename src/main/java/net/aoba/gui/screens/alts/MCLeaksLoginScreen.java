@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.aoba.gui.screens;
+package net.aoba.gui.screens.alts;
 
 import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
