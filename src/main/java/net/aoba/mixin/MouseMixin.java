@@ -93,8 +93,11 @@ public class MouseMixin {
 
     @Inject(at = {@At("HEAD")}, method = {"lockCursor()V"}, cancellable = true)
     private void onLockCursor(CallbackInfo ci) {
-        if (Aoba.getInstance().hudManager.isClickGuiOpen())
-            ci.cancel();
+    	 AobaClient aoba = Aoba.getInstance();
+    	if(aoba != null && aoba.hudManager != null) {
+    		if (aoba.hudManager.isClickGuiOpen())
+                ci.cancel();
+    	}
     }
 
     @Inject(at = {@At("HEAD")}, method = {"onCursorPos(JDD)V"}, cancellable = true)
