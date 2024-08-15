@@ -118,8 +118,8 @@ public class Trajectory extends Module implements Render3DListener {
 			Vec3d prevPoint = new Vec3d(0, 0, 0).add(eyePos).subtract(offset).add(right);
 			Vec3d landPosition = null;
 
-			RenderSystem.setShaderColor(renderColor.getRedFloat(), renderColor.getGreenFloat(),
-					renderColor.getBlueFloat(), renderColor.getAlphaFloat());
+			RenderSystem.setShaderColor(renderColor.getRed(), renderColor.getGreen(),
+					renderColor.getBlue(), renderColor.getAlpha());
 
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glDisable(GL11.GL_DEPTH_TEST);

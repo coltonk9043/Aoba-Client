@@ -51,7 +51,7 @@ public class ModuleSelectorHud extends HudWindow {
     private ArrayList<Module> modules = new ArrayList<Module>();
 
     public ModuleSelectorHud() {
-        super("ModuleSelectorHud", 0, 0, 150, 30);
+        super("ModuleSelectorHud", 0, 0, 225, 30);
         this.keybindUp = new KeyBinding("key.tabup", GLFW.GLFW_KEY_UP, "key.categories.aoba");
         this.keybindDown = new KeyBinding("key.tabdown", GLFW.GLFW_KEY_DOWN, "key.categories.aoba");
         this.keybindLeft = new KeyBinding("key.tableft", GLFW.GLFW_KEY_LEFT, "key.categories.aoba");

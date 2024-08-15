@@ -33,6 +33,6 @@ public class RainbowColor extends Color implements TickListener {
 
     @Override
     public void OnUpdate(TickEvent event) {
-        this.setHSV(((this.hue + 1f) % 361), 1f, 1f);
+    	this.setHue(((this.getHue() + 1f) % 360));
     }
 }

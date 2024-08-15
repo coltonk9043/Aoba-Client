@@ -16,6 +16,8 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
+
 import static net.aoba.AobaClient.MC;
 
 import org.lwjgl.opengl.GL11;
@@ -47,29 +49,31 @@ public class MainMenuScreen extends Screen {
 			smallScreenHeightOffset = 0;
 
 		float widgetHeight = ((BUTTON_HEIGHT + SPACING) * 5);
+		int startX = (int) ((this.width - this.BUTTON_WIDTH) / 2.0f);
 		int startY = (int) ((this.height - widgetHeight) / 2) + smallScreenHeightOffset;
 
-		AobaButtonWidget singleplayerButton = new AobaButtonWidget(50, startY, BUTTON_WIDTH, BUTTON_HEIGHT,
+		// TODO: Left Alignment uses X coordinate of 50. Use this once news is done!
+		AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX, startY, BUTTON_WIDTH, BUTTON_HEIGHT,
 				Text.of("Singleplayer"));
 		singleplayerButton.setPressAction(b -> client.setScreen(new SelectWorldScreen(this)));
 		this.addDrawableChild(singleplayerButton);
 
-		AobaButtonWidget multiplayerButton = new AobaButtonWidget(50, startY + BUTTON_HEIGHT + SPACING, BUTTON_WIDTH,
+		AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX, startY + BUTTON_HEIGHT + SPACING, BUTTON_WIDTH,
 				BUTTON_HEIGHT, Text.of("Multiplayer"));
 		multiplayerButton.setPressAction(b -> client.setScreen(new MultiplayerScreen(this)));
 		this.addDrawableChild(multiplayerButton);
 
-		AobaButtonWidget settingsButton = new AobaButtonWidget(50, startY + ((BUTTON_HEIGHT + SPACING) * 2),
+		AobaButtonWidget settingsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 2),
 				BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Settings"));
 		settingsButton.setPressAction(b -> client.setScreen(new OptionsScreen(this, MC.options)));
 		this.addDrawableChild(settingsButton);
 
-		AobaButtonWidget addonsButton = new AobaButtonWidget(50, startY + ((BUTTON_HEIGHT + SPACING) * 3), BUTTON_WIDTH,
+		AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 3), BUTTON_WIDTH,
 				BUTTON_HEIGHT, Text.of("Addons"));
 		addonsButton.setPressAction(b -> client.setScreen(new AddonScreen(this)));
 		this.addDrawableChild(addonsButton);
 
-		AobaButtonWidget quitButton = new AobaButtonWidget(50, startY + ((BUTTON_HEIGHT + SPACING) * 4), BUTTON_WIDTH,
+		AobaButtonWidget quitButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 4), BUTTON_WIDTH,
 				BUTTON_HEIGHT, Text.of("Quit"));
 		quitButton.setPressAction(b -> client.stop());
 		this.addDrawableChild(quitButton);
@@ -88,9 +92,10 @@ public class MainMenuScreen extends Screen {
          RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
          
 		float widgetHeight = ((BUTTON_HEIGHT + SPACING) * 5);
+		int startX = (int) ((this.width - BUTTON_WIDTH) / 2.0f);
 		int startY = (int) ((this.height - widgetHeight) / 2) - LOGO_HEIGHT - 10 + smallScreenHeightOffset;
 
-		drawContext.drawTexture(TextureBank.mainmenu_logo, 50, startY, 0, 0, BUTTON_WIDTH, LOGO_HEIGHT, 185,
+		drawContext.drawTexture(TextureBank.mainmenu_logo, startX, startY, 0, 0, BUTTON_WIDTH, LOGO_HEIGHT, 185,
 				LOGO_HEIGHT);
 		drawContext.drawTextWithShadow(this.textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, this.height - 10,
 				0xFF00FF);
@@ -123,10 +128,11 @@ public class MainMenuScreen extends Screen {
 			}
 		}
 
-		int newsWidth = (int)Math.max(100, Math.min(400, width * 0.25f));
-		Render2D.drawOutlinedRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), width - newsWidth - 40, 40, newsWidth,
-				height - 80, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
+		// News Peek!
+		Render2D.drawOutlinedRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), width - 110, 30, 100,
+				30, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
 				GuiManager.backgroundColor.getValue());
+		drawContext.drawTextWithShadow(this.textRenderer, "News coming soon!", width - 105, 40, Colors.WHITE);
 		
 		RenderSystem.enableCull();
 	}

@@ -40,11 +40,6 @@ public class ColorPickerComponent extends Component {
 	private String text;
 	private boolean isSliding = false;
 	private boolean collapsed = true;
-	private float hue = 0.0f;
-	private float saturation = 0.0f;
-	private float luminance = 0.0f;
-	private float alpha = 0.0f;
-
 	private ColorSetting color;
 
 	public ColorPickerComponent(String text, IGuiElement parent) {
@@ -56,24 +51,11 @@ public class ColorPickerComponent extends Component {
 
 	public ColorPickerComponent(IGuiElement parent, ColorSetting color) {
 		super(parent, new Rectangle(null, null, null, 30f));
-
 		this.text = color.displayName;
 		this.color = color;
-		this.color.setOnUpdate((Color newColor) -> ensureGuiUpdated(newColor));
-
-		this.hue = color.getValue().hue;
-		this.saturation = color.getValue().saturation;
-		this.luminance = color.getValue().luminance;
-
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
-	public void ensureGuiUpdated(Color newColor) {
-		this.hue = newColor.hue;
-		this.saturation = newColor.saturation;
-		this.luminance = newColor.luminance;
-		this.alpha = newColor.alpha;
-	}
 
 	public void setText(String text) {
 		this.text = text;
@@ -122,7 +104,7 @@ public class ColorPickerComponent extends Component {
 		double mouseX = event.getX();
 		double mouseY = event.getY();
 		if (Aoba.getInstance().hudManager.isClickGuiOpen() && this.isSliding) {
-
+			Color colorToModify = color.getValue();
 			float vertical = (float) Math
 					.min(Math.max(1.0f - (((mouseY - (actualY + 29)) - 1) / (actualHeight - 33)), 0.0f), 1.0f);
 
@@ -131,16 +113,13 @@ public class ColorPickerComponent extends Component {
 				float horizontal = (float) Math.min(Math.max(((mouseX - (actualX)) - 1) / (actualWidth - 76), 0.0f),
 						1.0f);
 
-				this.luminance = vertical;
-				this.saturation = horizontal;
+				colorToModify.setLuminance(vertical);
+				colorToModify.setSaturation(horizontal);
 			} else if (mouseX >= actualX + actualWidth - 68 && mouseX <= actualX + actualWidth - 34) {
-				this.hue = (1.0f - vertical) * 360.0f;
+				colorToModify.setHue((1.0f - vertical) * 360.0f);
 			} else if (mouseX >= actualX + actualWidth - 30 && mouseX <= actualX + actualWidth) {
-				this.alpha = (vertical) * 255.0f;
+				colorToModify.setAlpha(Math.round(vertical * 255.0f));
 			}
-
-			this.color.getValue().setHSV(hue, saturation, luminance);
-			this.color.getValue().setAlpha((int) alpha);
 		}
 	}
 
@@ -165,7 +144,8 @@ public class ColorPickerComponent extends Component {
 
 		if (!collapsed) {
 			Color newColor = new Color(255, 0, 0);
-			newColor.setHSV(this.hue, 1.0f, 1.0f);
+			Color colorSetting = this.color.getValue();
+			newColor.setHSV(colorSetting.getHue(), 1.0f, 1.0f);
 			Render2D.drawHorizontalGradient(matrix4f, actualX, actualY + 29, actualWidth - 76, actualHeight - 33,
 					new Color(255, 255, 255), newColor);
 			Render2D.drawVerticalGradient(matrix4f, actualX, actualY + 29, actualWidth - 76, actualHeight - 33,
@@ -196,12 +176,12 @@ public class ColorPickerComponent extends Component {
 			Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 30, actualY + 29, 30, actualHeight - 33, Colors.Black);
 
 			// Draw Indicators
-			Render2D.drawCircle(matrix4f, actualX + (saturation * (actualWidth - 72)),
-					actualY + 29 + ((1.0f - luminance) * (actualHeight - 33)), 3, new Color(255, 255, 255, 255));
+			Render2D.drawCircle(matrix4f, actualX + (colorSetting.getSaturation() * (actualWidth - 76)),
+					actualY + 29 + ((1.0f - colorSetting.getLuminance()) * (actualHeight - 33)), 3, new Color(255, 255, 255, 255));
 			Render2D.drawOutlinedBox(matrix4f, actualX + actualWidth - 68,
-					actualY + 29 + ((hue / 360.0f) * (actualHeight - 33)), 30, 3, Colors.Black,new Color(255, 255, 255, 255));
+					actualY + 29 + ((colorSetting.getHue() / 360.0f) * (actualHeight - 33)), 30, 3, Colors.Black,new Color(255, 255, 255, 255));
 			Render2D.drawOutlinedBox(matrix4f, actualX + actualWidth - 30,
-					actualY + 29 + (((255.0f - alpha) / 255.0f) * (actualHeight - 33)), 30, 3, Colors.Black,
+					actualY + 29 + (((255.0f - (colorSetting.getAlpha() * 255)) / 255.0f) * (actualHeight - 33)), 30, 3, Colors.Black,
 					new Color(255, 255, 255, 255));
 		}
 	}

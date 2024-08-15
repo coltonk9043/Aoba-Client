@@ -21,6 +21,7 @@ import net.aoba.settings.types.StringSetting;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
@@ -62,14 +63,14 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		super(title, x, y, 360, 0);
 
 		flyEnabled = new BooleanSetting("goto_fly_enabled", "Fly Enabled", "Fly Enabled", false, var -> {
-			if(var)
+			if (var)
 				pathManager = new FlyPathManager();
 			else
-				pathManager = new WalkingPathManager(); 
+				pathManager = new WalkingPathManager();
 			if (isStarted)
 				recalculatePathAsync();
 		});
-		
+
 		avoidWater = new BooleanSetting("goto_avoid_water", "Avoid Water", "Avoid Water", false, var -> {
 			pathManager.setAvoidWater(var);
 			if (isStarted)
@@ -81,12 +82,12 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			if (isStarted)
 				recalculatePathAsync();
 		});
-		
+
 		locationX = new StringSetting("goto_location_x", "X Coord.", "X Coordinate", "");
 		locationY = new StringSetting("goto_location_y", "Y Coord.", "Y Coordinate", "");
 		locationZ = new StringSetting("goto_location_z", "Z Coord.", "Z Coordinate", "");
 		maxSpeed = new FloatSetting("goto_max_speed", "Max Speed", "Max Speed", 4.0f, 0.5f, 15.0f, 0.5f);
-		
+
 		// Register Settings
 		SettingManager.registerSetting(this.flyEnabled, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.avoidWater, Aoba.getInstance().settingManager.configContainer);
@@ -95,7 +96,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		SettingManager.registerSetting(this.locationY, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.locationZ, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.maxSpeed, Aoba.getInstance().settingManager.configContainer);
-		
+
 		StackPanelComponent stackPanel = new StackPanelComponent(this);
 		stackPanel.setMargin(new Margin(null, 30f, null, null));
 
@@ -108,13 +109,13 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 
 		CheckboxComponent avoidWaterCheckbox = new CheckboxComponent(stackPanel, avoidWater);
 		stackPanel.addChild(avoidWaterCheckbox);
-		
+
 		CheckboxComponent avoidLavaCheckbox = new CheckboxComponent(stackPanel, avoidLava);
 		stackPanel.addChild(avoidLavaCheckbox);
-		
+
 		SliderComponent flyMaxSpeed = new SliderComponent(stackPanel, maxSpeed);
 		stackPanel.addChild(flyMaxSpeed);
-		
+
 		TextBoxComponent locationXTextBox = new TextBoxComponent(stackPanel, locationX);
 		stackPanel.addChild(locationXTextBox);
 
@@ -193,8 +194,9 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		Vec3d target = new Vec3d(x, y, z);
 
 		BlockPos targetPos = new BlockPos(x, y, z);
-		
-		ChunkPos targetChunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(targetPos.getX()), ChunkSectionPos.getSectionCoord(targetPos.getZ()));
+
+		ChunkPos targetChunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(targetPos.getX()),
+				ChunkSectionPos.getSectionCoord(targetPos.getZ()));
 
 		// Find the new chunk / position that we want to try to get to, hoping that we
 		// can find one.
@@ -204,17 +206,19 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		BlockPos newTarget = playerPos;
 		BlockPos temp = playerPos;
 		boolean foundTargetInLoadedChunks = false;
-		
-		ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(temp.getX()), ChunkSectionPos.getSectionCoord(temp.getZ()));
-		
-		//HashSet<Chunk> visittedChunks = new HashSet<Chunk>();
+
+		ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(temp.getX()),
+				ChunkSectionPos.getSectionCoord(temp.getZ()));
+
+		// HashSet<Chunk> visittedChunks = new HashSet<Chunk>();
 		while (MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z)) {
 			newTarget = temp;
 			temp = playerPos.add((int) Math.ceil(offset.x), (int) Math.ceil(offset.y), (int) Math.ceil(offset.z));
 			offset = offset.add(delta);
-			chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(temp.getX()), ChunkSectionPos.getSectionCoord(temp.getZ()));
+			chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(temp.getX()),
+					ChunkSectionPos.getSectionCoord(temp.getZ()));
 
-			//visittedChunks.add(chunk);
+			// visittedChunks.add(chunk);
 			if (chunkPos.equals(targetChunkPos)) {
 				newTarget = targetPos;
 				foundTargetInLoadedChunks = true;
@@ -222,13 +226,14 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			}
 		}
 
-		// We want to ensure that if we could NOT find the loaded chunk, that we move to the highest point in the middle of that chunk.
+		// We want to ensure that if we could NOT find the loaded chunk, that we move to
+		// the highest point in the middle of that chunk.
 		// If it doesn't, it is possible that the target would be inside of the bllock.
-		if(!foundTargetInLoadedChunks) 
+		if (!foundTargetInLoadedChunks)
 			newTarget = getHighestBlock(newTarget);
-		
+
 		targetPos = newTarget;
-		
+
 		pathManager.setTarget(targetPos);
 		nodes = pathManager.recalculatePath(MC.player.getBlockPos());
 
@@ -237,24 +242,24 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		actualEnd = new BlockPos(x, y, z);
 		currentNodeIndex = 0;
 	}
-	
+
 	private BlockPos getHighestBlock(BlockPos current) {
 		BlockPos prevPos = null;
-		for(int i = 320; i >= -64; i--) {
+		for (int i = 320; i >= -64; i--) {
 			BlockPos pos = current.withY(i);
 			BlockState state = MC.world.getBlockState(pos);
-			if(!state.isAir()) {
+			if (!state.isAir()) {
 				break;
 			}
 			prevPos = pos;
 		}
-		
-		if(flyEnabled.getValue()) {
-			if(prevPos.getY() >= current.getY())
+
+		if (flyEnabled.getValue()) {
+			if (prevPos.getY() >= current.getY())
 				return prevPos;
-			else 
+			else
 				return current;
-		}else
+		} else
 			return prevPos;
 	}
 
@@ -275,13 +280,14 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			for (int i = 0; i < nodes.size() - 1; i++) {
 				PathNode first = nodes.get(i);
 				PathNode second = nodes.get(i + 1);
-				
+
 				Vec3d pos1 = first.pos.toCenterPos().add(-0.15f, -0.15f, -0.15f);
 				Vec3d pos2 = first.pos.toCenterPos().add(0.15f, 0.15f, 0.15f);
 				Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
-				
+
 				Render3D.draw3DBox(event.GetMatrix(), box, Colors.Red, 1);
-				Render3D.drawLine3D(event.GetMatrix(), first.pos.toCenterPos(), second.pos.toCenterPos(), Colors.Red, 1.0f);
+				Render3D.drawLine3D(event.GetMatrix(), first.pos.toCenterPos(), second.pos.toCenterPos(), Colors.Red,
+						1.0f);
 			}
 		}
 	}
@@ -295,7 +301,14 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		if (currentNodeIndex < nodes.size() - 1) {
 			// Check next position
 			PathNode next = nodes.get(currentNodeIndex + 1);
-			BlockPos playerPos = MC.player.getBlockPos();
+			BlockPos playerPos;
+			
+			if(MC.player.isRiding()) {
+				Entity riding = MC.player.getRootVehicle();
+				playerPos = riding.getBlockPos();
+			}
+			else
+				playerPos= MC.player.getBlockPos();
 
 			if (playerPos.equals(next.pos)) {
 				currentNodeIndex++;
@@ -310,7 +323,15 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			if (flyEnabled.getValue()) {
 				double velocity = Math.min(maxSpeed.getValue(), MC.player.getPos().distanceTo(nextCenterPos));
 				Vec3d direction = nextCenterPos.subtract(MC.player.getPos()).normalize().multiply(velocity);
-				MC.player.setVelocity(direction);
+
+				// Check to see if the player is in a vehicle. If they are, we want to apply
+				// velocity to the vehicle (boatfly)
+				if (MC.player.isRiding()) {
+					Entity riding = MC.player.getRootVehicle();
+					riding.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
+					riding.setVelocity(direction);
+				} else
+					MC.player.setVelocity(direction);
 			} else {
 				MC.player.getAbilities().flying = false;
 				MC.player.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
@@ -321,7 +342,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 					MC.options.jumpKey.setPressed(false);
 			}
 		} else {
-			// Check to see if we actually reached the destination. If not, we want to recalculate the path.
+			// Check to see if we actually reached the destination. If not, we want to
+			// recalculate the path.
 			if (!actualEnd.equals(end)) {
 				recalculatePathAsync();
 			} else {

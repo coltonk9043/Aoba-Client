@@ -26,14 +26,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector3f;
 
 public class Color {
-    public int r;
-    public int g;
-    public int b;
-    public int alpha = 255;
+    private int r;
+    private int g;
+    private int b;
+    private int alpha = 255;
 
-    public float hue;
-    public float saturation;
-    public float luminance;
+    private float hue;
+    private float saturation;
+    private float luminance;
 
     /**
      * Color Constructor using RGB color space.
@@ -122,10 +122,35 @@ public class Color {
     }
 
     /**
+     * Gets the Hue of the color in HSV color space.
+     * @return Hue of the color.
+     */
+    public float getHue() {
+    	return hue;
+    }
+    
+    /**
+     * Gets the Saturation of the color in HSV color space.
+     * @return Saturation of the color.
+     */
+    public float getSaturation() {
+    	return saturation;
+    }
+    
+    /**
+     * Gets the Luminance of the color in HSV color space.
+     * @return Luminance of the color.
+     */
+    public float getLuminance() {
+    	return luminance;
+    }
+    
+    /**
      * Sets the RGB and HSV fields using inputs from an HSV color space.
      *
      * @param hue        The hue of the HSV color space.
      * @param saturation The saturation of the HSV color space.
+     * @param luminance  The luminance of the HSV color space.
      */
     public void setHSV(float hue, float saturation, float luminance) {
         this.hue = hue;
@@ -138,7 +163,49 @@ public class Color {
             this.b = vec.b;
         }
     }
-
+    
+    /**
+     * Sets the hue from HSV color space.
+     * @param hue Value to set hue to.
+     */
+    public void setHue(float hue) {
+    	this.hue = hue;
+    	Color vec = hsv2rgb(this.hue, this.saturation, this.luminance);
+        if (vec != null) {
+            this.r = vec.r;
+            this.g = vec.g;
+            this.b = vec.b;
+        }
+    }
+    
+    /**
+     * Sets the saturation from HSV color space.
+     * @param saturation Value to set saturation to.
+     */
+    public void setSaturation(float saturation) {
+    	this.saturation = saturation;
+    	Color vec = hsv2rgb(this.hue, this.saturation, this.luminance);
+        if (vec != null) {
+            this.r = vec.r;
+            this.g = vec.g;
+            this.b = vec.b;
+        }
+    }
+    
+    /**
+     * Sets the luminance from HSV color space.
+     * @param luminance Value to set luminance to.
+     */
+    public void setLuminance(float luminance) {
+    	this.luminance = luminance;
+    	Color vec = hsv2rgb(this.hue, this.saturation, this.luminance);
+        if (vec != null) {
+            this.r = vec.r;
+            this.g = vec.g;
+            this.b = vec.b;
+        }
+    }
+    
     /**
      * Sets the RGB fields using inputs from an RGB color space.
      *
@@ -204,7 +271,7 @@ public class Color {
      *
      * @return Red component as a float.
      */
-    public float getRedFloat() {
+    public float getRed() {
         return ((float) this.r) / 255.0f;
     }
 
@@ -213,7 +280,7 @@ public class Color {
      *
      * @return Green component as a float.
      */
-    public float getGreenFloat() {
+    public float getGreen() {
         return ((float) this.g) / 255.0f;
     }
 
@@ -222,11 +289,11 @@ public class Color {
      *
      * @return Blue component as a float.
      */
-    public float getBlueFloat() {
+    public float getBlue() {
         return ((float) this.b) / 255.0f;
     }
 
-    public float getAlphaFloat() {
+    public float getAlpha() {
         return ((float) this.alpha) / 255.0f;
     }
 

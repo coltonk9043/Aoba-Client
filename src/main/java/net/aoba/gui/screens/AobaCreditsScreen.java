@@ -1,6 +1,5 @@
 package net.aoba.gui.screens;
 
-import net.aoba.gui.GuiManager;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.render.TextureBank;
 import net.minecraft.client.gui.CubeMapRenderer;
@@ -8,7 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
-
+import net.minecraft.util.Colors;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,11 +57,9 @@ public class AobaCreditsScreen extends Screen {
 
         context.drawTexture(TextureBank.mainmenu_logo, (this.width - 185) / 2, logoY - 100, 0, 0, 185, logoHeight, 185, logoHeight);
 
-
-        int textWidth = this.textRenderer.getWidth(CONTRIBUTORS.get(0));
-        int textX = (this.width - textWidth) / 2;
-
         for (int i = 0; i < CONTRIBUTORS.size(); i++) {
+        	int textWidth = this.textRenderer.getWidth(CONTRIBUTORS.get(i));
+            int textX = (this.width - (textWidth * 2)) / 2;
             int textY = baseY + i * (textHeight + 10);
             float alpha = getFadeAlpha(textY);
             drawContributorName(context, CONTRIBUTORS.get(i), textX, textY, alpha);
@@ -84,7 +81,7 @@ public class AobaCreditsScreen extends Screen {
     }
 
     private void drawContributorName(DrawContext context, String contributor, int x, int y, float alpha) {
-        Render2D.drawString(context, contributor, (float) x, (float) y, GuiManager.foregroundColor.getValue());
+        Render2D.drawString(context, contributor, (float) x, (float) y, Colors.WHITE);
     }
 
     @Override

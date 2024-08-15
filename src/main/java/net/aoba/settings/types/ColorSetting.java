@@ -39,7 +39,7 @@ public class ColorSetting extends Setting<Color> {
 
     @Override
     protected boolean isValueValid(Color value) {
-        return (value.r <= 255 && value.g <= 255 && value.b <= 255);
+        return (value.getRed() <= 255 && value.getGreen() <= 255 && value.getBlue() <= 255);
     }
 
     public void setMode(ColorMode color) {

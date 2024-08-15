@@ -54,10 +54,10 @@ public class Render2D {
 	 */
 	public static void drawTexturedQuad(Matrix4f matrix4f, Identifier texture, float x1, float y1, float width,
 			float height, Color color) {
-		float red = color.getRedFloat();
-		float green = color.getGreenFloat();
-		float blue = color.getBlueFloat();
-		float alpha = color.getAlphaFloat();
+		float red = color.getRed();
+		float green = color.getGreen();
+		float blue = color.getBlue();
+		float alpha = color.getAlpha();
 
 		float x2 = x1 + width;
 		float y2 = y1 + height;
@@ -98,8 +98,8 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public static void drawBox(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
-				color.getAlphaFloat());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+				color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -146,8 +146,8 @@ public class Render2D {
 	 */
 	public static void drawRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height, float radius,
 			Color color) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
-				color.getAlphaFloat());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+				color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -229,8 +229,8 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public static void drawCircle(Matrix4f matrix4f, float x, float y, float radius, Color color) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
-				color.getAlphaFloat());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+				color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -279,16 +279,16 @@ public class Render2D {
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		for (int i = 0; i < 5; i++) {
 			RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-			float alpha = color.getAlphaFloat() * (1.0f / (i + 1)); // Adjust alpha for each blur layer
+			float alpha = color.getAlpha() * (1.0f / (i + 1)); // Adjust alpha for each blur layer
 
-			RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), alpha);
+			RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 
 			drawRoundedBox(matrix4f, x - i, y - i, width + 2 * i, height + 2 * i, radius + i, color);
 		}
 
 		// Draw the main rounded box
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
-				color.getAlphaFloat());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+				color.getAlpha());
 		drawRoundedBox(matrix4f, x, y, width, height, radius, color);
 
 		RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -323,8 +323,8 @@ public class Render2D {
 	 */
 	public static void drawOutlinedBox(Matrix4f matrix4f, float x, float y, float width, float height,
 			Color outlineColor, Color backgroundColor) {
-		RenderSystem.setShaderColor(backgroundColor.getRedFloat(), backgroundColor.getGreenFloat(),
-				backgroundColor.getBlueFloat(), backgroundColor.getAlphaFloat());
+		RenderSystem.setShaderColor(backgroundColor.getRed(), backgroundColor.getGreen(),
+				backgroundColor.getBlue(), backgroundColor.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -339,8 +339,8 @@ public class Render2D {
 		bufferBuilder.vertex(matrix4f, x, y + height, 0);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		RenderSystem.setShaderColor(outlineColor.getRedFloat(), outlineColor.getGreenFloat(),
-				outlineColor.getBlueFloat(), outlineColor.getAlphaFloat());
+		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(),
+				outlineColor.getBlue(), outlineColor.getAlpha());
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
@@ -383,8 +383,8 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public static void drawBoxOutline(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
-				color.getAlphaFloat());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+				color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -434,8 +434,8 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		
-		RenderSystem.setShaderColor(backgroundColor.getRedFloat(), backgroundColor.getGreenFloat(),
-				backgroundColor.getBlueFloat(), backgroundColor.getAlphaFloat());
+		RenderSystem.setShaderColor(backgroundColor.getRed(), backgroundColor.getGreen(),
+				backgroundColor.getBlue(), backgroundColor.getAlpha());
 
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
@@ -499,7 +499,7 @@ public class Render2D {
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		
-		RenderSystem.setShaderColor(outlineColor.getRedFloat(), outlineColor.getGreenFloat(), outlineColor.getBlueFloat(), outlineColor.getAlphaFloat());
+		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(), outlineColor.getBlue(), outlineColor.getAlpha());
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
@@ -544,8 +544,8 @@ public class Render2D {
 	 */
 	public static void drawRoundedBoxOutline(Matrix4f matrix4f, float x, float y, float width, float height,
 			float radius, Color color) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
-				color.getAlphaFloat());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+				color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -593,8 +593,8 @@ public class Render2D {
 	 * @param color    Color to draw the line in.
 	 */
 	public static void drawLine(Matrix4f matrix4f, float x1, float y1, float x2, float y2, Color color) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
-				color.getAlphaFloat());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+				color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();

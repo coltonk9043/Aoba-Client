@@ -70,8 +70,8 @@ import org.joml.Vector3f;
 
 public class Render3D {
 	public static void draw3DBox(MatrixStack matrixStack, Box box, Color color, float lineThickness) {
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
-				color.getAlphaFloat());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+				color.getAlpha());
 
 		MatrixStack.Entry entry = matrixStack.peek();
 		Matrix4f matrix4f = entry.getPositionMatrix();
@@ -84,8 +84,8 @@ public class Render3D {
 		RenderSystem.disableDepthTest();
 
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
-		RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(),
-				color.getAlphaFloat());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+				color.getAlpha());
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
 		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
@@ -285,7 +285,7 @@ public class Render3D {
 			RenderSystem.disableDepthTest();
 
 			RenderSystem.setShader(GameRenderer::getPositionProgram);
-			RenderSystem.setShaderColor(color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), color.getAlphaFloat());
+			RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 			// Draw Vertices
 			boolean hasVertices = false;
@@ -418,9 +418,9 @@ public class Render3D {
 
 		Vec3d normalized = new Vec3d(x2 - x1, y2 - y1, z2 - z1).normalize();
 
-		float r = color.getRedFloat();
-		float g = color.getGreenFloat();
-		float b = color.getBlueFloat();
+		float r = color.getRed();
+		float g = color.getGreen();
+		float b = color.getBlue();
 
 		bufferBuilder.vertex(matrix4f, x1, y1, z1).color(r, g, b, 1.0f).normal(entry, (float) normalized.x,
 				(float) normalized.y, (float) normalized.z);
