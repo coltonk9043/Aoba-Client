@@ -6,15 +6,12 @@ import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
-import net.aoba.gui.colors.Color;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Colors;
-
 
 public class EnumComponent<T extends Enum<T>> extends Component {
 	private EnumSetting<T> enumSetting;
@@ -23,7 +20,7 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 	private boolean hoveringRightButton;
 	
 	public EnumComponent(IGuiElement parent, EnumSetting<T> enumSetting) {
-		super(parent, new Rectangle(null, null, null, 60f));
+		super(parent, new Rectangle(null, null, null, 55f));
 		this.enumSetting = enumSetting;
 
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
@@ -51,7 +48,7 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 		// Text
 		String enumValue = this.enumSetting.getValue().toString();
 		float stringWidth = Render2D.getStringWidth(enumValue);
-		Render2D.drawString(drawContext, enumValue, actualX + (actualWidth / 2.0f) - stringWidth, actualY + 30, 0xFFFFFF);
+		Render2D.drawString(drawContext, enumValue, actualX + (actualWidth / 2.0f) - stringWidth, actualY + 34, 0xFFFFFF);
 	}
 
 	@Override

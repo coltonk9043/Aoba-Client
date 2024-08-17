@@ -30,16 +30,15 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -49,16 +48,20 @@ import net.minecraft.util.math.Vec3d;
 
 import org.lwjgl.glfw.GLFW;
 
+
+
 public class EntityESP extends Module implements Render3DListener {
+	public enum DrawMode {
+        BoundingBox, Model
+    }
 	
+	private EnumSetting<DrawMode> drawMode = new EnumSetting<DrawMode>("entityesp_draw_mode", "Draw Mode", "Draw Mode", DrawMode.Model);
     private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color", "Passive Color", new Color(0, 1f, 1f));
     private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
     private ColorSetting color_misc = new ColorSetting("entityesp_color_misc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
     private BooleanSetting showPassiveEntities = new BooleanSetting("entityesp_show_passive", "Show Passive Entities", "Show Passive Entities", true);
     private BooleanSetting showEnemies = new BooleanSetting("entityesp_show_enemies", "Show Enemies", "Show Enemies", true);
     private BooleanSetting showMiscEntities = new BooleanSetting("entityesp_show_misc", "Show Misc Entities", "Show Misc Entities", true);
-    public BooleanSetting rainbow = new BooleanSetting("entityesp_rainbow", "Rainbow", "Rainbow", false);
-    public FloatSetting effectSpeed = new FloatSetting("entityesp_effectspeed", "Effect Speed", "Effect Speed", 4f, 1f, 20f, 0.1f);
     private FloatSetting lineThickness = new FloatSetting("entityesp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
 
     public EntityESP() {
@@ -68,11 +71,10 @@ public class EntityESP extends Module implements Render3DListener {
         this.setCategory(Category.of("Render"));
         this.setDescription("Allows the player to see entities with an ESP.");
 
+        this.addSetting(drawMode);
         this.addSetting(color_passive);
         this.addSetting(color_enemies);
         this.addSetting(color_misc);
-        this.addSetting(rainbow);
-        this.addSetting(effectSpeed);
         this.addSetting(lineThickness);
         this.addSetting(showPassiveEntities);
         this.addSetting(showEnemies);
@@ -90,9 +92,7 @@ public class EntityESP extends Module implements Render3DListener {
     }
 
     @Override
-    public void onToggle() {
-
-    }
+    public void onToggle() { }
 
     @Override
     public void OnRender(Render3DEvent event) {
@@ -106,17 +106,23 @@ public class EntityESP extends Module implements Render3DListener {
         	Vec3d cameraPosition = camera.getPos();
         	if(MC.getEntityRenderDispatcher().shouldRender(entity, frustum, cameraPosition.getX(), cameraPosition.getY(), cameraPosition.getZ())) {
         		if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
-                    //double interpolatedX = MathHelper.lerp(partialTicks, entity.prevX, entity.getX());
-                    //double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
-                    //double interpolatedZ = MathHelper.lerp(partialTicks, entity.prevZ, entity.getZ());
+        			
+        			Color color = getColorForEntity(entity);
+        			if (color != null) {
+	        			switch(drawMode.getValue()) {
+	        				case DrawMode.BoundingBox:
+	                            double interpolatedX = MathHelper.lerp(partialTicks, entity.prevX, entity.getX());
+	                            double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
+	                            double interpolatedZ = MathHelper.lerp(partialTicks, entity.prevZ, entity.getZ());
 
-                    //Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(), interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
-
-                    Color color = getColorForEntity(entity);
-                    if (color != null) {
-                    	Render3D.drawEntityModel(matrixStack, partialTicks, entity, color, lineThickness.getValue());
-                        //Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
-                    }
+	                            Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(), interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
+	                            Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
+	        					break;
+	        				case DrawMode.Model:
+	        					Render3D.drawEntityModel(matrixStack, partialTicks, entity, color, lineThickness.getValue());
+	        					break;
+	        			}
+        			}
                 }
         	}
         }
