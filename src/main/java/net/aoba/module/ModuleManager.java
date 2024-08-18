@@ -24,6 +24,8 @@ package net.aoba.module;
 import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.api.IAddon;
+import net.aoba.cmd.Command;
+import net.aoba.cmd.CommandManager;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.module.modules.combat.*;
@@ -36,6 +38,7 @@ import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil.Key;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -46,162 +49,99 @@ public class ModuleManager implements KeyDownListener {
     private MinecraftClient mc = MinecraftClient.getInstance();
 
     //Modules
-    public Module aimbot = new Aimbot();
-    public Module anticactus = new AntiCactus();
-    public Module antiinvis = new AntiInvis();
-    public Module antiknockback = new AntiKnockback();
-    public Module antikick = new AntiKick();
-    public Module autoeat = new AutoEat();
-    public Module autofarm = new AutoFarm();
-    public Module autofish = new AutoFish();
-    public Module autosign = new AutoSign();
-    public Module autosoup = new AutoSoup();
-    public Module autoTotem = new AutoTotem();
-    public Module autorespawn = new AutoRespawn();
-    public Module autowalk = new AutoWalk();
-    public Module fakeplayer = new FakePlayer();
-    public Module bowaimbot = new BowAimbot();
-    public Module breadcrumbs = new Breadcrumbs();
-    public Module chestesp = new ChestESP();
-    public Module criticals = new Criticals();
-    public Module crystalaura = new CrystalAura();
-    public Module clickTP = new ClickTP();
-    public Module entityesp = new EntityESP();
-    public Module fastladder = new FastLadder();
-    public Module fastplace = new FastPlace();
-    public Module fastbreak = new FastBreak();
-    public Module fly = new Fly();
-    public Module freecam = new Freecam();
-    public Module fullbright = new Fullbright();
-    public Module itemesp = new ItemESP();
-    public Module norender = new NoRender();
+    public Aimbot aimbot = new Aimbot();
+    public AntiCactus anticactus = new AntiCactus();
+    public AntiInvis antiinvis = new AntiInvis();
+    public AntiKnockback antiknockback = new AntiKnockback();
+    public AntiKick antikick = new AntiKick();
+    public AutoEat autoeat = new AutoEat();
+    public AutoFarm autofarm = new AutoFarm();
+    public AutoFish autofish = new AutoFish();
+    public AutoShear autoShear = new AutoShear();
+    public AutoSign autosign = new AutoSign();
+    public AutoSoup autosoup = new AutoSoup();
+    public AutoTotem autoTotem = new AutoTotem();
+    public AutoRespawn autorespawn = new AutoRespawn();
+    public AutoWalk autowalk = new AutoWalk();
+    public FakePlayer fakeplayer = new FakePlayer();
+    public BowAimbot bowaimbot = new BowAimbot();
+    public Breadcrumbs breadcrumbs = new Breadcrumbs();
+    public ChestESP chestesp = new ChestESP();
+    public Criticals criticals = new Criticals();
+    public CrystalAura crystalaura = new CrystalAura();
+    public ClickTP clickTP = new ClickTP();
+    public EntityESP entityesp = new EntityESP();
+    public FastLadder fastladder = new FastLadder();
+    public FastPlace fastplace = new FastPlace();
+    public FastBreak fastbreak = new FastBreak();
+    public Fly fly = new Fly();
+    public Freecam freecam = new Freecam();
+    public Fullbright fullbright = new Fullbright();
+    public ItemESP itemesp = new ItemESP();
+    public NoRender norender = new NoRender();
     public FocusFps focusfps = new FocusFps();
-    public Module glide = new Glide();
-    public Module guimove = new GuiMove();
-    public Module higherjump = new HighJump();
-    public Module jesus = new Jesus();
-    public Module jetpack = new Jetpack();
-    public Module killaura = new KillAura();
-    public Module maceaura = new MaceAura();
-    public Module nametags = new Nametags();
-    public Module noclip = new Noclip();
-    public Module nofall = new NoFall();
-    public Module nojumpdelay = new NoJumpDelay();
-    public Module reverseStep = new ReverseStep();
-    public Module nooverlay = new NoOverlay();
-    public Module noslowdown = new NoSlowdown();
-    public Module nuker = new Nuker();
-    public Module playeresp = new PlayerESP();
-    public Module pov = new POV();
-    public Module reach = new Reach();
-    public Module safewalk = new Safewalk();
-    public Module sneak = new Sneak();
-    public Module spawneresp = new SpawnerESP();
-    public Module speed = new Speed();
-    public Module spider = new Spider();
-    public Module sprint = new Sprint();
-    public Module step = new Step();
-    public Module strafe = new Strafe();
-    public Module entityControl = new EntityControl();
-    public Module surround = new Surround();
-    public Module tilebreaker = new TileBreaker();
-    public Module timer = new Timer();
-    public Module tracer = new Tracer();
-    public Module trajectory = new Trajectory();
-    public Module triggerbot = new TriggerBot();
-    public Module xray = new XRay();
-    public Module zoom = new Zoom();
-    public Module tooltips = new Tooltips();
-    public Module antihunger = new AntiHunger();
-    public Module expthrower = new EXPThrower();
-    public Module mcf = new MCA();
+    public Glide glide = new Glide();
+    public GuiMove guimove = new GuiMove();
+    public HighJump higherjump = new HighJump();
+    public Jesus jesus = new Jesus();
+    public Jetpack jetpack = new Jetpack();
+    public KillAura killaura = new KillAura();
+    public MaceAura maceaura = new MaceAura();
+    public Nametags nametags = new Nametags();
+    public Noclip noclip = new Noclip();
+    public NoFall nofall = new NoFall();
+    public NoJumpDelay nojumpdelay = new NoJumpDelay();
+    public ReverseStep reverseStep = new ReverseStep();
+    public NoOverlay nooverlay = new NoOverlay();
+    public NoSlowdown noslowdown = new NoSlowdown();
+    public Nuker nuker = new Nuker();
+    public PlayerESP playeresp = new PlayerESP();
+    public POV pov = new POV();
+    public Reach reach = new Reach();
+    public Safewalk safewalk = new Safewalk();
+    public Sneak sneak = new Sneak();
+    public SpawnerESP spawneresp = new SpawnerESP();
+    public Speed speed = new Speed();
+    public Spider spider = new Spider();
+    public Sprint sprint = new Sprint();
+    public Step step = new Step();
+    public Strafe strafe = new Strafe();
+    public EntityControl entityControl = new EntityControl();
+    public Surround surround = new Surround();
+    public TileBreaker tilebreaker = new TileBreaker();
+    public Timer timer = new Timer();
+    public Tracer tracer = new Tracer();
+    public Trajectory trajectory = new Trajectory();
+    public TriggerBot triggerbot = new TriggerBot();
+    public XRay xray = new XRay();
+    public Zoom zoom = new Zoom();
+    public Tooltips tooltips = new Tooltips();
+    public AntiHunger antihunger = new AntiHunger();
+    public EXPThrower expthrower = new EXPThrower();
+    public MCA mcf = new MCA();
+    public XCarry xCarry = new XCarry();
 
     public ModuleManager(List<IAddon> addons) {
-        addModule(aimbot);
-        addModule(anticactus);
-        addModule(antiinvis);
-        addModule(antiknockback);
-        addModule(antikick);
-        addModule(autoeat);
-        addModule(autofarm);
-        addModule(autofish);
-        addModule(autosign);
-        addModule(autosoup);
-        addModule(autoTotem);
-        addModule(autorespawn);
-        addModule(autowalk);
-        addModule(fakeplayer);
-        addModule(bowaimbot);
-        addModule(breadcrumbs);
-        addModule(chestesp);
-        addModule(criticals);
-        addModule(crystalaura);
-        addModule(clickTP);
-        addModule(entityesp);
-        addModule(fastladder);
-        addModule(fastplace);
-        addModule(fastbreak);
-        addModule(fly);
-        addModule(freecam);
-        addModule(fullbright);
-        addModule(glide);
-        addModule(guimove);
-        addModule(higherjump);
-        addModule(itemesp);
-        addModule(norender);
-        addModule(focusfps);
-        addModule(jesus);
-        addModule(jetpack);
-        addModule(killaura);
-        addModule(maceaura);
-        //addModule(nametags);
-        addModule(noclip);
-        addModule(nofall);
-        addModule(nojumpdelay);
-        addModule(reverseStep);
-        addModule(nooverlay);
-        addModule(noslowdown);
-        addModule(nuker);
-        addModule(playeresp);
-        addModule(pov);
-        addModule(reach);
-        addModule(safewalk);
-        addModule(sneak);
-        addModule(spawneresp);
-        addModule(speed);
-        addModule(spider);
-        addModule(sprint);
-        addModule(step);
-        addModule(strafe);
-        addModule(entityControl);
-        addModule(surround);
-        addModule(tilebreaker);
-        addModule(timer);
-        addModule(triggerbot);
-        addModule(tracer);
-        addModule(trajectory);
-        addModule(xray);
-        addModule(zoom);
-        addModule(tooltips);
-        addModule(antihunger);
-        addModule(expthrower);
-        addModule(mcf);
-
-        addons.stream().filter(Objects::nonNull).forEach(addon -> {
-            try {
-                addon.modules().forEach(module -> {
-                    try {
-                        addModule(module);
-                        LogUtils.getLogger().info("[Aoba] Successfully added module: " + module.getClass().getName() + " from addon: " + addon.getClass().getName());
-                    } catch (Exception e) {
-                        LogUtils.getLogger().error("Error adding module: " + module.getClass().getName() + " from addon: " + addon.getClass().getName(), e);
-                    }
-                });
-            } catch (Exception e) {
-                LogUtils.getLogger().error("Error processing modules from addon: " + addon.getClass().getName(), e);
+    	try {
+    		// Attempts to find each field of type Module and add it to the module list.
+            for (Field field : ModuleManager.class.getDeclaredFields()) {
+                if (!Module.class.isAssignableFrom(field.getType()))
+                    continue;
+                Module module = (Module) field.get(this);
+                addModule(module);
             }
-        });
 
+            // Gets each Addon and adds their modules to the client.
+            addons.stream().filter(Objects::nonNull).forEach(addon -> {
+                addon.modules().forEach(module -> {
+                	addModule(module);
+                });
+            });
+        } catch (Exception e) {
+            LogUtils.getLogger().error("Error initializing Aoba modules: " + e.getMessage());
+        }
+
+        // Registers all Module settings to the settings manager.
         for (Module module : modules) {
             for (Setting<?> setting : module.getSettings()) {
                 SettingManager.registerSetting(setting, Aoba.getInstance().settingManager.modulesContainer);
