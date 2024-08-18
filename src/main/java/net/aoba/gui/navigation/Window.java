@@ -189,7 +189,11 @@ public class Window implements IGuiElement {
 	private void applyInherittedHeight() {
 		float tempHeight = 0;
 		for (Component child : children) {
-			tempHeight += (child.getSize().getHeight());
+			Float height = child.getSize().getHeight();
+			if(height != null) {
+				tempHeight += height.floatValue();
+			}
+			
 		}
 		setHeight(tempHeight);
 		minHeight = tempHeight;
