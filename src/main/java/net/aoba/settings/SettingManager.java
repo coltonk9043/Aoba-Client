@@ -150,18 +150,12 @@ public class SettingManager {
 
                     switch (setting.type) {
                         case FLOAT -> {
-                            float floatValue = Float.parseFloat(value);
-                            if (((FloatSetting) setting).min_value <= floatValue
-                                && ((FloatSetting) setting).max_value >= floatValue) {
-                                setting.setValue(Float.parseFloat(value));
-                            }
+                        	FloatSetting floatSetting = (FloatSetting)setting;
+                        	floatSetting.setValue(Float.parseFloat(value));
                         }
                         case INTEGER -> {
-                            int intValue = Integer.parseInt(value);
-                            if (((IntegerSetting) setting).min_value <= intValue
-                                && ((IntegerSetting) setting).max_value >= intValue) {
-                                setting.setValue(Integer.parseInt(value));
-                            }
+                        	IntegerSetting intSetting = (IntegerSetting)setting;
+                        	intSetting.setValue(Integer.parseInt(value));
                         }
                         case BOOLEAN -> {
                             setting.setValue(Boolean.parseBoolean(value));

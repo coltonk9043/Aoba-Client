@@ -98,11 +98,10 @@ public class MaceAura extends Module implements TickListener {
 
                 // Add all potential entities to the 'hitlist'
                 if (this.targetAnimals.getValue() || this.targetMonsters.getValue()) {
-                    double radiusSqr = this.radius.getValue() * this.radius.getValue();
                     for (Entity entity : MC.world.getEntities()) {
                         if (entity == MC.player)
                             continue;
-                        if (MC.player.squaredDistanceTo(entity) > radiusSqr)
+                        if (MC.player.squaredDistanceTo(entity) > radius.getValueSqr())
                             continue;
 
                         if ((entity instanceof AnimalEntity && this.targetAnimals.getValue())

@@ -196,9 +196,8 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
         if (!result.found() && !result.isHotbar()) return;
 
-        double radiusSquared = radius.getValue() * radius.getValue();
         for (PlayerEntity player : players) {
-            if (player == MC.player || MC.player.squaredDistanceTo(player) > radiusSquared) continue;
+            if (player == MC.player || MC.player.squaredDistanceTo(player) > radius.getValueSqr()) continue;
             if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player)) continue;
 
             Optional<BlockPos> bestPos = findBestCrystalPlacement(player);

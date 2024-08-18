@@ -26,7 +26,8 @@ public class FloatSetting extends Setting<Float> {
     public final float min_value;
     public final float max_value;
     public final float step;
-
+    private Float valueSqr;
+    
     public FloatSetting(String ID, String description, float default_value, float min_value, float max_value, float step) {
         super(ID, description, default_value);
         this.min_value = min_value;
@@ -56,9 +57,11 @@ public class FloatSetting extends Setting<Float> {
      */
     @Override
     public void setValue(Float value) {
-        double newValue = Math.max(min_value, Math.min(max_value, value));
+        float newValue = Math.max(min_value, Math.min(max_value, value));
         int steps = (int) Math.round((newValue) / step);
-        super.setValue(step * steps);
+        float actualNewValue = step * steps;
+        valueSqr = actualNewValue * actualNewValue;
+        super.setValue(actualNewValue);
     }
 
     /**
@@ -67,5 +70,9 @@ public class FloatSetting extends Setting<Float> {
     @Override
     protected boolean isValueValid(Float value) {
         return value >= min_value && value <= max_value;
+    }
+    
+    public Float getValueSqr() {
+    	return this.valueSqr;
     }
 }
