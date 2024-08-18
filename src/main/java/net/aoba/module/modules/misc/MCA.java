@@ -15,13 +15,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
-import org.spongepowered.asm.mixin.injection.invoke.util.InvokeUtil;
 
 public class MCA extends Module implements MouseClickListener {
+    public enum Mode {
+        FRIEND, PEARL
+    }
+    
     private final EnumSetting<Mode> mode = new EnumSetting<>("mca_mode", "Mode", "The mode for the action to run when the middle mouse button is clicked.", Mode.FRIEND);
 
-    private int selectedSlot;
-
+    private int previousSlot = -1;
+    
     public MCA() {
         super(new KeybindSetting("key.mca", "MCA Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
@@ -49,39 +52,40 @@ public class MCA extends Module implements MouseClickListener {
 
     @Override
     public void OnMouseClick(MouseClickEvent mouseClickEvent) {
-        if (mouseClickEvent.button == MouseButton.MIDDLE && mouseClickEvent.action == MouseAction.DOWN) {
-            if (mode.getValue() == Mode.FRIEND) {
-                if (MC.targetedEntity == null) return;
-                if (!(MC.targetedEntity instanceof PlayerEntity player)) return;
+        if (mouseClickEvent.button == MouseButton.MIDDLE) {
+        	if(mouseClickEvent.action == MouseAction.DOWN) {
+        		switch(mode.getValue()) {
+        		case Mode.FRIEND:
+        			if (MC.targetedEntity == null || !(MC.targetedEntity instanceof PlayerEntity player)) return;
 
-                if (!Aoba.getInstance().friendsList.contains(player)) {
-                    Aoba.getInstance().friendsList.addFriend(player);
-                    mouseClickEvent.cancel();
-
-                    sendChatMessage("Added " + player.getName().getString() + " to friends list.");
-                } else {
-                    Aoba.getInstance().friendsList.removeFriend(player);
-                    mouseClickEvent.cancel();
-
-                    sendChatMessage("Removed " + player.getName().getString() + " from friends list.");
-                }
-            } else if (mode.getValue() == Mode.PEARL) {
-                FindItemResult result = find(Items.ENDER_PEARL);
-
-                if (!result.found() || !result.isHotbar()) return;
-
-                selectedSlot = MC.player.getInventory().selectedSlot;
-
-                if (!result.isMainHand()) {
-                    swap(result.slot(), false);
-
-                    MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
-                }
-            }
+                    if (Aoba.getInstance().friendsList.contains(player)) {
+                    	Aoba.getInstance().friendsList.removeFriend(player);
+                        mouseClickEvent.cancel();
+                        sendChatMessage("Removed " + player.getName().getString() + " from friends list.");
+                    } else {
+                    	 Aoba.getInstance().friendsList.addFriend(player);
+                         mouseClickEvent.cancel();
+                         sendChatMessage("Added " + player.getName().getString() + " to friends list.");
+                    }
+        			break;
+        		case Mode.PEARL:
+        			 FindItemResult result = find(Items.ENDER_PEARL);
+                     if (!result.found() || !result.isHotbar()) return;
+                     previousSlot = MC.player.getInventory().selectedSlot;
+                     if (!result.isMainHand()) {
+                         swap(result.slot(), false);
+                         MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+                         mouseClickEvent.cancel();
+                     }
+                     break;
+        		}
+        	}else if(mouseClickEvent.action == MouseAction.UP) {
+        		if(mode.getValue() == Mode.PEARL && previousSlot != -1) {
+        			swap(previousSlot, false);
+        			previousSlot = -1;
+        			mouseClickEvent.cancel();
+        		}
+        	}
         }
-    }
-
-    public enum Mode {
-        FRIEND, PEARL
     }
 }
