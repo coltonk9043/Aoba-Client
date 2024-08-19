@@ -26,7 +26,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Fetch Build Time
-        run: echo "time=$(date +%Y-%m-%d)" >> $GITHUB_ENV
+        run: echo "time=$(date +%Y-%m-%d)" >> $env:GITHUB_ENV
 
       - name: Build
         run: ./gradlew build
@@ -37,8 +37,8 @@ jobs:
       - uses: "0xDylan/action-auto-releases-n20@v1.1"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: nightly-${{ env.time }}
+          automatic_release_tag: nightly-${{env.time}}
           prerelease: true
-          title: Nightly Build ${{ env.TIME }}
+          title: Nightly Build ${{env.time}}
           files: |
             ./build/libs/*.jar
