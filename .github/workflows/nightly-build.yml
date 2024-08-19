@@ -37,7 +37,7 @@ jobs:
       - uses: "0xDylan/action-auto-releases-n20@v1.1"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: nightly-${{ env.TIME }}
+          automatic_release_tag: nightly-${{ env.time }}
           prerelease: true
           title: Nightly Build ${{ env.TIME }}
           files: |
