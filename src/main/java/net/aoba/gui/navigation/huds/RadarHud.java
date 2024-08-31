@@ -36,11 +36,13 @@ public class RadarHud extends HudWindow {
 
 	float distance = 50;
 
-	public RadarHud(int x, int y, int width, int height) {
-		super("RadarHud", x, y, width, height);
+	public RadarHud(int x, int y) {
+		super("RadarHud", x, y, 180, 180);
 		
 		this.minHeight = 180.0f;
 		this.minWidth = 180.0f;
+		
+		this.inheritHeightFromChildren = false;
 	}
 
 	@Override

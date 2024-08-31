@@ -33,8 +33,12 @@ import net.minecraft.util.collection.DefaultedList;
 
 public class ArmorHud extends HudWindow {
 
-    public ArmorHud(int x, int y, int width, int height) {
+    public ArmorHud(int x, int y) {
         super("ArmorHud", x, y, 16, 256);
+        this.minHeight = 256f;
+        this.maxHeight = 256f;
+        this.minWidth = 16f;
+        this.maxWidth = 16f;
     }
 
     @Override

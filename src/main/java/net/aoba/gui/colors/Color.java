@@ -60,6 +60,10 @@ public class Color {
         this.alpha = alpha;
     }
 
+    public Color getAsSolid() {
+    	return new Color(r, g, b, 255);
+    }
+    
     /**
      * Interpolates between two colors.
      *

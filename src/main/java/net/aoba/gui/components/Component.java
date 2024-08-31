@@ -21,6 +21,7 @@ package net.aoba.gui.components;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
@@ -307,14 +308,27 @@ public abstract class Component implements IGuiElement {
 			tabIterator.next().onMouseMove(mouseMoveEvent);
 		}
 		
+		boolean wasHovered = hovered;
 		if (mouseMoveEvent.isCancelled() || !visible || !Aoba.getInstance().hudManager.isClickGuiOpen()) {
 			this.hovered = false;
+			if(wasHovered){
+				GuiManager.setTooltip(null);
+			}
 		} else {
 
 			float mouseX = (float) mouseMoveEvent.getX();
 			float mouseY = (float) mouseMoveEvent.getY();
 
 			this.hovered = actualSize.intersects(mouseX, mouseY);
+			
+			String tooltip = getTooltip();
+			if(hovered && tooltip != null) {
+				GuiManager.setTooltip(tooltip);
+				mouseMoveEvent.cancel();
+			}
+			else if(wasHovered){
+				GuiManager.setTooltip(null);
+			}
 		}
 	}
 
@@ -334,5 +348,9 @@ public abstract class Component implements IGuiElement {
 		while (tabIterator.hasNext()) {
 			tabIterator.next().onMouseClick(event);
 		}
+	}
+	
+	public String getTooltip() {
+		return null;
 	}
 }

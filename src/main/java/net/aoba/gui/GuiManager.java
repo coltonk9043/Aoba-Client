@@ -55,15 +55,11 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.resource.ResourceFactory;
-
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +67,8 @@ import java.util.Map;
 public class GuiManager implements KeyDownListener, TickListener, Render2DListener {
     private static final MinecraftClient MC = MinecraftClient.getInstance();
     private static CursorStyle currentCursor = CursorStyle.Default;
-
+    private static String tooltip = null;
+    
     public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
     private final KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
 
@@ -134,8 +131,8 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
         toolsPane.AddWindow(new GoToWindow("Go To Location", 1220, 550));
         
         moduleSelector = new ModuleSelectorHud();
-        armorHud = new ArmorHud(0, 0, 200, 50);
-        radarHud = new RadarHud(0, 0, 180, 180);
+        armorHud = new ArmorHud(0, 0);
+        radarHud = new RadarHud(0, 0);
         infoHud = new InfoHud(0, 0);
         moduleArrayListHud = new ModuleArrayListHud(0, 0);
         watermarkHud = new WatermarkHud(0, 0);
@@ -194,6 +191,15 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
         Input.setCursorStyle(currentCursor);
     }
 
+    public static String getTooltip() {
+    	return tooltip;
+    }
+    
+    public static void setTooltip(String tt) {
+    	if(tooltip != tt)
+    		tooltip = tt;
+    }
+    
     public void AddWindow(Window hud, String pageName) {
         for (Page page : clickGuiNavBar.getPanes()) {
             if (page.getTitle().equals(pageName)) {
@@ -216,7 +222,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
     @Override
     public void OnKeyDown(KeyDownEvent event) {
         if (clickGuiButton.getValue().getCode() == event.GetKey() && MC.currentScreen == null) {
-            this.clickGuiOpen = !this.clickGuiOpen;
+        	setClickGuiOpen(!this.clickGuiOpen);
             this.toggleMouse();
         }
     }
@@ -291,6 +297,18 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
             }
         }
 
+        // Draw Tooltip on top of all UI elements
+        if(tooltip != null) {
+        	int mouseX = (int) MC.mouse.getX();
+            int mouseY = (int) MC.mouse.getY();
+            int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
+            int tooltipHeight = 10;
+
+            Render2D.drawRoundedBox(matrixStack.peek().getPositionMatrix(), mouseX + 12, mouseY + 12, (tooltipWidth + 4) * 2, (tooltipHeight + 4) * 2, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue().getAsSolid());
+            Render2D.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18, GuiManager.foregroundColor.getValue());
+        }
+        
+        
         matrixStack.pop();
         RenderSystem.enableCull();
     }
@@ -306,6 +324,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
     public void setClickGuiOpen(boolean state) {
         this.clickGuiOpen = state;
+        setTooltip(null);
     }
 
     /**
