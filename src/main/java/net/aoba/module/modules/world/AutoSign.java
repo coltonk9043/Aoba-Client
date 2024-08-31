@@ -36,7 +36,7 @@ public class AutoSign extends Module {
 
         this.setName("AutoSign");
         this.setCategory(Category.of("World"));
-        this.setDescription("Automatically places sign.");
+        this.setDescription("Automatically places sign with predefined text.");
     }
 
     public void setText(String[] text) {

@@ -57,6 +57,7 @@ public class ModuleManager implements KeyDownListener {
     public AutoEat autoeat = new AutoEat();
     public AutoFarm autofarm = new AutoFarm();
     public AutoFish autofish = new AutoFish();
+    public AntiHunger antihunger = new AntiHunger();
     public AutoShear autoShear = new AutoShear();
     public AutoSign autosign = new AutoSign();
     public AutoSoup autosoup = new AutoSoup();
@@ -70,7 +71,9 @@ public class ModuleManager implements KeyDownListener {
     public Criticals criticals = new Criticals();
     public CrystalAura crystalaura = new CrystalAura();
     public ClickTP clickTP = new ClickTP();
+    public EntityControl entityControl = new EntityControl();
     public EntityESP entityesp = new EntityESP();
+    public EXPThrower expthrower = new EXPThrower();
     public FastLadder fastladder = new FastLadder();
     public FastPlace fastplace = new FastPlace();
     public FastBreak fastbreak = new FastBreak();
@@ -87,6 +90,7 @@ public class ModuleManager implements KeyDownListener {
     public Jetpack jetpack = new Jetpack();
     public KillAura killaura = new KillAura();
     public MaceAura maceaura = new MaceAura();
+    public MCA mcf = new MCA();
     public Nametags nametags = new Nametags();
     public Noclip noclip = new Noclip();
     public NoFall nofall = new NoFall();
@@ -106,20 +110,16 @@ public class ModuleManager implements KeyDownListener {
     public Sprint sprint = new Sprint();
     public Step step = new Step();
     public Strafe strafe = new Strafe();
-    public EntityControl entityControl = new EntityControl();
     public Surround surround = new Surround();
     public TileBreaker tilebreaker = new TileBreaker();
     public Timer timer = new Timer();
+    public Tooltips tooltips = new Tooltips();
     public Tracer tracer = new Tracer();
     public Trajectory trajectory = new Trajectory();
     public TriggerBot triggerbot = new TriggerBot();
+    public XCarry xCarry = new XCarry();
     public XRay xray = new XRay();
     public Zoom zoom = new Zoom();
-    public Tooltips tooltips = new Tooltips();
-    public AntiHunger antihunger = new AntiHunger();
-    public EXPThrower expthrower = new EXPThrower();
-    public MCA mcf = new MCA();
-    public XCarry xCarry = new XCarry();
 
     public ModuleManager(List<IAddon> addons) {
     	try {

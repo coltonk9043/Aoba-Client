@@ -71,7 +71,7 @@ public class Trajectory extends Module implements Render3DListener {
 
 		this.setName("Trajectory");
         this.setCategory(Category.of("Render"));
-		this.setDescription("Allows the player to see where they are aiming. (DISABLED)");
+		this.setDescription("Allows the player to see where their projectiles will approxmiately land.");
 
 		this.addSetting(color);
 		this.addSetting(blipSize);

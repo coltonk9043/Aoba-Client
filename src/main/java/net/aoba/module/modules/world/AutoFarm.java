@@ -51,7 +51,7 @@ public class AutoFarm extends Module implements TickListener {
 
         this.setName("AutoFarm");
         this.setCategory(Category.of("World"));
-        this.setDescription("Destroys blocks that can be instantly broken around the player.");
+        this.setDescription("Automatically plants, fertilizes, and harvests crops.");
         this.radius = new FloatSetting("autofarm_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
         this.addSetting(radius);
     }

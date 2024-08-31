@@ -57,7 +57,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
 
         this.setName("BowAimbot");
         this.setCategory(Category.of("Combat"));
-        this.setDescription("BowAimbot");
+        this.setDescription("Calculates the location the crosshair must be to hit an arrow shot.");
 
         targetAnimals = new BooleanSetting("bowaimbot_target_mobs", "Target Mobs", "Target mobs.", false);
         targetPlayers = new BooleanSetting("bowaimbot_target_players", "Target Players", "Target players.", true);

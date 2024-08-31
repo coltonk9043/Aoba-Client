@@ -17,7 +17,7 @@ public class GuiMove extends Module implements TickListener {
 
         this.setName("GuiMove");
         this.setCategory(Category.of("Movement"));
-        this.setDescription("Lets the player move while inside of menus.");
+        this.setDescription("Lets the player move while inside of menus using arrow keys..");
     }
 
     @Override

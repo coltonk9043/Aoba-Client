@@ -109,7 +109,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
         this.setName("CrystalAura");
         this.setCategory(Category.of("Combat"));
-        this.setDescription("Attacks anything within your personal space.");
+        this.setDescription("Attacks anything within your personal space with a End Crystal.");
 
         radius = new FloatSetting("crystalaura_radius", "Radius", "Radius, in blocks, that you can place/attack a crystal.", 5f, 1f, 15f, 1f);
         placeRadius = new FloatSetting("crystalaura_place_radius", "Place Radius", "Radius, in blocks, that you can place/attack a crystal.", 5f, 1f, 15f, 1f);

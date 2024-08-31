@@ -41,7 +41,7 @@ public class Glide extends Module implements TickListener {
 
         this.setName("Glide");
         this.setCategory(Category.of("Movement"));
-        this.setDescription("Allows the player to glide down.");
+        this.setDescription("Allows the player to glide down when in the air. Does not prevent fall damage.");
 
         fallSpeed = new FloatSetting("glide_fallspeed", "Fall Speed", "The speed at which the player will fall.", 0.25f, 0.1f, 2.0f, 0.1f);
 

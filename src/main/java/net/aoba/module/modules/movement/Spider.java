@@ -42,7 +42,7 @@ public class Spider extends Module implements TickListener {
 
         this.setName("Spider");
         this.setCategory(Category.of("Movement"));
-        this.setDescription("Allows players to climb up blocks.");
+        this.setDescription("Allows players to climb up blocks like a spider.");
 
         speed = new FloatSetting("spider.speed", "Speed", "Speed that player goes up blocks.", 0.1f, 0.05f, 1.0f, 0.05f);
 

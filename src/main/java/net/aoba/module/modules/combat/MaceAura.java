@@ -60,7 +60,7 @@ public class MaceAura extends Module implements TickListener {
 
         this.setName("MaceAura");
         this.setCategory(Category.of("Combat"));
-        this.setDescription("Attacks anything within your personal space.");
+        this.setDescription("Smashes players in your personal space with a Mace with extreme damage. Be sure to enable NoFall for best results.");
 
         radius = new FloatSetting("maceaura_radius", "Radius", "Radius", 5f, 0.1f, 10f, 0.1f);
         targetAnimals = new BooleanSetting("maceaura_target_animals", "Target Animals", "Target animals.", false);
