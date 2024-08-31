@@ -13,15 +13,18 @@ import net.aoba.utils.render.Render3D;
 import net.aoba.pathfinding.AbstractPathManager;
 import net.aoba.pathfinding.FlyPathManager;
 import net.aoba.pathfinding.PathNode;
+import net.aoba.pathfinding.TeleportPathManager;
 import net.aoba.pathfinding.WalkingPathManager;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.StringSetting;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
@@ -33,15 +36,25 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GoToWindow extends Window implements TickListener, Render3DListener {
+	
+	public enum Pathfinder {
+		Walk,
+		Fly,
+		Teleport,
+	}
+	
 	private static MinecraftClient MC = MinecraftClient.getInstance();
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private ButtonComponent startButton;
 	private ButtonComponent setPositionButton;
-
-	private BooleanSetting flyEnabled;
+	private SliderComponent radiusSlider;
+	private SliderComponent flyMaxSpeedSlider;
+	
+	private EnumSetting<Pathfinder> pathfinderMode;
 	private BooleanSetting avoidWater;
 	private BooleanSetting avoidLava;
+	private FloatSetting radius;
 	private StringSetting locationX;
 	private StringSetting locationY;
 	private StringSetting locationZ;
@@ -62,11 +75,23 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	public GoToWindow(String title, int x, int y) {
 		super(title, x, y, 360, 0);
 
-		flyEnabled = new BooleanSetting("goto_fly_enabled", "Fly Enabled", "Fly Enabled", false, var -> {
-			if (var)
+		pathfinderMode = new EnumSetting<Pathfinder>("goto_pathfinder_mode", "Mode", Pathfinder.Walk, var -> {
+			switch(var) {
+			case Pathfinder.Fly:
 				pathManager = new FlyPathManager();
-			else
+				break;
+			case Pathfinder.Walk:
 				pathManager = new WalkingPathManager();
+				break;
+			case Pathfinder.Teleport:
+				pathManager = new TeleportPathManager();
+				break;
+			}
+
+			// Disable Radius setting if not teleport
+			radiusSlider.setVisible(var == Pathfinder.Teleport);
+			flyMaxSpeedSlider.setVisible(var == Pathfinder.Fly);
+			
 			if (isStarted)
 				recalculatePathAsync();
 		});
@@ -83,15 +108,25 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				recalculatePathAsync();
 		});
 
+		radius = new FloatSetting("goto_radius", "Radius", 5.0f, 1.0f, 100.0f, 1.0f, var -> {
+			if(pathManager instanceof TeleportPathManager) {
+				TeleportPathManager tpManager = (TeleportPathManager)pathManager;
+				tpManager.setRadius(var);
+				if (isStarted)
+					recalculatePathAsync();
+			}
+		});
+	
 		locationX = new StringSetting("goto_location_x", "X Coord.", "X Coordinate", "");
 		locationY = new StringSetting("goto_location_y", "Y Coord.", "Y Coordinate", "");
 		locationZ = new StringSetting("goto_location_z", "Z Coord.", "Z Coordinate", "");
 		maxSpeed = new FloatSetting("goto_max_speed", "Max Speed", "Max Speed", 4.0f, 0.5f, 15.0f, 0.5f);
 
 		// Register Settings
-		SettingManager.registerSetting(this.flyEnabled, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(this.pathfinderMode, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.avoidWater, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.avoidLava, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(this.radius, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.locationX, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.locationY, Aoba.getInstance().settingManager.configContainer);
 		SettingManager.registerSetting(this.locationZ, Aoba.getInstance().settingManager.configContainer);
@@ -104,8 +139,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				"GoTo will automatically walk/fly your player to specific coordinates.", stackPanel);
 		stackPanel.addChild(label);
 
-		CheckboxComponent flyEnabledCheckBox = new CheckboxComponent(stackPanel, flyEnabled);
-		stackPanel.addChild(flyEnabledCheckBox);
+		EnumComponent<Pathfinder> pathfinderModeComponent = new EnumComponent<Pathfinder>(stackPanel, pathfinderMode);
+		stackPanel.addChild(pathfinderModeComponent);
 
 		CheckboxComponent avoidWaterCheckbox = new CheckboxComponent(stackPanel, avoidWater);
 		stackPanel.addChild(avoidWaterCheckbox);
@@ -113,8 +148,11 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		CheckboxComponent avoidLavaCheckbox = new CheckboxComponent(stackPanel, avoidLava);
 		stackPanel.addChild(avoidLavaCheckbox);
 
-		SliderComponent flyMaxSpeed = new SliderComponent(stackPanel, maxSpeed);
-		stackPanel.addChild(flyMaxSpeed);
+		radiusSlider = new SliderComponent(stackPanel, radius);
+		stackPanel.addChild(radiusSlider);
+		
+		flyMaxSpeedSlider = new SliderComponent(stackPanel, maxSpeed);
+		stackPanel.addChild(flyMaxSpeedSlider);
 
 		TextBoxComponent locationXTextBox = new TextBoxComponent(stackPanel, locationX);
 		stackPanel.addChild(locationXTextBox);
@@ -254,7 +292,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			prevPos = pos;
 		}
 
-		if (flyEnabled.getValue()) {
+		if (pathfinderMode.getValue() == Pathfinder.Fly) {
 			if (prevPos.getY() >= current.getY())
 				return prevPos;
 			else
@@ -320,26 +358,41 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 
 			Vec3d nextCenterPos = next.pos.toBottomCenterPos();
 
-			if (flyEnabled.getValue()) {
-				double velocity = Math.min(maxSpeed.getValue(), MC.player.getPos().distanceTo(nextCenterPos));
-				Vec3d direction = nextCenterPos.subtract(MC.player.getPos()).normalize().multiply(velocity);
+			switch(pathfinderMode.getValue()) {
+				case Pathfinder.Fly:
+					double velocity = Math.min(maxSpeed.getValue(), MC.player.getPos().distanceTo(nextCenterPos));
+					Vec3d direction = nextCenterPos.subtract(MC.player.getPos()).normalize().multiply(velocity);
 
-				// Check to see if the player is in a vehicle. If they are, we want to apply
-				// velocity to the vehicle (boatfly)
-				if (MC.player.isRiding()) {
-					Entity riding = MC.player.getRootVehicle();
-					riding.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
-					riding.setVelocity(direction);
-				} else
-					MC.player.setVelocity(direction);
-			} else {
-				MC.player.getAbilities().flying = false;
-				MC.player.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
-				MC.options.forwardKey.setPressed(true);
-				if (next.getIsInWater() || next.getIsInLava() || next.getWasJump() || MC.player.horizontalCollision)
-					MC.options.jumpKey.setPressed(true);
-				else
-					MC.options.jumpKey.setPressed(false);
+					// Check to see if the player is in a vehicle. If they are, we want to apply
+					// velocity to the vehicle (boatfly)
+					if (MC.player.isRiding()) {
+						Entity riding = MC.player.getRootVehicle();
+						riding.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
+						riding.setVelocity(direction);
+					} else
+						MC.player.setVelocity(direction);
+					break;
+				case Pathfinder.Walk:
+					MC.player.getAbilities().flying = false;
+					MC.player.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
+					MC.options.forwardKey.setPressed(true);
+					if (next.getIsInWater() || next.getIsInLava() || next.getWasJump() || MC.player.horizontalCollision)
+						MC.options.jumpKey.setPressed(true);
+					else
+						MC.options.jumpKey.setPressed(false);
+					break;
+				case Pathfinder.Teleport:
+	                int packetsRequired = (int) Math.ceil(MC.player.getPos().distanceTo(nextCenterPos) / 10) - 1;
+
+	                for (int i = 0; i < packetsRequired; i++) {
+	                    MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+	                }
+
+	                MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(nextCenterPos.x, nextCenterPos.y, nextCenterPos.z, true));
+	                MC.player.setPosition(nextCenterPos);
+					break;
+				default:
+					break;
 			}
 		} else {
 			// Check to see if we actually reached the destination. If not, we want to
