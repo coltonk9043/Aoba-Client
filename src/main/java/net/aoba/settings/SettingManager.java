@@ -21,6 +21,8 @@ package net.aoba.settings;
 import com.mojang.logging.LogUtils;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
+import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.ColorSetting.ColorMode;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IntegerSetting;
@@ -98,7 +100,8 @@ public class SettingManager {
                             + ((Rectangle) setting.getValue()).getHeight());
                     }
                     case COLOR -> {
-                        String s = ((Color) setting.getValue()).getColorAsHex();
+                    	ColorSetting cSetting = (ColorSetting)setting;
+                        String s = cSetting.getMode().name() + "," + ((Color) setting.getValue()).getColorAsHex();
                         config.setProperty(setting.ID, s);
                     }
                     case BLOCKS -> {
@@ -185,12 +188,18 @@ public class SettingManager {
                             }
                         }
                         case COLOR -> {
-                            long hexValue = Long.parseLong(value.replace("#", ""), 16);
-                            int Alpha = (int) ((hexValue) >> 24) & 0xFF;
-                            int R = (int) ((hexValue) >> 16) & 0xFF;
-                            int G = (int) ((hexValue) >> 8) & 0xFF;
-                            int B = (int) (hexValue) & 0xFF;
-                            setting.setValue(new Color(R, G, B, Alpha));
+                        	String[] splits = value.split(",");
+                        	ColorSetting cSetting = (ColorSetting)setting;
+                        	if(splits.length == 2) {
+                        		ColorMode enumValue = Enum.valueOf(((ColorSetting) setting).getMode().getDeclaringClass(), splits[0]);
+                        		long hexValue = Long.parseLong(splits[1].replace("#", ""), 16);
+                                int Alpha = (int) ((hexValue) >> 24) & 0xFF;
+                                int R = (int) ((hexValue) >> 16) & 0xFF;
+                                int G = (int) ((hexValue) >> 8) & 0xFF;
+                                int B = (int) (hexValue) & 0xFF;
+                                cSetting.setMode(enumValue);
+                                setting.setValue(new Color(R, G, B, Alpha));
+                        	}
                         }
                         case BLOCKS -> {
                             String[] ids = value.split(",");

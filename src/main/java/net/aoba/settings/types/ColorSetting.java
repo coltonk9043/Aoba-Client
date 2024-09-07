@@ -20,12 +20,16 @@ package net.aoba.settings.types;
 
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
-import net.aoba.gui.colors.ColorMode;
 import net.aoba.settings.Setting;
 
 public class ColorSetting extends Setting<Color> {
+	public enum ColorMode {
+	    Solid,
+	    Rainbow,
+	    Random,
+	}
 
-    private ColorMode mode;
+    private ColorMode mode = ColorMode.Solid;
 
     public ColorSetting(String ID, String description, Color default_value) {
         super(ID, description, default_value);
@@ -42,10 +46,14 @@ public class ColorSetting extends Setting<Color> {
         return (value.getRed() <= 255 && value.getGreen() <= 255 && value.getBlue() <= 255);
     }
 
+    public ColorMode getMode() {
+    	return mode;
+    }
+    
     public void setMode(ColorMode color) {
         mode = color;
         switch (mode) {
-            case Normal:
+            case Solid:
                 this.setValue(default_value);
                 break;
             case Rainbow:

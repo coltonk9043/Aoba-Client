@@ -21,14 +21,11 @@
  */
 package net.aoba.gui.colors;
 
-import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
 
-public class RainbowColor extends Color implements TickListener {
+public class RainbowColor extends AnimatedColor  {
     public RainbowColor() {
-        super(255, 0, 0);
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        super();
     }
 
     @Override
