@@ -51,6 +51,14 @@ public class FloatSetting extends Setting<Float> {
         this.step = step;
         type = TYPE.FLOAT;
     }
+    
+    public FloatSetting(String ID, String displayName, String description, float default_value, float min_value, float max_value, float step, Consumer<Float> onUpdate) {
+        super(ID, displayName, description, default_value, onUpdate);
+        this.min_value = min_value;
+        this.max_value = max_value;
+        this.step = step;
+        type = TYPE.FLOAT;
+    }
 
     /**
      * Setter for the value. Includes rounding to the nearest "step".

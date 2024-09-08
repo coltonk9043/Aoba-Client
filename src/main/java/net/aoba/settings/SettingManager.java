@@ -197,8 +197,11 @@ public class SettingManager {
                                 int R = (int) ((hexValue) >> 16) & 0xFF;
                                 int G = (int) ((hexValue) >> 8) & 0xFF;
                                 int B = (int) (hexValue) & 0xFF;
+                                
                                 cSetting.setMode(enumValue);
-                                setting.setValue(new Color(R, G, B, Alpha));
+                                if(enumValue == ColorMode.Solid) {
+                                	setting.setValue(new Color(R, G, B, Alpha));
+                                }
                         	}
                         }
                         case BLOCKS -> {
