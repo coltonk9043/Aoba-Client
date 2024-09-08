@@ -52,7 +52,6 @@ public class WalkingPathManager extends AbstractPathManager {
 
                 // Mark the current node as visited
                 visited.add(current.node);
-                float distanceToStart = heuristic(current.node, startNode.pos);
 
                 // Explore neighboring nodes
                 ArrayList<PathNode> list = getNeighbouringBlocks(current.node);
@@ -61,11 +60,10 @@ public class WalkingPathManager extends AbstractPathManager {
                         continue;
 
                     float predictedDistanceToTarget = heuristic(node, target);
-                    float totalDistance = distanceToStart + predictedDistanceToTarget;
 
                     // Update distances and parent relationships if a shorter path is found
-                    if (!distances.containsKey(node) || totalDistance < distances.get(node)) {
-                        distances.put(node, totalDistance);
+                    if (!distances.containsKey(node) || predictedDistanceToTarget < distances.get(node)) {
+                        distances.put(node, predictedDistanceToTarget);
                         queue.add(new PathFinderEntry(node, predictedDistanceToTarget));
                         parentMap.put(node, current.node);
                     }

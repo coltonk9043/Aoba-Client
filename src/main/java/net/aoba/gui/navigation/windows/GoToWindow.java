@@ -21,10 +21,13 @@ import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.StringSetting;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.PlantBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
@@ -108,7 +111,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				recalculatePathAsync();
 		});
 
-		radius = new FloatSetting("goto_radius", "Radius", 5.0f, 1.0f, 100.0f, 1.0f, var -> {
+		radius = new FloatSetting("goto_radius", "Teleport Radius", "The radius that the teleport pathfinder will attempt to find a block within.", 5.0f, 1.0f, 100.0f, 1.0f, var -> {
 			if(pathManager instanceof TeleportPathManager) {
 				TeleportPathManager tpManager = (TeleportPathManager)pathManager;
 				tpManager.setRadius(var);
@@ -222,9 +225,25 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	}
 
 	private void recalculatePath() {
+		BlockPos targetPos = getNextTarget();
+
+		int x = Integer.parseInt(locationX.getValue());
+		int y = Integer.parseInt(locationY.getValue());
+		int z = Integer.parseInt(locationZ.getValue());
+		
+		pathManager.setTarget(targetPos);
+		nodes = pathManager.recalculatePath(MC.player.getBlockPos());
+
+		start = MC.player.getBlockPos();
+		end = targetPos;
+		actualEnd = new BlockPos(x, y, z);
+		currentNodeIndex = 0;
+	}
+
+	private BlockPos getNextTarget() {
 		if (!NumberUtils.isParsable(locationX.getValue()) || !NumberUtils.isParsable(locationY.getValue())
 				|| !NumberUtils.isParsable(locationZ.getValue()))
-			return;
+			return null;
 
 		int x = Integer.parseInt(locationX.getValue());
 		int y = Integer.parseInt(locationY.getValue());
@@ -269,26 +288,21 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		// If it doesn't, it is possible that the target would be inside of the bllock.
 		if (!foundTargetInLoadedChunks)
 			newTarget = getHighestBlock(newTarget);
-
-		targetPos = newTarget;
-
-		pathManager.setTarget(targetPos);
-		nodes = pathManager.recalculatePath(MC.player.getBlockPos());
-
-		start = MC.player.getBlockPos();
-		end = targetPos;
-		actualEnd = new BlockPos(x, y, z);
-		currentNodeIndex = 0;
+		
+		return newTarget;
 	}
-
+	
 	private BlockPos getHighestBlock(BlockPos current) {
+		boolean isTeleportMode = pathfinderMode.getValue() == Pathfinder.Teleport;
 		BlockPos prevPos = null;
 		for (int i = 320; i >= -64; i--) {
 			BlockPos pos = current.withY(i);
 			BlockState state = MC.world.getBlockState(pos);
-			if (!state.isAir()) {
+			
+			if ((isTeleportMode && !state.isAir() && !state.getFluidState().isIn(FluidTags.WATER) && !state.getFluidState().isIn(FluidTags.LAVA) && !(state.getBlock() instanceof PlantBlock)) 
+					|| (!isTeleportMode && !state.isAir()))
 				break;
-			}
+			
 			prevPos = pos;
 		}
 

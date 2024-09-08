@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
-
-import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
@@ -18,13 +16,6 @@ import net.minecraft.util.math.ChunkSectionPos;
  * implementations for path recalculation and heuristic calculation for flying.
  */
 public class FlyPathManager extends AbstractPathManager {
-
-    /**
-     * Recalculates the path from the given position to the target position.
-     *
-     * @param pos The starting position for path recalculation.
-     * @return An ArrayList of PathNode representing the recalculated path.
-     */
     @Override
     public ArrayList<PathNode> recalculatePath(BlockPos pos) {
         if (target == null) {
@@ -48,15 +39,13 @@ public class FlyPathManager extends AbstractPathManager {
             }
 
             visited.add(current.node);
-            float distanceToStart = heuristic(current.node, startNode.pos);
-
             for (PathNode neighbor : getNeighbouringBlocks(current.node)) {
                 if (visited.contains(neighbor)) {
                     continue;
                 }
 
                 float predictedDistanceToTarget = heuristic(neighbor, target);
-                float totalDistance = distanceToStart + predictedDistanceToTarget;
+                float totalDistance = predictedDistanceToTarget;
 
                 // Update distances and queue if this path is better
                 if (!distances.containsKey(neighbor) || totalDistance < distances.get(neighbor)) {
@@ -69,13 +58,6 @@ public class FlyPathManager extends AbstractPathManager {
         return null;
     }
 
-    /**
-     * Calculates the heuristic cost from the given position to the target.
-     *
-     * @param position The current PathNode position.
-     * @param target   The target BlockPos position.
-     * @return The heuristic cost as a float.
-     */
     @Override
     protected float heuristic(PathNode position, BlockPos target) {
         if (position == null || target == null) {
@@ -99,12 +81,6 @@ public class FlyPathManager extends AbstractPathManager {
         return dx + dy + dz;
     }
 
-    /**
-     * Gets the neighboring blocks for the given node.
-     *
-     * @param node The current PathNode.
-     * @return An ArrayList of neighboring PathNode objects.
-     */
     @Override
     protected ArrayList<PathNode> getNeighbouringBlocks(PathNode node) {
         ArrayList<PathNode> result = new ArrayList<>();
