@@ -3,68 +3,54 @@ package net.aoba.settings.friends;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 import java.util.UUID;
 
 public class FriendsList {
-    private HashSet<Friend> friendsList;
-    public static File configFolder;
-    public static File friendsFile;
+    private final File friendsFile;
+    private final HashSet<Friend> friendsList = new HashSet<>();
 
     public FriendsList() {
-        friendsList = new HashSet<Friend>();
-        configFolder = new File(MinecraftClient.getInstance().runDirectory + File.separator + "aoba");
-        friendsFile = new File(configFolder + File.separator + "friends.xml");
-
+        File configFolder = new File(MinecraftClient.getInstance().runDirectory, "aoba");
+        friendsFile = new File(configFolder, "friends.xml");
         load();
     }
 
     public void save() {
-        Properties props = new Properties();
-        try {
+        try (FileOutputStream fos = new FileOutputStream(friendsFile)) {
+            Properties props = new Properties();
             StringBuilder friendsBuilder = new StringBuilder();
             for (Friend friend : friendsList) {
-                friendsBuilder.append(friend.getUsername());
-                friendsBuilder.append(':');
-                friendsBuilder.append(friend.getUUID().toString());
-                friendsBuilder.append('\n');
+                friendsBuilder.append(friend.getUsername()).append(':').append(friend.getUUID()).append('\n');
             }
-
-            props.loadFromXML(new FileInputStream(friendsFile));
             props.setProperty("friends", friendsBuilder.toString());
-            props.storeToXML(new FileOutputStream(friendsFile), null);
-        } catch (FileNotFoundException e) {
-            LogUtils.getLogger().error("Friends List File not found.");
+            props.storeToXML(fos, null);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LogUtils.getLogger().error("Failed to save friends list", e);
         }
     }
-	
+
     public void load() {
-        Properties props = new Properties();
-        try {
-            props.loadFromXML(new FileInputStream(friendsFile));
-
-            // Since UUIDs are delimited using dashes, we can safely store the username and uuid in format: (username):(uuid).
-            String value = props.getProperty("friends", null);
-            String[] entries = value.split(",");
-
-            for (String entry : entries) {
-                String[] values = entry.split(":");
-                if (values.length == 2) {
-                    Friend friend = new Friend(values[0], UUID.fromString(values[1]));
-                    friendsList.add(friend);
+        try (FileInputStream fis = new FileInputStream(friendsFile)) {
+            Properties props = new Properties();
+            props.loadFromXML(fis);
+            String friends = props.getProperty("friends");
+            if (friends != null) {
+                for (String entry : friends.split("\n")) {
+                    String[] values = entry.split(":");
+                    if (values.length == 2) {
+                        friendsList.add(new Friend(values[0], UUID.fromString(values[1])));
+                    }
                 }
-
             }
-        } catch (FileNotFoundException e) {
-            LogUtils.getLogger().error("Friends List File not found.");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LogUtils.getLogger().error("Failed to load friends list", e);
         }
     }
 
@@ -81,12 +67,7 @@ public class FriendsList {
     }
 
     public void removeFriend(UUID uuid) {
-        for (Friend friend : friendsList) {
-            if (friend.getUUID().equals(uuid)) {
-                friendsList.remove(friend);
-                break;
-            }
-        }
+        friendsList.removeIf(friend -> friend.getUUID().equals(uuid));
     }
 
     public boolean contains(PlayerEntity entity) {
@@ -94,12 +75,7 @@ public class FriendsList {
     }
 
     public boolean contains(UUID uuid) {
-        for (Friend friend : friendsList) {
-            if (friend.getUUID().equals(uuid)) {
-                return true;
-            }
-        }
-        return false;
+        return friendsList.stream().anyMatch(friend -> friend.getUUID().equals(uuid));
     }
 
     public HashSet<Friend> getFriends() {

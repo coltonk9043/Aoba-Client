@@ -24,9 +24,8 @@ import net.aoba.cmd.CommandManager;
 import net.aoba.module.Module;
 import net.minecraft.util.Formatting;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class CmdHelp extends Command {
@@ -67,7 +66,7 @@ public class CmdHelp extends Command {
         CommandManager.sendChatMessage("Use " + Formatting.LIGHT_PURPLE + ".aoba help [n]" + Formatting.RESET + " to get page n of help.");
 
         // Fetch the commands and dislays their syntax on the screen.
-        HashMap<String, Command> commands = Aoba.getInstance().commandManager.getCommands();
+        Map<String, Command> commands = Aoba.getInstance().commandManager.getCommands();
         Set<String> keySet = commands.keySet();
         ArrayList<String> listOfCommands = new ArrayList<String>(keySet);
 
