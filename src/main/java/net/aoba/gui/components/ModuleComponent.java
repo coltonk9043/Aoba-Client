@@ -113,6 +113,7 @@ public class ModuleComponent extends Component {
                     if (lastSettingsTab == null) {
                         lastSettingsTab = new CloseableWindow(this.module.getName(), actualX + actualWidth + 1, actualY, 320.0f, 0.0f);
                         lastSettingsTab.minWidth = 320.0f;
+                        lastSettingsTab.setInheritHeightFromChildren(true);
                         StackPanelComponent stackPanel = new StackPanelComponent(lastSettingsTab);
                         stackPanel.setMargin(new Margin(null, 30f, null, null));
 

@@ -33,10 +33,8 @@ public class DirectLoginAltScreen extends Screen {
 
     private final Screen parent;
     private ButtonWidget buttonLoginAlt;
-    private CheckboxWidget toggleMicrosoft;
 
     private TextFieldWidget textFieldAltUsername;
-    private TextFieldWidget textFieldAltPassword;
 
     private boolean didLoginError = false;
 
@@ -48,19 +46,8 @@ public class DirectLoginAltScreen extends Screen {
     public void init() {
         super.init();
 
-        this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 76, 200, 20, Text.of("Enter Name"));
+        this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 50, 200, 20, Text.of("Enter Name"));
         this.addDrawableChild(this.textFieldAltUsername);
-
-        this.textFieldAltPassword = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20, Text.of("Enter Password"));
-        textFieldAltPassword.setRenderTextProvider((text, n) -> {
-            StringBuilder str = new StringBuilder();
-            str.append("*".repeat(text.length()));
-            return OrderedText.styledForwardsVisitedString(str.toString(), Style.EMPTY);
-        });
-        this.addDrawableChild(this.textFieldAltPassword);
-
-        this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
-        this.addDrawableChild(this.toggleMicrosoft);
 
         this.buttonLoginAlt = ButtonWidget.builder(Text.of("Login"), b -> this.onButtonLoginPressed())
                 .dimensions(this.width / 2 - 100, this.height / 2 + 24, 200, 20).build();
@@ -72,12 +59,14 @@ public class DirectLoginAltScreen extends Screen {
 
     private void onButtonLoginPressed() {
         boolean loggedIn;
-        if (this.textFieldAltPassword.getText().isEmpty()) {
+        // TODO: Cracked accounts
+        if (false) {
             Aoba.getInstance().altManager.loginCracked(this.textFieldAltUsername.getText());
             client.setScreen(this.parent);
             return;
         } else {
-            Alt alt = new Alt(this.textFieldAltUsername.getText(), this.textFieldAltPassword.getText(), this.toggleMicrosoft.isChecked());
+            Alt alt = new Alt(this.textFieldAltUsername.getText(), false);
+            alt.auth();
             loggedIn = Aoba.getInstance().altManager.login(alt);
         }
 
@@ -92,12 +81,9 @@ public class DirectLoginAltScreen extends Screen {
     public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
     	super.render(drawContext, mouseX, mouseY, partialTicks);
         drawContext.drawCenteredTextWithShadow(textRenderer, this.title.getString(), this.width / 2, 20, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, this.textFieldAltPassword.getText().isEmpty() ? "Cracked Account" : "Premium Account", this.width / 2 - 100, height / 2 - 106, this.textFieldAltPassword.getText().isEmpty() ? 0xFF0000 : 0x00FF00);
-        drawContext.drawTextWithShadow(textRenderer, "Enter Username", this.width / 2 - 100, height / 2 - 90, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Enter Password", this.width / 2 - 100, height / 2 - 50, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "Enter Username/Email", this.width / 2 - 100, height / 2 - 60, 16777215);
         //drawStringWithShadow(matrixStack,textRenderer, "Microsoft: ", this.width / 2 - 100, height / 2 - 10, 16777215);
         this.textFieldAltUsername.render(drawContext, mouseX, mouseY, partialTicks);
-        this.textFieldAltPassword.render(drawContext, mouseX, mouseY, partialTicks);
         if (didLoginError) {
             drawContext.drawTextWithShadow(textRenderer, "Incorrect Login (Try using Email rather than Username)", this.width / 2 - 140, 116, 0xFF0000);
         }

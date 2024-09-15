@@ -32,26 +32,55 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+
+import java.util.function.Consumer;
+
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 public class TextBoxComponent extends Component implements KeyDownListener {
     private boolean listeningForKey;
-    private StringSetting string;
+    
+    @Nullable
+    private String title;
+    private String text;
+    private StringSetting stringSetting;
+    
     private boolean isFocused = false;
     private float focusAnimationProgress = 0.0f;
-    private Color focusBorderColor = new Color(255, 255, 255);
     private Color errorBorderColor = new Color(255, 0, 0);
     private boolean isErrorState = false;
 
+    // Events
+    private Consumer<String> onTextChanged;
+    
+    public TextBoxComponent(IGuiElement parent, String title) {
+    	super(parent, new Rectangle(null, null, null, 30f));
+    	this.setMargin(new Margin(8f, 2f, 8f, 2f));
+    	this.title = title;
+    	this.text = "";
+    }
+    
+    public TextBoxComponent(IGuiElement parent, String title, String text) {
+    	super(parent, new Rectangle(null, null, null, 30f));
+    	this.setMargin(new Margin(8f, 2f, 8f, 2f));
+    	
+    	this.title = title;
+    	this.text = text;
+    }
+     
     public TextBoxComponent(IGuiElement parent, StringSetting stringSetting) {
         super(parent, new Rectangle(null, null, null, 30f));
-        this.string = stringSetting;
-
         this.setMargin(new Margin(8f, 2f, 8f, 2f));
-
+        
+        this.stringSetting = stringSetting;
+        this.stringSetting.addOnUpdate(s -> {this.text = s;});
+        
+        this.title = stringSetting.displayName;
+        this.text = stringSetting.getValue();
     }
-
+    
     @Override
     public void update() {
         super.update();
@@ -74,19 +103,14 @@ public class TextBoxComponent extends Component implements KeyDownListener {
             focusAnimationProgress = Math.max(0.0f, focusAnimationProgress - partialTicks * 0.1f);
         }
 
-        Color borderColor = isErrorState ? errorBorderColor
-            : new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
+        Color borderColor = isErrorState ? errorBorderColor : new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
 
-        Render2D.drawString(drawContext, string.displayName, actualX, actualY + 8, 0xFFFFFF);
-        
-        // Text Box on right.
+        Render2D.drawString(drawContext, title, actualX, actualY + 8, 0xFFFFFF);
         Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 150, actualY, 150, actualHeight, 3.0f, borderColor, new Color(115, 115, 115, 200));
 
-        String keyBindText = this.string.getValue();
-        if (!keyBindText.isEmpty()) {
+        if (!text.isEmpty()) {
             int visibleStringLength = 120 / 10;
-            String visibleString = keyBindText.substring(Math.max(0, keyBindText.length() - visibleStringLength - 1),
-                keyBindText.length());
+            String visibleString = text.substring(Math.max(0, text.length() - visibleStringLength - 1), text.length());
             Render2D.drawString(drawContext, visibleString, actualX + actualWidth - 145, actualY + 8, 0xFFFFFF);
         }
     }
@@ -114,13 +138,15 @@ public class TextBoxComponent extends Component implements KeyDownListener {
             if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_ESCAPE) {
             	setListeningForKey(false);
             } else if (key == GLFW.GLFW_KEY_BACKSPACE) {
-                String currentVal = string.getValue();
-                if (!currentVal.isEmpty())
-                    string.setValue(currentVal.substring(0, currentVal.length() - 1));
+            	if(!text.isEmpty()) {
+            		 text = text.substring(0, text.length() - 1);
+            		 if(stringSetting != null)
+            			 stringSetting.setValue(text);
+            	}
             } else {
-                String currentVal = string.getValue();
-                currentVal += "" + (char) key;
-                string.setValue(currentVal);
+                text += "" + (char) key;
+                if(stringSetting != null)
+                	stringSetting.setValue(text);
             }
 
             event.cancel();
@@ -137,6 +163,13 @@ public class TextBoxComponent extends Component implements KeyDownListener {
     		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
     	}else {
     		Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
+    		if(onTextChanged != null) {
+    			onTextChanged.accept(text);
+    		}
     	}
+    }
+    
+    public void setOnTextChanged(Consumer<String> onTextChanged) {
+    	this.onTextChanged = onTextChanged;
     }
 }

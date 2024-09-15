@@ -11,9 +11,12 @@ import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 
 public class HudWindow extends Window {
+	private static Color hoverColor = new Color(255, 0, 0);
 	private static Color dragColor = new Color(255, 0, 0, 165);
 	public BooleanSetting activated;
 
+	public CloseableWindow optionsWindow;
+	
 	public HudWindow(String ID, float x, float y, float width, float height) {
 		super(ID, x, y, width, height);
 
@@ -40,22 +43,26 @@ public class HudWindow extends Window {
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		if (getVisible()) {
+			Rectangle pos = position.getValue();
+			
+			float x = pos.getX().floatValue();
+			float y = pos.getY().floatValue();
+			float width = pos.getWidth().floatValue();
+			float height = pos.getHeight().floatValue();
+			
 			if (isMoving) {
-				Rectangle pos = position.getValue();
-
 				if (pos.isDrawable()) {
-					float x = pos.getX().floatValue();
-					float y = pos.getY().floatValue();
-					float width = pos.getWidth().floatValue();
-					float height = pos.getHeight().floatValue();
-
 					Render2D.drawRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height,
 							GuiManager.roundingRadius.getValue(), dragColor);
-
-					for (Component child : children) {
-						child.draw(drawContext, partialTicks);
-					}
 				}
+			}
+			if(isMouseOver) {
+				Render2D.drawRoundedBoxOutline(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height,
+						GuiManager.roundingRadius.getValue(), hoverColor);
+			}
+			
+			for (Component child : children) {
+				child.draw(drawContext, partialTicks);
 			}
 		}
 	}

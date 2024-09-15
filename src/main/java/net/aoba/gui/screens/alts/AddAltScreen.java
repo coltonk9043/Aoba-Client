@@ -34,10 +34,9 @@ public class AddAltScreen extends Screen {
     private final AltScreen parent;
 
     private ButtonWidget buttonAddAlt;
-    private CheckboxWidget toggleMicrosoft;
+    private CheckboxWidget toggleCracked;
     private TextFieldWidget textFieldAltUsername;
-    private TextFieldWidget textFieldAltPassword;
-
+    
     public AddAltScreen(AltScreen parentScreen) {
         super(Text.of("Alt Manager"));
         this.parent = parentScreen;
@@ -46,24 +45,13 @@ public class AddAltScreen extends Screen {
     public void init() {
         super.init();
 
-        this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 76, 200, 20,
+        this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20,
                 Text.of("Enter Name"));
         this.textFieldAltUsername.setText("");
         this.addDrawableChild(this.textFieldAltUsername);
 
-        this.textFieldAltPassword = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20,
-                Text.of("Enter Password"));
-        this.textFieldAltPassword.setText("");
-        this.addDrawableChild(this.textFieldAltPassword);
-        textFieldAltPassword.setRenderTextProvider((text, n) -> {
-            StringBuilder str = new StringBuilder();
-            for (int i = 0; i < text.length(); i++)
-                str.append("*");
-            return OrderedText.styledForwardsVisitedString(str.toString(), Style.EMPTY);
-        });
-
-        this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
-        this.addDrawableChild(this.toggleMicrosoft);
+        this.toggleCracked = CheckboxWidget.builder(Text.of("Cracked Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
+        this.addDrawableChild(this.toggleCracked);
 
         this.buttonAddAlt = ButtonWidget.builder(Text.of("Add Alt"), b -> this.onButtonAltAddPressed())
                 .dimensions(this.width / 2 - 100, this.height / 2 + 24, 200, 20).build();
@@ -77,13 +65,16 @@ public class AddAltScreen extends Screen {
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, mouseX, mouseY, delta);
         drawContext.drawCenteredTextWithShadow(textRenderer, "Add Alternate Account", this.width / 2, 20, 16777215);
-        drawContext.drawCenteredTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
-        drawContext.drawCenteredTextWithShadow(textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);
+        drawContext.drawCenteredTextWithShadow(textRenderer, "Username:", this.width / 2 - 75, height / 2 - 50, 16777215);
     }
 
     private void onButtonAltAddPressed() {
-        Alt alt = new Alt(this.textFieldAltUsername.getText(), this.textFieldAltPassword.getText(), this.toggleMicrosoft.isChecked());
+        Alt alt = new Alt(this.textFieldAltUsername.getText(), toggleCracked.isChecked());
         Aoba.getInstance().altManager.addAlt(alt);
+        
+        if(!alt.isCracked())
+        	alt.auth();
+        
         this.parent.refreshAltList();
     }
 

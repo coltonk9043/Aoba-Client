@@ -78,6 +78,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	public GoToWindow(String title, int x, int y) {
 		super(title, x, y, 360, 0);
 
+		this.inheritHeightFromChildren = true;
+		
 		pathfinderMode = new EnumSetting<Pathfinder>("goto_pathfinder_mode", "Mode", Pathfinder.Walk, var -> {
 			switch(var) {
 			case Pathfinder.Fly:

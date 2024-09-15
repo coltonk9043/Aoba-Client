@@ -31,6 +31,8 @@ public class ToggleHudsTab extends Window {
     public ToggleHudsTab(ArrayList<HudWindow> huds) {
         super("Toggle HUDs", 0, 0, 50, 50);
 
+        this.inheritHeightFromChildren = true;
+        
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setMargin(new Margin(null, 30f, null, null));
 

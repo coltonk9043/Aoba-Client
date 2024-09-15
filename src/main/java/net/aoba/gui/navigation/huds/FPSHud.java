@@ -12,14 +12,16 @@ public class FPSHud extends HudWindow {
     private static final MinecraftClient MC = MinecraftClient.getInstance();
 
     public FPSHud(int x, int y) {
-        super("FPSHud", x, y, 0, 0);
+        super("FPSHud", x, y, 0, 20f);
         resizeable = false;
+        inheritHeightFromChildren = false;
+        
+        this.minHeight = 20f;
+        this.maxHeight = 20f;
     }
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-        super.draw(drawContext, partialTicks);
-
         if (getVisible()) {
             Rectangle pos = position.getValue();
             if (pos.isDrawable()) {
@@ -35,5 +37,6 @@ public class FPSHud extends HudWindow {
                 Render2D.drawString(drawContext, fpsText, pos.getX(), pos.getY(), GuiManager.foregroundColor.getValue().getColorAsInt());
             }
         }
+        super.draw(drawContext, partialTicks);
     }
 }

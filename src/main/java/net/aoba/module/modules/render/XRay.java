@@ -51,7 +51,7 @@ public class XRay extends Module {
                         Blocks.LAPIS_BLOCK, Blocks.NETHER_QUARTZ_ORE, Blocks.MOSSY_COBBLESTONE, Blocks.STONE_BRICKS,
                         Blocks.OAK_PLANKS, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
                         Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_COAL_ORE)));
-        blocks.setOnUpdate((HashSet<Block> block) -> ReloadRenderer(block));
+        blocks.addOnUpdate((HashSet<Block> block) -> ReloadRenderer(block));
         this.addSetting(blocks);
     }
 

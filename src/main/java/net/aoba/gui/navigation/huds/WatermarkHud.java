@@ -8,14 +8,17 @@ import net.aoba.utils.render.Render2D;import net.minecraft.client.gui.DrawContex
 public class WatermarkHud extends HudWindow {
 
     public WatermarkHud(int x, int y) {
-        super("WatermarkHud", x, y, 0, 0);
+        super("WatermarkHud", x, y, 0, 20);
+        
         resizeable = false;
+        inheritHeightFromChildren = false;
+        
+        this.minHeight = 20f;
+        this.maxHeight = 20f;
     }
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-        super.draw(drawContext, partialTicks);
-
         if (getVisible()) {
             Rectangle pos = position.getValue();
             if (pos.isDrawable()) {
@@ -30,6 +33,8 @@ public class WatermarkHud extends HudWindow {
                 Render2D.drawString(drawContext, watermarkText, pos.getX(), pos.getY(), GuiManager.foregroundColor.getValue().getColorAsInt());
             }
         }
+        
+        super.draw(drawContext, partialTicks);
     }
 
 }

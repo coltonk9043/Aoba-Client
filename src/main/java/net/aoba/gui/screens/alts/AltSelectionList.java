@@ -114,26 +114,13 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
         public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight,
                            int mouseX, int mouseY, boolean hovered, float tickDelta) {
 
-            StringBuilder password = new StringBuilder();
             String description;
-
- 
-            // Generates string for the password of an alt.
-            if (!this.alt.isCracked()) {
-                password.append("*".repeat(this.alt.getPassword().toCharArray().length));
-            } else {
-                password = new StringBuilder("None");
-            }
 
             // Generates the description of an alt.
             if (this.alt.isCracked()) {
                 description = "Cracked Account";
             } else {
-                if (this.alt.isMicrosoft()) {
-                    description = "Microsoft Account";
-                } else {
-                    description = "Mojang Account";
-                }
+                description = "Microsoft Account";
             }
 
             // Draws the strings onto the screen.
@@ -142,9 +129,7 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
                     (y + 2), 16777215);
             drawContext.drawTextWithShadow(textRenderer, "Username: " + this.alt.getEmail(), (x + 32 + 3),
                     (y + 2), 16777215);
-            drawContext.drawTextWithShadow(textRenderer, "Password: " + password, (x + 32 + 3), (y + 12),
-                    16777215);
-            drawContext.drawText(textRenderer, description, (x + 32 + 3), (y + 22),
+            drawContext.drawText(textRenderer, description, (x + 32 + 3), (y + 12),
                     this.alt.isCracked() ? 0xFF0000 : 0x00FF00, true);
 
             // Draws the respective player head.

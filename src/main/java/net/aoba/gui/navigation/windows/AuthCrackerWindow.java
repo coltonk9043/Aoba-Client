@@ -47,6 +47,8 @@ public class AuthCrackerWindow extends Window {
     public AuthCrackerWindow() {
         super("Auth Cracker", 810, 500, 280, 360);
         
+        this.inheritHeightFromChildren = true;
+        
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setMargin(new Margin(null, 30f, null, null));
         

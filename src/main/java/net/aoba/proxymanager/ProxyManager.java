@@ -4,8 +4,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.logging.LogUtils;
-import net.aoba.altmanager.Alt;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;

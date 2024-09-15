@@ -67,7 +67,7 @@ public class Window implements IGuiElement {
 	protected boolean visible = false;
 
 	// Mouse Variables
-	protected boolean inheritHeightFromChildren = true;
+	protected boolean inheritHeightFromChildren = false;
 
 	public ArrayList<Component> children = new ArrayList<>();
 
@@ -76,12 +76,21 @@ public class Window implements IGuiElement {
 		this.ID = ID;
 		this.title = ID;
 		this.position = new RectangleSetting(ID + "_position", ID + "Position", new Rectangle(x, y, width, height),
-				(Rectangle vec) -> UpdateAll(vec));
+				(Rectangle vec) -> UpdateAll());
 
 		SettingManager.registerSetting(position, Aoba.getInstance().settingManager.configContainer);
 	}
 
-	public void UpdateAll(Rectangle vec) {
+	public boolean getInheritsHeightFromChildren() {
+		return this.inheritHeightFromChildren;
+	}
+	
+	public void setInheritHeightFromChildren(boolean state) {
+		this.inheritHeightFromChildren = state;
+		UpdateAll();
+	}
+	
+	public void UpdateAll() {
 		if (this.inheritHeightFromChildren) {
 			applyInherittedHeight();
 		}

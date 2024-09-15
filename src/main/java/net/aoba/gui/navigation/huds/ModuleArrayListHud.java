@@ -18,8 +18,6 @@ public class ModuleArrayListHud extends HudWindow {
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-        super.draw(drawContext, partialTicks);
-
         if (getVisible()) {
             Rectangle pos = position.getValue();
 
@@ -56,5 +54,7 @@ public class ModuleArrayListHud extends HudWindow {
                         });
             }
         }
+        
+        super.draw(drawContext, partialTicks);
     }
 }

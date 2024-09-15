@@ -30,15 +30,14 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Vec2f;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.ArrayList;
 
 public class KillAura extends Module implements TickListener {
@@ -146,12 +145,7 @@ public class KillAura extends Module implements TickListener {
             // If the entity is found, we want to attach it.
             if (found) {
                 if (legit.getValue()) {
-                    //float camPitch = MC.cameraEntity.getPitch();
-                    //float camYaw = MC.cameraEntity.getYaw();
-
-                    Vec2f vec2 = new Vec2f((float) (MC.player.getX() - entityToAttack.getX()), (float) (MC.player.getZ() - entityToAttack.getZ()));
-//                    vec2 = vec2.normalize();
-//                    double angleFromPlayer = Math.atan2(vec2.y, vec2.x);
+                	MC.player.lookAt(EntityAnchor.EYES, entityToAttack.getPos());
                 }
                 MC.interactionManager.attackEntity(MC.player, entityToAttack);
                 MC.player.swingHand(Hand.MAIN_HAND);

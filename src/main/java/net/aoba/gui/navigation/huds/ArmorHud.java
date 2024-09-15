@@ -43,7 +43,6 @@ public class ArmorHud extends HudWindow {
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-    	super.draw(drawContext, partialTicks);
     	if (getVisible()) {
         	Rectangle pos = position.getValue();
 
@@ -68,5 +67,6 @@ public class ArmorHud extends HudWindow {
                 matrixStack.pop();
             }
         }
+    	super.draw(drawContext, partialTicks);
     }
 }

@@ -55,7 +55,7 @@ public class FontManager {
         MC = MinecraftClient.getInstance();
 
         fontSetting = new StringSetting("font", "The font that Aoba will use.", "minecraft");
-        fontSetting.setOnUpdate((i) -> {
+        fontSetting.addOnUpdate((i) -> {
             FontManager font = Aoba.getInstance().fontManager;
             font.SetRenderer(font.fontRenderers.get(i));
         });

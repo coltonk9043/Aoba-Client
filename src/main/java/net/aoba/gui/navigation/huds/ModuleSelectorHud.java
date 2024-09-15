@@ -51,7 +51,7 @@ public class ModuleSelectorHud extends HudWindow {
     private ArrayList<Module> modules = new ArrayList<Module>();
 
     public ModuleSelectorHud() {
-        super("ModuleSelectorHud", 0, 0, 225, 30);
+        super("ModuleSelectorHud", 0, 0, 225, 32);
         this.keybindUp = new KeyBinding("key.tabup", GLFW.GLFW_KEY_UP, "key.categories.aoba");
         this.keybindDown = new KeyBinding("key.tabdown", GLFW.GLFW_KEY_DOWN, "key.categories.aoba");
         this.keybindLeft = new KeyBinding("key.tableft", GLFW.GLFW_KEY_LEFT, "key.categories.aoba");
@@ -62,6 +62,8 @@ public class ModuleSelectorHud extends HudWindow {
         this.inheritHeightFromChildren = false;
         this.resizeable = false;
         this.setHeight(categories.size() * ROW_HEIGHT);
+        this.minHeight = 32f;
+        this.maxHeight = 32f;
     }
 
     @Override
@@ -114,8 +116,6 @@ public class ModuleSelectorHud extends HudWindow {
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-        super.draw(drawContext, partialTicks);
-
         // Gets the client and window.
         MatrixStack matrixStack = drawContext.getMatrices();
         Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
@@ -167,5 +167,6 @@ public class ModuleSelectorHud extends HudWindow {
                 }
             }
         }
+        super.draw(drawContext, partialTicks);
     }
 }

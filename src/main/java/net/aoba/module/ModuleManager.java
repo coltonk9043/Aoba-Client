@@ -24,8 +24,6 @@ package net.aoba.module;
 import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.api.IAddon;
-import net.aoba.cmd.Command;
-import net.aoba.cmd.CommandManager;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.module.modules.combat.*;
@@ -37,7 +35,6 @@ import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil.Key;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;

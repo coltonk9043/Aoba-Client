@@ -20,6 +20,7 @@ package net.aoba.settings;
 
 import net.aoba.utils.render.TextUtils;
 
+import java.util.HashSet;
 import java.util.function.Consumer;
 
 public abstract class Setting<T> {
@@ -38,14 +39,13 @@ public abstract class Setting<T> {
     public TYPE type;
 
     // Consumers
-    private Consumer<T> onUpdate;
+    private HashSet<Consumer<T>> onUpdate = new HashSet<Consumer<T>>();
 
     public Setting(String ID, String description, T default_value) {
         this.ID = ID;
         this.displayName = TextUtils.IDToName(ID);
         this.description = description;
         this.default_value = default_value;
-        this.onUpdate = null;
         this.value = default_value;
     }
 
@@ -54,7 +54,6 @@ public abstract class Setting<T> {
         this.displayName = displayName;
         this.description = description;
         this.default_value = default_value;
-        this.onUpdate = null;
         this.value = default_value;
     }
 
@@ -63,7 +62,7 @@ public abstract class Setting<T> {
         this.displayName = displayName;
         this.description = description;
         this.default_value = default_value;
-        this.onUpdate = onUpdate;
+        this.onUpdate.add(onUpdate);
         this.value = default_value;
     }
 
@@ -72,7 +71,7 @@ public abstract class Setting<T> {
         this.displayName = TextUtils.IDToName(ID);
         this.description = description;
         this.default_value = default_value;
-        this.onUpdate = onUpdate;
+        this.onUpdate.add(onUpdate);
         this.value = default_value;
     }
 
@@ -128,12 +127,18 @@ public abstract class Setting<T> {
      */
     public void update() {
         if (onUpdate != null) {
-            onUpdate.accept(value);
+        	for(Consumer<T> consumer : onUpdate) {
+        		consumer.accept(value);
+        	}
         }
     }
 
-    public void setOnUpdate(Consumer<T> consumer) {
-        this.onUpdate = consumer;
+    public void addOnUpdate(Consumer<T> consumer) {
+        this.onUpdate.add(consumer);
+    }
+    
+    public void removeOnUpdate(Consumer<T> consumer) {
+    	this.onUpdate.add(consumer);
     }
 
     /**

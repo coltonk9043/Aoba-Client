@@ -35,9 +35,9 @@ public class EditAltScreen extends Screen {
     private Alt alt;
 
     private ButtonWidget buttonSaveAlt;
-    private CheckboxWidget toggleMicrosoft;
+    private CheckboxWidget toggleCracked;
     private TextFieldWidget textFieldAltUsername;
-    private TextFieldWidget textFieldAltPassword;
+
 
     public EditAltScreen(AltScreen parentScreen, Alt alt) {
         super(Text.of("Alt Manager"));
@@ -47,23 +47,13 @@ public class EditAltScreen extends Screen {
 
     public void init() {
         super.init();
-        this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 76, 200, 20,
+        this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20,
                 Text.of("Enter Name"));
         this.textFieldAltUsername.setText(this.alt == null ? "" : alt.getEmail());
         this.addDrawableChild(this.textFieldAltUsername);
 
-        this.textFieldAltPassword = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20,
-                Text.of("Enter Password"));
-        this.textFieldAltPassword.setText(this.alt == null ? "" : alt.getPassword());
-        textFieldAltPassword.setRenderTextProvider((text, n) -> {
-            StringBuilder str = new StringBuilder();
-            str.append("*".repeat(text.length()));
-            return OrderedText.styledForwardsVisitedString(str.toString(), Style.EMPTY);
-        });
-        this.addDrawableChild(this.textFieldAltPassword);
-
-        this.toggleMicrosoft = CheckboxWidget.builder(Text.of("Microsoft Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
-        this.addDrawableChild(this.toggleMicrosoft);
+        this.toggleCracked = CheckboxWidget.builder(Text.of("Cracked Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
+        this.addDrawableChild(this.toggleCracked);
 
 
         this.buttonSaveAlt = ButtonWidget.builder(Text.of("Save Alt"), b -> this.onButtonAltEditPressed())
@@ -77,15 +67,14 @@ public class EditAltScreen extends Screen {
     public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
         super.render(drawContext, mouseX, mouseY, partialTicks);
         drawContext.drawCenteredTextWithShadow(textRenderer, "Edit Alternate Account", this.width / 2, 20, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 90, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Password:", this.width / 2 - 100, height / 2 - 50, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 50, 16777215);
         
     }
 
     private void onButtonAltEditPressed() {
         alt.setEmail(this.textFieldAltUsername.getText());
-        alt.setPassword(this.textFieldAltPassword.getText());
         Aoba.getInstance().altManager.saveAlts();
+        alt.auth();
         this.parent.refreshAltList();
     }
 

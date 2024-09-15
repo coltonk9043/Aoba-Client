@@ -37,23 +37,38 @@ import org.joml.Matrix4f;
 
 public class SliderComponent extends Component {
     private String text;
+    
     private float currentSliderPosition = 0.4f;
+    
+    private float minValue;
+    private float maxValue;
+    private float value;
+    
     private boolean isSliding = false;
 
-    FloatSetting slider;
+    FloatSetting floatSetting;
 
     public SliderComponent(String text, IGuiElement parent) {
         super(parent, new Rectangle(null, null, null, 45f));
         this.text = text;
-        this.slider = null;
+        this.floatSetting = null;
         this.setMargin(new Margin(8f, 2f, 8f, 2f));
     }
 
-    public SliderComponent(IGuiElement parent, FloatSetting slider) {
+    public SliderComponent(IGuiElement parent, FloatSetting floatSetting) {
         super(parent, new Rectangle(null, null, null, 45f));
-        this.text = slider.displayName;
-        this.slider = slider;
-        this.currentSliderPosition = (float) ((slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value));
+        this.floatSetting = floatSetting;
+        text = floatSetting.displayName;
+        minValue = floatSetting.min_value;
+        maxValue = floatSetting.max_value;
+        value = floatSetting.getValue();
+        currentSliderPosition = (float) ((value - minValue) / (maxValue - minValue));
+        
+        floatSetting.addOnUpdate(f -> {
+        	value = f;
+        	currentSliderPosition = (float) Math.min(Math.max((value - minValue) / (maxValue - minValue), 0f), 1f);
+        });
+        
         this.setMargin(new Margin(8f, 2f, 8f, 2f));
     }
 
@@ -102,8 +117,10 @@ public class SliderComponent extends Component {
             targetPosition = Math.max(0f, targetPosition);
 
             currentSliderPosition = targetPosition;
-
-            slider.setValue((currentSliderPosition * (slider.max_value - slider.min_value)) + slider.min_value);
+            value = (currentSliderPosition * (maxValue - minValue)) + minValue;
+            
+            if(floatSetting != null)
+            	floatSetting.setValue(value);
         }
     }
 
@@ -115,7 +132,7 @@ public class SliderComponent extends Component {
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-        if (this.slider == null) {
+        if (this.floatSetting == null) {
             return;
         }
 
@@ -127,19 +144,14 @@ public class SliderComponent extends Component {
         float actualY = this.getActualSize().getY();
         float actualWidth = this.getActualSize().getWidth();
 
-        float sliderProgress = (slider.getValue() - slider.min_value) / (slider.max_value - slider.min_value);
-        sliderProgress = Math.min(Math.max(sliderProgress, 0f), 1f);
-        float filledLength = actualWidth * sliderProgress;
+        float filledLength = actualWidth * currentSliderPosition;
 
         Render2D.drawBox(matrix4f, actualX, actualY + 35, filledLength, 2, GuiManager.foregroundColor.getValue());
-
         Render2D.drawBox(matrix4f, actualX + filledLength, actualY + 35, (actualWidth - filledLength), 2, new Color(255, 255, 255, 255));
-
         Render2D.drawCircle(matrix4f, actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
-
         Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
 
-        String valueText = String.format("%.02f", this.slider.getValue());
+        String valueText = String.format("%.02f", value);
         int textSize = mc.textRenderer.getWidth(valueText) * 2;
         Render2D.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
     }

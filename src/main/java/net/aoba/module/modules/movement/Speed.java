@@ -25,7 +25,7 @@ public class Speed extends Module implements TickListener {
 
         speedSetting = new FloatSetting("speed_setting", "Speed", "Speed", 0.2f, 0.1f, 6f, 0.1f);
 
-        speedSetting.setOnUpdate((i) -> {
+        speedSetting.addOnUpdate((i) -> {
             if (this.getState()) {
                 EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
                 attribute.setBaseValue(speedSetting.getValue());

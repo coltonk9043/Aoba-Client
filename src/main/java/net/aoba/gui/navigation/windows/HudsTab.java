@@ -36,6 +36,8 @@ public class HudsTab extends Window {
     public HudsTab(HudWindow[] abstractHuds) {
         super("Hud Options", 300, 200, 180, 0);
 
+        this.inheritHeightFromChildren = true;
+        
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setMargin(new Margin(null, 30f, null, null));
 

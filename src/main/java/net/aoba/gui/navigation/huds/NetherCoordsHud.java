@@ -12,14 +12,15 @@ public class NetherCoordsHud extends HudWindow {
     private static final MinecraftClient MC = MinecraftClient.getInstance();
 
     public NetherCoordsHud(int x, int y) {
-        super("NetherCoordsHud", x, y, 0, 0);
+        super("NetherCoordsHud", x, y, 0, 20f);
         resizeable = false;
+        inheritHeightFromChildren = false;
+        this.minHeight = 20f;
+        this.maxHeight = 20f;
     }
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-        super.draw(drawContext, partialTicks);
-
         if (getVisible()) {
             Rectangle pos = position.getValue();
             if (pos.isDrawable()) {
@@ -35,5 +36,7 @@ public class NetherCoordsHud extends HudWindow {
                 Render2D.drawString(drawContext, coordsText, pos.getX(), pos.getY(), GuiManager.foregroundColor.getValue().getColorAsInt());
             }
         }
+        
+        super.draw(drawContext, partialTicks);
     }
 }

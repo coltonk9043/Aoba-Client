@@ -43,7 +43,7 @@ public class Step extends Module {
 		
 		stepHeight = new FloatSetting("step_height", "Height", "Height that the player will step up.", 1f, 0.0f, 2f, 0.5f);
 		
-		stepHeight.setOnUpdate((i) -> {
+		stepHeight.addOnUpdate((i) -> {
 			if(this.getState()) {
 				EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT);
 				attribute.setBaseValue(stepHeight.getValue());

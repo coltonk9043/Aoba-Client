@@ -7,25 +7,32 @@ import net.aoba.utils.render.Render2D;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.PlayerListEntry;
 
 public class PingHud extends HudWindow {
     private static final MinecraftClient MC = MinecraftClient.getInstance();
     String pingText = null;
     
     public PingHud(int x, int y) {
-        super("PingHud", x, y, 0, 32);
+        super("PingHud", x, y, 0, 20f);
         resizeable = false;
-        this.minHeight = 32f;
-        this.maxHeight = 32f;
+        inheritHeightFromChildren = false;
+        this.minHeight = 20f;
+        this.maxHeight = 20f;
     }
 
     @Override
    	public void update() {
     	 ClientPlayNetworkHandler networkHandler = MC.getNetworkHandler();
          if (networkHandler != null && MC.player != null) {
-             int ping = networkHandler.getPlayerListEntry(MC.player.getUuid()).getLatency();
-             pingText = "Ping: " + ping + " ms";
-              
+        	 PlayerListEntry entry = networkHandler.getPlayerListEntry(MC.player.getUuid());
+        	 if(entry != null) {
+        		 int ping = entry.getLatency();
+        		 pingText = "Ping: " + ping + " ms";
+        	 }else {
+        		 pingText = "Ping: ?";
+        	 }
+
              int textWidth = MC.textRenderer.getWidth(pingText);
              setWidth(textWidth * 2);
          }else

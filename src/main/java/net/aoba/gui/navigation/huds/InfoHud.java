@@ -72,7 +72,6 @@ public class InfoHud extends HudWindow {
 
     @Override
     public void draw(DrawContext drawContext, float partialTicks) {
-    	super.draw(drawContext, partialTicks);
     	if (getVisible()) {
             Rectangle pos = position.getValue();
 
@@ -82,5 +81,6 @@ public class InfoHud extends HudWindow {
             	Render2D.drawString(drawContext, fpsText, pos.getX().intValue() + 5, pos.getY().intValue() + 44, GuiManager.foregroundColor.getValue());
             }
         }
+    	super.draw(drawContext, partialTicks);
     }
 }

@@ -152,7 +152,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
         for (Category category : categories.values()) {
             PinnableWindow tab = new PinnableWindow(category.getName(), xOffset, 75.0f, 180f, 180f);
-
+            tab.setInheritHeightFromChildren(true);
             StackPanelComponent stackPanel = new StackPanelComponent(tab);
             stackPanel.setMargin(new Margin(null, 30f, null, null));
 

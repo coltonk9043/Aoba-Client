@@ -59,20 +59,20 @@ public class MCLeaksLoginScreen extends Screen {
     }
 
     private void onButtonLoginPressed() {
-        try {
-            Aoba.getInstance().altManager.loginMCLeaks(this.textFieldToken.getText());
-            client.setScreen(this.parent);
-        } catch (APIDownException | APIErrorException | InvalidResponseException | InvalidTokenException e) {
-            didLoginError = true;
-            LogUtils.getLogger().error(e.getMessage());
-        }
+		/*
+		 * try {
+		 * Aoba.getInstance().altManager.loginMCLeaks(this.textFieldToken.getText());
+		 * client.setScreen(this.parent); } catch (APIDownException | APIErrorException
+		 * | InvalidResponseException | InvalidTokenException e) { didLoginError = true;
+		 * LogUtils.getLogger().error(e.getMessage()); }
+		 */
     }
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
     	super.render(drawContext, mouseX, mouseY, partialTicks);
         drawContext.drawCenteredTextWithShadow(textRenderer, this.title.getString(), this.width / 2, 17, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Enter Token", this.width / 2 - 100, 194, 10526880);
+        drawContext.drawTextWithShadow(textRenderer, "Enter Token", this.width / 2 - 100, 154, 10526880);
         this.textFieldToken.render(drawContext, mouseX, mouseY, partialTicks);
         if (didLoginError) {
             drawContext.drawTextWithShadow(textRenderer, "Incorrect Token", this.width / 2 - 140, 116, 0xFF0000);
