@@ -72,12 +72,12 @@ public class TriggerBot extends Module implements PreTickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PreTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PreTickListener.class, this);
     }
 
     @Override

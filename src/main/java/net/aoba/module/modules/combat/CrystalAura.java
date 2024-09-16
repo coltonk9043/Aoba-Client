@@ -2,9 +2,8 @@ package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.PreTickEvent;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.PostTickListener;
 import net.aoba.event.listeners.PreTickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.FindItemResult;
@@ -39,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class CrystalAura extends Module implements PostTickListener, Render3DListener {
+public class CrystalAura extends Module implements PreTickListener, Render3DListener {
 
     private final FloatSetting radius;
     private final FloatSetting placeRadius;
@@ -168,7 +167,7 @@ public class CrystalAura extends Module implements PostTickListener, Render3DLis
     }
 
     @Override
-    public void onPostTick(PostTickEvent event) {
+    public void onPreTick(PreTickEvent event) {
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastPlaceTime >= placeDelay.getValue()) {
