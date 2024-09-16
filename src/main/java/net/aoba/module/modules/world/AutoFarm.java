@@ -22,8 +22,8 @@
 package net.aoba.module.modules.world;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.utils.ModuleUtils;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -43,7 +43,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class AutoFarm extends Module implements TickListener {
+public class AutoFarm extends Module implements PostTickListener {
     private FloatSetting radius;
 
     public AutoFarm() {
@@ -62,12 +62,12 @@ public class AutoFarm extends Module implements TickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class AutoFarm extends Module implements TickListener {
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         int rad = radius.getValue().intValue();
         for (int x = -rad; x < rad; x++) {
             for (int y = -1; y <= 1; y++) {

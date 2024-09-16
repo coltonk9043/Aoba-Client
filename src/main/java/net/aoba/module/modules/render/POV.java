@@ -22,8 +22,8 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.utils.entity.FakePlayerEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -35,7 +35,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.lwjgl.glfw.GLFW;
 
-public class POV extends Module implements TickListener {
+public class POV extends Module implements PostTickListener {
     private FakePlayerEntity fakePlayer;
     private String povString = null;
     private Entity povEntity = null;
@@ -58,12 +58,12 @@ public class POV extends Module implements TickListener {
             fakePlayer.despawn();
             MC.world.removeEntity(-3, null);
         }
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
     }
 
 
@@ -89,7 +89,7 @@ public class POV extends Module implements TickListener {
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         ClientPlayerEntity player = MC.player;
         povEntity = null;
         for (Entity entity : MC.world.getPlayers()) {

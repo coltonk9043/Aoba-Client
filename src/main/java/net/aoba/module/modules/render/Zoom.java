@@ -19,8 +19,8 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -29,7 +29,7 @@ import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
-public class Zoom extends Module implements TickListener {
+public class Zoom extends Module implements PostTickListener {
 
     private int lastFov;
 
@@ -50,13 +50,13 @@ public class Zoom extends Module implements TickListener {
     @Override
     public void onDisable() {
         MC.options.getFov().setValue((int) Math.max(30, Math.min(110, lastFov)));
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
         lastFov = MC.options.getFov().getValue();
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class Zoom extends Module implements TickListener {
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         SimpleOption<Integer> fov = MC.options.getFov();
         int newZoom = (int) Math.max(30, Math.min(110, lastFov / zoomFactor.getValue()));
         fov.setValue(newZoom);

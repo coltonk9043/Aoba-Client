@@ -18,8 +18,8 @@
 
 package net.aoba.event.listeners;
 
-import net.aoba.event.events.TickEvent;
+import net.aoba.event.events.PreTickEvent;
 
-public interface TickListener extends AbstractListener {
-    public abstract void OnUpdate(TickEvent event);
+public interface PreTickListener extends AbstractListener {
+    public abstract void onPreTick(PreTickEvent event);
 }

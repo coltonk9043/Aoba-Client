@@ -1,8 +1,8 @@
 package net.aoba.module.modules.misc;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -10,7 +10,7 @@ import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
-public class AntiKick extends Module implements TickListener {
+public class AntiKick extends Module implements PostTickListener {
 
     //Experimental
 
@@ -35,12 +35,12 @@ public class AntiKick extends Module implements TickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class AntiKick extends Module implements TickListener {
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         //Basically deactivates and reactivates the Flymodule in the set Period of ticks to avoid being Kicked for "Flying is not enabled on this Server"
         //For now, vertical Movement still can get you kicked if you are not carefull
         if (i == ticks.getValue() && Aoba.getInstance().moduleManager.fly.getState()) {

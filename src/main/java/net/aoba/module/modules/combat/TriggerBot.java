@@ -19,8 +19,10 @@
 package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.PreTickEvent;
+import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.PreTickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -37,7 +39,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import org.lwjgl.glfw.GLFW;
 
-public class TriggerBot extends Module implements TickListener {
+public class TriggerBot extends Module implements PreTickListener {
     private FloatSetting radius;
     private BooleanSetting targetAnimals;
     private BooleanSetting targetMonsters;
@@ -70,12 +72,12 @@ public class TriggerBot extends Module implements TickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
     }
 
     @Override
@@ -83,9 +85,9 @@ public class TriggerBot extends Module implements TickListener {
 
     }
 
-    @Override
-    public void OnUpdate(TickEvent event) {
-        if (MC.player.getAttackCooldownProgress(0) == 1) {
+	@Override
+	public void onPreTick(PreTickEvent event) {
+		if (MC.player.getAttackCooldownProgress(0) == 1) {
             HitResult ray = MC.crosshairTarget;
 
             if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
@@ -110,5 +112,5 @@ public class TriggerBot extends Module implements TickListener {
                 }
             }
         }
-    }
+	}
 }

@@ -22,8 +22,8 @@
 package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -46,7 +46,7 @@ enum MaceState {
     OnGround, InAir, Descending,
 }
 
-public class MaceAura extends Module implements TickListener {
+public class MaceAura extends Module implements PostTickListener {
     private FloatSetting radius;
     private BooleanSetting targetAnimals;
     private BooleanSetting targetMonsters;
@@ -77,12 +77,12 @@ public class MaceAura extends Module implements TickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class MaceAura extends Module implements TickListener {
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         if (state == MaceState.OnGround) {
             if (MC.player.getMainHandStack().getItem() == Items.MACE && MC.player.getAttackCooldownProgress(0) == 1) {
                 ArrayList<Entity> hitList = new ArrayList<Entity>();

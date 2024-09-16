@@ -20,7 +20,8 @@ package net.aoba.mixin;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.event.events.TickEvent;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.PreTickEvent;
 import net.aoba.module.modules.render.FocusFps;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
@@ -64,10 +65,18 @@ public abstract class MinecraftClientMixin {
         Aoba.getInstance().loadAssets();
     }
 
-    @Inject(at = @At("TAIL"), method = "tick()V")
-    public void tick(CallbackInfo info) {
+    @Inject(at = @At("HEAD"), method = "tick()V")
+    public void onPreTick(CallbackInfo info) {
         if (this.world != null) {
-            TickEvent updateEvent = new TickEvent();
+            PreTickEvent updateEvent = new PreTickEvent();
+            Aoba.getInstance().eventManager.Fire(updateEvent);
+        }
+    }
+    
+    @Inject(at = @At("TAIL"), method = "tick()V")
+    public void onPostTick(CallbackInfo info) {
+        if (this.world != null) {
+            PostTickEvent updateEvent = new PostTickEvent();
             Aoba.getInstance().eventManager.Fire(updateEvent);
         }
     }

@@ -16,26 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.aoba.event.events;
+package net.aoba.event.listeners;
 
-import net.aoba.event.listeners.AbstractListener;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class TickEvent extends AbstractEvent {
-    @Override
-    public void Fire(ArrayList<? extends AbstractListener> listeners) {
-        for (AbstractListener listener : List.copyOf(listeners)) {
-            TickListener tickListener = (TickListener) listener;
-            tickListener.OnUpdate(this);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Class<TickListener> GetListenerClassType() {
-        return TickListener.class;
-    }
+public interface PostTickListener extends AbstractListener {
+    public abstract void onPostTick(PostTickEvent event);
 }

@@ -22,34 +22,38 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.mixin.interfaces.IEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class NoSlowdown extends Module implements TickListener {
-
+public class NoSlowdown extends Module implements PostTickListener {
+	private FloatSetting slowdownMultiplier = new FloatSetting("noslowdown_multiplier", "Multiplier", 0.0f, 0.0f, 1.0f, 0.1f);
+	
     public NoSlowdown() {
         super(new KeybindSetting("key.noslowdown", "NoSlowdown Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
         this.setName("NoSlowdown");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Prevents the player from being slowed down by blocks.");
+        
+        this.addSetting(slowdownMultiplier);
     }
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
     }
 
     @Override
@@ -58,8 +62,16 @@ public class NoSlowdown extends Module implements TickListener {
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         IEntity playerEntity = (IEntity) MC.player;
-        playerEntity.setMovementMultiplier(Vec3d.ZERO);
+        
+        if(!playerEntity.getMovementMultiplier().equals(Vec3d.ZERO)) {
+        	float multiplier = slowdownMultiplier.getValue();
+            if(multiplier == 0.0f) {
+            	playerEntity.setMovementMultiplier(Vec3d.ZERO);
+            }else {
+            	playerEntity.setMovementMultiplier(Vec3d.ZERO.add(1, 1, 1).multiply(1 / multiplier));
+            }
+        }
     }
 }

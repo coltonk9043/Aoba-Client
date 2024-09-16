@@ -2,8 +2,8 @@ package net.aoba.module.modules.misc;
 
 import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -15,7 +15,7 @@ import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 
-public class AutoShear extends Module implements TickListener {
+public class AutoShear extends Module implements PostTickListener {
 
 	private FloatSetting radius = new FloatSetting("killaura_radius", "Radius", "Radius", 5f, 0.1f, 10f, 0.1f);
 	
@@ -31,12 +31,12 @@ public class AutoShear extends Module implements TickListener {
 	 
 	@Override
 	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class AutoShear extends Module implements TickListener {
 	}
 
 	@Override
-	public void OnUpdate(TickEvent event) {
+	public void onPostTick(PostTickEvent event) {
 		for (Entity entity : MC.world.getEntities()) {
 			if(!(entity instanceof SheepEntity))
 				continue;

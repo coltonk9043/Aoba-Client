@@ -20,8 +20,8 @@ package net.aoba.module.modules.world;
 
 import com.google.common.collect.Lists;
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -44,7 +44,7 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Surround extends Module implements TickListener {
+public class Surround extends Module implements PostTickListener {
 
     public static final ArrayList<Block> blocks = Lists.newArrayList(Blocks.OBSIDIAN, Blocks.ENDER_CHEST,
             Blocks.ENCHANTING_TABLE, Blocks.ANVIL, Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL, Blocks.CRYING_OBSIDIAN,
@@ -80,12 +80,12 @@ public class Surround extends Module implements TickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
         if (alignCharacter.getValue()) {
             BlockPos blockPos = MC.player.getBlockPos();
             MC.player.updatePosition(blockPos.getX() + 0.5f, MC.player.getY(), blockPos.getZ() + 0.5f);
@@ -99,7 +99,7 @@ public class Surround extends Module implements TickListener {
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         int foundBlockSlot = getBlockInventorySlot();
         int oldSlot = MC.player.getInventory().selectedSlot;
 

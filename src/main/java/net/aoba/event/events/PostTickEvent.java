@@ -16,20 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * A class to represent a Color that iterates.
- */
-package net.aoba.gui.colors;
+package net.aoba.event.events;
 
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.AbstractListener;
+import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.PreTickListener;
+import java.util.ArrayList;
+import java.util.List;
 
-public class RainbowColor extends AnimatedColor  {
-    public RainbowColor() {
-        super();
-    }
+public class PostTickEvent extends AbstractEvent {
+	@Override
+	public void Fire(ArrayList<? extends AbstractListener> listeners) {
+		for (AbstractListener listener : List.copyOf(listeners)) {
+			PostTickListener tickListener = (PostTickListener) listener;
+			tickListener.onPostTick(this);
+		}
+	}
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
-    	this.setHue(((this.getHue() + 1f) % 360));
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public Class<PostTickListener> GetListenerClassType() {
+		return PostTickListener.class;
+	}
 }

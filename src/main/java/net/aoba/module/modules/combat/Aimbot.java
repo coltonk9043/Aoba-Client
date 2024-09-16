@@ -23,9 +23,9 @@ package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.TickEvent;
+import net.aoba.event.events.PostTickEvent;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -42,7 +42,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class Aimbot extends Module implements TickListener, Render3DListener {
+public class Aimbot extends Module implements PostTickListener, Render3DListener {
 
     private LivingEntity temp = null;
 
@@ -79,13 +79,13 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
     }
 
@@ -126,7 +126,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         currentTick++;
 
         float radiusSqr = radius.getValue() * radius.getValue();

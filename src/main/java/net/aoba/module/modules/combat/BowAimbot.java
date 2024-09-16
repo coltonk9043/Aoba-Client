@@ -3,9 +3,9 @@ package net.aoba.module.modules.combat;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.TickEvent;
+import net.aoba.event.events.PostTickEvent;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.utils.render.Render3D;
 import net.aoba.utils.bowaimbot.BowAimbotTargets;
 import net.aoba.utils.bowaimbot.BowAimbotUtils;
@@ -31,7 +31,7 @@ import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class BowAimbot extends Module implements TickListener, Render3DListener {
+public class BowAimbot extends Module implements PostTickListener, Render3DListener {
 
     private Entity temp = null;
 
@@ -74,7 +74,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
     public void onDisable() {
         if(Aoba.getInstance().moduleManager.trajectory.getState())
             Aoba.getInstance().moduleManager.trajectory.toggle();
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
     }
 
@@ -82,7 +82,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
     public void onEnable() {
         if(!Aoba.getInstance().moduleManager.trajectory.getState())
             Aoba.getInstance().moduleManager.trajectory.toggle();
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
     }
 
@@ -92,7 +92,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         skip = false;
         currentTick++;
 

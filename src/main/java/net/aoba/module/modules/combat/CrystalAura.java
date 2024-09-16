@@ -2,9 +2,10 @@ package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.TickEvent;
+import net.aoba.event.events.PostTickEvent;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.PreTickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.FindItemResult;
 import net.aoba.utils.render.Render3D;
@@ -21,29 +22,24 @@ import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.RaycastContext;
-
 import org.lwjgl.glfw.GLFW;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class CrystalAura extends Module implements TickListener, Render3DListener {
+public class CrystalAura extends Module implements PostTickListener, Render3DListener {
 
     private final FloatSetting radius;
     private final FloatSetting placeRadius;
@@ -156,13 +152,13 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PreTickListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PreTickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
     }
 
@@ -172,7 +168,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastPlaceTime >= placeDelay.getValue()) {

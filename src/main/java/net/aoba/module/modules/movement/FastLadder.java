@@ -1,8 +1,8 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.listeners.PostTickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -12,7 +12,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class FastLadder extends Module implements TickListener {
+public class FastLadder extends Module implements PostTickListener {
 
     private final FloatSetting ladderSpeed;
     private final FloatSetting accelerationBoost;
@@ -36,12 +36,12 @@ public class FastLadder extends Module implements TickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class FastLadder extends Module implements TickListener {
     }
 
     @Override
-    public void OnUpdate(TickEvent event) {
+    public void onPostTick(PostTickEvent event) {
         ClientPlayerEntity player = MC.player;
 
         if (!player.isClimbing() || !player.horizontalCollision)
