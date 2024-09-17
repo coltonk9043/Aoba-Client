@@ -109,7 +109,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 
     @Override
     public void OnMouseScroll(MouseScrollEvent event) {
-        if (Aoba.getInstance().hudManager.isClickGuiOpen() && this.hovered) {
+        if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.hovered) {
             if (event.GetVertical() > 0 && scroll > 0) {
                 scroll--;
             } else if (event.GetVertical() < 0 && (scroll + visibleRows) < (Registries.BLOCK.size() / visibleColumns)) {

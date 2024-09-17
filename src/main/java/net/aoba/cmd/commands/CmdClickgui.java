@@ -36,10 +36,10 @@ public class CmdClickgui extends Command {
                 if (parameters.length != 2)
                     throw new InvalidSyntaxException(this);
                 char keybind = Character.toUpperCase(parameters[1].charAt(0));
-                Aoba.getInstance().hudManager.clickGuiButton.setValue(InputUtil.fromKeyCode(keybind, 0));
+                Aoba.getInstance().guiManager.clickGuiButton.setValue(InputUtil.fromKeyCode(keybind, 0));
                 break;
             case "open":
-                Aoba.getInstance().hudManager.setClickGuiOpen(true);
+                Aoba.getInstance().guiManager.setClickGuiOpen(true);
                 break;
             default:
                 throw new InvalidSyntaxException(this);

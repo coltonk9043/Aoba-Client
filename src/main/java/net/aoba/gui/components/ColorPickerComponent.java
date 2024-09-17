@@ -126,7 +126,7 @@ public class ColorPickerComponent extends Component {
 
 		double mouseX = event.getX();
 		double mouseY = event.getY();
-		if (Aoba.getInstance().hudManager.isClickGuiOpen() && this.isSliding) {
+		if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.isSliding) {
 			Color colorToModify = color.getValue();
 			float vertical = (float) Math.min(Math.max(1.0f - (((mouseY - (actualY + 59)) - 1) / (actualHeight - 63)), 0.0f), 1.0f);
 

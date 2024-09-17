@@ -45,7 +45,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
     @Inject(at = {@At("HEAD")}, method = "setShowsDeathScreen(Z)V")
     private void onShowDeathScreen(boolean state, CallbackInfo ci) {
-        GuiManager hudManager = Aoba.getInstance().hudManager;
+        GuiManager hudManager = Aoba.getInstance().guiManager;
 
         if (state && hudManager.isClickGuiOpen()) {
             hudManager.setClickGuiOpen(false);

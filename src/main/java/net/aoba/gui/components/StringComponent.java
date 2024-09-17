@@ -23,6 +23,7 @@ import net.aoba.event.events.FontChangedEvent;
 import net.aoba.event.listeners.FontChangedListener;
 import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
+import net.aoba.gui.TextAlign;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
@@ -33,6 +34,7 @@ import net.minecraft.util.Formatting;
 import java.util.ArrayList;
 
 public class StringComponent extends Component implements FontChangedListener {
+	private TextAlign textAlign = TextAlign.Left;
     private String originalText;
     private ArrayList<String> text = new ArrayList<String>();
     private boolean bold;
@@ -69,16 +71,32 @@ public class StringComponent extends Component implements FontChangedListener {
     public void draw(DrawContext drawContext, float partialTicks) {
         float actualX = this.getActualSize().getX();
         float actualY = this.getActualSize().getY();
+        float actualWidth = this.getActualSize().getWidth();
+
         int i = 5;
         
         for (String str : text) {
             if (bold)
                 str = Formatting.BOLD + str;
-            Render2D.drawString(drawContext, str, actualX, actualY + i, this.color.getColorAsInt());
+            
+            switch(textAlign) {
+            	case TextAlign.Left:
+            		Render2D.drawString(drawContext, str, actualX, actualY + i, this.color.getColorAsInt());
+            	break;
+            	case TextAlign.Center:
+            		float xPosCenter = actualX + (actualWidth / 2.0f) - Render2D.getStringWidth(str);
+            		Render2D.drawString(drawContext, str, xPosCenter, actualY + i, this.color.getColorAsInt());
+                	break;
+            	case TextAlign.Right:
+            		float xPosRight = actualX + actualWidth - (Render2D.getStringWidth(str) * 2);
+            		Render2D.drawString(drawContext, str, xPosRight, actualY + i, this.color.getColorAsInt());
+                	break;
+            }
+            
             i += 25;
         }
     }
-
+    
     /**
      * Sets the text of the String Component.
      *
@@ -132,6 +150,14 @@ public class StringComponent extends Component implements FontChangedListener {
                 this.setHeight(this.text.size() * 25f);
             }
     	}
+    }
+    
+    public TextAlign getTextAlign() {
+    	return this.textAlign;
+    }
+    
+    public void setTextAlign(TextAlign textAlign) {
+    	this.textAlign = textAlign;
     }
 
     /**

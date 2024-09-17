@@ -79,7 +79,7 @@ public class ScrollComponent extends Component implements MouseScrollListener {
 
 	@Override
 	public void OnMouseScroll(MouseScrollEvent event) {
-		if (Aoba.getInstance().hudManager.isClickGuiOpen() && this.hovered) {
+		if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.hovered) {
 			int childCount = children.size();
             if (event.GetVertical() > 0 && scroll > 0) {
                 scroll--;

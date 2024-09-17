@@ -106,8 +106,8 @@ public abstract class MinecraftClientMixin {
     private void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
         AobaClient aoba = Aoba.getInstance();
 
-        if (aoba.hudManager != null) {
-            Aoba.getInstance().hudManager.setClickGuiOpen(false);
+        if (aoba.guiManager != null) {
+            Aoba.getInstance().guiManager.setClickGuiOpen(false);
         }
     }
 

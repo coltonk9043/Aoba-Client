@@ -19,6 +19,7 @@
 package net.aoba.gui.navigation;
 
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.gui.Direction;
@@ -43,7 +44,8 @@ import org.joml.Matrix4f;
 
 public class Window implements IGuiElement {
 	protected static MinecraftClient MC = MinecraftClient.getInstance();
-
+	protected static AobaClient AOBA = Aoba.getInstance();
+	
 	protected String ID;
 	protected String title;
 	protected Page parent;

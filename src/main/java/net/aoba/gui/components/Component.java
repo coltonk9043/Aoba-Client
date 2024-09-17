@@ -309,7 +309,7 @@ public abstract class Component implements IGuiElement {
 		}
 		
 		boolean wasHovered = hovered;
-		if (mouseMoveEvent.isCancelled() || !visible || !Aoba.getInstance().hudManager.isClickGuiOpen()) {
+		if (mouseMoveEvent.isCancelled() || !visible || !Aoba.getInstance().guiManager.isClickGuiOpen()) {
 			this.hovered = false;
 			if(wasHovered){
 				GuiManager.setTooltip(null);

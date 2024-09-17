@@ -25,7 +25,7 @@ public class HudWindow extends Window {
 	}
 
 	private void onActivatedChanged(Boolean state) {
-		Aoba.getInstance().hudManager.SetHudActive(this, state.booleanValue());
+		Aoba.getInstance().guiManager.SetHudActive(this, state.booleanValue());
 	}
 
 	@Override
@@ -37,7 +37,10 @@ public class HudWindow extends Window {
 	// Override to do nothing.. We want it to be visible based off of whether it is activated.
 	@Override
 	public void setVisible(boolean state) {
-
+		if(!state) {
+			isMouseOver = false;
+			isMoving = false;
+		}
 	}
 	
 	@Override
@@ -56,7 +59,7 @@ public class HudWindow extends Window {
 							GuiManager.roundingRadius.getValue(), dragColor);
 				}
 			}
-			if(isMouseOver) {
+			if(Aoba.getInstance().guiManager.isClickGuiOpen() && isMouseOver) {
 				Render2D.drawRoundedBoxOutline(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height,
 						GuiManager.roundingRadius.getValue(), hoverColor);
 			}

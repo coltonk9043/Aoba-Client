@@ -32,7 +32,7 @@ public class DeathScreenMixin {
 
     @Inject(at = {@At("HEAD")}, method = "init()V", cancellable = true)
     private void onInit(CallbackInfo ci) {
-        GuiManager hudManager = Aoba.getInstance().hudManager;
+        GuiManager hudManager = Aoba.getInstance().guiManager;
         if (hudManager.isClickGuiOpen()) {
             hudManager.setClickGuiOpen(false);
         }

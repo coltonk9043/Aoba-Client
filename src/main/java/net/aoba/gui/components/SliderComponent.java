@@ -107,7 +107,7 @@ public class SliderComponent extends Component {
     public void onMouseMove(MouseMoveEvent event) {
         super.onMouseMove(event);
 
-        if (Aoba.getInstance().hudManager.isClickGuiOpen() && this.isSliding) {
+        if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.isSliding) {
             double mouseX = event.getX();
 
             float actualX = this.getActualSize().getX();

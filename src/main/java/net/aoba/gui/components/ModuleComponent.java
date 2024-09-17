@@ -150,10 +150,10 @@ public class ModuleComponent extends Component {
                         lastSettingsTab.setOnClose(() -> {spinning = false;});
                         
                         lastSettingsTab.setVisible(true);
-                        Aoba.getInstance().hudManager.AddWindow(lastSettingsTab, "Modules");
+                        Aoba.getInstance().guiManager.AddWindow(lastSettingsTab, "Modules");
                         spinning = true;
                     } else {
-                        Aoba.getInstance().hudManager.RemoveWindow(lastSettingsTab, "Modules");
+                        Aoba.getInstance().guiManager.RemoveWindow(lastSettingsTab, "Modules");
                         spinning = false;
                         lastSettingsTab = null;
                     }

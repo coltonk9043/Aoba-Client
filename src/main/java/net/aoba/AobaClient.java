@@ -56,7 +56,7 @@ public class AobaClient {
     public CommandManager commandManager;
     public AltManager altManager;
     public ProxyManager proxyManager;
-    public GuiManager hudManager;
+    public GuiManager guiManager;
     public FontManager fontManager;
     public CombatManager combatManager;
     public RPCManager rpcManager;
@@ -112,8 +112,8 @@ public class AobaClient {
         LogUtils.getLogger().info("[Aoba] Initializing Combat Manager");
         combatManager = new CombatManager();
         LogUtils.getLogger().info("[Aoba] Initializing GUI");
-        hudManager = new GuiManager();
-        hudManager.Initialize();
+        guiManager = new GuiManager();
+        guiManager.Initialize();
         LogUtils.getLogger().info("[Aoba] Loading Alts");
         altManager = new AltManager();
         proxyManager = new ProxyManager();

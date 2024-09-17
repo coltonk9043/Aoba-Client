@@ -57,7 +57,7 @@ public class HudsTab extends Window {
         // Keybinds Header
         stackPanel.addChild(new StringComponent("Keybinds", stackPanel, GuiManager.foregroundColor.getValue(), true));
 
-        KeybindComponent clickGuiKeybindComponent = new KeybindComponent(stackPanel, Aoba.getInstance().hudManager.clickGuiButton);
+        KeybindComponent clickGuiKeybindComponent = new KeybindComponent(stackPanel, Aoba.getInstance().guiManager.clickGuiButton);
         clickGuiKeybindComponent.setSize(new Rectangle(null, null, null, 30f));
         
         stackPanel.addChild(clickGuiKeybindComponent);

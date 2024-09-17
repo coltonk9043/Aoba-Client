@@ -70,7 +70,7 @@ public class IngameHudMixin {
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void onRenderCrosshair(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        if(Aoba.getInstance().hudManager.isClickGuiOpen()) {
+        if(Aoba.getInstance().guiManager.isClickGuiOpen()) {
         	ci.cancel();
         	return;
         }

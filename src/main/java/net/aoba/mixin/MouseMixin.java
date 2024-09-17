@@ -72,7 +72,7 @@ public class MouseMixin {
 
             aoba.eventManager.Fire(event);
 
-            if (aoba.hudManager.isClickGuiOpen()) {
+            if (aoba.guiManager.isClickGuiOpen()) {
                 ci.cancel();
             }
         }
@@ -94,8 +94,8 @@ public class MouseMixin {
     @Inject(at = {@At("HEAD")}, method = {"lockCursor()V"}, cancellable = true)
     private void onLockCursor(CallbackInfo ci) {
     	 AobaClient aoba = Aoba.getInstance();
-    	if(aoba != null && aoba.hudManager != null) {
-    		if (aoba.hudManager.isClickGuiOpen())
+    	if(aoba != null && aoba.guiManager != null) {
+    		if (aoba.guiManager.isClickGuiOpen())
                 ci.cancel();
     	}
     }
