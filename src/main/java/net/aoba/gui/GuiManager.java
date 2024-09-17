@@ -98,7 +98,8 @@ public class GuiManager implements KeyDownListener, PostTickListener, Render2DLi
     public ModuleSelectorHud moduleSelector;
     public ArmorHud armorHud;
     public RadarHud radarHud;
-    public InfoHud infoHud;
+    public TimeHud timeHud;
+    public DayHud dayHud;
     public ModuleArrayListHud moduleArrayListHud;
     public WatermarkHud watermarkHud;
     public CoordsHud coordsHud;
@@ -133,7 +134,8 @@ public class GuiManager implements KeyDownListener, PostTickListener, Render2DLi
         moduleSelector = new ModuleSelectorHud();
         armorHud = new ArmorHud(0, 0);
         radarHud = new RadarHud(0, 0);
-        infoHud = new InfoHud(0, 0);
+        timeHud = new TimeHud(0, 0);
+        dayHud = new DayHud(0, 0);
         moduleArrayListHud = new ModuleArrayListHud(0, 0);
         watermarkHud = new WatermarkHud(0, 0);
         coordsHud = new CoordsHud(0, 0);
@@ -143,7 +145,7 @@ public class GuiManager implements KeyDownListener, PostTickListener, Render2DLi
         speedHud = new SpeedHud(0, 0);
 
     
-        ArrayList<HudWindow> huds = Lists.newArrayList(moduleSelector, armorHud, radarHud, infoHud, moduleArrayListHud, watermarkHud, coordsHud, netherCoordsHud, fpsHud, pingHud, speedHud);
+        ArrayList<HudWindow> huds = Lists.newArrayList(moduleSelector, armorHud, radarHud, timeHud, dayHud, moduleArrayListHud, watermarkHud, coordsHud, netherCoordsHud, fpsHud, pingHud, speedHud);
         hudPane.AddWindow(new HudOptionsTab());
         hudPane.AddWindow(new ToggleHudsTab(huds));
         

@@ -9,8 +9,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 
 public class SpeedHud extends HudWindow {
-
-    private static final MinecraftClient MC = MinecraftClient.getInstance();
     private String speedText = null;
 
     public SpeedHud(int x, int y) {
