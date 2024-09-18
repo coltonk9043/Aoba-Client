@@ -21,7 +21,7 @@
  */
 package net.aoba.gui.colors;
 
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent;
 
 public class RainbowColor extends AnimatedColor  {
     public RainbowColor() {
@@ -29,7 +29,7 @@ public class RainbowColor extends AnimatedColor  {
     }
 
     @Override
-    public void onPostTick(PostTickEvent event) {
+    public void onTick(TickEvent.Post event) {
     	this.setHue(((this.getHue() + 1f) % 360));
     }
 }

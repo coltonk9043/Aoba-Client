@@ -128,20 +128,18 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
         }
     }
 
-    @Inject(method = "sendMovementPackets", at = @At("HEAD"))
-    private void onSendMovementPacketsHead(CallbackInfo info) {
-        SendMovementPacketEvent.Pre sendMovementPacketPreEvent = new SendMovementPacketEvent.Pre();
-
-        Aoba.getInstance().eventManager.Fire(sendMovementPacketPreEvent);
-    }
-
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V", ordinal = 0))
     private void onTickHasVehicleBeforeSendPackets(CallbackInfo info) {
         SendMovementPacketEvent.Pre sendMovementPacketPreEvent = new SendMovementPacketEvent.Pre();
-
         Aoba.getInstance().eventManager.Fire(sendMovementPacketPreEvent);
     }
 
+    @Inject(method = "sendMovementPackets", at = @At("HEAD"))
+    private void onSendMovementPacketsHead(CallbackInfo info) {
+        SendMovementPacketEvent.Pre sendMovementPacketPreEvent = new SendMovementPacketEvent.Pre();
+        Aoba.getInstance().eventManager.Fire(sendMovementPacketPreEvent);
+    }
+    
     @Inject(method = "sendMovementPackets", at = @At("TAIL"))
     private void onSendMovementPacketsTail(CallbackInfo info) {
         SendMovementPacketEvent.Post sendMovementPacketPostEvent = new SendMovementPacketEvent.Post();

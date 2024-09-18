@@ -1,8 +1,9 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.PostTickEvent;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -12,7 +13,7 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import org.lwjgl.glfw.GLFW;
 
-public class Speed extends Module implements PostTickListener {
+public class Speed extends Module implements TickListener {
 
     private FloatSetting speedSetting;
 
@@ -42,7 +43,7 @@ public class Speed extends Module implements PostTickListener {
             EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
             attribute.setBaseValue(0.1);
         }
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class Speed extends Module implements PostTickListener {
         MC.options.getFovEffectScale().setValue(Math.min(1.0, Math.max(0.0, 0.0)));
         EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         attribute.setBaseValue(speedSetting.getValue());
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
@@ -58,9 +59,14 @@ public class Speed extends Module implements PostTickListener {
 
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
-        EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
-        attribute.setBaseValue(speedSetting.getValue());
-    }
+	@Override
+	public void onTick(Pre event) {
+	      EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+	        attribute.setBaseValue(speedSetting.getValue());
+	}
+
+	@Override
+	public void onTick(Post event) {
+
+	}
 }

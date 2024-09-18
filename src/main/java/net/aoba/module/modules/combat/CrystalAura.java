@@ -2,9 +2,9 @@ package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.PreTickEvent;
+import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.PreTickListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.FindItemResult;
 import net.aoba.utils.render.Render3D;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class CrystalAura extends Module implements PreTickListener, Render3DListener {
+public class CrystalAura extends Module implements TickListener, Render3DListener {
 
     private final FloatSetting radius;
     private final FloatSetting placeRadius;
@@ -151,13 +151,13 @@ public class CrystalAura extends Module implements PreTickListener, Render3DList
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(PreTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PreTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
     }
 
@@ -167,8 +167,8 @@ public class CrystalAura extends Module implements PreTickListener, Render3DList
     }
 
     @Override
-    public void onPreTick(PreTickEvent event) {
-        long currentTime = System.currentTimeMillis();
+    public void onTick(TickEvent.Pre event) {
+    	long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastPlaceTime >= placeDelay.getValue()) {
             placeCrystal();
@@ -180,7 +180,11 @@ public class CrystalAura extends Module implements PreTickListener, Render3DList
             lastAttackTime = currentTime;
         }
     }
+    
+    @Override
+    public void onTick(TickEvent.Post event) {
 
+    }
 
     private void placeCrystal() {
         List<AbstractClientPlayerEntity> players = MC.world.getPlayers();

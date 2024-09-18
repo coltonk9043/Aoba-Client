@@ -23,9 +23,9 @@ package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.PlayerDeathEvent;
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.PlayerDeathListener;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -33,7 +33,7 @@ import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
-public class AutoRespawn extends Module implements PlayerDeathListener, PostTickListener {
+public class AutoRespawn extends Module implements PlayerDeathListener, TickListener {
 
     private FloatSetting respawnDelay;
 
@@ -52,7 +52,7 @@ public class AutoRespawn extends Module implements PlayerDeathListener, PostTick
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(PlayerDeathListener.class, this);
     }
 
@@ -72,12 +72,17 @@ public class AutoRespawn extends Module implements PlayerDeathListener, PostTick
             respawn();
         } else {
             tick = 0;
-            Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+            Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
         }
     }
 
     @Override
-    public void onPostTick(PostTickEvent event) {
+    public void onTick(TickEvent.Pre event) {
+
+    }
+    
+    @Override
+    public void onTick(TickEvent.Post event) {
         if (tick < respawnDelay.getValue()) {
             tick++;
         } else {
@@ -88,6 +93,6 @@ public class AutoRespawn extends Module implements PlayerDeathListener, PostTick
     private void respawn() {
         MC.player.requestRespawn();
         MC.setScreen(null);
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 }

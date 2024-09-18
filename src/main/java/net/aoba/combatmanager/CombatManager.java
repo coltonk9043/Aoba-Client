@@ -2,10 +2,10 @@ package net.aoba.combatmanager;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.ReceivePacketEvent;
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent;
 import net.aoba.event.events.TotemPopEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.TickListener;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,11 +16,11 @@ import java.util.HashMap;
 
 import static net.aoba.AobaClient.MC;
 
-public class CombatManager implements PostTickListener, ReceivePacketListener {
+public class CombatManager implements TickListener, ReceivePacketListener {
     public HashMap<String, Integer> popList = new HashMap<>();
 
     public CombatManager() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(ReceivePacketListener.class, this);
     }
 
@@ -48,7 +48,12 @@ public class CombatManager implements PostTickListener, ReceivePacketListener {
     }
 
     @Override
-    public void onPostTick(PostTickEvent event) {
+    public void onTick(TickEvent.Pre event) {
+
+    }
+    
+    @Override
+    public void onTick(TickEvent.Post event) {
         for (PlayerEntity player : MC.world.getPlayers()) {
             if (player.getHealth() <= 0 && popList.containsKey(player.getName().getString()))
                 popList.remove(player.getName().getString(), popList.get(player.getName().getString()));

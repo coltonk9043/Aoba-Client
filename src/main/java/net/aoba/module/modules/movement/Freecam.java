@@ -23,9 +23,10 @@ package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.utils.entity.FakePlayerEntity;
 import net.aoba.mixin.interfaces.ICamera;
 import net.aoba.module.Category;
@@ -41,7 +42,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.UUID;
 
-public class Freecam extends Module implements PostTickListener, Render3DListener {
+public class Freecam extends Module implements TickListener, Render3DListener {
     private FloatSetting flySpeed;
 
     private FakePlayerEntity fakePlayer;
@@ -71,13 +72,13 @@ public class Freecam extends Module implements PostTickListener, Render3DListene
         if (fakePlayer != null)
             fakePlayer.despawn();
 
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
 
         ClientPlayerEntity player = MC.player;
@@ -106,8 +107,36 @@ public class Freecam extends Module implements PostTickListener, Render3DListene
     }
 
     @Override
-    public void onPostTick(PostTickEvent event) {
+    public void OnRender(Render3DEvent event) {
         Camera camera = MC.gameRenderer.getCamera();
+        ICamera iCamera = (ICamera) camera;
+
+        double tickDelta = event.GetPartialTicks();
+
+        ClientPlayerEntity player = MC.player;
+        fakePlayer.setPitch(player.getPitch(event.GetPartialTicks()));
+
+
+        Vec3d interpolatedPos = new Vec3d(
+                MathHelper.lerp(tickDelta, prevPos.x, pos.x),
+                MathHelper.lerp(tickDelta, prevPos.y, pos.y),
+                MathHelper.lerp(tickDelta, prevPos.z, pos.z)
+        );
+        iCamera.setCameraPos(interpolatedPos);
+    }
+
+    public FakePlayerEntity getFakePlayer() {
+        return this.fakePlayer;
+    }
+
+	@Override
+	public void onTick(Pre event) {
+
+	}
+
+	@Override
+	public void onTick(Post event) {
+		Camera camera = MC.gameRenderer.getCamera();
         Vec3d cameraPos = camera.getPos();
         prevPos = cameraPos;
 
@@ -141,28 +170,5 @@ public class Freecam extends Module implements PostTickListener, Render3DListene
         fakePlayer.setVelocity(player.getVelocity());
         fakePlayer.setPosition(player.getPos());
         fakePlayer.setUuid(player.getUuid());
-    }
-
-    @Override
-    public void OnRender(Render3DEvent event) {
-        Camera camera = MC.gameRenderer.getCamera();
-        ICamera iCamera = (ICamera) camera;
-
-        double tickDelta = event.GetPartialTicks();
-
-        ClientPlayerEntity player = MC.player;
-        fakePlayer.setPitch(player.getPitch(event.GetPartialTicks()));
-
-
-        Vec3d interpolatedPos = new Vec3d(
-                MathHelper.lerp(tickDelta, prevPos.x, pos.x),
-                MathHelper.lerp(tickDelta, prevPos.y, pos.y),
-                MathHelper.lerp(tickDelta, prevPos.z, pos.z)
-        );
-        iCamera.setCameraPos(interpolatedPos);
-    }
-
-    public FakePlayerEntity getFakePlayer() {
-        return this.fakePlayer;
-    }
+	}
 }

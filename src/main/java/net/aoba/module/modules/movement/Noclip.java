@@ -22,8 +22,9 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.PostTickEvent;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -35,7 +36,7 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class Noclip extends Module implements PostTickListener {
+public class Noclip extends Module implements TickListener {
     private FloatSetting flySpeed;
     private FloatSetting speedMultiplier;
     private BooleanSetting onGround;
@@ -81,12 +82,12 @@ public class Noclip extends Module implements PostTickListener {
         if (MC.player != null) {
             MC.player.noClip = false;
         }
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
@@ -94,9 +95,9 @@ public class Noclip extends Module implements PostTickListener {
 
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
-        ClientPlayerEntity player = MC.player;
+	@Override
+	public void onTick(Pre event) {
+		ClientPlayerEntity player = MC.player;
 
         float speed = this.flySpeed.getDefaultValue();
 
@@ -133,5 +134,10 @@ public class Noclip extends Module implements PostTickListener {
         }
 
         MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, onGround.getValue()));
-    }
+	}
+
+	@Override
+	public void onTick(Post event) {
+
+	}
 }

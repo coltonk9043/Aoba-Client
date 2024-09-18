@@ -18,8 +18,9 @@
 
 package net.aoba.event.listeners;
 
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent;
 
-public interface PostTickListener extends AbstractListener {
-    public abstract void onPostTick(PostTickEvent event);
+public interface TickListener extends AbstractListener {
+    public abstract void onTick(TickEvent.Pre event);
+    public abstract void onTick(TickEvent.Post event);
 }

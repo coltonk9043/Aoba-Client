@@ -22,9 +22,9 @@
 package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.PreTickEvent;
-import net.aoba.event.listeners.PostTickListener;
-import net.aoba.event.listeners.PreTickListener;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -41,7 +41,7 @@ import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 
-public class KillAura extends Module implements PreTickListener {
+public class KillAura extends Module implements TickListener {
     private enum Priority {
         LOWESTHP, CLOSEST
     }
@@ -78,12 +78,12 @@ public class KillAura extends Module implements PreTickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(PreTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PreTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class KillAura extends Module implements PreTickListener {
     }
 
 	@Override
-	public void onPreTick(PreTickEvent event) {
+	public void onTick(TickEvent.Pre event) {
 		if (MC.player.getAttackCooldownProgress(0) == 1) {
             ArrayList<Entity> hitList = new ArrayList<Entity>();
             LivingEntity entityToAttack = null;
@@ -152,5 +152,11 @@ public class KillAura extends Module implements PreTickListener {
                 MC.player.swingHand(Hand.MAIN_HAND);
             }
         }
+	}
+
+	@Override
+	public void onTick(Post event) {
+		// TODO Auto-generated method stub
+		
 	}
 }

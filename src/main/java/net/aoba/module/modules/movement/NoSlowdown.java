@@ -22,8 +22,9 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.PostTickEvent;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.mixin.interfaces.IEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -33,7 +34,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class NoSlowdown extends Module implements PostTickListener {
+public class NoSlowdown extends Module implements TickListener {
 	private FloatSetting slowdownMultiplier = new FloatSetting("noslowdown_multiplier", "Multiplier", 0.0f, 0.0f, 1.0f, 0.1f);
 	
     public NoSlowdown() {
@@ -48,12 +49,12 @@ public class NoSlowdown extends Module implements PostTickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
@@ -61,8 +62,8 @@ public class NoSlowdown extends Module implements PostTickListener {
 
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
+	@Override
+	public void onTick(Pre event) {
         IEntity playerEntity = (IEntity) MC.player;
         
         if(!playerEntity.getMovementMultiplier().equals(Vec3d.ZERO)) {
@@ -73,5 +74,10 @@ public class NoSlowdown extends Module implements PostTickListener {
             	playerEntity.setMovementMultiplier(Vec3d.ZERO.add(1, 1, 1).multiply(1 / multiplier));
             }
         }
-    }
+	}
+
+	@Override
+	public void onTick(Post event) {
+
+	}
 }

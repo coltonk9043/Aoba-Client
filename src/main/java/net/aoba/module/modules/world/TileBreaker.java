@@ -23,9 +23,10 @@ package net.aoba.module.modules.world;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
@@ -43,10 +44,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.ArrayList;
 
-public class TileBreaker extends Module implements PostTickListener, Render3DListener {
+public class TileBreaker extends Module implements TickListener, Render3DListener {
     private MinecraftClient mc;
     private ArrayList<Block> blocks = new ArrayList<Block>();
     private FloatSetting radius;
@@ -76,13 +76,13 @@ public class TileBreaker extends Module implements PostTickListener, Render3DLis
     @Override
     public void onDisable() {
         Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
     @Override
     public void onEnable() {
         Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
@@ -132,26 +132,6 @@ public class TileBreaker extends Module implements PostTickListener, Render3DLis
         return this.blocks.contains(b);
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
-        int rad = this.radius.getValue().intValue();
-        for (int x = -rad; x < rad; x++) {
-            for (int y = rad; y > -rad; y--) {
-                for (int z = -rad; z < rad; z++) {
-                    BlockPos blockpos = new BlockPos(mc.player.getBlockX() + x,
-                            mc.player.getBlockY() + y,
-                            mc.player.getBlockZ() + z);
-                    Block block = mc.world.getBlockState(blockpos).getBlock();
-                    if (this.isTileBreakerBlock(block)) {
-                        mc.player.networkHandler.sendPacket(
-                                new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, blockpos, Direction.NORTH));
-                        mc.player.networkHandler.sendPacket(
-                                new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockpos, Direction.NORTH));
-                    }
-                }
-            }
-        }
-    }
 
     @Override
     public void OnRender(Render3DEvent event) {
@@ -170,4 +150,30 @@ public class TileBreaker extends Module implements PostTickListener, Render3DLis
             }
         }
     }
+
+	@Override
+	public void onTick(Pre event) {
+		int rad = this.radius.getValue().intValue();
+        for (int x = -rad; x < rad; x++) {
+            for (int y = rad; y > -rad; y--) {
+                for (int z = -rad; z < rad; z++) {
+                    BlockPos blockpos = new BlockPos(mc.player.getBlockX() + x,
+                            mc.player.getBlockY() + y,
+                            mc.player.getBlockZ() + z);
+                    Block block = mc.world.getBlockState(blockpos).getBlock();
+                    if (this.isTileBreakerBlock(block)) {
+                        mc.player.networkHandler.sendPacket(
+                                new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, blockpos, Direction.NORTH));
+                        mc.player.networkHandler.sendPacket(
+                                new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockpos, Direction.NORTH));
+                    }
+                }
+            }
+        }
+	}
+
+	@Override
+	public void onTick(Post event) {
+
+	}
 }

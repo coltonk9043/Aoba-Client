@@ -22,8 +22,9 @@
 package net.aoba.module.modules.world;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.PostTickEvent;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.utils.ModuleUtils;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -43,7 +44,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
-public class AutoFarm extends Module implements PostTickListener {
+public class AutoFarm extends Module implements TickListener {
     private FloatSetting radius;
 
     public AutoFarm() {
@@ -62,21 +63,21 @@ public class AutoFarm extends Module implements PostTickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
     public void onToggle() {
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
-        int rad = radius.getValue().intValue();
+	@Override
+	public void onTick(Pre event) {
+		int rad = radius.getValue().intValue();
         for (int x = -rad; x < rad; x++) {
             for (int y = -1; y <= 1; y++) {
                 for (int z = -rad; z < rad; z++) {
@@ -102,7 +103,7 @@ public class AutoFarm extends Module implements PostTickListener {
                             if (b) {
                                 BlockHitResult rayTrace = new BlockHitResult(new Vec3d(0, 0, 0), Direction.UP, blockpos, false);
 
-                                this.MC.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
+                                MC.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
                             }
                         }
                     } else if (block instanceof FarmlandBlock) {
@@ -121,12 +122,17 @@ public class AutoFarm extends Module implements PostTickListener {
                             }
                             if (b) {
                                 BlockHitResult rayTrace = new BlockHitResult(new Vec3d(0, 0, 0), Direction.UP, blockpos, false);
-                                this.MC.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
+                                MC.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
                             }
                         }
                     }
                 }
             }
         }
-    }
+	}
+
+	@Override
+	public void onTick(Post event) {
+
+	}
 }

@@ -2,9 +2,9 @@ package net.aoba.gui.navigation.windows;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.Margin;
 import net.aoba.gui.colors.Colors;
 import net.aoba.gui.components.*;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GoToWindow extends Window implements PostTickListener, Render3DListener {
+public class GoToWindow extends Window implements TickListener, Render3DListener {
 	
 	public enum Pathfinder {
 		Walk,
@@ -218,12 +218,12 @@ public class GoToWindow extends Window implements PostTickListener, Render3DList
 	private void registerEvents() {
 
 		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	private void unregisterEvents() {
 		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-		Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	private void recalculatePath() {
@@ -346,8 +346,13 @@ public class GoToWindow extends Window implements PostTickListener, Render3DList
 		}
 	}
 
+    @Override
+    public void onTick(TickEvent.Pre event) {
+    
+    }
+	
 	@Override
-	public void onPostTick(PostTickEvent event) {
+	public void onTick(TickEvent.Post event) {
 		MinecraftClient MC = MinecraftClient.getInstance();
 		if (nodes == null)
 			return;
@@ -417,7 +422,7 @@ public class GoToWindow extends Window implements PostTickListener, Render3DList
 				recalculatePathAsync();
 			} else {
 				Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-				Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+				Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 				clear();
 				startButton.setText("Calculate");
 				startButton.setOnClick(startRunnable);

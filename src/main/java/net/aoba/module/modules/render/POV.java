@@ -22,8 +22,9 @@
 package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.PostTickEvent;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.utils.entity.FakePlayerEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -35,7 +36,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.lwjgl.glfw.GLFW;
 
-public class POV extends Module implements PostTickListener {
+public class POV extends Module implements TickListener {
     private FakePlayerEntity fakePlayer;
     private String povString = null;
     private Entity povEntity = null;
@@ -58,12 +59,12 @@ public class POV extends Module implements PostTickListener {
             fakePlayer.despawn();
             MC.world.removeEntity(-3, null);
         }
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
 
@@ -88,9 +89,9 @@ public class POV extends Module implements PostTickListener {
         }
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
-        ClientPlayerEntity player = MC.player;
+	@Override
+	public void onTick(Pre event) {
+		ClientPlayerEntity player = MC.player;
         povEntity = null;
         for (Entity entity : MC.world.getPlayers()) {
             if (entity.getName().getString().equals(povString)) {
@@ -118,5 +119,10 @@ public class POV extends Module implements PostTickListener {
                 MinecraftClient.getInstance().setCameraEntity(povEntity);
             }
         }
-    }
+	}
+
+	@Override
+	public void onTick(Post event) {
+
+	}
 }

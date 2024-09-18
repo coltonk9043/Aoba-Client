@@ -1,8 +1,9 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.PostTickEvent;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.interfaces.IHorseBaseEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -12,7 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AbstractHorseEntity;
 import org.lwjgl.glfw.GLFW;
 
-public class EntityControl extends Module implements PostTickListener {
+public class EntityControl extends Module implements TickListener {
     public EntityControl() {
         super(new KeybindSetting("key.entitycontrol", "EntityControl Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
@@ -23,7 +24,7 @@ public class EntityControl extends Module implements PostTickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 
         for (Entity entity : MC.world.getEntities()) {
             if (entity instanceof AbstractHorseEntity) ((IHorseBaseEntity) entity).setSaddled(false);
@@ -32,7 +33,7 @@ public class EntityControl extends Module implements PostTickListener {
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
@@ -40,10 +41,15 @@ public class EntityControl extends Module implements PostTickListener {
 
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
+	@Override
+	public void onTick(Pre event) {
+
+	}
+
+	@Override
+	public void onTick(Post event) {
         for (Entity entity : MC.world.getEntities()) {
             if (entity instanceof AbstractHorseEntity) ((IHorseBaseEntity) entity).setSaddled(true);
         }
-    }
+	}
 }

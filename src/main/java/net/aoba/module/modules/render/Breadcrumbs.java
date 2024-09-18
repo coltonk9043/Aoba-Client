@@ -23,9 +23,10 @@ package net.aoba.module.modules.render;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
@@ -38,7 +39,7 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 import java.util.LinkedList;
 
-public class Breadcrumbs extends Module implements Render3DListener, PostTickListener {
+public class Breadcrumbs extends Module implements Render3DListener, TickListener {
     private ColorSetting color = new ColorSetting("breadcrumbs_color", "Color", "Color", new Color(0, 1f, 1f));
     public FloatSetting lineThickness = new FloatSetting("breadcrumbs_linethickness", "Line Thickness", "Line Thickness", 1f, 0.1f, 10f, 0.1f);
 
@@ -61,14 +62,14 @@ public class Breadcrumbs extends Module implements Render3DListener, PostTickLis
     @Override
     public void onDisable() {
         Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
         positions.clear();
     }
 
     @Override
     public void onEnable() {
         Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
@@ -87,9 +88,15 @@ public class Breadcrumbs extends Module implements Render3DListener, PostTickLis
         }
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
-        currentTick++;
+	@Override
+	public void onTick(Pre event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTick(Post event) {
+		currentTick++;
         if (timer == currentTick) {
             currentTick = 0;
             if (!Aoba.getInstance().moduleManager.freecam.getState()) {
@@ -102,5 +109,5 @@ public class Breadcrumbs extends Module implements Render3DListener, PostTickLis
                 }
             }
         }
-    }
+	}
 }

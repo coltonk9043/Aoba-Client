@@ -21,10 +21,10 @@ package net.aoba.gui;
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.Render2DEvent;
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.event.listeners.Render2DListener;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.RainbowColor;
 import net.aoba.gui.colors.RandomColor;
@@ -64,7 +64,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GuiManager implements KeyDownListener, PostTickListener, Render2DListener {
+public class GuiManager implements KeyDownListener, TickListener, Render2DListener {
     private static final MinecraftClient MC = MinecraftClient.getInstance();
     private static CursorStyle currentCursor = CursorStyle.Default;
     private static String tooltip = null;
@@ -123,7 +123,7 @@ public class GuiManager implements KeyDownListener, PostTickListener, Render2DLi
         SettingManager.registerSetting(roundingRadius, Aoba.getInstance().settingManager.configContainer);
 
         Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(Render2DListener.class, this);
     }
     
@@ -241,11 +241,14 @@ public class GuiManager implements KeyDownListener, PostTickListener, Render2DLi
         }
     }
 
-    /**
-     * Getter for the current color used by the GUI for text rendering.
-     */
+
     @Override
-    public void onPostTick(PostTickEvent event) {
+    public void onTick(TickEvent.Pre event) {
+    
+    }
+    
+    @Override
+    public void onTick(TickEvent.Post event) {
         /**
          * Moves the selected Tab to where the user moves their mouse.
          */

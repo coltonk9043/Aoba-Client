@@ -1,8 +1,10 @@
 package net.aoba.module.modules.misc;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.PostTickEvent;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -13,7 +15,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
 import org.lwjgl.glfw.GLFW;
 
-public class EXPThrower extends Module implements PostTickListener {
+public class EXPThrower extends Module implements TickListener {
     private FloatSetting pitchSetting;
     private BooleanSetting autoSwapSetting;
     private FloatSetting throwDelaySetting;
@@ -41,14 +43,14 @@ public class EXPThrower extends Module implements PostTickListener {
 
     @Override
     public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 
         lastThrowTime = 0;
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
@@ -56,9 +58,15 @@ public class EXPThrower extends Module implements PostTickListener {
 
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
-        long currentTime = System.currentTimeMillis();
+	@Override
+	public void onTick(Pre event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTick(Post event) {
+		long currentTime = System.currentTimeMillis();
         if (currentTime - lastThrowTime < throwDelaySetting.getValue() * 50) {
             return;
         }
@@ -82,5 +90,5 @@ public class EXPThrower extends Module implements PostTickListener {
         }
 
         lastThrowTime = currentTime;
-    }
+	}
 }

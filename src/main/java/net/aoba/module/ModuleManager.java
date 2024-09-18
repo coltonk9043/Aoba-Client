@@ -50,7 +50,6 @@ public class ModuleManager implements KeyDownListener {
     public AntiCactus anticactus = new AntiCactus();
     public AntiInvis antiinvis = new AntiInvis();
     public AntiKnockback antiknockback = new AntiKnockback();
-    public AntiKick antikick = new AntiKick();
     public AutoEat autoeat = new AutoEat();
     public AutoFarm autofarm = new AutoFarm();
     public AutoFish autofish = new AutoFish();

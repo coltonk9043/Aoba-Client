@@ -24,15 +24,17 @@ package net.aoba.module.modules.movement;
 import net.aoba.module.Category;
 import net.aoba.settings.types.FloatSetting;
 import org.lwjgl.glfw.GLFW;
+
 import net.aoba.Aoba;
-import net.aoba.event.events.PostTickEvent;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly;
 
-public class NoFall extends Module implements PostTickListener {
+public class NoFall extends Module implements TickListener {
 
 	private FloatSetting fallDistance;
 
@@ -49,12 +51,12 @@ public class NoFall extends Module implements PostTickListener {
 
 	@Override
 	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
@@ -63,9 +65,14 @@ public class NoFall extends Module implements PostTickListener {
 	}
 
 	@Override
-	public void onPostTick(PostTickEvent event) {
+	public void onTick(Pre event) {
 		if(MC.player.fallDistance > fallDistance.getValue()) {
 			MC.player.networkHandler.sendPacket(new OnGroundOnly(true));
 		}
+	}
+
+	@Override
+	public void onTick(Post event) {
+
 	}
 }

@@ -24,10 +24,11 @@ package net.aoba.module.modules.world;
 import net.aoba.Aoba;
 import net.aoba.event.events.BlockStateEvent;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.PostTickEvent;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.BlockStateListener;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
@@ -44,10 +45,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.HashSet;
 
-public class Nuker extends Module implements Render3DListener, PostTickListener, BlockStateListener {
+public class Nuker extends Module implements Render3DListener, TickListener, BlockStateListener {
     private BooleanSetting creative = new BooleanSetting("nuker_creative", "Creative", "Creative", false);
     private ColorSetting color = new ColorSetting("nuker_color", "Color", "Color", new Color(0, 1f, 1f));
     private FloatSetting radius = new FloatSetting("nuker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
@@ -76,54 +76,19 @@ public class Nuker extends Module implements Render3DListener, PostTickListener,
     @Override
     public void onDisable() {
         Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
         Aoba.getInstance().eventManager.RemoveListener(BlockStateListener.class, this);
     }
 
     @Override
     public void onEnable() {
         Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
         Aoba.getInstance().eventManager.AddListener(BlockStateListener.class, this);
     }
 
     @Override
     public void onToggle() {
-    }
-
-    @Override
-    public void onPostTick(PostTickEvent event) {
-        if (creative.getValue()) {
-            int range = (int) (Math.floor(radius.getValue()) + 1);
-            Iterable<BlockPos> blocks = BlockPos.iterateOutwards(new BlockPos(BlockPos.ofFloored(MC.player.getPos()).up()), range, range, range);
-            for (BlockPos blockPos : blocks) {
-                Block block = MC.world.getBlockState(blockPos).getBlock();
-                if (block == Blocks.AIR || blacklist.getValue().contains(block))
-                    continue;
-
-                MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, blockPos, Direction.NORTH));
-                MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockPos, Direction.NORTH));
-                MC.player.swingHand(Hand.MAIN_HAND);
-            }
-        } else {
-            if (currentBlockToBreak == null) {
-                currentBlockToBreak = getNextBlock();
-            }
-
-            if (currentBlockToBreak != null) {
-
-                // Check to ensure that the block is not further than we can reach.
-                int range = (int) (Math.floor(radius.getValue()) + 1);
-                int rangeSqr = range ^ 2;
-                if (MC.player.getBlockPos().toCenterPos().distanceTo(currentBlockToBreak.toCenterPos()) > rangeSqr) {
-                    currentBlockToBreak = null;
-                } else {
-                    MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, currentBlockToBreak, Direction.NORTH));
-                    MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, currentBlockToBreak, Direction.NORTH));
-                    MC.player.swingHand(Hand.MAIN_HAND);
-                }
-            }
-        }
     }
 
     @Override
@@ -162,4 +127,44 @@ public class Nuker extends Module implements Render3DListener, PostTickListener,
         }
         return null;
     }
+
+	@Override
+	public void onTick(Pre event) {
+		if (creative.getValue()) {
+            int range = (int) (Math.floor(radius.getValue()) + 1);
+            Iterable<BlockPos> blocks = BlockPos.iterateOutwards(new BlockPos(BlockPos.ofFloored(MC.player.getPos()).up()), range, range, range);
+            for (BlockPos blockPos : blocks) {
+                Block block = MC.world.getBlockState(blockPos).getBlock();
+                if (block == Blocks.AIR || blacklist.getValue().contains(block))
+                    continue;
+
+                MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, blockPos, Direction.NORTH));
+                MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockPos, Direction.NORTH));
+                MC.player.swingHand(Hand.MAIN_HAND);
+            }
+        } else {
+            if (currentBlockToBreak == null) {
+                currentBlockToBreak = getNextBlock();
+            }
+
+            if (currentBlockToBreak != null) {
+
+                // Check to ensure that the block is not further than we can reach.
+                int range = (int) (Math.floor(radius.getValue()) + 1);
+                int rangeSqr = range ^ 2;
+                if (MC.player.getBlockPos().toCenterPos().distanceTo(currentBlockToBreak.toCenterPos()) > rangeSqr) {
+                    currentBlockToBreak = null;
+                } else {
+                    MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, currentBlockToBreak, Direction.NORTH));
+                    MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, currentBlockToBreak, Direction.NORTH));
+                    MC.player.swingHand(Hand.MAIN_HAND);
+                }
+            }
+        }
+	}
+
+	@Override
+	public void onTick(Post event) {
+
+	}
 }

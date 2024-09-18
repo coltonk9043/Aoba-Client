@@ -22,15 +22,16 @@
 package net.aoba.module.modules.misc;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.PostTickEvent;
-import net.aoba.event.listeners.PostTickListener;
+import net.aoba.event.events.TickEvent.Post;
+import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
-public class AutoWalk extends Module implements PostTickListener {
+public class AutoWalk extends Module implements TickListener {
     public AutoWalk() {
         super(new KeybindSetting("key.autowalk", "AutoWalk Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
 
@@ -42,12 +43,12 @@ public class AutoWalk extends Module implements PostTickListener {
     @Override
     public void onDisable() {
         MC.options.forwardKey.setPressed(false);
-        Aoba.getInstance().eventManager.RemoveListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
     }
 
     @Override
     public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PostTickListener.class, this);
+        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }
 
     @Override
@@ -55,8 +56,14 @@ public class AutoWalk extends Module implements PostTickListener {
 
     }
 
-    @Override
-    public void onPostTick(PostTickEvent event) {
-        MC.options.forwardKey.setPressed(true);
-    }
+	@Override
+	public void onTick(Pre event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTick(Post event) {
+		MC.options.forwardKey.setPressed(true);
+	}
 }
