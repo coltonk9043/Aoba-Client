@@ -20,33 +20,16 @@ package net.aoba.settings.types;
 
 import net.aoba.settings.Setting;
 import net.minecraft.util.math.Vec3d;
-
 import java.util.function.Consumer;
-import java.util.Objects;
 
+import org.joml.Vector2d;
 
 public class Vec3dSetting extends Setting<Vec3d> {
     public final float min_value;
     public final float max_value;
     public final float step;
 
-    public Vec3dSetting(String ID, String description, Vec3d default_value, float min_value, float max_value, float step) {
-        super(ID, description, default_value);
-        this.min_value = min_value;
-        this.max_value = max_value;
-        this.step = step;
-        type = TYPE.VEC3D;
-    }
-
-    public Vec3dSetting(String ID, String displayName, String description, Vec3d default_value, float min_value, float max_value, float step) {
-        super(ID, displayName, description, default_value);
-        this.min_value = min_value;
-        this.max_value = max_value;
-        this.step = step;
-        type = TYPE.VEC3D;
-    }
-
-    public Vec3dSetting(String ID, String description, Vec3d default_value, float min_value, float max_value, float step, Consumer<Vec3d> onUpdate) {
+    protected Vec3dSetting(String ID, String displayName, String description, Vec3d default_value, float min_value, float max_value, float step, Consumer<Vec3d> onUpdate) {
         super(ID, description, default_value, onUpdate);
         this.min_value = min_value;
         this.max_value = max_value;
@@ -73,4 +56,38 @@ public class Vec3dSetting extends Setting<Vec3d> {
                 value.y >= min_value && value.y <= max_value &&
                 value.z >= min_value && value.z <= max_value;
     }
+    
+    public static BUILDER builder() {
+    	return new BUILDER();
+    }
+    
+    public static class BUILDER extends Setting.BUILDER<BUILDER, Vec3dSetting, Vec3d> {
+		protected Float minValue = 1f;
+		protected Float maxValue = 10f;
+		protected Float step = 1f;
+		
+		protected BUILDER() {
+			super();
+		}
+		
+		public BUILDER minValue(Float value) {
+			minValue = value;
+			return this;
+		}
+		
+		public BUILDER maxValue(Float value) {
+			maxValue = value;
+			return this;
+		}
+		
+		public BUILDER step(Float value) {
+			step = value;
+			return this;
+		}
+		
+		@Override
+		public Vec3dSetting build() {
+			return new Vec3dSetting(id, displayName, description, defaultValue, minValue, maxValue, step, onUpdate);
+		}
+	}
 }
