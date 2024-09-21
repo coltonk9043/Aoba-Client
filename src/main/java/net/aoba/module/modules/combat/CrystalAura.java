@@ -8,10 +8,10 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.FindItemResult;
 import net.aoba.utils.render.Render3D;
-import net.aoba.utils.rotation.RotationManager.RotationMode;
+import net.aoba.utils.rotation.Rotation;
+import net.aoba.utils.rotation.RotationMode;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.module.modules.misc.MCA.Mode;
 import net.aoba.settings.types.*;
 import net.aoba.utils.entity.DamageUtils;
 import net.minecraft.block.Block;
@@ -477,7 +477,18 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
                     break;
                 case SMOOTH:
                     // Instant rotation for now because im too dumb to figure out smooth rotation
-                    MC.player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, targetPos);
+                	float rotationDegreesPerTick = 10f;
+					Rotation rotation = Rotation.getPlayerRotationDeltaFromEntity(bestCrystal);
+
+					float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
+							rotationDegreesPerTick);
+					float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
+							rotationDegreesPerTick);
+
+					Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
+							MC.player.getPitch() + maxPitchRotation);
+					MC.player.setYaw((float) newRotation.yaw());
+					MC.player.setPitch((float) newRotation.pitch());
 
                     MC.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.attack(bestCrystal, MC.player.isSneaking()));
                     if (swingHand.getValue()) MC.player.swingHand(hand);

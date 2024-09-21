@@ -36,157 +36,143 @@ import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.ArrayList;
 
-enum MaceState {
-    OnGround, InAir, Descending,
-}
-
 public class MaceAura extends Module implements TickListener {
-    private FloatSetting radius= FloatSetting.builder()
-    		.id("maceaura_radius")
-    		.displayName("Radius")
-    		.description("Radius that MaceAura will trigger")
-    		.defaultValue(5f)
-    		.minValue(0.1f)
-    		.maxValue(10f)
-    		.step(0.1f)
-    		.build();
-    
-	private BooleanSetting targetAnimals = BooleanSetting.builder()
-		    .id("maceaura_target_animals")
-		    .displayName("Target Animals")
-		    .description("Target animals.")
-		    .defaultValue(false)
-		    .build();
-	
-	private BooleanSetting targetMonsters = BooleanSetting.builder()
-		    .id("maceaura_target_monsters")
-		    .displayName("Target Monsters")
-		    .description("Target Monsters.")
-		    .defaultValue(true)
-		    .build();
-	
-	private BooleanSetting targetPlayers = BooleanSetting.builder()
-		    .id("maceaura_target_players")
-		    .displayName("Target Players")
-		    .description("Target Players.")
-		    .defaultValue(true)
-		    .build();
-	
-	private BooleanSetting targetFriends = BooleanSetting.builder()
-		    .id("maceaura_target_friends")
-		    .displayName("Target Friends")
-		    .description("Target Friends.")
-		    .defaultValue(false)
-		    .build();
-	
-    private MaceState state = MaceState.OnGround;
-    private LivingEntity entityToAttack;
+	private FloatSetting radius = FloatSetting.builder().id("maceaura_radius").displayName("Radius")
+			.description("Radius that MaceAura will trigger").defaultValue(5f).minValue(0.1f).maxValue(10f).step(0.1f)
+			.build();
 
-    public MaceAura() {
-    	super(KeybindSetting.builder().id("key.maceaura").displayName("Mace Aura Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	private FloatSetting height = FloatSetting.builder().id("maceaura_height").displayName("Height")
+			.description("Determines how high MaceAura will jump. Higher distance = more damage.").defaultValue(100f)
+			.minValue(1f).maxValue(255f).build();
 
-        this.setName("MaceAura");
-        this.setCategory(Category.of("Combat"));
-        this.setDescription("Smashes players in your personal space with a Mace with extreme damage. Be sure to enable NoFall for best results.");
-        
-        this.addSetting(radius);
-        this.addSetting(targetAnimals);
-        this.addSetting(targetMonsters);
-        this.addSetting(targetPlayers);
-        this.addSetting(targetFriends);
-    }
+	private BooleanSetting targetAnimals = BooleanSetting.builder().id("maceaura_target_animals")
+			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	private BooleanSetting targetMonsters = BooleanSetting.builder().id("maceaura_target_monsters")
+			.displayName("Target Monsters").description("Target Monsters.").defaultValue(true).build();
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	private BooleanSetting targetPlayers = BooleanSetting.builder().id("maceaura_target_players")
+			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
 
-    @Override
-    public void onToggle() {
+	private BooleanSetting targetFriends = BooleanSetting.builder().id("maceaura_target_friends")
+			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
 
-    }
+	private LivingEntity entityToAttack;
 
-    @Override
-    public void onTick(TickEvent.Pre event) {
-    	
-    }
-    
-    @Override
-    public void onTick(TickEvent.Post event) {
-        if (state == MaceState.OnGround) {
-            if (MC.player.getMainHandStack().getItem() == Items.MACE && MC.player.getAttackCooldownProgress(0) == 1) {
-                ArrayList<Entity> hitList = new ArrayList<Entity>();
+	public MaceAura() {
+		super(KeybindSetting.builder().id("key.maceaura").displayName("Mace Aura Key")
+				.defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
-                // Add all potential entities to the 'hitlist'
-                if (this.targetAnimals.getValue() || this.targetMonsters.getValue()) {
-                    for (Entity entity : MC.world.getEntities()) {
-                        if (entity == MC.player)
-                            continue;
-                        if (MC.player.squaredDistanceTo(entity) > radius.getValueSqr())
-                            continue;
+		this.setName("MaceAura");
+		this.setCategory(Category.of("Combat"));
+		this.setDescription(
+				"Smashes players in your personal space with a Mace with extreme damage. Be sure to enable NoFall for best results.");
 
-                        if ((entity instanceof AnimalEntity && this.targetAnimals.getValue())
-                                || (entity instanceof Monster && this.targetMonsters.getValue())) {
-                            hitList.add(entity);
-                        }
-                    }
-                }
+		this.addSetting(radius);
+		this.addSetting(height);
+		this.addSetting(targetAnimals);
+		this.addSetting(targetMonsters);
+		this.addSetting(targetPlayers);
+		this.addSetting(targetFriends);
+	}
 
-                // Add all potential players to the 'hitlist'
-                if (this.targetPlayers.getValue()) {
-                    for (PlayerEntity player : MC.world.getPlayers()) {
-                        if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
-                            continue;
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-                        if (player == MC.player || MC.player
-                                .squaredDistanceTo(player) > (this.radius.getValue() * this.radius.getValue())) {
-                            continue;
-                        }
-                        hitList.add(player);
-                    }
-                }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-                // For each entity, get the entity that matches a criteria.
-                for (Entity entity : hitList) {
-                    LivingEntity le = (LivingEntity) entity;
-                    if (entityToAttack == null) {
-                        entityToAttack = le;
-                    } else {
-                        if (MC.player.squaredDistanceTo(le) <= MC.player.squaredDistanceTo(entityToAttack)) {
-                            entityToAttack = le;
-                        }
-                    }
-                }
+	@Override
+	public void onToggle() {
 
-                // If the entity is found, we want to attach it.
-                if (entityToAttack != null) {
-                    Vec3d velocity = MC.player.getVelocity().add(0, 20, 0);
-                    MC.player.setVelocity(velocity);
-                    state = MaceState.InAir;
-                }
-            }
-        } else if (state == MaceState.InAir) {
-            Vec3d velocity = MC.player.getVelocity().add(0, -39, 0);
-            MC.player.setVelocity(velocity);
-            state = MaceState.Descending;
-        } else if (state == MaceState.Descending) {
-            MC.interactionManager.attackEntity(MC.player, entityToAttack);
-            MC.player.swingHand(Hand.MAIN_HAND);
-            entityToAttack = null;
-            Vec3d velocity = MC.player.getVelocity().add(0, 39, 0);
-            MC.player.setVelocity(velocity);
-            state = MaceState.OnGround;
-        }
-    }
+	}
+
+	@Override
+	public void onTick(TickEvent.Pre event) {
+
+	}
+
+	@Override
+	public void onTick(TickEvent.Post event) {
+		if (MC.player.getMainHandStack().getItem() == Items.MACE && MC.player.getAttackCooldownProgress(0) == 1) {
+			
+			if(entityToAttack == null) {
+				ArrayList<Entity> hitList = new ArrayList<Entity>();
+
+				// Add all potential entities to the 'hitlist'
+				if (this.targetAnimals.getValue() || this.targetMonsters.getValue()) {
+					for (Entity entity : MC.world.getEntities()) {
+						if (entity == MC.player)
+							continue;
+						if (MC.player.squaredDistanceTo(entity) > radius.getValueSqr())
+							continue;
+
+						if ((entity instanceof AnimalEntity && this.targetAnimals.getValue())
+								|| (entity instanceof Monster && this.targetMonsters.getValue())) {
+							hitList.add(entity);
+						}
+					}
+				}
+
+				// Add all potential players to the 'hitlist'
+				if (this.targetPlayers.getValue()) {
+					for (PlayerEntity player : MC.world.getPlayers()) {
+						if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
+							continue;
+
+						if (player == MC.player || MC.player
+								.squaredDistanceTo(player) > (this.radius.getValue() * this.radius.getValue())) {
+							continue;
+						}
+						hitList.add(player);
+					}
+				}
+
+				// For each entity, get the entity that matches a criteria.
+				for (Entity entity : hitList) {
+					LivingEntity le = (LivingEntity) entity;
+					if (entityToAttack == null) {
+						entityToAttack = le;
+					} else {
+						if (MC.player.squaredDistanceTo(le) <= MC.player.squaredDistanceTo(entityToAttack)) {
+							entityToAttack = le;
+						}
+					}
+				}
+
+				if(entityToAttack != null) {
+					// If the entity is found, we want to attach it.
+					int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
+					for (int i = 0; i < packetsRequired; i++) {
+						MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false));
+					}
+					
+					Vec3d newPos = MC.player.getPos().add(0, height.getValue(), 0);
+					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, false));
+				}
+			}else {
+				int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
+				for (int i = 0; i < packetsRequired; i++) {
+					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false));
+				}
+				
+				Vec3d newPos = MC.player.getPos();
+				MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, false));
+				
+				MC.interactionManager.attackEntity(MC.player, entityToAttack);
+	            MC.player.swingHand(Hand.MAIN_HAND);
+	            entityToAttack = null;
+			}
+		}
+	}
 }

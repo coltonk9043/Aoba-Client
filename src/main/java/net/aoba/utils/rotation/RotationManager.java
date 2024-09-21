@@ -11,10 +11,6 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 
 public class RotationManager implements SendPacketListener {
-    public enum RotationMode {
-        NONE, INSTANT, SMOOTH
-    }
-    
 	private static MinecraftClient MC = MinecraftClient.getInstance();
 	
 	public static Rotation serverRotation = new Rotation(0, 0);

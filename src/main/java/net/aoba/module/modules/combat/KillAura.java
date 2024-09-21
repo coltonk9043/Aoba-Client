@@ -34,8 +34,9 @@ import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.rotation.Rotation;
-import net.aoba.utils.rotation.RotationManager.RotationMode;
+import net.aoba.utils.rotation.RotationMode;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -209,20 +210,26 @@ public class KillAura extends Module implements TickListener, SendMovementPacket
 
 		// If the entity is found, we want to attach it.
 		if (found) {
-			if (legit.getValue()) {
+			switch(rotationMode.getValue()) {
+				case RotationMode.NONE:
+					break;
+				case RotationMode.SMOOTH:
+					float rotationDegreesPerTick = 10f;
+					Rotation rotation = Rotation.getPlayerRotationDeltaFromEntity(entityToAttack);
 
-				float rotationDegreesPerTick = 10f;
-				Rotation rotation = Rotation.getPlayerRotationDeltaFromEntity(entityToAttack);
+					float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
+							rotationDegreesPerTick);
+					float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
+							rotationDegreesPerTick);
 
-				float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
-						rotationDegreesPerTick);
-				float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
-						rotationDegreesPerTick);
-
-				Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
-						MC.player.getPitch() + maxPitchRotation);
-				MC.player.setYaw((float) newRotation.yaw());
-				MC.player.setPitch((float) newRotation.pitch());
+					Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
+							MC.player.getPitch() + maxPitchRotation);
+					MC.player.setYaw((float) newRotation.yaw());
+					MC.player.setPitch((float) newRotation.pitch());
+					break;
+				case RotationMode.INSTANT:
+					MC.player.lookAt(EntityAnchor.EYES, entityToAttack.getEyePos());
+					break;
 			}
 
 			if (MC.player.getAttackCooldownProgress(0) == 1) {
