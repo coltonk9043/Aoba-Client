@@ -48,16 +48,42 @@ import org.lwjgl.glfw.GLFW;
 import java.util.HashSet;
 
 public class Nuker extends Module implements Render3DListener, TickListener, BlockStateListener {
-    private BooleanSetting creative = new BooleanSetting("nuker_creative", "Creative", "Creative", false);
-    private ColorSetting color = new ColorSetting("nuker_color", "Color", "Color", new Color(0, 1f, 1f));
-    private FloatSetting radius = new FloatSetting("nuker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
-    private BlocksSetting blacklist = new BlocksSetting("nuker_blacklist", "Blacklist",
-            "Blocks that will not be broken by Nuker.", new HashSet<Block>());
+	
+	private BooleanSetting creative = BooleanSetting.builder()
+    		.id("nuker_creative")
+    		.displayName("Creative")
+    		.description("Creative")
+    		.defaultValue(false)
+    		.build();
+	
+    private ColorSetting color = ColorSetting.builder()
+			.id("nuker_color")
+			.displayName("Color")
+			.description("Color")
+			.defaultValue(new Color(0f, 1f, 1f))
+			.build();
+    
+	private FloatSetting radius = FloatSetting.builder()
+    		.id("nuker_radius")
+    		.displayName("Radius")
+    		.description("Radius")
+    		.defaultValue(5f)
+    		.minValue(0f)
+    		.maxValue(15f)
+    		.step(1f)
+    		.build();
+    
+	private BlocksSetting blacklist = BlocksSetting.builder()
+			.id("nuker_blacklist")
+			.displayName("Blacklist")
+			.description("Blocks that will not be broken by Nuker.")
+			.defaultValue(new HashSet<Block>())
+			.build();
 
     private BlockPos currentBlockToBreak = null;
 
     public Nuker() {
-        super(new KeybindSetting("key.nuker", "Nuker Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.nuker").displayName("Nuker Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Nuker");
         this.setCategory(Category.of("World"));

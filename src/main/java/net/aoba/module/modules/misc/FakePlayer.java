@@ -19,34 +19,100 @@ import java.util.UUID;
 public class FakePlayer extends Module {
     public static OtherClientPlayerEntity fakePlayer;
 
-    private final StringSetting playerName;
-    private final BooleanSetting enableRegen;
-    private final FloatSetting regenDuration;
-    private final FloatSetting regenAmplifier;
-    private final BooleanSetting enableAbsorption;
-    private final FloatSetting absorptionDuration;
-    private final FloatSetting absorptionAmplifier;
-    private final BooleanSetting enableResistance;
-    private final FloatSetting resistanceDuration;
-    private final FloatSetting resistanceAmplifier;
+    private final StringSetting playerName = StringSetting.builder()
+    		.id("fakeplayer_name")
+    		.displayName("Player Name")
+    		.description("Name of the fake player.")
+    		.defaultValue("cvs0")
+    		.build();
+    
+    private final BooleanSetting enableRegen = BooleanSetting.builder()
+    		.id("fakeplayer_regen_enable")
+    		.displayName("Enable Regeneration")
+    		.description("Enable regeneration effect.")
+    		.defaultValue(true)
+    		.build();
+    
+    private final FloatSetting regenDuration  = FloatSetting.builder()
+    		.id("fakeplayer_regen_duration")
+    		.displayName("Regeneration Duration")
+    		.description("Duration of regeneration effect.")
+    		.defaultValue(9999.0f)
+    		.minValue(0.0f)
+    		.maxValue(10000.0f)
+    		.step(1f)
+    		.build();
+    
+    private final FloatSetting regenAmplifier = FloatSetting.builder()
+    		.id("fakeplayer_regen_amplifier")
+    		.displayName("Regeneration Amplifier")
+    		.description("Amplifier level of regeneration effect.")
+    		.defaultValue(2.0f)
+    		.minValue(0.0f)
+    		.maxValue(10.0f)
+    		.step(1f)
+    		.build();
+    
+    private final BooleanSetting enableAbsorption = BooleanSetting.builder()
+    		.id("fakeplayer_absorption_enable")
+    		.displayName("Enable Absorption")
+    		.description("Enable absorption effect.")
+    		.defaultValue(true)
+    		.build();
+    
+    private final FloatSetting absorptionDuration = FloatSetting.builder()
+    		.id("fakeplayer_absorption_duration")
+    		.displayName("Absorption Duration")
+    		.description("Duration of absorption effect.")
+    		.defaultValue(9999.0f)
+    		.minValue(0.0f)
+    		.maxValue(10000.0f)
+    		.step(1f)
+    		.build();
+    
+    private final FloatSetting absorptionAmplifier = FloatSetting.builder()
+    		.id("fakeplayer_absorption_amplifier")
+    		.displayName("Absorption Amplifier")
+    		.description("Amplifier level of absorption effect.")
+    		.defaultValue(4.0f)
+    		.minValue(0.0f)
+    		.maxValue(10.0f)
+    		.step(1f)
+    		.build();
+    
+    private final BooleanSetting enableResistance = BooleanSetting.builder()
+    		.id("fakeplayer_resistance_enable")
+    		.displayName("Enable Resistance")
+    		.description("Enable resistance effect.")
+    		.defaultValue(true)
+    		.build();
+    
+    private final FloatSetting resistanceDuration = FloatSetting.builder()
+    		.id("fakeplayer_resistance_duration")
+    		.displayName("Resistance Duration")
+    		.description("Duration of resistance effect.")
+    		.defaultValue(9999.0f)
+    		.minValue(0.0f)
+    		.maxValue(10000.0f)
+    		.step(1f)
+    		.build();
+    
+    private final FloatSetting resistanceAmplifier = FloatSetting.builder()
+    		.id("fakeplayer_resistance_amplifier")
+    		.displayName("Resistance Amplifier")
+    		.description("Amplifier level of resistance effect.")
+    		.defaultValue(1.0f)
+    		.minValue(0.0f)
+    		.maxValue(10.0f)
+    		.step(1f)
+    		.build();
 
     public FakePlayer() {
-        super(new KeybindSetting("key.fakeplayer", "FakePlayer Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.fakeplayer").displayName("FakePlayer Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("FakePlayer");
         this.setCategory(Category.of("Misc"));
         this.setDescription("Creates a fake player entity.");
-
-        playerName = new StringSetting("fakeplayer_name", "Player Name", "Name of the fake player.", "cvs0");
-        enableRegen = new BooleanSetting("fakeplayer_regen_enable", "Enable Regeneration", "Enable regeneration effect.", true);
-        regenDuration = new FloatSetting("fakeplayer_regen_duration", "Regeneration Duration", "Duration of regeneration effect.", 9999.0f, 0.0f, 10000.0f, 1.0f);
-        regenAmplifier = new FloatSetting("fakeplayer_regen_amplifier", "Regeneration Amplifier", "Amplifier level of regeneration effect.", 2.0f, 0.0f, 10.0f, 1.0f);
-        enableAbsorption = new BooleanSetting("fakeplayer_absorption_enable", "Enable Absorption", "Enable absorption effect.", true);
-        absorptionDuration = new FloatSetting("fakeplayer_absorption_duration", "Absorption Duration", "Duration of absorption effect.", 9999.0f, 0.0f, 10000.0f, 1.0f);
-        absorptionAmplifier = new FloatSetting("fakeplayer_absorption_amplifier", "Absorption Amplifier", "Amplifier level of absorption effect.", 4.0f, 0.0f, 10.0f, 1.0f);
-        enableResistance = new BooleanSetting("fakeplayer_resistance_enable", "Enable Resistance", "Enable resistance effect.", true);
-        resistanceDuration = new FloatSetting("fakeplayer_resistance_duration", "Resistance Duration", "Duration of resistance effect.", 9999.0f, 0.0f, 10000.0f, 1.0f);
-        resistanceAmplifier = new FloatSetting("fakeplayer_resistance_amplifier", "Resistance Amplifier", "Amplifier level of resistance effect.", 1.0f, 0.0f, 10.0f, 1.0f);
 
         this.addSetting(playerName);
         this.addSetting(enableRegen);

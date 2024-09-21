@@ -41,7 +41,12 @@ public class CommandManager {
     private final Map<String, Command> commands = new HashMap<>();
     private final List<String> commandHistory = new ArrayList<>();
 
-    public static StringSetting PREFIX = new StringSetting("Prefix", "Prefix", ".aoba");
+    
+    public static StringSetting PREFIX = StringSetting.builder()
+    		.id("aoba_prefix")
+    		.displayName("Prefix")
+    		.defaultValue(".aoba")
+    		.build();
 
     // Commands
     public final CmdAimbot aimbot = new CmdAimbot();

@@ -45,27 +45,74 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-
 import org.lwjgl.glfw.GLFW;
-
-
 
 public class EntityESP extends Module implements Render3DListener {
 	public enum DrawMode {
         BoundingBox, Model
     }
 	
-	private EnumSetting<DrawMode> drawMode = new EnumSetting<DrawMode>("entityesp_draw_mode", "Draw Mode", "Draw Mode", DrawMode.Model);
-    private ColorSetting color_passive = new ColorSetting("entityesp_color_passive", "Passive Color", "Passive Color", new Color(0, 1f, 1f));
-    private ColorSetting color_enemies = new ColorSetting("entityesp_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
-    private ColorSetting color_misc = new ColorSetting("entityesp_color_misc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
-    private BooleanSetting showPassiveEntities = new BooleanSetting("entityesp_show_passive", "Show Passive Entities", "Show Passive Entities", true);
-    private BooleanSetting showEnemies = new BooleanSetting("entityesp_show_enemies", "Show Enemies", "Show Enemies", true);
-    private BooleanSetting showMiscEntities = new BooleanSetting("entityesp_show_misc", "Show Misc Entities", "Show Misc Entities", true);
-    private FloatSetting lineThickness = new FloatSetting("entityesp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
-
+    private final EnumSetting<DrawMode> drawMode = EnumSetting.<DrawMode>builder()
+    		.id("entityesp_draw_mode")
+    		.displayName("Draw Mode")
+    		.description("Draw Mode")
+    		.defaultValue(DrawMode.Model)
+    		.build();
+    
+    private ColorSetting color_passive = ColorSetting.builder()
+			.id("entityesp_color_passive")
+			.displayName("Passive Color")
+			.description("Passive Color")
+			.defaultValue(new Color(0, 1f, 1f))
+			.build();
+    
+    private ColorSetting color_enemies = ColorSetting.builder()
+			.id("entityesp_color_enemy")
+			.displayName("Enemy Color")
+			.description("Enemy Color")
+			.defaultValue(new Color(0, 1f, 1f))
+			.build();
+    
+    private ColorSetting color_misc = ColorSetting.builder()
+			.id("entityesp_color_misc")
+			.displayName("Misc. Color")
+			.description("Misc. Color")
+			.defaultValue(new Color(0, 1f, 1f))
+			.build();
+    
+    private BooleanSetting showPassiveEntities = BooleanSetting.builder()
+    		.id("entityesp_show_passive")
+    		.displayName("Show Passive Entities")
+    		.description("Show Passive Entities.")
+    		.defaultValue(true)
+    		.build();
+    
+    private BooleanSetting showEnemies = BooleanSetting.builder()
+    		.id("entityesp_show_enemies")
+    		.displayName("Show Enemies")
+    		.description("Show Enemies.")
+    		.defaultValue(true)
+    		.build();
+    
+    private BooleanSetting showMiscEntities = BooleanSetting.builder()
+    		.id("entityesp_show_misc")
+    		.displayName("Show Misc Entities")
+    		.description("Show Misc Entities")
+    		.defaultValue(true)
+    		.build();
+    
+    private FloatSetting lineThickness = FloatSetting.builder()
+    		.id("entityesp_linethickness")
+    		.displayName("Line Thickness")
+    		.description("Adjust the thickness of the ESP box lines")
+    		.defaultValue(2f)
+    		.minValue(0f)
+    		.maxValue(5f)
+    		.step(0.1f)
+    		.build();
+    
     public EntityESP() {
-        super(new KeybindSetting("key.entityesp", "EntityESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.entityesp").displayName("EntityESP Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("EntityESP");
         this.setCategory(Category.of("Render"));

@@ -43,19 +43,26 @@ import org.lwjgl.glfw.GLFW;
 import java.util.UUID;
 
 public class Freecam extends Module implements TickListener, Render3DListener {
-    private FloatSetting flySpeed;
+    private FloatSetting flySpeed = FloatSetting.builder()
+    		.id("freecam_speed")
+    		.displayName("Speed")
+    		.description("Speed of the Freecam.")
+    		.defaultValue(2f)
+    		.minValue(0.1f)
+    		.maxValue(15f)
+    		.step(0.5f)
+    		.build();
 
     private FakePlayerEntity fakePlayer;
     private Vec3d prevPos;
     private Vec3d pos;
 
     public Freecam() {
-        super(new KeybindSetting("key.freecam", "Freecam Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.freecam").displayName("Freecam Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Freecam");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to clip through blocks (Only work clientside).");
-        flySpeed = new FloatSetting("freecam_speed", "Speed", "Speed of the Freecam.", 2f, 0.1f, 15f, 0.5f);
         this.addSetting(flySpeed);
     }
 

@@ -40,18 +40,33 @@ import org.lwjgl.glfw.GLFW;
 import java.util.LinkedList;
 
 public class Breadcrumbs extends Module implements Render3DListener, TickListener {
-    private ColorSetting color = new ColorSetting("breadcrumbs_color", "Color", "Color", new Color(0, 1f, 1f));
-    public FloatSetting lineThickness = new FloatSetting("breadcrumbs_linethickness", "Line Thickness", "Line Thickness", 1f, 0.1f, 10f, 0.1f);
-
+	
+	private ColorSetting color = ColorSetting.builder()
+			.id("breadcrumbs_color")
+			.displayName("Color")
+			.description("Color")
+			.defaultValue(new Color(0, 1f, 1f))
+			.build();
+	
+    public FloatSetting lineThickness = FloatSetting.builder()
+    		.id("breadcrumbs_linethickness")
+    		.displayName("Line Thickness")
+    		.description("Line Thickness.")
+    		.defaultValue(1f)
+    		.minValue(0.1f)
+    		.maxValue(10f)
+    		.step(0.1f)
+    		.build();
+    
     private final float distanceThreshold = 1.0f; // Minimum distance to record a new position
     private float currentTick = 0;
     private float timer = 10;
     private final LinkedList<Vec3d> positions = new LinkedList<>();
     private final int maxPositions = 1000;
 
-
     public Breadcrumbs() {
-        super(new KeybindSetting("key.breadcrumbs", "Breadcrumbs Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.breadcrumbs").displayName("Breadcrumbs Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+
         this.setName("Breadcrumbs");
         this.setCategory(Category.of("Render"));
         this.setDescription("Shows breadcrumbs of where you last stepped;");

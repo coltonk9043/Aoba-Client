@@ -41,15 +41,54 @@ import org.lwjgl.glfw.GLFW;
 
 public class ItemESP extends Module implements Render3DListener {
 
-    private ColorSetting color = new ColorSetting("itemesp_color", "Color", "Color", new Color(0, 1f, 1f));
-    private BooleanSetting visibilityToggle = new BooleanSetting("itemesp_visibility", "Visibility", true);
-    private FloatSetting range = new FloatSetting("itemesp_range", "Range", 100f, 10f, 500f, 5f);
-    private ColorSetting rareItemColor = new ColorSetting("itemesp_rare_color", "Rare Item Color", new Color(1f, 0.5f, 0f));
-    private BooleanSetting colorRarity = new BooleanSetting("itemesp_color_rarity", "Color Rarity", true);
-    private FloatSetting lineThickness = new FloatSetting("itemesp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
+    private ColorSetting color = ColorSetting.builder()
+			.id("itemesp_color")
+			.displayName("Color")
+			.description("Color")
+			.defaultValue(new Color(0, 1f, 1f))
+			.build();
+
+    private BooleanSetting visibilityToggle = BooleanSetting.builder()
+    		.id("itemesp_visibility")
+    		.displayName("Visibility")
+    		.defaultValue(true)
+    		.build();
     
+    private FloatSetting range = FloatSetting.builder()
+    		.id("itemesp_range")
+    		.displayName("Range")
+    		.description("Range that the ESP will be drawn on items.")
+    		.defaultValue(100f)
+    		.minValue(10f)
+    		.maxValue(500f)
+    		.step(5f)
+    		.build();
+
+    private ColorSetting rareItemColor = ColorSetting.builder()
+			.id("itemesp_rare_color")
+			.displayName("Rare Item Color")
+			.description("Rare Item Color")
+			.defaultValue(new Color(1f, 0.5f, 0f))
+			.build();
+    
+    private BooleanSetting colorRarity = BooleanSetting.builder()
+    		.id("itemesp_color_rarity")
+    		.displayName("Color Rarity")
+    		.defaultValue(true)
+    		.build();
+    
+    private FloatSetting lineThickness = FloatSetting.builder()
+    		.id("itemesp_linethickness")
+    		.displayName("Line Thickness")
+    		.description("Adjust the thickness of the ESP box lines")
+    		.defaultValue(2f)
+    		.minValue(0f)
+    		.maxValue(5f)
+    		.step(0.1f)
+    		.build();
+
     public ItemESP() {
-        super(new KeybindSetting("key.itemesp", "ItemESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.itemesp").displayName("ItemESP Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("ItemESP");
         this.setCategory(Category.of("Render"));

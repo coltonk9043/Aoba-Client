@@ -37,28 +37,79 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
 public class Noclip extends Module implements TickListener {
-    private FloatSetting flySpeed;
-    private FloatSetting speedMultiplier;
-    private BooleanSetting onGround;
-    private FloatSetting packetDistanceThreshold;
-    private FloatSetting packetCountOffset;
-    private FloatSetting yawOffset;
-    private FloatSetting maxPackets;
+    private FloatSetting flySpeed = FloatSetting.builder()
+    		.id("noclip_fly_speed")
+    		.displayName("Speed")
+    		.description("Fly speed.")
+    		.defaultValue(2f)
+    		.minValue(0.1f)
+    		.maxValue(15f)
+    		.step(0.5f)
+    		.build();
+    
+    private FloatSetting speedMultiplier = FloatSetting.builder()
+    		.id("noclip_speedmultiplier")
+    		.displayName("Speed Multiplier")
+    		.description("Noclip speed multiplier.")
+    		.defaultValue(1.5f)
+    		.minValue(0.1f)
+    		.maxValue(15f)
+    		.step(0.1f)
+    		.build();
+    
+    private BooleanSetting onGround = BooleanSetting.builder()
+    		.id("noclip_onground")
+    		.displayName("On Ground Packet")
+    		.description("Whether to send the onground packet while moving.")
+    		.defaultValue(true)
+    		.build();
+    
+    private FloatSetting packetDistanceThreshold = FloatSetting.builder()
+    		.id("noclip_packet_distance_threshold")
+    		.displayName("Packet Distance Threshold")
+    		.description("Distance threshold for sending packets.")
+    		.defaultValue(10f)
+    		.minValue(1f)
+    		.maxValue(100f)
+    		.step(1f)
+    		.build();
+    
+    private FloatSetting packetCountOffset = FloatSetting.builder()
+    		.id("noclip_packet_count_offset")
+    		.displayName("Packet Count Offset")
+    		.description("Offset for the number of packets required.")
+    		.defaultValue(1f)
+    		.minValue(1f)
+    		.maxValue(10f)
+    		.step(1f)
+    		.build();
+    
+    private FloatSetting yawOffset = FloatSetting.builder()
+    		.id("noclip_yaw_offset")
+    		.displayName("Yaw Offset")
+    		.description("Angle offset for right direction.")
+    		.defaultValue(90f)
+    		.minValue(0f)
+    		.maxValue(360f)
+    		.step(1f)
+    		.build();
+    
+    private FloatSetting maxPackets = FloatSetting.builder()
+    		.id("noclip_max_packets")
+    		.displayName("Max Packets Per Update")
+    		.description("The maximum amount of packets allowed every update.")
+    		.defaultValue(5f)
+    		.minValue(1f)
+    		.maxValue(40f)
+    		.step(1f)
+    		.build();
 
     public Noclip() {
-        super(new KeybindSetting("key.noclip", "Noclip Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.noclip").displayName("Noclip Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Noclip");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to clip through blocks (Only work clientside).");
-
-        flySpeed = new FloatSetting("noclip_speed", "Speed", "Fly speed.", 2f, 0.1f, 15f, 0.5f);
-        speedMultiplier = new FloatSetting("noclip_speedmult", "Speed Multiplier", "Noclip speed multiplier.", 1.5f, 0.1f, 15f, 0.1f);
-        onGround = new BooleanSetting("noclip_onground", "On Ground", true);
-        packetDistanceThreshold = new FloatSetting("packet_distance_threshold", "Packet Distance Threshold", "Distance threshold for sending packets.", 10f, 1f, 100f, 1f);
-        packetCountOffset = new FloatSetting("packet_count_offset", "Packet Count Offset", "Offset for the number of packets required.", 1f, 1f, 10f, 1f);
-        yawOffset = new FloatSetting("yaw_offset", "Yaw Offset", "Angle offset for right direction.", 90f, 0f, 360f, 1f);
-        maxPackets = new FloatSetting("noclip_max_packets", "Max Packets Per Update", "The maximum amount of packets allowed every update", 5f, 1f, 40f, 1f);
 
         this.addSetting(flySpeed);
         this.addSetting(speedMultiplier);

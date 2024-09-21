@@ -40,13 +40,22 @@ public class AutoRespawn extends Module implements PlayerDeathListener, TickList
     private int tick;
 
     public AutoRespawn() {
-        super(new KeybindSetting("key.autorespawn", "AutoRespawn Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.autorespawn").displayName("AutoRespawn Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+    	
         this.setName("AutoRespawn");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Automatically respawns when you die.");
 
-        respawnDelay = new FloatSetting("autorespawn_delay", "Delay", "The delay between dying and automatically respawning.", 0.0f, 0.0f, 100.0f, 1.0f);
-
+        respawnDelay = FloatSetting.builder()
+        		.id("autorespawn_delay")
+        		.displayName("Delay")
+        		.description("The delay between dying and automatically respawning.")
+        		.defaultValue(0.0f)
+        		.minValue(0.0f)
+        		.maxValue(100.0f)
+        		.step(1.0f)
+        		.build();
+        		
         this.addSetting(respawnDelay);
     }
 

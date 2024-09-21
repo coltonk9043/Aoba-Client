@@ -15,7 +15,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class EntityControl extends Module implements TickListener {
     public EntityControl() {
-        super(new KeybindSetting("key.entitycontrol", "EntityControl Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.entitycontrol").displayName("EntityControl Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("EntityControl");
         this.setDescription("Allows you to control entities without needing a saddle.");

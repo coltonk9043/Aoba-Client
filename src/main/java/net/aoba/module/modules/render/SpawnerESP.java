@@ -42,11 +42,25 @@ import java.util.stream.Collectors;
 
 public class SpawnerESP extends Module implements Render3DListener {
 
-    private ColorSetting color = new ColorSetting("spawneresp_color", "Color", "Color", new Color(0, 1f, 1f));
-    private FloatSetting lineThickness = new FloatSetting("spawneresp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
-
+    private ColorSetting color = ColorSetting.builder()
+			.id("spawneresp_color")
+			.displayName("Color")
+			.description("Color")
+			.defaultValue(new Color(0f, 1f, 1f))
+			.build();
+    
+    private FloatSetting lineThickness = FloatSetting.builder()
+    		.id("spawneresp_linethickness")
+    		.displayName("Line Thickness")
+    		.description("Adjust the thickness of the ESP box lines")
+    		.defaultValue(2f)
+    		.minValue(0f)
+    		.maxValue(5f)
+    		.step(0.1f)
+    		.build();
+    
     public SpawnerESP() {
-        super(new KeybindSetting("key.spawneresp", "SpawnerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.spawneresp").displayName("SpawnerESP Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("SpawnerESP");
         this.setCategory(Category.of("Render"));

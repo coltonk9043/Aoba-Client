@@ -34,17 +34,22 @@ public class Zoom extends Module implements TickListener {
 
     private int lastFov;
 
-    private FloatSetting zoomFactor;
-
+	private FloatSetting zoomFactor = FloatSetting.builder()
+    		.id("zoom_factor")
+    		.displayName("Factor")
+    		.description("The zoom factor that the zoom will use.")
+    		.defaultValue(2f)
+    		.minValue(1f)
+    		.maxValue(3.6f)
+    		.step(0.1f)
+    		.build();
+	
     public Zoom() {
-        super(new KeybindSetting("key.zoom", "Zoom Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.zoom").displayName("Zoom Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Zoom");
         this.setCategory(Category.of("Render"));
         this.setDescription("Zooms the players camera to see further.");
-
-        zoomFactor = new FloatSetting("zoom_factor", "Factor", "The zoom factor that the zoom will use.", 2.0f, 1.0f, 3.6f, 0.1f);
-
         this.addSetting(zoomFactor);
     }
 

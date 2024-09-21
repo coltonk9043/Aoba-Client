@@ -34,17 +34,19 @@ import org.lwjgl.glfw.GLFW;
 
 public class Jesus extends Module implements TickListener {
 
-    public BooleanSetting legit;
+    public BooleanSetting legit = BooleanSetting.builder()
+    		.id("jesus_legit")
+    		.displayName("Legit")
+    		.description("Whether or not the player will swim as close to the surface as possible.")
+    		.defaultValue(true)
+    		.build();
 
     public Jesus() {
-        super(new KeybindSetting("key.jesus", "Jesus Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.jesus").displayName("Jesus Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Jesus");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to walk on water.");
-
-        // Add Settings
-        legit = new BooleanSetting("jesus_legit", "Legit", "Whether or not the player will swim as close to the surface as possible.", true);
         this.addSetting(legit);
     }
 

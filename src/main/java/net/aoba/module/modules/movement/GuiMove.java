@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class GuiMove extends Module implements TickListener {
     public GuiMove() {
-        super(new KeybindSetting("key.guimove", "GuiMove Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.guimove").displayName("GuiMove Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("GuiMove");
         this.setCategory(Category.of("Movement"));

@@ -3,10 +3,8 @@ package net.aoba.module.modules.misc;
 import net.aoba.Aoba;
 import net.aoba.event.events.SendMovementPacketEvent;
 import net.aoba.event.events.SendPacketEvent;
-import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.SendMovementPacketListener;
 import net.aoba.event.listeners.SendPacketListener;
-import net.aoba.event.listeners.TickListener;
 import net.aoba.mixin.interfaces.IPlayerMoveC2SPacket;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -20,11 +18,22 @@ import org.lwjgl.glfw.GLFW;
 public class AntiHunger extends Module implements SendPacketListener, SendMovementPacketListener {
     private boolean lastOnGround, ignorePacket;
 
-    public BooleanSetting sprint = new BooleanSetting("antihunger_sprint", "Sprint", "Change sprint packets.", true);
-    public BooleanSetting onGround = new BooleanSetting("antihunger_onground", "On Ground", "Fakes onGround.", true);
+    public BooleanSetting sprint = BooleanSetting.builder()
+    		.id("antihunger_sprint")
+    		.displayName("Sprint")
+    		.description("Change sprint packets.")
+    		.defaultValue(true)
+    		.build();
 
+    public BooleanSetting onGround = BooleanSetting.builder()
+    		.id("antihunger_onground")
+    		.displayName("On Ground")
+    		.description("Fakes onGround.")
+    		.defaultValue(true)
+    		.build();
+    
     public AntiHunger() {
-        super(new KeybindSetting("key.antihunger", "AntiHunger Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.antihunger").displayName("AntiHunger Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("AntiHunger");
         this.setCategory(Category.of("misc"));

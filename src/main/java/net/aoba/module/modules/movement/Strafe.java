@@ -13,16 +13,22 @@ import org.lwjgl.glfw.GLFW;
 
 public class Strafe extends Module implements TickListener {
 
-    private FloatSetting intensity;
+    private FloatSetting intensity = FloatSetting.builder()
+    		.id("strafe_intensity")
+    		.displayName("Intensity")
+    		.description("Strafe intensity.")
+    		.defaultValue(0.1f)
+    		.minValue(0f)
+    		.maxValue(0.3f)
+    		.step(0.1f)
+    		.build();
 
     public Strafe() {
-        super(new KeybindSetting("key.strafe", "Strafe Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.strafe").displayName("Strafe Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Strafe");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Makes the user able to change directions mid-air");
-
-        intensity = new FloatSetting("strafe_intensity", "Intensity", "Strafe intensity", 0.1f, 0.0f, 0.3f, 0.1f);
 
         this.addSetting(intensity);
     }

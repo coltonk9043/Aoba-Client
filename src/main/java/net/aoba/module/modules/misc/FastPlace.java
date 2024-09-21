@@ -37,7 +37,7 @@ public class FastPlace extends Module implements TickListener {
     IMinecraftClient iMC;
 
     public FastPlace() {
-        super(new KeybindSetting("key.fastplace", "FastPlace Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.fastplace").displayName("FastPlace Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("FastPlace");
         this.setCategory(Category.of("Misc"));

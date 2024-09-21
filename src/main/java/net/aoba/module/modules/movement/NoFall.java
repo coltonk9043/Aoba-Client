@@ -36,16 +36,23 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly;
 
 public class NoFall extends Module implements TickListener {
 
-	private FloatSetting fallDistance;
+	private FloatSetting fallDistance = FloatSetting.builder()
+    		.id("nofall_falldistance")
+    		.displayName("Fall Distance")
+    		.description("No-Fall Distance.")
+    		.defaultValue(2f)
+    		.minValue(1f)
+    		.maxValue(20f)
+    		.step(1f)
+    		.build();
 
 	public NoFall() {
-		super(new KeybindSetting("key.nofall", "NoFall Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.nofall").displayName("NoFall Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 		
 		this.setName("No-Fall");
         this.setCategory(Category.of("Movement"));
 		this.setDescription("Prevents fall damage.");
 
-		fallDistance = new FloatSetting("nofall_falldistance", "Fall Distance", "No-Fall Distance", 2f, 1f, 20f, 1f);
 		this.addSetting(fallDistance);
 	}
 

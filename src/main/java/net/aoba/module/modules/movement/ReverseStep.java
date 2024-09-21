@@ -12,8 +12,8 @@ import org.lwjgl.glfw.GLFW;
 
 public class ReverseStep extends Module implements TickListener {
     public ReverseStep() {
-        super(new KeybindSetting("key.reversestep", "ReverseStep Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-
+    	super(KeybindSetting.builder().id("key.reversestep").displayName("ReverseStep Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+		
         this.setName("ReverseStep");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Steps. But in reverse...");

@@ -8,10 +8,18 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class FocusFps extends Module {
-    private FloatSetting fps = new FloatSetting("focusfps_fps", "FPS", "The FPS for when the window is not in focus.", 30, 1, 45, 1);
-
+	private FloatSetting fps = FloatSetting.builder()
+    		.id("focusfps_fps")
+    		.displayName("FPS")
+    		.description("The FPS for when the window is not in focus.")
+    		.defaultValue(30f)
+    		.minValue(1f)
+    		.maxValue(45f)
+    		.step(1f)
+    		.build();
+	
     public FocusFps() {
-        super(new KeybindSetting("key.focusfps", "FocusFPS Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.focusfps").displayName("FocusFPS Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("FocusFPS");
         this.setCategory(Category.of("Render"));

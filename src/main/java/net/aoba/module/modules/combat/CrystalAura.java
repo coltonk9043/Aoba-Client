@@ -8,8 +8,10 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.FindItemResult;
 import net.aoba.utils.render.Render3D;
+import net.aoba.utils.rotation.RotationManager.RotationMode;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.module.modules.misc.MCA.Mode;
 import net.aoba.settings.types.*;
 import net.aoba.utils.entity.DamageUtils;
 import net.minecraft.block.Block;
@@ -39,15 +41,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public class CrystalAura extends Module implements TickListener, Render3DListener {
-
-    private final FloatSetting radius;
-    private final FloatSetting placeRadius;
-    private final BooleanSetting targetFriends;
-    private final FloatSetting attackDelay;
-    private final BooleanSetting autoSwitch;
-    private final FloatSetting placeDelay;
-    private final EnumSetting<TargetMode> targetMode;
-
     public enum TargetMode {
         NEAREST, MOST_HEALTH
     }
@@ -56,43 +49,167 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
         MAIN_HAND, OFF_HAND
     }
 
-    private final EnumSetting<HandSetting> handSetting;
-
-    // MultiPlace
-    private final BooleanSetting multiPlace;
-
-    // AntiSuicide
-    private final BooleanSetting antiSuicide;
-
-    // MinDamage
-    private final FloatSetting minDamage;
-
-    // MaxSelfDamage
-    private final FloatSetting maxSelfDamage;
-
-    // Enemy Range
-    private final FloatSetting enemyRange;
-
-    // Wall Range
-    private final FloatSetting wallRange;
-
-    // EndCrystal Priority
     public enum CrystalPriority {
         CLOSEST, HIGHEST_DAMAGE, LOWEST_HEALTH
     }
+    
+    private final FloatSetting radius = FloatSetting.builder()
+    		.id("crystalaura_radius")
+    		.displayName("Radius")
+    		.description("Radius, in blocks, that you can place/attack a crystal.")
+    		.defaultValue(5f)
+    		.minValue(1f)
+    		.maxValue(15f)
+    		.step(1f)
+    		.build();
+    
+    private final FloatSetting placeRadius = FloatSetting.builder()
+    		.id("crystalaura_place_radius")
+    		.displayName("Place Radius")
+    		.description("Radius, in blocks, that you can place/attack a crystal.")
+    		.defaultValue(5f)
+    		.minValue(1f)
+    		.maxValue(15f)
+    		.step(1f)
+    		.build();
+    
+    private final BooleanSetting targetFriends = BooleanSetting.builder()
+		    .id("crystalaura_target_friends")
+		    .displayName("Target Friends")
+		    .description("Target friends.")
+		    .defaultValue(false)
+		    .build();
+    
+    private final FloatSetting attackDelay = FloatSetting.builder()
+    		.id("crystalaura_attack_delay")
+    		.displayName("Attack Delay")
+    		.description("Delay between attacks in milliseconds.")
+    		.defaultValue(500f)
+    		.minValue(0f)
+    		.maxValue(2000f)
+    		.step(50f)
+    		.build();
+    
+    private final BooleanSetting autoSwitch = BooleanSetting.builder()
+		    .id("crystalaura_auto_switch")
+		    .displayName("Auto Switch")
+		    .description("Automatically switch to End Crystal.")
+		    .defaultValue(true)
+		    .build();
+    
+    private final FloatSetting placeDelay = FloatSetting.builder()
+    		.id("crystalaura_place_delay")
+    		.displayName("Place Delay")
+    		.description("Delay between placing crystals in milliseconds.")
+    		.defaultValue(500f)
+    		.minValue(0f)
+    		.maxValue(2000f)
+    		.step(50f)
+    		.build();
+    
+    private final BooleanSetting multiPlace = BooleanSetting.builder()
+		    .id("crystalaura_multi_place")
+		    .displayName("MultiPlace")
+		    .description("Allows placing multiple crystals simultaneously.")
+		    .defaultValue(false)
+		    .build();
+    
+    private final BooleanSetting antiSuicide = BooleanSetting.builder()
+		    .id("crystalaura_anti_suicide")
+		    .displayName("AntiSuicide")
+		    .description("Prevents attacking crystals if it would result in player's death.")
+		    .defaultValue(true)
+		    .build(); 
 
-    private final EnumSetting<CrystalPriority> crystalPriority;
+    private final FloatSetting minDamage = FloatSetting.builder()
+    		.id("crystalaura_min_damage")
+    		.displayName("Min Damage")
+    		.description("Minimum damage a crystal must deal to be placed or attacked.")
+    		.defaultValue(6f)
+    		.minValue(0f)
+    		.maxValue(36f)
+    		.step(0.5f)
+    		.build();
+    
+    private final BooleanSetting swingHand = BooleanSetting.builder()
+		    .id("crystalaura_swing_hand")
+		    .displayName("Swing Hand")
+		    .description("Swing hand after interacting.")
+		    .defaultValue(true)
+		    .build();
+    
+    private final BooleanSetting ignoreWalls = BooleanSetting.builder()
+		    .id("crystalaura_ignore_walls")
+		    .displayName("Ignore Walls")
+		    .description("Ignore walls when targeting enemies.")
+		    .defaultValue(true)
+		    .build();
+    
+    private final EnumSetting<TargetMode> targetMode = EnumSetting.<TargetMode>builder()
+    		.id("crystalaura_target_mode")
+    		.displayName("Target Mode")
+    		.description("Mode to target players.")
+    		.defaultValue(TargetMode.NEAREST)
+    		.build();
 
-    // Rotation Mode
-    public enum RotationMode {
-        NONE, INSTANT, SMOOTH
-    }
+    private final EnumSetting<CrystalPriority> crystalPriority = EnumSetting.<CrystalPriority>builder()
+    		.id("crystalaura_crystal_priority")
+    		.displayName("Crystal Priority")
+    		.description("Prioritize which crystals to attack first.")
+    		.defaultValue(CrystalPriority.CLOSEST)
+    		.build();
+    
+    private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
+    		.id("crystalaura_rotation_mode")
+    		.displayName("Rotation Mode")
+    		.description("Controls how the player's view rotates.")
+    		.defaultValue(RotationMode.NONE)
+    		.build();
+    
+    private final EnumSetting<HandSetting> handSetting = EnumSetting.<HandSetting>builder()
+    		.id("crystalaura_hand_setting")
+    		.displayName("Hand Setting")
+    		.description("The hand to use for interactions.")
+    		.defaultValue(HandSetting.MAIN_HAND)
+    		.build();
 
-    private final EnumSetting<RotationMode> rotationMode;
-    private final BooleanSetting swingHand;
-    private final BooleanSetting ignoreWalls;
-    private ColorSetting color = new ColorSetting("tilebreaker_color", "Color", "Color", new Color(0, 1f, 1f));
+    private final FloatSetting maxSelfDamage = FloatSetting.builder()
+    		.id("crystalaura_max_self_damage")
+    		.displayName("Max Self Damage")
+    		.description("Maximum self-damage the player can take from a single crystal.")
+    		.defaultValue(4f)
+    		.minValue(0f)
+    		.maxValue(20f)
+    		.step(0.5f)
+    		.build();
 
+    private final FloatSetting enemyRange = FloatSetting.builder()
+    		.id("crystalaura_enemy_range")
+    		.displayName("Enemy Range")
+    		.description("Maximum distance an enemy can be to be considered a target.")
+    		.defaultValue(12f)
+    		.minValue(0f)
+    		.maxValue(32f)
+    		.step(1f)
+    		.build();
+
+    private final FloatSetting wallRange = FloatSetting.builder()
+    		.id("crystalaura_wall_range")
+    		.displayName("Wall Range")
+    		.description("Distance an enemy must be to a wall for crystals to be placed or attacked through it.")
+    		.defaultValue(3f)
+    		.minValue(0f)
+    		.maxValue(8f)
+    		.step(0.5f)
+    		.build();
+
+    private ColorSetting color = ColorSetting.builder()
+			.id("tilebreaker_color")
+			.displayName("Color")
+			.description("Color")
+			.defaultValue(new Color(0, 1f, 1f))
+			.build();
+    
     private long lastAttackTime;
     private long lastPlaceTime;
     private BlockPos placePos;
@@ -100,31 +217,12 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
     private final Map<BlockPos, Long> displayedBoxes = new HashMap<>();
 
     public CrystalAura() {
-        super(new KeybindSetting("key.crystalaura", "Crystal Aura Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.crystalaura").displayName("Crystal Aura Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("CrystalAura");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Attacks anything within your personal space with a End Crystal.");
-
-        radius = new FloatSetting("crystalaura_radius", "Radius", "Radius, in blocks, that you can place/attack a crystal.", 5f, 1f, 15f, 1f);
-        placeRadius = new FloatSetting("crystalaura_place_radius", "Place Radius", "Radius, in blocks, that you can place/attack a crystal.", 5f, 1f, 15f, 1f);
-        targetFriends = new BooleanSetting("crystalaura_target_friends", "Target Friends", "Target friends.", false);
-        attackDelay = new FloatSetting("crystalaura_attack_delay", "Attack Delay", "Delay between attacks in milliseconds.", 500, 0, 2000, 50);
-        autoSwitch = new BooleanSetting("crystalaura_auto_switch", "Auto Switch", "Automatically switch to End Crystal.", true);
-        placeDelay = new FloatSetting("crystalaura_place_delay", "Place Delay", "Delay between placing crystals in milliseconds.", 500, 0, 2000, 50);
-        targetMode = new EnumSetting<>("crystalaura_target_mode", "Target Mode", "Mode to target players.", TargetMode.NEAREST);
-        multiPlace = new BooleanSetting("crystalaura_multi_place", "MultiPlace", "Allows placing multiple crystals simultaneously.", false);
-        antiSuicide = new BooleanSetting("crystalaura_anti_suicide", "AntiSuicide", "Prevents attacking crystals if it would result in player's death.", true);
-        minDamage = new FloatSetting("crystalaura_min_damage", "Min Damage", "Minimum damage a crystal must deal to be placed or attacked.", 6f, 0f, 36f, 0.5f);
-        maxSelfDamage = new FloatSetting("crystalaura_max_self_damage", "Max Self Damage", "Maximum self-damage the player can take from a single crystal.", 4f, 0f, 20f, 0.5f);
-        enemyRange = new FloatSetting("crystalaura_enemy_range", "Enemy Range", "Maximum distance an enemy can be to be considered a target.", 12f, 0f, 32f, 1f);
-        wallRange = new FloatSetting("crystalaura_wall_range", "Wall Range", "Distance an enemy must be to a wall for crystals to be placed or attacked through it.", 3f, 0f, 8f, 0.5f);
-        crystalPriority = new EnumSetting<>("crystalaura_crystal_priority", "Crystal Priority", "Prioritize which crystals to attack first.", CrystalPriority.CLOSEST);
-        rotationMode = new EnumSetting<>("crystalaura_rotation_mode", "Rotation Mode", "Controls how the player's view rotates.", RotationMode.NONE);
-        handSetting = new EnumSetting<>("crystalaura_hand_setting", "Hand Setting", "The hand to use for interactions.", HandSetting.MAIN_HAND);
-        swingHand = new BooleanSetting("crystalaura_swing_hand", "Swing Hand", "Swing hand after interacting.", true);
-        ignoreWalls = new BooleanSetting("crystalaura_ignore_walls", "Ignore Walls", "Ignore walls when targeting enemies.", false);
-
+        
         this.addSetting(ignoreWalls);
         this.addSetting(swingHand);
         this.addSetting(handSetting);

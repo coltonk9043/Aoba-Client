@@ -32,7 +32,7 @@ public class AutoSign extends Module {
     String[] text;
 
     public AutoSign() {
-        super(new KeybindSetting("key.autosign", "AutoSign Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.autosign").displayName("AutoSign Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("AutoSign");
         this.setCategory(Category.of("World"));

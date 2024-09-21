@@ -8,11 +8,23 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class Tooltips extends Module {
-    public BooleanSetting storage = new BooleanSetting("tooltips_storage", "Storage", "Renders the contents of the storage item.", true);
-    public BooleanSetting maps = new BooleanSetting("tooltips_maps", "Maps", "Render a map preview", true);
-
+	
+	public BooleanSetting storage = BooleanSetting.builder()
+    		.id("tooltips_storage")
+    		.displayName("Storage")
+    		.description("Renders the contents of the storage item.")
+    		.defaultValue(true)
+    		.build();
+	
+	public BooleanSetting maps = BooleanSetting.builder()
+    		.id("tooltips_maps")
+    		.displayName("Maps")
+    		.description("Render a map preview")
+    		.defaultValue(true)
+    		.build();
+	
     public Tooltips() {
-        super(new KeybindSetting("key.tooltips", "Tooltips Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.tooltips").displayName("Tooltips Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Tooltips");
         this.setCategory(Category.of("Render"));

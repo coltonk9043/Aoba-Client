@@ -36,14 +36,39 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class PlayerESP extends Module implements Render3DListener {
+    private ColorSetting color_default = ColorSetting.builder()
+			.id("playeresp_color_default")
+			.displayName("Default Color")
+			.description("Default Color")
+			.defaultValue(new Color(1f, 1f, 0f))
+			.build();
 
-    private ColorSetting color_default = new ColorSetting("playeresp_color_default", "Default Color", "Default Color", new Color(1f, 1f, 0f));
-    private ColorSetting color_friendly = new ColorSetting("playeresp_color_friendly", "Friendly Color", "Friendly Color", new Color(0f, 1f, 0f));
-    private ColorSetting color_enemy = new ColorSetting("playeresp_color_enemy", "Enemy Color", "Enemy Color", new Color(1f, 0f, 0f));
-    private FloatSetting lineThickness = new FloatSetting("playeresp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
-
+    private ColorSetting color_friendly = ColorSetting.builder()
+			.id("playeresp_color_friendly")
+			.displayName("Friendly Color")
+			.description("Friendly Color")
+			.defaultValue(new Color(0f, 1f, 0f))
+			.build();
+    
+    private ColorSetting color_enemy = ColorSetting.builder()
+			.id("playeresp_color_enemy")
+			.displayName("Enemy Color")
+			.description("Enemy Color")
+			.defaultValue(new Color(1f, 0f, 0f))
+			.build();
+    
+    private FloatSetting lineThickness = FloatSetting.builder()
+    		.id("playeresp_linethickness")
+    		.displayName("Line Thickness")
+    		.description("Adjust the thickness of the ESP box lines")
+    		.defaultValue(2f)
+    		.minValue(0f)
+    		.maxValue(5f)
+    		.step(0.1f)
+    		.build();
+    
     public PlayerESP() {
-        super(new KeybindSetting("key.playeresp", "PlayerESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.playeresp").displayName("PlayerESP Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("PlayerESP");
         this.setCategory(Category.of("Render"));

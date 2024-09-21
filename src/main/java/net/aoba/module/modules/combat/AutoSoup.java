@@ -45,13 +45,22 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 	private int previousSlot = -1;
 	
 	public AutoSoup() {
-		super(new KeybindSetting("key.autosoup", "AutoSoup Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-
+    	super(KeybindSetting.builder().id("key.autosoup").displayName("AutoSoup Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+    	
 		this.setName("AutoSoup");
         this.setCategory(Category.of("Combat"));
 		this.setDescription("Automatically consumes soup when health is low. (KitPVP)");
 		
-		health = new FloatSetting("autosoup_health", "Min. Health", "Minimum health that the AutoSoup will trigger.", 6f, 1f, 20f, 1f);
+		health = FloatSetting.builder()
+				.id("autosoup_health")
+				.displayName("Min. Health")
+				.description("Minimum health that the AutoSoup will trigger.")
+				.defaultValue(6f)
+				.minValue(1f)
+				.maxValue(20f)
+				.step(1f)
+				.build();
+
 		this.addSetting(health);
 	}
 

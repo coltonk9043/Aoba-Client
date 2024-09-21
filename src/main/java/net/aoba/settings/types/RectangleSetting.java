@@ -23,19 +23,7 @@ import net.aoba.settings.Setting;
 import java.util.function.Consumer;
 
 public class RectangleSetting extends Setting<Rectangle> {
-
-    public RectangleSetting(String ID, String description, Rectangle default_value) {
-        super(ID, description, default_value);
-        type = TYPE.RECTANGLE;
-    }
-
-    public RectangleSetting(String ID, String displayName, String description, Rectangle default_value) {
-        super(ID, displayName, description, default_value);
-        type = TYPE.RECTANGLE;
-    }
-
-
-    public RectangleSetting(String ID, String description, Rectangle default_value, Consumer<Rectangle> onUpdate) {
+    protected RectangleSetting(String ID, String displayName,String description, Rectangle default_value, Consumer<Rectangle> onUpdate) {
         super(ID, description, default_value, onUpdate);
         type = TYPE.RECTANGLE;
     }
@@ -156,4 +144,19 @@ public class RectangleSetting extends Setting<Rectangle> {
     protected boolean isValueValid(Rectangle value) {
         return true;
     }
+    
+    public static BUILDER builder() {
+    	return new BUILDER();
+    }
+    
+    public static class BUILDER extends Setting.BUILDER<BUILDER, RectangleSetting, Rectangle> {
+		protected BUILDER() {
+			super();
+		}
+		
+		@Override
+		public RectangleSetting build() {
+			return new RectangleSetting(id, displayName, description, defaultValue, onUpdate);
+		}
+	}
 }

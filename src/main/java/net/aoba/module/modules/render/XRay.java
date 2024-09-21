@@ -34,24 +34,25 @@ import org.lwjgl.glfw.GLFW;
 import java.util.HashSet;
 
 public class XRay extends Module {
-    public BlocksSetting blocks;
+    public BlocksSetting blocks = BlocksSetting.builder()
+    		.id("xray_blocks")
+    		.displayName("Blocks")
+    		.description("Blocks that can be seen in Xray")
+    		.defaultValue(new HashSet<Block>(Lists.newArrayList(Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.DIAMOND_ORE, Blocks.DIAMOND_BLOCK,
+                    Blocks.GOLD_ORE, Blocks.GOLD_BLOCK, Blocks.IRON_ORE, Blocks.IRON_BLOCK, Blocks.COAL_ORE,
+                    Blocks.COAL_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.REDSTONE_ORE, Blocks.LAPIS_ORE,
+                    Blocks.LAPIS_BLOCK, Blocks.NETHER_QUARTZ_ORE, Blocks.MOSSY_COBBLESTONE, Blocks.STONE_BRICKS,
+                    Blocks.OAK_PLANKS, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
+                    Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_COAL_ORE)))
+    		.onUpdate((HashSet<Block> block) -> ReloadRenderer(block))
+    		.build();
 
     public XRay() {
-        super(new KeybindSetting("key.xray", "XRay Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.xray").displayName("XRay Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("XRay");
         this.setCategory(Category.of("Render"));
         this.setDescription("Allows the player to see ores.");
-
-
-        blocks = new BlocksSetting("xray_blocks", "Blocks", "Blocks that can be seen in Xray",
-                new HashSet<Block>(Lists.newArrayList(Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.DIAMOND_ORE, Blocks.DIAMOND_BLOCK,
-                        Blocks.GOLD_ORE, Blocks.GOLD_BLOCK, Blocks.IRON_ORE, Blocks.IRON_BLOCK, Blocks.COAL_ORE,
-                        Blocks.COAL_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.REDSTONE_ORE, Blocks.LAPIS_ORE,
-                        Blocks.LAPIS_BLOCK, Blocks.NETHER_QUARTZ_ORE, Blocks.MOSSY_COBBLESTONE, Blocks.STONE_BRICKS,
-                        Blocks.OAK_PLANKS, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
-                        Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_COAL_ORE)));
-        blocks.addOnUpdate((HashSet<Block> block) -> ReloadRenderer(block));
         this.addSetting(blocks);
     }
 

@@ -46,17 +46,20 @@ public class Criticals extends Module implements SendPacketListener {
         INTERACT, ATTACK, INTERACT_AT
     }
 	
-	private BooleanSetting legit;
+	private BooleanSetting legit = BooleanSetting.builder()
+		    .id("criticals_legit")
+		    .displayName("Legit")
+		    .description("Whether or not we will use the 'legit' mode.")
+		    .defaultValue(false)
+		    .build();
 	
 	public Criticals() {
-		super(new KeybindSetting("key.criticals", "Criticals Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.criticals").displayName("Criticals Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
 		this.setName("Criticals");
         this.setCategory(Category.of("Combat"));
 		this.setDescription("Makes all attacks into critical strikes.");
-		
-		legit = new BooleanSetting("criticals_legit", "Legit", "Whether or not we will use the 'legit' mode.", false);
-		
+
 		this.addSetting(legit);
 	}
 

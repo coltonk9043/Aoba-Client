@@ -33,13 +33,21 @@ public class Reach extends Module {
     private FloatSetting distance;
 
     public Reach() {
-        super(new KeybindSetting("key.reach", "Reach Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.reach").displayName("Reach Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Reach");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Allows you to reach further.");
 
-        distance = new FloatSetting("reach_distance", "Distance", "Distance, in blocks, that you can reach.", 5f, 1f, 15f, 1f);
+        distance = FloatSetting.builder()
+        		.id("reach_distance")
+        		.displayName("Distance")
+        		.description("Distance, in blocks, that you can reach.")
+        		.defaultValue(5f)
+        		.minValue(1f)
+        		.maxValue(15f)
+        		.step(1f)
+        		.build();
         this.addSetting(distance);
     }
 

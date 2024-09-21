@@ -77,8 +77,13 @@ public class Window implements IGuiElement {
 		this.parent = null;
 		this.ID = ID;
 		this.title = ID;
-		this.position = new RectangleSetting(ID + "_position", ID + "Position", new Rectangle(x, y, width, height),
-				(Rectangle vec) -> UpdateAll());
+		
+		position = RectangleSetting.builder()
+				.id(ID + "_position")
+				.displayName(ID + "Position")
+				.defaultValue(new Rectangle(x, y, width, height))
+				.onUpdate((Rectangle vec) -> UpdateAll())
+				.build();
 
 		SettingManager.registerSetting(position, Aoba.getInstance().settingManager.configContainer);
 	}

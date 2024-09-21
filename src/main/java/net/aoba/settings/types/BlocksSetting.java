@@ -20,18 +20,12 @@ package net.aoba.settings.types;
 
 import net.aoba.settings.Setting;
 import net.minecraft.block.Block;
-
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 public class BlocksSetting extends Setting<HashSet<Block>> {
-
-    public BlocksSetting(String ID, String description, HashSet<Block> default_value) {
-        super(ID, description, default_value);
-        type = TYPE.BLOCKS;
-    }
-
-    public BlocksSetting(String ID, String displayName, String description, HashSet<Block> default_value) {
-        super(ID, displayName, description, default_value);
+    protected BlocksSetting(String ID, String displayName, String description, HashSet<Block> default_value, Consumer<HashSet<Block>> onUpdate) {
+        super(ID, displayName, description, default_value, onUpdate);
         type = TYPE.BLOCKS;
     }
 
@@ -39,4 +33,19 @@ public class BlocksSetting extends Setting<HashSet<Block>> {
     protected boolean isValueValid(HashSet<Block> value) {
         return true;
     }
+    
+    public static BUILDER builder() {
+    	return new BUILDER();
+    }
+    
+    public static class BUILDER extends Setting.BUILDER<BUILDER, BlocksSetting, HashSet<Block>> {
+		protected BUILDER() {
+			super();
+		}
+
+		@Override
+		public BlocksSetting build() {
+			return new BlocksSetting(id, displayName, description, defaultValue, onUpdate);
+		}
+	}
 }

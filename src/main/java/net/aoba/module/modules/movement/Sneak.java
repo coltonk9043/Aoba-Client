@@ -38,8 +38,8 @@ public class Sneak extends Module implements TickListener {
     private final MinecraftClient MC = MinecraftClient.getInstance();
 
     public Sneak() {
-        super(new KeybindSetting("key.sneakhack", "Sneak Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-
+    	super(KeybindSetting.builder().id("key.sneakhack").displayName("Sneak Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+		
         this.setName("Sneak");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Makes the player appear like they're sneaking.");

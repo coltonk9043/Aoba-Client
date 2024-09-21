@@ -29,7 +29,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class LightmapTextureManagerMixin {
     @Inject(at = {@At("HEAD")}, method = {"getDarknessFactor(F)F"}, cancellable = true)
     private void onGetDarknessFactor(float delta, CallbackInfoReturnable<Float> cir) {
-        if (Aoba.getInstance().moduleManager.nooverlay.getState())
-            cir.setReturnValue(0F);
+    	// TODO: NoRender
+        //if (Aoba.getInstance().moduleManager.nooverlay.getState())
+        //    cir.setReturnValue(0F);
     }
 }

@@ -35,11 +35,20 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
 public class NoSlowdown extends Module implements TickListener {
-	private FloatSetting slowdownMultiplier = new FloatSetting("noslowdown_multiplier", "Multiplier", 0.0f, 0.0f, 1.0f, 0.1f);
 	
-    public NoSlowdown() {
-        super(new KeybindSetting("key.noslowdown", "NoSlowdown Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+	private FloatSetting slowdownMultiplier = FloatSetting.builder()
+    		.id("noslowdown_multiplier")
+    		.displayName("Multiplier")
+    		.description("NoSlowdown walk speed multiplier.")
+    		.defaultValue(0f)
+    		.minValue(0f)
+    		.maxValue(1f)
+    		.step(0.1f)
+    		.build();
 
+    public NoSlowdown() {
+    	super(KeybindSetting.builder().id("key.noslowdown").displayName("NoSlowdown Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+		
         this.setName("NoSlowdown");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Prevents the player from being slowed down by blocks.");

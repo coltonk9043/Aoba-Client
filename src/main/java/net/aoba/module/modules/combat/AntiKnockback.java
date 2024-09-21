@@ -39,7 +39,7 @@ import org.lwjgl.glfw.GLFW;
 public class AntiKnockback extends Module implements ReceivePacketListener {
 
     public AntiKnockback() {
-        super(new KeybindSetting("key.antiknockback", "AntiKnockback Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.antiknockback").displayName("AntiKnockback Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("AntiKnockback");
         this.setCategory(Category.of("Combat"));

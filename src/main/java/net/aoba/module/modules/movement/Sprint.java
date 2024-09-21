@@ -34,7 +34,7 @@ import org.lwjgl.glfw.GLFW;
 public class Sprint extends Module implements TickListener {
 
     public Sprint() {
-        super(new KeybindSetting("key.sprinthack", "Sprint Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.sprinthack").displayName("Sprint Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Sprint");
         this.setCategory(Category.of("Movement"));

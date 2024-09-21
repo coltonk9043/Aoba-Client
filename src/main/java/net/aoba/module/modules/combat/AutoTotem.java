@@ -47,21 +47,40 @@ import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 
 public class AutoTotem extends Module implements PlayerHealthListener, ReceivePacketListener {
 
-	public FloatSetting healthTrigger;
-	public FloatSetting crystalRadiusTrigger;
-	public BooleanSetting mainHand;
+	public FloatSetting healthTrigger= FloatSetting.builder()
+			.id("autototem_health")
+			.displayName("Health")
+			.description("The health at which the totem will be placed into your hand.")
+			.defaultValue(6.0f)
+			.minValue(1.0f)
+			.maxValue(20.0f)
+			.step(1.0f)
+			.build();
+	
+	public FloatSetting crystalRadiusTrigger= FloatSetting.builder()
+			.id("autototem_crystal_radius")
+			.displayName("Crystal Radius")
+			.description("The radius at which a placed end crystal will trigger autototem.")
+			.defaultValue(6.0f)
+			.minValue(1.0f)
+			.maxValue(10.0f)
+			.step(1.0f)
+			.build();
+	
+	public BooleanSetting mainHand = BooleanSetting.builder()
+		    .id("autototem_mainhand")
+		    .displayName("Mainhand")
+		    .description("Places totem in main hand instead of off-hand")
+		    .defaultValue(false)
+		    .build();
 	
 	public AutoTotem() {
-		super(new KeybindSetting("key.autototem", "AutoTotem Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.autototem").displayName("AutoTotem Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 		
 		this.setName("AutoTotem");
         this.setCategory(Category.of("Combat"));
 		this.setDescription("Automatically replaced totems.");
-		
-		healthTrigger = new FloatSetting("autototem_health", "Health", "The health at which the totem will be placed into your hand.", 6.0f, 1.0f, 20.0f, 1.0f);
-		crystalRadiusTrigger = new FloatSetting("autototem_crystal_radius", "Crystal Radius", "The radius at which a placed end crystal will trigger autototem.", 6.0f, 1.0f, 10.0f, 1.0f);
-		mainHand = new BooleanSetting("autototem_mainhand", "Mainhand", "Places totem in main hand instead of off-hand", false);
-		
+
 		this.addSetting(healthTrigger);
 		this.addSetting(crystalRadiusTrigger);
 		this.addSetting(mainHand);

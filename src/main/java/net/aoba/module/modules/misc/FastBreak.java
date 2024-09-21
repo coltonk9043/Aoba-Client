@@ -31,18 +31,29 @@ import org.lwjgl.glfw.GLFW;
 
 public class FastBreak extends Module {
 
-    public FloatSetting multiplier;
-    public BooleanSetting ignoreWater;
+    public FloatSetting multiplier = FloatSetting.builder()
+    		.id("fastbreak_multiplier")
+    		.displayName("Multiplier")
+    		.description("Multiplier for how fast the blocks will break.")
+    		.defaultValue(1.25f)
+    		.minValue(1.0f)
+    		.maxValue(10.0f)
+    		.step(0.05f)
+    		.build();
+    
+    public BooleanSetting ignoreWater = BooleanSetting.builder()
+    		.id("fastbreak_ignore_water")
+    		.displayName("Ignore Water")
+    		.description("Ignores the slowdown that being in water causes.")
+    		.defaultValue(false)
+    		.build();
 
     public FastBreak() {
-        super(new KeybindSetting("key.fastbreak", "FastBreak Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.fastbreak").displayName("FastBreak Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("FastBreak");
         this.setCategory(Category.of("Misc"));
         this.setDescription("Breaks blocks quicker based on a multiplier.");
-
-        multiplier = new FloatSetting("fastbreak_multiplier", "Multiplier", "Multiplier for how fast the blocks will break.", 1.25f, 1f, 10f, 0.05f);
-        ignoreWater = new BooleanSetting("fastbreak_ignore_water", "Ignore Water", "Ignores the slowdown that being in water causes.", false);
 
         this.addSetting(multiplier);
         this.addSetting(ignoreWater);

@@ -54,11 +54,14 @@ public class GlobalChat {
     private BufferedReader in;
     private boolean started = false;
 
-    private BooleanSetting enabled;
+    private BooleanSetting enabled = BooleanSetting.builder()
+    		.id("global_chat_enabled")
+    		.description("Whether or not global chat is enabled or disabled.")
+    		.defaultValue(true)
+    		.build();
 
     public GlobalChat() {
         gson = new Gson();
-        enabled = new BooleanSetting("global_chat_enabled", "Whether or not global chat is enabled or disabled.", true);
         SettingManager.registerSetting(this.enabled, Aoba.getInstance().settingManager.modulesContainer);
     }
 
@@ -80,7 +83,6 @@ public class GlobalChat {
 
         }
     }
-
 
     public void StartListener() {
         if (started) {

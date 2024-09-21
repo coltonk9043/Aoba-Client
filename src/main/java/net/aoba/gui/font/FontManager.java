@@ -54,7 +54,13 @@ public class FontManager {
         fontRenderers = new ConcurrentHashMap<>();
         MC = MinecraftClient.getInstance();
 
-        fontSetting = new StringSetting("font", "The font that Aoba will use.", "minecraft");
+        fontSetting = StringSetting.builder()
+        		.id("aoba_font")
+        		.displayName("Font")
+        		.description("The font that Aoba will use.")
+        		.defaultValue("minecraft")
+        		.build();
+ 
         fontSetting.addOnUpdate((i) -> {
             FontManager font = Aoba.getInstance().fontManager;
             font.SetRenderer(font.fontRenderers.get(i));

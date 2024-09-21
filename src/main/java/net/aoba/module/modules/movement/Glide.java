@@ -35,17 +35,22 @@ import org.lwjgl.glfw.GLFW;
 
 public class Glide extends Module implements TickListener {
 
-    private FloatSetting fallSpeed;
+    private FloatSetting fallSpeed = FloatSetting.builder()
+    		.id("glide_fallspeed")
+    		.displayName("Fall Speed")
+    		.description("The speed at which the player will fall.")
+    		.defaultValue(0.2f)
+    		.minValue(0.1f)
+    		.maxValue(2f)
+    		.step(0.1f)
+    		.build();
 
     public Glide() {
-        super(new KeybindSetting("key.glide", "Glide Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-
-        this.setName("Glide");
+    	super(KeybindSetting.builder().id("key.glide").displayName("Glide Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+        
+    	this.setName("Glide");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to glide down when in the air. Does not prevent fall damage.");
-
-        fallSpeed = new FloatSetting("glide_fallspeed", "Fall Speed", "The speed at which the player will fall.", 0.25f, 0.1f, 2.0f, 0.1f);
-
         this.addSetting(fallSpeed);
     }
 

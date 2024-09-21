@@ -8,16 +8,59 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class NoRender extends Module {
-    private BooleanSetting noEatParticles = new BooleanSetting("norender_eat_particles", "Eating Particles", "Does not render eating particles", false);
-    private BooleanSetting noTotemAnimation = new BooleanSetting("norender_totem_anim", "Totem Animation", "Does not render the totem floating animation.", false);
-    private BooleanSetting noVignette = new BooleanSetting("norender_vignette", "Vignette", "Does not render the Minecraft vignette.", false);
-    private BooleanSetting noPumpkinOverlay = new BooleanSetting("norender_pumpkin", "Pumpkin Overlay", "Does not render the pumpkin overlay when you are wearing one.", false);
-    private BooleanSetting noFireOverlay = new BooleanSetting("norender_fire", "Fire Overlay", "Does not render the overlay when the player is on fire.", false);
-    private BooleanSetting noPortalOverlay = new BooleanSetting("norender_portal", "Portal Overlay", "Does not render the overlay when travelling through a portal.", false);
-    private BooleanSetting noCrosshair = new BooleanSetting("norender_crosshair", "Crosshair", "Does not render the crosshair.", false);
+
+	
+	private BooleanSetting noEatParticles = BooleanSetting.builder()
+		    .id("norender_eat_particles")
+		    .displayName("Eating Particles")
+		    .description("Does not render eating particles.")
+		    .defaultValue(false)
+		    .build();
+	
+	private BooleanSetting noTotemAnimation = BooleanSetting.builder()
+		    .id("norender_totem_anim")
+		    .displayName("Totem Animation")
+		    .description("Does not render the totem floating animation.")
+		    .defaultValue(false)
+		    .build();
+	
+	private BooleanSetting noVignette = BooleanSetting.builder()
+		    .id("norender_vignette")
+		    .displayName("Vignette")
+		    .description("Does not render the Minecraft vignette.")
+		    .defaultValue(false)
+		    .build();
+	
+	private BooleanSetting noPumpkinOverlay = BooleanSetting.builder()
+		    .id("norender_pumpkin")
+		    .displayName("Pumpkin Overlay")
+		    .description("Does not render the pumpkin overlay when you are wearing one.")
+		    .defaultValue(false)
+		    .build();
+	
+	private BooleanSetting noFireOverlay = BooleanSetting.builder()
+		    .id("norender_fire")
+		    .displayName("Fire Overlay")
+		    .description("Does not render the overlay when the player is on fire.")
+		    .defaultValue(false)
+		    .build();
+	
+	private BooleanSetting noPortalOverlay = BooleanSetting.builder()
+		    .id("norender_portal")
+		    .displayName("Portal Overlay")
+		    .description("Does not render the overlay when travelling through a portal.")
+		    .defaultValue(false)
+		    .build();
+
+	private BooleanSetting noCrosshair = BooleanSetting.builder()
+		    .id("norender_crosshair")
+		    .displayName("Crosshair")
+		    .description("Does not render the crosshair.")
+		    .defaultValue(false)
+		    .build();
 
     public NoRender() {
-        super(new KeybindSetting("key.norender", "NoRender Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.norender").displayName("NoRender Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("NoRender");
         this.setCategory(Category.of("Render"));

@@ -27,36 +27,13 @@ public class FloatSetting extends Setting<Float> {
     public final float max_value;
     public final float step;
     private Float valueSqr;
-    
-    public FloatSetting(String ID, String description, float default_value, float min_value, float max_value, float step) {
-        super(ID, description, default_value);
-        this.min_value = min_value;
-        this.max_value = max_value;
-        this.step = step;
-        type = TYPE.FLOAT;
-    }
-
-    public FloatSetting(String ID, String displayName, String description, float default_value, float min_value, float max_value, float step) {
-        super(ID, displayName, description, default_value);
-        this.min_value = min_value;
-        this.max_value = max_value;
-        this.step = step;
-        type = TYPE.FLOAT;
-    }
-
-    public FloatSetting(String ID, String description, float default_value, float min_value, float max_value, float step, Consumer<Float> onUpdate) {
-        super(ID, description, default_value, onUpdate);
-        this.min_value = min_value;
-        this.max_value = max_value;
-        this.step = step;
-        type = TYPE.FLOAT;
-    }
-    
-    public FloatSetting(String ID, String displayName, String description, float default_value, float min_value, float max_value, float step, Consumer<Float> onUpdate) {
+   
+    private FloatSetting(String ID, String displayName, String description, float default_value, float min_value, float max_value, float step, Consumer<Float> onUpdate) {
         super(ID, displayName, description, default_value, onUpdate);
         this.min_value = min_value;
         this.max_value = max_value;
         this.step = step;
+        valueSqr = value * value;
         type = TYPE.FLOAT;
     }
 
@@ -72,6 +49,14 @@ public class FloatSetting extends Setting<Float> {
         super.setValue(actualNewValue);
     }
 
+    @Override
+    public void silentSetValue(Float value) {
+        if (isValueValid(value)) {
+            this.value = value;
+            this.valueSqr = value * value;
+        }
+    }
+    
     /**
      * Checks whether or not a value is with this setting's valid range.
      */
@@ -83,4 +68,38 @@ public class FloatSetting extends Setting<Float> {
     public Float getValueSqr() {
     	return this.valueSqr;
     }
+    
+    public static BUILDER builder() {
+    	return new BUILDER();
+    }
+    
+    public static class BUILDER extends Setting.BUILDER<BUILDER, FloatSetting, Float> {
+		protected Float minValue = 1f;
+		protected Float maxValue = 10f;
+		protected Float step = 1f;
+		
+		protected BUILDER() {
+			super();
+		}
+		
+		public BUILDER minValue(Float value) {
+			minValue = value;
+			return this;
+		}
+		
+		public BUILDER maxValue(Float value) {
+			maxValue = value;
+			return this;
+		}
+		
+		public BUILDER step(Float value) {
+			step = value;
+			return this;
+		}
+		
+		@Override
+		public FloatSetting build() {
+			return new FloatSetting(id, displayName, description, defaultValue, minValue, maxValue, step, onUpdate);
+		}
+	}
 }

@@ -35,7 +35,6 @@ import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
@@ -46,28 +45,65 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 
     private LivingEntity temp = null;
 
-    private BooleanSetting targetAnimals;
-    private BooleanSetting targetPlayers;
-    private BooleanSetting targetFriends;
-    private FloatSetting frequency;
-    private FloatSetting radius;
-    private FloatSetting rotationSpeed;
+    private BooleanSetting targetAnimals = BooleanSetting.builder()
+		    .id("aimbot_target_mobs")
+		    .displayName("Target Mobs")
+		    .description("Target mobs.")
+		    .defaultValue(false)
+		    .build();
+    
+    private BooleanSetting targetPlayers = BooleanSetting.builder()
+		    .id("aimbot_target_players")
+		    .displayName("Target Players")
+		    .description("Target Players.")
+		    .defaultValue(true)
+		    .build();
+    
+    private BooleanSetting targetFriends= BooleanSetting.builder()
+		    .id("aimbot_target_friends")
+		    .displayName("Target Friends")
+		    .description("Target Friends.")
+		    .defaultValue(true)
+		    .build();
+    
+    private FloatSetting frequency= FloatSetting.builder()
+    		.id("aimbot_frequency")
+    		.displayName("Ticks")
+    		.description("How frequent the aimbot updates (Lower = Laggier)")
+    		.defaultValue(1.0f)
+    		.minValue(1.0f)
+    		.maxValue(1.0f)
+    		.step(1.0f)
+    		.build();
+    
+    private FloatSetting radius= FloatSetting.builder()
+    		.id("aimbot_radius")
+    		.displayName("Radius")
+    		.description("Radius that the aimbot will lock onto a target.")
+    		.defaultValue(64.0f)
+    		.minValue(1.0f)
+    		.maxValue(256.0f)
+    		.step(1.0f)
+    		.build();
+    
+    private FloatSetting rotationSpeed= FloatSetting.builder()
+    		.id("aimbot_rotation_speed")
+    		.displayName("Rotation Speed")
+    		.description("Speed of the rotation.")
+    		.defaultValue(1.0f)
+    		.minValue(0.1f)
+    		.maxValue(5.0f)
+    		.step(0.1f)
+    		.build();
 
     private int currentTick = 0;
 
     public Aimbot() {
-        super(new KeybindSetting("key.aimbot", "Aimbot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+        super(KeybindSetting.builder().id("key.aimbot").displayName("Aimbot Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Aimbot");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Locks your crosshair towards a desired player or entity.");
-
-        targetAnimals = new BooleanSetting("aimbot_target_mobs", "Target Mobs", "Target mobs.", false);
-        targetPlayers = new BooleanSetting("aimbot_target_players", "Target Players", "Target players.", true);
-        targetFriends = new BooleanSetting("aimbot_target_friends", "Target Friends", "Target friends.", false);
-        frequency = new FloatSetting("aimbot_frequency", "Ticks", "How frequent the aimbot updates (Lower = Laggier)", 1.0f, 1.0f, 20.0f, 1.0f);
-        radius = new FloatSetting("aimbot_radius", "Radius", "Radius", 64.0f, 1.0f, 256.0f, 1.0f);
-        rotationSpeed = new FloatSetting("aimbot_rotation_speed", "Rotation Speed", "Speed of the rotation.", 1.0f, 0.1f, 5.0f, 0.1f);
 
         this.addSetting(rotationSpeed);
         this.addSetting(targetAnimals);

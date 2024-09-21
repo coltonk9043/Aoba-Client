@@ -13,7 +13,7 @@ import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 
 public class XCarry extends Module implements SendPacketListener {
     public XCarry() {
-        super(new KeybindSetting("key.xcarry", "XCarry Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.xcarry").displayName("XCarry Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("XCarry");
         this.setCategory(Category.of("Misc"));

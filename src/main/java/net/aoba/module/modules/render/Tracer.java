@@ -43,14 +43,46 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 
 public class Tracer extends Module implements Render3DListener {
-    private ColorSetting color_player = new ColorSetting("tracer_color_player", "Player Color", "Player Color", new Color(1f, 1f, 0f));
-    private ColorSetting color_passive = new ColorSetting("tracer_color_passive", "Passive Color", "Passive Color", new Color(0, 1f, 1f));
-    private ColorSetting color_enemies = new ColorSetting("tracer_color_enemy", "Enemy Color", "Enemy Color", new Color(0, 1f, 1f));
-    private ColorSetting color_misc = new ColorSetting("tracer_color_misc", "Misc. Color", "Misc. Color", new Color(0, 1f, 1f));
-	private FloatSetting line_width = new FloatSetting("tracer_line_width", "Line Width", "Width of the tracer lines.", 1.0f, 0.1f, 10.0f, 0.1f);
+    private ColorSetting color_player = ColorSetting.builder()
+			.id("tracer_color_player")
+			.displayName("Player Color")
+			.description("Player Color")
+			.defaultValue(new Color(1f, 1f, 0f))
+			.build();
+    
+    private ColorSetting color_passive = ColorSetting.builder()
+			.id("tracer_color_passive")
+			.displayName("Passive Color")
+			.description("Passive Color")
+			.defaultValue(new Color(0f, 1f, 1f))
+			.build();
+    
+    private ColorSetting color_enemies = ColorSetting.builder()
+			.id("tracer_color_enemy")
+			.displayName("Enemy Color")
+			.description("Enemy Color")
+			.defaultValue(new Color(0f, 1f, 1f))
+			.build();
+    
+    private ColorSetting color_misc = ColorSetting.builder()
+			.id("tracer_color_misc")
+			.displayName("Misc. Color")
+			.description("Misc. Color")
+			.defaultValue(new Color(0f, 1f, 1f))
+			.build();
 
+    private FloatSetting lineWidth = FloatSetting.builder()
+    		.id("tracer_line_width")
+    		.displayName("Line Width")
+    		.description("Width of the tracer lines.")
+    		.defaultValue(1f)
+    		.minValue(0.1f)
+    		.maxValue(10f)
+    		.step(0.1f)
+    		.build();
+    
     public Tracer() {
-        super(new KeybindSetting("key.tracer", "Tracer Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.tracer").displayName("Tracer Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Tracer");
         this.setCategory(Category.of("Render"));
@@ -60,7 +92,7 @@ public class Tracer extends Module implements Render3DListener {
         this.addSetting(color_passive);
         this.addSetting(color_enemies);
         this.addSetting(color_misc);
-        this.addSetting(line_width);
+        this.addSetting(lineWidth);
     }
 
     @Override
@@ -94,18 +126,18 @@ public class Tracer extends Module implements Render3DListener {
             if (entity instanceof LivingEntity && (entity != MC.player)) {
                 Vec3d interpolated = Render3D.getEntityPositionInterpolated(entity, tickDelta);
                 if (entity instanceof AnimalEntity) {
-                    Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_passive.getValue(), line_width.getValue());
+                    Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_passive.getValue(), lineWidth.getValue());
                 } else if (entity instanceof Monster) {
-                    Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_enemies.getValue(), line_width.getValue());
+                    Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_enemies.getValue(), lineWidth.getValue());
                 } else {
-                    Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_misc.getValue(), line_width.getValue());
+                    Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_misc.getValue(), lineWidth.getValue());
                 }
             }
         }
 
         for (AbstractClientPlayerEntity player : MC.world.getPlayers()) {
             Vec3d interpolated = Render3D.getEntityPositionInterpolated(player, tickDelta);
-            Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_player.getValue(), line_width.getValue());
+            Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_player.getValue(), lineWidth.getValue());
         }
     }
 }

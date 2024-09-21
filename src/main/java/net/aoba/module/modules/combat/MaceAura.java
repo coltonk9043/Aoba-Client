@@ -47,27 +47,54 @@ enum MaceState {
 }
 
 public class MaceAura extends Module implements TickListener {
-    private FloatSetting radius;
-    private BooleanSetting targetAnimals;
-    private BooleanSetting targetMonsters;
-    private BooleanSetting targetPlayers;
-    private BooleanSetting targetFriends;
+    private FloatSetting radius= FloatSetting.builder()
+    		.id("maceaura_radius")
+    		.displayName("Radius")
+    		.description("Radius that MaceAura will trigger")
+    		.defaultValue(5f)
+    		.minValue(0.1f)
+    		.maxValue(10f)
+    		.step(0.1f)
+    		.build();
+    
+	private BooleanSetting targetAnimals = BooleanSetting.builder()
+		    .id("maceaura_target_animals")
+		    .displayName("Target Animals")
+		    .description("Target animals.")
+		    .defaultValue(false)
+		    .build();
+	
+	private BooleanSetting targetMonsters = BooleanSetting.builder()
+		    .id("maceaura_target_monsters")
+		    .displayName("Target Monsters")
+		    .description("Target Monsters.")
+		    .defaultValue(true)
+		    .build();
+	
+	private BooleanSetting targetPlayers = BooleanSetting.builder()
+		    .id("maceaura_target_players")
+		    .displayName("Target Players")
+		    .description("Target Players.")
+		    .defaultValue(true)
+		    .build();
+	
+	private BooleanSetting targetFriends = BooleanSetting.builder()
+		    .id("maceaura_target_friends")
+		    .displayName("Target Friends")
+		    .description("Target Friends.")
+		    .defaultValue(false)
+		    .build();
+	
     private MaceState state = MaceState.OnGround;
     private LivingEntity entityToAttack;
 
     public MaceAura() {
-        super(new KeybindSetting("key.maceaura", "Mace Aura Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.maceaura").displayName("Mace Aura Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("MaceAura");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Smashes players in your personal space with a Mace with extreme damage. Be sure to enable NoFall for best results.");
-
-        radius = new FloatSetting("maceaura_radius", "Radius", "Radius", 5f, 0.1f, 10f, 0.1f);
-        targetAnimals = new BooleanSetting("maceaura_target_animals", "Target Animals", "Target animals.", false);
-        targetMonsters = new BooleanSetting("maceaura_target_monsters", "Target Monsters", "Target monsters.", true);
-        targetPlayers = new BooleanSetting("maceaura_target_players", "Target Players", "Target pplayers.", true);
-        targetFriends = new BooleanSetting("maceaura_target_friends", "Target Friends", "Target friends.", false);
-
+        
         this.addSetting(radius);
         this.addSetting(targetAnimals);
         this.addSetting(targetMonsters);

@@ -20,9 +20,12 @@ public class PinnableWindow extends Window {
 
 	public PinnableWindow(String ID, float x, float y, float width, float height) {
 		super(ID, x, y, width, height);
-
-		isPinned = new BooleanSetting(ID + "_pinned", "IS PINNED", false);
-
+		
+		isPinned = BooleanSetting.builder()
+	    		.id(ID + "_pinned")
+	    		.defaultValue(false)
+	    		.build();
+		
 		SettingManager.registerSetting(isPinned, Aoba.getInstance().settingManager.hiddenContainer);
 	}
 

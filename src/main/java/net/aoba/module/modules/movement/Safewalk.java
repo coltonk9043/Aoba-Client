@@ -35,8 +35,8 @@ import org.lwjgl.glfw.GLFW;
 public class Safewalk extends Module implements TickListener {
 
     public Safewalk() {
-        super(new KeybindSetting("key.safewalk", "Safewalk Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-
+    	super(KeybindSetting.builder().id("key.safewalk").displayName("Safewalk Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+		
         this.setName("Safewalk");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Permanently keeps player in sneaking mode.");

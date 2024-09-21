@@ -18,9 +18,12 @@
 
 package net.aoba.settings.types;
 
+import java.util.function.Consumer;
+
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.Setting;
+import net.aoba.settings.types.BooleanSetting.BUILDER;
 
 public class ColorSetting extends Setting<Color> {
 	public enum ColorMode {
@@ -31,12 +34,7 @@ public class ColorSetting extends Setting<Color> {
 
     private ColorMode mode = ColorMode.Solid;
 
-    public ColorSetting(String ID, String description, Color default_value) {
-        super(ID, description, default_value);
-        type = TYPE.COLOR;
-    }
-
-    public ColorSetting(String ID, String displayName, String description, Color default_value) {
+    protected ColorSetting(String ID, String displayName, String description, Color default_value, Consumer<Color> onUpdate) {
         super(ID, displayName, description, default_value);
         type = TYPE.COLOR;
     }
@@ -64,4 +62,19 @@ public class ColorSetting extends Setting<Color> {
                 break;
         }
     }
+    
+    public static BUILDER builder() {
+    	return new BUILDER();
+    }
+    
+    public static class BUILDER extends Setting.BUILDER<BUILDER, ColorSetting, Color> {
+		protected BUILDER() {
+			super();
+		}
+		
+		@Override
+		public ColorSetting build() {
+			return new ColorSetting(id, displayName, description, defaultValue, onUpdate);
+		}
+	}
 }

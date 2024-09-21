@@ -31,20 +31,37 @@ import org.lwjgl.glfw.GLFW;
 
 public class Nametags extends Module {
 
-    private FloatSetting scale;
-    private BooleanSetting onlyPlayers;
-    private BooleanSetting alwaysVisible;
+    private FloatSetting scale = FloatSetting.builder()
+    		.id("nametags_scale")
+    		.displayName("Scale")
+    		.description("Scale of the NameTags")
+    		.defaultValue(1.25f)
+    		.minValue(0f)
+    		.maxValue(5f)
+    		.step(0.25f)
+    		.build();
+    
+    private BooleanSetting onlyPlayers = BooleanSetting.builder()
+    		.id("nametags_onlyPlayers")
+    		.displayName("Only Players")
+    		.description("Whether Nametags are only enlarged for players.")
+    		.defaultValue(false)
+    		.build();
+    
+    private BooleanSetting alwaysVisible = BooleanSetting.builder()
+    		.id("nametags_alwaysVisible")
+    		.displayName("Always Visible")
+    		.description("Whether Nametags will always be displayed.")
+    		.defaultValue(false)
+    		.build();
 
     public Nametags() {
-        super(new KeybindSetting("key.nametags", "NameTags Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.nametags").displayName("NameTags Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Nametags");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Scales the nametags to be larger.");
-
-        scale = new FloatSetting("nametags_scale", "Scale", "Scale of the NameTags", 1.25f, 0f, 5f, 0.25f);
-        onlyPlayers = new BooleanSetting("nametags_onlyPlayers", "Only Players", "Whether Nametags are only enlarged for players.", false);
-        alwaysVisible = new BooleanSetting("nametags_alwaysVisible", "Always Visible", "Whether Nametags will always be displayed.", false);
+        
         this.addSetting(scale);
         this.addSetting(onlyPlayers);
         this.addSetting(alwaysVisible);

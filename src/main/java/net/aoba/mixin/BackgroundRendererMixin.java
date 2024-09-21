@@ -34,7 +34,8 @@ public class BackgroundRendererMixin {
             cancellable = true)
     private static void onGetFogModifier(Entity entity, float tickDelta,
                                          CallbackInfoReturnable<?> cir) {
-        if (Aoba.getInstance().moduleManager.nooverlay.getState())
-            cir.setReturnValue(null);
+        // TODO: NoRender
+    	//if (Aoba.getInstance().moduleManager.nooverlay.getState())
+         //   cir.setReturnValue(null);
     }
 }

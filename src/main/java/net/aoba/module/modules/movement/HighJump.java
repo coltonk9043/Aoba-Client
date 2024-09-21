@@ -9,16 +9,22 @@ import org.lwjgl.glfw.GLFW;
 
 public class HighJump extends Module {
 
-    private FloatSetting multiplier;
+    private FloatSetting multiplier = FloatSetting.builder()
+    		.id("highjump_jumpmultiplier")
+    		.displayName("Jump Multiplier")
+    		.description("The height that the player will jump.")
+    		.defaultValue(1.5f)
+    		.minValue(0.1f)
+    		.maxValue(10f)
+    		.step(0.1f)
+    		.build();
 
     public HighJump() {
-        super(new KeybindSetting("key.higheump", "Higher Jump Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.highjump").displayName("HighJump Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("HighJump");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to jump super high!");
-
-        multiplier = new FloatSetting("highjump.jumpmultiplier", "Jump Multiplier", "The height that the player will jump.", 1.5f, 0.1f, 10.0f, 0.1f);
 
         this.addSetting(multiplier);
     }

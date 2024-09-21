@@ -29,16 +29,22 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class Timer extends Module {
-    private final FloatSetting multiplier;
+    private final FloatSetting multiplier = FloatSetting.builder()
+    		.id("timer_multiplier")
+    		.displayName("Multiplier")
+    		.description("The multiplier that will affect the game speed.")
+    		.defaultValue(1f)
+    		.minValue(0.1f)
+    		.maxValue(15.0f)
+    		.step(0.1f)
+    		.build();
 
     public Timer() {
-        super(new KeybindSetting("key.timer", "Timer Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.timer").displayName("Timer Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Timer");
         this.setCategory(Category.of("Misc"));
         this.setDescription("Increases the speed of Minecraft.");
-
-        this.multiplier = new FloatSetting("timer_multiplier", "Multiplier", "The multiplier that will affect the game speed.", 1f, 0.1f, 15f, 0.1f);
         this.addSetting(multiplier);
     }
 

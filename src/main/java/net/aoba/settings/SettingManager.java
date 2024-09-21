@@ -26,14 +26,12 @@ import net.aoba.settings.types.ColorSetting.ColorMode;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.IntegerSetting;
-import net.aoba.utils.types.Vector2;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.InputUtil.Key;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -88,10 +86,6 @@ public class SettingManager {
                     case KEYBIND -> {
                         Key key = ((Key) setting.getValue());
                         config.setProperty(setting.ID, String.valueOf(key.getCode()));
-                    }
-                    case VECTOR2 -> {
-                        config.setProperty(setting.ID, ((Vector2) setting.getValue()).x + ","
-                            + ((Vector2) setting.getValue()).y);
                     }
                     case RECTANGLE -> {
                         config.setProperty(setting.ID, ((Rectangle) setting.getValue()).getX() + ","
@@ -170,12 +164,6 @@ public class SettingManager {
                             int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
                             setting.setValue(InputUtil.fromKeyCode(keyCode, 0));
                         }
-                        case VECTOR2 -> {
-                            String[] dimensions = value.split(",");
-                            if (dimensions.length == 2) {
-                                setting.setValue(new Vector2(Float.parseFloat(dimensions[0]), Float.parseFloat(dimensions[1])));
-                            }
-                        }
                         case RECTANGLE -> {
                             String[] dimensions = value.split(",");
                             if (dimensions.length == 4) {
@@ -218,7 +206,7 @@ public class SettingManager {
                         case ENUM -> {
                             String enumName = config.getProperty(setting.ID, null);
                             if (enumName != null) {
-                                Enum<?> enumValue = Enum.valueOf(((EnumSetting<?>) setting).getValue().getDeclaringClass(), enumName);
+                                Enum<?> enumValue = Enum.valueOf((((Enum<?>) setting.getValue()).getDeclaringClass()), enumName);
                                 setting.setValue(enumValue);
                             }
                         }

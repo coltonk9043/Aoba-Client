@@ -31,7 +31,7 @@ public class Fullbright extends Module {
 
     //private double previousValue = 0.0;
     public Fullbright() {
-        super(new KeybindSetting("key.fullbright", "Fullbright Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.fullbright").displayName("Fullbright Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Fullbright");
         this.setCategory(Category.of("Render"));

@@ -15,16 +15,23 @@ import org.lwjgl.glfw.GLFW;
 
 public class Speed extends Module implements TickListener {
 
-    private FloatSetting speedSetting;
+    private FloatSetting speedSetting = FloatSetting.builder()
+    		.id("speed_setting")
+    		.displayName("Speed")
+    		.description("Speed.")
+    		.defaultValue(0.1f)
+    		.minValue(0.1f)
+    		.maxValue(6f)
+    		.step(0.1f)
+    		.build();
 
     public Speed() {
-        super(new KeybindSetting("key.speed", "Speed Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-
+    	super(KeybindSetting.builder().id("key.speed").displayName("Speed Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+		
         this.setName("Speed");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Modifies the Movement-Speed of the Player");
 
-        speedSetting = new FloatSetting("speed_setting", "Speed", "Speed", 0.2f, 0.1f, 6f, 0.1f);
 
         speedSetting.addOnUpdate((i) -> {
             if (this.getState()) {

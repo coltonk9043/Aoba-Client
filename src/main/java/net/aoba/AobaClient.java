@@ -36,6 +36,7 @@ import net.aoba.proxymanager.ProxyManager;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.friends.FriendsList;
 import net.aoba.utils.discord.RPCManager;
+import net.aoba.utils.rotation.RotationManager;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.MinecraftClient;
@@ -52,6 +53,7 @@ public class AobaClient {
     public static IMinecraftClient IMC;
 
     // Systems
+    public RotationManager rotationManager;
     public ModuleManager moduleManager;
     public CommandManager commandManager;
     public AltManager altManager;
@@ -111,6 +113,8 @@ public class AobaClient {
         fontManager.Initialize();
         LogUtils.getLogger().info("[Aoba] Initializing Combat Manager");
         combatManager = new CombatManager();
+        LogUtils.getLogger().info("[Aoba] Initializing Rotation Manager");
+        rotationManager = new RotationManager();
         LogUtils.getLogger().info("[Aoba] Initializing GUI");
         guiManager = new GuiManager();
         guiManager.Initialize();
@@ -122,6 +126,8 @@ public class AobaClient {
         rpcManager.startRpc();
         LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 
+        
+        
         SettingManager.loadSettings(settingManager.configContainer);
         SettingManager.loadSettings(settingManager.modulesContainer);
         SettingManager.loadSettings(settingManager.hiddenContainer);

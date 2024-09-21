@@ -21,12 +21,17 @@ public class MCA extends Module implements MouseClickListener {
         FRIEND, PEARL
     }
     
-    private final EnumSetting<Mode> mode = new EnumSetting<>("mca_mode", "Mode", "The mode for the action to run when the middle mouse button is clicked.", Mode.FRIEND);
-
+    private final EnumSetting<Mode> mode = EnumSetting.<Mode>builder()
+    		.id("mca_mode")
+    		.displayName("Mode")
+    		.description("The mode for the action to run when the middle mouse button is clicked.")
+    		.defaultValue(Mode.FRIEND)
+    		.build();
+    
     private int previousSlot = -1;
     
     public MCA() {
-        super(new KeybindSetting("key.mca", "MCA Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.mca").displayName("MCA Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("MCA");
         this.setCategory(Category.of("misc"));

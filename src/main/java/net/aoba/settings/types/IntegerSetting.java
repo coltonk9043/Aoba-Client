@@ -19,7 +19,6 @@
 package net.aoba.settings.types;
 
 import net.aoba.settings.Setting;
-
 import java.util.function.Consumer;
 
 public class IntegerSetting extends Setting<Integer> {
@@ -27,26 +26,8 @@ public class IntegerSetting extends Setting<Integer> {
     public final int max_value;
     public final int step;
 
-    public IntegerSetting(String ID, String description, Integer default_value, int min_value, int max_value,
-                          int step) {
-        super(ID, description, default_value);
-        this.min_value = min_value;
-        this.max_value = max_value;
-        this.step = step;
-        type = TYPE.INTEGER;
-    }
-
-    public IntegerSetting(String ID, String displayName, String description, Integer default_value, int min_value, int max_value, int step) {
-        super(ID, displayName, description, default_value);
-        this.min_value = min_value;
-        this.max_value = max_value;
-        this.step = step;
-        type = TYPE.INTEGER;
-    }
-
-    public IntegerSetting(String ID, String description, int default_value, int min_value, int max_value, int step,
-                          Consumer<Integer> onUpdate) {
-        super(ID, description, default_value, onUpdate);
+    protected IntegerSetting(String ID, String displayName, String description, int default_value, int min_value, int max_value, int step, Consumer<Integer> onUpdate) {
+        super(ID, displayName, description, default_value, onUpdate);
         this.min_value = min_value;
         this.max_value = max_value;
         this.step = step;
@@ -60,4 +41,38 @@ public class IntegerSetting extends Setting<Integer> {
     protected boolean isValueValid(Integer value) {
         return value >= min_value && value <= max_value;
     }
+    
+    public static BUILDER builder() {
+    	return new BUILDER();
+    }
+    
+    public static class BUILDER extends Setting.BUILDER<BUILDER, IntegerSetting, Integer> {
+		protected Integer minValue = 1;
+		protected Integer maxValue = 10;
+		protected Integer step = 1;
+		
+		protected BUILDER() {
+			super();
+		}
+		
+		public BUILDER minValue(Integer value) {
+			minValue = value;
+			return this;
+		}
+		
+		public BUILDER maxValue(Integer value) {
+			maxValue = value;
+			return this;
+		}
+		
+		public BUILDER step(Integer value) {
+			step = value;
+			return this;
+		}
+		
+		@Override
+		public IntegerSetting build() {
+			return new IntegerSetting(id, displayName, description, defaultValue, minValue, maxValue, step, onUpdate);
+		}
+	}
 }

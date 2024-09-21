@@ -22,16 +22,22 @@ import org.lwjgl.glfw.GLFW;
 
 public class ClickTP extends Module implements MouseClickListener {
 
-    private FloatSetting distance;
+    private FloatSetting distance = FloatSetting.builder()
+    		.id("clicktp_distance")
+    		.displayName("Max Distance")
+    		.description("Max Distance to teleport.")
+    		.defaultValue(10f)
+    		.minValue(1.0f)
+    		.maxValue(200f)
+    		.step(1.0f)
+    		.build();
 
     public ClickTP() {
-        super(new KeybindSetting("key.clicktp", "ClickTP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.clicktp").displayName("ClickTP Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("ClickTP");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the user to teleport where they are looking.");
-
-        distance = new FloatSetting("clicktp.distance", "Max Distance", "Max Distance to teleport.", 10.0f, 1.0f, 200.0f, 1.0f);
 
         this.addSetting(distance);
     }

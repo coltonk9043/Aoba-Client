@@ -29,7 +29,6 @@ import net.aoba.utils.ModuleUtils;
 import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -40,27 +39,37 @@ import net.minecraft.block.entity.TrappedChestBlockEntity;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Box;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class ChestESP extends Module implements Render3DListener {
-    private ColorSetting color = new ColorSetting("chestesp_color", "Color", "Color", new Color(0, 1f, 1f));
-
-    public BooleanSetting rainbow = new BooleanSetting("chestesp_rainbow", "Rainbow", "Rainbow", false);
-    public FloatSetting effectSpeed = new FloatSetting("chestesp_effectspeed", "Effect Speed", "Effect Speed", 4f, 1f, 20f, 0.1f);
-    private FloatSetting lineThickness = new FloatSetting("chestesp_linethickness", "Line Thickness", "Adjust the thickness of the ESP box lines", 2f, 0f, 5f, 0.1f);
-
+	
+	
+    private ColorSetting color = ColorSetting.builder()
+			.id("chestesp_color")
+			.displayName("Color")
+			.description("Color")
+			.defaultValue(new Color(0, 1f, 1f))
+			.build();
+    
+    public FloatSetting lineThickness = FloatSetting.builder()
+    		.id("chestesp_linethickness")
+    		.displayName("Line Thickness")
+    		.description("Adjust the thickness of the ESP box lines")
+    		.defaultValue(2f)
+    		.minValue(0f)
+    		.maxValue(5f)
+    		.step(0.1f)
+    		.build();
+    
     public ChestESP() {
-        super(new KeybindSetting("key.chestesp", "ChestESP Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.chestesp").displayName("ChestESP Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("ChestESP");
         this.setCategory(Category.of("Render"));
         this.setDescription("Allows the player to see Chests with an ESP.");
 
         this.addSetting(color);
-        this.addSetting(rainbow);
-        this.addSetting(effectSpeed);
         this.addSetting(lineThickness);
     }
 

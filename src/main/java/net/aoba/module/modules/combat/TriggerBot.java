@@ -19,7 +19,6 @@
 package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
@@ -40,33 +39,81 @@ import net.minecraft.util.hit.HitResult;
 import org.lwjgl.glfw.GLFW;
 
 public class TriggerBot extends Module implements TickListener {
-    private FloatSetting radius;
-    private BooleanSetting targetAnimals;
-    private BooleanSetting targetMonsters;
-    private BooleanSetting targetPlayers;
-    private FloatSetting attackDelay;
-
+    private FloatSetting radius = FloatSetting.builder()
+    		.id("triggerbot_radius")
+    		.displayName("Radius")
+    		.description("Radius that TriggerBot will trigger.")
+    		.defaultValue(5f)
+    		.minValue(0.1f)
+    		.maxValue(10f)
+    		.step(0.1f)
+    		.build();
+    
+	private BooleanSetting targetAnimals = BooleanSetting.builder()
+		    .id("triggerbot_target_animals")
+		    .displayName("Target Animals")
+		    .description("Target animals.")
+		    .defaultValue(false)
+		    .build();
+	
+	private BooleanSetting targetMonsters = BooleanSetting.builder()
+		    .id("triggerbot_target_monsters")
+		    .displayName("Target Monsters")
+		    .description("Target Monsters.")
+		    .defaultValue(true)
+		    .build();
+	
+	private BooleanSetting targetPlayers = BooleanSetting.builder()
+		    .id("triggerbot_target_players")
+		    .displayName("Target Players")
+		    .description("Target Players.")
+		    .defaultValue(true)
+		    .build();
+	
+	private BooleanSetting targetFriends = BooleanSetting.builder()
+		    .id("triggerbot_target_friends")
+		    .displayName("Target Friends")
+		    .description("Target Friends.")
+		    .defaultValue(false)
+		    .build();
+	
+    private FloatSetting attackDelay = FloatSetting.builder()
+    		.id("triggerbot_attack_delay")
+    		.displayName("Attack Delay")
+    		.description("Delay in milliseconds between attacks.")
+    		.defaultValue(0f)
+    		.minValue(0f)
+    		.maxValue(500f)
+    		.step(10f)
+    		.build();
+    
+    private FloatSetting randomness = FloatSetting.builder()
+    		.id("triggerbot_randomness")
+    		.displayName("Randomness")
+    		.description("The randomness of the delay between when TriggerBot will hit a target.")
+    		.defaultValue(0.0f)
+    		.minValue(0.0f)
+    		.maxValue(60.0f)
+    		.step(1f)
+    		.build();
+    
     private long lastAttackTime;
 
     public TriggerBot() {
-        super(new KeybindSetting("key.triggerbot", "TriggerBot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.triggerbot").displayName("TriggerBot Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Triggerbot");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Attacks anything you are looking at.");
-
-        radius = new FloatSetting("triggerbot_radius", "Radius", 5f, 0.1f, 10f, 0.1f);
-        targetAnimals = new BooleanSetting("triggerbot_target_animals", "Target Animals", "Target animals.", false);
-        targetMonsters = new BooleanSetting("triggerbot_target_monsters", "Target Monsters", "Target monsters.", true);
-        targetPlayers = new BooleanSetting("triggerbot_target_players", "Target Players", "Target players.", true);
-        attackDelay = new FloatSetting("triggerbot_attack_delay", "Attack Delay", "Delay in milliseconds between attacks.", 0, 0, 500, 10);
 
         this.addSetting(attackDelay);
         this.addSetting(radius);
         this.addSetting(targetAnimals);
         this.addSetting(targetMonsters);
         this.addSetting(targetPlayers);
-
+        this.addSetting(targetFriends);
+        this.addSetting(randomness);
+        
         this.lastAttackTime = 0L;
     }
 
@@ -88,7 +135,10 @@ public class TriggerBot extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		if (MC.player.getAttackCooldownProgress(0) == 1) {
+		int randomnessValue = randomness.getValue().intValue();
+		boolean state = randomnessValue == 0 || (Math.round(Math.random() * Math.round(randomness.max_value))) % randomnessValue == 0;
+		
+		if (MC.player.getAttackCooldownProgress(0) == 1 && state) {
             HitResult ray = MC.crosshairTarget;
 
             if (ray != null && ray.getType() == HitResult.Type.ENTITY) {

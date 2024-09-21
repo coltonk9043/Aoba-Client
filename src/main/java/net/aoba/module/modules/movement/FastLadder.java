@@ -15,20 +15,42 @@ import org.lwjgl.glfw.GLFW;
 
 public class FastLadder extends Module implements TickListener {
 
-    private final FloatSetting ladderSpeed;
-    private final FloatSetting accelerationBoost;
-    private final FloatSetting decelerationPenalty;
+    private final FloatSetting ladderSpeed = FloatSetting.builder()
+    		.id("fastladder_speed")
+    		.displayName("Speed")
+    		.description("Speed for FastLadder Module.")
+    		.defaultValue(0.2f)
+    		.minValue(0.1f)
+    		.maxValue(0.5f)
+    		.step(0.1f)
+    		.build();
+    
+    private final FloatSetting accelerationBoost = FloatSetting.builder()
+    		.id("acceleration_boost")
+    		.displayName("Acceleration Boost")
+    		.description("Extra speed applied when moving upwards on ladders.")
+    		.defaultValue(0.08f)
+    		.minValue(0.01f)
+    		.maxValue(0.2f)
+    		.step(0.01f)
+    		.build();
+    
+    private final FloatSetting decelerationPenalty = FloatSetting.builder()
+    		.id("deceleration_penalty")
+    		.displayName("Deceleration Penalty")
+    		.description("Speed reduction when moving sideways or not moving on ladders.")
+    		.defaultValue(0.08f)
+    		.minValue(0.01f)
+    		.maxValue(0.2f)
+    		.step(0.01f)
+    		.build();
 
     public FastLadder() {
-        super(new KeybindSetting("key.fastladder", "FastLadder Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.fastladder").displayName("FastLadder Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("FastLadder");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Allows players to climb up Ladders faster");
-
-        ladderSpeed = new FloatSetting("fastladder_speed", "Speed", "Speed for FastLadder Module", 0.2f, 0.1f, 0.5f, 0.1f);
-        accelerationBoost = new FloatSetting("acceleration_boost", "Acceleration Boost", "Extra speed applied when moving upwards on ladders.", 0.08f, 0.01f, 0.2f, 0.01f);
-        decelerationPenalty = new FloatSetting("deceleration_penalty", "Deceleration Penalty", "Speed reduction when moving sideways or not moving on ladders.", 0.08f, 0.01f, 0.2f, 0.01f);
 
         this.addSetting(ladderSpeed);
         this.addSetting(accelerationBoost);

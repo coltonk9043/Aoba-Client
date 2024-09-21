@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.lwjgl.glfw.GLFW;
+
 public abstract class Module {
     private String name;
     private String description;
@@ -57,23 +59,15 @@ public abstract class Module {
     protected final IMinecraftClient IMC = AobaClient.IMC;
 
     /**
-     * Default constructor for the module, initializing it with a
-     * default keybind setting.
-     */
-    public Module() {
-        this(new KeybindSetting("default.key", "Default Key", InputUtil.UNKNOWN_KEY));
-    }
-
-    /**
      * Constructor for the module, allowing for a custom keybind.
      *
      * @param keyName        The identifier for the keybind setting.
      * @param keyDescription A description for the keybind setting.
      * @param keyCode        The key code corresponding to the keybind.
      */
-    public Module(String keyName, String keyDescription, int keyCode) {
-        this(new KeybindSetting(keyName, keyDescription, InputUtil.fromKeyCode(keyCode, 0)));
-    }
+    //public Module(String keyName, String keyDescription, int keyCode) {
+    //    this(new KeybindSetting(keyName, keyDescription, InputUtil.fromKeyCode(keyCode, 0)));
+    //}
 
     /**
      * Constructor for the module, initializing it with a specified keybind.

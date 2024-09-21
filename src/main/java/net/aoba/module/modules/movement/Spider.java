@@ -36,17 +36,22 @@ import org.lwjgl.glfw.GLFW;
 
 public class Spider extends Module implements TickListener {
 
-    private FloatSetting speed;
+    private FloatSetting speed = FloatSetting.builder()
+    		.id("spider_speed")
+    		.displayName("Speed")
+    		.description("Speed that the player climbs up blocks.")
+    		.defaultValue(0.1f)
+    		.minValue(0.05f)
+    		.maxValue(1f)
+    		.step(0.05f)
+    		.build();
 
     public Spider() {
-        super(new KeybindSetting("key.spider", "Spider Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-
+    	super(KeybindSetting.builder().id("key.spider").displayName("Spider Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+		
         this.setName("Spider");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Allows players to climb up blocks like a spider.");
-
-        speed = new FloatSetting("spider.speed", "Speed", "Speed that player goes up blocks.", 0.1f, 0.05f, 1.0f, 0.05f);
-
         this.addSetting(speed);
     }
 

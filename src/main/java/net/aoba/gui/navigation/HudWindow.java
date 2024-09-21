@@ -19,8 +19,13 @@ public class HudWindow extends Window {
 	
 	public HudWindow(String ID, float x, float y, float width, float height) {
 		super(ID, x, y, width, height);
-
-		activated = new BooleanSetting(ID + "_activated", ID + " Activated", false, (Boolean val) -> onActivatedChanged(val));
+		
+		activated = BooleanSetting.builder()
+	    		.id(ID + "_activated")
+	    		.defaultValue(false)
+	    		.onUpdate(val -> onActivatedChanged(val))
+	    		.build();
+		
 		SettingManager.registerSetting(activated, Aoba.getInstance().settingManager.configContainer);
 	}
 

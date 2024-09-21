@@ -30,7 +30,7 @@ import org.lwjgl.glfw.GLFW;
 public class AntiCactus extends Module {
 
     public AntiCactus() {
-        super(new KeybindSetting("key.anticactus", "AntiCactus Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.anticactus").displayName("AntiCactus Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("AntiCactus");
         this.setCategory(Category.of("Misc"));

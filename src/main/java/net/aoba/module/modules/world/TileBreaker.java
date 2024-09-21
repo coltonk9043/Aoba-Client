@@ -36,7 +36,6 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
@@ -47,23 +46,33 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 
 public class TileBreaker extends Module implements TickListener, Render3DListener {
-    private MinecraftClient mc;
     private ArrayList<Block> blocks = new ArrayList<Block>();
-    private FloatSetting radius;
+    
+	private FloatSetting radius = FloatSetting.builder()
+    		.id("tilebreaker_radius")
+    		.displayName("Radius")
+    		.description("Radius")
+    		.defaultValue(5f)
+    		.minValue(0f)
+    		.maxValue(15f)
+    		.step(1f)
+    		.build();
 
-    private ColorSetting color = new ColorSetting("tilebreaker_color", "Color", "Color", new Color(0, 1f, 1f));
-
+    private ColorSetting color = ColorSetting.builder()
+			.id("tilebreaker_color")
+			.displayName("Color")
+			.description("Color")
+			.defaultValue(new Color(0f, 1f, 1f))
+			.build();
+    
     public TileBreaker() {
-        super(new KeybindSetting("key.tilebreaker", "TileBreaker Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.tilebreaker").displayName("TileBreaker Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("TileBreaker");
         this.setCategory(Category.of("World"));
         this.setDescription("Destroys blocks that can be instantly broken around the player.");
 
         this.loadTileBreakerBlocks();
-        mc = MinecraftClient.getInstance();
-
-        this.radius = new FloatSetting("tilebreaker_radius", "Radius", "Radius", 5f, 0f, 15f, 1f);
 
         this.addSetting(color);
         this.addSetting(radius);
@@ -139,10 +148,10 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
         for (int x = -rad; x < rad; x++) {
             for (int y = rad; y > -rad; y--) {
                 for (int z = -rad; z < rad; z++) {
-                    BlockPos blockpos = new BlockPos((int) mc.player.getBlockX() + x,
-                            mc.player.getBlockY() + y,
-                            mc.player.getBlockZ() + z);
-                    Block block = mc.world.getBlockState(blockpos).getBlock();
+                    BlockPos blockpos = new BlockPos((int) MC.player.getBlockX() + x,
+                            MC.player.getBlockY() + y,
+                            MC.player.getBlockZ() + z);
+                    Block block = MC.world.getBlockState(blockpos).getBlock();
                     if (this.isTileBreakerBlock(block)) {
                         Render3D.draw3DBox(event.GetMatrix(), new Box(blockpos), color.getValue(), 1.0f);
                     }
@@ -157,14 +166,14 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
         for (int x = -rad; x < rad; x++) {
             for (int y = rad; y > -rad; y--) {
                 for (int z = -rad; z < rad; z++) {
-                    BlockPos blockpos = new BlockPos(mc.player.getBlockX() + x,
-                            mc.player.getBlockY() + y,
-                            mc.player.getBlockZ() + z);
-                    Block block = mc.world.getBlockState(blockpos).getBlock();
+                    BlockPos blockpos = new BlockPos(MC.player.getBlockX() + x,
+                    		MC.player.getBlockY() + y,
+                    		MC.player.getBlockZ() + z);
+                    Block block = MC.world.getBlockState(blockpos).getBlock();
                     if (this.isTileBreakerBlock(block)) {
-                        mc.player.networkHandler.sendPacket(
+                    	MC.player.networkHandler.sendPacket(
                                 new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, blockpos, Direction.NORTH));
-                        mc.player.networkHandler.sendPacket(
+                    	MC.player.networkHandler.sendPacket(
                                 new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockpos, Direction.NORTH));
                     }
                 }

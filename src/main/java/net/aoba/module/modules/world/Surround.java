@@ -50,10 +50,36 @@ public class Surround extends Module implements TickListener {
             Blocks.ENCHANTING_TABLE, Blocks.ANVIL, Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL, Blocks.CRYING_OBSIDIAN,
             Blocks.NETHERITE_BLOCK, Blocks.ANCIENT_DEBRIS, Blocks.RESPAWN_ANCHOR);
 
-    public FloatSetting placeHeight;
-    public BooleanSetting alignCharacter;
-    public BooleanSetting autoDisable;
-    public BooleanSetting legit;
+    public FloatSetting placeHeight= FloatSetting.builder()
+    		.id("surround_height")
+    		.displayName("Height")
+    		.description("Height that surround walls will go.")
+    		.defaultValue(1f)
+    		.minValue(1f)
+    		.maxValue(3f)
+    		.step(1.0f)
+    		.build();
+    
+    public BooleanSetting alignCharacter = BooleanSetting.builder()
+    		.id("surround_align")
+    		.displayName("Align")
+    		.description("Aligns the character to the nearest block.")
+    		.defaultValue(false)
+    		.build();
+    
+    public BooleanSetting autoDisable = BooleanSetting.builder()
+    		.id("surround_autodisable")
+    		.displayName("Auto-Disable")
+    		.description("Disables the module when the blocks have finished placing.")
+    		.defaultValue(false)
+    		.build();
+    
+    public BooleanSetting legit = BooleanSetting.builder()
+    		.id("surround_legit")
+    		.displayName("Legit")
+    		.description("Whether or not to simulate a player looking and clicking to place.")
+    		.defaultValue(false)
+    		.build();
 
     private static final List<Block> BREAKABLE_BLOCKS = Lists.newArrayList(
             Blocks.TALL_GRASS, Blocks.FERN, Blocks.LARGE_FERN, Blocks.DEAD_BUSH,
@@ -61,16 +87,11 @@ public class Surround extends Module implements TickListener {
     );
 
     public Surround() {
-        super(new KeybindSetting("key.surround", "Surround Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.surround").displayName("Surround Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Surround");
         this.setCategory(Category.of("World"));
         this.setDescription("Surrounds the player with blocks.");
-
-        placeHeight = new FloatSetting("surround_height", "Height", "Height that surround walls will go.", 1f, 1f, 3f, 1.0f);
-        alignCharacter = new BooleanSetting("surround_align", "Align", "Aligns the character to the nearest block.", false);
-        autoDisable = new BooleanSetting("surround_autodisable", "Auto-Disable", "Disables the module when the blocks have finished placing.", false);
-        legit = new BooleanSetting("surround_legit", "Legit", "Whether or not to simulate a player looking and clicking to place.", false);
 
         this.addSetting(placeHeight);
         this.addSetting(alignCharacter);

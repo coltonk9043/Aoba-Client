@@ -24,9 +24,8 @@ import java.util.HashSet;
 import java.util.function.Consumer;
 
 public abstract class Setting<T> {
-
     public enum TYPE {
-        BOOLEAN, FLOAT, STRING, INTEGER, STRINGLIST, INDEXEDSTRINGLIST, VECTOR2, KEYBIND, COLOR, BLOCKS, ENUM, RECTANGLE, VEC3D
+        BOOLEAN, FLOAT, STRING, INTEGER, STRINGLIST, INDEXEDSTRINGLIST, KEYBIND, COLOR, BLOCKS, ENUM, RECTANGLE, VEC3D
     }
 
     public final String ID;
@@ -42,7 +41,8 @@ public abstract class Setting<T> {
     private HashSet<Consumer<T>> onUpdate = new HashSet<Consumer<T>>();
 
     public Setting(String ID, String description, T default_value) {
-        this.ID = ID;
+        
+    	this.ID = ID;
         this.displayName = TextUtils.IDToName(ID);
         this.description = description;
         this.default_value = default_value;
@@ -128,7 +128,8 @@ public abstract class Setting<T> {
     public void update() {
         if (onUpdate != null) {
         	for(Consumer<T> consumer : onUpdate) {
-        		consumer.accept(value);
+        		if(consumer != null)
+        			consumer.accept(value);
         	}
         }
     }
@@ -157,4 +158,46 @@ public abstract class Setting<T> {
      * @return True if the value is valid.
      */
     protected abstract boolean isValueValid(T value);
+    
+    /**
+     * Abstract builder class for easier setting creation.
+     * @param <S>
+     * @param <T>
+     */
+	public abstract static class BUILDER<B extends BUILDER<?, ?, ?>, S extends Setting<T>, T> {
+		protected String id;
+		protected String displayName;
+		protected String description;
+		protected T defaultValue;
+		protected Consumer<T> onUpdate;
+		
+		protected BUILDER() { }
+		
+		public B id(String id) {
+			this.id = id;
+			return (B) this;
+		}
+		
+		public B displayName(String displayName) {
+			this.displayName = displayName;
+			return (B) this;
+		}
+		
+		public B description(String description) {
+			this.description = description;
+			return (B) this;
+		}
+		
+		public B defaultValue(T defaultValue) {
+			this.defaultValue = defaultValue;
+			return (B) this;
+		}
+		
+		public B onUpdate(Consumer<T> onUpdate) {
+			this.onUpdate = onUpdate;
+			return (B) this;
+		}
+		
+		public abstract S build();
+	}
 }

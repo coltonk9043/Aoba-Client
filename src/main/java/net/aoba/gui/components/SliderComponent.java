@@ -26,6 +26,7 @@ import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
+import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.types.MouseAction;
@@ -145,9 +146,15 @@ public class SliderComponent extends Component {
         float actualWidth = this.getActualSize().getWidth();
 
         float filledLength = actualWidth * currentSliderPosition;
-
-        Render2D.drawBox(matrix4f, actualX, actualY + 35, filledLength, 2, GuiManager.foregroundColor.getValue());
-        Render2D.drawBox(matrix4f, actualX + filledLength, actualY + 35, (actualWidth - filledLength), 2, new Color(255, 255, 255, 255));
+        
+        if(floatSetting != null) {
+        	float defaultLength = actualWidth * ((floatSetting.getDefaultValue() - minValue) / (maxValue - minValue));
+        	Render2D.drawBox(matrix4f, actualX + defaultLength - 2, actualY + 28, 4, 14, Colors.White);
+        }
+        
+        Render2D.drawBox(matrix4f, actualX, actualY + 34, filledLength, 2, GuiManager.foregroundColor.getValue());
+        Render2D.drawBox(matrix4f, actualX + filledLength, actualY + 34, (actualWidth - filledLength), 2, new Color(255, 255, 255, 255));
+        
         Render2D.drawCircle(matrix4f, actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
         Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
 

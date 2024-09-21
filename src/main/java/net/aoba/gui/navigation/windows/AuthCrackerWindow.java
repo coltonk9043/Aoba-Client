@@ -37,7 +37,12 @@ import java.util.concurrent.TimeUnit;
 public class AuthCrackerWindow extends Window {
     private ButtonComponent start;
 
-    private FloatSetting delay = new FloatSetting("authcracker_delay", "Delay", 100, 50, 50000, 1, null);
+    private FloatSetting delay = FloatSetting.builder()
+    		.id("authcracker_delay")
+    		.displayName("Delay")
+    		.defaultValue(100f)
+    		.minValue(50f)
+    		.maxValue(50000f).build();
 
     private AuthCracker authCracker;
 

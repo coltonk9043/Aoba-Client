@@ -43,7 +43,6 @@ import net.aoba.gui.navigation.windows.ToggleHudsTab;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.SettingManager;
-import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -68,8 +67,13 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
     private static final MinecraftClient MC = MinecraftClient.getInstance();
     private static CursorStyle currentCursor = CursorStyle.Default;
     private static String tooltip = null;
+	
+    public KeybindSetting clickGuiButton = KeybindSetting.builder()
+    		.id("key.clickgui")
+    		.displayName("ClickGUI Key")
+    		.defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0))
+    		.build();
     
-    public KeybindSetting clickGuiButton = new KeybindSetting("key.clickgui", "ClickGUI Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0));
     private final KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
 
     private boolean clickGuiOpen = false;
@@ -82,18 +86,47 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
     public Page hudPane = new Page("Hud");
 
     // Global HUD Settings
-    public static ColorSetting foregroundColor;
-    public static ColorSetting borderColor;
-    public static ColorSetting backgroundColor;
-    public static FloatSetting roundingRadius;
-    public static FloatSetting dragSmoothening;
+    public static ColorSetting foregroundColor = ColorSetting.builder()
+			.id("hud_foreground_color")
+			.displayName("GUI Foreground Color")
+			.description("Color of the foreground.")
+			.defaultValue(new Color(1.0f, 1.0f, 1.0f))
+			.build();
+    
+    public static ColorSetting borderColor = ColorSetting.builder()
+			.id("hud_border_color")
+			.displayName("GUI Border Color")
+			.description("Color of the borders.")
+			.defaultValue(new Color(0, 0, 0))
+			.build();
+    
+    public static ColorSetting backgroundColor = ColorSetting.builder()
+			.id("hud_background_color")
+			.displayName("GUI Background Color")
+			.description("Color of the background.")
+			.defaultValue(new Color(0, 0, 0, 50))
+			.build();
+    
+    public static FloatSetting roundingRadius = FloatSetting.builder()
+    		.id("hud_rounding_radius")
+    		.description("The radius of the rounding on hud.")
+    		.defaultValue(6f)
+    		.minValue(0f)
+    		.maxValue(10f)
+    		.step(1f)
+    		.build();
+    
+    public static FloatSetting dragSmoothening = FloatSetting.builder()
+    		.id("gui_drag_smoothening")
+    		.description("The value for the dragging smoothening")
+    		.defaultValue(1.0f)
+    		.minValue(0.1f)
+    		.maxValue(2.0f)
+    		.step(0.1f)
+    		.build();
 
     public static RainbowColor rainbowColor = new RainbowColor();
     public static RandomColor randomColor = new RandomColor();
-
-    public FloatSetting effectSpeed = new FloatSetting("color_speed", "Effect Spd", 4f, 1f, 20f, 0.1f, null);
-    public BooleanSetting rainbow = new BooleanSetting("rainbow_mode", "Rainbow", false, null);
-    public BooleanSetting ah = new BooleanSetting("armorhud_toggle", "ArmorHUD", false, null);
 
     public ModuleSelectorHud moduleSelector;
     public ArmorHud armorHud;
@@ -109,11 +142,6 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
     public SpeedHud speedHud;
 
     public GuiManager() {
-        borderColor = new ColorSetting("hud_border_color", "Color of the borders.", new Color(0, 0, 0));
-        backgroundColor = new ColorSetting("hud_background_color", "Color of the background.", new Color(0, 0, 0, 50));
-        foregroundColor = new ColorSetting("hud_foreground_color", "The color of the HUD", new Color(1.0f, 1.0f, 1.0f));
-        roundingRadius = new FloatSetting("hud_rounding_radius", "The radius of the rounding on hud.", 6f, 0f, 10f, 1f);
-        dragSmoothening = new FloatSetting("gui_drag_smoothening", "The value for the dragging smoothening", 1f, 0.1f, 2f, 0.1f);
         clickGuiNavBar = new NavigationBar();
 
         SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.configContainer);
@@ -175,11 +203,6 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
         clickGuiNavBar.addPane(modulesPane);
         clickGuiNavBar.addPane(toolsPane);
         clickGuiNavBar.addPane(hudPane);
-        // clickGuiNavBar.addPane(settingsPane);
-
-        SettingManager.registerSetting(effectSpeed, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(rainbow, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(ah, Aoba.getInstance().settingManager.configContainer);
 
         clickGuiNavBar.setSelectedIndex(0);
     }

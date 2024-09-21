@@ -1,28 +1,15 @@
 package net.aoba.settings.types;
 
 import net.aoba.settings.Setting;
-
 import java.util.function.Consumer;
 
-public class EnumSetting<T extends Enum<T>> extends Setting<T> {
-
+public class EnumSetting<T extends Enum<?>> extends Setting<T> {
     private T[] enumConstants;
 
-    public EnumSetting(String ID, String description, T defaultValue) {
-        super(ID, description, defaultValue);
-        this.enumConstants = defaultValue.getDeclaringClass().getEnumConstants();
-        type = TYPE.ENUM;
-    }
-
-    public EnumSetting(String ID, String displayName, String description, T defaultValue) {
-        super(ID, displayName, description, defaultValue);
-        this.enumConstants = defaultValue.getDeclaringClass().getEnumConstants();
-        type = TYPE.ENUM;
-    }
-
-    public EnumSetting(String ID, String description, T defaultValue, Consumer<T> onUpdate) {
+    @SuppressWarnings("unchecked")
+	protected EnumSetting(String ID, String displayName, String description, T defaultValue, Consumer<T> onUpdate) {
         super(ID, description, defaultValue, onUpdate);
-        this.enumConstants = defaultValue.getDeclaringClass().getEnumConstants();
+        this.enumConstants = (T[]) defaultValue.getDeclaringClass().getEnumConstants();
         type = TYPE.ENUM;
     }
 
@@ -53,4 +40,19 @@ public class EnumSetting<T extends Enum<T>> extends Setting<T> {
         }
         return false;
     }
+    
+    public static <E extends Enum<E>> BUILDER<E> builder() {
+    	return new BUILDER<E>();
+    }
+    
+    public static class BUILDER<E extends Enum<?>> extends Setting.BUILDER<BUILDER<E>, EnumSetting<E>, E> {
+		protected BUILDER() {
+			super();
+		}
+		
+		@Override
+		public EnumSetting<E> build() {
+			return new EnumSetting<E>(id, displayName, description, defaultValue, onUpdate);
+		}
+	}
 }

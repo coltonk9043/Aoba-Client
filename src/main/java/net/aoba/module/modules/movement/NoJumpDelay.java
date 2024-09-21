@@ -32,16 +32,23 @@ import org.lwjgl.glfw.GLFW;
 
 public class NoJumpDelay extends Module implements TickListener {
 
-    private FloatSetting delay;
+    private FloatSetting delay = FloatSetting.builder()
+    		.id("nojumpdelay_delay")
+    		.displayName("Delay")
+    		.description("NoJumpDelay Delay.")
+    		.defaultValue(1f)
+    		.minValue(0f)
+    		.maxValue(20f)
+    		.step(1f)
+    		.build();
 
     public NoJumpDelay() {
-        super(new KeybindSetting("key.nojumpdelay", "NoJumpDelay Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
-
+    	super(KeybindSetting.builder().id("key.nojumpdelay").displayName("NoJumpDelay Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+		
         this.setName("NoJumpDelay");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Makes it so the user can jump very quickly.");
 
-        delay = new FloatSetting("nojumpdelay_delay", "Delay", "NoJumpDelay Delay", 1f, 0.0f, 20.0f, 1f);
         this.addSetting(delay);
     }
 

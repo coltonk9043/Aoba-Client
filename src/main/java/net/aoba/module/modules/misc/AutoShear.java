@@ -18,10 +18,18 @@ import net.minecraft.util.Hand;
 
 public class AutoShear extends Module implements TickListener {
 
-	private FloatSetting radius = new FloatSetting("killaura_radius", "Radius", "Radius", 5f, 0.1f, 10f, 0.1f);
-	
+	private FloatSetting radius = FloatSetting.builder()
+    		.id("autoshear_radius")
+    		.displayName("Radius")
+    		.description("Radius that AutoShear will trigger on Mobs.")
+    		.defaultValue(5f)
+    		.minValue(0.1f)
+    		.maxValue(10f)
+    		.step(0.1f)
+    		.build();
+    
 	 public AutoShear() {
-	        super(new KeybindSetting("key.autoshear", "AutoShear Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+	    	super(KeybindSetting.builder().id("key.autoshear").displayName("AutoShear Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
 	        this.setName("AutoShear");
 	        this.setCategory(Category.of("Misc"));

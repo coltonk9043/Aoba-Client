@@ -1,7 +1,6 @@
 package net.aoba.gui.navigation.huds;
 
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
@@ -16,11 +15,15 @@ import net.minecraft.client.gui.DrawContext;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
-
 import net.aoba.gui.TextAlign;
 
 public class ModuleArrayListHud extends HudWindow {
-	private EnumSetting<TextAlign> textAlign = new EnumSetting<TextAlign>("ModuleArrayListHudText_TextAlign", "Text Align", "Text Alignment", TextAlign.Left);
+	private EnumSetting<TextAlign> textAlign = EnumSetting.<TextAlign>builder()
+			.id("ModuleArrayListHudText_TextAlign")
+			.displayName("Text Align")
+			.description("Text Alignment")
+			.defaultValue(TextAlign.Left)
+			.build();
 	
 	public ModuleArrayListHud(int x, int y) {
 		super("ModuleArrayListHud", x, y, 0, 0);

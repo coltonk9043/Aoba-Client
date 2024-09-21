@@ -62,12 +62,25 @@ import net.minecraft.world.RaycastContext.FluidHandling;
 
 public class Trajectory extends Module implements Render3DListener {
 
-	private ColorSetting color = new ColorSetting("trajectory_color", "Color", "Color", new Color(0, 1f, 1f));
-	private FloatSetting blipSize = new FloatSetting("trajectory_blipsize", "Blip Size", "Blip Size", 0.15f, 0.05f,
-			1.0f, 0.05f);
+	private ColorSetting color = ColorSetting.builder()
+			.id("trajectory_color")
+			.displayName("Color")
+			.description("Color")
+			.defaultValue(new Color(0f, 1f, 1f))
+			.build();
+	
+	private FloatSetting blipSize = FloatSetting.builder()
+    		.id("trajectory_blipsize")
+    		.displayName("Blip Size")
+    		.description("Blip Size")
+    		.defaultValue(0.15f)
+    		.minValue(0.05f)
+    		.maxValue(1f)
+    		.step(0.05f)
+    		.build();
 
 	public Trajectory() {
-		super(new KeybindSetting("key.trajectory", "Trajectory Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.trajectory").displayName("Trajectory Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
 		this.setName("Trajectory");
         this.setCategory(Category.of("Render"));

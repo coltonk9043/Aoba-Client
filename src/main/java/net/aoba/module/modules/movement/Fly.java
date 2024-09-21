@@ -40,23 +40,60 @@ import org.lwjgl.glfw.GLFW;
 
 public class Fly extends Module implements TickListener, SendMovementPacketListener {
 
-    private FloatSetting flySpeed;
-    private FloatSetting sprintSpeedMultiplier;
-    private FloatSetting jumpMotionY;
-    private FloatSetting sneakMotionY;
-    private BooleanSetting antiKick;
+    private FloatSetting flySpeed = FloatSetting.builder()
+    		.id("fly_speed")
+    		.displayName("Speed")
+    		.description("Fly speed.")
+    		.defaultValue(2f)
+    		.minValue(0.1f)
+    		.maxValue(15f)
+    		.step(0.5f)
+    		.build();
+    
+    private FloatSetting sprintSpeedMultiplier = FloatSetting.builder()
+    		.id("fly_sprint_speed_multiplier")
+    		.displayName("Sprint Speed Multiplier")
+    		.description("Speed multiplier when sprinting.")
+    		.defaultValue(1.5f)
+    		.minValue(1.0f)
+    		.maxValue(3.0f)
+    		.step(0.1f)
+    		.build();
+    
+    private FloatSetting jumpMotionY = FloatSetting.builder()
+    		.id("fly_jump_motion_y")
+    		.displayName("Jump Motion Y")
+    		.description("Upward motion when jump key is pressed.")
+    		.defaultValue(0.3f)
+    		.minValue(0.1f)
+    		.maxValue(2.0f)
+    		.step(0.1f)
+    		.build();
+    
+    private FloatSetting sneakMotionY = FloatSetting.builder()
+    		.id("fly_sneak_motion_y")
+    		.displayName("Sneak Motion Y")
+    		.description("Downward motion when sneak key is pressed.")
+    		.defaultValue(-0.3f)
+    		.minValue(-2.0f)
+    		.maxValue(0f)
+    		.step(0.1f)
+    		.build();
+    
+    private BooleanSetting antiKick = BooleanSetting.builder()
+    		.id("fly_antikick")
+    		.displayName("AntiKick")
+    		.description("Prevents the player from being kicked.")
+    		.defaultValue(false)
+    		.build();
+    
     public Fly() {
-        super(new KeybindSetting("key.fly", "Fly Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0)));
+    	super(KeybindSetting.builder().id("key.fly").displayName("Fly Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("Fly");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Allows the player to fly.");
 
-        flySpeed = new FloatSetting("fly_speed", "Speed", "Fly speed.", 2f, 0.1f, 15f, 0.5f);
-        sprintSpeedMultiplier = new FloatSetting("fly_sprint_speed_multiplier", "Sprint Speed Multiplier", "Speed multiplier when sprinting.", 1.5f, 1.0f, 3.0f, 0.1f);
-        jumpMotionY = new FloatSetting("fly_jump_motion_y", "Jump Motion Y", "Upward motion when jump key is pressed.", 0.3f, 0.1f, 2.0f, 0.1f);
-        sneakMotionY = new FloatSetting("fly_sneak_motion_y", "Sneak Motion Y", "Downward motion when sneak key is pressed.", -0.3f, -2.0f, 0.0f, 0.1f);
-        antiKick = new BooleanSetting("fly_antikick", "AntiKick", "Prevents the player from being kicked", false);
         this.addSetting(flySpeed);
         this.addSetting(sprintSpeedMultiplier);
         this.addSetting(jumpMotionY);

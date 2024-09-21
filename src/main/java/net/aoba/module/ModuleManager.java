@@ -92,7 +92,6 @@ public class ModuleManager implements KeyDownListener {
     public NoFall nofall = new NoFall();
     public NoJumpDelay nojumpdelay = new NoJumpDelay();
     public ReverseStep reverseStep = new ReverseStep();
-    public NoOverlay nooverlay = new NoOverlay();
     public NoSlowdown noslowdown = new NoSlowdown();
     public Nuker nuker = new Nuker();
     public PlayerESP playeresp = new PlayerESP();

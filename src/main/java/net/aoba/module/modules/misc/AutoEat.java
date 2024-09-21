@@ -39,21 +39,40 @@ import net.minecraft.item.Items;
 import org.lwjgl.glfw.GLFW;
 
 public class AutoEat extends Module implements FoodLevelListener, PlayerHealthListener {
-    private FloatSetting hungerSetting;
-    private FloatSetting healthSetting;
-    private BooleanSetting prioritizeGapples;
+    private FloatSetting hungerSetting = FloatSetting.builder()
+    		.id("autoeat_hunger")
+    		.displayName("Hunger")
+    		.description("Determines when AutoEat will trigger.")
+    		.defaultValue(10f)
+    		.minValue(1f)
+    		.maxValue(20f)
+    		.step(1f)
+    		.build();
+    
+    private FloatSetting healthSetting = FloatSetting.builder()
+    		.id("autoeat_health")
+    		.displayName("Health")
+    		.description("Determines when AutoEat will trigger based on health.")
+    		.defaultValue(10f)
+    		.minValue(1f)
+    		.maxValue(20f)
+    		.step(1f)
+    		.build();
+    
+    private BooleanSetting prioritizeGapples = BooleanSetting.builder()
+    		.id("prioritize_gapples")
+    		.displayName("Prioritize Gapples")
+    		.description("Prioritizes enchanted golden apples and golden apples.")
+    		.defaultValue(true)
+    		.build();
 
     public AutoEat() {
-        super(new KeybindSetting("key.autoeat", "AutoEat Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.autoeat").displayName("AutoEat Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("AutoEat");
         this.setCategory(Category.of("Misc"));
         this.setDescription("Automatically eats the best food in your inventory.");
-
-        hungerSetting = new FloatSetting("autoeat_hunger", "Hunger", "Determines when AutoEat will trigger.", 6, 1, 20, 1);
-        healthSetting = new FloatSetting("autoeat_health", "Health", "Determines when AutoEat will trigger based on health.", 10, 1, 20, 1);
-        prioritizeGapples = new BooleanSetting("prioritize_gapples", "Prioritize Gapples", "Prioritizes enchanted golden apples and golden apples.", true);
-
+   
         this.addSetting(hungerSetting);
         this.addSetting(healthSetting);
         this.addSetting(prioritizeGapples);

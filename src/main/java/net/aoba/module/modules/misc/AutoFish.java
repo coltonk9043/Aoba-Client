@@ -38,18 +38,26 @@ import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
 
 public class AutoFish extends Module implements ReceivePacketListener {
-    private BooleanSetting autoSwitch;
-    private BooleanSetting autoToggle;
+    private BooleanSetting autoSwitch = BooleanSetting.builder()
+    		.id("autofish_autoswitch")
+    		.displayName("Auto Switch")
+    		.description("Automatically switch to fishing rod before casting.")
+    		.defaultValue(true)
+    		.build();
+    
+    private BooleanSetting autoToggle = BooleanSetting.builder()
+    		.id("autofish_autotoggle")
+    		.displayName("Auto Toggle")
+    		.description("Automatically toggles off if no fishing rod is found in the hotbar.")
+    		.defaultValue(true)
+    		.build();
 
     public AutoFish() {
-        super(new KeybindSetting("key.autofish", "AutoFish Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.autofish").displayName("AutoFish Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("AutoFish");
         this.setCategory(Category.of("Misc"));
         this.setDescription("Automatically fishes for you.");
-
-        autoSwitch = new BooleanSetting("autofish_autoswitch", "Auto Switch", "Automatically switch to fishing rod before casting.", true);
-        autoToggle = new BooleanSetting("autofish_autotoggle", "Auto Toggle", "Automatically toggles off if no fishing rod is found in the hotbar.", true);
 
         this.addSetting(autoSwitch);
         this.addSetting(autoToggle);

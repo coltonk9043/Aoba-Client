@@ -20,21 +20,10 @@ package net.aoba.settings.types;
 
 import net.aoba.settings.Setting;
 import net.minecraft.client.util.InputUtil.Key;
-
 import java.util.function.Consumer;
 
 public class KeybindSetting extends Setting<Key> {
-    public KeybindSetting(String ID, String description, Key default_value) {
-        super(ID, description, default_value);
-        type = TYPE.KEYBIND;
-    }
-
-    public KeybindSetting(String ID, String displayName, String description, Key default_value) {
-        super(ID, displayName, description, default_value);
-        type = TYPE.KEYBIND;
-    }
-
-    public KeybindSetting(String ID, String description, Key default_value, Consumer<Key> onUpdate) {
+    protected KeybindSetting(String ID, String displayName, String description, Key default_value, Consumer<Key> onUpdate) {
         super(ID, description, default_value, onUpdate);
         type = TYPE.KEYBIND;
     }
@@ -46,4 +35,19 @@ public class KeybindSetting extends Setting<Key> {
     protected boolean isValueValid(Key value) {
         return true;
     }
+    
+    public static BUILDER builder() {
+    	return new BUILDER();
+    }
+    
+    public static class BUILDER extends Setting.BUILDER<BUILDER, KeybindSetting, Key> {
+		protected BUILDER() {
+			super();
+		}
+
+		@Override
+		public KeybindSetting build() {
+			return new KeybindSetting(id, displayName, description, defaultValue, onUpdate);
+		}
+	}
 }

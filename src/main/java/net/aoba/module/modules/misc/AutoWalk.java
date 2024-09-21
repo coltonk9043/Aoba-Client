@@ -33,7 +33,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class AutoWalk extends Module implements TickListener {
     public AutoWalk() {
-        super(new KeybindSetting("key.autowalk", "AutoWalk Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.autowalk").displayName("AutoWalk Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("AutoWalk");
         this.setCategory(Category.of("Misc"));

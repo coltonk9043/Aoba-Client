@@ -35,10 +35,39 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
 
     private Entity temp = null;
 
-    private BooleanSetting targetAnimals;
-    private BooleanSetting targetPlayers;
-    private FloatSetting frequency;
-    private FloatSetting predictmovement;
+    private BooleanSetting targetAnimals = BooleanSetting.builder()
+		    .id("bowaimbot_target_mobs")
+		    .displayName("Target Mobs")
+		    .description("Target mobs.")
+		    .defaultValue(false)
+		    .build();
+    
+    private BooleanSetting targetPlayers = BooleanSetting.builder()
+		    .id("bowaimbot_target_players")
+		    .displayName("Target Players")
+		    .description("Target Players.")
+		    .defaultValue(true)
+		    .build();
+    
+    private FloatSetting frequency = FloatSetting.builder()
+    		.id("bowaimbot_frequency")
+    		.displayName("Ticks")
+    		.description("How frequent the aimbot updates (Lower = Laggier)")
+    		.defaultValue(1.0f)
+    		.minValue(1.0f)
+    		.maxValue(20.0f)
+    		.step(1.0f)
+    		.build();
+    
+    private FloatSetting predictMovement = FloatSetting.builder()
+    		.id("bowaimbot_prediction")
+    		.displayName("Prediction")
+    		.description("Sets the strength of BowAimbot's movement prediction")
+    		.defaultValue(2f)
+    		.minValue(0f)
+    		.maxValue(10f)
+    		.step(1f)
+    		.build();
 
     private int currentTick = 0;
     private boolean skip;
@@ -49,25 +78,18 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
     private float neededPitch;
     private double d;
     private float neededYaw;
-
-
-
+    
     public BowAimbot() {
-        super(new KeybindSetting("key.bowaimbot", "BowAimbot Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.bowaimbot").displayName("BowAimbot Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("BowAimbot");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Calculates the location the crosshair must be to hit an arrow shot.");
 
-        targetAnimals = new BooleanSetting("bowaimbot_target_mobs", "Target Mobs", "Target mobs.", false);
-        targetPlayers = new BooleanSetting("bowaimbot_target_players", "Target Players", "Target players.", true);
-        frequency = new FloatSetting("bowaimbot_frequency", "Ticks", "How frequent the aimbot updates (Lower = Laggier)", 1.0f, 1.0f, 20.0f, 1.0f);
-        predictmovement = new FloatSetting("bowaimbot_prediction", "Prediction", "sets the strength of BowAimbot's movement prediction", 2f, 0f, 10f, 1f);
-
         this.addSetting(targetAnimals);
         this.addSetting(targetPlayers);
         this.addSetting(frequency);
-        this.addSetting(predictmovement);
+        this.addSetting(predictMovement);
     }
 
     @Override
@@ -151,7 +173,7 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
             float velocitySq = velocity * velocity;
             float velocityPow4 = velocitySq * velocitySq;
 
-            d = temp.squaredDistanceTo(MC.player.getEyePos()) * (predictmovement.getValue() / 100);
+            d = temp.squaredDistanceTo(MC.player.getEyePos()) * (predictMovement.getValue() / 100);
             posY = temp.getY() + (temp.getY() - temp.lastRenderY) * d + temp.getHeight() * 0.5 - MC.player.getY() - MC.player.getEyeHeight(MC.player.getPose());
             neededPitch = (float)-Math.toDegrees(Math.atan((velocitySq - Math.sqrt(velocityPow4 - g * (g * hDistanceSq + 2 * posY * velocitySq))) / (g * hDistance)));
             posZ = temp.getZ() + (temp.getZ() - temp.lastRenderZ) * d - MC.player.getZ();

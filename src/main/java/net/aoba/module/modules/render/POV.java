@@ -45,7 +45,7 @@ public class POV extends Module implements TickListener {
 
 
     public POV() {
-        super(new KeybindSetting("key.pov", "POV Key", InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)));
+    	super(KeybindSetting.builder().id("key.pov").displayName("POV Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
         this.setName("POV");
         this.setCategory(Category.of("Render"));
