@@ -39,8 +39,25 @@ import org.lwjgl.glfw.GLFW;
 
 public class AntiKnockback extends Module implements ReceivePacketListener {
 
-    private FloatSetting horizontal;
-    private FloatSetting vertical;
+    private FloatSetting horizontal = FloatSetting.builder()
+    		.id("antiknockback_horizontal")
+    		.displayName("Horizontal")
+    		.description("Horizontal Velocity")
+    		.defaultValue(0f)
+    		.minValue(0f)
+    		.maxValue(1f)
+    		.step(0.01f)
+    		.build();
+    		
+    private FloatSetting vertical= FloatSetting.builder()
+    		.id("antiknockback_vertical")
+    		.displayName("Vertical")
+    		.description("Vertical Velocity")
+    		.defaultValue(0f)
+    		.minValue(0f)
+    		.maxValue(1f)
+    		.step(0.01f)
+    		.build();
 
     public AntiKnockback() {
     	super(KeybindSetting.builder().id("key.antiknockback").displayName("AntiKnockback Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
@@ -48,9 +65,6 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
         this.setName("AntiKnockback");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Prevents knockback.");
-
-        horizontal = new FloatSetting("killaura_horizontal", "Horizontal", "Horizontal Velocity", 0f, 0f, 1f, 0.01f);
-        vertical = new FloatSetting("killaura_vertical", "Vertical", "Vertical Velocity", 0f, 0f, 1f, 0.01f);
 
         this.addSetting(horizontal);
         this.addSetting(vertical);
