@@ -39,7 +39,8 @@ import net.minecraft.registry.Registries;
 import org.joml.Matrix4f;
 
 public class BlocksComponent extends Component implements MouseScrollListener {
-
+	private static final float BLOCK_WIDTH = 32f;
+	private static final float BLOCK_MARGIN = 4f;
 	private static final float COLLAPSED_HEIGHT = 30f;
 	private static final float EXPANDED_HEIGHT = 135f;
 	
@@ -62,9 +63,13 @@ public class BlocksComponent extends Component implements MouseScrollListener {
         blocks = setting;
 
         this.setMargin(new Margin(4f, null, 4f, null));
-
-        visibleRows = (int) EXPANDED_HEIGHT / 36;
-        visibleColumns = (int) (actualSize.getWidth() / 36);
+    }
+    
+    @Override
+    public void remeasure() {
+    	super.remeasure();
+        visibleRows = (int) (EXPANDED_HEIGHT / (BLOCK_WIDTH + BLOCK_MARGIN));
+        visibleColumns = (int) (actualSize.getWidth() / (BLOCK_WIDTH + BLOCK_MARGIN));
     }
 	
     /**
@@ -97,9 +102,9 @@ public class BlocksComponent extends Component implements MouseScrollListener {
                     Block block = Registries.BLOCK.get(index);
 
                     if (blocks.getValue().contains(block)) {
-                    	Render2D.drawBox(matrix4f, ((actualX + (j * 36))), ((actualY + ((i - scroll) * 36) + 25)), 32, 32, new Color(0, 255, 0, 55));
+                    	Render2D.drawBox(matrix4f, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1), ((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25)), BLOCK_WIDTH, BLOCK_WIDTH, new Color(0, 255, 0, 55));
                     }
-                    drawContext.drawItem(new ItemStack(block.asItem()), (int) ((actualX + (j * 36) + 2) / 2.0f), (int) ((actualY + ((i - scroll) * 36) + 25) / 2.0f));
+                    Render2D.drawItem(drawContext, new ItemStack(block.asItem()), (int) ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN)) + 2) / 2.0f), (int) ((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25) / 2.0f));
                 }
             }
 
@@ -133,8 +138,8 @@ public class BlocksComponent extends Component implements MouseScrollListener {
     	super.onMouseClick(event);
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
             if(hovered) {
-                double mouseX = event.mouseX;
-                double mouseY = event.mouseY;
+                float mouseX = (float)event.mouseX;
+                float mouseY = (float)event.mouseY;
                 
             	float actualX = actualSize.getX();
                 float actualY = actualSize.getY();
@@ -142,7 +147,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
                 float actualHeight = actualSize.getHeight();
                 
                 Rectangle collapseHitbox = new Rectangle((actualX + 4), actualY, actualWidth, 24.0f);
-                if(collapseHitbox.intersects(actualX, actualY)) {
+                if(collapseHitbox.intersects(mouseX, mouseY)) {
                 	collapsed = !collapsed;
                     if (collapsed) 
                     	this.setHeight(COLLAPSED_HEIGHT);
@@ -152,9 +157,9 @@ public class BlocksComponent extends Component implements MouseScrollListener {
                 }else {
                 	Rectangle blockHitbox = new Rectangle(actualX + 4, actualY + 24, actualWidth, actualHeight - 24);
                 	
-                	if(blockHitbox.intersects(actualX, actualY)) {
-                		int col = (int) (mouseX - actualX - 8) / 36;
-                        int row = (int) ((mouseY - actualY - 24) / 36) + scroll;
+                	if(blockHitbox.intersects(mouseX, mouseY)) {
+                		int col = (int) ((mouseX - actualX - 8) / (BLOCK_WIDTH + BLOCK_MARGIN));
+                        int row = (int) ((mouseY - actualY - 24) / (BLOCK_WIDTH + BLOCK_MARGIN)) + scroll;
 
                         int index = (row * visibleColumns) + col;
                         if (index > Registries.BLOCK.size())

@@ -98,21 +98,26 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public static void drawBox(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
-				color.getAlpha());
+//		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
+//				color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
-		bufferBuilder.vertex(matrix4f, x, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x, y + height, 0);
+		float r = color.getRed();
+		float g = color.getGreen();
+		float b = color.getBlue();
+		float alpha = color.getAlpha();
+		
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		bufferBuilder.vertex(matrix4f, x, y, 0).color(r, g, b, alpha);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).color(r, g, b, alpha);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).color(r, g, b, alpha);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).color(r, g, b, alpha);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
 		RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -400,7 +405,7 @@ public class Render2D {
 		bufferBuilder.vertex(matrix4f, x, y, 0);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-		RenderSystem.setShaderColor(1, 1, 1, 1);
+
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -716,15 +721,24 @@ public class Render2D {
 	public static void drawItem(DrawContext drawContext, ItemStack stack, float x, float y) {
 		MinecraftClient MC = MinecraftClient.getInstance();
 		BakedModel bakedModel = MC.getItemRenderer().getModel(stack, null, null, 0);
+		
+		boolean sidelit = bakedModel.isSideLit();
 
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.translate(x + 8, y + 8, 150);
 		matrixStack.scale(16.0f, -16.0f, 16.0f);
-		DiffuseLighting.disableGuiDepthLighting();
+		
+        if (!sidelit) {
+            DiffuseLighting.disableGuiDepthLighting();
+        }
+        
 		MC.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI, false, matrixStack,
-				drawContext.getVertexConsumers(), 0xFFFFFF, OverlayTexture.DEFAULT_UV, bakedModel);
-		DiffuseLighting.enableGuiDepthLighting();
+				drawContext.getVertexConsumers(), 0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel);
+		
+		if (!sidelit) {
+			DiffuseLighting.enableGuiDepthLighting();
+		}
 		matrixStack.pop();
 	}
 
