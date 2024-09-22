@@ -49,7 +49,7 @@ public class AutoFish extends Module implements ReceivePacketListener {
     		.id("autofish_autotoggle")
     		.displayName("Auto Toggle")
     		.description("Automatically toggles off if no fishing rod is found in the hotbar.")
-    		.defaultValue(true)
+    		.defaultValue(false)
     		.build();
 
     public AutoFish() {
