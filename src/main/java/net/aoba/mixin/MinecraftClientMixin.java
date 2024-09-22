@@ -24,6 +24,7 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.module.modules.render.FocusFps;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.session.Session;
 import net.minecraft.client.world.ClientWorld;
@@ -53,6 +54,9 @@ public abstract class MinecraftClientMixin {
     @Shadow
     public ClientWorld world;
 
+    @Shadow
+    public ClientPlayerEntity player;
+    
     private Session aobaSession;
 
     @Shadow public abstract boolean isWindowFocused();
@@ -66,7 +70,7 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "tick()V")
     public void onPreTick(CallbackInfo info) {
-        if (this.world != null) {
+        if (this.world != null && player != null) {
             TickEvent.Pre updateEvent = new TickEvent.Pre();
             Aoba.getInstance().eventManager.Fire(updateEvent);
         }
@@ -74,7 +78,7 @@ public abstract class MinecraftClientMixin {
     
     @Inject(at = @At("TAIL"), method = "tick()V")
     public void onPostTick(CallbackInfo info) {
-        if (this.world != null) {
+        if (this.world != null && player != null) {
             TickEvent.Post updateEvent = new TickEvent.Post();
             Aoba.getInstance().eventManager.Fire(updateEvent);
         }
