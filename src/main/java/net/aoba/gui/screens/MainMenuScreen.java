@@ -20,8 +20,23 @@ import net.minecraft.util.Colors;
 
 import static net.aoba.AobaClient.MC;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpClient.Version;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.lwjgl.opengl.GL11;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 public class MainMenuScreen extends Screen {
@@ -36,10 +51,62 @@ public class MainMenuScreen extends Screen {
 
 	int smallScreenHeightOffset = 0;
 
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private String fetchedVersion = null;
+	
 	public MainMenuScreen() {
 		super(Text.of("Aoba Client Main Menu"));
+		
+		// Async fetch latest release from GitHub
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				fetchLatestVersion();
+			}
+		});
 	}
 
+	private static URI createURI(String url) {
+		try {
+			URI uri = new URI(url);
+			return uri;
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	private void fetchLatestVersion() {
+		try {
+			HttpClient client = HttpClient.newBuilder().version(Version.HTTP_2).followRedirects(Redirect.NORMAL)
+					.build();
+			
+			HttpRequest request = HttpRequest.newBuilder(createURI("https://api.github.com/repos/coltonk9043/Aoba-MC-Hacked-Client/releases/latest"))
+					.header("User-Agent",
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
+					.header("Accept", "application/json")
+					.header("Content-Type", "application/x-www-form-urlencoded")
+					.GET().build();
+
+			HttpResponse<String> response;
+			response = client.send(request, BodyHandlers.ofString());
+			String responseString = response.body();
+
+			int status = response.statusCode();
+			if (status != HttpURLConnection.HTTP_OK) {
+				throw new IllegalArgumentException("Device token could not be fetched. Invalid status code " + status);
+			}
+
+			JsonObject json = new Gson().fromJson(responseString, JsonObject.class);
+			String tagName = json.get("tag_name").getAsString();
+			if(tagName != null) 
+				fetchedVersion = tagName;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void init() {
 		super.init();
 
@@ -100,6 +167,12 @@ public class MainMenuScreen extends Screen {
 		drawContext.drawTextWithShadow(this.textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, this.height - 10,
 				0xFF00FF);
 
+		// Draw out of date if out of date.
+		// TODO: Add option to hide if on previous versions.
+		if(fetchedVersion != null && !fetchedVersion.equals(AobaClient.AOBA_VERSION)) {
+			drawContext.drawTextWithShadow(this.textRenderer, "New version available: " + fetchedVersion, 2, this.height - 20, 0xFF00FF);
+		}
+		
 		if (AobaClient.addons.isEmpty()) {
 			String noAddonsText = "No addons loaded";
 			int textWidth = this.textRenderer.getWidth(noAddonsText);
