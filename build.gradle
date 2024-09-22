@@ -42,7 +42,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation files("libs/baritone-standalone-fabric-1.10.2-5-gab84fb74.jar")
+    modImplementation files("libs/baritone-standalone-fabric-1.10.2-7-ga231748b.jar")
     implementation "dev.babbaj:nether-pathfinder:1.4.1"
 
     libImpl("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }
