@@ -169,15 +169,15 @@ public abstract class Module {
     public void setState(boolean state) {
         if (this.state == state) return;
 
-        this.onToggle();
-
         if (state) {
+        	this.state = true;
             this.onEnable();
-            this.state = true;
         } else {
+        	this.state = false;
             this.onDisable();
-            this.state = false;
         }
+        
+        this.onToggle();
     }
 
     /**
@@ -269,12 +269,7 @@ public abstract class Module {
      * The state is then updated accordingly.
      */
     public void toggle() {
-        if (this.state) {
-            this.onDisable();
-        } else {
-            this.onEnable();
-        }
-        this.setState(!this.getState());
+    	setState(!state);
     }
 
 
