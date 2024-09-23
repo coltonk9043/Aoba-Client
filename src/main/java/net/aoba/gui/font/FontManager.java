@@ -64,6 +64,7 @@ public class FontManager {
         fontSetting.addOnUpdate((i) -> {
             FontManager font = Aoba.getInstance().fontManager;
             font.SetRenderer(font.fontRenderers.get(i));
+            LogUtils.getLogger().info("Changed font to " + i);
         });
 
         SettingManager.registerSetting(fontSetting, Aoba.getInstance().settingManager.hiddenContainer);
@@ -73,7 +74,9 @@ public class FontManager {
         fontRenderers.put("minecraft", MC.textRenderer);
 
         File fontDirectory = new File(MC.runDirectory + File.separator + "aoba" + File.separator + "fonts");
+
         if (fontDirectory.exists() && fontDirectory.isDirectory()) {
+            LogUtils.getLogger().info("Found Font Directory: " + fontDirectory.getAbsolutePath());
             File[] files = fontDirectory.listFiles((dir, name) -> name.endsWith(".ttf"));
 
             if (files != null) {
@@ -82,8 +85,9 @@ public class FontManager {
                         Font font = LoadTTFFont(file, 12.5f, 2, new TrueTypeFontLoader.Shift(-1, 0), "");
                         List<Font.FontFilterPair> list = new ArrayList<>();
                         list.add(new Font.FontFilterPair(font, FilterMap.NO_FILTER));
+                        LogUtils.getLogger().info("Loading font " + file.getName());
 
-                        try (FontStorage storage = new FontStorage(MC.getTextureManager(), Identifier.of("aoba:" + file.getName()))) {
+                        try (FontStorage storage = new FontStorage(MC.getTextureManager(), Identifier.of("aoba:fonts/" + file.getName()))) {
                             storage.setFonts(list, Set.of());
                             fontRenderers.put(file.getName().replace(".ttf", ""), new TextRenderer(id -> storage, true));
                         }

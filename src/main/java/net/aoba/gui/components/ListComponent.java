@@ -18,8 +18,10 @@
 
 package net.aoba.gui.components;
 
+import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
+import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.IGuiElement;
@@ -82,18 +84,25 @@ public class ListComponent extends Component implements MouseClickListener {
     @Override
     public void OnMouseClick(MouseClickEvent event) {
     	super.onMouseClick(event);
-        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (this.hovered) {
+//        LogUtils.getLogger().info(this.getActualSize().getX() + ", " + this.getActualSize().getY());
+//        LogUtils.getLogger().info(this.getActualSize().getWidth() + ", " + this.getActualSize().getHeight());
+//        LogUtils.getLogger().info(event.mouseX + ", " + event.mouseY);
+
+        if (event.button == MouseButton.LEFT) {
+            if (this.getActualSize().getY() < event.mouseY && event.mouseY < this.getActualSize().getY() + this.getActualSize().getHeight()) {
+
                 float mouseX = (float)event.mouseX;
                 float actualX = this.getActualSize().getX();
                 float actualWidth = this.getActualSize().getWidth();
                 
                 if (mouseX > actualX && mouseX < (actualX + 32)) {
-                    setSelectedIndex(Math.max(--selectedIndex, 0));
+                    setSelectedIndex(Math.max(selectedIndex - 1, 0));
+//                    LogUtils.getLogger().info("Right clicked");
                     // Mouse is on the right
                     
                 } else if (mouseX > (actualX + actualWidth - 32) && mouseX < (actualX + actualWidth))
-                    setSelectedIndex(Math.min(++selectedIndex, options.size() - 1));
+                    setSelectedIndex(Math.min(selectedIndex + 1, options.size() - 1));
+//                    LogUtils.getLogger().info("Left clicked");
                 
                 event.cancel();
             }

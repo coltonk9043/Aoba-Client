@@ -18,6 +18,7 @@
 
 package net.aoba.gui.navigation.windows;
 
+import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
@@ -27,6 +28,7 @@ import net.aoba.gui.navigation.Window;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,10 +41,8 @@ public class HudOptionsTab extends Window {
         StackPanelComponent stackPanel = new StackPanelComponent(this);
         stackPanel.setMargin(new Margin(null, 30f, null, null));
 
-        ConcurrentHashMap<String, TextRenderer> fontRenderers = Aoba.getInstance().fontManager.fontRenderers;
-        Set<String> set = fontRenderers.keySet();
-
-        List<String> fontNames = new ArrayList<>(set);
+        List<String> fontNames = Aoba.getInstance().fontManager.fontRenderers.keySet().stream().toList();
+        LogUtils.getLogger().info(Arrays.toString(fontNames.toArray()));
 
         // Keybinds Header
         stackPanel.addChild(new StringComponent("Keybinds", stackPanel, GuiManager.foregroundColor.getValue(), true));
