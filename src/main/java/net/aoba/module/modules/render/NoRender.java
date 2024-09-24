@@ -52,6 +52,13 @@ public class NoRender extends Module {
 		    .defaultValue(false)
 		    .build();
 
+	private BooleanSetting noPowderSnowOverlay = BooleanSetting.builder()
+			.id("norender_powder_snow")
+			.displayName("Powder Snow")
+			.description("Does not render the overlay when in powder snow.")
+			.defaultValue(false)
+			.build();
+
 	private BooleanSetting noCrosshair = BooleanSetting.builder()
 		    .id("norender_crosshair")
 		    .displayName("Crosshair")
@@ -72,6 +79,7 @@ public class NoRender extends Module {
         this.addSetting(noPumpkinOverlay);
         this.addSetting(noFireOverlay);
         this.addSetting(noPortalOverlay);
+		this.addSetting(noPowderSnowOverlay);
         this.addSetting(noCrosshair);
     }
 
@@ -114,7 +122,11 @@ public class NoRender extends Module {
         return this.noPumpkinOverlay.getValue();
     }
 
-    public boolean getNoCrosshair() {
+	public boolean getNoPowderSnowOverlay() {
+		return this.noPowderSnowOverlay.getValue();
+	}
+
+	public boolean getNoCrosshair() {
         return this.noCrosshair.getValue();
     }
 }
