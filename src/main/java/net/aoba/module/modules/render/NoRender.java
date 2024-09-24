@@ -54,7 +54,7 @@ public class NoRender extends Module {
 
 	private BooleanSetting noPowderSnowOverlay = BooleanSetting.builder()
 			.id("norender_powder_snow")
-			.displayName("Powder Snow")
+			.displayName("Powder Snow Overlay")
 			.description("Does not render the overlay when in powder snow.")
 			.defaultValue(false)
 			.build();
