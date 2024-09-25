@@ -2,7 +2,7 @@
 <br>
   <tr>
     <th><a href="#server-invite">Server Invite</a></th>
-    <td><a target="_blank" href="https://discord.gg/zkspfFwqDg"><img src="https://dcbadge.limes.pink/api/server/zkspfFwqDg" alt="" /></a></td>
+    <td><a target="_blank" href="[https://discord.gg/zkspfFwqDg](https://discord.gg/krV9VrCMVm)"><img src="https://dcbadge.limes.pink/api/server/zkspfFwqDg" alt="" /></a></td>
   </tr>
   
 ## !!! Notice !!!
