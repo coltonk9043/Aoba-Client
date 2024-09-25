@@ -61,6 +61,13 @@ public class IngameHudMixin {
         if (norender.getState() && norender.getNoPumpkinOverlay()) args.set(2, 0f);
     }
 
+    @ModifyArgs(method = "renderMiscOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderOverlay(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/util/Identifier;F)V", ordinal = 1))
+    private void onRenderPowderSnowOverlay(Args args) {
+        NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+
+        if (norender.getState() && norender.getNoPowderSnowOverlay()) args.set(2, 0f);
+    }
+
     @Inject(method = "renderPortalOverlay", at = @At("HEAD"), cancellable = true)
     private void onRenderPortalOverlay(DrawContext context, float nauseaStrength, CallbackInfo ci) {
         NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
