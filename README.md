@@ -2,6 +2,7 @@
 <br>
   <tr>
     <th><a href="#server-invite">Server Invite</a></th>
+    <th><a href="#website">https://www.aobaclient.com/</a></th>
     <td><a target="_blank" href="[https://discord.gg/zkspfFwqDg](https://discord.gg/krV9VrCMVm)"><br><img src="https://dcbadge.limes.pink/api/server/krV9VrCMVm" alt="" /></a></td>
   </tr>
   
