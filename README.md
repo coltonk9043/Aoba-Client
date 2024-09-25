@@ -1,7 +1,10 @@
 <img src="https://www.aobaclient.com/_next/image?url=%2Faoba-name.png&w=640&q=75" alt="Aoba Name" width="320" height="120">
 <br>
-![Discord Shield](https://discord.com/api/guilds/1175572390353313862/widget.png?style=shield)
-
+  <tr>
+    <th><a href="#server-invite">Server Invite</a></th>
+    <td><a target="_blank" href="https://discord.gg/zkspfFwqDg"><img src="https://dcbadge.limes.pink/api/server/zkspfFwqDg" alt="" /></a></td>
+  </tr>
+  
 ## !!! Notice !!!
 If you plan on downloading Aoba for Java Edition on PC or Pojav Launcher on Android/iOS, PLEASE download it from this [repo](https://github.com/coltonk9043/Aoba-MC-Hacked-Client/releases) or our own [website](https://www.aobaclient.com/). We NEVER HAVE and NEVER WILL use MediaFire, Mega, Google Drive, or ANY other provider to host downloads for the client. Please always use caution when downloading from these third-party websites.
 
