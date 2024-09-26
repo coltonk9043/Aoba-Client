@@ -432,7 +432,8 @@ public class Render2D {
 	 * @param width    Width of the box.
 	 * @param height   Height of the box.
 	 * @param radius   Corner radius of the box outline.
-	 * @param color    Color of the outline of the box.
+	 * @param outlineColor    Color of the outline of the box.
+	 * @param backgroundColor Color of the background of the box.
 	 */
 	public static void drawOutlinedRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height, float radius, Color outlineColor, Color backgroundColor) {
 		RenderSystem.enableBlend();
@@ -890,7 +891,7 @@ public class Render2D {
 	 * @return Width of text in pixels.
 	 */
 	public static int getStringWidth(String text) {
-		TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+		TextRenderer textRenderer = Aoba.getInstance().fontManager.GetRenderer();
 		return textRenderer.getWidth(text);
 	}
 }

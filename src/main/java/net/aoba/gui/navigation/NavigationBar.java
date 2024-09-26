@@ -24,6 +24,7 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
+import net.aoba.gui.font.FontManager;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -103,7 +104,7 @@ public class NavigationBar implements MouseClickListener {
             if (i == selectedIndex) {
                 pane.render(drawContext, partialTicks);
             }
-            Render2D.drawString(drawContext, pane.title, centerX - ((float) width / 2) + 50 + (100 * i) - mc.textRenderer.getWidth(pane.title), 30, GuiManager.foregroundColor.getValue());
+            Render2D.drawString(drawContext, pane.title, centerX - ((float) width / 2) + 50 + (100 * i) - Render2D.getStringWidth(pane.title), 30, GuiManager.foregroundColor.getValue());
         }
     }
 

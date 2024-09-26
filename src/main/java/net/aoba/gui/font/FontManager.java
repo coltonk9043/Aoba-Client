@@ -82,7 +82,7 @@ public class FontManager {
             if (files != null) {
                 for (File file : files) {
                     try {
-                        Font font = LoadTTFFont(file, 12.5f, 2, new TrueTypeFontLoader.Shift(-1, 0), "");
+                        Font font = LoadTTFFont(file, 9f, 2, new TrueTypeFontLoader.Shift(-1, 0), "");
                         List<Font.FontFilterPair> list = new ArrayList<>();
                         list.add(new Font.FontFilterPair(font, FilterMap.NO_FILTER));
                         LogUtils.getLogger().info("Loading font " + file.getName());
