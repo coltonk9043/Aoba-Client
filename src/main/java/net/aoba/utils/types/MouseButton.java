@@ -1,5 +1,5 @@
 package net.aoba.utils.types;
 
 public enum MouseButton {
-    LEFT, RIGHT, MIDDLE
+    LEFT, RIGHT, MIDDLE, OTHER
 }
