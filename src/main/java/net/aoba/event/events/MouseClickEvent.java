@@ -14,6 +14,7 @@ public class MouseClickEvent extends AbstractEvent {
     public final double mouseY;
     public final MouseButton button;
     public final MouseAction action;
+    public final int buttonNumber;
 
     public MouseClickEvent(double mouseX, double mouseY, MouseButton button, MouseAction action) {
         super();
@@ -21,6 +22,16 @@ public class MouseClickEvent extends AbstractEvent {
         this.mouseY = mouseY;
         this.button = button;
         this.action = action;
+        this.buttonNumber = -1;
+    }
+
+    public MouseClickEvent(double mouseX, double mouseY, MouseButton button, MouseAction action, int buttonNumber) {
+        super();
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
+        this.button = button;
+        this.action = action;
+        this.buttonNumber = buttonNumber;
     }
 
 

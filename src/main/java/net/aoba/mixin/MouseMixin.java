@@ -68,6 +68,12 @@ public class MouseMixin {
                         event = new MouseClickEvent(x, y, MouseButton.RIGHT, MouseAction.UP);
                     }
                     break;
+                default:
+                    if (action == 1) {
+                        event = new MouseClickEvent(x, y, MouseButton.OTHER, MouseAction.DOWN, button);
+                    } else {
+                        event = new MouseClickEvent(x, y, MouseButton.OTHER, MouseAction.UP, button);
+                    }
             }
 
             aoba.eventManager.Fire(event);
