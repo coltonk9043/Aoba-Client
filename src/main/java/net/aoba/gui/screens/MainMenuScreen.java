@@ -33,6 +33,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import net.minecraft.util.Util;
 import org.lwjgl.opengl.GL11;
 
 import com.google.gson.Gson;
@@ -149,6 +150,11 @@ public class MainMenuScreen extends Screen {
 				20, TextureBank.aoba);
 		creditsButton.setPressAction(b -> MC.setScreen(new AobaCreditsScreen()));
 		this.addDrawableChild(creditsButton);
+
+		AobaImageButtonWidget discordButton = new AobaImageButtonWidget(this.width - 60, this.height - 30, 20,
+				20, TextureBank.discord);
+		discordButton.setPressAction(b -> Util.getOperatingSystem().open("https://discord.gg/CDa4etPFtk"));
+		this.addDrawableChild(discordButton);
 	}
 
 	@Override
