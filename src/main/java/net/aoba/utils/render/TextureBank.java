@@ -7,6 +7,7 @@ public class TextureBank {
     public static final Identifier mainmenu_logo = Identifier.of("aoba", "textures/mainmenu/aoba-name.png");
     public static final Identifier aoba = Identifier.of("aoba", "textures/aoba.png");
     public static final Identifier gear = Identifier.of("aoba", "textures/gear.png");
+    public static final Identifier discord = Identifier.of("aoba", "textures/mainmenu/discord.png");
     
     // Panorama
     public static final Identifier mainmenu_panorama = Identifier.of("aoba", "textures/mainmenu/panorama");
