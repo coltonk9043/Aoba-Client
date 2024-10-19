@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id "fabric-loom" version "1.7-SNAPSHOT"
     id 'maven-publish'
 }
 
@@ -26,6 +26,14 @@ repositories {
         name = 'babbaj-repo'
         url = 'https://babbaj.github.io/maven/'
     }
+    maven {
+        name = "modrinth"
+        url = "https://api.modrinth.com/maven"
+
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 configurations {
@@ -38,10 +46,14 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modCompileOnly("maven.modrinth:sodium:${project.sodium_version}") { transitive = false }
+    modCompileOnly("maven.modrinth:lithium:${project.lithium_version}") { transitive = false }
+    modCompileOnly("maven.modrinth:iris:${project.iris_version}") { transitive = false }
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+    modImplementation("maven.modrinth:sodium:${project.sodium_version}")
     modImplementation files("libs/baritone-standalone-fabric-1.10.2-7-ga231748b.jar")
     implementation "dev.babbaj:nether-pathfinder:1.4.1"
 
@@ -65,7 +77,6 @@ processResources {
         expand "version": project.version
     }
 }
-
 
 
 tasks.withType(JavaCompile).configureEach {

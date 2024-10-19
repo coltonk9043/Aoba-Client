@@ -22,6 +22,8 @@
 package net.aoba.module.modules.combat;
 
 import net.aoba.module.Category;
+import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
@@ -124,32 +126,29 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 			SwitchToTotem();
 		}
 	}
-	
+
 	private void SwitchToTotem() {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		
+
 		PlayerInventory inventory = mc.player.getInventory();
-		
-		// Search for a Totem of Undying in the player's inventory.
+
 		int slot = -1;
-		for(int i = 0; i <= 36; i++)
-		{
+		for (int i = 0; i <= 36; i++) {
 			ItemStack itemStackToCheck = inventory.getStack(i);
 			Item itemToCheck = itemStackToCheck.getItem();
-			
-			if(itemToCheck == Items.TOTEM_OF_UNDYING) {
+
+			if (itemToCheck == Items.TOTEM_OF_UNDYING) {
 				slot = i;
 				break;
 			}
 		}
 
-		// Switches the Totem of Undying to the player's main hand.
-		if(slot != -1) {
-			mc.getNetworkHandler().sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.STOP_SPRINTING));
-			mc.interactionManager.pickFromInventory(slot);
-            mc.getNetworkHandler().sendPacket(new CloseHandledScreenC2SPacket(mc.player.currentScreenHandler.syncId));
+		if (slot != -1) {
+			mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, slot, 0, SlotActionType.PICKUP, mc.player);
+			mc.player.setStackInHand(Hand.OFF_HAND, inventory.getStack(slot));
 		}
 	}
+
 
 	@Override
 	public void OnReceivePacket(ReceivePacketEvent readPacketEvent) {

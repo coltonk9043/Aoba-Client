@@ -1,0 +1,13 @@
+{
+  "required": false,
+  "package": "net.aoba.mixin.sodium",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "SodiumBlockRendererMixin",
+    "SodiumBlockOcclusionCacheMixin",
+    "SodiumLightDataAccessMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -44,7 +44,7 @@ public class XRay extends Module {
                     Blocks.LAPIS_BLOCK, Blocks.NETHER_QUARTZ_ORE, Blocks.MOSSY_COBBLESTONE, Blocks.STONE_BRICKS,
                     Blocks.OAK_PLANKS, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
                     Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_COAL_ORE)))
-    		.onUpdate((HashSet<Block> block) -> ReloadRenderer(block))
+    		.onUpdate(this::ReloadRenderer)
     		.build();
 
     public XRay() {
