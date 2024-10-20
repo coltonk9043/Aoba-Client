@@ -28,6 +28,7 @@ import net.aoba.mixin.interfaces.IEntityVelocityUpdateS2CPacket;
 import net.aoba.mixin.interfaces.IExplosionS2CPacket;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
@@ -49,7 +50,7 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
     		.step(0.01f)
     		.build();
     		
-    private FloatSetting vertical= FloatSetting.builder()
+    private FloatSetting vertical = FloatSetting.builder()
     		.id("antiknockback_vertical")
     		.displayName("Vertical")
     		.description("Vertical Velocity")
@@ -58,6 +59,13 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
     		.maxValue(1f)
     		.step(0.01f)
     		.build();
+
+    private BooleanSetting noPush = BooleanSetting.builder()
+            .id("antiknockback_vertical")
+            .displayName("No Push")
+            .description("Prevents being pushed by entites.")
+            .defaultValue(true)
+            .build();
 
     public AntiKnockback() {
     	super(KeybindSetting.builder().id("key.antiknockback").displayName("AntiKnockback Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
@@ -68,6 +76,11 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 
         this.addSetting(horizontal);
         this.addSetting(vertical);
+        this.addSetting(noPush);
+    }
+
+    public boolean getNoPush() {
+        return this.noPush.getValue();
     }
 
     @Override
