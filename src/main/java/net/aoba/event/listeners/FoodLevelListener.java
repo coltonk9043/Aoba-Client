@@ -21,5 +21,5 @@ package net.aoba.event.listeners;
 import net.aoba.event.events.FoodLevelEvent;
 
 public interface FoodLevelListener extends AbstractListener {
-    public abstract void OnFoodLevelChanged(FoodLevelEvent readPacketEvent);
+    public abstract void onFoodLevelChanged(FoodLevelEvent readPacketEvent);
 }

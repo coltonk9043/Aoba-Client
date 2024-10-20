@@ -21,5 +21,5 @@ package net.aoba.event.listeners;
 import net.aoba.event.events.PlayerDeathEvent;
 
 public interface PlayerDeathListener extends AbstractListener {
-    public abstract void OnPlayerDeath(PlayerDeathEvent readPacketEvent);
+    public abstract void onPlayerDeath(PlayerDeathEvent readPacketEvent);
 }

@@ -17,7 +17,7 @@ public class SendMessageEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             SendMessageListener sendMessageListener = (SendMessageListener) listener;
-            sendMessageListener.OnMessage(this);
+            sendMessageListener.onSendMessage(this);
         }
     }
 

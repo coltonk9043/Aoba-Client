@@ -106,7 +106,7 @@ public class Trajectory extends Module implements Render3DListener {
 	}
 
 	@Override
-	public void OnRender(Render3DEvent event) {
+	public void onRender(Render3DEvent event) {
 		Color renderColor = color.getValue();
 		Matrix4f matrix = event.GetMatrix().peek().getPositionMatrix();
 

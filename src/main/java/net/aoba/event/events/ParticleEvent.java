@@ -22,7 +22,7 @@ public class ParticleEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             ParticleListener particleListener = (ParticleListener) listener;
-            particleListener.OnParticle(this);
+            particleListener.onParticle(this);
         }
     }
 

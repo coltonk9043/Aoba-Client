@@ -108,7 +108,7 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 	}
 
 	@Override
-	public void OnHealthChanged(PlayerHealthEvent readPacketEvent) {
+	public void onHealthChanged(PlayerHealthEvent readPacketEvent) {
 		LogUtils.getLogger().info("autosoup");
 		float playerHealth = readPacketEvent.getHealth();
 		

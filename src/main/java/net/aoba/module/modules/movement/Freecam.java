@@ -114,7 +114,7 @@ public class Freecam extends Module implements TickListener, Render3DListener {
     }
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void onRender(Render3DEvent event) {
         Camera camera = MC.gameRenderer.getCamera();
         ICamera iCamera = (ICamera) camera;
 

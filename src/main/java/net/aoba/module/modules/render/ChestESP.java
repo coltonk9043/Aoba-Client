@@ -89,7 +89,7 @@ public class ChestESP extends Module implements Render3DListener {
     }
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void onRender(Render3DEvent event) {
         ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities().collect(Collectors.toCollection(ArrayList::new));
         for (BlockEntity blockEntity : blockEntities) {
             if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity || blockEntity instanceof BarrelBlockEntity) {

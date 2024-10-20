@@ -76,7 +76,7 @@ public class AutoRespawn extends Module implements PlayerDeathListener, TickList
     }
 
     @Override
-    public void OnPlayerDeath(PlayerDeathEvent readPacketEvent) {
+    public void onPlayerDeath(PlayerDeathEvent readPacketEvent) {
         if (respawnDelay.getValue() == 0.0f) {
             respawn();
         } else {

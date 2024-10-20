@@ -114,7 +114,7 @@ public class ItemESP extends Module implements Render3DListener {
     }
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void onRender(Render3DEvent event) {
         if (!visibilityToggle.getValue()) return;
 
         Vec3d playerPos = MC.player.getPos();

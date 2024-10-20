@@ -56,7 +56,7 @@ public class MCA extends Module implements MouseClickListener {
     }
 
     @Override
-    public void OnMouseClick(MouseClickEvent mouseClickEvent) {
+    public void onMouseClick(MouseClickEvent mouseClickEvent) {
         if (mouseClickEvent.button == MouseButton.MIDDLE) {
         	if(mouseClickEvent.action == MouseAction.DOWN) {
         		switch(mode.getValue()) {

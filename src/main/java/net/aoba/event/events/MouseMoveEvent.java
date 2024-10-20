@@ -58,7 +58,7 @@ public class MouseMoveEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             MouseMoveListener mouseMoveListener = (MouseMoveListener) listener;
-            mouseMoveListener.OnMouseMove(this);
+            mouseMoveListener.onMouseMove(this);
         }
     }
 

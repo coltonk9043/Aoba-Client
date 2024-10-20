@@ -183,7 +183,7 @@ public class StringComponent extends Component implements FontChangedListener {
     }
 
     @Override
-    public void OnFontChanged(FontChangedEvent event) {
+    public void onFontChanged(FontChangedEvent event) {
         setText(this.originalText);
     }
 }

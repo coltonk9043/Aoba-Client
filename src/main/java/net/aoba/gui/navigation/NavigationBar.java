@@ -109,7 +109,7 @@ public class NavigationBar implements MouseClickListener {
     }
 
     @Override
-    public void OnMouseClick(MouseClickEvent event) {
+    public void onMouseClick(MouseClickEvent event) {
         if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
             AobaClient aoba = Aoba.getInstance();
             Window window = mc.getWindow();

@@ -12,7 +12,7 @@ public class GameLeftEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             GameLeftListener gameLeftListener = (GameLeftListener) listener;
-            gameLeftListener.OnGameLeft(this);
+            gameLeftListener.onGameLeft(this);
         }
     }
 

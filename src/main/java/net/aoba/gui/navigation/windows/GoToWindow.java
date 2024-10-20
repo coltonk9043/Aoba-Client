@@ -365,7 +365,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	}
 
 	@Override
-	public void OnRender(Render3DEvent event) {
+	public void onRender(Render3DEvent event) {
 		if (this.nodes != null) {
 			Box startBox = new Box(start);
 			Box endBox = new Box(end);

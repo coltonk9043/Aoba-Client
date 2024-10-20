@@ -96,7 +96,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
     }
 
     @Override
-    public void OnKeyDown(KeyDownEvent event) {
+    public void onKeyDown(KeyDownEvent event) {
         if (listeningForKey) {
             int key = event.GetKey();
             int scanCode = event.GetScanCode();

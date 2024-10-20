@@ -98,6 +98,7 @@ public class ModuleManager implements KeyDownListener {
     public POV pov = new POV();
     public Reach reach = new Reach();
     public Safewalk safewalk = new Safewalk();
+    public Scaffold scaffold = new Scaffold();
     public Sneak sneak = new Sneak();
     public SpawnerESP spawneresp = new SpawnerESP();
     public Speed speed = new Speed();
@@ -166,7 +167,7 @@ public class ModuleManager implements KeyDownListener {
     }
 
     @Override
-    public void OnKeyDown(KeyDownEvent event) {
+    public void onKeyDown(KeyDownEvent event) {
         if (mc.currentScreen == null) {
             for (Module module : modules) {
                 Key binding = module.getBind().getValue();

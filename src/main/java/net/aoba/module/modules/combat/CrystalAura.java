@@ -523,7 +523,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
     }
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void onRender(Render3DEvent event) {
         long currentTime = System.currentTimeMillis();
 
         displayedBoxes.entrySet().removeIf(entry -> {

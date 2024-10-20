@@ -46,7 +46,7 @@ public class KeyUpEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             KeyUpListener keyDownListener = (KeyUpListener) listener;
-            keyDownListener.OnKeyUp(this);
+            keyDownListener.onKeyUp(this);
         }
     }
 

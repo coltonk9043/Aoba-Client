@@ -25,7 +25,7 @@ public class CombatManager implements TickListener, ReceivePacketListener {
     }
 
     @Override
-    public void OnReceivePacket(ReceivePacketEvent event) {
+    public void onReceivePacket(ReceivePacketEvent event) {
         if (event.GetPacket() instanceof EntityStatusS2CPacket entityStatusS2CPacket) {
             if (entityStatusS2CPacket.getStatus() == EntityStatuses.USE_TOTEM_OF_UNDYING) {
                 Entity entity = entityStatusS2CPacket.getEntity(MC.world);

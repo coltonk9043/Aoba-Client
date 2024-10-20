@@ -131,7 +131,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
     }
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void onRender(Render3DEvent event) {
         if (temp != null) {
             Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
             Vec3d targetPos = temp.getEyePos().add(offset);

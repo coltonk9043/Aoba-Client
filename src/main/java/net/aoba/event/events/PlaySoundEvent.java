@@ -22,7 +22,7 @@ public class PlaySoundEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             PlaySoundListener playSoundListener = (PlaySoundListener) listener;
-            playSoundListener.OnPlaySound(this);
+            playSoundListener.onPlaySound(this);
         }
     }
 

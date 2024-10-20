@@ -41,7 +41,7 @@ public class ReceivePacketEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             ReceivePacketListener readPacketListener = (ReceivePacketListener) listener;
-            readPacketListener.OnReceivePacket(this);
+            readPacketListener.onReceivePacket(this);
         }
     }
 

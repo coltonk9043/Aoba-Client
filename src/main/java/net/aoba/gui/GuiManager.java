@@ -39,6 +39,7 @@ import net.aoba.gui.navigation.huds.*;
 import net.aoba.gui.navigation.windows.AuthCrackerWindow;
 import net.aoba.gui.navigation.windows.GoToWindow;
 import net.aoba.gui.navigation.windows.HudOptionsTab;
+import net.aoba.gui.navigation.windows.MacroWindow;
 import net.aoba.gui.navigation.windows.ToggleHudsTab;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -158,6 +159,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
     public void Initialize() {
         toolsPane.AddWindow(new AuthCrackerWindow());
         toolsPane.AddWindow(new GoToWindow("Go To Location", 1220, 550));
+        toolsPane.AddWindow(new MacroWindow(1500, 550));
         
         moduleSelector = new ModuleSelectorHud();
         armorHud = new ArmorHud(0, 0);
@@ -245,7 +247,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
     }
 
     @Override
-    public void OnKeyDown(KeyDownEvent event) {
+    public void onKeyDown(KeyDownEvent event) {
         if (clickGuiButton.getValue().getCode() == event.GetKey() && MC.currentScreen == null) {
         	setClickGuiOpen(!this.clickGuiOpen);
             this.toggleMouse();
@@ -293,7 +295,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
     }
 
     @Override
-    public void OnRender(Render2DEvent event) {
+    public void onRender(Render2DEvent event) {
 
     	RenderSystem.disableCull();
     	RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

@@ -36,7 +36,7 @@ public class XCarry extends Module implements SendPacketListener {
     }
     
 	@Override
-	public void OnSendPacket(SendPacketEvent event) {
+	public void onSendPacket(SendPacketEvent event) {
 		Packet<?> packet = event.GetPacket();
 		if(packet instanceof CloseHandledScreenC2SPacket) {
 			CloseHandledScreenC2SPacket closeScreenPacket = (CloseHandledScreenC2SPacket)packet;

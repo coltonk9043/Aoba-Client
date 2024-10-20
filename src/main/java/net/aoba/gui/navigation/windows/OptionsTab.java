@@ -86,7 +86,7 @@ public class OptionsTab extends Window implements MouseScrollListener {
 	}
 
 	@Override
-	public void OnMouseScroll(MouseScrollEvent event) {
+	public void onMouseScroll(MouseScrollEvent event) {
 		ArrayList<Module> modules = Aoba.getInstance().moduleManager.modules;
 
 		if (event.GetVertical() > 0)

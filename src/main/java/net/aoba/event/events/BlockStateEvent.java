@@ -35,7 +35,7 @@ public class BlockStateEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             BlockStateListener blockStateListener = (BlockStateListener) listener;
-            blockStateListener.OnBlockStateChanged(this);
+            blockStateListener.onBlockStateChanged(this);
         }
     }
 

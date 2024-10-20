@@ -51,7 +51,7 @@ public class Render3DEvent extends AbstractEvent {
 	public void Fire(ArrayList<? extends AbstractListener> listeners) {
 		for(AbstractListener listener : List.copyOf(listeners)) {
 			Render3DListener renderListener = (Render3DListener) listener;
-			renderListener.OnRender(this);
+			renderListener.onRender(this);
 		}
 	}
 

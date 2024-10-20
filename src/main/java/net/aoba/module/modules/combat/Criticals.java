@@ -79,7 +79,7 @@ public class Criticals extends Module implements SendPacketListener {
 	}
 	
 	@Override
-	public void OnSendPacket(SendPacketEvent event) {
+	public void onSendPacket(SendPacketEvent event) {
 		Packet<?> packet = event.GetPacket();
 		if(packet instanceof PlayerInteractEntityC2SPacket) {
 			PlayerInteractEntityC2SPacket playerInteractPacket = (PlayerInteractEntityC2SPacket) packet;

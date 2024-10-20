@@ -11,7 +11,7 @@ public class FontChangedEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             FontChangedListener fontChangeListener = (FontChangedListener) listener;
-            fontChangeListener.OnFontChanged(this);
+            fontChangeListener.onFontChanged(this);
         }
     }
 

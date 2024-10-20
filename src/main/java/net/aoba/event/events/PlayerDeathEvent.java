@@ -32,7 +32,7 @@ public class PlayerDeathEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             PlayerDeathListener playerDeathListener = (PlayerDeathListener) listener;
-            playerDeathListener.OnPlayerDeath(this);
+            playerDeathListener.onPlayerDeath(this);
         }
     }
 

@@ -109,7 +109,7 @@ public class AutoFish extends Module implements ReceivePacketListener {
     }
 
     @Override
-    public void OnReceivePacket(ReceivePacketEvent readPacketEvent) {
+    public void onReceivePacket(ReceivePacketEvent readPacketEvent) {
         Packet<?> packet = readPacketEvent.GetPacket();
 
         if (packet instanceof PlaySoundS2CPacket) {

@@ -3,9 +3,7 @@ package net.aoba.cmd.commands;
 import net.aoba.Aoba;
 import net.aoba.cmd.Command;
 import net.aoba.cmd.CommandManager;
-import net.minecraft.util.Formatting;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 
 public class CmdHistory extends Command {

@@ -46,7 +46,7 @@ public class Render2DEvent extends AbstractEvent {
 	public void Fire(ArrayList<? extends AbstractListener> listeners) {
 		for(AbstractListener listener : List.copyOf(listeners)) {
 			Render2DListener renderListener = (Render2DListener) listener;
-			renderListener.OnRender(this);
+			renderListener.onRender(this);
 		}
 	}
 

@@ -20,7 +20,7 @@ public class RotationManager implements SendPacketListener {
 	}
 	
 	@Override
-	public void OnSendPacket(SendPacketEvent event) {
+	public void onSendPacket(SendPacketEvent event) {
 		Packet<?> packet = event.GetPacket();
 		if(packet instanceof PlayerMoveC2SPacket) {
 			PlayerMoveC2SPacket playerMovePacket = (PlayerMoveC2SPacket)packet;

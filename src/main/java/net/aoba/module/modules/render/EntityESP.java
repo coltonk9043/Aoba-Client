@@ -142,7 +142,7 @@ public class EntityESP extends Module implements Render3DListener {
     public void onToggle() { }
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void onRender(Render3DEvent event) {
         MatrixStack matrixStack = event.GetMatrix();
         float partialTicks = event.GetPartialTicks();
 

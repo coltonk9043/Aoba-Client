@@ -40,7 +40,7 @@ public class FoodLevelEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             FoodLevelListener foodLevelListener = (FoodLevelListener) listener;
-            foodLevelListener.OnFoodLevelChanged(this);
+            foodLevelListener.onFoodLevelChanged(this);
         }
     }
 

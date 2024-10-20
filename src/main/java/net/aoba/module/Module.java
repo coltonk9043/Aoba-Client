@@ -27,6 +27,7 @@ import net.aoba.interfaces.IClientPlayerInteractionManager;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.settings.Setting;
 import net.aoba.settings.SettingManager;
+import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.FindItemResult;
 import net.minecraft.block.BlockState;
@@ -50,8 +51,8 @@ public abstract class Module {
     private String name;
     private String description;
     private Category category;
-    private boolean state;
 
+    protected boolean state;
     protected KeybindSetting keyBind;
     private List<Setting<?>> settings = new ArrayList<Setting<?>>();
 
@@ -167,7 +168,6 @@ public abstract class Module {
      *              {@code false} to disable.
      */
     public void setState(boolean state) {
-        if (this.state == state) return;
 
         if (state) {
         	this.state = true;

@@ -46,7 +46,7 @@ public class PlayerHealthEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             PlayerHealthListener playerHealthListener = (PlayerHealthListener) listener;
-            playerHealthListener.OnHealthChanged(this);
+            playerHealthListener.onHealthChanged(this);
         }
     }
 

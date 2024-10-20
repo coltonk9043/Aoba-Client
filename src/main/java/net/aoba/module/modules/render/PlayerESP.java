@@ -96,7 +96,7 @@ public class PlayerESP extends Module implements Render3DListener {
     }
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void onRender(Render3DEvent event) {
         for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
             if (entity != MC.player) {
                 Render3D.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), color_default.getValue(), lineThickness.getValue().floatValue());

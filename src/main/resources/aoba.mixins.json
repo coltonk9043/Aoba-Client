@@ -16,7 +16,8 @@
 		"interfaces.IRabbitEntityModel",
 		"interfaces.IAnimalModel",
 		"interfaces.ILlamaEntityModel",
-		"interfaces.IPlayerMoveC2SPacket"
+		"interfaces.IPlayerMoveC2SPacket",
+		"interfaces.IMouse",
 	],
 	"client": [
 		"AbstractBlockStateMixin",

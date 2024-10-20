@@ -143,12 +143,12 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
     }
 
     @Override
-    public void OnFoodLevelChanged(FoodLevelEvent readPacketEvent) {
+    public void onFoodLevelChanged(FoodLevelEvent readPacketEvent) {
         eatIfNecessary();
     }
 
     @Override
-    public void OnHealthChanged(PlayerHealthEvent readPacketEvent) {
+    public void onHealthChanged(PlayerHealthEvent readPacketEvent) {
         eatIfNecessary();
     }
 }

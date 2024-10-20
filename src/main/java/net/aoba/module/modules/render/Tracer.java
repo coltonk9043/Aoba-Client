@@ -111,7 +111,7 @@ public class Tracer extends Module implements Render3DListener {
     }
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void onRender(Render3DEvent event) {
         Vec3d eyePosition = new Vec3d(0, 0, 1);
         Camera camera = MC.gameRenderer.getCamera();
         Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity, event.GetPartialTicks());

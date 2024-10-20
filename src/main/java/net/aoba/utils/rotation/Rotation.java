@@ -50,8 +50,28 @@ public record Rotation(double yaw, double pitch) {
 		);
 	}
 	
+	public static Rotation rotationFrom(Vec3d vec) {
+		MinecraftClient MC = MinecraftClient.getInstance();
+		Vec3d playerPos = MC.player.getPos();
+
+		double deltaX = vec.x - playerPos.x;
+		double deltaY = vec.y - playerPos.y;
+		double deltaZ = vec.z - playerPos.z;
+
+		return new Rotation(
+			MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(deltaZ, deltaX)) - 90f),
+			MathHelper.wrapDegrees((-Math.toDegrees(Math.atan2(deltaY, Math.sqrt(deltaX * deltaX + deltaZ * deltaZ)))))
+		);
+	}
+	
 	public static Rotation getPlayerRotationDeltaFromEntity(Entity target) {
 		Rotation fromPlayer = rotationFrom(target);
+		Rotation difference = difference(new Rotation(RotationManager.serverRotation.yaw(), RotationManager.serverRotation.pitch()), fromPlayer);
+		return difference;
+	}
+	
+	public static Rotation getPlayerRotationDeltaFromPosition(Vec3d position) {
+		Rotation fromPlayer = rotationFrom(position);
 		Rotation difference = difference(new Rotation(RotationManager.serverRotation.yaw(), RotationManager.serverRotation.pitch()), fromPlayer);
 		return difference;
 	}

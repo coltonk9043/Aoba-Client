@@ -30,6 +30,8 @@ import net.aoba.combatmanager.CombatManager;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
+import net.aoba.macros.MacroPlayer;
+import net.aoba.macros.MacroRecorder;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
 import net.aoba.proxymanager.ProxyManager;
@@ -66,6 +68,8 @@ public class AobaClient {
     public FriendsList friendsList;
     public GlobalChat globalChat;
     public EventManager eventManager;
+    public MacroRecorder macroRecorder;
+    public MacroPlayer macroPlayer;
     public static List<IAddon> addons = new ArrayList<>();
 
     /**
@@ -126,7 +130,8 @@ public class AobaClient {
         rpcManager.startRpc();
         LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 
-        
+        macroRecorder = new MacroRecorder();
+        macroPlayer = new MacroPlayer();
         
         SettingManager.loadSettings(settingManager.configContainer);
         SettingManager.loadSettings(settingManager.modulesContainer);

@@ -143,7 +143,7 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 
 
     @Override
-    public void OnRender(Render3DEvent event) {
+    public void onRender(Render3DEvent event) {
         int rad = this.radius.getValue().intValue();
         for (int x = -rad; x < rad; x++) {
             for (int y = rad; y > -rad; y--) {

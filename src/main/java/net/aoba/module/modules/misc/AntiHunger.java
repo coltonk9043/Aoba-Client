@@ -64,7 +64,7 @@ public class AntiHunger extends Module implements SendPacketListener, SendMoveme
 
 
     @Override
-    public void OnSendPacket(SendPacketEvent event) {
+    public void onSendPacket(SendPacketEvent event) {
         if (ignorePacket && event.GetPacket() instanceof PlayerMoveC2SPacket) {
             ignorePacket = false;
             return;

@@ -106,7 +106,7 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 	}
 
 	@Override
-	public void OnHealthChanged(PlayerHealthEvent readPacketEvent) {
+	public void onHealthChanged(PlayerHealthEvent readPacketEvent) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		
 		// If current screen is a generic container, we want to prevent autototem from firing.
@@ -151,7 +151,7 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 
 
 	@Override
-	public void OnReceivePacket(ReceivePacketEvent readPacketEvent) {
+	public void onReceivePacket(ReceivePacketEvent readPacketEvent) {
 		// Check to see if the packet is an entity spawn packet, and if the entity is an end crystal.
 		if (readPacketEvent.GetPacket() instanceof EntitySpawnS2CPacket spawnEntityPacket) {
             if (spawnEntityPacket.getEntityType() == EntityType.END_CRYSTAL) {

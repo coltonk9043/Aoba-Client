@@ -87,7 +87,7 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
     }
 
     @Override
-    public void OnReceivePacket(ReceivePacketEvent readPacketEvent) {
+    public void onReceivePacket(ReceivePacketEvent readPacketEvent) {
         MinecraftClient mc = MinecraftClient.getInstance();
         Packet<?> packet = readPacketEvent.GetPacket();
 

@@ -44,38 +44,7 @@ public class MouseMixin {
     private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
         AobaClient aoba = Aoba.getInstance();
         if (aoba != null && aoba.eventManager != null) {
-            MouseClickEvent event = null;
-
-            switch (button) {
-                case GLFW.GLFW_MOUSE_BUTTON_LEFT:
-                    if (action == 1) {
-                        event = new MouseClickEvent(x, y, MouseButton.LEFT, MouseAction.DOWN);
-                    } else {
-                        event = new MouseClickEvent(x, y, MouseButton.LEFT, MouseAction.UP);
-                    }
-                    break;
-                case GLFW.GLFW_MOUSE_BUTTON_MIDDLE:
-                    if (action == 1) {
-                        event = new MouseClickEvent(x, y, MouseButton.MIDDLE, MouseAction.DOWN);
-                    } else {
-                        event = new MouseClickEvent(x, y, MouseButton.MIDDLE, MouseAction.UP);
-                    }
-                    break;
-                case GLFW.GLFW_MOUSE_BUTTON_RIGHT:
-                    if (action == 1) {
-                        event = new MouseClickEvent(x, y, MouseButton.RIGHT, MouseAction.DOWN);
-                    } else {
-                        event = new MouseClickEvent(x, y, MouseButton.RIGHT, MouseAction.UP);
-                    }
-                    break;
-                default:
-                    if (action == 1) {
-                        event = new MouseClickEvent(x, y, MouseButton.OTHER, MouseAction.DOWN, button);
-                    } else {
-                        event = new MouseClickEvent(x, y, MouseButton.OTHER, MouseAction.UP, button);
-                    }
-            }
-
+            MouseClickEvent event = new MouseClickEvent(x, y, button, action, mods);
             aoba.eventManager.Fire(event);
 
             if (aoba.guiManager.isClickGuiOpen()) {

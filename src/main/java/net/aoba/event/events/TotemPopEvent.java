@@ -28,7 +28,7 @@ public class TotemPopEvent extends AbstractEvent {
     public void Fire(ArrayList<? extends AbstractListener> listeners) {
         for (AbstractListener listener : List.copyOf(listeners)) {
             TotemPopListener totemPopListener = (TotemPopListener) listener;
-            totemPopListener.OnTotemPop(this);
+            totemPopListener.onTotemPop(this);
 
             if(this.isCancelled)
                 break;
