@@ -35,6 +35,6 @@ public class InvalidSyntaxException extends CommandException {
 
     @Override
     public void PrintToChat() {
-        CommandManager.sendChatMessage("Invalid Usage! Usage: " + Formatting.LIGHT_PURPLE + ".aoba " + cmd.getName() + " " + cmd.getSyntax() + Formatting.RESET);
+        CommandManager.sendChatMessage("Invalid syntax! Correct usage: " + Formatting.LIGHT_PURPLE + ".aoba " + cmd.getName() + " " + cmd.getSyntax() + Formatting.RESET);
     }
 }
