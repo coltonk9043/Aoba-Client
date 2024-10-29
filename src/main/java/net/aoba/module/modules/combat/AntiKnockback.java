@@ -29,13 +29,10 @@ import net.aoba.mixin.interfaces.IExplosionS2CPacket;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
-import org.lwjgl.glfw.GLFW;
 
 public class AntiKnockback extends Module implements ReceivePacketListener {
 
@@ -60,9 +57,8 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
     		.build();
 
     public AntiKnockback() {
-    	super(KeybindSetting.builder().id("key.antiknockback").displayName("AntiKnockback Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+    	super("AntiKnockback");
 
-        this.setName("AntiKnockback");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Prevents knockback.");
 

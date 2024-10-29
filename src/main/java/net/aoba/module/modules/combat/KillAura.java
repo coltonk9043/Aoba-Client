@@ -21,6 +21,8 @@
  */
 package net.aoba.module.modules.combat;
 
+import java.util.ArrayList;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.SendMovementPacketEvent.Pre;
 import net.aoba.event.events.TickEvent;
@@ -32,10 +34,8 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.rotation.Rotation;
 import net.aoba.utils.rotation.RotationMode;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -45,8 +45,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import org.lwjgl.glfw.GLFW;
-import java.util.ArrayList;
 
 public class KillAura extends Module implements TickListener, SendMovementPacketListener {
 	private enum Priority {
@@ -120,9 +118,8 @@ public class KillAura extends Module implements TickListener, SendMovementPacket
 	private LivingEntity entityToAttack;
 	
 	public KillAura() {
-    	super(KeybindSetting.builder().id("key.killaura").displayName("Kill Aura Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+    	super("KillAura");
 
-		this.setName("KillAura");
 		this.setCategory(Category.of("Combat"));
 		this.setDescription("Attacks anything within your personal space.");
 

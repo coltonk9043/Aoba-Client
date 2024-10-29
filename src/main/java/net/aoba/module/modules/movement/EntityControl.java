@@ -7,39 +7,35 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.interfaces.IHorseBaseEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.AbstractHorseEntity;
-import org.lwjgl.glfw.GLFW;
 
 public class EntityControl extends Module implements TickListener {
-    public EntityControl() {
-    	super(KeybindSetting.builder().id("key.entitycontrol").displayName("EntityControl Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	public EntityControl() {
+		super("EntityControl");
+		this.setDescription("Allows you to control entities without needing a saddle.");
+		this.setCategory(Category.of("Movement"));
+	}
 
-        this.setName("EntityControl");
-        this.setDescription("Allows you to control entities without needing a saddle.");
-        this.setCategory(Category.of("Movement"));
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		for (Entity entity : MC.world.getEntities()) {
+			if (entity instanceof AbstractHorseEntity)
+				((IHorseBaseEntity) entity).setSaddled(false);
+		}
+	}
 
-        for (Entity entity : MC.world.getEntities()) {
-            if (entity instanceof AbstractHorseEntity) ((IHorseBaseEntity) entity).setSaddled(false);
-        }
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onToggle() {
 
-    @Override
-    public void onToggle() {
-
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
@@ -48,8 +44,9 @@ public class EntityControl extends Module implements TickListener {
 
 	@Override
 	public void onTick(Post event) {
-        for (Entity entity : MC.world.getEntities()) {
-            if (entity instanceof AbstractHorseEntity) ((IHorseBaseEntity) entity).setSaddled(true);
-        }
+		for (Entity entity : MC.world.getEntities()) {
+			if (entity instanceof AbstractHorseEntity)
+				((IHorseBaseEntity) entity).setSaddled(true);
+		}
 	}
 }

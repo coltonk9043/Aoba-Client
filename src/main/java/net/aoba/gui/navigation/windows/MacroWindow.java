@@ -65,7 +65,7 @@ public class MacroWindow extends Window {
 			@Override
 			public void run() {
 				Aoba.getInstance().guiManager.setClickGuiOpen(false);
-				Aoba.getInstance().macroRecorder.startRecording();
+				Aoba.getInstance().macroManager.getRecorder().startRecording();
 				startButton.setText("Stop Recording");
 				startButton.setOnClick(endRunnable);
 			}
@@ -74,7 +74,7 @@ public class MacroWindow extends Window {
 		endRunnable = new Runnable() {
 			@Override
 			public void run() {
-				Aoba.getInstance().macroRecorder.stopRecording();
+				Aoba.getInstance().macroManager.getRecorder().stopRecording();
 				startButton.setText("Record");
 				startButton.setOnClick(startRunnable);
 			}
@@ -87,7 +87,7 @@ public class MacroWindow extends Window {
 			@Override
 			public void run() {
 				AobaClient aoba = Aoba.getInstance();
-				aoba.macroPlayer.play(aoba.macroRecorder.getCurrentMacro());
+				aoba.macroManager.getPlayer().play(aoba.macroManager.getCurrentlySelected());
 			}
 		};
 		replayButton = new ButtonComponent(stackPanel, "Replay", replayRunnable);

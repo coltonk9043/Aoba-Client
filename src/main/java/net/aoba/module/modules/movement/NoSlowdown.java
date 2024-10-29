@@ -29,60 +29,49 @@ import net.aoba.mixin.interfaces.IEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.glfw.GLFW;
 
 public class NoSlowdown extends Module implements TickListener {
-	
-	private FloatSetting slowdownMultiplier = FloatSetting.builder()
-    		.id("noslowdown_multiplier")
-    		.displayName("Multiplier")
-    		.description("NoSlowdown walk speed multiplier.")
-    		.defaultValue(0f)
-    		.minValue(0f)
-    		.maxValue(1f)
-    		.step(0.1f)
-    		.build();
 
-    public NoSlowdown() {
-    	super(KeybindSetting.builder().id("key.noslowdown").displayName("NoSlowdown Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-		
-        this.setName("NoSlowdown");
-        this.setCategory(Category.of("Movement"));
-        this.setDescription("Prevents the player from being slowed down by blocks.");
-        
-        this.addSetting(slowdownMultiplier);
-    }
+	private FloatSetting slowdownMultiplier = FloatSetting.builder().id("noslowdown_multiplier")
+			.displayName("Multiplier").description("NoSlowdown walk speed multiplier.").defaultValue(0f).minValue(0f)
+			.maxValue(1f).step(0.1f).build();
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	public NoSlowdown() {
+		super("NoSlowdown");
+		this.setCategory(Category.of("Movement"));
+		this.setDescription("Prevents the player from being slowed down by blocks.");
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+		this.addSetting(slowdownMultiplier);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
+
+	@Override
+	public void onToggle() {
+
+	}
 
 	@Override
 	public void onTick(Pre event) {
-        IEntity playerEntity = (IEntity) MC.player;
-        
-        if(!playerEntity.getMovementMultiplier().equals(Vec3d.ZERO)) {
-        	float multiplier = slowdownMultiplier.getValue();
-            if(multiplier == 0.0f) {
-            	playerEntity.setMovementMultiplier(Vec3d.ZERO);
-            }else {
-            	playerEntity.setMovementMultiplier(Vec3d.ZERO.add(1, 1, 1).multiply(1 / multiplier));
-            }
-        }
+		IEntity playerEntity = (IEntity) MC.player;
+
+		if (!playerEntity.getMovementMultiplier().equals(Vec3d.ZERO)) {
+			float multiplier = slowdownMultiplier.getValue();
+			if (multiplier == 0.0f) {
+				playerEntity.setMovementMultiplier(Vec3d.ZERO);
+			} else {
+				playerEntity.setMovementMultiplier(Vec3d.ZERO.add(1, 1, 1).multiply(1 / multiplier));
+			}
+		}
 	}
 
 	@Override

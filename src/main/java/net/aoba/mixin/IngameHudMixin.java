@@ -18,13 +18,6 @@
 
 package net.aoba.mixin;
 
-import net.aoba.Aoba;
-import net.aoba.event.events.Render2DEvent;
-import net.aoba.module.modules.render.NoRender;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,57 +25,72 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import net.aoba.Aoba;
+import net.aoba.event.events.Render2DEvent;
+import net.aoba.module.modules.render.NoRender;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.entity.Entity;
+
 @Mixin(InGameHud.class)
 public class IngameHudMixin {
 
-    //@Inject(at = {@At(value = "TAIL")}, method = {"render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"})
-    //private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
-    //	 Render2DEvent renderEvent = new Render2DEvent(context, tickDelta);
-    //     Aoba.getInstance().eventManager.Fire(renderEvent);
-    //}
+	// @Inject(at = {@At(value = "TAIL")}, method =
+	// {"render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"})
+	// private void onRender(DrawContext context, RenderTickCounter tickDelta,
+	// CallbackInfo ci) {
+	// Render2DEvent renderEvent = new Render2DEvent(context, tickDelta);
+	// Aoba.getInstance().eventManager.Fire(renderEvent);
+	// }
 
-    @Inject(at = {@At(value = "TAIL")}, method = {"renderAutosaveIndicator(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"})
-    private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
-    	 Render2DEvent renderEvent = new Render2DEvent(context, tickDelta);
-         Aoba.getInstance().eventManager.Fire(renderEvent);
-    }
-	
-    @Inject(method = "renderVignetteOverlay", at = @At("HEAD"), cancellable = true)
-    private void onRenderVignetteOverlay(DrawContext context, Entity entity, CallbackInfo ci) {
-        NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+	@Inject(at = { @At(value = "TAIL") }, method = {
+			"renderAutosaveIndicator(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V" })
+	private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
+		Render2DEvent renderEvent = new Render2DEvent(context, tickDelta);
+		Aoba.getInstance().eventManager.Fire(renderEvent);
+	}
 
-        if (norender.getState() && norender.getNoVignette()) ci.cancel();
-    }
+	@Inject(method = "renderVignetteOverlay", at = @At("HEAD"), cancellable = true)
+	private void onRenderVignetteOverlay(DrawContext context, Entity entity, CallbackInfo ci) {
+		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
 
-    @ModifyArgs(method = "renderMiscOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderOverlay(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/util/Identifier;F)V", ordinal = 0))
-    private void onRenderPumpkinOverlay(Args args) {
-        NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		if (norender.state.getValue() && norender.getNoVignette())
+			ci.cancel();
+	}
 
-        if (norender.getState() && norender.getNoPumpkinOverlay()) args.set(2, 0f);
-    }
+	@ModifyArgs(method = "renderMiscOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderOverlay(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/util/Identifier;F)V", ordinal = 0))
+	private void onRenderPumpkinOverlay(Args args) {
+		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
 
-    @ModifyArgs(method = "renderMiscOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderOverlay(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/util/Identifier;F)V", ordinal = 1))
-    private void onRenderPowderSnowOverlay(Args args) {
-        NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		if (norender.state.getValue() && norender.getNoPumpkinOverlay())
+			args.set(2, 0f);
+	}
 
-        if (norender.getState() && norender.getNoPowderSnowOverlay()) args.set(2, 0f);
-    }
+	@ModifyArgs(method = "renderMiscOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderOverlay(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/util/Identifier;F)V", ordinal = 1))
+	private void onRenderPowderSnowOverlay(Args args) {
+		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
 
-    @Inject(method = "renderPortalOverlay", at = @At("HEAD"), cancellable = true)
-    private void onRenderPortalOverlay(DrawContext context, float nauseaStrength, CallbackInfo ci) {
-        NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		if (norender.state.getValue() && norender.getNoPowderSnowOverlay())
+			args.set(2, 0f);
+	}
 
-        if (norender.getState() && norender.getNoPortalOverlay()) ci.cancel();
-    }
+	@Inject(method = "renderPortalOverlay", at = @At("HEAD"), cancellable = true)
+	private void onRenderPortalOverlay(DrawContext context, float nauseaStrength, CallbackInfo ci) {
+		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
 
-    @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-    private void onRenderCrosshair(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        if(Aoba.getInstance().guiManager.isClickGuiOpen()) {
-        	ci.cancel();
-        	return;
-        }
-        	NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
-        if (norender.getState() && norender.getNoCrosshair()) 
-        	ci.cancel();
-    }
+		if (norender.state.getValue() && norender.getNoPortalOverlay())
+			ci.cancel();
+	}
+
+	@Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
+	private void onRenderCrosshair(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
+			ci.cancel();
+			return;
+		}
+		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		if (norender.state.getValue() && norender.getNoCrosshair())
+			ci.cancel();
+	}
 }

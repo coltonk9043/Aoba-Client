@@ -30,6 +30,7 @@ import net.aoba.combatmanager.CombatManager;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
+import net.aoba.macros.MacroManager;
 import net.aoba.macros.MacroPlayer;
 import net.aoba.macros.MacroRecorder;
 import net.aoba.mixin.interfaces.IMinecraftClient;
@@ -68,8 +69,8 @@ public class AobaClient {
     public FriendsList friendsList;
     public GlobalChat globalChat;
     public EventManager eventManager;
-    public MacroRecorder macroRecorder;
-    public MacroPlayer macroPlayer;
+    public MacroManager macroManager;
+    
     public static List<IAddon> addons = new ArrayList<>();
 
     /**
@@ -125,13 +126,16 @@ public class AobaClient {
         LogUtils.getLogger().info("[Aoba] Loading Alts");
         altManager = new AltManager();
         proxyManager = new ProxyManager();
+        
+        macroManager = new MacroManager();
+        
         LogUtils.getLogger().info("[Aoba] Starting Discord RPC");
         rpcManager = new RPCManager();
         rpcManager.startRpc();
         LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 
-        macroRecorder = new MacroRecorder();
-        macroPlayer = new MacroPlayer();
+        
+        
         
         SettingManager.loadSettings(settingManager.configContainer);
         SettingManager.loadSettings(settingManager.modulesContainer);
@@ -154,6 +158,7 @@ public class AobaClient {
             SettingManager.saveSettings(settingManager.hiddenContainer);
             altManager.saveAlts();
             friendsList.save();
+            macroManager.save();
             moduleManager.modules.forEach(s -> s.onDisable());
         } catch (Exception e) {
             LogUtils.getLogger().error(e.getMessage());

@@ -24,40 +24,35 @@ package net.aoba.module.modules.world;
 import net.aoba.cmd.CommandManager;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class AutoSign extends Module {
-    String[] text;
+	String[] text;
 
-    public AutoSign() {
-    	super(KeybindSetting.builder().id("key.autosign").displayName("AutoSign Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	public AutoSign() {
+		super("AutoSign");
+		this.setCategory(Category.of("World"));
+		this.setDescription("Automatically places sign with predefined text.");
+	}
 
-        this.setName("AutoSign");
-        this.setCategory(Category.of("World"));
-        this.setDescription("Automatically places sign with predefined text.");
-    }
+	public void setText(String[] text) {
+		this.text = text;
+	}
 
-    public void setText(String[] text) {
-        this.text = text;
-    }
+	public String[] getText() {
+		return this.text;
+	}
 
-    public String[] getText() {
-        return this.text;
-    }
+	@Override
+	public void onDisable() {
+	}
 
-    @Override
-    public void onDisable() {
-    }
+	@Override
+	public void onEnable() {
+		CommandManager.sendChatMessage("Place down a sign to set text!");
+		this.text = null;
+	}
 
-    @Override
-    public void onEnable() {
-        CommandManager.sendChatMessage("Place down a sign to set text!");
-        this.text = null;
-    }
-
-    @Override
-    public void onToggle() {
-    }
+	@Override
+	public void onToggle() {
+	}
 }

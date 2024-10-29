@@ -1,14 +1,16 @@
 package net.aoba.utils.render;
 
-import net.minecraft.client.font.TextRenderer;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
@@ -112,7 +114,7 @@ public class Render2D {
 		float g = color.getGreen();
 		float b = color.getBlue();
 		float alpha = color.getAlpha();
-		
+
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		bufferBuilder.vertex(matrix4f, x, y, 0).color(r, g, b, alpha);
 		bufferBuilder.vertex(matrix4f, x + width, y, 0).color(r, g, b, alpha);
@@ -151,8 +153,7 @@ public class Render2D {
 	 */
 	public static void drawRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height, float radius,
 			Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
-				color.getAlpha());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -234,8 +235,7 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public static void drawCircle(Matrix4f matrix4f, float x, float y, float radius, Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
-				color.getAlpha());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -292,8 +292,7 @@ public class Render2D {
 		}
 
 		// Draw the main rounded box
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
-				color.getAlpha());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 		drawRoundedBox(matrix4f, x, y, width, height, radius, color);
 
 		RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -328,8 +327,8 @@ public class Render2D {
 	 */
 	public static void drawOutlinedBox(Matrix4f matrix4f, float x, float y, float width, float height,
 			Color outlineColor, Color backgroundColor) {
-		RenderSystem.setShaderColor(backgroundColor.getRed(), backgroundColor.getGreen(),
-				backgroundColor.getBlue(), backgroundColor.getAlpha());
+		RenderSystem.setShaderColor(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(),
+				backgroundColor.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -344,8 +343,8 @@ public class Render2D {
 		bufferBuilder.vertex(matrix4f, x, y + height, 0);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(),
-				outlineColor.getBlue(), outlineColor.getAlpha());
+		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(), outlineColor.getBlue(),
+				outlineColor.getAlpha());
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
@@ -388,8 +387,7 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public static void drawBoxOutline(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
-				color.getAlpha());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -426,22 +424,23 @@ public class Render2D {
 	/**
 	 * Draws the outline of a rounded box.
 	 * 
-	 * @param matrix4f Transformation matrix
-	 * @param x        X position of the box.
-	 * @param y        Y position of the box.
-	 * @param width    Width of the box.
-	 * @param height   Height of the box.
-	 * @param radius   Corner radius of the box outline.
+	 * @param matrix4f        Transformation matrix
+	 * @param x               X position of the box.
+	 * @param y               Y position of the box.
+	 * @param width           Width of the box.
+	 * @param height          Height of the box.
+	 * @param radius          Corner radius of the box outline.
 	 * @param outlineColor    Color of the outline of the box.
 	 * @param backgroundColor Color of the background of the box.
 	 */
-	public static void drawOutlinedRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height, float radius, Color outlineColor, Color backgroundColor) {
+	public static void drawOutlinedRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height,
+			float radius, Color outlineColor, Color backgroundColor) {
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-		
-		RenderSystem.setShaderColor(backgroundColor.getRed(), backgroundColor.getGreen(),
-				backgroundColor.getBlue(), backgroundColor.getAlpha());
+
+		RenderSystem.setShaderColor(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(),
+				backgroundColor.getAlpha());
 
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
@@ -504,8 +503,9 @@ public class Render2D {
 		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-		
-		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(), outlineColor.getBlue(), outlineColor.getAlpha());
+
+		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(), outlineColor.getBlue(),
+				outlineColor.getAlpha());
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
@@ -550,8 +550,7 @@ public class Render2D {
 	 */
 	public static void drawRoundedBoxOutline(Matrix4f matrix4f, float x, float y, float width, float height,
 			float radius, Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
-				color.getAlpha());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -587,7 +586,7 @@ public class Render2D {
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
 	}
-	
+
 	/**
 	 * Draws a line from Point A to Point B
 	 * 
@@ -599,8 +598,7 @@ public class Render2D {
 	 * @param color    Color to draw the line in.
 	 */
 	public static void drawLine(Matrix4f matrix4f, float x1, float y1, float x2, float y2, Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
-				color.getAlpha());
+		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -722,21 +720,21 @@ public class Render2D {
 	public static void drawItem(DrawContext drawContext, ItemStack stack, float x, float y) {
 		MinecraftClient MC = MinecraftClient.getInstance();
 		BakedModel bakedModel = MC.getItemRenderer().getModel(stack, null, null, 0);
-		
+
 		boolean sidelit = bakedModel.isSideLit();
 
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
 		matrixStack.translate(x + 8, y + 8, 150);
 		matrixStack.scale(16.0f, -16.0f, 16.0f);
-		
-        if (!sidelit) {
-            DiffuseLighting.disableGuiDepthLighting();
-        }
-        
+
+		if (!sidelit) {
+			DiffuseLighting.disableGuiDepthLighting();
+		}
+
 		MC.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI, false, matrixStack,
 				drawContext.getVertexConsumers(), 0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel);
-		
+
 		if (!sidelit) {
 			DiffuseLighting.enableGuiDepthLighting();
 		}

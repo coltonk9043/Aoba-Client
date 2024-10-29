@@ -7,9 +7,6 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Strafe extends Module implements TickListener {
 
@@ -24,9 +21,7 @@ public class Strafe extends Module implements TickListener {
     		.build();
 
     public Strafe() {
-    	super(KeybindSetting.builder().id("key.strafe").displayName("Strafe Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-
-        this.setName("Strafe");
+    	super("Strafe");
         this.setCategory(Category.of("Movement"));
         this.setDescription("Makes the user able to change directions mid-air");
 

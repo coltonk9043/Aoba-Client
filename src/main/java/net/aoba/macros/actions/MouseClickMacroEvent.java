@@ -1,7 +1,8 @@
 package net.aoba.macros.actions;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 import net.aoba.mixin.interfaces.IMouse;
 import net.minecraft.client.Mouse;
@@ -12,6 +13,10 @@ public class MouseClickMacroEvent extends MacroEvent {
 	private int action= 0;
 	private int mods = 0;
 	
+	public MouseClickMacroEvent() {
+		
+	}
+	
 	public MouseClickMacroEvent(long timestamp, int button, int action, int mods) {
 		super(timestamp);
 		this.button = button;
@@ -20,13 +25,19 @@ public class MouseClickMacroEvent extends MacroEvent {
 	}
 
 	@Override
-	public void write(FileOutputStream fs) {
-
+	public void write(DataOutputStream fs) throws IOException {
+		super.write(fs);
+		fs.writeInt(button);
+		fs.writeInt(action);
+		fs.writeInt(mods);
 	}
 
 	@Override
-	public void read(FileInputStream fs) {
-
+	public void read(DataInputStream in)throws IOException {
+		super.read(in);
+		button = in.readInt();
+		action = in.readInt();
+		mods = in.readInt();
 	}
 
 	@Override

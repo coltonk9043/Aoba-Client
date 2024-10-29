@@ -21,20 +21,17 @@
  */
 package net.aoba.module.modules.combat;
 
-import net.aoba.module.Category;
-import org.lwjgl.glfw.GLFW;
 import io.netty.buffer.Unpooled;
 import net.aoba.Aoba;
 import net.aoba.event.events.SendPacketEvent;
 import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.mixin.interfaces.IPlayerInteractEntityC2SPacket;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
@@ -54,9 +51,8 @@ public class Criticals extends Module implements SendPacketListener {
 		    .build();
 	
 	public Criticals() {
-    	super(KeybindSetting.builder().id("key.criticals").displayName("Criticals Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+    	super("Criticals");
 
-		this.setName("Criticals");
         this.setCategory(Category.of("Combat"));
 		this.setDescription("Makes all attacks into critical strikes.");
 

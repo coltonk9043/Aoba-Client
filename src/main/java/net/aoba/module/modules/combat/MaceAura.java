@@ -21,6 +21,8 @@
  */
 package net.aoba.module.modules.combat;
 
+import java.util.ArrayList;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
@@ -28,8 +30,6 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -39,8 +39,6 @@ import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.glfw.GLFW;
-import java.util.ArrayList;
 
 public class MaceAura extends Module implements TickListener {
 	private FloatSetting radius = FloatSetting.builder().id("maceaura_radius").displayName("Radius")
@@ -66,10 +64,8 @@ public class MaceAura extends Module implements TickListener {
 	private LivingEntity entityToAttack;
 
 	public MaceAura() {
-		super(KeybindSetting.builder().id("key.maceaura").displayName("Mace Aura Key")
-				.defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+		super("MaceAura");
 
-		this.setName("MaceAura");
 		this.setCategory(Category.of("Combat"));
 		this.setDescription(
 				"Smashes players in your personal space with a Mace with extreme damage. Be sure to enable NoFall for best results.");

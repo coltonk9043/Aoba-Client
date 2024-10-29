@@ -30,125 +30,109 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import org.lwjgl.glfw.GLFW;
 
 public class AutoEat extends Module implements FoodLevelListener, PlayerHealthListener {
-    private FloatSetting hungerSetting = FloatSetting.builder()
-    		.id("autoeat_hunger")
-    		.displayName("Hunger")
-    		.description("Determines when AutoEat will trigger.")
-    		.defaultValue(10f)
-    		.minValue(1f)
-    		.maxValue(20f)
-    		.step(1f)
-    		.build();
-    
-    private FloatSetting healthSetting = FloatSetting.builder()
-    		.id("autoeat_health")
-    		.displayName("Health")
-    		.description("Determines when AutoEat will trigger based on health.")
-    		.defaultValue(10f)
-    		.minValue(1f)
-    		.maxValue(20f)
-    		.step(1f)
-    		.build();
-    
-    private BooleanSetting prioritizeGapples = BooleanSetting.builder()
-    		.id("prioritize_gapples")
-    		.displayName("Prioritize Gapples")
-    		.description("Prioritizes enchanted golden apples and golden apples.")
-    		.defaultValue(true)
-    		.build();
+	private FloatSetting hungerSetting = FloatSetting.builder().id("autoeat_hunger").displayName("Hunger")
+			.description("Determines when AutoEat will trigger.").defaultValue(10f).minValue(1f).maxValue(20f).step(1f)
+			.build();
 
-    public AutoEat() {
-    	super(KeybindSetting.builder().id("key.autoeat").displayName("AutoEat Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	private FloatSetting healthSetting = FloatSetting.builder().id("autoeat_health").displayName("Health")
+			.description("Determines when AutoEat will trigger based on health.").defaultValue(10f).minValue(1f)
+			.maxValue(20f).step(1f).build();
 
-        this.setName("AutoEat");
-        this.setCategory(Category.of("Misc"));
-        this.setDescription("Automatically eats the best food in your inventory.");
-   
-        this.addSetting(hungerSetting);
-        this.addSetting(healthSetting);
-        this.addSetting(prioritizeGapples);
-    }
+	private BooleanSetting prioritizeGapples = BooleanSetting.builder().id("prioritize_gapples")
+			.displayName("Prioritize Gapples").description("Prioritizes enchanted golden apples and golden apples.")
+			.defaultValue(true).build();
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(FoodLevelListener.class, this);
-        Aoba.getInstance().eventManager.RemoveListener(PlayerHealthListener.class, this);
-    }
+	public AutoEat() {
+		super("AutoEat");
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(FoodLevelListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(PlayerHealthListener.class, this);
-    }
+		this.setCategory(Category.of("Misc"));
+		this.setDescription("Automatically eats the best food in your inventory.");
 
-    @Override
-    public void onToggle() {
+		this.addSetting(hungerSetting);
+		this.addSetting(healthSetting);
+		this.addSetting(prioritizeGapples);
+	}
 
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(FoodLevelListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(PlayerHealthListener.class, this);
+	}
 
-    public void setHunger(int hunger) {
-        hungerSetting.setValue((float) hunger);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(FoodLevelListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(PlayerHealthListener.class, this);
+	}
 
-    public void setHealth(float health) {
-        healthSetting.setValue(health);
-    }
+	@Override
+	public void onToggle() {
 
-    private void eatIfNecessary() {
-        if (MC.player.getHungerManager().getFoodLevel() <= hungerSetting.getValue() || MC.player.getHealth() <= healthSetting.getValue()) {
-            int foodSlot = -1;
-            FoodComponent bestFood = null;
+	}
 
-            for (int i = 0; i < 9; i++) {
-                Item item = MC.player.getInventory().getStack(i).getItem();
-                FoodComponent food = item.getComponents().get(DataComponentTypes.FOOD);
-                if (food == null) continue;
+	public void setHunger(int hunger) {
+		hungerSetting.setValue((float) hunger);
+	}
 
-                if (prioritizeGapples.getValue()) {
-                    if (item == Items.ENCHANTED_GOLDEN_APPLE) {
-                        bestFood = food;
-                        foodSlot = i;
-                        break;
-                    } else if (item == Items.GOLDEN_APPLE) {
-                        bestFood = food;
-                        foodSlot = i;
-                    }
-                }
+	public void setHealth(float health) {
+		healthSetting.setValue(health);
+	}
 
-                if (bestFood != null) {
-                    if (food.nutrition() > bestFood.nutrition() && item != Items.GOLDEN_APPLE && item != Items.ENCHANTED_GOLDEN_APPLE) {
-                        bestFood = food;
-                        foodSlot = i;
-                    }
-                } else {
-                    bestFood = food;
-                    foodSlot = i;
-                }
-            }
+	private void eatIfNecessary() {
+		if (MC.player.getHungerManager().getFoodLevel() <= hungerSetting.getValue()
+				|| MC.player.getHealth() <= healthSetting.getValue()) {
+			int foodSlot = -1;
+			FoodComponent bestFood = null;
 
-            if (bestFood != null) {
-                MC.player.getInventory().selectedSlot = foodSlot;
-                MC.options.useKey.setPressed(true);
-            }
-        }
-    }
+			for (int i = 0; i < 9; i++) {
+				Item item = MC.player.getInventory().getStack(i).getItem();
+				FoodComponent food = item.getComponents().get(DataComponentTypes.FOOD);
+				if (food == null)
+					continue;
 
-    @Override
-    public void onFoodLevelChanged(FoodLevelEvent readPacketEvent) {
-        eatIfNecessary();
-    }
+				if (prioritizeGapples.getValue()) {
+					if (item == Items.ENCHANTED_GOLDEN_APPLE) {
+						bestFood = food;
+						foodSlot = i;
+						break;
+					} else if (item == Items.GOLDEN_APPLE) {
+						bestFood = food;
+						foodSlot = i;
+					}
+				}
 
-    @Override
-    public void onHealthChanged(PlayerHealthEvent readPacketEvent) {
-        eatIfNecessary();
-    }
+				if (bestFood != null) {
+					if (food.nutrition() > bestFood.nutrition() && item != Items.GOLDEN_APPLE
+							&& item != Items.ENCHANTED_GOLDEN_APPLE) {
+						bestFood = food;
+						foodSlot = i;
+					}
+				} else {
+					bestFood = food;
+					foodSlot = i;
+				}
+			}
+
+			if (bestFood != null) {
+				MC.player.getInventory().selectedSlot = foodSlot;
+				MC.options.useKey.setPressed(true);
+			}
+		}
+	}
+
+	@Override
+	public void onFoodLevelChanged(FoodLevelEvent readPacketEvent) {
+		eatIfNecessary();
+	}
+
+	@Override
+	public void onHealthChanged(PlayerHealthEvent readPacketEvent) {
+		eatIfNecessary();
+	}
 }

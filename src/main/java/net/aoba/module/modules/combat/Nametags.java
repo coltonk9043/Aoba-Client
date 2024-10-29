@@ -25,9 +25,6 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Nametags extends Module {
 
@@ -56,9 +53,8 @@ public class Nametags extends Module {
     		.build();
 
     public Nametags() {
-    	super(KeybindSetting.builder().id("key.nametags").displayName("NameTags Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+    	super("Nametags");
 
-        this.setName("Nametags");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Scales the nametags to be larger.");
         

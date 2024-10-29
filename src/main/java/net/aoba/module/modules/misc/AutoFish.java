@@ -27,96 +27,87 @@ import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.FindItemResult;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import org.lwjgl.glfw.GLFW;
 
 public class AutoFish extends Module implements ReceivePacketListener {
-    private BooleanSetting autoSwitch = BooleanSetting.builder()
-    		.id("autofish_autoswitch")
-    		.displayName("Auto Switch")
-    		.description("Automatically switch to fishing rod before casting.")
-    		.defaultValue(true)
-    		.build();
-    
-    private BooleanSetting autoToggle = BooleanSetting.builder()
-    		.id("autofish_autotoggle")
-    		.displayName("Auto Toggle")
-    		.description("Automatically toggles off if no fishing rod is found in the hotbar.")
-    		.defaultValue(false)
-    		.build();
+	private BooleanSetting autoSwitch = BooleanSetting.builder().id("autofish_autoswitch").displayName("Auto Switch")
+			.description("Automatically switch to fishing rod before casting.").defaultValue(true).build();
 
-    public AutoFish() {
-    	super(KeybindSetting.builder().id("key.autofish").displayName("AutoFish Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	private BooleanSetting autoToggle = BooleanSetting.builder().id("autofish_autotoggle").displayName("Auto Toggle")
+			.description("Automatically toggles off if no fishing rod is found in the hotbar.").defaultValue(false)
+			.build();
 
-        this.setName("AutoFish");
-        this.setCategory(Category.of("Misc"));
-        this.setDescription("Automatically fishes for you.");
+	public AutoFish() {
+		super("AutoFish");
 
-        this.addSetting(autoSwitch);
-        this.addSetting(autoToggle);
-    }
+		this.setCategory(Category.of("Misc"));
+		this.setDescription("Automatically fishes for you.");
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(ReceivePacketListener.class, this);
-    }
+		this.addSetting(autoSwitch);
+		this.addSetting(autoToggle);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(ReceivePacketListener.class, this);
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(ReceivePacketListener.class, this);
+	}
 
-        FindItemResult rod = find(Items.FISHING_ROD);
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(ReceivePacketListener.class, this);
 
-        if (autoSwitch.getValue()) {
-            if (rod.found() && rod.isHotbar()) {
-                swap(rod.slot(), false);
-            } else {
-                if (!autoToggle.getValue()) return;
+		FindItemResult rod = find(Items.FISHING_ROD);
 
-                toggle();
-            }
-        }
-    }
+		if (autoSwitch.getValue()) {
+			if (rod.found() && rod.isHotbar()) {
+				swap(rod.slot(), false);
+			} else {
+				if (!autoToggle.getValue())
+					return;
 
-    @Override
-    public void onToggle() {
+				toggle();
+			}
+		}
+	}
 
-    }
+	@Override
+	public void onToggle() {
 
-    private void castRod(int count) {
-        FindItemResult rod = find(Items.FISHING_ROD);
+	}
 
-        if (autoSwitch.getValue()) {
-            if (rod.found() && rod.isHotbar()) {
-                swap(rod.slot(), false);
-            } else {
-                if (!autoToggle.getValue()) return;
+	private void castRod(int count) {
+		FindItemResult rod = find(Items.FISHING_ROD);
 
-                toggle();
-            }
-        }
+		if (autoSwitch.getValue()) {
+			if (rod.found() && rod.isHotbar()) {
+				swap(rod.slot(), false);
+			} else {
+				if (!autoToggle.getValue())
+					return;
 
-        for (int i = 0; i < count; i++) {
-            MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
-        }
-    }
+				toggle();
+			}
+		}
 
-    @Override
-    public void onReceivePacket(ReceivePacketEvent readPacketEvent) {
-        Packet<?> packet = readPacketEvent.GetPacket();
+		for (int i = 0; i < count; i++) {
+			MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+		}
+	}
 
-        if (packet instanceof PlaySoundS2CPacket) {
-            PlaySoundS2CPacket soundPacket = (PlaySoundS2CPacket) packet;
-            if (soundPacket.getSound().value().equals(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH)) {
-                castRod(2);
-            }
-        }
-    }
+	@Override
+	public void onReceivePacket(ReceivePacketEvent readPacketEvent) {
+		Packet<?> packet = readPacketEvent.GetPacket();
+
+		if (packet instanceof PlaySoundS2CPacket) {
+			PlaySoundS2CPacket soundPacket = (PlaySoundS2CPacket) packet;
+			if (soundPacket.getSound().value().equals(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH)) {
+				castRod(2);
+			}
+		}
+	}
 }

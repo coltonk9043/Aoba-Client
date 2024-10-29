@@ -1,13 +1,19 @@
 package net.aoba.macros.actions;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import net.aoba.mixin.interfaces.IMouse;
 import net.minecraft.client.Mouse;
 
 public class MouseMoveMacroEvent extends MacroEvent {
 	private double x = 0;
 	private double y = 0;
+	
+	public MouseMoveMacroEvent() {
+		
+	}
 	
 	public MouseMoveMacroEvent(long timestamp, double x, double y) {
 		super(timestamp);
@@ -16,13 +22,17 @@ public class MouseMoveMacroEvent extends MacroEvent {
 	}
 
 	@Override
-	public void write(FileOutputStream fs) {
-
+	public void write(DataOutputStream fs) throws IOException {
+		super.write(fs);
+		fs.writeDouble(x);
+		fs.writeDouble(y);
 	}
 
 	@Override
-	public void read(FileInputStream fs) {
-
+	public void read(DataInputStream in)throws IOException {
+		super.read(in);
+		x = in.readDouble();
+		y = in.readDouble();
 	}
 
 	@Override

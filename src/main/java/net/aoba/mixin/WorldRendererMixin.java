@@ -18,6 +18,16 @@
 
 package net.aoba.mixin;
 
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
+import org.lwjgl.opengl.GL11;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.minecraft.block.BlockState;
@@ -32,73 +42,63 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3d;
-import org.lwjgl.opengl.GL11;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
 	@Shadow
 	private Frustum frustum;
-	
+
 	@Shadow
 	private Vector3d capturedFrustumPosition;
-	
+
 	@Shadow
 	@Nullable
-    private Frustum capturedFrustum;
-	
-    @Inject(at = @At("HEAD"), method = "renderChunkDebugInfo(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/Camera;)V", cancellable = true)
-    private void onRenderChunkDebugInfo(MatrixStack matrices,
-                                        VertexConsumerProvider vertexConsumers,
-                                        Camera camera, CallbackInfo ci) {
-        if (Aoba.getInstance().moduleManager != null) {
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.glEnable(GL11.GL_LINE_SMOOTH);
-            GL11.glEnable(GL11.GL_CULL_FACE);
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
+	private Frustum capturedFrustum;
 
-            
-            Frustum cameraFrustum = null;
-            boolean bl = this.capturedFrustum != null;
-            if (bl) {
-            	cameraFrustum = this.capturedFrustum;
-            	cameraFrustum.setPosition(this.capturedFrustumPosition.x, this.capturedFrustumPosition.y, this.capturedFrustumPosition.z);
-            } else {
-            	cameraFrustum = this.frustum;
-            }
-            
-            matrices.push();
-            Vec3d camPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getPos();
-            matrices.translate(-camPos.x, -camPos.y, -camPos.z);
-            Render3DEvent renderEvent = new Render3DEvent(matrices, cameraFrustum, MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
-            Aoba.getInstance().eventManager.Fire(renderEvent);
-            matrices.pop();
+	@Inject(at = @At("HEAD"), method = "renderChunkDebugInfo(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/Camera;)V", cancellable = true)
+	private void onRenderChunkDebugInfo(MatrixStack matrices, VertexConsumerProvider vertexConsumers, Camera camera,
+			CallbackInfo ci) {
+		if (Aoba.getInstance().moduleManager != null) {
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GL11.glEnable(GL11.GL_LINE_SMOOTH);
+			GL11.glEnable(GL11.GL_CULL_FACE);
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
 
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glDisable(GL11.GL_LINE_SMOOTH);
-        }
-    }
+			Frustum cameraFrustum = null;
+			boolean bl = this.capturedFrustum != null;
+			if (bl) {
+				cameraFrustum = this.capturedFrustum;
+				cameraFrustum.setPosition(this.capturedFrustumPosition.x, this.capturedFrustumPosition.y,
+						this.capturedFrustumPosition.z);
+			} else {
+				cameraFrustum = this.frustum;
+			}
 
+			matrices.push();
+			Vec3d camPos = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().camera.getPos();
+			matrices.translate(-camPos.x, -camPos.y, -camPos.z);
+			Render3DEvent renderEvent = new Render3DEvent(matrices, cameraFrustum,
+					MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false));
+			Aoba.getInstance().eventManager.Fire(renderEvent);
+			matrices.pop();
 
-    @Inject(at = @At("HEAD"), method = "hasBlindnessOrDarkness(Lnet/minecraft/client/render/Camera;)Z", cancellable = true)
-    private void onHasBlindnessOrDarknessEffect(Camera camera, CallbackInfoReturnable<Boolean> cir) {
-    	// TODO: NoRender
-        //if (Aoba.getInstance().moduleManager.nooverlay.getState())
-        //    cir.setReturnValue(false);
-    }
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		}
+	}
 
-    @Inject(at = @At("HEAD"), method = "drawBlockOutline(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/entity/Entity;DDDLnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V", cancellable = true)
-    private void onDrawBlockOutline(MatrixStack matrices, VertexConsumer vertexConsumer, Entity entity, double cameraX, double cameraY, double cameraZ, BlockPos pos, BlockState state, CallbackInfo ci) {
-        if (Aoba.getInstance().moduleManager.freecam.getState())
-            ci.cancel();
-    }
+	@Inject(at = @At("HEAD"), method = "hasBlindnessOrDarkness(Lnet/minecraft/client/render/Camera;)Z", cancellable = true)
+	private void onHasBlindnessOrDarknessEffect(Camera camera, CallbackInfoReturnable<Boolean> cir) {
+		// TODO: NoRender
+		// if (Aoba.getInstance().moduleManager.nooverlay.getState())
+		// cir.setReturnValue(false);
+	}
+
+	@Inject(at = @At("HEAD"), method = "drawBlockOutline(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/entity/Entity;DDDLnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V", cancellable = true)
+	private void onDrawBlockOutline(MatrixStack matrices, VertexConsumer vertexConsumer, Entity entity, double cameraX,
+			double cameraY, double cameraZ, BlockPos pos, BlockState state, CallbackInfo ci) {
+		if (Aoba.getInstance().moduleManager.freecam.state.getValue())
+			ci.cancel();
+	}
 }

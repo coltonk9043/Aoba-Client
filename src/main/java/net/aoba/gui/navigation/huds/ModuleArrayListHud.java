@@ -1,9 +1,14 @@
 package net.aoba.gui.navigation.huds;
 
+import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
+import net.aoba.gui.TextAlign;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.module.Module;
 import net.aoba.settings.SettingManager;
@@ -12,47 +17,39 @@ import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
-import java.util.Comparator;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
-import net.aoba.gui.TextAlign;
 
 public class ModuleArrayListHud extends HudWindow {
-	private EnumSetting<TextAlign> textAlign = EnumSetting.<TextAlign>builder()
-			.id("ModuleArrayListHudText_TextAlign")
-			.displayName("Text Align")
-			.description("Text Alignment")
-			.defaultValue(TextAlign.Left)
-			.build();
-	
+	private EnumSetting<TextAlign> textAlign = EnumSetting.<TextAlign>builder().id("ModuleArrayListHudText_TextAlign")
+			.displayName("Text Align").description("Text Alignment").defaultValue(TextAlign.Left).build();
+
 	public ModuleArrayListHud(int x, int y) {
 		super("ModuleArrayListHud", x, y, 0, 0);
 		resizeable = false;
-		
+
 		SettingManager.registerSetting(textAlign, Aoba.getInstance().settingManager.configContainer);
-		
+
 		// Calculate max possible width.
 		float newWidth = 0;
-		for(Module mod : AOBA.moduleManager.modules) {
+		for (Module mod : AOBA.moduleManager.modules) {
 			float nameWidth = Render2D.getStringWidth(mod.getName());
-			if(nameWidth > newWidth)
-				newWidth = nameWidth;	
+			if (nameWidth > newWidth)
+				newWidth = nameWidth;
 		}
-		
+
 		this.setWidth(newWidth);
 	}
-	
+
 	@Override
 	public void OnMouseClick(MouseClickEvent event) {
 		super.OnMouseClick(event);
-		
-		if(this.isMouseOver && event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
+
+		if (this.isMouseOver && event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
 			TextAlign currentValue = textAlign.getValue();
 			TextAlign[] enumConstants = currentValue.getDeclaringClass().getEnumConstants();
 			int currentIndex = java.util.Arrays.asList(enumConstants).indexOf(currentValue);
 			int enumCount = enumConstants.length;
 			currentIndex = (currentIndex + 1) % enumCount;
-			
+
 			textAlign.setValue(enumConstants[currentIndex]);
 		}
 	}
@@ -62,13 +59,13 @@ public class ModuleArrayListHud extends HudWindow {
 		super.update();
 		int totalHeight = 0;
 		for (Module mod : AOBA.moduleManager.modules) {
-			if (mod.getState()) {
+			if (mod.state.getValue()) {
 				totalHeight += 20;
 			}
 		}
 		this.setHeight(totalHeight + 10);
 	}
-	
+
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		if (getVisible()) {
@@ -76,10 +73,10 @@ public class ModuleArrayListHud extends HudWindow {
 
 			if (pos.isDrawable()) {
 				AtomicInteger iteration = new AtomicInteger(0);
-				Stream<Module> moduleStream = AOBA.moduleManager.modules.stream().filter(Module::getState)
-						.sorted(Comparator.comparing((mod) -> ((Module)mod).getName()));
-				
-				switch(textAlign.getValue()) {
+				Stream<Module> moduleStream = AOBA.moduleManager.modules.stream().filter(s -> s.state.getValue())
+						.sorted(Comparator.comparing((mod) -> ((Module) mod).getName()));
+
+				switch (textAlign.getValue()) {
 				case TextAlign.Left:
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
@@ -92,7 +89,8 @@ public class ModuleArrayListHud extends HudWindow {
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
 						float centerTextWidth = Render2D.getStringWidth(mod.getName());
-						Render2D.drawString(drawContext, mod.getName(), pos.getX() + (pos.getWidth() / 2.0f) - centerTextWidth, yPosition,
+						Render2D.drawString(drawContext, mod.getName(),
+								pos.getX() + (pos.getWidth() / 2.0f) - centerTextWidth, yPosition,
 								GuiManager.foregroundColor.getValue().getColorAsInt());
 						iteration.incrementAndGet();
 					});
@@ -101,13 +99,13 @@ public class ModuleArrayListHud extends HudWindow {
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
 						float rightTextWidth = Render2D.getStringWidth(mod.getName()) * 2;
-						Render2D.drawString(drawContext, mod.getName(), pos.getX() + pos.getWidth() - rightTextWidth, yPosition,
-								GuiManager.foregroundColor.getValue().getColorAsInt());
+						Render2D.drawString(drawContext, mod.getName(), pos.getX() + pos.getWidth() - rightTextWidth,
+								yPosition, GuiManager.foregroundColor.getValue().getColorAsInt());
 						iteration.incrementAndGet();
 					});
 					break;
 				}
-				
+
 			}
 		}
 

@@ -21,31 +21,25 @@
  */
 package net.aoba.module.modules.combat;
 
-import net.aoba.module.Category;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.Hand;
-import org.lwjgl.glfw.GLFW;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.PlayerHealthEvent;
 import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.PlayerHealthListener;
 import net.aoba.event.listeners.ReceivePacketListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
+import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.Hand;
 
 public class AutoTotem extends Module implements PlayerHealthListener, ReceivePacketListener {
 
@@ -77,9 +71,8 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 		    .build();
 	
 	public AutoTotem() {
-    	super(KeybindSetting.builder().id("key.autototem").displayName("AutoTotem Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-		
-		this.setName("AutoTotem");
+    	super("AutoTotem");
+
         this.setCategory(Category.of("Combat"));
 		this.setDescription("Automatically replaced totems.");
 

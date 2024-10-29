@@ -23,33 +23,28 @@ package net.aoba.module.modules.render;
 
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Fullbright extends Module {
 
-    //private double previousValue = 0.0;
-    public Fullbright() {
-    	super(KeybindSetting.builder().id("key.fullbright").displayName("Fullbright Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	// private double previousValue = 0.0;
+	public Fullbright() {
+		super("Fullbright");
+		this.setCategory(Category.of("Render"));
+		this.setDescription("Maxes out the brightness.");
+	}
 
-        this.setName("Fullbright");
-        this.setCategory(Category.of("Render"));
-        this.setDescription("Maxes out the brightness.");
-    }
+	@Override
+	public void onDisable() {
 
-    @Override
-    public void onDisable() {
+	}
 
-    }
+	@Override
+	public void onEnable() {
 
-    @Override
-    public void onEnable() {
+	}
 
-    }
+	@Override
+	public void onToggle() {
 
-    @Override
-    public void onToggle() {
-
-    }
+	}
 }

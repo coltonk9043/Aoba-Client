@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import net.minecraft.block.AbstractTorchBlock;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PlantBlock;
 import net.minecraft.block.SnowBlock;
@@ -79,7 +78,7 @@ public class TeleportPathManager extends AbstractPathManager {
 					float predictedDistanceToTarget = heuristic(node, target);
 					PathFinderEntry newEntry = new PathFinderEntry(node, predictedDistanceToTarget);
 					queue.add(newEntry);
-					
+
 					if (isTeleportable(node.pos)) {
 						// Update distances and parent relationships if a shorter path is found
 						if (!distances.containsKey(node) || predictedDistanceToTarget < distances.get(node)) {
@@ -95,9 +94,10 @@ public class TeleportPathManager extends AbstractPathManager {
 		// Return null if no path is found
 		return null;
 	}
-	
+
 	/**
 	 * Determines if a position can be teleported to.
+	 * 
 	 * @param pos Position to check.
 	 * @return Whether or not the position can be teleported to.
 	 */
@@ -105,15 +105,16 @@ public class TeleportPathManager extends AbstractPathManager {
 		BlockPos down = pos.down();
 		BlockState state = MC.world.getBlockState(pos);
 		BlockState stateBelow = MC.world.getBlockState(down);
-		
+
 		boolean isPlant = state.getBlock() instanceof PlantBlock;
 		boolean isSnow = state.getBlock() instanceof SnowBlock;
 		boolean isTorch = state.getBlock() instanceof AbstractTorchBlock;
 		boolean isVine = state.getBlock() instanceof VineBlock;
-		
-		return isPlayerPassable(pos) && state.canPathfindThrough(NavigationType.LAND) && !state.getFluidState().isIn(FluidTags.WATER) && !state.getFluidState().isIn(FluidTags.LAVA)
-			&& !stateBelow.canPathfindThrough(NavigationType.LAND) && !stateBelow.isAir() && stateBelow.getFluidState().isEmpty()
-			&& !isPlant && !isSnow && !isTorch && !isVine;
+
+		return isPlayerPassable(pos) && state.canPathfindThrough(NavigationType.LAND)
+				&& !state.getFluidState().isIn(FluidTags.WATER) && !state.getFluidState().isIn(FluidTags.LAVA)
+				&& !stateBelow.canPathfindThrough(NavigationType.LAND) && !stateBelow.isAir()
+				&& stateBelow.getFluidState().isEmpty() && !isPlant && !isSnow && !isTorch && !isVine;
 	}
 
 	@Override
@@ -142,7 +143,8 @@ public class TeleportPathManager extends AbstractPathManager {
 		// Skips any nodes that are in the same 'direction' as the previous to trim it.
 		PathNode current = parentMap.get(prev);
 		while (current != null && !current.equals(start)) {
-			if (isTeleportable(current.pos) && radiusSqr <= prev.pos.toCenterPos().squaredDistanceTo(current.pos.toCenterPos())) {
+			if (isTeleportable(current.pos)
+					&& radiusSqr <= prev.pos.toCenterPos().squaredDistanceTo(current.pos.toCenterPos())) {
 				prev = current;
 				path.addFirst(current);
 			}

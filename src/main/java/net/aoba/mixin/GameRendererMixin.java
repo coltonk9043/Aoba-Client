@@ -18,6 +18,12 @@
 
 package net.aoba.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import net.aoba.Aoba;
 import net.aoba.module.modules.render.NoRender;
 import net.minecraft.client.render.GameRenderer;
@@ -25,37 +31,34 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
-    @Inject(at = {@At("HEAD")}, method = {"bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V"}, cancellable = true)
-    private void onBobViewWhenHurt(MatrixStack matrixStack, float f, CallbackInfo ci) {
-        // TODO: NoRender
-    	//if (Aoba.getInstance().moduleManager.nooverlay.getState()) {
-        //    ci.cancel();
-        //}
-    }
+	@Inject(at = { @At("HEAD") }, method = {
+			"bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V" }, cancellable = true)
+	private void onBobViewWhenHurt(MatrixStack matrixStack, float f, CallbackInfo ci) {
+		// TODO: NoRender
+		// if (Aoba.getInstance().moduleManager.nooverlay.getState()) {
+		// ci.cancel();
+		// }
+	}
 
-    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F", ordinal = 0), method = {
-            "renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V"})
-    private float nauseaLerp(float delta, float first, float second) {
-    	// TODO: NoRender
-        //if (Aoba.getInstance().moduleManager.nooverlay.getState())
-        //    return 0;
+	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F", ordinal = 0), method = {
+			"renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V" })
+	private float nauseaLerp(float delta, float first, float second) {
+		// TODO: NoRender
+		// if (Aoba.getInstance().moduleManager.nooverlay.getState())
+		// return 0;
 
-        return MathHelper.lerp(delta, first, second);
-    }
+		return MathHelper.lerp(delta, first, second);
+	}
 
-    @Inject(method = "showFloatingItem", at = @At("HEAD"), cancellable = true)
-    private void onShowFloatingItem(ItemStack floatingItem, CallbackInfo info) {
-        NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
-        if (floatingItem.getItem() == Items.TOTEM_OF_UNDYING && norender.getState() &&  norender.getNoTotemAnimation()) {
-            info.cancel();
-        }
-    }
+	@Inject(method = "showFloatingItem", at = @At("HEAD"), cancellable = true)
+	private void onShowFloatingItem(ItemStack floatingItem, CallbackInfo info) {
+		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		if (floatingItem.getItem() == Items.TOTEM_OF_UNDYING && norender.state.getValue()
+				&& norender.getNoTotemAnimation()) {
+			info.cancel();
+		}
+	}
 }

@@ -28,56 +28,45 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.glfw.GLFW;
 
 public class Spider extends Module implements TickListener {
 
-    private FloatSetting speed = FloatSetting.builder()
-    		.id("spider_speed")
-    		.displayName("Speed")
-    		.description("Speed that the player climbs up blocks.")
-    		.defaultValue(0.1f)
-    		.minValue(0.05f)
-    		.maxValue(1f)
-    		.step(0.05f)
-    		.build();
+	private FloatSetting speed = FloatSetting.builder().id("spider_speed").displayName("Speed")
+			.description("Speed that the player climbs up blocks.").defaultValue(0.1f).minValue(0.05f).maxValue(1f)
+			.step(0.05f).build();
 
-    public Spider() {
-    	super(KeybindSetting.builder().id("key.spider").displayName("Spider Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-		
-        this.setName("Spider");
-        this.setCategory(Category.of("Movement"));
-        this.setDescription("Allows players to climb up blocks like a spider.");
-        this.addSetting(speed);
-    }
+	public Spider() {
+		super("Spider");
+		this.setCategory(Category.of("Movement"));
+		this.setDescription("Allows players to climb up blocks like a spider.");
+		this.addSetting(speed);
+	}
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
-        ClientPlayerEntity player = MC.player;
+		ClientPlayerEntity player = MC.player;
 
-        if (player.horizontalCollision) {
-            Vec3d playerVelocity = player.getVelocity();
-            MC.player.setVelocity(new Vec3d(playerVelocity.getX(), speed.getValue(), playerVelocity.getZ()));
-        }
+		if (player.horizontalCollision) {
+			Vec3d playerVelocity = player.getVelocity();
+			MC.player.setVelocity(new Vec3d(playerVelocity.getX(), speed.getValue(), playerVelocity.getZ()));
+		}
 	}
 
 	@Override

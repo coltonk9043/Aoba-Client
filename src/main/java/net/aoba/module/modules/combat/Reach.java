@@ -24,18 +24,14 @@ package net.aoba.module.modules.combat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Reach extends Module {
 
     private FloatSetting distance;
 
     public Reach() {
-    	super(KeybindSetting.builder().id("key.reach").displayName("Reach Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+    	super("Reach");
 
-        this.setName("Reach");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Allows you to reach further.");
 

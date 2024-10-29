@@ -3,6 +3,7 @@ package net.aoba.macros;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import net.aoba.Aoba;
 import net.aoba.macros.actions.MacroEvent;
 
@@ -10,31 +11,32 @@ public class MacroPlayer {
 
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 	
-	private LinkedList<MacroEvent> currentMacro = new LinkedList<MacroEvent>();
+	private Macro currentMacro = null;
 	private boolean isPlaying = false;
 	private long startTime = 0;
 	private long timeStamp = 0;
 	
-	public void play(LinkedList<MacroEvent> events) {
+	public void play(Macro macro) {
 		Aoba.getInstance().guiManager.setClickGuiOpen(false);
 		
 		isPlaying = true;
-		startTime = System.currentTimeMillis();
+		startTime = System.nanoTime();
 		timeStamp = 0;
-		currentMacro = (LinkedList<MacroEvent>)events.clone();
+		currentMacro = macro;
 		executor.submit(this::execute);
 	}
 	
 	private void execute() {
+		LinkedList<MacroEvent> events = (LinkedList<MacroEvent>) currentMacro.getEvents().clone();
 		System.out.println("Starting macro");
-		System.out.println("Macro Size: " + currentMacro.size());
-		MacroEvent event = currentMacro.poll();
+		System.out.println("Macro Size: " + events.size());
+		MacroEvent event = events.poll();
 		while(event != null) {
-			timeStamp = System.currentTimeMillis() - startTime;
+			timeStamp = System.nanoTime() - startTime;
 			
 			if(timeStamp >= event.getTimestamp()) {
 				event.execute();
-				event = currentMacro.poll();
+				event = events.poll();
 			}
 		}
 		System.out.println("Stopped macro");

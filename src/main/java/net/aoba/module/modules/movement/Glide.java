@@ -28,53 +28,44 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Glide extends Module implements TickListener {
 
-    private FloatSetting fallSpeed = FloatSetting.builder()
-    		.id("glide_fallspeed")
-    		.displayName("Fall Speed")
-    		.description("The speed at which the player will fall.")
-    		.defaultValue(0.2f)
-    		.minValue(0.1f)
-    		.maxValue(2f)
-    		.step(0.1f)
-    		.build();
+	private FloatSetting fallSpeed = FloatSetting.builder().id("glide_fallspeed").displayName("Fall Speed")
+			.description("The speed at which the player will fall.").defaultValue(0.2f).minValue(0.1f).maxValue(2f)
+			.step(0.1f).build();
 
-    public Glide() {
-    	super(KeybindSetting.builder().id("key.glide").displayName("Glide Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-        
-    	this.setName("Glide");
-        this.setCategory(Category.of("Movement"));
-        this.setDescription("Allows the player to glide down when in the air. Does not prevent fall damage.");
-        this.addSetting(fallSpeed);
-    }
+	public Glide() {
+		super("Glide");
+		this.setCategory(Category.of("Movement"));
+		this.setDescription("Allows the player to glide down when in the air. Does not prevent fall damage.");
+		this.addSetting(fallSpeed);
+	}
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
-        ClientPlayerEntity player = MC.player;
-        if (player.getVelocity().y < 0 && (!player.isOnGround() || !player.isInLava() || !player.isSubmergedInWater() || !player.isHoldingOntoLadder())) {
-            player.setVelocity(player.getVelocity().x, Math.max(player.getVelocity().y, -fallSpeed.getValue()), player.getVelocity().z);
-        }
+		ClientPlayerEntity player = MC.player;
+		if (player.getVelocity().y < 0 && (!player.isOnGround() || !player.isInLava() || !player.isSubmergedInWater()
+				|| !player.isHoldingOntoLadder())) {
+			player.setVelocity(player.getVelocity().x, Math.max(player.getVelocity().y, -fallSpeed.getValue()),
+					player.getVelocity().z);
+		}
 	}
 
 	@Override

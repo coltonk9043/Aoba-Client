@@ -23,21 +23,21 @@ package net.aoba.module.modules.render;
 
 import java.util.function.Predicate;
 
-import net.aoba.module.Category;
 import org.joml.Matrix4f;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.utils.ModuleUtils;
-import net.aoba.utils.render.Render3D;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.ModuleUtils;
+import net.aoba.utils.render.Render3D;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Camera;
@@ -45,7 +45,6 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.BowItem;
@@ -62,28 +61,15 @@ import net.minecraft.world.RaycastContext.FluidHandling;
 
 public class Trajectory extends Module implements Render3DListener {
 
-	private ColorSetting color = ColorSetting.builder()
-			.id("trajectory_color")
-			.displayName("Color")
-			.description("Color")
-			.defaultValue(new Color(0f, 1f, 1f))
-			.build();
-	
-	private FloatSetting blipSize = FloatSetting.builder()
-    		.id("trajectory_blipsize")
-    		.displayName("Blip Size")
-    		.description("Blip Size")
-    		.defaultValue(0.15f)
-    		.minValue(0.05f)
-    		.maxValue(1f)
-    		.step(0.05f)
-    		.build();
+	private ColorSetting color = ColorSetting.builder().id("trajectory_color").displayName("Color").description("Color")
+			.defaultValue(new Color(0f, 1f, 1f)).build();
+
+	private FloatSetting blipSize = FloatSetting.builder().id("trajectory_blipsize").displayName("Blip Size")
+			.description("Blip Size").defaultValue(0.15f).minValue(0.05f).maxValue(1f).step(0.05f).build();
 
 	public Trajectory() {
-    	super(KeybindSetting.builder().id("key.trajectory").displayName("Trajectory Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-
-		this.setName("Trajectory");
-        this.setCategory(Category.of("Render"));
+		super("Trajectory");
+		this.setCategory(Category.of("Render"));
 		this.setDescription("Allows the player to see where their projectiles will approxmiately land.");
 
 		this.addSetting(color);
@@ -131,8 +117,8 @@ public class Trajectory extends Module implements Render3DListener {
 			Vec3d prevPoint = new Vec3d(0, 0, 0).add(eyePos).subtract(offset).add(right);
 			Vec3d landPosition = null;
 
-			RenderSystem.setShaderColor(renderColor.getRed(), renderColor.getGreen(),
-					renderColor.getBlue(), renderColor.getAlpha());
+			RenderSystem.setShaderColor(renderColor.getRed(), renderColor.getGreen(), renderColor.getBlue(),
+					renderColor.getAlpha());
 
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -196,9 +182,9 @@ public class Trajectory extends Module implements Render3DListener {
 			}
 		}
 	}
-	
+
 	public double throwableGravity(Item item) {
-		if(item == Items.BOW) 
+		if (item == Items.BOW)
 			return -0.045f;
 		else
 			return -0.13f;

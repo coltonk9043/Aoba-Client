@@ -27,35 +27,29 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Sprint extends Module implements TickListener {
 
-    public Sprint() {
-    	super(KeybindSetting.builder().id("key.sprinthack").displayName("Sprint Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	public Sprint() {
+		super("Sprint");
+		this.setCategory(Category.of("Movement"));
+		this.setDescription("Permanently keeps player in sprinting mode.");
+	}
 
-        this.setName("Sprint");
-        this.setCategory(Category.of("Movement"));
-        this.setDescription("Permanently keeps player in sprinting mode.");
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onToggle() {
 
-    @Override
-    public void onToggle() {
-
-    }
-
+	}
 
 	@Override
 	public void onTick(Pre event) {

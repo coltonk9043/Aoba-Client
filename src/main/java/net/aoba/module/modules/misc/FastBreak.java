@@ -25,58 +25,45 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class FastBreak extends Module {
 
-    public FloatSetting multiplier = FloatSetting.builder()
-    		.id("fastbreak_multiplier")
-    		.displayName("Multiplier")
-    		.description("Multiplier for how fast the blocks will break.")
-    		.defaultValue(1.25f)
-    		.minValue(1.0f)
-    		.maxValue(10.0f)
-    		.step(0.05f)
-    		.build();
-    
-    public BooleanSetting ignoreWater = BooleanSetting.builder()
-    		.id("fastbreak_ignore_water")
-    		.displayName("Ignore Water")
-    		.description("Ignores the slowdown that being in water causes.")
-    		.defaultValue(false)
-    		.build();
+	public FloatSetting multiplier = FloatSetting.builder().id("fastbreak_multiplier").displayName("Multiplier")
+			.description("Multiplier for how fast the blocks will break.").defaultValue(1.25f).minValue(1.0f)
+			.maxValue(10.0f).step(0.05f).build();
 
-    public FastBreak() {
-    	super(KeybindSetting.builder().id("key.fastbreak").displayName("FastBreak Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	public BooleanSetting ignoreWater = BooleanSetting.builder().id("fastbreak_ignore_water")
+			.displayName("Ignore Water").description("Ignores the slowdown that being in water causes.")
+			.defaultValue(false).build();
 
-        this.setName("FastBreak");
-        this.setCategory(Category.of("Misc"));
-        this.setDescription("Breaks blocks quicker based on a multiplier.");
+	public FastBreak() {
+		super("FastBreak");
 
-        this.addSetting(multiplier);
-        this.addSetting(ignoreWater);
-    }
+		this.setCategory(Category.of("Misc"));
+		this.setDescription("Breaks blocks quicker based on a multiplier.");
 
-    public void setMultiplier(float multiplier) {
-        this.multiplier.setValue(multiplier);
-    }
+		this.addSetting(multiplier);
+		this.addSetting(ignoreWater);
+	}
 
-    public float getMultiplier() {
-        return this.multiplier.getValue().floatValue();
-    }
+	public void setMultiplier(float multiplier) {
+		this.multiplier.setValue(multiplier);
+	}
 
-    @Override
-    public void onDisable() {
-    }
+	public float getMultiplier() {
+		return this.multiplier.getValue().floatValue();
+	}
 
-    @Override
-    public void onEnable() {
-    }
+	@Override
+	public void onDisable() {
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onEnable() {
+	}
 
-    }
+	@Override
+	public void onToggle() {
+
+	}
 }

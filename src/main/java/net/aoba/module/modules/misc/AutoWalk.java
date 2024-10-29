@@ -27,39 +27,35 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class AutoWalk extends Module implements TickListener {
-    public AutoWalk() {
-    	super(KeybindSetting.builder().id("key.autowalk").displayName("AutoWalk Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	public AutoWalk() {
+		super("AutoWalk");
 
-        this.setName("AutoWalk");
-        this.setCategory(Category.of("Misc"));
-        this.setDescription("Automatically walks for you.");
-    }
+		this.setCategory(Category.of("Misc"));
+		this.setDescription("Automatically walks for you.");
+	}
 
-    @Override
-    public void onDisable() {
-        MC.options.forwardKey.setPressed(false);
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		MC.options.forwardKey.setPressed(false);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

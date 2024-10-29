@@ -23,16 +23,11 @@ package net.aoba.module.modules.combat;
 
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class AntiInvis extends Module {
 
     public AntiInvis() {
-    	super(KeybindSetting.builder().id("key.antiinvis").displayName("AntiInvis Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-
-        this.setName("AntiInvis");
+    	super("AntiInvis");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Reveals players who are invisible.");
     }

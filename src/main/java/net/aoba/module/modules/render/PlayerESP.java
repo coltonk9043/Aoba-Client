@@ -25,82 +25,60 @@ import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.render.Render3D;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class PlayerESP extends Module implements Render3DListener {
-    private ColorSetting color_default = ColorSetting.builder()
-			.id("playeresp_color_default")
-			.displayName("Default Color")
-			.description("Default Color")
-			.defaultValue(new Color(1f, 1f, 0f))
-			.build();
+	private ColorSetting color_default = ColorSetting.builder().id("playeresp_color_default")
+			.displayName("Default Color").description("Default Color").defaultValue(new Color(1f, 1f, 0f)).build();
 
-    private ColorSetting color_friendly = ColorSetting.builder()
-			.id("playeresp_color_friendly")
-			.displayName("Friendly Color")
-			.description("Friendly Color")
-			.defaultValue(new Color(0f, 1f, 0f))
-			.build();
-    
-    private ColorSetting color_enemy = ColorSetting.builder()
-			.id("playeresp_color_enemy")
-			.displayName("Enemy Color")
-			.description("Enemy Color")
-			.defaultValue(new Color(1f, 0f, 0f))
-			.build();
-    
-    private FloatSetting lineThickness = FloatSetting.builder()
-    		.id("playeresp_linethickness")
-    		.displayName("Line Thickness")
-    		.description("Adjust the thickness of the ESP box lines")
-    		.defaultValue(2f)
-    		.minValue(0f)
-    		.maxValue(5f)
-    		.step(0.1f)
-    		.build();
-    
-    public PlayerESP() {
-    	super(KeybindSetting.builder().id("key.playeresp").displayName("PlayerESP Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	private ColorSetting color_friendly = ColorSetting.builder().id("playeresp_color_friendly")
+			.displayName("Friendly Color").description("Friendly Color").defaultValue(new Color(0f, 1f, 0f)).build();
 
-        this.setName("PlayerESP");
-        this.setCategory(Category.of("Render"));
-        this.setDescription("Allows the player to see other players with an ESP.");
+	private ColorSetting color_enemy = ColorSetting.builder().id("playeresp_color_enemy").displayName("Enemy Color")
+			.description("Enemy Color").defaultValue(new Color(1f, 0f, 0f)).build();
 
-        this.addSetting(color_default);
-        this.addSetting(color_friendly);
-        this.addSetting(color_enemy);
-        this.addSetting(lineThickness);
-    }
+	private FloatSetting lineThickness = FloatSetting.builder().id("playeresp_linethickness")
+			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
+			.minValue(0f).maxValue(5f).step(0.1f).build();
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-    }
+	public PlayerESP() {
+		super("PlayerESP");
+		this.setCategory(Category.of("Render"));
+		this.setDescription("Allows the player to see other players with an ESP.");
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-    }
+		this.addSetting(color_default);
+		this.addSetting(color_friendly);
+		this.addSetting(color_enemy);
+		this.addSetting(lineThickness);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+	}
 
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+	}
 
-    @Override
-    public void onRender(Render3DEvent event) {
-        for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
-            if (entity != MC.player) {
-                Render3D.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), color_default.getValue(), lineThickness.getValue().floatValue());
-            }
-        }
-    }
+	@Override
+	public void onToggle() {
+
+	}
+
+	@Override
+	public void onRender(Render3DEvent event) {
+		for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
+			if (entity != MC.player) {
+				Render3D.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), color_default.getValue(),
+						lineThickness.getValue().floatValue());
+			}
+		}
+	}
 }

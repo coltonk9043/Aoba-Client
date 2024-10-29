@@ -27,54 +27,49 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Sneak extends Module implements TickListener {
 
-    private final MinecraftClient MC = MinecraftClient.getInstance();
+	private final MinecraftClient MC = MinecraftClient.getInstance();
 
-    public Sneak() {
-    	super(KeybindSetting.builder().id("key.sneakhack").displayName("Sneak Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-		
-        this.setName("Sneak");
-        this.setCategory(Category.of("Movement"));
-        this.setDescription("Makes the player appear like they're sneaking.");
-    }
+	public Sneak() {
+		super("Sneak");
+		this.setCategory(Category.of("Movement"));
+		this.setDescription("Makes the player appear like they're sneaking.");
+	}
 
-    @Override
-    public void onDisable() {
-        ClientPlayerEntity player = MC.player;
-        if (player != null) {
-            MC.options.sneakKey.setPressed(false);
-        }
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		ClientPlayerEntity player = MC.player;
+		if (player != null) {
+			MC.options.sneakKey.setPressed(false);
+		}
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
-        ClientPlayerEntity player = MC.player;
-        if (player != null) {
-            MC.options.sneakKey.setPressed(true);
-        }
+		ClientPlayerEntity player = MC.player;
+		if (player != null) {
+			MC.options.sneakKey.setPressed(true);
+		}
 	}
 
 	@Override
 	public void onTick(Post event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

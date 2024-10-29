@@ -22,15 +22,13 @@
 package net.aoba.module.modules.combat;
 
 import com.mojang.logging.LogUtils;
-import net.aoba.module.Category;
-import org.lwjgl.glfw.GLFW;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.PlayerHealthEvent;
 import net.aoba.event.listeners.PlayerHealthListener;
+import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -45,9 +43,8 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 	private int previousSlot = -1;
 	
 	public AutoSoup() {
-    	super(KeybindSetting.builder().id("key.autosoup").displayName("AutoSoup Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-    	
-		this.setName("AutoSoup");
+    	super("AutoSoup");
+
         this.setCategory(Category.of("Combat"));
 		this.setDescription("Automatically consumes soup when health is low. (KitPVP)");
 		

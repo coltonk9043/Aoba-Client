@@ -24,47 +24,37 @@ package net.aoba.module.modules.misc;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Timer extends Module {
-    private final FloatSetting multiplier = FloatSetting.builder()
-    		.id("timer_multiplier")
-    		.displayName("Multiplier")
-    		.description("The multiplier that will affect the game speed.")
-    		.defaultValue(1f)
-    		.minValue(0.1f)
-    		.maxValue(15.0f)
-    		.step(0.1f)
-    		.build();
+	private final FloatSetting multiplier = FloatSetting.builder().id("timer_multiplier").displayName("Multiplier")
+			.description("The multiplier that will affect the game speed.").defaultValue(1f).minValue(0.1f)
+			.maxValue(15.0f).step(0.1f).build();
 
-    public Timer() {
-    	super(KeybindSetting.builder().id("key.timer").displayName("Timer Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	public Timer() {
+		super("Timer");
 
-        this.setName("Timer");
-        this.setCategory(Category.of("Misc"));
-        this.setDescription("Increases the speed of Minecraft.");
-        this.addSetting(multiplier);
-    }
+		this.setCategory(Category.of("Misc"));
+		this.setDescription("Increases the speed of Minecraft.");
+		this.addSetting(multiplier);
+	}
 
-    public float getMultiplier() {
-        return this.multiplier.getValue().floatValue();
-    }
+	public float getMultiplier() {
+		return this.multiplier.getValue().floatValue();
+	}
 
-    public void setMultipler(float multiplier) {
-        this.multiplier.setValue(multiplier);
-    }
+	public void setMultipler(float multiplier) {
+		this.multiplier.setValue(multiplier);
+	}
 
-    @Override
-    public void onDisable() {
-    }
+	@Override
+	public void onDisable() {
+	}
 
-    @Override
-    public void onEnable() {
-    }
+	@Override
+	public void onEnable() {
+	}
 
-    @Override
-    public void onToggle() {
-    }
+	@Override
+	public void onToggle() {
+	}
 }

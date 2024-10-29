@@ -26,8 +26,6 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -36,7 +34,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import org.lwjgl.glfw.GLFW;
 
 public class TriggerBot extends Module implements TickListener {
     private FloatSetting radius = FloatSetting.builder()
@@ -100,9 +97,8 @@ public class TriggerBot extends Module implements TickListener {
     private long lastAttackTime;
 
     public TriggerBot() {
-    	super(KeybindSetting.builder().id("key.triggerbot").displayName("TriggerBot Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+    	super("Triggerbot");
 
-        this.setName("Triggerbot");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Attacks anything you are looking at.");
 

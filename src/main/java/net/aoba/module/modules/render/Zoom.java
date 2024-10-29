@@ -25,50 +25,41 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.minecraft.client.option.SimpleOption;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Zoom extends Module implements TickListener {
 
-    private int lastFov;
+	private Integer lastFov = null;
 
-	private FloatSetting zoomFactor = FloatSetting.builder()
-    		.id("zoom_factor")
-    		.displayName("Factor")
-    		.description("The zoom factor that the zoom will use.")
-    		.defaultValue(2f)
-    		.minValue(1f)
-    		.maxValue(3.6f)
-    		.step(0.1f)
-    		.build();
-	
-    public Zoom() {
-    	super(KeybindSetting.builder().id("key.zoom").displayName("Zoom Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	private FloatSetting zoomFactor = FloatSetting.builder().id("zoom_factor").displayName("Factor")
+			.description("The zoom factor that the zoom will use.").defaultValue(2f).minValue(1f).maxValue(3.6f)
+			.step(0.1f).build();
 
-        this.setName("Zoom");
-        this.setCategory(Category.of("Render"));
-        this.setDescription("Zooms the players camera to see further.");
-        this.addSetting(zoomFactor);
-    }
+	public Zoom() {
+		super("Zoom");
+		this.setCategory(Category.of("Render"));
+		this.setDescription("Zooms the players camera to see further.");
+		this.addSetting(zoomFactor);
+	}
 
-    @Override
-    public void onDisable() {
-        MC.options.getFov().setValue((int) Math.max(30, Math.min(110, lastFov)));
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		if (lastFov != null) {
+			MC.options.getFov().setValue((int) Math.max(30, Math.min(110, lastFov)));
+			Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		}
+	}
 
-    @Override
-    public void onEnable() {
-        lastFov = MC.options.getFov().getValue();
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		lastFov = MC.options.getFov().getValue();
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
@@ -78,7 +69,7 @@ public class Zoom extends Module implements TickListener {
 	@Override
 	public void onTick(Post event) {
 		SimpleOption<Integer> fov = MC.options.getFov();
-        int newZoom = (int) Math.max(30, Math.min(110, lastFov / zoomFactor.getValue()));
-        fov.setValue(newZoom);
+		int newZoom = (int) Math.max(30, Math.min(110, lastFov / zoomFactor.getValue()));
+		fov.setValue(newZoom);
 	}
 }

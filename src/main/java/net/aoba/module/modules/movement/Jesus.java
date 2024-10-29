@@ -28,56 +28,48 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class Jesus extends Module implements TickListener {
 
-    public BooleanSetting legit = BooleanSetting.builder()
-    		.id("jesus_legit")
-    		.displayName("Legit")
-    		.description("Whether or not the player will swim as close to the surface as possible.")
-    		.defaultValue(true)
-    		.build();
+	public BooleanSetting legit = BooleanSetting.builder().id("jesus_legit").displayName("Legit")
+			.description("Whether or not the player will swim as close to the surface as possible.").defaultValue(true)
+			.build();
 
-    public Jesus() {
-    	super(KeybindSetting.builder().id("key.jesus").displayName("Jesus Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	public Jesus() {
+		super("Jesus");
+		this.setCategory(Category.of("Movement"));
+		this.setDescription("Allows the player to walk on water.");
+		this.addSetting(legit);
+	}
 
-        this.setName("Jesus");
-        this.setCategory(Category.of("Movement"));
-        this.setDescription("Allows the player to walk on water.");
-        this.addSetting(legit);
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onToggle() {
 
-    @Override
-    public void onToggle() {
-
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
-        // If Legit is enabled, simply swim.
-        if (this.legit.getValue()) {
-            if (MC.player.isInLava() || MC.player.isTouchingWater()) {
-                MC.options.jumpKey.setPressed(true);
-            }
-        }
+		// If Legit is enabled, simply swim.
+		if (this.legit.getValue()) {
+			if (MC.player.isInLava() || MC.player.isTouchingWater()) {
+				MC.options.jumpKey.setPressed(true);
+			}
+		}
 	}
 
 	@Override
 	public void onTick(Post event) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

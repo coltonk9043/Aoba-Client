@@ -26,20 +26,17 @@ import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.render.Render3D;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.glfw.GLFW;
 
 public class Aimbot extends Module implements TickListener, Render3DListener {
 
@@ -99,9 +96,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
     private int currentTick = 0;
 
     public Aimbot() {
-        super(KeybindSetting.builder().id("key.aimbot").displayName("Aimbot Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-
-        this.setName("Aimbot");
+        super("Aimbot");
         this.setCategory(Category.of("Combat"));
         this.setDescription("Locks your crosshair towards a desired player or entity.");
 

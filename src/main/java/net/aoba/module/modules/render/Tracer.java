@@ -25,119 +25,95 @@ import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.render.Render3D;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.glfw.GLFW;
 
 public class Tracer extends Module implements Render3DListener {
-    private ColorSetting color_player = ColorSetting.builder()
-			.id("tracer_color_player")
-			.displayName("Player Color")
-			.description("Player Color")
-			.defaultValue(new Color(1f, 1f, 0f))
-			.build();
-    
-    private ColorSetting color_passive = ColorSetting.builder()
-			.id("tracer_color_passive")
-			.displayName("Passive Color")
-			.description("Passive Color")
-			.defaultValue(new Color(0f, 1f, 1f))
-			.build();
-    
-    private ColorSetting color_enemies = ColorSetting.builder()
-			.id("tracer_color_enemy")
-			.displayName("Enemy Color")
-			.description("Enemy Color")
-			.defaultValue(new Color(0f, 1f, 1f))
-			.build();
-    
-    private ColorSetting color_misc = ColorSetting.builder()
-			.id("tracer_color_misc")
-			.displayName("Misc. Color")
-			.description("Misc. Color")
-			.defaultValue(new Color(0f, 1f, 1f))
-			.build();
+	private ColorSetting color_player = ColorSetting.builder().id("tracer_color_player").displayName("Player Color")
+			.description("Player Color").defaultValue(new Color(1f, 1f, 0f)).build();
 
-    private FloatSetting lineWidth = FloatSetting.builder()
-    		.id("tracer_line_width")
-    		.displayName("Line Width")
-    		.description("Width of the tracer lines.")
-    		.defaultValue(1f)
-    		.minValue(0.1f)
-    		.maxValue(10f)
-    		.step(0.1f)
-    		.build();
-    
-    public Tracer() {
-    	super(KeybindSetting.builder().id("key.tracer").displayName("Tracer Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	private ColorSetting color_passive = ColorSetting.builder().id("tracer_color_passive").displayName("Passive Color")
+			.description("Passive Color").defaultValue(new Color(0f, 1f, 1f)).build();
 
-        this.setName("Tracer");
-        this.setCategory(Category.of("Render"));
-        this.setDescription("Points toward other players and entities with a line.");
+	private ColorSetting color_enemies = ColorSetting.builder().id("tracer_color_enemy").displayName("Enemy Color")
+			.description("Enemy Color").defaultValue(new Color(0f, 1f, 1f)).build();
 
-        this.addSetting(color_player);
-        this.addSetting(color_passive);
-        this.addSetting(color_enemies);
-        this.addSetting(color_misc);
-        this.addSetting(lineWidth);
-    }
+	private ColorSetting color_misc = ColorSetting.builder().id("tracer_color_misc").displayName("Misc. Color")
+			.description("Misc. Color").defaultValue(new Color(0f, 1f, 1f)).build();
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-    }
+	private FloatSetting lineWidth = FloatSetting.builder().id("tracer_line_width").displayName("Line Width")
+			.description("Width of the tracer lines.").defaultValue(1f).minValue(0.1f).maxValue(10f).step(0.1f).build();
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-    }
+	public Tracer() {
+		super("Tracer");
+		this.setCategory(Category.of("Render"));
+		this.setDescription("Points toward other players and entities with a line.");
 
-    @Override
-    public void onToggle() {
+		this.addSetting(color_player);
+		this.addSetting(color_passive);
+		this.addSetting(color_enemies);
+		this.addSetting(color_misc);
+		this.addSetting(lineWidth);
+	}
 
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+	}
 
-    @Override
-    public void onRender(Render3DEvent event) {
-        Vec3d eyePosition = new Vec3d(0, 0, 1);
-        Camera camera = MC.gameRenderer.getCamera();
-        Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity, event.GetPartialTicks());
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+	}
 
-        eyePosition = eyePosition.rotateX((float) -Math.toRadians(camera.getPitch()));
-        eyePosition = eyePosition.rotateY((float) -Math.toRadians(camera.getYaw()));
-        eyePosition = eyePosition.add(MC.cameraEntity.getEyePos());
-        eyePosition = eyePosition.subtract(offset);
+	@Override
+	public void onToggle() {
 
-        float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
-        for (Entity entity : MC.world.getEntities()) {
-            if (entity instanceof LivingEntity && (entity != MC.player)) {
-                Vec3d interpolated = Render3D.getEntityPositionInterpolated(entity, tickDelta);
-                if (entity instanceof AnimalEntity) {
-                    Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_passive.getValue(), lineWidth.getValue());
-                } else if (entity instanceof Monster) {
-                    Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_enemies.getValue(), lineWidth.getValue());
-                } else {
-                    Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_misc.getValue(), lineWidth.getValue());
-                }
-            }
-        }
+	}
 
-        for (AbstractClientPlayerEntity player : MC.world.getPlayers()) {
-            Vec3d interpolated = Render3D.getEntityPositionInterpolated(player, tickDelta);
-            Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_player.getValue(), lineWidth.getValue());
-        }
-    }
+	@Override
+	public void onRender(Render3DEvent event) {
+		Vec3d eyePosition = new Vec3d(0, 0, 1);
+		Camera camera = MC.gameRenderer.getCamera();
+		Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity, event.GetPartialTicks());
+
+		eyePosition = eyePosition.rotateX((float) -Math.toRadians(camera.getPitch()));
+		eyePosition = eyePosition.rotateY((float) -Math.toRadians(camera.getYaw()));
+		eyePosition = eyePosition.add(MC.cameraEntity.getEyePos());
+		eyePosition = eyePosition.subtract(offset);
+
+		float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
+		for (Entity entity : MC.world.getEntities()) {
+			if (entity instanceof LivingEntity && (entity != MC.player)) {
+				Vec3d interpolated = Render3D.getEntityPositionInterpolated(entity, tickDelta);
+				if (entity instanceof AnimalEntity) {
+					Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_passive.getValue(),
+							lineWidth.getValue());
+				} else if (entity instanceof Monster) {
+					Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_enemies.getValue(),
+							lineWidth.getValue());
+				} else {
+					Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_misc.getValue(),
+							lineWidth.getValue());
+				}
+			}
+		}
+
+		for (AbstractClientPlayerEntity player : MC.world.getPlayers()) {
+			Vec3d interpolated = Render3D.getEntityPositionInterpolated(player, tickDelta);
+			Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_player.getValue(),
+					lineWidth.getValue());
+		}
+	}
 }

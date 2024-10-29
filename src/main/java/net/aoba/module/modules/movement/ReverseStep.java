@@ -6,39 +6,35 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class ReverseStep extends Module implements TickListener {
-    public ReverseStep() {
-    	super(KeybindSetting.builder().id("key.reversestep").displayName("ReverseStep Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-		
-        this.setName("ReverseStep");
-        this.setCategory(Category.of("Movement"));
-        this.setDescription("Steps. But in reverse...");
-    }
+	public ReverseStep() {
+		super("ReverseStep");
+		this.setCategory(Category.of("Movement"));
+		this.setDescription("Steps. But in reverse...");
+	}
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
-	       if (MC.player.isOnGround()) {
-	            MC.player.setVelocity(MC.player.getVelocity().x, MC.player.getVelocity().y - 1.0, MC.player.getVelocity().z);
-	        }
+		if (MC.player.isOnGround()) {
+			MC.player.setVelocity(MC.player.getVelocity().x, MC.player.getVelocity().y - 1.0,
+					MC.player.getVelocity().z);
+		}
 	}
 
 	@Override

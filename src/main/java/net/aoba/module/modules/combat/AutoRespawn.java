@@ -29,9 +29,6 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class AutoRespawn extends Module implements PlayerDeathListener, TickListener {
 
@@ -40,9 +37,8 @@ public class AutoRespawn extends Module implements PlayerDeathListener, TickList
     private int tick;
 
     public AutoRespawn() {
-    	super(KeybindSetting.builder().id("key.autorespawn").displayName("AutoRespawn Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-    	
-        this.setName("AutoRespawn");
+    	super("AutoRespawn");
+
         this.setCategory(Category.of("Combat"));
         this.setDescription("Automatically respawns when you die.");
 

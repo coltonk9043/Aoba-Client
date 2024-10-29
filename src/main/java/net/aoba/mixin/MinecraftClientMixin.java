@@ -18,16 +18,6 @@
 
 package net.aoba.mixin;
 
-import net.aoba.Aoba;
-import net.aoba.AobaClient;
-import net.aoba.event.events.TickEvent;
-import net.aoba.module.modules.render.FocusFps;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.session.Session;
-import net.minecraft.client.world.ClientWorld;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,89 +28,106 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.aoba.Aoba;
+import net.aoba.AobaClient;
+import net.aoba.event.events.TickEvent;
+import net.aoba.module.modules.render.FocusFps;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.session.Session;
+import net.minecraft.client.world.ClientWorld;
+
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
 
-    @Shadow
-    private int itemUseCooldown;
-    @Shadow
-    @Final
-    private Session session;
+	@Shadow
+	private int itemUseCooldown;
+	@Shadow
+	@Final
+	private Session session;
 
-    @Shadow
-    @Final
-    private Mouse mouse;
+	@Shadow
+	@Final
+	private Mouse mouse;
 
-    @Shadow
-    public ClientWorld world;
+	@Shadow
+	public ClientWorld world;
 
-    @Shadow
-    public ClientPlayerEntity player;
-    
-    private Session aobaSession;
+	@Shadow
+	public ClientPlayerEntity player;
 
-    @Shadow public abstract boolean isWindowFocused();
-    @Shadow @Final public GameOptions options;
+	private Session aobaSession;
 
+	@Shadow
+	public abstract boolean isWindowFocused();
 
-    @Inject(at = @At("HEAD"), method = "onFinishedLoading(Lnet/minecraft/client/MinecraftClient$LoadingContext;)V")
-    private void onfinishedloading(CallbackInfo info) {
-        Aoba.getInstance().loadAssets();
-    }
+	@Shadow
+	@Final
+	public GameOptions options;
 
-    @Inject(at = @At("HEAD"), method = "tick()V")
-    public void onPreTick(CallbackInfo info) {
-        if (this.world != null && player != null) {
-            TickEvent.Pre updateEvent = new TickEvent.Pre();
-            Aoba.getInstance().eventManager.Fire(updateEvent);
-        }
-    }
-    
-    @Inject(at = @At("TAIL"), method = "tick()V")
-    public void onPostTick(CallbackInfo info) {
-        if (this.world != null && player != null) {
-            TickEvent.Post updateEvent = new TickEvent.Post();
-            Aoba.getInstance().eventManager.Fire(updateEvent);
-        }
-    }
+	@Inject(at = @At("HEAD"), method = "onFinishedLoading(Lnet/minecraft/client/MinecraftClient$LoadingContext;)V")
+	private void onfinishedloading(CallbackInfo info) {
+		Aoba.getInstance().loadAssets();
+	}
 
-    @Inject(at = {@At("HEAD")}, method = {"getSession()Lnet/minecraft/client/session/Session;"}, cancellable = true)
-    private void onGetSession(CallbackInfoReturnable<Session> cir) {
-        if (aobaSession == null) return;
-        cir.setReturnValue(aobaSession);
-    }
+	@Inject(at = @At("HEAD"), method = "tick()V")
+	public void onPreTick(CallbackInfo info) {
+		if (this.world != null && player != null) {
+			TickEvent.Pre updateEvent = new TickEvent.Pre();
+			Aoba.getInstance().eventManager.Fire(updateEvent);
+		}
+	}
 
-    @Redirect(at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;session:Lnet/minecraft/client/session/Session;", opcode = Opcodes.GETFIELD, ordinal = 0), method = {"getSession()Lnet/minecraft/client/session/Session;"})
-    private Session getSessionForSessionProperties(MinecraftClient mc) {
-        if (aobaSession != null) return aobaSession;
-        return session;
-    }
+	@Inject(at = @At("TAIL"), method = "tick()V")
+	public void onPostTick(CallbackInfo info) {
+		if (this.world != null && player != null) {
+			TickEvent.Post updateEvent = new TickEvent.Post();
+			Aoba.getInstance().eventManager.Fire(updateEvent);
+		}
+	}
 
-    @Inject(at = {@At(value = "HEAD")}, method = {"close()V"})
-    private void onClose(CallbackInfo ci) {
-        try {
-            Aoba.getInstance().endClient();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	@Inject(at = { @At("HEAD") }, method = { "getSession()Lnet/minecraft/client/session/Session;" }, cancellable = true)
+	private void onGetSession(CallbackInfoReturnable<Session> cir) {
+		if (aobaSession == null)
+			return;
+		cir.setReturnValue(aobaSession);
+	}
 
-    @Inject(at = {@At(value = "HEAD")}, method = {"openGameMenu(Z)V"})
-    private void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
-        AobaClient aoba = Aoba.getInstance();
+	@Redirect(at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;session:Lnet/minecraft/client/session/Session;", opcode = Opcodes.GETFIELD, ordinal = 0), method = {
+			"getSession()Lnet/minecraft/client/session/Session;" })
+	private Session getSessionForSessionProperties(MinecraftClient mc) {
+		if (aobaSession != null)
+			return aobaSession;
+		return session;
+	}
 
-        if (aoba.guiManager != null) {
-            Aoba.getInstance().guiManager.setClickGuiOpen(false);
-        }
-    }
+	@Inject(at = { @At(value = "HEAD") }, method = { "close()V" })
+	private void onClose(CallbackInfo ci) {
+		try {
+			Aoba.getInstance().endClient();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    @Inject(method = "getFramerateLimit", at = @At("HEAD"), cancellable = true)
-    private void onGetFramerateLimit(CallbackInfoReturnable<Integer> info) {
-        if (Aoba.getInstance().moduleManager != null) {
-            FocusFps focusfps = (FocusFps) Aoba.getInstance().moduleManager.focusfps;
-            if (focusfps.getState() && !isWindowFocused()) {
-                info.setReturnValue(Math.min(focusfps.getFps().intValue(), this.options.getMaxFps().getValue()));
-            }
-        }
-    }
+	@Inject(at = { @At(value = "HEAD") }, method = { "openGameMenu(Z)V" })
+	private void onOpenPauseMenu(boolean pause, CallbackInfo ci) {
+		AobaClient aoba = Aoba.getInstance();
+
+		if (aoba.guiManager != null) {
+			Aoba.getInstance().guiManager.setClickGuiOpen(false);
+		}
+	}
+
+	@Inject(method = "getFramerateLimit", at = @At("HEAD"), cancellable = true)
+	private void onGetFramerateLimit(CallbackInfoReturnable<Integer> info) {
+		if (Aoba.getInstance().moduleManager != null) {
+			FocusFps focusfps = (FocusFps) Aoba.getInstance().moduleManager.focusfps;
+			if (focusfps.state.getValue() && !isWindowFocused()) {
+				info.setReturnValue(Math.min(focusfps.getFps().intValue(), this.options.getMaxFps().getValue()));
+			}
+		}
+	}
 }

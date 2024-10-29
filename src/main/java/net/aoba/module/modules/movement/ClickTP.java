@@ -24,11 +24,9 @@ import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -36,7 +34,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import org.lwjgl.glfw.GLFW;
 
 public class ClickTP extends Module implements MouseClickListener {
 
@@ -45,10 +42,7 @@ public class ClickTP extends Module implements MouseClickListener {
 			.build();
 
 	public ClickTP() {
-		super(KeybindSetting.builder().id("key.clicktp").displayName("ClickTP Key")
-				.defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-
-		this.setName("ClickTP");
+		super("ClickTP");
 		this.setCategory(Category.of("Movement"));
 		this.setDescription("Allows the user to teleport where they are looking.");
 

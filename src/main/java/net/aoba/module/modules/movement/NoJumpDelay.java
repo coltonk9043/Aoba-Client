@@ -26,53 +26,41 @@ import net.aoba.mixin.interfaces.ILivingEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class NoJumpDelay extends Module implements TickListener {
 
-    private FloatSetting delay = FloatSetting.builder()
-    		.id("nojumpdelay_delay")
-    		.displayName("Delay")
-    		.description("NoJumpDelay Delay.")
-    		.defaultValue(1f)
-    		.minValue(0f)
-    		.maxValue(20f)
-    		.step(1f)
-    		.build();
+	private FloatSetting delay = FloatSetting.builder().id("nojumpdelay_delay").displayName("Delay")
+			.description("NoJumpDelay Delay.").defaultValue(1f).minValue(0f).maxValue(20f).step(1f).build();
 
-    public NoJumpDelay() {
-    	super(KeybindSetting.builder().id("key.nojumpdelay").displayName("NoJumpDelay Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-		
-        this.setName("NoJumpDelay");
-        this.setCategory(Category.of("Movement"));
-        this.setDescription("Makes it so the user can jump very quickly.");
+	public NoJumpDelay() {
+		super("NoJumpDelay");
+		this.setCategory(Category.of("Movement"));
+		this.setDescription("Makes it so the user can jump very quickly.");
 
-        this.addSetting(delay);
-    }
+		this.addSetting(delay);
+	}
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
-        ILivingEntity ent = (ILivingEntity) MC.player;
-        if (ent.getJumpCooldown() > delay.getValue()) {
-            ent.setJumpCooldown(delay.getValue().intValue());
-        }
+		ILivingEntity ent = (ILivingEntity) MC.player;
+		if (ent.getJumpCooldown() > delay.getValue()) {
+			ent.setJumpCooldown(delay.getValue().intValue());
+		}
 	}
 
 	@Override

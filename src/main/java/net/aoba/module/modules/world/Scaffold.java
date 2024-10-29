@@ -1,6 +1,5 @@
 package net.aoba.module.modules.world;
 
-import org.lwjgl.glfw.GLFW;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
@@ -10,10 +9,8 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.rotation.Rotation;
 import net.aoba.utils.rotation.RotationMode;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.util.ActionResult;
@@ -25,15 +22,16 @@ import net.minecraft.util.math.Vec3d;
 
 public class Scaffold extends Module implements TickListener {
 
-	private record ScaffoldPlaceResult(BlockPos pos, Direction direction) { }
-	
+	private record ScaffoldPlaceResult(BlockPos pos, Direction direction) {
+	}
+
 	private final FloatSetting radius = FloatSetting.builder().id("scaffold_radius").displayName("Radius")
 			.description("How far Scaffold will place a block below the player.").defaultValue(5f).minValue(1f)
 			.maxValue(10f).step(1f).build();
 
 	private final FloatSetting placeDelay = FloatSetting.builder().id("scaffold_place_delay").displayName("Place Delay")
-			.description("How long (in ticks) until Scaffold will place the next block below the player.").defaultValue(0f)
-			.minValue(1f).maxValue(20f).step(1f).build();
+			.description("How long (in ticks) until Scaffold will place the next block below the player.")
+			.defaultValue(0f).minValue(1f).maxValue(20f).step(1f).build();
 
 	private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
 			.id("scaffold_rotation_mode").displayName("Rotation Mode")
@@ -45,12 +43,9 @@ public class Scaffold extends Module implements TickListener {
 
 	private int yPosition = 0;
 	private int curDelay = 0;
-	
-	public Scaffold() {
-		super(KeybindSetting.builder().id("key.Scaffold").displayName("Scaffold Key")
-				.defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
-		this.setName("Scaffold");
+	public Scaffold() {
+		super("Scaffold");
 		this.setCategory(Category.of("World"));
 		this.setDescription("Automatically places blocks below the player.");
 
@@ -60,15 +55,15 @@ public class Scaffold extends Module implements TickListener {
 		this.addSetting(swingHand);
 	}
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
 	@Override
 	public void onToggle() {
@@ -78,7 +73,7 @@ public class Scaffold extends Module implements TickListener {
 	public void onTick(Pre event) {
 		ScaffoldPlaceResult placementPos = findBlockPosToPlace();
 
-		if(curDelay >= placeDelay.getValue()) {
+		if (curDelay >= placeDelay.getValue()) {
 			if (placementPos != null) {
 				Vec3d placementPosVec = placementPos.pos.toCenterPos();
 
@@ -107,21 +102,20 @@ public class Scaffold extends Module implements TickListener {
 					break;
 				}
 
-				BlockHitResult rayTrace = new BlockHitResult(MC.player.getPos(), placementPos.direction, placementPos.pos, false);
+				BlockHitResult rayTrace = new BlockHitResult(MC.player.getPos(), placementPos.direction,
+						placementPos.pos, false);
 				ActionResult result = MC.interactionManager.interactBlock(MC.player, Hand.MAIN_HAND, rayTrace);
 
-				
-				if(result.isAccepted()) {
-					if(swingHand.getValue())
+				if (result.isAccepted()) {
+					if (swingHand.getValue())
 						MC.player.swingHand(Hand.MAIN_HAND);
-				}	
-				else
+				} else
 					MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
-				
+
 				curDelay = 0;
-			}else
+			} else
 				curDelay++;
-		}else
+		} else
 			curDelay++;
 	}
 
@@ -129,9 +123,9 @@ public class Scaffold extends Module implements TickListener {
 	public void onTick(Post event) {
 		// Determine the height at which the player will build.
 		if (MC.player.isOnGround()) {
-			if(MC.options.jumpKey.isPressed()) {
+			if (MC.options.jumpKey.isPressed()) {
 				yPosition = MC.player.getBlockPos().getY();
-			}else
+			} else
 				yPosition = MC.player.getBlockPos().getY() - 1;
 		}
 	}
@@ -140,23 +134,23 @@ public class Scaffold extends Module implements TickListener {
 		BlockPos playerPos = MC.player.getBlockPos();
 		BlockPos underneathPosition = new BlockPos(playerPos.getX(), yPosition, playerPos.getZ());
 
-		if(!MC.world.isAir(underneathPosition))
+		if (!MC.world.isAir(underneathPosition))
 			return null;
-		
+
 		BlockPos result = null;
 		Direction resultDirection = null;
 		double lastDistanceTo = Float.MAX_VALUE;
-		
+
 		int radiusInt = radius.getValue().intValue();
-		for(int x = -radiusInt; x < radiusInt; x++) {
-			for(int z = -radiusInt; z < radiusInt; z++) {
+		for (int x = -radiusInt; x < radiusInt; x++) {
+			for (int z = -radiusInt; z < radiusInt; z++) {
 				BlockPos checkPos = underneathPosition.add(x, 0, z);
 				Direction directionToPlace = findAdjacentBlockFace(checkPos);
-				
-				if(directionToPlace != null) {
+
+				if (directionToPlace != null) {
 					double distanceToBlock = MC.player.squaredDistanceTo(checkPos.toCenterPos());
-					
-					if(result == null || distanceToBlock < lastDistanceTo) {
+
+					if (result == null || distanceToBlock < lastDistanceTo) {
 						result = checkPos;
 						resultDirection = directionToPlace;
 						lastDistanceTo = distanceToBlock;
@@ -164,7 +158,8 @@ public class Scaffold extends Module implements TickListener {
 				}
 			}
 		}
-		if(result == null || resultDirection == null || result.getSquaredDistance(MC.player.getPos()) > radius.getValueSqr())
+		if (result == null || resultDirection == null
+				|| result.getSquaredDistance(MC.player.getPos()) > radius.getValueSqr())
 			return null;
 		else
 			return new ScaffoldPlaceResult(result, resultDirection);
@@ -177,20 +172,26 @@ public class Scaffold extends Module implements TickListener {
 		BlockPos east = pos.east();
 		BlockPos up = pos.up();
 		BlockPos down = pos.down();
-		
-		if(!MC.world.isAir(north) && !MC.world.getFluidState(north).isOf(Fluids.LAVA) && !MC.world.getFluidState(north).isOf(Fluids.WATER)) {
+
+		if (!MC.world.isAir(north) && !MC.world.getFluidState(north).isOf(Fluids.LAVA)
+				&& !MC.world.getFluidState(north).isOf(Fluids.WATER)) {
 			return Direction.SOUTH;
-		}else if(!MC.world.isAir(east) && !MC.world.getFluidState(east).isOf(Fluids.LAVA) && !MC.world.getFluidState(east).isOf(Fluids.WATER)) {
+		} else if (!MC.world.isAir(east) && !MC.world.getFluidState(east).isOf(Fluids.LAVA)
+				&& !MC.world.getFluidState(east).isOf(Fluids.WATER)) {
 			return Direction.WEST;
-		}else if(!MC.world.isAir(south) && !MC.world.getFluidState(south).isOf(Fluids.LAVA) && !MC.world.getFluidState(south).isOf(Fluids.WATER)) {
+		} else if (!MC.world.isAir(south) && !MC.world.getFluidState(south).isOf(Fluids.LAVA)
+				&& !MC.world.getFluidState(south).isOf(Fluids.WATER)) {
 			return Direction.NORTH;
-		}else if(!MC.world.isAir(west) && !MC.world.getFluidState(west).isOf(Fluids.LAVA) && !MC.world.getFluidState(west).isOf(Fluids.WATER)) {
+		} else if (!MC.world.isAir(west) && !MC.world.getFluidState(west).isOf(Fluids.LAVA)
+				&& !MC.world.getFluidState(west).isOf(Fluids.WATER)) {
 			return Direction.EAST;
-		}else if(!MC.world.isAir(up) && !MC.world.getFluidState(up).isOf(Fluids.LAVA) && !MC.world.getFluidState(up).isOf(Fluids.WATER)) {
+		} else if (!MC.world.isAir(up) && !MC.world.getFluidState(up).isOf(Fluids.LAVA)
+				&& !MC.world.getFluidState(up).isOf(Fluids.WATER)) {
 			return Direction.UP;
-		}else if(!MC.world.isAir(down) && !MC.world.getFluidState(down).isOf(Fluids.LAVA) && !MC.world.getFluidState(down).isOf(Fluids.WATER)) {
+		} else if (!MC.world.isAir(down) && !MC.world.getFluidState(down).isOf(Fluids.LAVA)
+				&& !MC.world.getFluidState(down).isOf(Fluids.WATER)) {
 			return Direction.NORTH;
-		}else
+		} else
 			return null;
 	}
 }

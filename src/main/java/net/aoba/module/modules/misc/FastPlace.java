@@ -22,43 +22,38 @@
 package net.aoba.module.modules.misc;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class FastPlace extends Module implements TickListener {
-    IMinecraftClient iMC;
+	IMinecraftClient iMC;
 
-    public FastPlace() {
-    	super(KeybindSetting.builder().id("key.fastplace").displayName("FastPlace Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	public FastPlace() {
+		super("FastPlace");
 
-        this.setName("FastPlace");
-        this.setCategory(Category.of("Misc"));
-        this.setDescription("Places blocks exceptionally fast");
-    }
+		this.setCategory(Category.of("Misc"));
+		this.setDescription("Places blocks exceptionally fast");
+	}
 
-    @Override
-    public void onDisable() {
-        IMC.setItemUseCooldown(4);
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		IMC.setItemUseCooldown(4);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
 	@Override
 	public void onTick(Pre event) {
@@ -67,6 +62,6 @@ public class FastPlace extends Module implements TickListener {
 
 	@Override
 	public void onTick(Post event) {
-		
+
 	}
 }

@@ -23,29 +23,25 @@ package net.aoba.module.modules.misc;
 
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
 
 public class AntiCactus extends Module {
 
-    public AntiCactus() {
-    	super(KeybindSetting.builder().id("key.anticactus").displayName("AntiCactus Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	public AntiCactus() {
+		super("AntiCactus");
 
-        this.setName("AntiCactus");
-        this.setCategory(Category.of("Misc"));
-        this.setDescription("Prevents blocks from hurting you.");
-    }
+		this.setCategory(Category.of("Misc"));
+		this.setDescription("Prevents blocks from hurting you.");
+	}
 
-    @Override
-    public void onDisable() {
-    }
+	@Override
+	public void onDisable() {
+	}
 
-    @Override
-    public void onEnable() {
-    }
+	@Override
+	public void onEnable() {
+	}
 
-    @Override
-    public void onToggle() {
-    }
+	@Override
+	public void onToggle() {
+	}
 }

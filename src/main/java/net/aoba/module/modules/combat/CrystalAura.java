@@ -1,24 +1,31 @@
 package net.aoba.module.modules.combat;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
+import net.aoba.module.Category;
+import net.aoba.module.Module;
+import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.EnumSetting;
+import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.FindItemResult;
+import net.aoba.utils.entity.DamageUtils;
 import net.aoba.utils.render.Render3D;
 import net.aoba.utils.rotation.Rotation;
 import net.aoba.utils.rotation.RotationMode;
-import net.aoba.module.Category;
-import net.aoba.module.Module;
-import net.aoba.settings.types.*;
-import net.aoba.utils.entity.DamageUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
@@ -34,11 +41,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import org.lwjgl.glfw.GLFW;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class CrystalAura extends Module implements TickListener, Render3DListener {
     public enum TargetMode {
@@ -217,9 +219,8 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
     private final Map<BlockPos, Long> displayedBoxes = new HashMap<>();
 
     public CrystalAura() {
-    	super(KeybindSetting.builder().id("key.crystalaura").displayName("Crystal Aura Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
-
-        this.setName("CrystalAura");
+    	super("CrystalAura");
+    	
         this.setCategory(Category.of("Combat"));
         this.setDescription("Attacks anything within your personal space with a End Crystal.");
         

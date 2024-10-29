@@ -21,81 +21,68 @@
  */
 package net.aoba.module.modules.render;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
-import net.aoba.utils.ModuleUtils;
-import net.aoba.utils.render.Render3D;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.ModuleUtils;
+import net.aoba.utils.render.Render3D;
 import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.entity.TrappedChestBlockEntity;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Box;
-import org.lwjgl.glfw.GLFW;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class ChestESP extends Module implements Render3DListener {
-	
-	
-    private ColorSetting color = ColorSetting.builder()
-			.id("chestesp_color")
-			.displayName("Color")
-			.description("Color")
-			.defaultValue(new Color(0, 1f, 1f))
-			.build();
-    
-    public FloatSetting lineThickness = FloatSetting.builder()
-    		.id("chestesp_linethickness")
-    		.displayName("Line Thickness")
-    		.description("Adjust the thickness of the ESP box lines")
-    		.defaultValue(2f)
-    		.minValue(0f)
-    		.maxValue(5f)
-    		.step(0.1f)
-    		.build();
-    
-    public ChestESP() {
-    	super(KeybindSetting.builder().id("key.chestesp").displayName("ChestESP Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
 
-        this.setName("ChestESP");
-        this.setCategory(Category.of("Render"));
-        this.setDescription("Allows the player to see Chests with an ESP.");
+	private ColorSetting color = ColorSetting.builder().id("chestesp_color").displayName("Color").description("Color")
+			.defaultValue(new Color(0, 1f, 1f)).build();
 
-        this.addSetting(color);
-        this.addSetting(lineThickness);
-    }
+	public FloatSetting lineThickness = FloatSetting.builder().id("chestesp_linethickness")
+			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
+			.minValue(0f).maxValue(5f).step(0.1f).build();
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-    }
+	public ChestESP() {
+		super("ChestESP");
+		this.setCategory(Category.of("Render"));
+		this.setDescription("Allows the player to see Chests with an ESP.");
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-    }
+		this.addSetting(color);
+		this.addSetting(lineThickness);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+	}
 
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+	}
 
-    @Override
-    public void onRender(Render3DEvent event) {
-        ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities().collect(Collectors.toCollection(ArrayList::new));
-        for (BlockEntity blockEntity : blockEntities) {
-            if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity || blockEntity instanceof BarrelBlockEntity) {
-                Box box = new Box(blockEntity.getPos());
-                Render3D.draw3DBox(event.GetMatrix(), box, color.getValue(), lineThickness.getValue().floatValue());
-            }
-        }
-    }
+	@Override
+	public void onToggle() {
+
+	}
+
+	@Override
+	public void onRender(Render3DEvent event) {
+		ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities()
+				.collect(Collectors.toCollection(ArrayList::new));
+		for (BlockEntity blockEntity : blockEntities) {
+			if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity
+					|| blockEntity instanceof BarrelBlockEntity) {
+				Box box = new Box(blockEntity.getPos());
+				Render3D.draw3DBox(event.GetMatrix(), box, color.getValue(), lineThickness.getValue().floatValue());
+			}
+		}
+	}
 }

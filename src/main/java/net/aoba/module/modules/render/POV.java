@@ -25,100 +25,93 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.utils.entity.FakePlayerEntity;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.entity.FakePlayerEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import org.lwjgl.glfw.GLFW;
 
 public class POV extends Module implements TickListener {
-    private FakePlayerEntity fakePlayer;
-    private String povString = null;
-    private Entity povEntity = null;
+	private FakePlayerEntity fakePlayer;
+	private String povString = null;
+	private Entity povEntity = null;
 
-    private boolean fakePlayerSpawned = false;
+	private boolean fakePlayerSpawned = false;
 
+	public POV() {
+		super("POV");
+		this.setCategory(Category.of("Render"));
+		this.setDescription("Allows the player to see someone else's point-of-view.");
+	}
 
-    public POV() {
-    	super(KeybindSetting.builder().id("key.pov").displayName("POV Key").defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0)).build());
+	@Override
+	public void onDisable() {
+		MinecraftClient.getInstance().setCameraEntity(MC.player);
+		if (fakePlayer != null) {
+			fakePlayer.despawn();
+			MC.world.removeEntity(-3, null);
+		}
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
-        this.setName("POV");
-        this.setCategory(Category.of("Render"));
-        this.setDescription("Allows the player to see someone else's point-of-view.");
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
 
-    @Override
-    public void onDisable() {
-        MinecraftClient.getInstance().setCameraEntity(MC.player);
-        if (fakePlayer != null) {
-            fakePlayer.despawn();
-            MC.world.removeEntity(-3, null);
-        }
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	@Override
+	public void onToggle() {
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+	}
 
+	public void setEntityPOV(String entity) {
+		this.povString = entity;
+	}
 
-    @Override
-    public void onToggle() {
+	public Entity getEntity() {
+		return this.povEntity;
+	}
 
-    }
-
-    public void setEntityPOV(String entity) {
-        this.povString = entity;
-    }
-
-    public Entity getEntity() {
-        return this.povEntity;
-    }
-
-    public PlayerEntity getEntityAsPlayer() {
-        if (this.povEntity instanceof PlayerEntity) {
-            return (PlayerEntity) this.povEntity;
-        } else {
-            return null;
-        }
-    }
+	public PlayerEntity getEntityAsPlayer() {
+		if (this.povEntity instanceof PlayerEntity) {
+			return (PlayerEntity) this.povEntity;
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public void onTick(Pre event) {
 		ClientPlayerEntity player = MC.player;
-        povEntity = null;
-        for (Entity entity : MC.world.getPlayers()) {
-            if (entity.getName().getString().equals(povString)) {
-                povEntity = entity;
-            }
-        }
-        if (MinecraftClient.getInstance().getCameraEntity() == povEntity) {
-            if (!fakePlayerSpawned) {
-                fakePlayer = new FakePlayerEntity();
-                fakePlayer.copyFrom(player);
-                fakePlayer.headYaw = player.headYaw;
-                MC.world.addEntity(fakePlayer);
-            }
-            fakePlayer.copyFrom(player);
-            fakePlayer.headYaw = player.headYaw;
-        } else {
-            if (fakePlayer != null) {
-                fakePlayer.despawn();
-                MC.world.removeEntity(-3, null);
-            }
+		povEntity = null;
+		for (Entity entity : MC.world.getPlayers()) {
+			if (entity.getName().getString().equals(povString)) {
+				povEntity = entity;
+			}
+		}
+		if (MinecraftClient.getInstance().getCameraEntity() == povEntity) {
+			if (!fakePlayerSpawned) {
+				fakePlayer = new FakePlayerEntity();
+				fakePlayer.copyFrom(player);
+				fakePlayer.headYaw = player.headYaw;
+				MC.world.addEntity(fakePlayer);
+			}
+			fakePlayer.copyFrom(player);
+			fakePlayer.headYaw = player.headYaw;
+		} else {
+			if (fakePlayer != null) {
+				fakePlayer.despawn();
+				MC.world.removeEntity(-3, null);
+			}
 
-            if (povEntity == null) {
-                MinecraftClient.getInstance().setCameraEntity(MC.player);
-            } else {
-                MinecraftClient.getInstance().setCameraEntity(povEntity);
-            }
-        }
+			if (povEntity == null) {
+				MinecraftClient.getInstance().setCameraEntity(MC.player);
+			} else {
+				MinecraftClient.getInstance().setCameraEntity(povEntity);
+			}
+		}
 	}
 
 	@Override
