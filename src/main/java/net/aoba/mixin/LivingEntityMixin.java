@@ -24,15 +24,18 @@ public abstract class LivingEntityMixin extends EntityMixin {
 
 	}
 
-    @Inject(method = "spawnItemParticles", at = @At("HEAD"), cancellable = true)
-    private void spawnItemParticles(ItemStack stack, int count, CallbackInfo info) {
-        NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
-        if (norender.getState() && norender.getNoEatParticles() && stack.getComponents().contains(DataComponentTypes.FOOD)) info.cancel();
-    }
+	@Inject(method = "spawnItemParticles", at = @At("HEAD"), cancellable = true)
+	private void spawnItemParticles(ItemStack stack, int count, CallbackInfo info) {
+		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		if (norender.state.getValue() && norender.getNoEatParticles()
+				&& stack.getComponents().contains(DataComponentTypes.FOOD))
+			info.cancel();
+	}
 
-    @Inject(method = "pushAwayFrom", at = @At("HEAD"), cancellable = true)
-    private void hookNoPush(CallbackInfo info) {
-        AntiKnockback antiKnockback = Aoba.getInstance().moduleManager.antiknockback;
-        if (antiKnockback.getState() && antiKnockback.getNoPush()) info.cancel();
-    }
+	@Inject(method = "pushAwayFrom", at = @At("HEAD"), cancellable = true)
+	private void hookNoPush(CallbackInfo info) {
+		AntiKnockback antiKnockback = Aoba.getInstance().moduleManager.antiknockback;
+		if (antiKnockback.state.getValue() && antiKnockback.getNoPush())
+			info.cancel();
+	}
 }
