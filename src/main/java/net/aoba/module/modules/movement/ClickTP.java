@@ -66,32 +66,36 @@ public class ClickTP extends Module implements MouseClickListener {
 
 	@Override
 	public void onMouseClick(MouseClickEvent event) {
+
 		if (event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
 			Camera camera = MC.gameRenderer.getCamera();
-			Vec3d direction = Vec3d.fromPolar(camera.getPitch(), camera.getYaw()).multiply(210);
-			Vec3d targetPos = camera.getPos().add(direction);
 
-			RaycastContext context = new RaycastContext(camera.getPos(), targetPos, RaycastContext.ShapeType.OUTLINE,
-					RaycastContext.FluidHandling.NONE, MC.player);
+			if (camera != null) {
+				Vec3d direction = Vec3d.fromPolar(camera.getPitch(), camera.getYaw()).multiply(210);
+				Vec3d targetPos = camera.getPos().add(direction);
 
-			HitResult raycast = MC.world.raycast(context);
+				RaycastContext context = new RaycastContext(camera.getPos(), targetPos,
+						RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, MC.player);
 
-			if (raycast.getType() == HitResult.Type.BLOCK) {
-				BlockHitResult raycastBlock = (BlockHitResult) raycast;
-				BlockPos pos = raycastBlock.getBlockPos();
-				Direction side = raycastBlock.getSide();
+				HitResult raycast = MC.world.raycast(context);
 
-				Vec3d newPos = new Vec3d(pos.getX() + 0.5 + side.getOffsetX(), pos.getY() + 1,
-						pos.getZ() + 0.5 + side.getOffsetZ());
-				int packetsRequired = (int) Math.ceil(MC.player.getPos().distanceTo(newPos) / 10) - 1;
+				if (raycast.getType() == HitResult.Type.BLOCK) {
+					BlockHitResult raycastBlock = (BlockHitResult) raycast;
+					BlockPos pos = raycastBlock.getBlockPos();
+					Direction side = raycastBlock.getSide();
 
-				for (int i = 0; i < packetsRequired; i++) {
-					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+					Vec3d newPos = new Vec3d(pos.getX() + 0.5 + side.getOffsetX(), pos.getY() + 1,
+							pos.getZ() + 0.5 + side.getOffsetZ());
+					int packetsRequired = (int) Math.ceil(MC.player.getPos().distanceTo(newPos) / 10) - 1;
+
+					for (int i = 0; i < packetsRequired; i++) {
+						MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+					}
+
+					MC.player.networkHandler.sendPacket(
+							new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, true));
+					MC.player.setPosition(newPos);
 				}
-
-				MC.player.networkHandler
-						.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, true));
-				MC.player.setPosition(newPos);
 			}
 		}
 	}
