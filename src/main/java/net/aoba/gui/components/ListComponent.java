@@ -18,87 +18,126 @@
 
 package net.aoba.gui.components;
 
-import com.mojang.logging.LogUtils;
+import java.util.List;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
-import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
-import net.aoba.utils.render.Render2D;
+import net.aoba.gui.Size;
+import net.aoba.gui.UIElement;
 import net.aoba.settings.types.StringSetting;
-import net.aoba.utils.types.MouseAction;
+import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 
-import java.util.List;
-
 public class ListComponent extends Component implements MouseClickListener {
-    private StringSetting listSetting;
+	private StringSetting listSetting;
 
-    private List<String> options;
-    private int selectedIndex;
+	private List<String> itemsSource;
+	private int selectedIndex;
 
-    public ListComponent(IGuiElement parent, List<String> options) {
-        super(parent, new Rectangle(null, null, null, 30f));
-        this.setMargin(new Margin(2f, null, 2f, null));
-        this.options = options;
-    }
+	public ListComponent(UIElement parent, List<String> itemsSource) {
+		super(parent);
+		this.setMargin(new Margin(2f, null, 2f, null));
+		this.itemsSource = itemsSource;
+	}
 
-    public ListComponent(IGuiElement parent, List<String> options, StringSetting listSetting) {
-        super(parent, new Rectangle(null, null, null, 30f));
-        this.listSetting = listSetting;
-        this.setMargin(new Margin(2f, null, 2f, null));
-        this.options = options;
-    }
+	public ListComponent(UIElement parent, List<String> itemsSource, StringSetting listSetting) {
+		super(parent);
+		this.listSetting = listSetting;
+		this.setMargin(new Margin(2f, null, 2f, null));
+		this.itemsSource = itemsSource;
+	}
 
-    @Override
+	@Override
+	public void measure(Size availableSize) {
+		preferredSize = new Size(availableSize.getWidth(), 30.0f);
+	}
+
+	public int getSelectedIndex() {
+		return selectedIndex;
+	}
+
+	public String getSelectedItem() {
+		if (itemsSource.size() > selectedIndex)
+			return itemsSource.get(selectedIndex);
+		else
+			return null;
+	}
+
+	public List<String> getItemsSource() {
+		return itemsSource;
+	}
+
+	public void setItemsSource(List<String> itemsSource) {
+		this.itemsSource = itemsSource;
+		setSelectedIndex(this.selectedIndex);
+	}
+
+	@Override
 	public void onVisibilityChanged() {
-    	super.onVisibilityChanged();
-		if(this.isVisible())
+		super.onVisibilityChanged();
+		if (this.isVisible())
 			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 		else
 			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
 	}
-    
-    @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
-        float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(listSetting.getValue());
-        
-        float actualX = this.getActualSize().getX();
-        float actualY = this.getActualSize().getY();
-        float actualWidth = this.getActualSize().getWidth();
-        
-        Render2D.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth, actualY + 8, 0xFFFFFF);
-        Render2D.drawString(drawContext, "<<", actualX + 8, actualY + 4, GuiManager.foregroundColor.getValue());
-        Render2D.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4, GuiManager.foregroundColor.getValue());
-    }
 
-    public void setSelectedIndex(int index) {
-        selectedIndex = index;
-        listSetting.setValue(options.get(selectedIndex));
-    }
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks) {
 
-    @Override
-    public void onMouseClick(MouseClickEvent event) {
-    	super.onMouseClick(event);
+		float actualX = this.getActualSize().getX();
+		float actualY = this.getActualSize().getY();
+		float actualWidth = this.getActualSize().getWidth();
 
-        if (event.button == MouseButton.LEFT) {
-            if (this.getActualSize().getY() < event.mouseY && event.mouseY < this.getActualSize().getY() + this.getActualSize().getHeight()) {
+		if (listSetting != null) {
+			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(listSetting.getValue());
+			Render2D.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
+					actualY + 8, 0xFFFFFF);
+		} else if (itemsSource.size() > 0) {
+			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(itemsSource.get(selectedIndex));
+			Render2D.drawString(drawContext, itemsSource.get(selectedIndex),
+					actualX + (actualWidth / 2.0f) - stringWidth, actualY + 8, 0xFFFFFF);
+		}
 
-                float mouseX = (float)event.mouseX;
-                float actualX = this.getActualSize().getX();
-                float actualWidth = this.getActualSize().getWidth();
-                
-                if (mouseX > actualX && mouseX < (actualX + 32)) {
-                    setSelectedIndex(Math.max(selectedIndex - 1, 0));
-                } else if (mouseX > (actualX + actualWidth - 32) && mouseX < (actualX + actualWidth))
-                    setSelectedIndex(Math.min(selectedIndex + 1, options.size() - 1));
-                
-                event.cancel();
-            }
-        }
-    }
+		Render2D.drawString(drawContext, "<<", actualX + 8, actualY + 4, GuiManager.foregroundColor.getValue());
+		Render2D.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4,
+				GuiManager.foregroundColor.getValue());
+	}
+
+	public void setSelectedIndex(int index) {
+		selectedIndex = index;
+
+		if (listSetting != null) {
+			listSetting.setValue(itemsSource.get(selectedIndex));
+		}
+	}
+
+	@Override
+	public void onMouseClick(MouseClickEvent event) {
+		super.onMouseClick(event);
+
+		Rectangle actualSize = this.getActualSize();
+		if (actualSize != null && actualSize.isDrawable()) {
+			if (event.button == MouseButton.LEFT) {
+				if (this.getActualSize().getY() < event.mouseY
+						&& event.mouseY < this.getActualSize().getY() + this.getActualSize().getHeight()) {
+
+					float mouseX = (float) event.mouseX;
+					float actualX = this.getActualSize().getX();
+					float actualWidth = this.getActualSize().getWidth();
+
+					if (mouseX > actualX && mouseX < (actualX + 32)) {
+						setSelectedIndex(Math.max(selectedIndex - 1, 0));
+					} else if (mouseX > (actualX + actualWidth - 32) && mouseX < (actualX + actualWidth))
+						setSelectedIndex(Math.min(selectedIndex + 1, itemsSource.size() - 1));
+
+					event.cancel();
+				}
+			}
+		}
+	}
 }

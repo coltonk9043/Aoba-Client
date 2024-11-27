@@ -2,14 +2,13 @@ package net.aoba.gui.navigation;
 
 import org.joml.Matrix4f;
 
-import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.utils.render.Render2D;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
@@ -18,15 +17,12 @@ import net.minecraft.client.util.math.MatrixStack;
 public class PinnableWindow extends Window {
 	protected BooleanSetting isPinned;
 
-	public PinnableWindow(String ID, float x, float y, float width, float height) {
-		super(ID, x, y, width, height);
-		
-		isPinned = BooleanSetting.builder()
-	    		.id(ID + "_pinned")
-	    		.defaultValue(false)
-	    		.build();
-		
-		SettingManager.registerSetting(isPinned, Aoba.getInstance().settingManager.hiddenContainer);
+	public PinnableWindow(String ID, float x, float y) {
+		super(ID, x, y);
+
+		isPinned = BooleanSetting.builder().id(ID + "_pinned").defaultValue(false).build();
+
+		SettingManager.registerSetting(isPinned);
 	}
 
 	public final boolean isPinned() {
@@ -38,7 +34,7 @@ public class PinnableWindow extends Window {
 	}
 
 	@Override
-	public void OnMouseClick(MouseClickEvent event) {
+	public void onMouseClick(MouseClickEvent event) {
 		// Check to see if the event is cancelled. If not, execute branch.
 		if (!event.isCancelled()) {
 			if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
@@ -55,12 +51,12 @@ public class PinnableWindow extends Window {
 				}
 			}
 		}
-		
+
 		// Cancel any other movements if it is pinned.
-		if(this.isPinned())
+		if (this.isPinned())
 			event.cancel();
-		
-		super.OnMouseClick(event);
+
+		super.onMouseClick(event);
 	}
 
 	@Override

@@ -18,148 +18,143 @@
 
 package net.aoba.gui.components;
 
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
-import net.aoba.gui.Rectangle;
+import net.aoba.gui.Size;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
-import net.aoba.utils.render.Render2D;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
 
 public class SliderComponent extends Component {
-    private String text;
-    
-    private float currentSliderPosition = 0.4f;
-    
-    private float minValue;
-    private float maxValue;
-    private float value;
-    
-    private boolean isSliding = false;
+	private float currentSliderPosition = 0.4f;
 
-    FloatSetting floatSetting;
+	private float minValue;
+	private float maxValue;
+	private float value;
 
-    public SliderComponent(String text, IGuiElement parent) {
-        super(parent, new Rectangle(null, null, null, 45f));
-        this.text = text;
-        this.floatSetting = null;
-        this.setMargin(new Margin(8f, 2f, 8f, 2f));
-    }
+	private boolean isSliding = false;
 
-    public SliderComponent(IGuiElement parent, FloatSetting floatSetting) {
-        super(parent, new Rectangle(null, null, null, 45f));
-        this.floatSetting = floatSetting;
-        text = floatSetting.displayName;
-        minValue = floatSetting.min_value;
-        maxValue = floatSetting.max_value;
-        value = floatSetting.getValue();
-        currentSliderPosition = (float) ((value - minValue) / (maxValue - minValue));
-        
-        floatSetting.addOnUpdate(f -> {
-        	value = f;
-        	currentSliderPosition = (float) Math.min(Math.max((value - minValue) / (maxValue - minValue), 0f), 1f);
-        });
-        
-        this.setMargin(new Margin(8f, 2f, 8f, 2f));
-    }
+	FloatSetting floatSetting;
 
-    public float getSliderPosition() {
-        return this.currentSliderPosition;
-    }
+	public SliderComponent(UIElement parent) {
+		super(parent);
+		this.floatSetting = null;
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+	}
 
-    public void setSliderPosition(float pos) {
-        this.currentSliderPosition = pos;
-    }
+	public SliderComponent(UIElement parent, FloatSetting floatSetting) {
+		super(parent);
+		this.floatSetting = floatSetting;
+		minValue = floatSetting.min_value;
+		maxValue = floatSetting.max_value;
+		value = floatSetting.getValue();
+		currentSliderPosition = (float) ((value - minValue) / (maxValue - minValue));
 
-    public void setText(String text) {
-        this.text = text;
-    }
+		floatSetting.addOnUpdate(f -> {
+			value = f;
+			currentSliderPosition = (float) Math.min(Math.max((value - minValue) / (maxValue - minValue), 0f), 1f);
+		});
 
-    public String getText() {
-        return this.text;
-    }
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+	}
 
-    @Override
-    public void onMouseClick(MouseClickEvent event) {
-        super.onMouseClick(event);
-        if (event.button == MouseButton.LEFT) {
-            if (event.action == MouseAction.DOWN) {
-                if (hovered) {
-                    isSliding = true;
-                    event.cancel();
-                }
-            } else if (event.action == MouseAction.UP) {
-                isSliding = false;
-            }
-        }
-    }
+	@Override
+	public void measure(Size availableSize) {
+		preferredSize = new Size(availableSize.getWidth(), 45.0f);
+	}
 
-    @Override
-    public void onMouseMove(MouseMoveEvent event) {
-        super.onMouseMove(event);
+	public float getSliderPosition() {
+		return this.currentSliderPosition;
+	}
 
-        if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.isSliding) {
-            double mouseX = event.getX();
+	public void setSliderPosition(float pos) {
+		this.currentSliderPosition = pos;
+	}
 
-            float actualX = this.getActualSize().getX();
-            float actualWidth = this.getActualSize().getWidth();
+	@Override
+	public void onMouseClick(MouseClickEvent event) {
+		super.onMouseClick(event);
+		if (event.button == MouseButton.LEFT) {
+			if (event.action == MouseAction.DOWN) {
+				if (hovered) {
+					isSliding = true;
+					event.cancel();
+				}
+			} else if (event.action == MouseAction.UP) {
+				isSliding = false;
+			}
+		}
+	}
 
-            float targetPosition = (float) Math.min(((mouseX - actualX) / actualWidth), 1f);
-            targetPosition = Math.max(0f, targetPosition);
+	@Override
+	public void onMouseMove(MouseMoveEvent event) {
+		super.onMouseMove(event);
 
-            currentSliderPosition = targetPosition;
-            value = (currentSliderPosition * (maxValue - minValue)) + minValue;
-            
-            if(floatSetting != null)
-            	floatSetting.setValue(value);
-        }
-    }
+		if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.isSliding) {
+			double mouseX = event.getX();
 
+			float actualX = this.getActualSize().getX();
+			float actualWidth = this.getActualSize().getWidth();
 
-    @Override
-    public void update() {
-        super.update();
-    }
+			float targetPosition = (float) Math.min(((mouseX - actualX) / actualWidth), 1f);
+			targetPosition = Math.max(0f, targetPosition);
 
-    @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
-        if (this.floatSetting == null) {
-            return;
-        }
+			currentSliderPosition = targetPosition;
+			value = (currentSliderPosition * (maxValue - minValue)) + minValue;
 
-        MinecraftClient mc = MinecraftClient.getInstance();
-        MatrixStack matrixStack = drawContext.getMatrices();
-        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+			if (floatSetting != null)
+				floatSetting.setValue(value);
+		}
+	}
 
-        float actualX = this.getActualSize().getX();
-        float actualY = this.getActualSize().getY();
-        float actualWidth = this.getActualSize().getWidth();
+	@Override
+	public void update() {
+		super.update();
+	}
 
-        float filledLength = actualWidth * currentSliderPosition;
-        
-        if(floatSetting != null) {
-        	float defaultLength = actualWidth * ((floatSetting.getDefaultValue() - minValue) / (maxValue - minValue));
-        	Render2D.drawBox(matrix4f, actualX + defaultLength - 2, actualY + 28, 4, 14, Colors.White);
-        }
-        
-        Render2D.drawBox(matrix4f, actualX, actualY + 34, filledLength, 2, GuiManager.foregroundColor.getValue());
-        Render2D.drawBox(matrix4f, actualX + filledLength, actualY + 34, (actualWidth - filledLength), 2, new Color(255, 255, 255, 255));
-        
-        Render2D.drawCircle(matrix4f, actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
-        Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks) {
+		if (this.floatSetting == null) {
+			return;
+		}
 
-        String valueText = String.format("%.02f", value);
-        int textSize = mc.textRenderer.getWidth(valueText) * 2;
-        Render2D.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
-    }
+		MinecraftClient mc = MinecraftClient.getInstance();
+		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+
+		float actualX = this.getActualSize().getX();
+		float actualY = this.getActualSize().getY();
+		float actualWidth = this.getActualSize().getWidth();
+
+		float filledLength = actualWidth * currentSliderPosition;
+
+		if (floatSetting != null) {
+			float defaultLength = actualWidth * ((floatSetting.getDefaultValue() - minValue) / (maxValue - minValue));
+			Render2D.drawBox(matrix4f, actualX + defaultLength - 2, actualY + 28, 4, 14, Colors.White);
+		}
+
+		Render2D.drawBox(matrix4f, actualX, actualY + 34, filledLength, 2, GuiManager.foregroundColor.getValue());
+		Render2D.drawBox(matrix4f, actualX + filledLength, actualY + 34, (actualWidth - filledLength), 2,
+				new Color(255, 255, 255, 255));
+
+		Render2D.drawCircle(matrix4f, actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
+
+		String valueText = String.format("%.02f", value);
+		int textSize = mc.textRenderer.getWidth(valueText) * 2;
+		Render2D.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
+
+		super.draw(drawContext, partialTicks);
+	}
 }

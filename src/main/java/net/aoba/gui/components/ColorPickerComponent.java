@@ -18,13 +18,16 @@
 
 package net.aoba.gui.components;
 
+import org.joml.Matrix4f;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
+import net.aoba.gui.Size;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.settings.types.ColorSetting;
@@ -34,7 +37,6 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
 
 public class ColorPickerComponent extends Component {
 
@@ -43,20 +45,19 @@ public class ColorPickerComponent extends Component {
 	private boolean collapsed = true;
 	private ColorSetting color;
 
-	public ColorPickerComponent(String text, IGuiElement parent) {
-		super(parent, new Rectangle(null, null, null, 30f));
+	public ColorPickerComponent(UIElement parent, String text) {
+		super(parent);
 		this.text = text;
 
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
-	public ColorPickerComponent(IGuiElement parent, ColorSetting color) {
-		super(parent, new Rectangle(null, null, null, 30f));
+	public ColorPickerComponent(UIElement parent, ColorSetting color) {
+		super(parent);
 		this.text = color.displayName;
 		this.color = color;
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
-
 
 	public void setText(String text) {
 		this.text = text;
@@ -67,36 +68,48 @@ public class ColorPickerComponent extends Component {
 	}
 
 	@Override
+	public void measure(Size availableSize) {
+		if (collapsed) {
+			preferredSize = new Size(availableSize.getWidth(), 30.0f);
+		} else {
+			preferredSize = new Size(availableSize.getWidth(), 175.0f);
+		}
+	}
+
+	@Override
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
 		if (event.button == MouseButton.LEFT) {
 			if (event.action == MouseAction.DOWN) {
 				if (hovered) {
-					float mouseX = (float)event.mouseX;
-					float mouseY = (float)event.mouseY;
+					float mouseX = (float) event.mouseX;
+					float mouseY = (float) event.mouseY;
 					float actualY = actualSize.getY();
 					if (mouseY < actualY + 29) {
 						collapsed = !collapsed;
-						if (collapsed)
-							this.setHeight(30f);
-						else
-							this.setHeight(175f);
+
+						invalidate();
+						/*
+						 * if (collapsed) this.setHeight(30f); else this.setHeight(175f);
+						 */
 						event.cancel();
-						
-					}else if(!collapsed) {
+
+					} else if (!collapsed) {
 						if (mouseY > actualY + 29 && mouseY <= actualY + 59) {
 							float actualX = this.getActualSize().getX();
 							float actualWidth = this.getActualSize().getWidth();
-							
-							Rectangle leftButton = new Rectangle(actualX + actualWidth - 128, actualY + 34, 16.0f, 16.0f);
-							Rectangle rightButton = new Rectangle(actualX + actualWidth - 16, actualY + 34, 16.0f, 16.0f);
-							
+
+							Rectangle leftButton = new Rectangle(actualX + actualWidth - 128, actualY + 34, 16.0f,
+									16.0f);
+							Rectangle rightButton = new Rectangle(actualX + actualWidth - 16, actualY + 34, 16.0f,
+									16.0f);
+
 							ColorMode[] enumConstants = color.getMode().getDeclaringClass().getEnumConstants();
 							int currentIndex = java.util.Arrays.asList(enumConstants).indexOf(color.getMode());
 							int enumCount = enumConstants.length;
-							if(leftButton.intersects(mouseX,  mouseY)) {
+							if (leftButton.intersects(mouseX, mouseY)) {
 								currentIndex = (currentIndex - 1 + enumCount) % enumCount;
-							}else if (rightButton.intersects(mouseX, mouseY)) {
+							} else if (rightButton.intersects(mouseX, mouseY)) {
 								currentIndex = (currentIndex + 1) % enumCount;
 							}
 
@@ -106,7 +119,7 @@ public class ColorPickerComponent extends Component {
 								isSliding = true;
 						}
 					}
-						
+
 					event.cancel();
 				}
 			} else if (event.action == MouseAction.UP) {
@@ -128,7 +141,8 @@ public class ColorPickerComponent extends Component {
 		double mouseY = event.getY();
 		if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.isSliding) {
 			Color colorToModify = color.getValue();
-			float vertical = (float) Math.min(Math.max(1.0f - (((mouseY - (actualY + 59)) - 1) / (actualHeight - 63)), 0.0f), 1.0f);
+			float vertical = (float) Math
+					.min(Math.max(1.0f - (((mouseY - (actualY + 59)) - 1) / (actualHeight - 63)), 0.0f), 1.0f);
 
 			// If inside of saturation/lightness box.
 			if (mouseX >= actualX && mouseX <= actualX + actualWidth - 76) {
@@ -166,15 +180,16 @@ public class ColorPickerComponent extends Component {
 
 		if (!collapsed) {
 			// Mode
-	        Render2D.drawString(drawContext, "Mode", actualX, actualY + 34, 0xFFFFFF);
-	        Render2D.drawString(drawContext, "<", actualX + actualWidth - 128, actualY + 34, 0xFFFFFF);
-	        Render2D.drawString(drawContext, ">", actualX + actualWidth - 16, actualY + 34, 0xFFFFFF);
-	        
-	        String enumText = color.getMode().name();
-	        float stringLength = Render2D.getStringWidth(enumText);
-	        Render2D.drawString(drawContext, enumText, actualX + actualWidth - 70 - stringLength, actualY + 34, 0xFFFFFF);
-	        		
-	        // Gradients
+			Render2D.drawString(drawContext, "Mode", actualX, actualY + 34, 0xFFFFFF);
+			Render2D.drawString(drawContext, "<", actualX + actualWidth - 128, actualY + 34, 0xFFFFFF);
+			Render2D.drawString(drawContext, ">", actualX + actualWidth - 16, actualY + 34, 0xFFFFFF);
+
+			String enumText = color.getMode().name();
+			float stringLength = Render2D.getStringWidth(enumText);
+			Render2D.drawString(drawContext, enumText, actualX + actualWidth - 70 - stringLength, actualY + 34,
+					0xFFFFFF);
+
+			// Gradients
 			Color newColor = new Color(255, 0, 0);
 			Color colorSetting = this.color.getValue();
 			newColor.setHSV(colorSetting.getHue(), 1.0f, 1.0f);
@@ -187,8 +202,8 @@ public class ColorPickerComponent extends Component {
 			float increment = ((actualHeight - 63) / 6.0f);
 			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59, 30, increment,
 					new Color(255, 0, 0), new Color(255, 255, 0));
-			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59 + increment, 30,
-					increment, new Color(255, 255, 0), new Color(0, 255, 0));
+			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59 + increment, 30, increment,
+					new Color(255, 255, 0), new Color(0, 255, 0));
 			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59 + (2 * increment), 30,
 					increment, new Color(0, 255, 0), new Color(0, 255, 255));
 			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59 + (3 * increment), 30,
@@ -204,19 +219,22 @@ public class ColorPickerComponent extends Component {
 
 			// Draw Outlines
 			Render2D.drawBoxOutline(matrix4f, actualX, actualY + 59, actualWidth - 76, actualHeight - 63, Colors.Black);
-			Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 68, actualY + 59, 30, actualHeight - 63, Colors.Black);
-			Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 30, actualY + 59, 30, actualHeight - 63, Colors.Black);
+			Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 68, actualY + 59, 30, actualHeight - 63,
+					Colors.Black);
+			Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 30, actualY + 59, 30, actualHeight - 63,
+					Colors.Black);
 
 			// Draw Indicators
 			Render2D.drawCircle(matrix4f, actualX + (colorSetting.getSaturation() * (actualWidth - 76)),
-					actualY + 59 + ((1.0f - colorSetting.getLuminance()) * (actualHeight - 63)), 3, new Color(255, 255, 255, 255));
-			Render2D.drawOutlinedBox(matrix4f, actualX + actualWidth - 68,
-					actualY + 59 + ((colorSetting.getHue() / 360.0f) * (actualHeight - 63)), 30, 3, Colors.Black,new Color(255, 255, 255, 255));
-			Render2D.drawOutlinedBox(matrix4f, actualX + actualWidth - 30,
-					actualY + 59 + (((255.0f - (colorSetting.getAlpha() * 255)) / 255.0f) * (actualHeight - 63)), 30, 3, Colors.Black,
+					actualY + 59 + ((1.0f - colorSetting.getLuminance()) * (actualHeight - 63)), 3,
 					new Color(255, 255, 255, 255));
+			Render2D.drawOutlinedBox(matrix4f, actualX + actualWidth - 68,
+					actualY + 59 + ((colorSetting.getHue() / 360.0f) * (actualHeight - 63)), 30, 3, Colors.Black,
+					new Color(255, 255, 255, 255));
+			Render2D.drawOutlinedBox(matrix4f, actualX + actualWidth - 30,
+					actualY + 59 + (((255.0f - (colorSetting.getAlpha() * 255)) / 255.0f) * (actualHeight - 63)), 30, 3,
+					Colors.Black, new Color(255, 255, 255, 255));
 		}
 	}
-
 
 }

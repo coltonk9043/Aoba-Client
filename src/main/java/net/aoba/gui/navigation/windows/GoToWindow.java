@@ -1,15 +1,26 @@
 package net.aoba.gui.navigation.windows;
 
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.apache.commons.lang3.math.NumberUtils;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.gui.Margin;
 import net.aoba.gui.colors.Colors;
-import net.aoba.gui.components.*;
+import net.aoba.gui.components.ButtonComponent;
+import net.aoba.gui.components.CheckboxComponent;
+import net.aoba.gui.components.EnumComponent;
+import net.aoba.gui.components.SeparatorComponent;
+import net.aoba.gui.components.SliderComponent;
+import net.aoba.gui.components.StackPanelComponent;
+import net.aoba.gui.components.StringComponent;
+import net.aoba.gui.components.TextBoxComponent;
 import net.aoba.gui.navigation.Window;
-import net.aoba.utils.render.Render3D;
 import net.aoba.pathfinding.AbstractPathManager;
 import net.aoba.pathfinding.FlyPathManager;
 import net.aoba.pathfinding.PathNode;
@@ -20,6 +31,7 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.StringSetting;
+import net.aoba.utils.render.Render3D;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PlantBlock;
 import net.minecraft.client.MinecraftClient;
@@ -32,10 +44,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Vec3d;
-import org.apache.commons.lang3.math.NumberUtils;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class GoToWindow extends Window implements TickListener, Render3DListener {
 
@@ -47,8 +55,11 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private ButtonComponent startButton;
+	private StringComponent startButtonText;
 	private ButtonComponent setPositionButton;
+	private StringComponent radiusHeader;
 	private SliderComponent radiusSlider;
+	private StringComponent flyMaxSpeedHeader;
 	private SliderComponent flyMaxSpeedSlider;
 
 	private EnumSetting<Pathfinder> pathfinderMode;
@@ -72,16 +83,13 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	private ArrayList<PathNode> nodes;
 	private boolean isStarted = false;
 
-	public GoToWindow(String title, int x, int y) {
-		super(title, x, y, 360, 0);
+	public GoToWindow() {
+		super("Go To Location", 540, 150);
 
-		this.inheritHeightFromChildren = true;
+		this.minWidth = 350f;
 
-		pathfinderMode = EnumSetting.<Pathfinder>builder()
-				.id("goto_pathfinder_mode")
-				.displayName("Mode")
-				.defaultValue(Pathfinder.Walk)
-				.onUpdate(var -> {
+		pathfinderMode = EnumSetting.<Pathfinder>builder().id("goto_pathfinder_mode").displayName("Mode")
+				.defaultValue(Pathfinder.Walk).onUpdate(var -> {
 					switch (var) {
 					case Pathfinder.Fly:
 						pathManager = new FlyPathManager();
@@ -95,41 +103,30 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 					}
 
 					// Disable Radius setting if not teleport
+					radiusHeader.setVisible(var == Pathfinder.Teleport);
 					radiusSlider.setVisible(var == Pathfinder.Teleport);
+					flyMaxSpeedHeader.setVisible(var == Pathfinder.Fly);
 					flyMaxSpeedSlider.setVisible(var == Pathfinder.Fly);
 
 					if (isStarted)
 						recalculatePathAsync();
-				})
-				.build();
-			
-		avoidWater = BooleanSetting.builder()
-				.id("goto_avoid_water")
-				.displayName("Avoid Water")
-				.description("Whether the pathfinder will avoid Water")
-				.defaultValue(false)
-				.onUpdate(var -> {
+				}).build();
+
+		avoidWater = BooleanSetting.builder().id("goto_avoid_water").displayName("Avoid Water")
+				.description("Whether the pathfinder will avoid Water").defaultValue(false).onUpdate(var -> {
 					pathManager.setAvoidWater(var);
 					if (isStarted)
 						recalculatePathAsync();
-				})
-				.build();
+				}).build();
 
-		avoidLava = BooleanSetting.builder()
-				.id("goto_avoid_lava")
-				.displayName("Avoid Lava")
-				.description("Whether the pathfinder will avoid Lava")
-				.defaultValue(false)
-				.onUpdate(var -> {
+		avoidLava = BooleanSetting.builder().id("goto_avoid_lava").displayName("Avoid Lava")
+				.description("Whether the pathfinder will avoid Lava").defaultValue(false).onUpdate(var -> {
 					pathManager.setAvoidLava(var);
 					if (isStarted)
 						recalculatePathAsync();
-				})
-				.build();
+				}).build();
 
-		radius = FloatSetting.builder()
-				.id("goto_radius")
-				.displayName("Teleport Radius")
+		radius = FloatSetting.builder().id("goto_radius").displayName("Teleport Radius")
 				.description("The radius that the teleport pathfinder will attempt to find a block within.")
 				.defaultValue(5.0f).minValue(1.0f).maxValue(100.0f).step(1.0f).onUpdate(s -> {
 					if (pathManager instanceof TeleportPathManager) {
@@ -140,51 +137,38 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 					}
 				}).build();
 
-		locationX = StringSetting.builder()
-				.id("goto_location_x")
-				.displayName("X Coord")
-				.description("X Coordinate")
+		locationX = StringSetting.builder().id("goto_location_x").displayName("X Coord").description("X Coordinate")
 				.build();
-			
-		locationY = StringSetting.builder()
-				.id("goto_location_y")
-				.displayName("Y Coord")
-				.description("Y Coordinate")
+
+		locationY = StringSetting.builder().id("goto_location_y").displayName("Y Coord").description("Y Coordinate")
 				.build();
-		
-		locationZ = StringSetting.builder()
-				.id("goto_location_z")
-				.displayName("Z Coord")
-				.description("Z Coordinate")
+
+		locationZ = StringSetting.builder().id("goto_location_z").displayName("Z Coord").description("Z Coordinate")
 				.build();
-		
-		maxSpeed = FloatSetting.builder()
-				.id("goto_max_speed")
-				.displayName("Max Speed")
-				.description("Max Speed")
-				.defaultValue(4.0f)
-				.minValue(0.5f)
-				.maxValue(15.0f)
-				.step(0.5f)
-				.build();
+
+		maxSpeed = FloatSetting.builder().id("goto_max_speed").displayName("Max Speed").description("Max Speed")
+				.defaultValue(4.0f).minValue(0.5f).maxValue(15.0f).step(0.5f).build();
 
 		// Register Settings
-		SettingManager.registerSetting(this.pathfinderMode, Aoba.getInstance().settingManager.configContainer);
-		SettingManager.registerSetting(this.avoidWater, Aoba.getInstance().settingManager.configContainer);
-		SettingManager.registerSetting(this.avoidLava, Aoba.getInstance().settingManager.configContainer);
-		SettingManager.registerSetting(this.radius, Aoba.getInstance().settingManager.configContainer);
-		SettingManager.registerSetting(this.locationX, Aoba.getInstance().settingManager.configContainer);
-		SettingManager.registerSetting(this.locationY, Aoba.getInstance().settingManager.configContainer);
-		SettingManager.registerSetting(this.locationZ, Aoba.getInstance().settingManager.configContainer);
-		SettingManager.registerSetting(this.maxSpeed, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(this.pathfinderMode);
+		SettingManager.registerSetting(this.avoidWater);
+		SettingManager.registerSetting(this.avoidLava);
+		SettingManager.registerSetting(this.radius);
+		SettingManager.registerSetting(this.locationX);
+		SettingManager.registerSetting(this.locationY);
+		SettingManager.registerSetting(this.locationZ);
+		SettingManager.registerSetting(this.maxSpeed);
 
 		StackPanelComponent stackPanel = new StackPanelComponent(this);
-		stackPanel.setMargin(new Margin(null, 30f, null, null));
 
-		StringComponent label = new StringComponent(
-				"GoTo will automatically walk/fly your player to specific coordinates.", stackPanel);
+		stackPanel.addChild(new StringComponent(stackPanel, "PathFinding"));
+		stackPanel.addChild(new SeparatorComponent(stackPanel));
+
+		StringComponent label = new StringComponent(stackPanel,
+				"GoTo will automatically walk/fly your player to specific coordinates.");
 		stackPanel.addChild(label);
 
+		stackPanel.addChild(new StringComponent(stackPanel, "Mode"));
 		EnumComponent<Pathfinder> pathfinderModeComponent = new EnumComponent<Pathfinder>(stackPanel, pathfinderMode);
 		stackPanel.addChild(pathfinderModeComponent);
 
@@ -194,25 +178,32 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		CheckboxComponent avoidLavaCheckbox = new CheckboxComponent(stackPanel, avoidLava);
 		stackPanel.addChild(avoidLavaCheckbox);
 
+		radiusHeader = new StringComponent(stackPanel, "Radius");
+		stackPanel.addChild(radiusHeader);
 		radiusSlider = new SliderComponent(stackPanel, radius);
 		stackPanel.addChild(radiusSlider);
 
+		flyMaxSpeedHeader = new StringComponent(stackPanel, "Max Speed");
+		stackPanel.addChild(flyMaxSpeedHeader);
 		flyMaxSpeedSlider = new SliderComponent(stackPanel, maxSpeed);
 		stackPanel.addChild(flyMaxSpeedSlider);
 
+		stackPanel.addChild(new StringComponent(stackPanel, "X Coordinate"));
 		TextBoxComponent locationXTextBox = new TextBoxComponent(stackPanel, locationX);
 		stackPanel.addChild(locationXTextBox);
 
+		stackPanel.addChild(new StringComponent(stackPanel, "Y Coordinate"));
 		TextBoxComponent locationYTextBox = new TextBoxComponent(stackPanel, locationY);
 		stackPanel.addChild(locationYTextBox);
 
+		stackPanel.addChild(new StringComponent(stackPanel, "Z Coordinate"));
 		TextBoxComponent locationZTextBox = new TextBoxComponent(stackPanel, locationZ);
 		stackPanel.addChild(locationZTextBox);
 
 		startRunnable = new Runnable() {
 			@Override
 			public void run() {
-				startButton.setText("Cancel");
+				startButtonText.setText("Cancel");
 				startButton.setOnClick(clearRunnable);
 				isStarted = true;
 				recalculatePathAsync();
@@ -225,7 +216,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			public void run() {
 				unregisterEvents();
 				clear();
-				startButton.setText("Calculate");
+				startButtonText.setText("Calculate");
 				startButton.setOnClick(startRunnable);
 			}
 		};
@@ -241,10 +232,13 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			}
 		};
 
-		startButton = new ButtonComponent(stackPanel, "Calculate", startRunnable);
+		startButton = new ButtonComponent(stackPanel, startRunnable);
+		startButtonText = new StringComponent(startButton, "Calculate");
+		startButton.addChild(startButtonText);
 		stackPanel.addChild(startButton);
 
-		setPositionButton = new ButtonComponent(stackPanel, "Set Position", setPositionRunnable);
+		setPositionButton = new ButtonComponent(stackPanel, setPositionRunnable);
+		setPositionButton.addChild(new StringComponent(setPositionButton, "Set Position"));
 		stackPanel.addChild(setPositionButton);
 
 		children.add(stackPanel);
@@ -466,7 +460,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
 				Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 				clear();
-				startButton.setText("Calculate");
+				startButtonText.setText("Calculate");
 				startButton.setOnClick(startRunnable);
 			}
 		}

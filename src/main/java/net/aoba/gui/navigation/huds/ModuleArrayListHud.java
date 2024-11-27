@@ -4,10 +4,10 @@ import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
+import net.aoba.gui.ResizeMode;
 import net.aoba.gui.TextAlign;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.module.Module;
@@ -23,10 +23,10 @@ public class ModuleArrayListHud extends HudWindow {
 			.displayName("Text Align").description("Text Alignment").defaultValue(TextAlign.Left).build();
 
 	public ModuleArrayListHud(int x, int y) {
-		super("ModuleArrayListHud", x, y, 0, 0);
-		resizeable = false;
+		super("ModuleArrayListHud", x, y);
+		resizeMode = ResizeMode.None;
 
-		SettingManager.registerSetting(textAlign, Aoba.getInstance().settingManager.configContainer);
+		SettingManager.registerSetting(textAlign);
 
 		// Calculate max possible width.
 		float newWidth = 0;
@@ -40,8 +40,8 @@ public class ModuleArrayListHud extends HudWindow {
 	}
 
 	@Override
-	public void OnMouseClick(MouseClickEvent event) {
-		super.OnMouseClick(event);
+	public void onMouseClick(MouseClickEvent event) {
+		super.onMouseClick(event);
 
 		if (this.isMouseOver && event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
 			TextAlign currentValue = textAlign.getValue();
@@ -63,12 +63,12 @@ public class ModuleArrayListHud extends HudWindow {
 				totalHeight += 20;
 			}
 		}
-		this.setHeight(totalHeight + 10);
+		// this.setHeight(totalHeight + 10);
 	}
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		if (getVisible()) {
+		if (isVisible()) {
 			Rectangle pos = position.getValue();
 
 			if (pos.isDrawable()) {

@@ -26,9 +26,9 @@ import org.joml.Quaternionf;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
-import net.aoba.gui.Rectangle;
+import net.aoba.gui.Size;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.navigation.CloseableWindow;
 import net.aoba.module.Module;
@@ -52,13 +52,18 @@ public class ModuleComponent extends Component {
 	private boolean spinning = false;
 	private float spinAngle = 0;
 
-	public ModuleComponent(String text, IGuiElement parent, Module module) {
-		super(parent, new Rectangle(null, null, null, 30f));
+	public ModuleComponent(UIElement parent, String text, Module module) {
+		super(parent);
 
 		this.text = text;
 		this.module = module;
 
 		this.setMargin(new Margin(8f, null, 8f, null));
+	}
+
+	@Override
+	public void measure(Size availableSize) {
+		preferredSize = new Size(availableSize.getWidth(), 30.0f);
 	}
 
 	@Override
@@ -116,15 +121,21 @@ public class ModuleComponent extends Component {
 				if (isOnOptionsButton) {
 					spinning = true;
 					if (lastSettingsTab == null) {
-						lastSettingsTab = new CloseableWindow(this.module.getName(), actualX + actualWidth + 1, actualY,
-								320.0f, 0.0f);
-						lastSettingsTab.minWidth = 320.0f;
-						lastSettingsTab.setInheritHeightFromChildren(true);
+						lastSettingsTab = new CloseableWindow(this.module.getName(), actualX + actualWidth + 1,
+								actualY);
+						lastSettingsTab.setMinWidth(320.0f);
+						// lastSettingsTab.setInheritHeightFromChildren(true);
 						StackPanelComponent stackPanel = new StackPanelComponent(lastSettingsTab);
-						stackPanel.setMargin(new Margin(null, 30f, null, null));
+
+						StringComponent titleComponent = new StringComponent(stackPanel,
+								this.module.getName() + " Settings");
+						titleComponent.setIsHitTestVisible(false);
+						stackPanel.addChild(titleComponent);
+
+						stackPanel.addChild(new SeparatorComponent(stackPanel));
 
 						KeybindComponent keybindComponent = new KeybindComponent(stackPanel, module.getBind());
-						keybindComponent.setSize(new Rectangle(null, null, null, 30f));
+						// keybindComponent.setSize(new Rectangle(null, null, null, 30f));
 
 						stackPanel.addChild(keybindComponent);
 
@@ -150,6 +161,7 @@ public class ModuleComponent extends Component {
 							}
 
 							if (c != null) {
+								stackPanel.addChild(new StringComponent(stackPanel, setting.displayName));
 								stackPanel.addChild(c);
 							}
 						}
@@ -160,8 +172,10 @@ public class ModuleComponent extends Component {
 							spinning = false;
 						});
 
-						lastSettingsTab.setVisible(true);
+						lastSettingsTab.setMinWidth(250.0f);
+						lastSettingsTab.setMaxWidth(600f);
 						Aoba.getInstance().guiManager.AddWindow(lastSettingsTab, "Modules");
+						lastSettingsTab.initialize();
 						spinning = true;
 					} else {
 						Aoba.getInstance().guiManager.RemoveWindow(lastSettingsTab, "Modules");

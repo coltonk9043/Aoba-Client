@@ -18,6 +18,17 @@
 
 package net.aoba.gui;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
+
+import com.google.common.collect.Lists;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.Render2DEvent;
@@ -25,25 +36,42 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.event.listeners.Render2DListener;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.RainbowColor;
 import net.aoba.gui.colors.RandomColor;
+import net.aoba.gui.components.GridComponent;
+import net.aoba.gui.components.ImageComponent;
 import net.aoba.gui.components.ModuleComponent;
+import net.aoba.gui.components.SeparatorComponent;
 import net.aoba.gui.components.StackPanelComponent;
+import net.aoba.gui.components.StringComponent;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.gui.navigation.NavigationBar;
 import net.aoba.gui.navigation.Page;
-import net.aoba.gui.navigation.PinnableWindow;
 import net.aoba.gui.navigation.Window;
-import net.aoba.gui.navigation.huds.*;
+import net.aoba.gui.navigation.huds.ArmorHud;
+import net.aoba.gui.navigation.huds.CoordsHud;
+import net.aoba.gui.navigation.huds.DayHud;
+import net.aoba.gui.navigation.huds.FPSHud;
+import net.aoba.gui.navigation.huds.ModuleArrayListHud;
+import net.aoba.gui.navigation.huds.ModuleSelectorHud;
+import net.aoba.gui.navigation.huds.NetherCoordsHud;
+import net.aoba.gui.navigation.huds.PingHud;
+import net.aoba.gui.navigation.huds.RadarHud;
+import net.aoba.gui.navigation.huds.SpeedHud;
+import net.aoba.gui.navigation.huds.TimeHud;
+import net.aoba.gui.navigation.huds.WatermarkHud;
 import net.aoba.gui.navigation.windows.AuthCrackerWindow;
 import net.aoba.gui.navigation.windows.GoToWindow;
-import net.aoba.gui.navigation.windows.HudOptionsTab;
+import net.aoba.gui.navigation.windows.HudOptionsWindow;
 import net.aoba.gui.navigation.windows.MacroWindow;
+import net.aoba.gui.navigation.windows.SettingsWindow;
 import net.aoba.gui.navigation.windows.ToggleHudsTab;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.SettingManager;
+import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.KeybindSetting;
@@ -55,316 +83,314 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
-import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GuiManager implements KeyDownListener, TickListener, Render2DListener {
-    private static final MinecraftClient MC = MinecraftClient.getInstance();
-    private static CursorStyle currentCursor = CursorStyle.Default;
-    private static String tooltip = null;
-	
-    public KeybindSetting clickGuiButton = KeybindSetting.builder()
-    		.id("key.clickgui")
-    		.displayName("ClickGUI Key")
-    		.defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0))
-    		.build();
-    
-    private final KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
+	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static CursorStyle currentCursor = CursorStyle.Default;
+	private static String tooltip = null;
 
-    private boolean clickGuiOpen = false;
-    private final HashMap<Object, Window> pinnedHuds = new HashMap<Object, Window>();
+	public KeybindSetting clickGuiButton = KeybindSetting.builder().id("key.clickgui").displayName("ClickGUI Key")
+			.defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_GRAVE_ACCENT, 0)).build();
 
-    // Navigation Bar and Pages
-    public NavigationBar clickGuiNavBar;
-    public Page modulesPane = new Page("Modules");
-    public Page toolsPane = new Page("Tools");
-    public Page hudPane = new Page("Hud");
+	private final KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
 
-    // Global HUD Settings
-    public static ColorSetting foregroundColor = ColorSetting.builder()
-			.id("hud_foreground_color")
-			.displayName("GUI Foreground Color")
-			.description("Color of the foreground.")
-			.defaultValue(new Color(1.0f, 1.0f, 1.0f))
+	private boolean clickGuiOpen = false;
+	private final HashMap<Object, Window> pinnedHuds = new HashMap<Object, Window>();
+
+	// Navigation Bar and Pages
+	public NavigationBar clickGuiNavBar;
+	public Page modulesPane = new Page("Modules");
+	public Page toolsPane = new Page("Tools");
+	public Page hudPane = new Page("Hud");
+
+	// Global HUD Settings
+	public static BooleanSetting enableCustomTitle = BooleanSetting.builder().id("enable_custom_title")
+			.displayName("Enable Custom Title Screen").defaultValue(true).build();
+
+	public static ColorSetting foregroundColor = ColorSetting.builder().id("hud_foreground_color")
+			.displayName("GUI Foreground Color").description("Color of the foreground.")
+			.defaultValue(new Color(238, 21, 247)).build();
+
+	public static ColorSetting borderColor = ColorSetting.builder().id("hud_border_color")
+			.displayName("GUI Border Color").description("Color of the borders.").defaultValue(new Color(0, 0, 0))
 			.build();
-    
-    public static ColorSetting borderColor = ColorSetting.builder()
-			.id("hud_border_color")
-			.displayName("GUI Border Color")
-			.description("Color of the borders.")
-			.defaultValue(new Color(0, 0, 0))
+
+	public static ColorSetting backgroundColor = ColorSetting.builder().id("hud_background_color")
+			.displayName("GUI Background Color").description("Color of the background.")
+			.defaultValue(new Color(0, 0, 0, 50)).build();
+
+	public static FloatSetting roundingRadius = FloatSetting.builder().id("hud_rounding_radius")
+			.description("The radius of the rounding on hud.").defaultValue(6f).minValue(0f).maxValue(10f).step(1f)
 			.build();
-    
-    public static ColorSetting backgroundColor = ColorSetting.builder()
-			.id("hud_background_color")
-			.displayName("GUI Background Color")
-			.description("Color of the background.")
-			.defaultValue(new Color(0, 0, 0, 50))
-			.build();
-    
-    public static FloatSetting roundingRadius = FloatSetting.builder()
-    		.id("hud_rounding_radius")
-    		.description("The radius of the rounding on hud.")
-    		.defaultValue(6f)
-    		.minValue(0f)
-    		.maxValue(10f)
-    		.step(1f)
-    		.build();
-    
-    public static FloatSetting dragSmoothening = FloatSetting.builder()
-    		.id("gui_drag_smoothening")
-    		.description("The value for the dragging smoothening")
-    		.defaultValue(1.0f)
-    		.minValue(0.1f)
-    		.maxValue(2.0f)
-    		.step(0.1f)
-    		.build();
 
-    public static RainbowColor rainbowColor = new RainbowColor();
-    public static RandomColor randomColor = new RandomColor();
+	public static FloatSetting dragSmoothening = FloatSetting.builder().id("gui_drag_smoothening")
+			.description("The value for the dragging smoothening").defaultValue(1.0f).minValue(0.1f).maxValue(2.0f)
+			.step(0.1f).build();
 
-    public ModuleSelectorHud moduleSelector;
-    public ArmorHud armorHud;
-    public RadarHud radarHud;
-    public TimeHud timeHud;
-    public DayHud dayHud;
-    public ModuleArrayListHud moduleArrayListHud;
-    public WatermarkHud watermarkHud;
-    public CoordsHud coordsHud;
-    public NetherCoordsHud netherCoordsHud;
-    public FPSHud fpsHud;
-    public PingHud pingHud;
-    public SpeedHud speedHud;
+	public static RainbowColor rainbowColor = new RainbowColor();
+	public static RandomColor randomColor = new RandomColor();
 
-    public GuiManager() {
-        clickGuiNavBar = new NavigationBar();
+	public ModuleSelectorHud moduleSelector;
+	public ArmorHud armorHud;
+	public RadarHud radarHud;
+	public TimeHud timeHud;
+	public DayHud dayHud;
+	public ModuleArrayListHud moduleArrayListHud;
+	public WatermarkHud watermarkHud;
+	public CoordsHud coordsHud;
+	public NetherCoordsHud netherCoordsHud;
+	public FPSHud fpsHud;
+	public PingHud pingHud;
+	public SpeedHud speedHud;
 
-        SettingManager.registerSetting(borderColor, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(backgroundColor, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(foregroundColor, Aoba.getInstance().settingManager.configContainer);
-        SettingManager.registerSetting(clickGuiButton, Aoba.getInstance().settingManager.modulesContainer);
-        SettingManager.registerSetting(roundingRadius, Aoba.getInstance().settingManager.configContainer);
+	public GuiManager() {
+		clickGuiNavBar = new NavigationBar();
 
-        Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-        Aoba.getInstance().eventManager.AddListener(Render2DListener.class, this);
-    }
-    
-    public void Initialize() {
-        toolsPane.AddWindow(new AuthCrackerWindow());
-        toolsPane.AddWindow(new GoToWindow("Go To Location", 1220, 550));
-        toolsPane.AddWindow(new MacroWindow(1500, 550));
-        
-        moduleSelector = new ModuleSelectorHud();
-        armorHud = new ArmorHud(0, 0);
-        radarHud = new RadarHud(0, 0);
-        timeHud = new TimeHud(0, 0);
-        dayHud = new DayHud(0, 0);
-        moduleArrayListHud = new ModuleArrayListHud(0, 0);
-        watermarkHud = new WatermarkHud(0, 0);
-        coordsHud = new CoordsHud(0, 0);
-        netherCoordsHud = new NetherCoordsHud(0, 0);
-        fpsHud = new FPSHud(0, 0);
-        pingHud = new PingHud(0, 0);
-        speedHud = new SpeedHud(0, 0);
+		SettingManager.registerGlobalSetting(borderColor);
+		SettingManager.registerGlobalSetting(backgroundColor);
+		SettingManager.registerGlobalSetting(foregroundColor);
+		SettingManager.registerGlobalSetting(roundingRadius);
 
-    
-        ArrayList<HudWindow> huds = Lists.newArrayList(moduleSelector, armorHud, radarHud, timeHud, dayHud, moduleArrayListHud, watermarkHud, coordsHud, netherCoordsHud, fpsHud, pingHud, speedHud);
-        hudPane.AddWindow(new HudOptionsTab());
-        hudPane.AddWindow(new ToggleHudsTab(huds));
-        
-        Map<String, Category> categories = Category.getAllCategories();
-        float xOffset = 50;
+		SettingManager.registerSetting(clickGuiButton);
+		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(Render2DListener.class, this);
+	}
 
-        for (Category category : categories.values()) {
-            PinnableWindow tab = new PinnableWindow(category.getName(), xOffset, 75.0f, 180f, 180f);
-            tab.setInheritHeightFromChildren(true);
-            StackPanelComponent stackPanel = new StackPanelComponent(tab);
-            stackPanel.setMargin(new Margin(null, 30f, null, null));
+	public void Initialize() {
+		System.out.println("Initializing");
+		toolsPane.AddWindow(new AuthCrackerWindow());
+		toolsPane.AddWindow(new GoToWindow());
+		toolsPane.AddWindow(new MacroWindow());
 
-            // Loop through modules and add them to the correct category
-            for (Module module : Aoba.getInstance().moduleManager.modules) {
-                if (module.getCategory().equals(category)) {
-                    ModuleComponent button = new ModuleComponent(module.getName(), stackPanel, module);
-                    stackPanel.addChild(button);
-                }
-            }
+		moduleSelector = new ModuleSelectorHud();
+		armorHud = new ArmorHud(0, 0);
+		radarHud = new RadarHud(0, 0);
+		timeHud = new TimeHud(0, 0);
+		dayHud = new DayHud(0, 0);
+		moduleArrayListHud = new ModuleArrayListHud(0, 0);
+		watermarkHud = new WatermarkHud(0, 0);
+		coordsHud = new CoordsHud(0, 0);
+		netherCoordsHud = new NetherCoordsHud(0, 0);
+		fpsHud = new FPSHud(0, 0);
+		pingHud = new PingHud(0, 0);
+		speedHud = new SpeedHud(0, 0);
 
-            tab.addChild(stackPanel);
-            tab.setWidth(180);
-            modulesPane.AddWindow(tab);
-            xOffset += tab.getActualSize().getWidth() + 10;
-        }
+		ArrayList<HudWindow> huds = Lists.newArrayList(moduleSelector, armorHud, radarHud, timeHud, dayHud,
+				moduleArrayListHud, watermarkHud, coordsHud, netherCoordsHud, fpsHud, pingHud, speedHud);
+		hudPane.AddWindow(new HudOptionsWindow());
+		hudPane.AddWindow(new ToggleHudsTab(huds));
+		Map<String, Category> categories = Category.getAllCategories();
+		float xOffset = 50;
 
-        clickGuiNavBar.addPane(modulesPane);
-        clickGuiNavBar.addPane(toolsPane);
-        clickGuiNavBar.addPane(hudPane);
+		for (Category category : categories.values()) {
+			Window tab = new Window(category.getName(), xOffset, 75.0f);
+			StackPanelComponent stackPanel = new StackPanelComponent(tab);
+			stackPanel.setMargin(new Margin(null, 30f, null, null));
 
-        clickGuiNavBar.setSelectedIndex(0);
-    }
+			GridComponent gridComponent = new GridComponent(stackPanel);
+			gridComponent.addColumnDefinition(new GridDefinition(30, RelativeUnit.Absolute)); // Fill 30px
+			gridComponent.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative)); // Fill all remaining space
 
-    public static CursorStyle getCursor() {
-        return currentCursor;
-    }
+			ImageComponent img = new ImageComponent(gridComponent, category.getIcon());
+			img.setMargin(new Margin(4f, 0f, 4f, 0f));
+			gridComponent.addChild(img);
 
-    public static void setCursor(CursorStyle cursor) {
-        currentCursor = cursor;
-        Input.setCursorStyle(currentCursor);
-    }
+			StringComponent title = new StringComponent(gridComponent, category.getName());
+			title.setIsHitTestVisible(false);
+			gridComponent.addChild(title);
 
-    public static String getTooltip() {
-    	return tooltip;
-    }
-    
-    public static void setTooltip(String tt) {
-    	if(tooltip != tt)
-    		tooltip = tt;
-    }
-    
-    public void AddWindow(Window hud, String pageName) {
-        for (Page page : clickGuiNavBar.getPanes()) {
-            if (page.getTitle().equals(pageName)) {
-                page.AddWindow(hud);
-                page.moveToFront(hud);
-                break;
-            }
-        }
-    }
+			stackPanel.addChild(gridComponent);
 
-    public void RemoveWindow(Window hud, String pageName) {
-        for (Page page : clickGuiNavBar.getPanes()) {
-            if (page.getTitle().equals(pageName)) {
-                page.RemoveWindow(hud);
-                break;
-            }
-        }
-    }
+			SeparatorComponent separator = new SeparatorComponent(stackPanel);
+			separator.setIsHitTestVisible(false);
+			stackPanel.addChild(separator);
 
-    @Override
-    public void onKeyDown(KeyDownEvent event) {
-        if (clickGuiButton.getValue().getCode() == event.GetKey() && MC.currentScreen == null) {
-        	setClickGuiOpen(!this.clickGuiOpen);
-            this.toggleMouse();
-        }
-    }
+			// Loop through modules and add them to the correct category
+			for (Module module : Aoba.getInstance().moduleManager.modules) {
+				if (module.getCategory().equals(category)) {
+					ModuleComponent button = new ModuleComponent(stackPanel, module.getName(), module);
+					stackPanel.addChild(button);
+				}
+			}
 
-    public void SetHudActive(HudWindow hud, boolean state) {
-        if (state) {
-            pinnedHuds.put(hud.getClass(), hud);
-            hudPane.AddWindow(hud);
-            hud.activated.silentSetValue(true);
-        } else {
-            this.pinnedHuds.remove(hud.getClass());
-            hudPane.RemoveWindow(hud);
-            hud.activated.silentSetValue(false);
-        }
-    }
+			tab.addChild(stackPanel);
+			tab.setMaxWidth(600f);
+			modulesPane.AddWindow(tab);
 
+			xOffset += tab.getMinWidth() + 10;
+		}
 
-    @Override
-    public void onTick(TickEvent.Pre event) {
-    
-    }
-    
-    @Override
-    public void onTick(TickEvent.Post event) {
-        /**
-         * Moves the selected Tab to where the user moves their mouse.
-         */
-        if (this.clickGuiOpen) {
-            clickGuiNavBar.update();
-        }
+		modulesPane.AddWindow(new SettingsWindow());
 
-        /**
-         * Updates each of the Tab GUIs that are currently on the screen.
-         */
-        for (Window hud : pinnedHuds.values()) {
-            hud.update();
-        }
+		clickGuiNavBar.addPane(modulesPane);
+		clickGuiNavBar.addPane(toolsPane);
+		clickGuiNavBar.addPane(hudPane);
 
-        if (this.esc.isPressed() && this.clickGuiOpen) {
-            this.clickGuiOpen = false;
-            this.toggleMouse();
-        }
-    }
+		modulesPane.initialize();
+		toolsPane.initialize();
+		hudPane.initialize();
 
-    @Override
-    public void onRender(Render2DEvent event) {
+		clickGuiNavBar.setSelectedIndex(0);
+	}
 
-    	RenderSystem.disableCull();
-    	RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+	public static CursorStyle getCursor() {
+		return currentCursor;
+	}
 
-        DrawContext drawContext = event.getDrawContext();
-        float tickDelta = event.getRenderTickCounter().getTickDelta(false);
+	public static void setCursor(CursorStyle cursor) {
+		currentCursor = cursor;
+		Input.setCursorStyle(currentCursor);
+	}
 
-        MatrixStack matrixStack = drawContext.getMatrices();
-        matrixStack.push();
+	public static String getTooltip() {
+		return tooltip;
+	}
 
-        int guiScale = MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(), MC.forcesUnicodeFont());
-        matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
+	public static void setTooltip(String tt) {
+		if (tooltip != tt)
+			tooltip = tt;
+	}
 
-        net.minecraft.client.util.Window window = (net.minecraft.client.util.Window) MC.getWindow();
-        Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+	public void AddWindow(Window hud, String pageName) {
+		for (Page page : clickGuiNavBar.getPanes()) {
+			if (page.getTitle().equals(pageName)) {
+				page.AddWindow(hud);
+				page.moveToFront(hud);
+				hud.initialize();
+				break;
+			}
+		}
+	}
 
-        /**
-         * Render ClickGUI and Sidebar
-         */
-        if (this.clickGuiOpen) {
-            Render2D.drawBox(matrix, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
-            clickGuiNavBar.draw(drawContext, tickDelta);
-        }
+	public void RemoveWindow(Window hud, String pageName) {
+		for (Page page : clickGuiNavBar.getPanes()) {
+			if (page.getTitle().equals(pageName)) {
+				page.RemoveWindow(hud);
+				break;
+			}
+		}
+	}
 
-        // Render HUDS
-        if (!this.clickGuiOpen) {
-            for (Window hud : pinnedHuds.values()) {
-                hud.draw(drawContext, tickDelta);
-            }
-        }
+	@Override
+	public void onKeyDown(KeyDownEvent event) {
+		if (clickGuiButton.getValue().getCode() == event.GetKey() && MC.currentScreen == null) {
+			setClickGuiOpen(!this.clickGuiOpen);
+			this.toggleMouse();
+		}
+	}
 
-        // Draw Tooltip on top of all UI elements
-        if(tooltip != null) {
-        	int mouseX = (int) MC.mouse.getX();
-            int mouseY = (int) MC.mouse.getY();
-            int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
-            int tooltipHeight = 10;
+	public void SetHudActive(HudWindow hud, boolean state) {
+		if (state) {
+			pinnedHuds.put(hud.getClass(), hud);
+			hudPane.AddWindow(hud);
+			hud.activated.silentSetValue(true);
+		} else {
+			this.pinnedHuds.remove(hud.getClass());
+			hudPane.RemoveWindow(hud);
+			hud.activated.silentSetValue(false);
+		}
+	}
 
-            Render2D.drawRoundedBox(matrixStack.peek().getPositionMatrix(), mouseX + 12, mouseY + 12, (tooltipWidth + 4) * 2, (tooltipHeight + 4) * 2, GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue().getAsSolid());
-            Render2D.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18, GuiManager.foregroundColor.getValue());
-        }
-        
-        
-        matrixStack.pop();
-        RenderSystem.enableCull();
-    }
+	@Override
+	public void onTick(TickEvent.Pre event) {
 
-    /**
-     * Gets whether or not the Click GUI is currently open.
-     *
-     * @return State of the Click GUI.
-     */
-    public boolean isClickGuiOpen() {
-        return this.clickGuiOpen;
-    }
+	}
 
-    public void setClickGuiOpen(boolean state) {
-        this.clickGuiOpen = state;
-        setTooltip(null);
-    }
+	@Override
+	public void onTick(TickEvent.Post event) {
+		/**
+		 * Moves the selected Tab to where the user moves their mouse.
+		 */
+		if (this.clickGuiOpen) {
+			clickGuiNavBar.update();
+		}
 
-    /**
-     * Locks and unlocks the Mouse.
-     */
-    public void toggleMouse() {
-        if (MC.mouse.isCursorLocked()) {
-            MC.mouse.unlockCursor();
-        } else {
-            MC.mouse.lockCursor();
-        }
-    }
+		/**
+		 * Updates each of the Tab GUIs that are currently on the screen.
+		 */
+		for (Window hud : pinnedHuds.values()) {
+			hud.update();
+		}
+
+		if (this.esc.isPressed() && this.clickGuiOpen) {
+			this.clickGuiOpen = false;
+			this.toggleMouse();
+		}
+	}
+
+	@Override
+	public void onRender(Render2DEvent event) {
+
+		RenderSystem.disableCull();
+		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+		DrawContext drawContext = event.getDrawContext();
+		float tickDelta = event.getRenderTickCounter().getTickDelta(false);
+
+		MatrixStack matrixStack = drawContext.getMatrices();
+		matrixStack.push();
+
+		int guiScale = MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(), MC.forcesUnicodeFont());
+		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
+
+		net.minecraft.client.util.Window window = (net.minecraft.client.util.Window) MC.getWindow();
+		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+
+		/**
+		 * Render ClickGUI and Sidebar
+		 */
+		if (this.clickGuiOpen) {
+			Render2D.drawBox(matrix, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
+			clickGuiNavBar.draw(drawContext, tickDelta);
+		}
+
+		// Render HUDS
+		if (!this.clickGuiOpen) {
+			for (Window hud : pinnedHuds.values()) {
+				hud.draw(drawContext, tickDelta);
+			}
+		}
+
+		// Draw Tooltip on top of all UI elements
+		if (tooltip != null) {
+			int mouseX = (int) MC.mouse.getX();
+			int mouseY = (int) MC.mouse.getY();
+			int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
+			int tooltipHeight = 10;
+
+			Render2D.drawRoundedBox(matrixStack.peek().getPositionMatrix(), mouseX + 12, mouseY + 12,
+					(tooltipWidth + 4) * 2, (tooltipHeight + 4) * 2, GuiManager.roundingRadius.getValue(),
+					GuiManager.backgroundColor.getValue().getAsSolid());
+			Render2D.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18, GuiManager.foregroundColor.getValue());
+		}
+
+		matrixStack.pop();
+		RenderSystem.enableCull();
+	}
+
+	/**
+	 * Gets whether or not the Click GUI is currently open.
+	 *
+	 * @return State of the Click GUI.
+	 */
+	public boolean isClickGuiOpen() {
+		return this.clickGuiOpen;
+	}
+
+	public void setClickGuiOpen(boolean state) {
+		this.clickGuiOpen = state;
+		setTooltip(null);
+	}
+
+	/**
+	 * Locks and unlocks the Mouse.
+	 */
+	public void toggleMouse() {
+		if (MC.mouse.isCursorLocked()) {
+			MC.mouse.unlockCursor();
+		} else {
+			MC.mouse.lockCursor();
+		}
+	}
 }

@@ -18,10 +18,12 @@
 
 package net.aoba.gui.components;
 
+import org.joml.Matrix4f;
+
 import net.aoba.event.events.MouseClickEvent;
-import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
-import net.aoba.gui.Rectangle;
+import net.aoba.gui.Size;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.utils.render.Render2D;
@@ -29,84 +31,89 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
 
 public class CheckboxComponent extends Component {
-    private String text;
-    private BooleanSetting checkbox;
-    private Runnable onClick;
-    private boolean isHovered = false;
-    private float animationProgress = 0.0f;
-    private Color hoverBorderColor = new Color(255, 255, 255);
-    private Color clickAnimationColor = new Color(255, 255, 0);
-    
-    public CheckboxComponent(IGuiElement parent, BooleanSetting checkbox) {
-        super(parent, new Rectangle(null, null, null, 30f));
-        this.text = checkbox.displayName;
-        this.checkbox = checkbox;
+	private String text;
+	private BooleanSetting checkbox;
+	private Runnable onClick;
+	private boolean isHovered = false;
+	private float animationProgress = 0.0f;
+	private Color hoverBorderColor = new Color(255, 255, 255);
+	private Color clickAnimationColor = new Color(255, 255, 0);
 
-        this.setMargin(new Margin(8f, 2f, 8f, 2f));
-    }
+	public CheckboxComponent(UIElement parent, BooleanSetting checkbox) {
+		super(parent);
+		this.text = checkbox.displayName;
+		this.checkbox = checkbox;
 
-    /**
-     * Draws the checkbox to the screen.
-     *
-     * @param drawContext  The current draw context of the game.
-     * @param partialTicks The partial ticks used for interpolation.
-     */
-    @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
-        super.draw(drawContext, partialTicks);
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+	}
 
-        MatrixStack matrixStack = drawContext.getMatrices();
-        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+	@Override
+	public void measure(Size availableSize) {
+		preferredSize = new Size(availableSize.getWidth(), 30.0f);
+	}
 
-        float actualX = this.getActualSize().getX();
-        float actualY = this.getActualSize().getY();
-        float actualWidth = this.getActualSize().getWidth();
+	/**
+	 * Draws the checkbox to the screen.
+	 *
+	 * @param drawContext  The current draw context of the game.
+	 * @param partialTicks The partial ticks used for interpolation.
+	 */
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks) {
+		super.draw(drawContext, partialTicks);
 
-        // Determine border color based on hover and click state
-        Color borderColor = isHovered ? hoverBorderColor : new Color(128, 128, 128);
-        if (animationProgress > 0) {
-            borderColor = clickAnimationColor;
-            animationProgress -= partialTicks; // Decrease animation progress
-        }
+		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-        // Determine fill color based on checkbox state
-        Color fillColor = this.checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
+		float actualX = this.getActualSize().getX();
+		float actualY = this.getActualSize().getY();
+		float actualWidth = this.getActualSize().getWidth();
 
-        Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
-        Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, 3, borderColor, fillColor);
-    }
+		// Determine border color based on hover and click state
+		Color borderColor = isHovered ? hoverBorderColor : new Color(128, 128, 128);
+		if (animationProgress > 0) {
+			borderColor = clickAnimationColor;
+			animationProgress -= partialTicks; // Decrease animation progress
+		}
 
-    /**
-     * Handles updating the Checkbox component.
-     */
-    @Override
-    public void update() {
-        super.update();
-    }
+		// Determine fill color based on checkbox state
+		Color fillColor = this.checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
 
-    @Override
-    public void onMouseClick(MouseClickEvent event) {
-    	super.onMouseClick(event);
-        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (hovered) {
-                checkbox.toggle();
-                animationProgress = 1.0f; // Reset animation progress on click
-                if (onClick != null) 
-                    onClick.run();
-                event.cancel();
-            }
-        }
-    }
+		Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
+		Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, 3, borderColor,
+				fillColor);
+	}
 
-    public void setChecked(boolean checked) {
-        checkbox.setValue(checked);
-        animationProgress = 1.0f;
-    }
+	/**
+	 * Handles updating the Checkbox component.
+	 */
+	@Override
+	public void update() {
+		super.update();
+	}
 
-    public boolean isChecked() {
-        return checkbox.getValue();
-    }
+	@Override
+	public void onMouseClick(MouseClickEvent event) {
+		super.onMouseClick(event);
+		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			if (hovered) {
+				checkbox.toggle();
+				animationProgress = 1.0f; // Reset animation progress on click
+				if (onClick != null)
+					onClick.run();
+				event.cancel();
+			}
+		}
+	}
+
+	public void setChecked(boolean checked) {
+		checkbox.setValue(checked);
+		animationProgress = 1.0f;
+	}
+
+	public boolean isChecked() {
+		return checkbox.getValue();
+	}
 }

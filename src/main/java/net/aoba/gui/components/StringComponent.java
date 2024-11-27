@@ -18,12 +18,15 @@
 
 package net.aoba.gui.components;
 
+import java.util.ArrayList;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.FontChangedEvent;
 import net.aoba.event.listeners.FontChangedListener;
-import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
+import net.aoba.gui.Size;
 import net.aoba.gui.TextAlign;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
@@ -31,159 +34,168 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Formatting;
 
-import java.util.ArrayList;
-
 public class StringComponent extends Component implements FontChangedListener {
 	private TextAlign textAlign = TextAlign.Left;
-    private String originalText;
-    private ArrayList<String> text = new ArrayList<String>();
-    private boolean bold;
-    private Color color;
+	private String originalText;
+	private ArrayList<String> text = new ArrayList<String>();
+	private boolean bold;
+	private Color color;
 
-    public StringComponent(String text, IGuiElement parent) {
-        super(parent);
-        setText(text);
-        this.color = Colors.White;
-        this.bold = false;
-        this.setMargin(new Margin(8f, 2f, 8f, 2f));
-        Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
-    }
+	public StringComponent(UIElement parent, String text) {
+		super(parent);
+		setText(text);
+		this.color = Colors.White;
+		this.bold = false;
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		this.setIsHitTestVisible(false);
+		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
+	}
 
-    public StringComponent(String text, IGuiElement parent, boolean bold) {
-        super(parent);
-        setText(text);
-        this.color = Colors.White;
-        this.bold = bold;
-        this.setMargin(new Margin(8f, 2f, 8f, 2f));
-        Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
-    }
+	public StringComponent(UIElement parent, String text, boolean bold) {
+		super(parent);
+		setText(text);
+		this.color = Colors.White;
+		this.bold = bold;
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		this.setIsHitTestVisible(false);
+		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
+	}
 
-    public StringComponent(String text, IGuiElement parent, Color color, boolean bold) {
-        super(parent);
-        setText(text);
-        this.color = color;
-        this.bold = bold;
-        this.setMargin(new Margin(8f, 2f, 8f, 2f));
-        Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
-    }
+	public StringComponent(UIElement parent, String text, Color color, boolean bold) {
+		super(parent);
+		setText(text);
+		this.color = color;
+		this.bold = bold;
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		this.setIsHitTestVisible(false);
+		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
+	}
 
-    @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
-        float actualX = this.getActualSize().getX();
-        float actualY = this.getActualSize().getY();
-        float actualWidth = this.getActualSize().getWidth();
+	@Override
+	public void measure(Size availableSize) {
+		recalculateLines();
+		preferredSize = new Size(availableSize.getWidth(), text.size() * 25f);
+	}
 
-        int i = 5;
-        
-        for (String str : text) {
-            if (bold)
-                str = Formatting.BOLD + str;
-            
-            switch(textAlign) {
-            	case TextAlign.Left:
-            		Render2D.drawString(drawContext, str, actualX, actualY + i, this.color.getColorAsInt());
-            	break;
-            	case TextAlign.Center:
-            		float xPosCenter = actualX + (actualWidth / 2.0f) - Render2D.getStringWidth(str);
-            		Render2D.drawString(drawContext, str, xPosCenter, actualY + i, this.color.getColorAsInt());
-                	break;
-            	case TextAlign.Right:
-            		float xPosRight = actualX + actualWidth - (Render2D.getStringWidth(str) * 2);
-            		Render2D.drawString(drawContext, str, xPosRight, actualY + i, this.color.getColorAsInt());
-                	break;
-            }
-            
-            i += 25;
-        }
-    }
-    
-    /**
-     * Sets the text of the String Component.
-     *
-     * @param text The text to set.
-     */
-    public void setText(String text) {
-    	if(actualSize != null) {
-    		TextRenderer textRenderer = Aoba.getInstance().fontManager.GetRenderer();
-    		this.originalText = text;
-            this.text.clear();
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks) {
+		float actualX = this.getActualSize().getX();
+		float actualY = this.getActualSize().getY();
+		float actualWidth = this.getActualSize().getWidth();
 
-            float width = actualSize.getWidth().floatValue();
-            float textWidth = textRenderer.getWidth(text) * 2.0f;
-            if (textWidth < width) {
-                this.text.add(text);
-                this.setHeight(25f);
-            } else {
-            	// Single there are multiple lines, we will want to split them in a spot that makes the most sense.
-                StringBuilder buffer = new StringBuilder();
-                int lastSplit = 0;
-                int lastSpace = -1;
-                for(int i = 0; i < text.length();) {
-                	char c = text.charAt(i);
-                	buffer.append(c);
-                
-                	float wordBufferWidth = textRenderer.getWidth(buffer.toString()) * 2.0f;
-                	if(wordBufferWidth >= width) {
-                		if(lastSpace == -1) {
-                			this.text.add(text.substring(lastSplit));
-                			lastSplit = i - 1;
-                    		++i;
-                		}else {
-                			this.text.add(text.substring(lastSplit, lastSpace));
-                			lastSplit = lastSpace + 1;
-                			i = lastSplit;
-                    		lastSpace = -1;
-                		}
-                		buffer.setLength(0);
-                		continue;
-                	}
-                	
-                	if(c == ' ') {
-                		lastSpace = i;
-                	}
-                	++i;
-                }
-                
-                if(lastSplit < text.length())
-                	this.text.add(text.substring(lastSplit));
-                
-                this.setHeight(this.text.size() * 25f);
-            }
-    	}
-    }
-    
-    public TextAlign getTextAlign() {
-    	return this.textAlign;
-    }
-    
-    public void setTextAlign(TextAlign textAlign) {
-    	this.textAlign = textAlign;
-    }
+		int i = 5;
 
-    /**
-     * Gets the text of the String Component.
-     *
-     * @return Text of the String Component as a string.
-     */
+		for (String str : text) {
+			if (bold)
+				str = Formatting.BOLD + str;
 
-    public String getText() {
-        return this.originalText;
-    }
+			switch (textAlign) {
+			case TextAlign.Left:
+				Render2D.drawString(drawContext, str, actualX, actualY + i, this.color.getColorAsInt());
+				break;
+			case TextAlign.Center:
+				float xPosCenter = actualX + (actualWidth / 2.0f) - Render2D.getStringWidth(str);
+				Render2D.drawString(drawContext, str, xPosCenter, actualY + i, this.color.getColorAsInt());
+				break;
+			case TextAlign.Right:
+				float xPosRight = actualX + actualWidth - (Render2D.getStringWidth(str) * 2);
+				Render2D.drawString(drawContext, str, xPosRight, actualY + i, this.color.getColorAsInt());
+				break;
+			}
 
-    @Override
-    public void update() {
+			i += 25;
+		}
+	}
 
-    }
+	/**
+	 * Sets the text of the String Component.
+	 *
+	 * @param text The text to set.
+	 */
+	public void setText(String text) {
+		if (actualSize != null) {
+			this.originalText = text;
+			recalculateLines();
+			invalidate();
+		}
+	}
 
+	public void recalculateLines() {
+		this.text.clear();
 
-    @Override
-    public void onParentChanged() {
-    	super.onParentChanged();
-        setText(originalText);
-    }
+		if (originalText != null) {
+			TextRenderer textRenderer = Aoba.getInstance().fontManager.GetRenderer();
 
-    @Override
-    public void onFontChanged(FontChangedEvent event) {
-        setText(this.originalText);
-    }
+			float width = actualSize.getWidth().floatValue();
+			float textWidth = textRenderer.getWidth(originalText) * 2.0f;
+			if (textWidth < width) {
+				this.text.add(originalText);
+			} else {
+				// Single there are multiple lines, we will want to split them in a spot that
+				// makes the most sense.
+				StringBuilder buffer = new StringBuilder();
+				int lastSplit = 0;
+				int lastSpace = -1;
+				for (int i = 0; i < originalText.length();) {
+					char c = originalText.charAt(i);
+					buffer.append(c);
+
+					float wordBufferWidth = textRenderer.getWidth(buffer.toString()) * 2.0f;
+					if (wordBufferWidth >= width) {
+						if (lastSplit == -1)
+							break;
+
+						if (lastSpace == -1) {
+							this.text.add(originalText.substring(lastSplit));
+							lastSplit = i - 1;
+							++i;
+						} else {
+							this.text.add(originalText.substring(lastSplit, lastSpace));
+							lastSplit = lastSpace + 1;
+							i = lastSplit;
+							lastSpace = -1;
+						}
+						buffer.setLength(0);
+						continue;
+					}
+
+					if (c == ' ') {
+						lastSpace = i;
+					}
+					++i;
+				}
+
+				if (lastSplit != -1 && lastSplit < originalText.length())
+					this.text.add(originalText.substring(lastSplit));
+			}
+		}
+	}
+
+	public TextAlign getTextAlign() {
+		return this.textAlign;
+	}
+
+	public void setTextAlign(TextAlign textAlign) {
+		this.textAlign = textAlign;
+	}
+
+	/**
+	 * Gets the text of the String Component.
+	 *
+	 * @return Text of the String Component as a string.
+	 */
+
+	public String getText() {
+		return this.originalText;
+	}
+
+	@Override
+	public void update() {
+
+	}
+
+	@Override
+	public void onFontChanged(FontChangedEvent event) {
+		setText(this.originalText);
+	}
 }

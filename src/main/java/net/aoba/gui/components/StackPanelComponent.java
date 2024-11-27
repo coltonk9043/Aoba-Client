@@ -18,62 +18,52 @@
 
 package net.aoba.gui.components;
 
-import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Rectangle;
+import net.aoba.gui.Size;
+import net.aoba.gui.UIElement;
 
-public  class StackPanelComponent extends Component {
-    public enum StackType {
-        Horizontal, Vertical
-    }
+public class StackPanelComponent extends Component {
+	public enum StackType {
+		Horizontal, Vertical
+	}
 
-    protected StackType stackType = StackType.Vertical;
+	protected StackType stackType = StackType.Vertical;
 
-    public StackPanelComponent(IGuiElement parent) {
-        super(parent);
-    }
+	public StackPanelComponent(UIElement parent) {
+		super(parent);
+	}
 
-    @Override
-    public void update() {
-        super.update();
-    }
+	@Override
+	public void measure(Size availableSize) {
+		Size newSize = new Size(availableSize.getWidth(), 0.0f);
+		if (children.size() > 0) {
+			for (UIElement element : children) {
+				if (element == null || !element.isVisible())
+					continue;
 
-    @Override
-    public void onChildAdded(Component child) {
-        this.RecalculateHeight();
-    }
-    
-    @Override
-    public void onChildRemoved(Component child) {
-    	this.RecalculateHeight();
-    }
+				element.measure(availableSize);
+				Size resultingSize = element.getPreferredSize();
+				newSize.setHeight(newSize.getHeight() + resultingSize.getHeight());
+			}
+		}
+		preferredSize = newSize;
+	}
 
-    @Override
-    public void onChildChanged(Component child) {
-        this.RecalculateHeight();
-    }
+	@Override
+	public void arrange(Rectangle finalSize) {
+		if (this.parent != null) {
+			setActualSize(finalSize);
+		}
 
-    @Override
-    public void onVisibilityChanged() {
-    	super.onVisibilityChanged();
-        this.RecalculateHeight();
-    }
+		float y = 0;
+		for (UIElement element : children) {
+			if (element == null || !element.isVisible())
+				continue;
 
-    public void RecalculateHeight() {
-    	float height = 0;
-        for (int i = 0; i < children.size(); i++) {
-            Component iChild = children.get(i);
-
-            // If the child is visible, increase the height of the StackPanel.
-            if (iChild.isVisible())
-                height += iChild.getSize().getHeight();
-            
-            // Move the Top of the child below to the top + height of the previous element.
-            if (i + 1 != children.size()) {
-            	 Component childBelow = children.get(i + 1);
-                 Rectangle position = childBelow.getSize();
-                 childBelow.setSize(new Rectangle(position.getX(), actualSize.getY() + height, position.getWidth(), position.getHeight()));
-            }
-        }
-        setHeight(height + margin.getTop());
-    }
+			Size preferredSize = element.getPreferredSize();
+			element.arrange(new Rectangle(finalSize.getX(), finalSize.getY() + y, finalSize.getWidth(),
+					preferredSize.getHeight()));
+			y += preferredSize.getHeight();
+		}
+	}
 }

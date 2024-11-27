@@ -22,31 +22,34 @@ import java.util.ArrayList;
 
 import net.aoba.gui.Margin;
 import net.aoba.gui.components.HudComponent;
+import net.aoba.gui.components.SeparatorComponent;
 import net.aoba.gui.components.StackPanelComponent;
+import net.aoba.gui.components.StringComponent;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.gui.navigation.Window;
 import net.minecraft.client.gui.DrawContext;
 
 public class ToggleHudsTab extends Window {
-    public ToggleHudsTab(ArrayList<HudWindow> huds) {
-        super("Toggle HUDs", 0, 0, 50, 50);
+	public ToggleHudsTab(ArrayList<HudWindow> huds) {
+		super("Toggle HUDs", 0, 0);
 
-        this.inheritHeightFromChildren = true;
-        
-        StackPanelComponent stackPanel = new StackPanelComponent(this);
-        stackPanel.setMargin(new Margin(null, 30f, null, null));
+		StackPanelComponent stackPanel = new StackPanelComponent(this);
+		stackPanel.setMargin(new Margin(null, 30f, null, null));
 
-        for (HudWindow hud : huds) {
-            HudComponent hudComponent = new HudComponent(hud.getID(), stackPanel, hud);
-            stackPanel.addChild(hudComponent);
-        }
+		stackPanel.addChild(new StringComponent(stackPanel, "Toggle HUDs"));
+		stackPanel.addChild(new SeparatorComponent(stackPanel));
 
-        this.children.add(stackPanel);
-        this.setWidth(300);
-    }
+		for (HudWindow hud : huds) {
+			HudComponent hudComponent = new HudComponent(stackPanel, hud.getID(), hud);
+			stackPanel.addChild(hudComponent);
+		}
 
-    @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
-        super.draw(drawContext, partialTicks);
-    }
+		this.children.add(stackPanel);
+		this.setMinWidth(300.0f);
+	}
+
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks) {
+		super.draw(drawContext, partialTicks);
+	}
 }

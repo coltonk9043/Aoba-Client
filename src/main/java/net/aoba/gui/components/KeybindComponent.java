@@ -18,98 +18,105 @@
 
 package net.aoba.gui.components;
 
+import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
-import net.aoba.gui.IGuiElement;
 import net.aoba.gui.Margin;
-import net.aoba.gui.Rectangle;
+import net.aoba.gui.Size;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
-import net.aoba.utils.render.Render2D;
 import net.aoba.settings.types.KeybindSetting;
+import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
-import org.lwjgl.glfw.GLFW;
 
 public class KeybindComponent extends Component implements KeyDownListener {
-    private boolean listeningForKey;
-    private KeybindSetting keyBind;
+	private boolean listeningForKey;
+	private KeybindSetting keyBind;
 
-    public KeybindComponent(IGuiElement parent, KeybindSetting keyBind) {
-        super(parent, new Rectangle(null, null, null, 30f));
-        this.setMargin(new Margin(8f, 2f, 8f, 2f));
-        this.keyBind = keyBind;
-    }
+	public KeybindComponent(UIElement parent, KeybindSetting keyBind) {
+		super(parent);
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		this.keyBind = keyBind;
+	}
 
-    @Override
-    public void onVisibilityChanged() {
-    	super.onVisibilityChanged();
-        if (this.isVisible()) {
-            Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
-        } else {
-            Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
-        }
-    }
+	@Override
+	public void onVisibilityChanged() {
+		super.onVisibilityChanged();
+		if (this.isVisible()) {
+			Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+		} else {
+			Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
+		}
+	}
 
-    @Override
-    public void update() {
-        super.update();
-    }
+	@Override
+	public void measure(Size availableSize) {
+		preferredSize = new Size(availableSize.getWidth(), 30.0f);
+	}
 
-    @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
-        super.draw(drawContext, partialTicks);
+	@Override
+	public void update() {
+		super.update();
+	}
 
-        MatrixStack matrixStack = drawContext.getMatrices();
-        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks) {
+		super.draw(drawContext, partialTicks);
 
-        float actualX = this.getActualSize().getX();
-        float actualY = this.getActualSize().getY();
-        float actualWidth = this.getActualSize().getWidth();
-        float actualHeight = this.getActualSize().getHeight();
-        
-        Render2D.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
-        Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f, Colors.Black, new Color(115, 115, 115, 200));
+		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-        String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
-        if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
-            keyBindText = "N/A";
+		float actualX = this.getActualSize().getX();
+		float actualY = this.getActualSize().getY();
+		float actualWidth = this.getActualSize().getWidth();
+		float actualHeight = this.getActualSize().getHeight();
 
-        Render2D.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 6, 0xFFFFFF);
-    }
+		Render2D.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
+		Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f,
+				Colors.Black, new Color(115, 115, 115, 200));
 
-    @Override
-    public void onMouseClick(MouseClickEvent event) {
-    	super.onMouseClick(event);
-        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (hovered) {
-                listeningForKey = !listeningForKey;
-                event.cancel();
-            }
-        }
-    }
+		String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
+		if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
+			keyBindText = "N/A";
 
-    @Override
-    public void onKeyDown(KeyDownEvent event) {
-        if (listeningForKey) {
-            int key = event.GetKey();
-            int scanCode = event.GetScanCode();
+		Render2D.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 6, 0xFFFFFF);
+	}
 
-            if (key == GLFW.GLFW_KEY_ESCAPE) {
-                keyBind.setValue(InputUtil.UNKNOWN_KEY);
-            } else {
-                keyBind.setValue(InputUtil.fromKeyCode(key, scanCode));
-            }
+	@Override
+	public void onMouseClick(MouseClickEvent event) {
+		super.onMouseClick(event);
+		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			if (hovered) {
+				listeningForKey = !listeningForKey;
+				event.cancel();
+			}
+		}
+	}
 
-            listeningForKey = false;
+	@Override
+	public void onKeyDown(KeyDownEvent event) {
+		if (listeningForKey) {
+			int key = event.GetKey();
+			int scanCode = event.GetScanCode();
 
-            event.cancel();
-        }
-    }
+			if (key == GLFW.GLFW_KEY_ESCAPE) {
+				keyBind.setValue(InputUtil.UNKNOWN_KEY);
+			} else {
+				keyBind.setValue(InputUtil.fromKeyCode(key, scanCode));
+			}
+
+			listeningForKey = false;
+
+			event.cancel();
+		}
+	}
 }

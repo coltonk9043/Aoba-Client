@@ -21,7 +21,11 @@
  */
 package net.aoba;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mojang.logging.LogUtils;
+
 import net.aoba.altmanager.AltManager;
 import net.aoba.api.IAddon;
 import net.aoba.cmd.CommandManager;
@@ -31,8 +35,6 @@ import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
 import net.aoba.macros.MacroManager;
-import net.aoba.macros.MacroPlayer;
-import net.aoba.macros.MacroRecorder;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
 import net.aoba.proxymanager.ProxyManager;
@@ -44,125 +46,116 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.MinecraftClient;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class AobaClient {
-    public static final String NAME = "Aoba";
-    public static final String VERSION = "1.21";
-    public static final String AOBA_VERSION = "1.4.3";
+	public static final String NAME = "Aoba";
+	public static final String VERSION = "1.21";
+	public static final String AOBA_VERSION = "1.4.3";
 
-    public static MinecraftClient MC;
-    public static IMinecraftClient IMC;
+	public static MinecraftClient MC;
+	public static IMinecraftClient IMC;
 
-    // Systems
-    public RotationManager rotationManager;
-    public ModuleManager moduleManager;
-    public CommandManager commandManager;
-    public AltManager altManager;
-    public ProxyManager proxyManager;
-    public GuiManager guiManager;
-    public FontManager fontManager;
-    public CombatManager combatManager;
-    public RPCManager rpcManager;
-    public SettingManager settingManager;
-    public FriendsList friendsList;
-    public GlobalChat globalChat;
-    public EventManager eventManager;
-    public MacroManager macroManager;
-    
-    public static List<IAddon> addons = new ArrayList<>();
+	// Systems
+	public RotationManager rotationManager;
+	public ModuleManager moduleManager;
+	public CommandManager commandManager;
+	public AltManager altManager;
+	public ProxyManager proxyManager;
+	public GuiManager guiManager;
+	public FontManager fontManager;
+	public CombatManager combatManager;
+	public RPCManager rpcManager;
+	public SettingManager settingManager;
+	public FriendsList friendsList;
+	public GlobalChat globalChat;
+	public EventManager eventManager;
+	public MacroManager macroManager;
 
-    /**
-     * Initializes Aoba Client and creates sub-systems.
-     */
-    public void Initialize() {
-        // Gets instance of Minecraft
-        MC = MinecraftClient.getInstance();
-        IMC = (IMinecraftClient) MC;
-    }
+	public static List<IAddon> addons = new ArrayList<>();
 
-    public void loadAssets() {
-        LogUtils.getLogger().info("[Aoba] Starting Client");
+	/**
+	 * Initializes Aoba Client and creates sub-systems.
+	 */
+	public void Initialize() {
+		// Gets instance of Minecraft
+		MC = MinecraftClient.getInstance();
+		IMC = (IMinecraftClient) MC;
+	}
 
-        eventManager = new EventManager();
+	public void loadAssets() {
+		LogUtils.getLogger().info("[Aoba] Starting Client");
 
-        LogUtils.getLogger().info("[Aoba] Starting addon initialization");
+		eventManager = new EventManager();
 
-        for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("aoba", IAddon.class)) {
-            IAddon addon = entrypoint.getEntrypoint();
+		LogUtils.getLogger().info("[Aoba] Starting addon initialization");
 
-            try {
-                LogUtils.getLogger().info("[Aoba] Initializing addon: " + addon.getName());
-                addon.onInitialize();
-                LogUtils.getLogger().info("[Aoba] Addon initialized: " + addon.getName());
-            } catch (Throwable e) {
-                LogUtils.getLogger().error("Error initializing addon: " + addon.getName(), e.getMessage());
-            }
+		for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("aoba",
+				IAddon.class)) {
+			IAddon addon = entrypoint.getEntrypoint();
 
-            addons.add(addon);
-        }
+			try {
+				LogUtils.getLogger().info("[Aoba] Initializing addon: " + addon.getName());
+				addon.onInitialize();
+				LogUtils.getLogger().info("[Aoba] Addon initialized: " + addon.getName());
+			} catch (Throwable e) {
+				LogUtils.getLogger().error("Error initializing addon: " + addon.getName(), e.getMessage());
+			}
 
-        LogUtils.getLogger().info("[Aoba] Addon initialization completed");
+			addons.add(addon);
+		}
 
-        LogUtils.getLogger().info("[Aoba] Reading Settings");
-        settingManager = new SettingManager();
-        LogUtils.getLogger().info("[Aoba] Reading Friends List");
-        friendsList = new FriendsList();
-        LogUtils.getLogger().info("[Aoba] Initializing Modules");
-        moduleManager = new ModuleManager(addons);
-        LogUtils.getLogger().info("[Aoba] Initializing Commands");
-        commandManager = new CommandManager(addons);
-        LogUtils.getLogger().info("[Aoba] Initializing Font Manager");
-        fontManager = new FontManager();
-        fontManager.Initialize();
-        LogUtils.getLogger().info("[Aoba] Initializing Combat Manager");
-        combatManager = new CombatManager();
-        LogUtils.getLogger().info("[Aoba] Initializing Rotation Manager");
-        rotationManager = new RotationManager();
-        LogUtils.getLogger().info("[Aoba] Initializing GUI");
-        guiManager = new GuiManager();
-        guiManager.Initialize();
-        LogUtils.getLogger().info("[Aoba] Loading Alts");
-        altManager = new AltManager();
-        proxyManager = new ProxyManager();
-        
-        macroManager = new MacroManager();
-        
-        LogUtils.getLogger().info("[Aoba] Starting Discord RPC");
-        rpcManager = new RPCManager();
-        rpcManager.startRpc();
-        LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
+		LogUtils.getLogger().info("[Aoba] Addon initialization completed");
 
-        
-        
-        
-        SettingManager.loadSettings(settingManager.configContainer);
-        SettingManager.loadSettings(settingManager.modulesContainer);
-        SettingManager.loadSettings(settingManager.hiddenContainer);
+		LogUtils.getLogger().info("[Aoba] Reading Settings");
+		settingManager = new SettingManager();
+		LogUtils.getLogger().info("[Aoba] Reading Friends List");
+		friendsList = new FriendsList();
+		LogUtils.getLogger().info("[Aoba] Initializing Modules");
+		moduleManager = new ModuleManager(addons);
+		LogUtils.getLogger().info("[Aoba] Initializing Commands");
+		commandManager = new CommandManager(addons);
+		LogUtils.getLogger().info("[Aoba] Initializing Font Manager");
+		fontManager = new FontManager();
+		fontManager.Initialize();
+		LogUtils.getLogger().info("[Aoba] Initializing Combat Manager");
+		combatManager = new CombatManager();
+		LogUtils.getLogger().info("[Aoba] Initializing Rotation Manager");
+		rotationManager = new RotationManager();
+		LogUtils.getLogger().info("[Aoba] Initializing GUI");
+		guiManager = new GuiManager();
+		guiManager.Initialize();
+		LogUtils.getLogger().info("[Aoba] Loading Alts");
+		altManager = new AltManager();
+		proxyManager = new ProxyManager();
 
-        globalChat = new GlobalChat();
-        globalChat.StartListener();
+		macroManager = new MacroManager();
 
-        //GuiManager.borderColor.setMode(ColorMode.Rainbow);
-        //GuiManager.foregroundColor.setMode(ColorMode.Random);
-    }
+		LogUtils.getLogger().info("[Aoba] Starting Discord RPC");
+		rpcManager = new RPCManager();
+		rpcManager.startRpc();
+		LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 
-    /**
-     * Called when the client is shutting down.
-     */
-    public void endClient() {
-        try {
-            SettingManager.saveSettings(settingManager.configContainer);
-            SettingManager.saveSettings(settingManager.modulesContainer);
-            SettingManager.saveSettings(settingManager.hiddenContainer);
-            altManager.saveAlts();
-            friendsList.save();
-            macroManager.save();
-            moduleManager.modules.forEach(s -> s.onDisable());
-        } catch (Exception e) {
-            LogUtils.getLogger().error(e.getMessage());
-        }
-        LogUtils.getLogger().info("[Aoba] Shutting down...");
-    }
+		SettingManager.loadGlobalSettings();
+		SettingManager.loadSettings();
+		globalChat = new GlobalChat();
+		globalChat.StartListener();
+
+		// GuiManager.borderColor.setMode(ColorMode.Rainbow);
+		// GuiManager.foregroundColor.setMode(ColorMode.Random);
+	}
+
+	/**
+	 * Called when the client is shutting down.
+	 */
+	public void endClient() {
+		try {
+			SettingManager.saveSettings();
+			altManager.saveAlts();
+			friendsList.save();
+			macroManager.save();
+			moduleManager.modules.forEach(s -> s.onDisable());
+		} catch (Exception e) {
+			LogUtils.getLogger().error(e.getMessage());
+		}
+		LogUtils.getLogger().info("[Aoba] Shutting down...");
+	}
 }

@@ -18,113 +18,89 @@
 
 package net.aoba.gui.components;
 
+import org.joml.Matrix4f;
+
 import net.aoba.event.events.MouseClickEvent;
-import net.aoba.gui.IGuiElement;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
-import net.aoba.gui.Rectangle;
+import net.aoba.gui.Size;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
 
 public class ButtonComponent extends Component {
 
-    private String text;
-    private Runnable onClick;
-    private Color borderColor = new Color(128, 128, 128);
-    private Color backgroundColor = new Color(96, 96, 96);
-    private Color hoveredBackgroundColor = new Color(156, 156, 156);
+	private Runnable onClick;
 
-    /**
-     * Constructor for button component.
-     *
-     * @param parent  Parent Tab that this Component resides in.
-     * @param text    Text contained in this button element.
-     * @param onClick OnClick delegate that will run when the button is pressed.
-     */
-    public ButtonComponent(IGuiElement parent, String text, Runnable onClick) {
-        super(parent, new Rectangle(null, null, null, 38f));
+	/**
+	 * Constructor for button component.
+	 *
+	 * @param parent  Parent Tab that this Component resides in.
+	 * @param text    Text contained in this button element.
+	 * @param onClick OnClick delegate that will run when the button is pressed.
+	 */
+	public ButtonComponent(UIElement parent, Runnable onClick) {
+		super(parent);
 
-        this.setMargin(new Margin(8f, 4f, 8f, 4f));
+		this.setMargin(new Margin(8f, 4f, 8f, 4f));
 
-        this.text = text;
-        this.onClick = onClick;
-    }
+		this.onClick = onClick;
+	}
 
-    public ButtonComponent(IGuiElement parent, String text, Runnable onClick, Color borderColor, Color backgroundColor) {
-        super(parent, new Rectangle(null, null, null, 38f));
+	@Override
+	public void measure(Size availableSize) {
+		preferredSize = new Size(availableSize.getWidth(), 40.0f);
+	}
 
-        this.setMargin(new Margin(8f, 4f, 8f, 4f));
+	/**
+	 * Sets the OnClick delegate of the button.
+	 *
+	 * @param onClick Delegate to set.
+	 */
+	public void setOnClick(Runnable onClick) {
+		this.onClick = onClick;
+	}
 
-        this.text = text;
-        this.onClick = onClick;
+	/**
+	 * Draws the button to the screen.
+	 *
+	 * @param drawContext  The current draw context of the game.
+	 * @param partialTicks The partial ticks used for interpolation.
+	 */
+	@Override
+	public void draw(DrawContext drawContext, float partialTicks) {
+		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-        this.borderColor = borderColor;
-        this.backgroundColor = backgroundColor;
-    }
-	
-    /**
-     * Sets the text of the button.
-     *
-     * @param text Text to set.
-     */
-    public void setText(String text) {
-        this.text = text;
-    }
+		float actualX = this.getActualSize().getX();
+		float actualY = this.getActualSize().getY();
+		float actualWidth = this.getActualSize().getWidth();
+		float actualHeight = this.getActualSize().getHeight();
 
-    /**
-     * Sets the OnClick delegate of the button.
-     *
-     * @param onClick Delegate to set.
-     */
-    public void setOnClick(Runnable onClick) {
-        this.onClick = onClick;
-    }
+		Color color = GuiManager.foregroundColor.getValue();
+		if (hovered) {
+			color = color.add(45, 45, 45);
+		}
 
-    public void setBorderColor(Color color) {
-        this.borderColor = color;
-    }
+		Render2D.drawOutlinedRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, 3.0f,
+				GuiManager.borderColor.getValue(), color);
 
-    public void setBackgroundColor(Color color) {
-        this.backgroundColor = color;
-    }
+		super.draw(drawContext, partialTicks);
+	}
 
-    /**
-     * Draws the button to the screen.
-     *
-     * @param drawContext  The current draw context of the game.
-     * @param partialTicks The partial ticks used for interpolation.
-     */
-    @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
-        MatrixStack matrixStack = drawContext.getMatrices();
-        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
-        float actualX = this.getActualSize().getX();
-        float actualY = this.getActualSize().getY();
-        float actualWidth = this.getActualSize().getWidth();
-        float actualHeight = this.getActualSize().getHeight();
-        
-        Color color = backgroundColor;
-        if(hovered)
-        	color = hoveredBackgroundColor;
-        
-        Render2D.drawOutlinedRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor, color);
-        Render2D.drawString(drawContext, this.text, actualX + 6, actualY + 6, 0xFFFFFF);
-    }
-
-    @Override
-    public void onMouseClick(MouseClickEvent event) {
-    	super.onMouseClick(event);
-        if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-            if (this.hovered) {
-            	if( onClick != null)
-                	onClick.run();
-                event.cancel();
-            }
-        }
-    }
+	@Override
+	public void onMouseClick(MouseClickEvent event) {
+		super.onMouseClick(event);
+		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			if (this.hovered) {
+				if (onClick != null)
+					onClick.run();
+				event.cancel();
+			}
+		}
+	}
 }

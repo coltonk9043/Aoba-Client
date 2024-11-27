@@ -1,10 +1,9 @@
 package net.aoba.gui.navigation;
 
 import net.aoba.Aoba;
-import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
-import net.aoba.gui.components.Component;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.utils.render.Render2D;
@@ -16,17 +15,17 @@ public class HudWindow extends Window {
 	public BooleanSetting activated;
 
 	public CloseableWindow optionsWindow;
-	
+
+	public HudWindow(String ID, float x, float y) {
+		this(ID, x, y, 180.0f, 50f);
+	}
+
 	public HudWindow(String ID, float x, float y, float width, float height) {
 		super(ID, x, y, width, height);
-		
-		activated = BooleanSetting.builder()
-	    		.id(ID + "_activated")
-	    		.defaultValue(false)
-	    		.onUpdate(val -> onActivatedChanged(val))
-	    		.build();
-		
-		SettingManager.registerSetting(activated, Aoba.getInstance().settingManager.configContainer);
+		activated = BooleanSetting.builder().id(ID + "_activated").defaultValue(false)
+				.onUpdate(val -> onActivatedChanged(val)).build();
+
+		SettingManager.registerSetting(activated);
 	}
 
 	private void onActivatedChanged(Boolean state) {
@@ -34,43 +33,43 @@ public class HudWindow extends Window {
 	}
 
 	@Override
-	public boolean getVisible() {
+	public boolean isVisible() {
 		return activated.getValue().booleanValue();
 	}
-	
-	
-	// Override to do nothing.. We want it to be visible based off of whether it is activated.
+
+	// Override to do nothing.. We want it to be visible based off of whether it is
+	// activated.
 	@Override
 	public void setVisible(boolean state) {
-		if(!state) {
+		if (!state) {
 			isMouseOver = false;
 			isMoving = false;
 		}
 	}
-	
+
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		if (getVisible()) {
-			Rectangle pos = position.getValue();
-			
+		if (isVisible()) {
+			for (UIElement child : children) {
+				child.draw(drawContext, partialTicks);
+			}
+
+			Rectangle pos = getActualSize();
+
 			float x = pos.getX().floatValue();
 			float y = pos.getY().floatValue();
 			float width = pos.getWidth().floatValue();
 			float height = pos.getHeight().floatValue();
-			
+
 			if (isMoving) {
 				if (pos.isDrawable()) {
-					Render2D.drawRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height,
-							GuiManager.roundingRadius.getValue(), dragColor);
+					Render2D.drawBox(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height,
+							dragColor);
 				}
 			}
-			if(Aoba.getInstance().guiManager.isClickGuiOpen() && isMouseOver) {
-				Render2D.drawRoundedBoxOutline(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height,
-						GuiManager.roundingRadius.getValue(), hoverColor);
-			}
-			
-			for (Component child : children) {
-				child.draw(drawContext, partialTicks);
+			if (Aoba.getInstance().guiManager.isClickGuiOpen() && isMouseOver) {
+				Render2D.drawBoxOutline(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height,
+						hoverColor);
 			}
 		}
 	}

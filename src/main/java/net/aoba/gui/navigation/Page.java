@@ -18,95 +18,106 @@
 
 package net.aoba.gui.navigation;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.minecraft.client.gui.DrawContext;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class Page implements MouseMoveListener, MouseClickListener{
-    protected String title;
-    protected List<Window> tabs = new ArrayList<Window>();
+// TODO: Turn Page into a UI element.
+public class Page implements MouseMoveListener, MouseClickListener {
+	protected String title;
+	protected List<Window> tabs = new ArrayList<Window>();
 
-    private boolean isVisible;
+	private boolean isVisible;
 
-    public Page(String title) {
-        this.title = title;
-    }
+	public Page(String title) {
+		this.title = title;
+	}
 
-    public String getTitle() {
-        return this.title;
-    }
+	public void initialize() {
+		for (Window tab : tabs) {
+			tab.initialize();
+		}
+	}
 
-    public void AddWindow(Window hud) {
-    	hud.parent = this;
-        tabs.add(hud);
-    }
-    
-    public void RemoveWindow(Window hud) {
-    	hud.parent = null;
-    	tabs.remove(hud);
-    }
+	public String getTitle() {
+		return this.title;
+	}
 
-    public void setVisible(boolean state) {
-        this.isVisible = state;
-        
-        if(isVisible) {
-        	Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
-        	Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-        }else {
-        	Aoba.getInstance().eventManager.RemoveListener(MouseMoveListener.class, this);
-        	Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
-        }
-        
-        for (Window hud : tabs) {
-        	hud.setVisible(state);
-        }
-    }
+	public void AddWindow(Window hud) {
+		hud.parentPage = this;
+		tabs.add(hud);
+		hud.initialize();
+	}
 
-    public void update() {
-        if (this.isVisible) {
-            Iterator<Window> tabIterator = tabs.iterator();
-            while (tabIterator.hasNext()) {
-                tabIterator.next().update();
-            }
-        }
-    }
+	public void RemoveWindow(Window hud) {
+		hud.parentPage = null;
+		tabs.remove(hud);
+		hud.initialize();
+	}
 
-    public void render(DrawContext drawContext, float partialTicks) {
-        if (this.isVisible) {
-            Iterator<Window> tabIterator = tabs.iterator();
-            while (tabIterator.hasNext()) {
-                tabIterator.next().draw(drawContext, partialTicks);
-            }
-        }
-    }
-    
-    public void moveToFront(Window window) {
-    	if(tabs.size() > 1) {
-    		Window temp = tabs.get(tabs.size() - 1);
-    		int indexOfWindow = tabs.indexOf(window);
-    		tabs.set(indexOfWindow, temp);
-    		tabs.set(tabs.size() - 1, window);
-    	}
-    }
+	public void setVisible(boolean state) {
+		this.isVisible = state;
+
+		if (isVisible) {
+			Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
+			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+
+		} else {
+			Aoba.getInstance().eventManager.RemoveListener(MouseMoveListener.class, this);
+			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+		}
+
+		for (Window hud : tabs) {
+			hud.setVisible(state);
+		}
+	}
+
+	public void update() {
+		if (this.isVisible) {
+			Iterator<Window> tabIterator = tabs.iterator();
+			while (tabIterator.hasNext()) {
+				tabIterator.next().update();
+			}
+		}
+	}
+
+	public void render(DrawContext drawContext, float partialTicks) {
+		if (this.isVisible) {
+			Iterator<Window> tabIterator = tabs.iterator();
+			while (tabIterator.hasNext()) {
+				tabIterator.next().draw(drawContext, partialTicks);
+			}
+		}
+	}
+
+	public void moveToFront(Window window) {
+		if (tabs.size() > 1) {
+			Window temp = tabs.get(tabs.size() - 1);
+			int indexOfWindow = tabs.indexOf(window);
+			tabs.set(indexOfWindow, temp);
+			tabs.set(tabs.size() - 1, window);
+		}
+	}
 
 	@Override
 	public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
-		if(Aoba.getInstance().guiManager.isClickGuiOpen()) {
+		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
 			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.onMouseMove(mouseMoveEvent));
 		}
 	}
 
 	@Override
 	public void onMouseClick(MouseClickEvent mouseClickEvent) {
-		if(Aoba.getInstance().guiManager.isClickGuiOpen()) {
-			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.OnMouseClick(mouseClickEvent));
+		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
+			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.onMouseClick(mouseClickEvent));
 		}
 	}
 }

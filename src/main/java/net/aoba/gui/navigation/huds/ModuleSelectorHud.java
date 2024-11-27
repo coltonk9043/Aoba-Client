@@ -23,10 +23,9 @@ import java.util.List;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
-import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
+import net.aoba.gui.ResizeMode;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -36,7 +35,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class ModuleSelectorHud extends HudWindow {
-	private static final AobaClient AOBA = Aoba.getInstance();;
+
 	private static final float ROW_HEIGHT = 30.0f;
 
 	private KeyBinding keybindUp;
@@ -52,19 +51,21 @@ public class ModuleSelectorHud extends HudWindow {
 	private ArrayList<Module> modules = new ArrayList<Module>();
 
 	public ModuleSelectorHud() {
-		super("ModuleSelectorHud", 0, 0, 225, 32);
+		super("ModuleSelectorHud", 0, 0);
+
+		categories.addAll(Category.getAllCategories().values());
+
+		setMinWidth(180.0f);
+		float newHeight = categories.size() * ROW_HEIGHT;
+		setMinHeight(newHeight);
+		setHeight(newHeight);
+
+		resizeMode = ResizeMode.Width;
+
 		this.keybindUp = new KeyBinding("key.tabup", GLFW.GLFW_KEY_UP, "key.categories.aoba");
 		this.keybindDown = new KeyBinding("key.tabdown", GLFW.GLFW_KEY_DOWN, "key.categories.aoba");
 		this.keybindLeft = new KeyBinding("key.tableft", GLFW.GLFW_KEY_LEFT, "key.categories.aoba");
 		this.keybindRight = new KeyBinding("key.tabright", GLFW.GLFW_KEY_RIGHT, "key.categories.aoba");
-
-		categories.addAll(Category.getAllCategories().values());
-
-		this.inheritHeightFromChildren = false;
-		this.resizeable = false;
-		this.setHeight(categories.size() * ROW_HEIGHT);
-		this.minHeight = 32f;
-		this.maxHeight = 32f;
 	}
 
 	@Override
@@ -117,11 +118,12 @@ public class ModuleSelectorHud extends HudWindow {
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
+		super.draw(drawContext, partialTicks);
+
 		// Gets the client and window.
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
-		Rectangle pos = position.getValue();
+		Rectangle pos = getActualSize();
 
 		if (pos.isDrawable()) {
 			float x = pos.getX().floatValue();
@@ -129,9 +131,11 @@ public class ModuleSelectorHud extends HudWindow {
 			float width = pos.getWidth().floatValue();
 			float height = pos.getHeight().floatValue();
 
-			// Draws the table including all of the categories.
-			Render2D.drawRoundedBox(matrix4f, x, y, width, height, 6f, GuiManager.backgroundColor.getValue());
-			Render2D.drawRoundedBoxOutline(matrix4f, x, y, width, height, 6f, GuiManager.borderColor.getValue());
+			// Draws background depending on components width and height
+			Render2D.drawRoundedBox(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
+					GuiManager.backgroundColor.getValue());
+			Render2D.drawRoundedBoxOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
+					GuiManager.borderColor.getValue());
 
 			// For every category, draw a cell for it.
 			for (int i = 0; i < this.categories.size(); i++) {
@@ -171,6 +175,5 @@ public class ModuleSelectorHud extends HudWindow {
 				}
 			}
 		}
-		super.draw(drawContext, partialTicks);
 	}
 }

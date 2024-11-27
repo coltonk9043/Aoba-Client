@@ -17,8 +17,11 @@
  */
 package net.aoba.gui.navigation.huds;
 
+import org.joml.Matrix4f;
+
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
+import net.aoba.gui.ResizeMode;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
@@ -30,28 +33,25 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import org.joml.Matrix4f;
 
 public class RadarHud extends HudWindow {
-
 	float distance = 50;
 
-	public RadarHud(int x, int y) {
-		super("RadarHud", x, y, 180, 180);
-		
+	public RadarHud(float x, float y) {
+		super("RadarHud", x, y, 180f, 180f);
+
 		this.minHeight = 180.0f;
 		this.minWidth = 180.0f;
-		
-		this.inheritHeightFromChildren = false;
+		resizeMode = ResizeMode.WidthAndHeight;
 	}
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		if (getVisible()) {
+		if (isVisible()) {
 			MatrixStack matrixStack = drawContext.getMatrices();
 			Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-			Rectangle pos = position.getValue();
+			Rectangle pos = getActualSize();
 			if (pos.isDrawable()) {
 				float x = pos.getX().floatValue();
 				float y = pos.getY().floatValue();
@@ -133,10 +133,5 @@ public class RadarHud extends HudWindow {
 			}
 		}
 		super.draw(drawContext, partialTicks);
-	}
-
-	@Override
-	public void update() {
-
 	}
 }
