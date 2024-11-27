@@ -207,7 +207,7 @@ public class ModuleManager implements KeyDownListener {
 		// Registers all Module settings to the settings manager.
 		for (Module module : modules) {
 			for (Setting<?> setting : module.getSettings()) {
-				SettingManager.registerSetting(setting, Aoba.getInstance().settingManager.modulesContainer);
+				SettingManager.registerSetting(setting);
 			}
 		}
 

@@ -29,7 +29,6 @@ import java.util.function.Predicate;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.interfaces.IClientPlayerInteractionManager;
 import net.aoba.mixin.interfaces.IMinecraftClient;
@@ -87,8 +86,8 @@ public abstract class Module {
 		this.addSetting(keyBind);
 		this.addSetting(state);
 
-		SettingManager.registerSetting(this.keyBind, Aoba.getInstance().settingManager.modulesContainer);
-		SettingManager.registerSetting(this.state, Aoba.getInstance().settingManager.modulesContainer);
+		SettingManager.registerSetting(this.keyBind);
+		SettingManager.registerSetting(this.state);
 	}
 
 	/**
