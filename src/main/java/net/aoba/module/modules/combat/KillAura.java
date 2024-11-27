@@ -24,10 +24,8 @@ package net.aoba.module.modules.combat;
 import java.util.ArrayList;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.SendMovementPacketEvent.Pre;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.events.TickEvent.Post;
-import net.aoba.event.listeners.SendMovementPacketListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -46,79 +44,58 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 
-public class KillAura extends Module implements TickListener, SendMovementPacketListener {
+public class KillAura extends Module implements TickListener {
 	private enum Priority {
 		LOWESTHP, CLOSEST
 	}
 
 	private Priority priority = Priority.CLOSEST;
-	
-	private FloatSetting radius = FloatSetting.builder()
-			.id("killaura_radius")
-			.displayName("Radius")
-			.description("Radius that KillAura will target entities.")
-			.defaultValue(5f)
-			.minValue(0.1f)
-			.maxValue(10f)
-			.step(0.1f)
-			.build();
-	
-	private BooleanSetting targetAnimals = BooleanSetting.builder()
-		    .id("killaura_target_animals")
-		    .displayName("Target Animals")
-		    .description("Target animals.")
-		    .defaultValue(false)
-		    .build();
-	
-	private BooleanSetting targetMonsters = BooleanSetting.builder()
-		    .id("killaura_target_monsters")
-		    .displayName("Target Monsters")
-		    .description("Target Monsters.")
-		    .defaultValue(true)
-		    .build();
-	
-	private BooleanSetting targetPlayers = BooleanSetting.builder()
-		    .id("killaura_target_players")
-		    .displayName("Target Players")
-		    .description("Target Players.")
-		    .defaultValue(true)
-		    .build();
-	
-	private BooleanSetting targetFriends = BooleanSetting.builder()
-		    .id("killaura_target_friends")
-		    .displayName("Target Friends")
-		    .description("Target Friends.")
-		    .defaultValue(false)
-		    .build();
-	
-	private BooleanSetting legit = BooleanSetting.builder()
-			.id("killaura_legit")
-			.displayName("Legit")
-			.description("Whether a raycast will be used to ensure that KillAura will not hit a player outside of the view")
-			.defaultValue(false)
-		    .build();
-			
-    private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
-    		.id("killaura_rotation_mode")
-    		.displayName("Rotation Mode")
-    		.description("Controls how the player's view rotates.")
-    		.defaultValue(RotationMode.NONE)
-    		.build();
-    
-	private FloatSetting randomness = FloatSetting.builder()
-			.id("killaura_randomness")
-			.displayName("Randomness")
-			.description("The randomness of the delay between when KillAura will hit a target.")
-			.defaultValue(0.0f)
-			.minValue(0.0f)
-			.maxValue(60.0f)
-			.step(1.0f)
+
+	private FloatSetting radius = FloatSetting.builder().id("killaura_radius").displayName("Radius")
+			.description("Radius that KillAura will target entities.").defaultValue(5f).minValue(0.1f).maxValue(10f)
+			.step(0.1f).build();
+
+	private BooleanSetting targetAnimals = BooleanSetting.builder().id("killaura_target_animals")
+			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
+
+	private BooleanSetting targetMonsters = BooleanSetting.builder().id("killaura_target_monsters")
+			.displayName("Target Monsters").description("Target Monsters.").defaultValue(true).build();
+
+	private BooleanSetting targetPlayers = BooleanSetting.builder().id("killaura_target_players")
+			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
+
+	private BooleanSetting targetFriends = BooleanSetting.builder().id("killaura_target_friends")
+			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
+
+	private FloatSetting randomness = FloatSetting.builder().id("killaura_randomness").displayName("Randomness")
+			.description("The randomness of the delay between when KillAura will hit a target.").defaultValue(0.0f)
+			.minValue(0.0f).maxValue(60.0f).step(1.0f).build();
+
+	private BooleanSetting legit = BooleanSetting.builder().id("killaura_legit").displayName("Legit")
+			.description(
+					"Whether a raycast will be used to ensure that KillAura will not hit a player outside of the view")
+			.defaultValue(false).build();
+
+	private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
+			.id("killaura_rotation_mode").displayName("Rotation Mode")
+			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
+
+	private FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation")
+			.description("The max speed that KillAura will rotate").defaultValue(10.0f).minValue(1.0f).maxValue(360.0f)
 			.build();
 
+	private FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
+			.description("The randomness of the player's yaw").defaultValue(0.0f).minValue(0.0f).maxValue(60.0f)
+			.step(1.0f).build();
+
+	private FloatSetting pitchRandomness = FloatSetting.builder().id("killaura_pitch_randomness")
+			.description("The randomness of the player's pitch").defaultValue(0.0f).minValue(0.0f).maxValue(60.0f)
+			.step(1.0f).build();
+
 	private LivingEntity entityToAttack;
-	
+
 	public KillAura() {
-    	super("KillAura");
+		super("KillAura");
 
 		this.setCategory(Category.of("Combat"));
 		this.setDescription("Attacks anything within your personal space.");
@@ -128,21 +105,22 @@ public class KillAura extends Module implements TickListener, SendMovementPacket
 		this.addSetting(targetMonsters);
 		this.addSetting(targetPlayers);
 		this.addSetting(targetFriends);
-		this.addSetting(rotationMode);
 		this.addSetting(legit);
 		this.addSetting(randomness);
+		this.addSetting(rotationMode);
+		this.addSetting(maxRotation);
+		this.addSetting(yawRandomness);
+		this.addSetting(pitchRandomness);
 	}
 
 	@Override
 	public void onDisable() {
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.RemoveListener(SendMovementPacketListener.class, this);
 	}
 
 	@Override
 	public void onEnable() {
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(SendMovementPacketListener.class, this);
 	}
 
 	@Override
@@ -207,32 +185,39 @@ public class KillAura extends Module implements TickListener, SendMovementPacket
 
 		// If the entity is found, we want to attach it.
 		if (found) {
-			switch(rotationMode.getValue()) {
-				case RotationMode.NONE:
-					break;
-				case RotationMode.SMOOTH:
-					float rotationDegreesPerTick = 10f;
-					Rotation rotation = Rotation.getPlayerRotationDeltaFromEntity(entityToAttack);
+			switch (rotationMode.getValue()) {
+			case RotationMode.NONE:
+				break;
+			case RotationMode.SMOOTH:
+				float rotationDegreesPerTick = maxRotation.getValue();
+				Rotation rotation = Rotation.getPlayerRotationDeltaFromEntity(entityToAttack);
 
-					float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
-							rotationDegreesPerTick);
-					float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
-							rotationDegreesPerTick);
+				float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
+						rotationDegreesPerTick);
+				float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
+						rotationDegreesPerTick);
 
-					Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
-							MC.player.getPitch() + maxPitchRotation);
-					MC.player.setYaw((float) newRotation.yaw());
-					MC.player.setPitch((float) newRotation.pitch());
-					break;
-				case RotationMode.INSTANT:
-					MC.player.lookAt(EntityAnchor.EYES, entityToAttack.getEyePos());
-					break;
+				// Apply Pitch / Yaw randomness and
+				double pitchRandom = Math.random() * pitchRandomness.getValue();
+				double yawRandom = Math.random() * yawRandomness.getValue();
+
+				maxYawRotationDelta += yawRandom;
+				maxPitchRotation += pitchRandom;
+
+				Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
+						MC.player.getPitch() + maxPitchRotation).roundToGCD();
+				MC.player.setYaw((float) newRotation.yaw());
+				MC.player.setPitch((float) newRotation.pitch());
+				break;
+			case RotationMode.INSTANT:
+				MC.player.lookAt(EntityAnchor.EYES, entityToAttack.getEyePos());
+				break;
 			}
 
 			if (MC.player.getAttackCooldownProgress(0) == 1) {
 
-				if (legit.getValue()) {
-					if (state) {
+				if (state) {
+					if (legit.getValue()) {
 						HitResult ray = MC.crosshairTarget;
 
 						if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
@@ -240,15 +225,13 @@ public class KillAura extends Module implements TickListener, SendMovementPacket
 							Entity ent = entityResult.getEntity();
 
 							if (ent == entityToAttack) {
-								MC.interactionManager.attackEntity(MC.player, entityToAttack);
 								MC.player.swingHand(Hand.MAIN_HAND);
+								MC.interactionManager.attackEntity(MC.player, entityToAttack);
 							}
 						}
-					}
-				} else {
-					if (state) {
-						MC.interactionManager.attackEntity(MC.player, entityToAttack);
+					} else {
 						MC.player.swingHand(Hand.MAIN_HAND);
+						MC.interactionManager.attackEntity(MC.player, entityToAttack);
 					}
 				}
 			}
@@ -257,31 +240,6 @@ public class KillAura extends Module implements TickListener, SendMovementPacket
 
 	@Override
 	public void onTick(Post event) {
-		// TODO Auto-generated method stub
-
-	}
-
-	// TODO: Move Fix?
-	@Override
-	public void onSendMovementPacket(Pre event) {
-		// Vec3d playerVelocity = MC.player.getVelocity();
-		// double movement = playerVelocity.lengthSquared();
-
-		// if(movement < 0.001) {
-		// MC.player.setVelocity(Vec3d.ZERO);
-		// }else {
-		// double sinYaw = Math.sin(Math.toRadians(MC.player.getYaw()));
-		// double cosYaw = Math.cos(Math.toRadians(MC.player.getYaw()));
-
-		// MC.player.setVelocity(playerVelocity.multiply(cosYaw -
-		// MC.player.getVelocity().z * sinYaw, 1, cosYaw + MC.player.getVelocity().x *
-		// sinYaw));
-		// }
-	}
-
-	// TODO: Find a way to fix this.
-	@Override
-	public void onSendMovementPacket(net.aoba.event.events.SendMovementPacketEvent.Post event) {
 
 	}
 }
