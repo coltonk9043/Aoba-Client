@@ -20,6 +20,9 @@
 package net.aoba.gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
@@ -37,7 +40,7 @@ public abstract class UIElement {
 	protected static MinecraftClient MC = MinecraftClient.getInstance();
 	protected static AobaClient AOBA = Aoba.getInstance();
 
-	protected ArrayList<UIElement> children = new ArrayList<UIElement>();
+	private ArrayList<UIElement> children = new ArrayList<UIElement>();
 	protected UIElement parent;
 
 	// Constraints (Dimensions will always adhere to these if it is not null)
@@ -60,14 +63,16 @@ public abstract class UIElement {
 	protected boolean hovered = false;
 	protected boolean isHitTestVisible = true;
 
-	public UIElement(UIElement parent) {
-		this.parent = parent;
+	public UIElement() {
 		preferredSize = new Size(0.0f, 0.0f);
 		actualSize = new Rectangle(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 	public void initialize() {
-		this.initialized = true;
+		boolean wasInitialized = initialized;
+		if (!wasInitialized) {
+			this.initialized = true;
+		}
 
 		for (UIElement child : children) {
 			if (child == null)
@@ -75,7 +80,14 @@ public abstract class UIElement {
 			child.initialize();
 		}
 
-		invalidate();
+		if (!wasInitialized) {
+			onInitialized();
+			invalidateMeasure();
+		}
+	}
+
+	protected void onInitialized() {
+
 	}
 
 	public void update() {
@@ -123,7 +135,7 @@ public abstract class UIElement {
 	public void setMargin(Margin margin) {
 		if (!this.margin.equals(margin)) {
 			this.margin = margin;
-			invalidate();
+			invalidateMeasure();
 		}
 	}
 
@@ -138,7 +150,7 @@ public abstract class UIElement {
 		if (this.width != newWidth || this.height != newHeight) {
 			this.width = size.getWidth();
 			this.height = size.getHeight();
-			invalidate();
+			invalidateMeasure();
 		}
 	}
 
@@ -146,14 +158,14 @@ public abstract class UIElement {
 		if (this.width != width || this.height != height) {
 			this.width = width;
 			this.height = height;
-			invalidate();
+			invalidateMeasure();
 		}
 	}
 
 	public void setWidth(Float width) {
 		if (this.width != width) {
 			this.width = width;
-			invalidate();
+			invalidateMeasure();
 		}
 	}
 
@@ -168,7 +180,7 @@ public abstract class UIElement {
 			}
 
 			this.height = height;
-			invalidate();
+			invalidateMeasure();
 		}
 	}
 
@@ -254,13 +266,23 @@ public abstract class UIElement {
 		return parent;
 	}
 
-	public void invalidate() {
+	public void setParent(UIElement parent) {
+		this.parent = parent;
+		invalidateMeasure();
+	}
+
+	public void invalidateMeasure() {
 		if (initialized) {
-			if (parent != null)
-				parent.invalidate();
-			else {
+			if (parent != null) {
+				parent.invalidateMeasure();
+			} else {
+
 				// Construct new bounds based off of width/height constraints.
-				Size size = new Size(0f, 0f);
+				Size size;
+				if (parent == null)
+					size = new Size(0f, 0f);
+				else
+					size = parent.getPreferredSize();
 
 				if (width != null)
 					size.setWidth(width);
@@ -287,6 +309,13 @@ public abstract class UIElement {
 		}
 	}
 
+	public void invalidateArrange() {
+		if (initialized) {
+			Rectangle rect = new Rectangle(0f, 0f, preferredSize.getWidth(), preferredSize.getHeight());
+			arrange(rect);
+		}
+	}
+
 	/**
 	 * Measures the UI element accounting for all of the children. This method spans
 	 * all of the children, starting from the bottom up.
@@ -296,6 +325,11 @@ public abstract class UIElement {
 	 * @return The new preferred size of the UI Element.
 	 */
 	public void measure(Size availableSize) {
+		if (!isVisible()) {
+			preferredSize = Size.ZERO;
+			return;
+		}
+
 		if (initialized) {
 			float finalWidth = availableSize.getWidth();
 			float finalHeight = availableSize.getHeight();
@@ -384,18 +418,29 @@ public abstract class UIElement {
 				newFinalSize = finalSize;
 			}
 
+			Rectangle oldActualSize = actualSize;
 			setActualSize(newFinalSize);
 
-			for (UIElement element : children) {
-				element.arrange(this.getActualSize());
+			if (!oldActualSize.equals(actualSize)) {
+				for (UIElement element : children) {
+					element.arrange(this.getActualSize());
+				}
 			}
 		}
+	}
+
+	public List<UIElement> getChildren() {
+		return Collections.unmodifiableList(children);
 	}
 
 	public void addChild(UIElement child) {
 		if (child == null)
 			return;
 
+		if (this.initialized && !child.initialized)
+			child.initialize();
+
+		child.setParent(this);
 		children.add(child);
 		onChildAdded(child);
 	}
@@ -408,24 +453,37 @@ public abstract class UIElement {
 		onChildRemoved(child);
 	}
 
+	public void clearChildren() {
+		children.clear();
+		// TODO: Implement children cleared as list.
+	}
+
 	public void onChildAdded(UIElement child) {
-		invalidate();
+		invalidateMeasure();
 	}
 
 	public void onChildChanged(UIElement child) {
-		invalidate();
+		invalidateMeasure();
 	}
 
 	public void onChildRemoved(UIElement child) {
-		invalidate();
+		invalidateMeasure();
 	}
 
 	public void onVisibilityChanged() {
-		invalidate();
+		invalidateMeasure();
 	}
 
+	/**
+	 * Dispose method to release resources.
+	 */
 	public void dispose() {
+		Iterator<UIElement> children = getChildren().iterator();
+		while (children.hasNext()) {
+			children.next().dispose();
+		}
 
+		this.clearChildren();
 	}
 
 	public void onMouseMove(MouseMoveEvent event) {

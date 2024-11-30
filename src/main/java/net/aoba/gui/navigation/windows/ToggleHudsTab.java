@@ -33,18 +33,18 @@ public class ToggleHudsTab extends Window {
 	public ToggleHudsTab(ArrayList<HudWindow> huds) {
 		super("Toggle HUDs", 0, 0);
 
-		StackPanelComponent stackPanel = new StackPanelComponent(this);
+		StackPanelComponent stackPanel = new StackPanelComponent();
 		stackPanel.setMargin(new Margin(null, 30f, null, null));
 
-		stackPanel.addChild(new StringComponent(stackPanel, "Toggle HUDs"));
-		stackPanel.addChild(new SeparatorComponent(stackPanel));
+		stackPanel.addChild(new StringComponent("Toggle HUDs"));
+		stackPanel.addChild(new SeparatorComponent());
 
 		for (HudWindow hud : huds) {
-			HudComponent hudComponent = new HudComponent(stackPanel, hud.getID(), hud);
+			HudComponent hudComponent = new HudComponent(hud.getID(), hud);
 			stackPanel.addChild(hudComponent);
 		}
 
-		this.children.add(stackPanel);
+		addChild(stackPanel);
 		this.setMinWidth(300.0f);
 	}
 

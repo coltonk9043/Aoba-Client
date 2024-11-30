@@ -18,6 +18,8 @@
 
 package net.aoba.gui.components;
 
+import java.util.List;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
@@ -37,8 +39,8 @@ public class ScrollComponent extends Component implements MouseScrollListener {
 	 * 
 	 * @param parent Parent component.
 	 */
-	public ScrollComponent(UIElement parent) {
-		super(parent);
+	public ScrollComponent() {
+		super();
 	}
 
 	@Override
@@ -74,6 +76,7 @@ public class ScrollComponent extends Component implements MouseScrollListener {
 	@Override
 	public void onMouseScroll(MouseScrollEvent event) {
 		if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.hovered) {
+			List<UIElement> children = getChildren();
 			int childCount = children.size();
 			if (event.GetVertical() > 0 && scroll > 0) {
 				scroll--;

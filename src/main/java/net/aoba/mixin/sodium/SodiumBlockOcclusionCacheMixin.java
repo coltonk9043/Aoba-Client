@@ -20,12 +20,10 @@ public abstract class SodiumBlockOcclusionCacheMixin {
 	@Inject(at = { @At("TAIL") }, method = "shouldDrawSide", cancellable = true)
 	private void onShouldDrawSide(BlockState state, BlockView view, BlockPos pos, Direction facing,
 			CallbackInfoReturnable<Boolean> cir) {
-		if (Aoba.getInstance().moduleManager.freecam.state.getValue()) {
-			AobaClient aoba = Aoba.getInstance();
-			XRay xray = aoba.moduleManager.xray;
-			if (xray.state.getValue()) {
-				cir.setReturnValue(!xray.isXRayBlock(state.getBlock()));
-			}
+		AobaClient aoba = Aoba.getInstance();
+		XRay xray = aoba.moduleManager.xray;
+		if (xray.state.getValue()) {
+			cir.setReturnValue(!xray.isXRayBlock(state.getBlock()));
 		}
 	}
 }

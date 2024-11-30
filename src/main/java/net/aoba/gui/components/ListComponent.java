@@ -27,7 +27,6 @@ import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseButton;
@@ -39,14 +38,14 @@ public class ListComponent extends Component implements MouseClickListener {
 	private List<String> itemsSource;
 	private int selectedIndex;
 
-	public ListComponent(UIElement parent, List<String> itemsSource) {
-		super(parent);
+	public ListComponent(List<String> itemsSource) {
+		super();
 		this.setMargin(new Margin(2f, null, 2f, null));
 		this.itemsSource = itemsSource;
 	}
 
-	public ListComponent(UIElement parent, List<String> itemsSource, StringSetting listSetting) {
-		super(parent);
+	public ListComponent(List<String> itemsSource, StringSetting listSetting) {
+		super();
 		this.listSetting = listSetting;
 		this.setMargin(new Margin(2f, null, 2f, null));
 		this.itemsSource = itemsSource;

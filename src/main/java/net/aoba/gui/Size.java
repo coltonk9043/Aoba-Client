@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class Size {
 	public static final Size INFINITE = new Size(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
-
+	public static final Size ZERO = new Size(0f, 0f);
 	private Float width = null;
 	private Float height = null;
 

@@ -1,5 +1,7 @@
 package net.aoba.gui.navigation;
 
+import java.util.List;
+
 import net.aoba.Aoba;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.UIElement;
@@ -50,6 +52,7 @@ public class HudWindow extends Window {
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		if (isVisible()) {
+			List<UIElement> children = getChildren();
 			for (UIElement child : children) {
 				child.draw(drawContext, partialTicks);
 			}

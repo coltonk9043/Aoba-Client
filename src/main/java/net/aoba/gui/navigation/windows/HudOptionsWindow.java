@@ -42,46 +42,43 @@ public class HudOptionsWindow extends Window {
 
 		this.minWidth = 340.0f;
 
-		StackPanelComponent stackPanel = new StackPanelComponent(this);
+		StackPanelComponent stackPanel = new StackPanelComponent();
 		stackPanel.setMargin(new Margin(null, 30f, null, null));
 
 		List<String> fontNames = Aoba.getInstance().fontManager.fontRenderers.keySet().stream().toList();
 		LogUtils.getLogger().info(Arrays.toString(fontNames.toArray()));
 
 		// Keybinds Header
-		stackPanel.addChild(new StringComponent(stackPanel, "Keybinds", GuiManager.foregroundColor.getValue(), true));
+		stackPanel.addChild(new StringComponent("Keybinds", GuiManager.foregroundColor.getValue(), true));
 
-		stackPanel.addChild(new CheckboxComponent(stackPanel, GuiManager.enableCustomTitle));
+		stackPanel.addChild(new CheckboxComponent(GuiManager.enableCustomTitle));
 
-		KeybindComponent clickGuiKeybindComponent = new KeybindComponent(stackPanel,
-				Aoba.getInstance().guiManager.clickGuiButton);
+		KeybindComponent clickGuiKeybindComponent = new KeybindComponent(Aoba.getInstance().guiManager.clickGuiButton);
 
 		stackPanel.addChild(clickGuiKeybindComponent);
 
 		// Hud Font Header
-		stackPanel.addChild(new StringComponent(stackPanel, "HUD Font", GuiManager.foregroundColor.getValue(), true));
+		stackPanel.addChild(new StringComponent("HUD Font", GuiManager.foregroundColor.getValue(), true));
 
-		ListComponent listComponent = new ListComponent(stackPanel, fontNames,
-				Aoba.getInstance().fontManager.fontSetting);
+		ListComponent listComponent = new ListComponent(fontNames, Aoba.getInstance().fontManager.fontSetting);
 		stackPanel.addChild(listComponent);
 
-		stackPanel.addChild(new StringComponent(stackPanel, "HUD Colors", GuiManager.foregroundColor.getValue(), true));
+		stackPanel.addChild(new StringComponent("HUD Colors", GuiManager.foregroundColor.getValue(), true));
 
-		stackPanel.addChild(new ColorPickerComponent(stackPanel, GuiManager.foregroundColor));
-		stackPanel.addChild(new ColorPickerComponent(stackPanel, GuiManager.backgroundColor));
-		stackPanel.addChild(new ColorPickerComponent(stackPanel, GuiManager.borderColor));
+		stackPanel.addChild(new ColorPickerComponent(GuiManager.foregroundColor));
+		stackPanel.addChild(new ColorPickerComponent(GuiManager.backgroundColor));
+		stackPanel.addChild(new ColorPickerComponent(GuiManager.borderColor));
+
+		stackPanel.addChild(new StringComponent("Hud Styling", GuiManager.foregroundColor.getValue(), true));
+
+		stackPanel.addChild(new SliderComponent(GuiManager.roundingRadius));
 
 		stackPanel
-				.addChild(new StringComponent(stackPanel, "Hud Styling", GuiManager.foregroundColor.getValue(), true));
+				.addChild(new StringComponent("GUI / HUD Responsiveness", GuiManager.foregroundColor.getValue(), true));
 
-		stackPanel.addChild(new SliderComponent(stackPanel, GuiManager.roundingRadius));
+		stackPanel.addChild(new SliderComponent(GuiManager.dragSmoothening));
 
-		stackPanel.addChild(new StringComponent(stackPanel, "GUI / HUD Responsiveness",
-				GuiManager.foregroundColor.getValue(), true));
-
-		stackPanel.addChild(new SliderComponent(stackPanel, GuiManager.dragSmoothening));
-
-		this.children.add(stackPanel);
+		this.addChild(stackPanel);
 	}
 
 	@Override

@@ -30,13 +30,13 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class TextBoxComponent extends Component implements KeyDownListener {
@@ -54,20 +54,20 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 	// Events
 	private Consumer<String> onTextChanged;
 
-	public TextBoxComponent(UIElement parent) {
-		super(parent);
+	public TextBoxComponent() {
+		super();
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.text = "";
 	}
 
-	public TextBoxComponent(UIElement parent, String text) {
-		super(parent);
+	public TextBoxComponent(String text) {
+		super();
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.text = text;
 	}
 
-	public TextBoxComponent(UIElement parent, StringSetting stringSetting) {
-		super(parent);
+	public TextBoxComponent(StringSetting stringSetting) {
+		super();
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 
 		this.stringSetting = stringSetting;
@@ -113,7 +113,9 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 
 		if (text != null && !text.isEmpty()) {
 			int visibleStringLength = (int) (actualWidth - 16 / 10);
-			String visibleString = text.substring(Math.max(0, text.length() - visibleStringLength - 1), text.length());
+
+			int visibleStringIndex = Math.min(Math.max(0, text.length() - visibleStringLength - 1), text.length() - 1);
+			String visibleString = text.substring(visibleStringIndex, text.length());
 			Render2D.drawString(drawContext, visibleString, actualX + 8, actualY + 8, 0xFFFFFF);
 		}
 	}
@@ -146,14 +148,25 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 					if (stringSetting != null)
 						stringSetting.setValue(text);
 				}
-			} else {
-				text += "" + (char) key;
+
+			} else if (keyIsValid(key) || key == GLFW.GLFW_KEY_SPACE) {
+				System.out.println(key);
+				char keyCode = (char) key;
+
+				if (key != GLFW.GLFW_KEY_SPACE && !Screen.hasShiftDown())
+					keyCode = Character.toLowerCase(keyCode);
+
+				text += "" + keyCode;
 				if (stringSetting != null)
 					stringSetting.setValue(text);
 			}
 
 			event.cancel();
 		}
+	}
+
+	private boolean keyIsValid(int key) {
+		return (key >= 48 && key <= 57) || (key >= 65 && key <= 90) || (key >= 97 && key <= 122);
 	}
 
 	public String getText() {
@@ -184,5 +197,11 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 
 	public void setOnTextChanged(Consumer<String> onTextChanged) {
 		this.onTextChanged = onTextChanged;
+	}
+
+	@Override
+	public void onVisibilityChanged() {
+		super.onVisibilityChanged();
+		setListeningForKey(false);
 	}
 }

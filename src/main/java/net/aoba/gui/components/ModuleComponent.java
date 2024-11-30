@@ -28,7 +28,6 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.navigation.CloseableWindow;
 import net.aoba.module.Module;
@@ -52,8 +51,8 @@ public class ModuleComponent extends Component {
 	private boolean spinning = false;
 	private float spinAngle = 0;
 
-	public ModuleComponent(UIElement parent, String text, Module module) {
-		super(parent);
+	public ModuleComponent(String text, Module module) {
+		super();
 
 		this.text = text;
 		this.module = module;
@@ -125,16 +124,15 @@ public class ModuleComponent extends Component {
 								actualY);
 						lastSettingsTab.setMinWidth(320.0f);
 						// lastSettingsTab.setInheritHeightFromChildren(true);
-						StackPanelComponent stackPanel = new StackPanelComponent(lastSettingsTab);
+						StackPanelComponent stackPanel = new StackPanelComponent();
 
-						StringComponent titleComponent = new StringComponent(stackPanel,
-								this.module.getName() + " Settings");
+						StringComponent titleComponent = new StringComponent(module.getName() + " Settings");
 						titleComponent.setIsHitTestVisible(false);
 						stackPanel.addChild(titleComponent);
 
-						stackPanel.addChild(new SeparatorComponent(stackPanel));
+						stackPanel.addChild(new SeparatorComponent());
 
-						KeybindComponent keybindComponent = new KeybindComponent(stackPanel, module.getBind());
+						KeybindComponent keybindComponent = new KeybindComponent(module.getBind());
 						// keybindComponent.setSize(new Rectangle(null, null, null, 30f));
 
 						stackPanel.addChild(keybindComponent);
@@ -145,23 +143,23 @@ public class ModuleComponent extends Component {
 
 							Component c;
 							if (setting instanceof FloatSetting) {
-								c = new SliderComponent(stackPanel, (FloatSetting) setting);
+								c = new SliderComponent((FloatSetting) setting);
 							} else if (setting instanceof BooleanSetting) {
-								c = new CheckboxComponent(stackPanel, (BooleanSetting) setting);
+								c = new CheckboxComponent((BooleanSetting) setting);
 								// }else if (setting instanceof StringListSetting) {
 								// c = new ListComponent(stackPanel, (IndexedStringListSetting) setting);
 							} else if (setting instanceof ColorSetting) {
-								c = new ColorPickerComponent(stackPanel, (ColorSetting) setting);
+								c = new ColorPickerComponent((ColorSetting) setting);
 							} else if (setting instanceof BlocksSetting) {
-								c = new BlocksComponent(stackPanel, (BlocksSetting) setting);
+								c = new BlocksComponent((BlocksSetting) setting);
 							} else if (setting instanceof EnumSetting) {
-								c = new EnumComponent<>(stackPanel, (EnumSetting) setting);
+								c = new EnumComponent<>((EnumSetting) setting);
 							} else {
 								c = null;
 							}
 
 							if (c != null) {
-								stackPanel.addChild(new StringComponent(stackPanel, setting.displayName));
+								stackPanel.addChild(new StringComponent(setting.displayName));
 								stackPanel.addChild(c);
 							}
 						}

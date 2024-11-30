@@ -6,7 +6,6 @@ import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.render.Render2D;
@@ -20,8 +19,8 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 	private boolean hoveringLeftButton;
 	private boolean hoveringRightButton;
 
-	public EnumComponent(UIElement parent, EnumSetting<T> enumSetting) {
-		super(parent);
+	public EnumComponent(EnumSetting<T> enumSetting) {
+		super();
 		this.enumSetting = enumSetting;
 
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));

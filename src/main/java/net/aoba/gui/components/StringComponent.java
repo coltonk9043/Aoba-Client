@@ -26,7 +26,6 @@ import net.aoba.event.listeners.FontChangedListener;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Size;
 import net.aoba.gui.TextAlign;
-import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
@@ -41,8 +40,8 @@ public class StringComponent extends Component implements FontChangedListener {
 	private boolean bold;
 	private Color color;
 
-	public StringComponent(UIElement parent, String text) {
-		super(parent);
+	public StringComponent(String text) {
+		super();
 		setText(text);
 		this.color = Colors.White;
 		this.bold = false;
@@ -51,8 +50,8 @@ public class StringComponent extends Component implements FontChangedListener {
 		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
 	}
 
-	public StringComponent(UIElement parent, String text, boolean bold) {
-		super(parent);
+	public StringComponent(String text, boolean bold) {
+		super();
 		setText(text);
 		this.color = Colors.White;
 		this.bold = bold;
@@ -61,8 +60,8 @@ public class StringComponent extends Component implements FontChangedListener {
 		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
 	}
 
-	public StringComponent(UIElement parent, String text, Color color, boolean bold) {
-		super(parent);
+	public StringComponent(String text, Color color, boolean bold) {
+		super();
 		setText(text);
 		this.color = color;
 		this.bold = bold;
@@ -73,8 +72,8 @@ public class StringComponent extends Component implements FontChangedListener {
 
 	@Override
 	public void measure(Size availableSize) {
-		recalculateLines();
-		preferredSize = new Size(availableSize.getWidth(), text.size() * 25f);
+		recalculateLines(availableSize);
+		preferredSize = new Size(availableSize.getWidth(), text.size() * 28f);
 	}
 
 	@Override
@@ -115,18 +114,17 @@ public class StringComponent extends Component implements FontChangedListener {
 	public void setText(String text) {
 		if (actualSize != null) {
 			this.originalText = text;
-			recalculateLines();
-			invalidate();
+			invalidateMeasure();
 		}
 	}
 
-	public void recalculateLines() {
+	public void recalculateLines(Size availableSize) {
 		this.text.clear();
 
 		if (originalText != null) {
 			TextRenderer textRenderer = Aoba.getInstance().fontManager.GetRenderer();
 
-			float width = actualSize.getWidth().floatValue();
+			float width = availableSize.getWidth().floatValue();
 			float textWidth = textRenderer.getWidth(originalText) * 2.0f;
 			if (textWidth < width) {
 				this.text.add(originalText);

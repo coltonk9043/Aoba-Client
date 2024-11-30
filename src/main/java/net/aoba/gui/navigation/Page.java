@@ -53,6 +53,7 @@ public class Page implements MouseMoveListener, MouseClickListener {
 
 	public void AddWindow(Window hud) {
 		hud.parentPage = this;
+		hud.setVisible(this.isVisible);
 		tabs.add(hud);
 		hud.initialize();
 	}

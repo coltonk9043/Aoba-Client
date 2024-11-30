@@ -23,7 +23,6 @@ import org.joml.Matrix4f;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.utils.render.Render2D;
@@ -41,8 +40,8 @@ public class CheckboxComponent extends Component {
 	private Color hoverBorderColor = new Color(255, 255, 255);
 	private Color clickAnimationColor = new Color(255, 255, 0);
 
-	public CheckboxComponent(UIElement parent, BooleanSetting checkbox) {
-		super(parent);
+	public CheckboxComponent(BooleanSetting checkbox) {
+		super();
 		this.text = checkbox.displayName;
 		this.checkbox = checkbox;
 

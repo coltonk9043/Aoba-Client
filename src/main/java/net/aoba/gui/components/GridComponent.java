@@ -1,6 +1,7 @@
 package net.aoba.gui.components;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.aoba.gui.GridDefinition;
 import net.aoba.gui.GridDefinition.RelativeUnit;
@@ -15,8 +16,8 @@ public class GridComponent extends Component {
 	private Float[] columnWidths;
 	private Float[] rowHeights;
 
-	public GridComponent(UIElement parent) {
-		super(parent);
+	public GridComponent() {
+		super();
 	}
 
 	public void addColumnDefinition(GridDefinition def) {
@@ -34,6 +35,8 @@ public class GridComponent extends Component {
 
 	@Override
 	public void measure(Size availableSize) {
+		List<UIElement> children = getChildren();
+
 		int numChildren = children.size();
 		int numColumnDefinitions = 0;
 		int numRowDefinitions = 0;
@@ -143,6 +146,7 @@ public class GridComponent extends Component {
 			float currentX = 0;
 			float currentY = finalSize.getY();
 
+			List<UIElement> children = getChildren();
 			for (UIElement element : children) {
 				int row = iteration / columnWidths.length;
 				int column = iteration % columnWidths.length;

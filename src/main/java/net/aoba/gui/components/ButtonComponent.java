@@ -18,6 +18,8 @@
 
 package net.aoba.gui.components;
 
+import java.util.List;
+
 import org.joml.Matrix4f;
 
 import net.aoba.event.events.MouseClickEvent;
@@ -43,8 +45,8 @@ public class ButtonComponent extends Component {
 	 * @param text    Text contained in this button element.
 	 * @param onClick OnClick delegate that will run when the button is pressed.
 	 */
-	public ButtonComponent(UIElement parent, Runnable onClick) {
-		super(parent);
+	public ButtonComponent(Runnable onClick) {
+		super();
 
 		this.setMargin(new Margin(8f, 4f, 8f, 4f));
 
@@ -53,7 +55,64 @@ public class ButtonComponent extends Component {
 
 	@Override
 	public void measure(Size availableSize) {
-		preferredSize = new Size(availableSize.getWidth(), 40.0f);
+		if (!isVisible()) {
+			preferredSize = Size.ZERO;
+			return;
+		}
+
+		if (initialized) {
+			float finalWidth = 0;
+			float finalHeight = 0;
+
+			List<UIElement> children = getChildren();
+			for (UIElement element : children) {
+				if (!element.isVisible())
+					continue;
+
+				element.measure(availableSize);
+				Size resultingSize = element.getPreferredSize();
+
+				if (resultingSize.getWidth() > finalWidth)
+					finalWidth = resultingSize.getWidth();
+
+				if (resultingSize.getHeight() > finalHeight)
+					finalHeight = resultingSize.getHeight();
+			}
+
+			if (margin != null) {
+
+				Float marginLeft = margin.getLeft();
+				Float marginTop = margin.getTop();
+				Float marginRight = margin.getRight();
+				Float marginBottom = margin.getBottom();
+
+				if (marginLeft != null)
+					finalWidth += marginLeft;
+
+				if (marginRight != null)
+					finalWidth += marginRight;
+
+				if (marginTop != null)
+					finalHeight += marginTop;
+
+				if (marginBottom != null)
+					finalHeight += marginBottom;
+			}
+
+			if (minWidth != null && finalWidth < minWidth) {
+				finalWidth = minWidth;
+			} else if (maxWidth != null && finalWidth > maxWidth) {
+				finalWidth = maxWidth;
+			}
+
+			if (minHeight != null && finalHeight < minHeight) {
+				finalHeight = minHeight;
+			} else if (maxHeight != null && finalHeight > maxHeight) {
+				finalHeight = maxHeight;
+			}
+
+			preferredSize = new Size(finalWidth, finalHeight);
+		}
 	}
 
 	/**

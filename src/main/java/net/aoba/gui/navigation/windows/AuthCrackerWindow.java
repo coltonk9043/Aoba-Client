@@ -52,16 +52,16 @@ public class AuthCrackerWindow extends Window {
 		super("Auth Cracker", 185, 150);
 
 		this.minWidth = 350f;
-		StackPanelComponent stackPanel = new StackPanelComponent(this);
+		StackPanelComponent stackPanel = new StackPanelComponent();
 
-		stackPanel.addChild(new StringComponent(stackPanel, "AuthCracker"));
-		stackPanel.addChild(new SeparatorComponent(stackPanel));
+		stackPanel.addChild(new StringComponent("AuthCracker"));
+		stackPanel.addChild(new SeparatorComponent());
 
-		StringComponent label = new StringComponent(stackPanel,
+		StringComponent label = new StringComponent(
 				"This panel can be used to break Auth passwords used in cracked servers.");
 		stackPanel.addChild(label);
 
-		SliderComponent slider = new SliderComponent(stackPanel, delay);
+		SliderComponent slider = new SliderComponent(delay);
 		stackPanel.addChild(slider);
 
 		authCracker = new AuthCracker(delay);
@@ -84,14 +84,14 @@ public class AuthCrackerWindow extends Window {
 			}
 		};
 
-		start = new ButtonComponent(stackPanel, startRunnable);
+		start = new ButtonComponent(startRunnable);
 
 		// Create Text inside button
-		startButtonText = new StringComponent(start, "Start");
+		startButtonText = new StringComponent("Start");
 		start.addChild(startButtonText);
 		stackPanel.addChild(start);
 
-		this.children.add(stackPanel);
+		addChild(stackPanel);
 	}
 }
 

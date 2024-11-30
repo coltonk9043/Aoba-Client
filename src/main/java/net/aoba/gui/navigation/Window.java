@@ -19,6 +19,7 @@
 package net.aoba.gui.navigation;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.joml.Matrix4f;
 
@@ -58,15 +59,16 @@ public class Window extends UIElement {
 	}
 
 	public Window(String ID, float x, float y, float width, float height) {
-		super(null);
+		super();
 		this.ID = ID;
 		minWidth = 180.0f;
 		minHeight = 50.0f;
 
+		visible = false;
 		position = RectangleSetting.builder().id(ID + "_position").displayName(ID + "Position")
 				.defaultValue(new Rectangle(x, y, width, height)).onUpdate((Rectangle vec) -> {
 					setSize(vec.getWidth(), vec.getHeight());
-					invalidate();
+					invalidateArrange();
 				}).build();
 
 		setSize(getWidth(), getHeight());
@@ -82,7 +84,7 @@ public class Window extends UIElement {
 		if (position.getY() != null)
 			newSize.setY(position.getY());
 
-		return actualSize;
+		return newSize;
 	}
 
 	@Override
@@ -97,13 +99,6 @@ public class Window extends UIElement {
 
 	public String getID() {
 		return ID;
-	}
-
-	public void dispose() {
-		for (UIElement child : children) {
-			child.dispose();
-		}
-		children.clear();
 	}
 
 	public void draw(DrawContext drawContext, float partialTicks) {
@@ -121,6 +116,7 @@ public class Window extends UIElement {
 		Render2D.drawRoundedBoxOutline(matrix4f, actualX, actualY, actualWidth, actualHeight,
 				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
 
+		List<UIElement> children = getChildren();
 		for (UIElement child : children) {
 			child.draw(drawContext, partialTicks);
 		}
@@ -153,7 +149,7 @@ public class Window extends UIElement {
 	public void onMouseMove(MouseMoveEvent event) {
 		// Propagate to children.
 		if (!isMoving || !isResizing) {
-			Iterator<UIElement> tabIterator = children.iterator();
+			Iterator<UIElement> tabIterator = getChildren().iterator();
 			while (tabIterator.hasNext()) {
 				tabIterator.next().onMouseMove(event);
 			}
@@ -241,7 +237,7 @@ public class Window extends UIElement {
 
 	public void onMouseClick(MouseClickEvent event) {
 		// Propagate to children.
-		Iterator<UIElement> tabIterator = children.iterator();
+		Iterator<UIElement> tabIterator = getChildren().iterator();
 		while (tabIterator.hasNext()) {
 			tabIterator.next().onMouseClick(event);
 		}

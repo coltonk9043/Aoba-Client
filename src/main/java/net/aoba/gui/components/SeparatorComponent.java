@@ -2,14 +2,13 @@ package net.aoba.gui.components;
 
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 
 public class SeparatorComponent extends Component {
 
-	public SeparatorComponent(UIElement parent) {
-		super(parent);
+	public SeparatorComponent() {
+		super();
 	}
 
 	@Override

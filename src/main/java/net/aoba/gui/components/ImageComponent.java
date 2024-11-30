@@ -4,7 +4,6 @@ import org.joml.Matrix4f;
 
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
@@ -14,12 +13,12 @@ public class ImageComponent extends Component {
 
 	public Identifier image;
 
-	public ImageComponent(UIElement parent) {
-		super(parent);
+	public ImageComponent() {
+		super();
 	}
 
-	public ImageComponent(UIElement parent, Identifier image) {
-		this(parent);
+	public ImageComponent(Identifier image) {
+		this();
 		this.image = image;
 	}
 

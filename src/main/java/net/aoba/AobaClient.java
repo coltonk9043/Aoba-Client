@@ -118,15 +118,14 @@ public class AobaClient {
 		fontManager.Initialize();
 		LogUtils.getLogger().info("[Aoba] Initializing Combat Manager");
 		combatManager = new CombatManager();
-
+		LogUtils.getLogger().info("[Aoba] Initializing Macro Manager");
+		macroManager = new MacroManager();
 		LogUtils.getLogger().info("[Aoba] Initializing GUI");
 		guiManager = new GuiManager();
 		guiManager.Initialize();
 		LogUtils.getLogger().info("[Aoba] Loading Alts");
 		altManager = new AltManager();
 		proxyManager = new ProxyManager();
-
-		macroManager = new MacroManager();
 
 		LogUtils.getLogger().info("[Aoba] Starting Discord RPC");
 		rpcManager = new RPCManager();

@@ -159,45 +159,45 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		SettingManager.registerSetting(this.locationZ);
 		SettingManager.registerSetting(this.maxSpeed);
 
-		StackPanelComponent stackPanel = new StackPanelComponent(this);
+		StackPanelComponent stackPanel = new StackPanelComponent();
 
-		stackPanel.addChild(new StringComponent(stackPanel, "PathFinding"));
-		stackPanel.addChild(new SeparatorComponent(stackPanel));
+		stackPanel.addChild(new StringComponent("PathFinding"));
+		stackPanel.addChild(new SeparatorComponent());
 
-		StringComponent label = new StringComponent(stackPanel,
+		StringComponent label = new StringComponent(
 				"GoTo will automatically walk/fly your player to specific coordinates.");
 		stackPanel.addChild(label);
 
-		stackPanel.addChild(new StringComponent(stackPanel, "Mode"));
-		EnumComponent<Pathfinder> pathfinderModeComponent = new EnumComponent<Pathfinder>(stackPanel, pathfinderMode);
+		stackPanel.addChild(new StringComponent("Mode"));
+		EnumComponent<Pathfinder> pathfinderModeComponent = new EnumComponent<Pathfinder>(pathfinderMode);
 		stackPanel.addChild(pathfinderModeComponent);
 
-		CheckboxComponent avoidWaterCheckbox = new CheckboxComponent(stackPanel, avoidWater);
+		CheckboxComponent avoidWaterCheckbox = new CheckboxComponent(avoidWater);
 		stackPanel.addChild(avoidWaterCheckbox);
 
-		CheckboxComponent avoidLavaCheckbox = new CheckboxComponent(stackPanel, avoidLava);
+		CheckboxComponent avoidLavaCheckbox = new CheckboxComponent(avoidLava);
 		stackPanel.addChild(avoidLavaCheckbox);
 
-		radiusHeader = new StringComponent(stackPanel, "Radius");
+		radiusHeader = new StringComponent("Radius");
 		stackPanel.addChild(radiusHeader);
-		radiusSlider = new SliderComponent(stackPanel, radius);
+		radiusSlider = new SliderComponent(radius);
 		stackPanel.addChild(radiusSlider);
 
-		flyMaxSpeedHeader = new StringComponent(stackPanel, "Max Speed");
+		flyMaxSpeedHeader = new StringComponent("Max Speed");
 		stackPanel.addChild(flyMaxSpeedHeader);
-		flyMaxSpeedSlider = new SliderComponent(stackPanel, maxSpeed);
+		flyMaxSpeedSlider = new SliderComponent(maxSpeed);
 		stackPanel.addChild(flyMaxSpeedSlider);
 
-		stackPanel.addChild(new StringComponent(stackPanel, "X Coordinate"));
-		TextBoxComponent locationXTextBox = new TextBoxComponent(stackPanel, locationX);
+		stackPanel.addChild(new StringComponent("X Coordinate"));
+		TextBoxComponent locationXTextBox = new TextBoxComponent(locationX);
 		stackPanel.addChild(locationXTextBox);
 
-		stackPanel.addChild(new StringComponent(stackPanel, "Y Coordinate"));
-		TextBoxComponent locationYTextBox = new TextBoxComponent(stackPanel, locationY);
+		stackPanel.addChild(new StringComponent("Y Coordinate"));
+		TextBoxComponent locationYTextBox = new TextBoxComponent(locationY);
 		stackPanel.addChild(locationYTextBox);
 
-		stackPanel.addChild(new StringComponent(stackPanel, "Z Coordinate"));
-		TextBoxComponent locationZTextBox = new TextBoxComponent(stackPanel, locationZ);
+		stackPanel.addChild(new StringComponent("Z Coordinate"));
+		TextBoxComponent locationZTextBox = new TextBoxComponent(locationZ);
 		stackPanel.addChild(locationZTextBox);
 
 		startRunnable = new Runnable() {
@@ -232,16 +232,16 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			}
 		};
 
-		startButton = new ButtonComponent(stackPanel, startRunnable);
-		startButtonText = new StringComponent(startButton, "Calculate");
+		startButton = new ButtonComponent(startRunnable);
+		startButtonText = new StringComponent("Calculate");
 		startButton.addChild(startButtonText);
 		stackPanel.addChild(startButton);
 
-		setPositionButton = new ButtonComponent(stackPanel, setPositionRunnable);
-		setPositionButton.addChild(new StringComponent(setPositionButton, "Set Position"));
+		setPositionButton = new ButtonComponent(setPositionRunnable);
+		setPositionButton.addChild(new StringComponent("Set Position"));
 		stackPanel.addChild(setPositionButton);
 
-		children.add(stackPanel);
+		addChild(stackPanel);
 
 		pathManager = new WalkingPathManager();
 	}

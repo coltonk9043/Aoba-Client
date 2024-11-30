@@ -22,7 +22,6 @@ import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
@@ -33,8 +32,8 @@ public class HudComponent extends Component {
 	private String text;
 	private HudWindow hud;
 
-	public HudComponent(UIElement parent, String text, HudWindow hud) {
-		super(parent);
+	public HudComponent(String text, HudWindow hud) {
+		super();
 		this.text = text;
 		this.hud = hud;
 

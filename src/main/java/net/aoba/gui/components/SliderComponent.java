@@ -26,7 +26,6 @@ import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.settings.types.FloatSetting;
@@ -48,14 +47,14 @@ public class SliderComponent extends Component {
 
 	FloatSetting floatSetting;
 
-	public SliderComponent(UIElement parent) {
-		super(parent);
+	public SliderComponent() {
+		super();
 		this.floatSetting = null;
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
-	public SliderComponent(UIElement parent, FloatSetting floatSetting) {
-		super(parent);
+	public SliderComponent(FloatSetting floatSetting) {
+		super();
 		this.floatSetting = floatSetting;
 		minValue = floatSetting.min_value;
 		maxValue = floatSetting.max_value;

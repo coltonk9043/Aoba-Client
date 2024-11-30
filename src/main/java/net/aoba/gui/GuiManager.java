@@ -185,31 +185,31 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 		for (Category category : categories.values()) {
 			Window tab = new Window(category.getName(), xOffset, 75.0f);
-			StackPanelComponent stackPanel = new StackPanelComponent(tab);
+			StackPanelComponent stackPanel = new StackPanelComponent();
 			stackPanel.setMargin(new Margin(null, 30f, null, null));
 
-			GridComponent gridComponent = new GridComponent(stackPanel);
+			GridComponent gridComponent = new GridComponent();
 			gridComponent.addColumnDefinition(new GridDefinition(30, RelativeUnit.Absolute)); // Fill 30px
 			gridComponent.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative)); // Fill all remaining space
 
-			ImageComponent img = new ImageComponent(gridComponent, category.getIcon());
+			ImageComponent img = new ImageComponent(category.getIcon());
 			img.setMargin(new Margin(4f, 0f, 4f, 0f));
 			gridComponent.addChild(img);
 
-			StringComponent title = new StringComponent(gridComponent, category.getName());
+			StringComponent title = new StringComponent(category.getName());
 			title.setIsHitTestVisible(false);
 			gridComponent.addChild(title);
 
 			stackPanel.addChild(gridComponent);
 
-			SeparatorComponent separator = new SeparatorComponent(stackPanel);
+			SeparatorComponent separator = new SeparatorComponent();
 			separator.setIsHitTestVisible(false);
 			stackPanel.addChild(separator);
 
 			// Loop through modules and add them to the correct category
 			for (Module module : Aoba.getInstance().moduleManager.modules) {
 				if (module.getCategory().equals(category)) {
-					ModuleComponent button = new ModuleComponent(stackPanel, module.getName(), module);
+					ModuleComponent button = new ModuleComponent(module.getName(), module);
 					stackPanel.addChild(button);
 				}
 			}

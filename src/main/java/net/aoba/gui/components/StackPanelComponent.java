@@ -18,6 +18,8 @@
 
 package net.aoba.gui.components;
 
+import java.util.List;
+
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.Size;
 import net.aoba.gui.UIElement;
@@ -29,13 +31,14 @@ public class StackPanelComponent extends Component {
 
 	protected StackType stackType = StackType.Vertical;
 
-	public StackPanelComponent(UIElement parent) {
-		super(parent);
+	public StackPanelComponent() {
+		super();
 	}
 
 	@Override
 	public void measure(Size availableSize) {
 		Size newSize = new Size(availableSize.getWidth(), 0.0f);
+		List<UIElement> children = getChildren();
 		if (children.size() > 0) {
 			for (UIElement element : children) {
 				if (element == null || !element.isVisible())
@@ -56,6 +59,7 @@ public class StackPanelComponent extends Component {
 		}
 
 		float y = 0;
+		List<UIElement> children = getChildren();
 		for (UIElement element : children) {
 			if (element == null || !element.isVisible())
 				continue;

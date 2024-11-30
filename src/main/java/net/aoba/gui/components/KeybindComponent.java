@@ -27,7 +27,6 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.settings.types.KeybindSetting;
@@ -42,8 +41,8 @@ public class KeybindComponent extends Component implements KeyDownListener {
 	private boolean listeningForKey;
 	private KeybindSetting keyBind;
 
-	public KeybindComponent(UIElement parent, KeybindSetting keyBind) {
-		super(parent);
+	public KeybindComponent(KeybindSetting keyBind) {
+		super();
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.keyBind = keyBind;
 	}

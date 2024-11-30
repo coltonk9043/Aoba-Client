@@ -29,13 +29,14 @@ import net.aoba.gui.UIElement;
 
 public abstract class Component extends UIElement {
 
-	public Component(UIElement parent) {
-		super(parent);
+	public Component() {
+		super();
 		this.margin = new Margin();
 	}
 
 	@Override
 	public void onVisibilityChanged() {
+		super.onVisibilityChanged();
 		hovered = false;
 	}
 
@@ -47,7 +48,7 @@ public abstract class Component extends UIElement {
 	public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
 		if (isHitTestVisible()) {
 			// Propagate to children.
-			Iterator<UIElement> tabIterator = children.iterator();
+			Iterator<UIElement> tabIterator = getChildren().iterator();
 			while (tabIterator.hasNext()) {
 				tabIterator.next().onMouseMove(mouseMoveEvent);
 			}
@@ -77,19 +78,9 @@ public abstract class Component extends UIElement {
 
 	}
 
-	/**
-	 * Dispose method to release resources.
-	 */
-	public void dispose() {
-		for (UIElement child : children) {
-			child.dispose();
-		}
-		children.clear();
-	}
-
 	public void onMouseClick(MouseClickEvent event) {
 		// Propagate to children.
-		Iterator<UIElement> tabIterator = children.iterator();
+		Iterator<UIElement> tabIterator = getChildren().iterator();
 		while (tabIterator.hasNext()) {
 			tabIterator.next().onMouseClick(event);
 		}

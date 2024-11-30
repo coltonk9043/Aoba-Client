@@ -27,7 +27,6 @@ import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.settings.types.ColorSetting;
@@ -45,15 +44,15 @@ public class ColorPickerComponent extends Component {
 	private boolean collapsed = true;
 	private ColorSetting color;
 
-	public ColorPickerComponent(UIElement parent, String text) {
-		super(parent);
+	public ColorPickerComponent(String text) {
+		super();
 		this.text = text;
 
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
-	public ColorPickerComponent(UIElement parent, ColorSetting color) {
-		super(parent);
+	public ColorPickerComponent(ColorSetting color) {
+		super();
 		this.text = color.displayName;
 		this.color = color;
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
@@ -88,7 +87,7 @@ public class ColorPickerComponent extends Component {
 					if (mouseY < actualY + 29) {
 						collapsed = !collapsed;
 
-						invalidate();
+						invalidateMeasure();
 						/*
 						 * if (collapsed) this.setHeight(30f); else this.setHeight(175f);
 						 */
