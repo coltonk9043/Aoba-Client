@@ -1,12 +1,9 @@
 package net.aoba.mixin.sodium;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
@@ -19,21 +16,16 @@ import net.minecraft.world.BlockView;
 
 @Mixin(value = BlockOcclusionCache.class, remap = false)
 public abstract class SodiumBlockOcclusionCacheMixin {
-	@Unique
-	private XRay xray;
 
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void onInit(CallbackInfo info) {
-		AobaClient aoba = Aoba.getInstance();
-		xray = (XRay) aoba.moduleManager.xray;
-	}
-
-	@ModifyReturnValue(method = "shouldDrawSide", at = @At("RETURN"))
-	private boolean shouldDrawSide(boolean original, BlockState state, BlockView view, BlockPos pos, Direction facing) {
-		if (xray.state.getValue()) {
-			return !xray.isXRayBlock(state.getBlock());
+	@Inject(at = { @At("TAIL") }, method = "shouldDrawSide", cancellable = true)
+	private void onShouldDrawSide(BlockState state, BlockView view, BlockPos pos, Direction facing,
+			CallbackInfoReturnable<Boolean> cir) {
+		if (Aoba.getInstance().moduleManager.freecam.state.getValue()) {
+			AobaClient aoba = Aoba.getInstance();
+			XRay xray = aoba.moduleManager.xray;
+			if (xray.state.getValue()) {
+				cir.setReturnValue(!xray.isXRayBlock(state.getBlock()));
+			}
 		}
-
-		return original;
 	}
 }

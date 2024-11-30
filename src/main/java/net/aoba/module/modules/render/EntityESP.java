@@ -106,7 +106,7 @@ public class EntityESP extends Module implements Render3DListener {
 	@Override
 	public void onRender(Render3DEvent event) {
 		MatrixStack matrixStack = event.GetMatrix();
-		float partialTicks = event.GetPartialTicks();
+		float partialTicks = event.getRenderTickCounter().getTickDelta(true);
 
 		for (Entity entity : MC.world.getEntities()) {
 

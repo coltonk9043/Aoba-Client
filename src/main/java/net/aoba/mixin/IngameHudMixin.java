@@ -35,21 +35,17 @@ import net.minecraft.entity.Entity;
 
 @Mixin(InGameHud.class)
 public class IngameHudMixin {
-
-	// @Inject(at = {@At(value = "TAIL")}, method =
-	// {"render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"})
-	// private void onRender(DrawContext context, RenderTickCounter tickDelta,
-	// CallbackInfo ci) {
-	// Render2DEvent renderEvent = new Render2DEvent(context, tickDelta);
-	// Aoba.getInstance().eventManager.Fire(renderEvent);
-	// }
-
-	@Inject(at = { @At(value = "TAIL") }, method = {
-			"renderAutosaveIndicator(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V" })
-	private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
-		Render2DEvent renderEvent = new Render2DEvent(context, tickDelta);
+	@Inject(at = @At("HEAD"), method = "renderPlayerList(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V")
+	private void onRenderPlayerList(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+		Render2DEvent renderEvent = new Render2DEvent(context, tickCounter);
 		Aoba.getInstance().eventManager.Fire(renderEvent);
 	}
+
+//	@Inject(at = { @At(value = "TAIL") }, method = {
+//			"renderAutosaveIndicator(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V" })
+//	private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
+//
+//	}
 
 	@Inject(method = "renderVignetteOverlay", at = @At("HEAD"), cancellable = true)
 	private void onRenderVignetteOverlay(DrawContext context, Entity entity, CallbackInfo ci) {

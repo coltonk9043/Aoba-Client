@@ -76,7 +76,8 @@ public class FakePlayer extends Module {
 		if (fakePlayer == null)
 			return;
 
-		fakePlayer.kill();
+		// TODO: 1.21.3 changed this
+		// fakePlayer.kill(fakePlayer.getWorld());
 		fakePlayer.setRemoved(Entity.RemovalReason.KILLED);
 		fakePlayer.onRemoved();
 		fakePlayer = null;

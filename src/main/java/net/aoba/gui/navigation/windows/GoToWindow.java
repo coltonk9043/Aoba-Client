@@ -441,11 +441,11 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				int packetsRequired = (int) Math.ceil(MC.player.getPos().distanceTo(nextCenterPos) / 10) - 1;
 
 				for (int i = 0; i < packetsRequired; i++) {
-					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true, false));
 				}
 
 				MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(nextCenterPos.x,
-						nextCenterPos.y, nextCenterPos.z, true));
+						nextCenterPos.y, nextCenterPos.z, true, false));
 				MC.player.setPosition(nextCenterPos);
 				break;
 			default:

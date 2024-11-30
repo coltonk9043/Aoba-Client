@@ -91,7 +91,7 @@ public class Jetpack extends Module implements TickListener {
 		float speed = this.jetpackSpeed.getValue().floatValue();
 
 		if (MC.player.fallDistance > 2f) {
-			MC.player.networkHandler.sendPacket(new OnGroundOnly(true));
+			MC.player.networkHandler.sendPacket(new OnGroundOnly(true, false));
 		}
 
 		if (MC.player.isRiding()) {

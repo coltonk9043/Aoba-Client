@@ -90,7 +90,7 @@ public class Surround extends Module implements TickListener {
 			BlockPos blockPos = MC.player.getBlockPos();
 			MC.player.updatePosition(blockPos.getX() + 0.5f, MC.player.getY(), blockPos.getZ() + 0.5f);
 			MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(blockPos.getX() + 0.5f,
-					MC.player.getY(), blockPos.getZ() + 0.5f, MC.player.isOnGround()));
+					MC.player.getY(), blockPos.getZ() + 0.5f, MC.player.isOnGround(), false));
 		}
 	}
 

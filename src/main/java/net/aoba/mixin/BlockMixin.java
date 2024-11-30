@@ -29,17 +29,15 @@ import net.aoba.module.modules.render.XRay;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
 
 @Mixin(Block.class)
 public abstract class BlockMixin implements ItemConvertible {
 
 	@Inject(at = { @At("HEAD") }, method = {
-			"shouldDrawSide(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;)Z" }, cancellable = true)
-	private static void onShouldDrawSide(BlockState state, BlockView world, BlockPos pos, Direction direction,
-			BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
+			"shouldDrawSide(Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/Direction;)Z" }, cancellable = true)
+	private static void onShouldDrawSide(BlockState state, BlockState otherState, Direction side,
+			CallbackInfoReturnable<Boolean> cir) {
 		AobaClient aoba = Aoba.getInstance();
 		XRay xray = (XRay) aoba.moduleManager.xray;
 		if (xray.state.getValue()) {

@@ -1,5 +1,5 @@
 plugins {
-    id "fabric-loom" version "1.7-SNAPSHOT"
+    id "fabric-loom" version "1.8.9"
     id 'maven-publish'
 }
 
@@ -54,7 +54,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation("maven.modrinth:sodium:${project.sodium_version}")
-    modImplementation files("libs/baritone-standalone-fabric-1.10.2-7-ga231748b.jar")
+    modImplementation files("libs/baritone-standalone-fabric-1.11.1.jar")
     implementation "dev.babbaj:nether-pathfinder:1.4.1"
 
     libImpl("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }

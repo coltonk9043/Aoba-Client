@@ -40,8 +40,7 @@ public class Step extends Module {
 
 		stepHeight.addOnUpdate((i) -> {
 			if (state.getValue()) {
-				EntityAttributeInstance attribute = MC.player
-						.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT);
+				EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.STEP_HEIGHT);
 				attribute.setBaseValue(stepHeight.getValue());
 			}
 		});
@@ -52,14 +51,14 @@ public class Step extends Module {
 	@Override
 	public void onDisable() {
 		if (MC.player != null) {
-			EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT);
+			EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.STEP_HEIGHT);
 			attribute.setBaseValue(0.5f);
 		}
 	}
 
 	@Override
 	public void onEnable() {
-		EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.GENERIC_STEP_HEIGHT);
+		EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.STEP_HEIGHT);
 		attribute.setBaseValue(stepHeight.getValue());
 	}
 

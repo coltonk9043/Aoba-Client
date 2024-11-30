@@ -136,11 +136,11 @@ public class Noclip extends Module implements TickListener {
 		packetsRequired = Math.min(packetsRequired, maxPackets.getValue().intValue());
 
 		for (int i = 0; i < packetsRequired; i++) {
-			MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(onGround.getValue()));
+			MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(onGround.getValue(), false));
 		}
 
 		MC.player.networkHandler.sendPacket(
-				new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, onGround.getValue()));
+				new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, onGround.getValue(), false));
 	}
 
 	@Override

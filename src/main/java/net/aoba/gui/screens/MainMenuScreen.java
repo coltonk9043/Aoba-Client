@@ -1,5 +1,26 @@
 package net.aoba.gui.screens;
 
+import static net.aoba.AobaClient.MC;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpClient.Version;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.lwjgl.opengl.GL11;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
 import net.aoba.gui.GuiManager;
@@ -15,30 +36,10 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
-
-import static net.aoba.AobaClient.MC;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpClient.Redirect;
-import java.net.http.HttpClient.Version;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import net.minecraft.util.Util;
-import org.lwjgl.opengl.GL11;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 public class MainMenuScreen extends Screen {
 	protected static final CubeMapRenderer AOBA_PANORAMA_RENDERER = new CubeMapRenderer(TextureBank.mainmenu_panorama);
@@ -54,10 +55,10 @@ public class MainMenuScreen extends Screen {
 
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private String fetchedVersion = null;
-	
+
 	public MainMenuScreen() {
 		super(Text.of("Aoba Client Main Menu"));
-		
+
 		// Async fetch latest release from GitHub
 		executor.execute(new Runnable() {
 			@Override
@@ -75,17 +76,18 @@ public class MainMenuScreen extends Screen {
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
+
 	private void fetchLatestVersion() {
 		try {
 			HttpClient client = HttpClient.newBuilder().version(Version.HTTP_2).followRedirects(Redirect.NORMAL)
 					.build();
-			
-			HttpRequest request = HttpRequest.newBuilder(createURI("https://api.github.com/repos/coltonk9043/Aoba-MC-Hacked-Client/releases/latest"))
+
+			HttpRequest request = HttpRequest
+					.newBuilder(
+							createURI("https://api.github.com/repos/coltonk9043/Aoba-MC-Hacked-Client/releases/latest"))
 					.header("User-Agent",
-					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
-					.header("Accept", "application/json")
-					.header("Content-Type", "application/x-www-form-urlencoded")
+							"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
+					.header("Accept", "application/json").header("Content-Type", "application/x-www-form-urlencoded")
 					.GET().build();
 
 			HttpResponse<String> response;
@@ -99,7 +101,7 @@ public class MainMenuScreen extends Screen {
 
 			JsonObject json = new Gson().fromJson(responseString, JsonObject.class);
 			String tagName = json.get("tag_name").getAsString();
-			if(tagName != null) 
+			if (tagName != null)
 				fetchedVersion = tagName;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -107,7 +109,7 @@ public class MainMenuScreen extends Screen {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void init() {
 		super.init();
 
@@ -126,8 +128,8 @@ public class MainMenuScreen extends Screen {
 		singleplayerButton.setPressAction(b -> client.setScreen(new SelectWorldScreen(this)));
 		this.addDrawableChild(singleplayerButton);
 
-		AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX, startY + BUTTON_HEIGHT + SPACING, BUTTON_WIDTH,
-				BUTTON_HEIGHT, Text.of("Multiplayer"));
+		AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX, startY + BUTTON_HEIGHT + SPACING,
+				BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Multiplayer"));
 		multiplayerButton.setPressAction(b -> client.setScreen(new MultiplayerScreen(this)));
 		this.addDrawableChild(multiplayerButton);
 
@@ -136,13 +138,13 @@ public class MainMenuScreen extends Screen {
 		settingsButton.setPressAction(b -> client.setScreen(new OptionsScreen(this, MC.options)));
 		this.addDrawableChild(settingsButton);
 
-		AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 3), BUTTON_WIDTH,
-				BUTTON_HEIGHT, Text.of("Addons"));
+		AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 3),
+				BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Addons"));
 		addonsButton.setPressAction(b -> client.setScreen(new AddonScreen(this)));
 		this.addDrawableChild(addonsButton);
 
-		AobaButtonWidget quitButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 4), BUTTON_WIDTH,
-				BUTTON_HEIGHT, Text.of("Quit"));
+		AobaButtonWidget quitButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 4),
+				BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Quit"));
 		quitButton.setPressAction(b -> client.stop());
 		this.addDrawableChild(quitButton);
 
@@ -151,8 +153,8 @@ public class MainMenuScreen extends Screen {
 		creditsButton.setPressAction(b -> MC.setScreen(new AobaCreditsScreen()));
 		this.addDrawableChild(creditsButton);
 
-		AobaImageButtonWidget discordButton = new AobaImageButtonWidget(this.width - 60, this.height - 30, 20,
-				20, TextureBank.discord);
+		AobaImageButtonWidget discordButton = new AobaImageButtonWidget(this.width - 60, this.height - 30, 20, 20,
+				TextureBank.discord);
 		discordButton.setPressAction(b -> Util.getOperatingSystem().open("https://discord.gg/CDa4etPFtk"));
 		this.addDrawableChild(discordButton);
 	}
@@ -161,24 +163,26 @@ public class MainMenuScreen extends Screen {
 	public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
 		super.render(drawContext, mouseX, mouseY, delta);
 
-		 RenderSystem.disableCull();
-         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-         
+		RenderSystem.disableCull();
+		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
 		float widgetHeight = ((BUTTON_HEIGHT + SPACING) * 5);
 		int startX = (int) ((this.width - BUTTON_WIDTH) / 2.0f);
 		int startY = (int) ((this.height - widgetHeight) / 2) - LOGO_HEIGHT - 10 + smallScreenHeightOffset;
 
-		drawContext.drawTexture(TextureBank.mainmenu_logo, startX, startY, 0, 0, BUTTON_WIDTH, LOGO_HEIGHT, 185,
-				LOGO_HEIGHT);
+		drawContext.drawTexture(RenderLayer::getGuiTextured, TextureBank.mainmenu_logo, startX, startY, 0, 0,
+				BUTTON_WIDTH, LOGO_HEIGHT, 185, LOGO_HEIGHT);
+
 		drawContext.drawTextWithShadow(this.textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, this.height - 10,
 				0xFF00FF);
 
 		// Draw out of date if out of date.
 		// TODO: Add option to hide if on previous versions.
-		if(fetchedVersion != null && !fetchedVersion.equals(AobaClient.AOBA_VERSION)) {
-			drawContext.drawTextWithShadow(this.textRenderer, "New version available: " + fetchedVersion, 2, this.height - 20, 0xFF00FF);
+		if (fetchedVersion != null && !fetchedVersion.equals(AobaClient.AOBA_VERSION)) {
+			drawContext.drawTextWithShadow(this.textRenderer, "New version available: " + fetchedVersion, 2,
+					this.height - 20, 0xFF00FF);
 		}
-		
+
 		if (AobaClient.addons.isEmpty()) {
 			String noAddonsText = "No addons loaded";
 			int textWidth = this.textRenderer.getWidth(noAddonsText);
@@ -208,11 +212,11 @@ public class MainMenuScreen extends Screen {
 		}
 
 		// News Peek!
-		Render2D.drawOutlinedRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), width - 110, 30, 100,
-				30, GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
+		Render2D.drawOutlinedRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), width - 110, 30, 100, 30,
+				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
 				GuiManager.backgroundColor.getValue());
 		drawContext.drawTextWithShadow(this.textRenderer, "News coming soon!", width - 105, 40, Colors.WHITE);
-		
+
 		RenderSystem.enableCull();
 	}
 

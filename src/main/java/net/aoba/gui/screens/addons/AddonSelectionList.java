@@ -18,6 +18,12 @@
 
 package net.aoba.gui.screens.addons;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
 import net.fabricmc.api.EnvType;
@@ -26,18 +32,15 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelectionList.Entry> {
 	private final List<NormalEntry> addonList = new ArrayList<AddonSelectionList.NormalEntry>();
 
 	private AddonScreen parent;
-	
+
 	public AddonSelectionList(AddonScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l) {
 		super(minecraftClient, i, j, k, l);
 		parent = ownerIn;
@@ -53,7 +56,7 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 		this.addonList.forEach(this::addEntry);
 	}
 
-	public List<NormalEntry> getAddons(){
+	public List<NormalEntry> getAddons() {
 		return this.addonList;
 	}
 
@@ -64,7 +67,7 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 	public void onClickEntry(@Nullable NormalEntry entry) {
 		parent.setSelected(entry);
 	}
-	
+
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		Entry AltSelectionList$entry = this.getSelectedOrNull();
@@ -89,16 +92,15 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 			this.owner = ownerIn;
 			this.addon = addon;
 			this.mc = MinecraftClient.getInstance();
-			
+
 			Optional<String> iconPathOptional = addon.getIcon();
-			if(!iconPathOptional.isEmpty()) {
+			if (!iconPathOptional.isEmpty()) {
 				String iconPath = iconPathOptional.get().replaceFirst("assets/", "");
 				int firstDirectory = iconPath.indexOf('/');
 				String modNamespace = iconPath.substring(0, firstDirectory);
 				String modIconPath = iconPath.substring(firstDirectory + 1);
 				this.iconIdentifier = Identifier.of(modNamespace, modIconPath);
-			}
-			else
+			} else
 				this.iconIdentifier = null;
 		}
 
@@ -107,7 +109,8 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 				int mouseX, int mouseY, boolean hovered, float tickDelta) {
 			// Draws the strings onto the screen.
 			TextRenderer textRenderer = this.mc.textRenderer;
-			drawContext.drawTexture(iconIdentifier, x + 8, y + 8, 0, 0, 32, 32, 32, 32);
+
+			drawContext.drawTexture(RenderLayer::getGuiTextured, iconIdentifier, x + 8, y + 8, 0, 0, 32, 32, 32, 32);
 			drawContext.drawTextWithShadow(textRenderer, addon.getName(), (x + 54), y + 10, 16777215);
 			drawContext.drawTextWithShadow(textRenderer, addon.getDescription(), (x + 54), y + 22, 16777215);
 		}
@@ -128,11 +131,11 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 		public Text getNarration() {
 			return Text.of(addon.getName());
 		}
-		
+
 		public IAddon getAddon() {
 			return this.addon;
 		}
-		
+
 		public Identifier getIcon() {
 			return this.iconIdentifier;
 		}

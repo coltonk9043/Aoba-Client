@@ -40,20 +40,16 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 public class Criticals extends Module implements SendPacketListener {
 
 	public enum InteractType {
-        INTERACT, ATTACK, INTERACT_AT
-    }
-	
-	private BooleanSetting legit = BooleanSetting.builder()
-		    .id("criticals_legit")
-		    .displayName("Legit")
-		    .description("Whether or not we will use the 'legit' mode.")
-		    .defaultValue(false)
-		    .build();
-	
-	public Criticals() {
-    	super("Criticals");
+		INTERACT, ATTACK, INTERACT_AT
+	}
 
-        this.setCategory(Category.of("Combat"));
+	private BooleanSetting legit = BooleanSetting.builder().id("criticals_legit").displayName("Legit")
+			.description("Whether or not we will use the 'legit' mode.").defaultValue(false).build();
+
+	public Criticals() {
+		super("Criticals");
+
+		this.setCategory(Category.of("Combat"));
 		this.setDescription("Makes all attacks into critical strikes.");
 
 		this.addSetting(legit);
@@ -73,30 +69,33 @@ public class Criticals extends Module implements SendPacketListener {
 	public void onToggle() {
 
 	}
-	
+
 	@Override
 	public void onSendPacket(SendPacketEvent event) {
 		Packet<?> packet = event.GetPacket();
-		if(packet instanceof PlayerInteractEntityC2SPacket) {
+		if (packet instanceof PlayerInteractEntityC2SPacket) {
 			PlayerInteractEntityC2SPacket playerInteractPacket = (PlayerInteractEntityC2SPacket) packet;
-			IPlayerInteractEntityC2SPacket packetAccessor = (IPlayerInteractEntityC2SPacket)playerInteractPacket;
-			
+			IPlayerInteractEntityC2SPacket packetAccessor = (IPlayerInteractEntityC2SPacket) playerInteractPacket;
+
 			PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
 			packetAccessor.invokeWrite(packetBuf);
 			packetBuf.readVarInt();
 			InteractType type = packetBuf.readEnumConstant(InteractType.class);
-			
-			if(type == InteractType.ATTACK) {
+
+			if (type == InteractType.ATTACK) {
 				MinecraftClient mc = MinecraftClient.getInstance();
 				ClientPlayerEntity player = mc.player;
-				if(player.isOnGround() && !player.isInLava() && !player.isSubmergedInWater()) {
-					if(legit.getValue()) {
+				if (player.isOnGround() && !player.isInLava() && !player.isSubmergedInWater()) {
+					if (legit.getValue()) {
 						player.jump();
-					}else {
+					} else {
 						ClientPlayNetworkHandler networkHandler = mc.getNetworkHandler();
-						networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + 0.03125D, mc.player.getZ(), false));
-						networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() + 0.0625D, mc.player.getZ(), false));
-						networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), false));
+						networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(),
+								mc.player.getY() + 0.03125D, mc.player.getZ(), false, false));
+						networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(),
+								mc.player.getY() + 0.0625D, mc.player.getZ(), false, false));
+						networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(),
+								mc.player.getY(), mc.player.getZ(), false, false));
 					}
 				}
 			}

@@ -92,7 +92,6 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 
 	@Override
 	public void onTick(Pre event) {
-		// TODO Auto-generated method stub
 
 	}
 

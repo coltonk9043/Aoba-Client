@@ -31,7 +31,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.TickEvent;
-import net.aoba.module.modules.render.FocusFps;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -121,13 +120,14 @@ public abstract class MinecraftClientMixin {
 		}
 	}
 
-	@Inject(method = "getFramerateLimit", at = @At("HEAD"), cancellable = true)
-	private void onGetFramerateLimit(CallbackInfoReturnable<Integer> info) {
-		if (Aoba.getInstance().moduleManager != null) {
-			FocusFps focusfps = (FocusFps) Aoba.getInstance().moduleManager.focusfps;
-			if (focusfps.state.getValue() && !isWindowFocused()) {
-				info.setReturnValue(Math.min(focusfps.getFps().intValue(), this.options.getMaxFps().getValue()));
-			}
-		}
-	}
+	// TODO: InactivityFrameLimiter class... i guess.. :/
+	/*
+	 * @Inject(method = "getCurrentFps", at = @At("HEAD"), cancellable = true)
+	 * private void onGetCurrentFps(CallbackInfoReturnable<Integer> info) { if
+	 * (Aoba.getInstance().moduleManager != null) { FocusFps focusfps = (FocusFps)
+	 * Aoba.getInstance().moduleManager.focusfps; if (focusfps.state.getValue() &&
+	 * !isWindowFocused()) {
+	 * info.setReturnValue(Math.min(focusfps.getFps().intValue(),
+	 * this.options.getMaxFps().getValue())); } } }
+	 */
 }

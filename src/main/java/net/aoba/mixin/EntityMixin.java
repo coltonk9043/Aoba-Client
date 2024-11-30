@@ -27,7 +27,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -51,11 +50,6 @@ public abstract class EntityMixin {
 		if (Aoba.getInstance().moduleManager.antiinvis.state.getValue()) {
 			cir.setReturnValue(false);
 		}
-	}
-
-	@Inject(at = { @At("HEAD") }, method = "damage(Lnet/minecraft/entity/damage/DamageSource;F)Z", cancellable = true)
-	public void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
-		return;
 	}
 
 	@Inject(at = { @At("HEAD") }, method = "getStepHeight()F", cancellable = true)

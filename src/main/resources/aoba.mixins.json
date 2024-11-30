@@ -14,7 +14,7 @@
 		"interfaces.IModelPart",
 		"interfaces.ICuboid",
 		"interfaces.IRabbitEntityModel",
-		"interfaces.IAnimalModel",
+		"interfaces.IEntityModel",
 		"interfaces.ILlamaEntityModel",
 		"interfaces.IPlayerMoveC2SPacket",
 		"interfaces.IMouse",

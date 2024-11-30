@@ -201,7 +201,8 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
 		if (skip)
 			return;
 		if (temp != null) {
-			Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(temp, event.GetPartialTicks());
+			Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(temp,
+					event.getRenderTickCounter().getTickDelta(true));
 			MC.player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES,
 					temp.getEyePos().add(offset).add(posX, posY, posZ));
 			MC.player.setYaw(neededYaw);

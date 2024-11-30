@@ -89,11 +89,11 @@ public class ClickTP extends Module implements MouseClickListener {
 					int packetsRequired = (int) Math.ceil(MC.player.getPos().distanceTo(newPos) / 10) - 1;
 
 					for (int i = 0; i < packetsRequired; i++) {
-						MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true));
+						MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true, false));
 					}
 
 					MC.player.networkHandler.sendPacket(
-							new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, true));
+							new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, true, false));
 					MC.player.setPosition(newPos);
 				}
 			}

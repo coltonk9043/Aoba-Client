@@ -27,30 +27,22 @@ import org.joml.Vector3f;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.aoba.gui.colors.Color;
-import net.aoba.mixin.interfaces.IAnimalModel;
 import net.aoba.mixin.interfaces.ICuboid;
-import net.aoba.mixin.interfaces.ILlamaEntityModel;
 import net.aoba.mixin.interfaces.IModelPart;
-import net.aoba.mixin.interfaces.IRabbitEntityModel;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelPart.Cuboid;
 import net.minecraft.client.model.ModelPart.Quad;
 import net.minecraft.client.model.ModelPart.Vertex;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.model.AnimalModel;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.LlamaEntityModel;
-import net.minecraft.client.render.entity.model.RabbitEntityModel;
-import net.minecraft.client.render.entity.model.SinglePartEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
@@ -75,7 +67,8 @@ public class Render3D {
 		RenderSystem.disableCull();
 		RenderSystem.disableDepthTest();
 
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+
 		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
@@ -112,7 +105,8 @@ public class Render3D {
 
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 
-		RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+		RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
+
 		RenderSystem.lineWidth(lineThickness);
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
@@ -166,7 +160,7 @@ public class Render3D {
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 
-		RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+		RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
 		RenderSystem.lineWidth(lineWidth);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
@@ -180,29 +174,26 @@ public class Render3D {
 
 	public static void drawEntityModel(MatrixStack matrixStack, float partialTicks, Entity entity, Color color,
 			float lineWidth) {
-		EntityRenderer<?> renderer = MinecraftClient.getInstance().getEntityRenderDispatcher().getRenderer(entity);
+		EntityRenderer<?, ?> renderer = MinecraftClient.getInstance().getEntityRenderDispatcher().getRenderer(entity);
 
 		if (entity instanceof LivingEntity) {
 			matrixStack.push();
 
 			LivingEntity livingEntity = (LivingEntity) entity;
-			LivingEntityRenderer<?, ?> leRenderer = (LivingEntityRenderer<?, ?>) renderer;
+			LivingEntityRenderer<?, ?, ?> leRenderer = (LivingEntityRenderer<?, ?, ?>) renderer;
 			EntityModel<?> model = leRenderer.getModel();
 
 			Direction sleepDirection = livingEntity.getSleepingDirection();
 			// Setup transforms
-			model.handSwingProgress = livingEntity.getHandSwingProgress(partialTicks);
-			model.riding = livingEntity.hasVehicle();
-			model.child = livingEntity.isBaby();
+
+			// model.handSwingProgress = livingEntity.getHandSwingProgress(partialTicks);
+			// model.riding = livingEntity.hasVehicle();
+			// model.child = livingEntity.isBaby();
 
 			// Interpolate entity position and body rotations.
 			Vec3d interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks);
 			float interpolatedBodyYaw = MathHelper.lerpAngleDegrees(partialTicks, livingEntity.prevBodyYaw,
 					livingEntity.bodyYaw);
-			float interpolatedHeadYaw = MathHelper.lerpAngleDegrees(partialTicks, livingEntity.prevHeadYaw,
-					livingEntity.headYaw);
-			float interpolatedPitch = MathHelper.lerp(partialTicks, livingEntity.prevPitch, livingEntity.getPitch());
-
 			// Translate by the entity's interpolated position.
 			matrixStack.translate(interpolatedEntityPosition.getX(), interpolatedEntityPosition.getY(),
 					interpolatedEntityPosition.getZ());
@@ -252,28 +243,6 @@ public class Render3D {
 			matrixStack.scale(-1.0f, -1.0f, 1.0f);
 			matrixStack.translate(0.0f, -1.501f, 0.0f);
 
-			// Animation and move the limbs of the entity.
-			float animationProgress = livingEntity.age + partialTicks;
-
-			float limbDistance = 0.0f;
-			float limbAngle = 0.0f;
-			if (!livingEntity.hasVehicle() && livingEntity.isAlive()) {
-				limbDistance = livingEntity.limbAnimator.getSpeed(partialTicks);
-				limbAngle = livingEntity.limbAnimator.getPos(partialTicks);
-				if (livingEntity.isBaby()) {
-					limbAngle *= 3.0f;
-				}
-				if (limbDistance > 1.0f) {
-					limbDistance = 1.0f;
-				}
-			}
-
-			float headYaw = interpolatedHeadYaw - interpolatedBodyYaw;
-
-			((EntityModel) model).animateModel(entity, limbAngle, limbDistance, partialTicks);
-			((EntityModel) model).setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw,
-					interpolatedPitch);
-
 			// Render Vertices
 			Tessellator tessellator = RenderSystem.renderThreadTesselator();
 
@@ -282,7 +251,7 @@ public class Render3D {
 			RenderSystem.disableCull();
 			RenderSystem.disableDepthTest();
 
-			RenderSystem.setShader(GameRenderer::getPositionProgram);
+			RenderSystem.setShader(ShaderProgramKeys.POSITION);
 			RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 			// Draw Vertices
@@ -290,52 +259,8 @@ public class Render3D {
 			BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
 			Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-			if (model instanceof SinglePartEntityModel) {
-				SinglePartEntityModel<?> singleModel = (SinglePartEntityModel<?>) model;
-				hasVertices = buildModelPartVertices(matrix4f, entity, singleModel.getPart(), bufferBuilder);
-			} else if (model instanceof BipedEntityModel) {
-				BipedEntityModel<?> bipedModel = (BipedEntityModel<?>) model;
-				hasVertices |= buildModelPartVertices(matrix4f, entity, bipedModel.hat, bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, bipedModel.head, bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, bipedModel.body, bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, bipedModel.rightArm, bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, bipedModel.leftArm, bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, bipedModel.rightLeg, bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, bipedModel.leftLeg, bufferBuilder);
-			} else if (model instanceof AnimalModel) {
-				IAnimalModel animalModel = (IAnimalModel) model;
-
-				for (ModelPart part : animalModel.invokeGetHeadParts()) {
-					hasVertices |= buildModelPartVertices(matrix4f, entity, part, bufferBuilder);
-				}
-
-				for (ModelPart part : animalModel.invokeGetBodyParts()) {
-					hasVertices |= buildModelPartVertices(matrix4f, entity, part, bufferBuilder);
-				}
-			} else if (model instanceof RabbitEntityModel) {
-				IRabbitEntityModel rabbitModel = (IRabbitEntityModel) model;
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getLeftHindLeg(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getRightHindLeg(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getLeftHaunch(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getRightHaunch(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getBody(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getLeftFrontLeg(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getRightFrontLeg(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getHead(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getRightEar(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getLeftEar(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getTail(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, rabbitModel.getNose(), bufferBuilder);
-			} else if (model instanceof LlamaEntityModel) {
-				ILlamaEntityModel llamaModel = (ILlamaEntityModel) model;
-				hasVertices |= buildModelPartVertices(matrix4f, entity, llamaModel.getHead(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, llamaModel.getBody(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, llamaModel.getRightHindLeg(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, llamaModel.getLeftHindLeg(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, llamaModel.getRightFrontLeg(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, llamaModel.getLeftFrontLeg(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, llamaModel.getRightChest(), bufferBuilder);
-				hasVertices |= buildModelPartVertices(matrix4f, entity, llamaModel.getLeftChest(), bufferBuilder);
+			for (ModelPart part : model.getParts()) {
+				hasVertices |= buildModelPartVertices(matrix4f, entity, part, bufferBuilder);
 			}
 
 			if (hasVertices)
@@ -381,6 +306,7 @@ public class Render3D {
 
 		MatrixStack modelMatrixStack = new MatrixStack();
 		part.rotate(modelMatrixStack);
+
 		boolean result = false;
 		for (Cuboid cuboid : iModelPart.getCuboids()) {
 			result |= renderCuboid(matrix4f, modelMatrixStack.peek().getPositionMatrix(), bufferBuilder, cuboid);
@@ -399,10 +325,10 @@ public class Render3D {
 		Vector3f vector3f = new Vector3f();
 		ICuboid iCuboid = (ICuboid) cuboid;
 		for (Quad quad : iCuboid.getSides()) {
-			for (Vertex vertex : quad.vertices) {
-				float i = vertex.pos.x() / 16.0f;
-				float j = vertex.pos.y() / 16.0f;
-				float k = vertex.pos.z() / 16.0f;
+			for (Vertex vertex : quad.vertices()) {
+				float i = vertex.pos().x() / 16.0f;
+				float j = vertex.pos().y() / 16.0f;
+				float k = vertex.pos().z() / 16.0f;
 				partTransform.transformPosition(i, j, k, vector3f);
 				bufferBuilder.vertex(transformation, vector3f.x(), vector3f.y(), vector3f.z());
 				result |= true;

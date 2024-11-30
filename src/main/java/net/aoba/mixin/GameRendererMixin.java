@@ -19,6 +19,7 @@
 package net.aoba.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -26,6 +27,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.aoba.Aoba;
 import net.aoba.module.modules.render.NoRender;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -33,7 +36,13 @@ import net.minecraft.item.Items;
 import net.minecraft.util.math.MathHelper;
 
 @Mixin(GameRenderer.class)
-public class GameRendererMixin {
+public abstract class GameRendererMixin {
+	@Shadow
+	private Camera camera;
+
+	@Shadow
+	private MinecraftClient client;
+
 	@Inject(at = { @At("HEAD") }, method = {
 			"bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V" }, cancellable = true)
 	private void onBobViewWhenHurt(MatrixStack matrixStack, float f, CallbackInfo ci) {

@@ -61,7 +61,7 @@ public class NoFall extends Module implements TickListener {
 	@Override
 	public void onTick(Pre event) {
 		if (MC.player.fallDistance > fallDistance.getValue()) {
-			MC.player.networkHandler.sendPacket(new OnGroundOnly(true));
+			MC.player.networkHandler.sendPacket(new OnGroundOnly(true, false));
 		}
 	}
 

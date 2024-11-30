@@ -101,8 +101,8 @@ public class MaceAura extends Module implements TickListener {
 	@Override
 	public void onTick(TickEvent.Post event) {
 		if (MC.player.getMainHandStack().getItem() == Items.MACE && MC.player.getAttackCooldownProgress(0) == 1) {
-			
-			if(entityToAttack == null) {
+
+			if (entityToAttack == null) {
 				ArrayList<Entity> hitList = new ArrayList<Entity>();
 
 				// Add all potential entities to the 'hitlist'
@@ -146,28 +146,30 @@ public class MaceAura extends Module implements TickListener {
 					}
 				}
 
-				if(entityToAttack != null) {
+				if (entityToAttack != null) {
 					// If the entity is found, we want to attach it.
 					int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
 					for (int i = 0; i < packetsRequired; i++) {
-						MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false));
+						MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false, false));
 					}
-					
+
 					Vec3d newPos = MC.player.getPos().add(0, height.getValue(), 0);
-					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, false));
+					MC.player.networkHandler.sendPacket(
+							new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, false, false));
 				}
-			}else {
+			} else {
 				int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
 				for (int i = 0; i < packetsRequired; i++) {
-					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false));
+					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false, false));
 				}
-				
+
 				Vec3d newPos = MC.player.getPos();
-				MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, false));
-				
+				MC.player.networkHandler.sendPacket(
+						new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, false, false));
+
 				MC.interactionManager.attackEntity(MC.player, entityToAttack);
-	            MC.player.swingHand(Hand.MAIN_HAND);
-	            entityToAttack = null;
+				MC.player.swingHand(Hand.MAIN_HAND);
+				entityToAttack = null;
 			}
 		}
 	}

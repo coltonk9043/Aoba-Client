@@ -27,10 +27,10 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.Item;
@@ -137,7 +137,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 		int i = 0;
 		for (ItemStack itemStack : itemStacks) {
 			context.drawItem(itemStack, offsetX + 8 + i * 18, offsetY + 7 + row * 18);
-			context.drawItemInSlot(MC.textRenderer, itemStack, offsetX + 8 + i * 18, offsetY + 7 + row * 18);
 
 			if (mouseX > offsetX + 8 + i * 18 && mouseX < offsetX + 28 + i * 18 && mouseY > offsetY + 7 + row * 18
 					&& mouseY < offsetY + 27 + row * 18)
@@ -159,7 +158,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 		RenderSystem.setShaderColor(colors[0], colors[1], colors[2], 1F);
 		RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 		RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-		context.drawTexture(TextureBank.container, x, y, 0, 0, 176, 67, 176, 67);
+		context.drawTexture(RenderLayer::getGuiTextured, TextureBank.container, x, y, 0, 0, 176, 67, 176, 67);
 		RenderSystem.enableBlend();
 	}
 
@@ -184,8 +183,11 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 			context.getMatrices().translate(x1, y1, z);
 			context.getMatrices().scale((float) scale, (float) scale, 0);
 			VertexConsumerProvider.Immediate consumer = client.getBufferBuilders().getEntityVertexConsumers();
-			client.gameRenderer.getMapRenderer().draw(context.getMatrices(), consumer,
-					(MapIdComponent) stack.get(DataComponentTypes.MAP_ID), mapState, false, 0xF000F0);
+
+			// TODO:
+			// client.gameRenderer.getMapRenderer().draw(context.getMatrices(), consumer,
+			// (MapIdComponent) stack.get(DataComponentTypes.MAP_ID), mapState, false,
+			// 0xF000F0);
 		}
 		context.getMatrices().pop();
 	}

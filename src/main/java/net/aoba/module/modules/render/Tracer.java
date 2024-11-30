@@ -86,7 +86,8 @@ public class Tracer extends Module implements Render3DListener {
 	public void onRender(Render3DEvent event) {
 		Vec3d eyePosition = new Vec3d(0, 0, 1);
 		Camera camera = MC.gameRenderer.getCamera();
-		Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity, event.GetPartialTicks());
+		Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity,
+				event.getRenderTickCounter().getTickDelta(true));
 
 		eyePosition = eyePosition.rotateX((float) -Math.toRadians(camera.getPitch()));
 		eyePosition = eyePosition.rotateY((float) -Math.toRadians(camera.getYaw()));

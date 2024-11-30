@@ -61,7 +61,6 @@ public class EXPThrower extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		// TODO Auto-generated method stub
 
 	}
 

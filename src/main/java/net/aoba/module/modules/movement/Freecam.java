@@ -105,10 +105,10 @@ public class Freecam extends Module implements TickListener, Render3DListener {
 		Camera camera = MC.gameRenderer.getCamera();
 		ICamera iCamera = (ICamera) camera;
 
-		double tickDelta = event.GetPartialTicks();
+		float tickDelta = event.getRenderTickCounter().getTickDelta(true);
 
 		ClientPlayerEntity player = MC.player;
-		fakePlayer.setPitch(player.getPitch(event.GetPartialTicks()));
+		fakePlayer.setPitch(player.getPitch(tickDelta));
 
 		Vec3d interpolatedPos = new Vec3d(MathHelper.lerp(tickDelta, prevPos.x, pos.x),
 				MathHelper.lerp(tickDelta, prevPos.y, pos.y), MathHelper.lerp(tickDelta, prevPos.z, pos.z));

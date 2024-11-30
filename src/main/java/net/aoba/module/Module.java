@@ -446,7 +446,7 @@ public abstract class Module {
 			player.setPitch(newPitch);
 
 			client.getNetworkHandler().sendPacket(
-					new PlayerMoveC2SPacket.LookAndOnGround(player.getYaw(), newPitch, player.isOnGround()));
+					new PlayerMoveC2SPacket.LookAndOnGround(player.getYaw(), newPitch, player.isOnGround(), false));
 		}
 	}
 

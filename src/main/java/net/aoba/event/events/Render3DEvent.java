@@ -18,38 +18,41 @@
 
 package net.aoba.event.events;
 
-import net.aoba.event.listeners.AbstractListener;
-import net.aoba.event.listeners.Render3DListener;
-import net.minecraft.client.render.Frustum;
-import net.minecraft.client.util.math.MatrixStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.aoba.event.listeners.AbstractListener;
+import net.aoba.event.listeners.Render3DListener;
+import net.minecraft.client.render.Frustum;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.util.math.MatrixStack;
+
 public class Render3DEvent extends AbstractEvent {
-	MatrixStack matrices; 
+	MatrixStack matrices;
 	Frustum frustum;
-	float partialTicks;
-	
+	RenderTickCounter renderTickCounter;
+
 	public MatrixStack GetMatrix() {
 		return matrices;
 	}
-	public float GetPartialTicks() {
-		return partialTicks;
+
+	public RenderTickCounter getRenderTickCounter() {
+		return renderTickCounter;
 	}
-	
+
 	public Frustum getFrustum() {
 		return frustum;
 	}
-	
-	public Render3DEvent(MatrixStack matrix4f, Frustum frustum, float partialTicks) {
+
+	public Render3DEvent(MatrixStack matrix4f, Frustum frustum, RenderTickCounter renderTickCounter) {
 		this.matrices = matrix4f;
-		this.partialTicks = partialTicks;
+		this.renderTickCounter = renderTickCounter;
 		this.frustum = frustum;
 	}
-	
+
 	@Override
 	public void Fire(ArrayList<? extends AbstractListener> listeners) {
-		for(AbstractListener listener : List.copyOf(listeners)) {
+		for (AbstractListener listener : List.copyOf(listeners)) {
 			Render3DListener renderListener = (Render3DListener) listener;
 			renderListener.onRender(this);
 		}

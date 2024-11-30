@@ -38,10 +38,10 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
 import net.aoba.utils.render.Render3D;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
@@ -105,7 +105,8 @@ public class Trajectory extends Module implements Render3DListener {
 				initialVelocity *= BowItem.getPullProgress(MC.player.getItemUseTime());
 
 			Camera camera = MC.gameRenderer.getCamera();
-			Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity, event.GetPartialTicks());
+			Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity,
+					event.getRenderTickCounter().getTickDelta(true));
 			Vec3d eyePos = MC.cameraEntity.getEyePos();
 
 			// Calculate look direction.
@@ -124,7 +125,9 @@ public class Trajectory extends Module implements Render3DListener {
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 			Tessellator tessellator = RenderSystem.renderThreadTesselator();
-			RenderSystem.setShader(GameRenderer::getPositionProgram);
+
+			RenderSystem.setShader(ShaderProgramKeys.POSITION);
+
 			BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
 
 			for (int iteration = 0; iteration < 150; iteration++) {

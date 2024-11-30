@@ -69,7 +69,6 @@ public class Sneak extends Module implements TickListener {
 
 	@Override
 	public void onTick(Post event) {
-		// TODO Auto-generated method stub
 
 	}
 }

@@ -18,10 +18,11 @@
 
 package net.aoba.mixin;
 
-import net.minecraft.client.render.RenderTickCounter.Constant;
 import org.spongepowered.asm.mixin.Mixin;
+
+import net.minecraft.client.render.RenderTickCounter.Constant;
 
 @Mixin(Constant.class)
 public class ConstantMixin {
-    // TODO: Wtf is constant and what's it for? Determine and lets HACK.
+
 }

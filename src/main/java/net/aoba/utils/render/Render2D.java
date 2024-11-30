@@ -11,17 +11,15 @@ import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -65,7 +63,7 @@ public class Render2D {
 		float y2 = y1 + height;
 
 		RenderSystem.setShaderTexture(0, texture);
-		RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX_COLOR);
 		RenderSystem.enableBlend();
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS,
@@ -108,7 +106,7 @@ public class Render2D {
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
 		float r = color.getRed();
 		float g = color.getGreen();
@@ -159,7 +157,7 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
 		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
@@ -241,7 +239,7 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
 		double roundedInterval = (360.0f / 30.0f);
@@ -283,7 +281,7 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		for (int i = 0; i < 5; i++) {
-			RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+			RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 			float alpha = color.getAlpha() * (1.0f / (i + 1)); // Adjust alpha for each blur layer
 
 			RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), alpha);
@@ -334,7 +332,7 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
 		bufferBuilder.vertex(matrix4f, x, y, 0);
@@ -345,7 +343,7 @@ public class Render2D {
 
 		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(), outlineColor.getBlue(),
 				outlineColor.getAlpha());
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
 		bufferBuilder.vertex(matrix4f, x, y, 0);
@@ -393,7 +391,7 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
 		bufferBuilder.vertex(matrix4f, x, y, 0);
@@ -442,9 +440,8 @@ public class Render2D {
 		RenderSystem.setShaderColor(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(),
 				backgroundColor.getAlpha());
 
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
 		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
@@ -506,7 +503,7 @@ public class Render2D {
 
 		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(), outlineColor.getBlue(),
 				outlineColor.getAlpha());
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
 		// Top Left Arc and Top
@@ -556,7 +553,7 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
 		// Top Left Arc and Top
@@ -604,7 +601,7 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
 		bufferBuilder.vertex(matrix4f, x1, y1, 0);
@@ -651,7 +648,7 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColor.getColorAsInt());
@@ -695,7 +692,7 @@ public class Render2D {
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 		bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColor.getColorAsInt());
@@ -732,8 +729,9 @@ public class Render2D {
 			DiffuseLighting.disableGuiDepthLighting();
 		}
 
-		MC.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI, false, matrixStack,
-				drawContext.getVertexConsumers(), 0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel);
+		// TODO: MC.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI,
+		// false, matrixStack,
+		// drawContext., 0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel);
 
 		if (!sidelit) {
 			DiffuseLighting.enableGuiDepthLighting();

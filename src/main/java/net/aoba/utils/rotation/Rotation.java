@@ -66,17 +66,18 @@ public record Rotation(double yaw, double pitch) {
 				.wrapDegrees((-Math.toDegrees(Math.atan2(deltaY, Math.sqrt(deltaX * deltaX + deltaZ * deltaZ))))));
 	}
 
+	// TODO: 1.21.3 update broke these!
 	public static Rotation getPlayerRotationDeltaFromEntity(Entity target) {
 		Rotation fromPlayer = rotationFrom(target);
-		Rotation difference = difference(
-				new Rotation(RotationManager.serverRotation.yaw(), RotationManager.serverRotation.pitch()), fromPlayer);
+		ClientPlayerEntity player = MC.player;
+		Rotation difference = difference(new Rotation(player.getYaw(), player.getPitch()), fromPlayer);
 		return difference;
 	}
 
 	public static Rotation getPlayerRotationDeltaFromPosition(Vec3d position) {
 		Rotation fromPlayer = rotationFrom(position);
-		Rotation difference = difference(
-				new Rotation(RotationManager.serverRotation.yaw(), RotationManager.serverRotation.pitch()), fromPlayer);
+		ClientPlayerEntity player = MC.player;
+		Rotation difference = difference(new Rotation(player.getYaw(), player.getPitch()), fromPlayer);
 		return difference;
 	}
 }
