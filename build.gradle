@@ -47,7 +47,7 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modCompileOnly("maven.modrinth:sodium:${project.sodium_version}") { transitive = false }
-    modCompileOnly("maven.modrinth:lithium:${project.lithium_version}") { transitive = false }w
+    modCompileOnly("maven.modrinth:lithium:${project.lithium_version}") { transitive = false }
     modCompileOnly("maven.modrinth:iris:${project.iris_version}") { transitive = false }
 
     // Fabric API. This is technically optional, but you probably want it anyway.
