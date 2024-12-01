@@ -17,7 +17,7 @@
  */
 
 /**
- * A class to represent a system that manages all of the Modules.
+ * A class to represent a system that manages all the Modules.
  */
 package net.aoba.module;
 
@@ -46,19 +46,7 @@ import net.aoba.module.modules.combat.MaceAura;
 import net.aoba.module.modules.combat.Nametags;
 import net.aoba.module.modules.combat.Reach;
 import net.aoba.module.modules.combat.TriggerBot;
-import net.aoba.module.modules.misc.AntiCactus;
-import net.aoba.module.modules.misc.AntiHunger;
-import net.aoba.module.modules.misc.AutoEat;
-import net.aoba.module.modules.misc.AutoFish;
-import net.aoba.module.modules.misc.AutoShear;
-import net.aoba.module.modules.misc.AutoWalk;
-import net.aoba.module.modules.misc.EXPThrower;
-import net.aoba.module.modules.misc.FakePlayer;
-import net.aoba.module.modules.misc.FastBreak;
-import net.aoba.module.modules.misc.FastPlace;
-import net.aoba.module.modules.misc.MCA;
-import net.aoba.module.modules.misc.Timer;
-import net.aoba.module.modules.misc.XCarry;
+import net.aoba.module.modules.misc.*;
 import net.aoba.module.modules.movement.ClickTP;
 import net.aoba.module.modules.movement.EntityControl;
 import net.aoba.module.modules.movement.FastLadder;
@@ -183,6 +171,7 @@ public class ModuleManager implements KeyDownListener {
 	public XCarry xCarry = new XCarry();
 	public XRay xray = new XRay();
 	public Zoom zoom = new Zoom();
+	public DiscordRPCModule discordRPC = new DiscordRPCModule();
 
 	public ModuleManager(List<IAddon> addons) {
 		try {

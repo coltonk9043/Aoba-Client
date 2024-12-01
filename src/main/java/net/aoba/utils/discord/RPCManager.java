@@ -61,6 +61,23 @@ public class RPCManager {
         }
     }
 
+    /*
+     Stops the Discord Rich Presence (RPC).
+     */
+    public void StopRPC() {
+        if (started) {
+            started = false;
+
+            if (thread != null && thread.isAlive()) {
+                thread.interrupt();
+            }
+
+            rpc.Discord_Shutdown();
+
+            thread = null;
+        }
+    }
+
     private String getDetails() {
         String result = "";
 
