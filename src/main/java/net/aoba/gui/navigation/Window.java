@@ -29,6 +29,7 @@ import net.aoba.gui.Direction;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
+import net.aoba.gui.Size;
 import net.aoba.gui.UIElement;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.types.RectangleSetting;
@@ -120,6 +121,11 @@ public class Window extends UIElement {
 		for (UIElement child : children) {
 			child.draw(drawContext, partialTicks);
 		}
+	}
+
+	@Override
+	protected Size getStartingSize(Size availableSize) {
+		return availableSize;
 	}
 
 	protected void setResizing(boolean state, MouseClickEvent event, Direction direction) {

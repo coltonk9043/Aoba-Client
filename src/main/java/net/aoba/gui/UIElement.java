@@ -30,6 +30,7 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.gui.colors.Colors;
 import net.aoba.gui.navigation.huds.ModuleSelectorHud;
+import net.aoba.gui.navigation.huds.RadarHud;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -276,7 +277,9 @@ public abstract class UIElement {
 			if (parent != null) {
 				parent.invalidateMeasure();
 			} else {
-
+				if (this instanceof RadarHud) {
+					System.out.println();
+				}
 				// Construct new bounds based off of width/height constraints.
 				Size size;
 				if (parent == null)
@@ -316,6 +319,10 @@ public abstract class UIElement {
 		}
 	}
 
+	protected Size getStartingSize(Size availableSize) {
+		return new Size(0f, 0f);
+	}
+
 	/**
 	 * Measures the UI element accounting for all of the children. This method spans
 	 * all of the children, starting from the bottom up.
@@ -331,8 +338,7 @@ public abstract class UIElement {
 		}
 
 		if (initialized) {
-			float finalWidth = availableSize.getWidth();
-			float finalHeight = availableSize.getHeight();
+			Size finalSize = getStartingSize(availableSize);
 
 			for (UIElement element : children) {
 				if (!element.visible)
@@ -341,11 +347,11 @@ public abstract class UIElement {
 				element.measure(availableSize);
 				Size resultingSize = element.getPreferredSize();
 
-				if (resultingSize.getWidth() > finalWidth)
-					finalWidth = resultingSize.getWidth();
+				if (resultingSize.getWidth() > finalSize.getWidth())
+					finalSize.setWidth(resultingSize.getWidth());
 
-				if (resultingSize.getHeight() > finalHeight)
-					finalHeight = resultingSize.getHeight();
+				if (resultingSize.getHeight() > finalSize.getHeight())
+					finalSize.setHeight(resultingSize.getHeight());
 			}
 
 			if (margin != null) {
@@ -356,31 +362,31 @@ public abstract class UIElement {
 				Float marginBottom = margin.getBottom();
 
 				if (marginLeft != null)
-					finalWidth += marginLeft;
+					finalSize.setWidth(finalSize.getWidth() + marginLeft);
 
 				if (marginRight != null)
-					finalWidth += marginRight;
+					finalSize.setWidth(finalSize.getWidth() + marginRight);
 
 				if (marginTop != null)
-					finalHeight += marginTop;
+					finalSize.setHeight(finalSize.getHeight() + marginTop);
 
 				if (marginBottom != null)
-					finalHeight += marginBottom;
+					finalSize.setHeight(finalSize.getHeight() + marginBottom);
 			}
 
-			if (minWidth != null && finalWidth < minWidth) {
-				finalWidth = minWidth;
-			} else if (maxWidth != null && finalWidth > maxWidth) {
-				finalWidth = maxWidth;
+			if (minWidth != null && finalSize.getWidth() < minWidth) {
+				finalSize.setWidth(minWidth);
+			} else if (maxWidth != null && finalSize.getWidth() > maxWidth) {
+				finalSize.setWidth(maxWidth);
 			}
 
-			if (minHeight != null && finalHeight < minHeight) {
-				finalHeight = minHeight;
-			} else if (maxHeight != null && finalHeight > maxHeight) {
-				finalHeight = maxHeight;
+			if (minHeight != null && finalSize.getHeight() < minHeight) {
+				finalSize.setHeight(minHeight);
+			} else if (maxHeight != null && finalSize.getHeight() > maxHeight) {
+				finalSize.setHeight(maxHeight);
 			}
 
-			preferredSize = new Size(finalWidth, finalHeight);
+			preferredSize = finalSize;
 		}
 	}
 
