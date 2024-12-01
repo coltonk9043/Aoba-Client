@@ -64,7 +64,7 @@ public class RPCManager {
     /*
      Stops the Discord Rich Presence (RPC).
      */
-    public void StopRPC() {
+    public void stopRpc() {
         if (started) {
             started = false;
 

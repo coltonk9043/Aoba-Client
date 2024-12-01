@@ -16,13 +16,13 @@ public class DiscordRPCModule extends Module {
     @Override
     public void onDisable() {
         RPCManager rpcManager = new RPCManager();
-        rpcManager.startRpc();
+        rpcManager.stopRpc();
     }
 
     @Override
     public void onEnable() {
         RPCManager rpcManager = new RPCManager();
-        rpcManager.StopRPC();
+        rpcManager.startRpc();
     }
 
     @Override
