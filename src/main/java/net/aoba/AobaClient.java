@@ -127,9 +127,6 @@ public class AobaClient {
 		altManager = new AltManager();
 		proxyManager = new ProxyManager();
 
-		LogUtils.getLogger().info("[Aoba] Starting Discord RPC");
-		rpcManager = new RPCManager();
-		rpcManager.startRpc();
 		LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 
 		SettingManager.loadGlobalSettings();
