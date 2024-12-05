@@ -100,7 +100,9 @@ public class SettingManager {
 
 			if (files != null) {
 				for (File file : files) {
-					configNames.add(file.getName().replace(".ttf", ""));
+					String name = file.getName().replace(".xml", "");
+					if (!name.equals("globals"))
+						configNames.add(name);
 				}
 			}
 		}
