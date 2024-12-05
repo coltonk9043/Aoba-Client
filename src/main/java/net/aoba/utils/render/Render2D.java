@@ -54,10 +54,7 @@ public class Render2D {
 	 */
 	public static void drawTexturedQuad(Matrix4f matrix4f, Identifier texture, float x1, float y1, float width,
 			float height, Color color) {
-		float red = color.getRed();
-		float green = color.getGreen();
-		float blue = color.getBlue();
-		float alpha = color.getAlpha();
+		int colorInt = color.getColorAsInt();
 
 		float x2 = x1 + width;
 		float y2 = y1 + height;
@@ -68,10 +65,10 @@ public class Render2D {
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS,
 				VertexFormats.POSITION_TEXTURE_COLOR);
-		bufferBuilder.vertex(matrix4f, x1, y1, 0).color(red, green, blue, alpha).texture(0, 0);
-		bufferBuilder.vertex(matrix4f, x1, y2, 0).color(red, green, blue, alpha).texture(0, 1);
-		bufferBuilder.vertex(matrix4f, x2, y2, 0).color(red, green, blue, alpha).texture(1, 1);
-		bufferBuilder.vertex(matrix4f, x2, y1, 0).color(red, green, blue, alpha).texture(1, 0);
+		bufferBuilder.vertex(matrix4f, x1, y1, 0).color(colorInt).texture(0, 0);
+		bufferBuilder.vertex(matrix4f, x1, y2, 0).color(colorInt).texture(0, 1);
+		bufferBuilder.vertex(matrix4f, x2, y2, 0).color(colorInt).texture(1, 1);
+		bufferBuilder.vertex(matrix4f, x2, y1, 0).color(colorInt).texture(1, 0);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		RenderSystem.disableBlend();
 	}
@@ -98,8 +95,7 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public static void drawBox(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
-//		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(),
-//				color.getAlpha());
+		int colorInt = color.getColorAsInt();
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
@@ -107,20 +103,13 @@ public class Render2D {
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 
 		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
-
-		float r = color.getRed();
-		float g = color.getGreen();
-		float b = color.getBlue();
-		float alpha = color.getAlpha();
-
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		bufferBuilder.vertex(matrix4f, x, y, 0).color(r, g, b, alpha);
-		bufferBuilder.vertex(matrix4f, x + width, y, 0).color(r, g, b, alpha);
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).color(r, g, b, alpha);
-		bufferBuilder.vertex(matrix4f, x, y + height, 0).color(r, g, b, alpha);
+		bufferBuilder.vertex(matrix4f, x, y, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).color(colorInt);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -151,73 +140,71 @@ public class Render2D {
 	 */
 	public static void drawRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height, float radius,
 			Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		int colorInt = color.getColorAsInt();
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
-		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
-		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f);
-		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
-		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION_COLOR);
+		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f, color);
+		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f, color);
+		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f, color);
+		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f, color);
 
 		// |---
-		bufferBuilder.vertex(matrix4f, x + radius, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(colorInt);
 
 		// ---|
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(colorInt);
 
 		// _||
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(colorInt);
 
 		// |||
-		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(colorInt);
 
 		/// __|
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
 
 		// |__
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(colorInt);
 
 		// |||
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(colorInt);
 
 		/// ||-
-		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
 
 		/// |-/
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
 
 		/// /_|
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(colorInt);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -233,15 +220,15 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public static void drawCircle(Matrix4f matrix4f, float x, float y, float radius, Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		int colorInt = color.getColorAsInt();
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION_COLOR);
 		double roundedInterval = (360.0f / 30.0f);
 
 		for (int i = 0; i < 30; i++) {
@@ -252,13 +239,11 @@ public class Render2D {
 			float radiusX2 = (float) Math.cos(angle2) * radius;
 			float radiusY2 = (float) Math.sin(angle2) * radius;
 
-			bufferBuilder.vertex(matrix4f, x, y, 0);
-			bufferBuilder.vertex(matrix4f, x + radiusX1, y + radiusY1, 0);
-			bufferBuilder.vertex(matrix4f, x + radiusX2, y + radiusY2, 0);
+			bufferBuilder.vertex(matrix4f, x, y, 0).color(colorInt);
+			bufferBuilder.vertex(matrix4f, x + radiusX1, y + radiusY1, 0).color(colorInt);
+			bufferBuilder.vertex(matrix4f, x + radiusX2, y + radiusY2, 0).color(colorInt);
 		}
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -280,20 +265,20 @@ public class Render2D {
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+
 		for (int i = 0; i < 5; i++) {
-			RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+			float r = color.getRed();
+			float g = color.getGreen();
+			float b = color.getBlue();
 			float alpha = color.getAlpha() * (1.0f / (i + 1)); // Adjust alpha for each blur layer
 
-			RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-
-			drawRoundedBox(matrix4f, x - i, y - i, width + 2 * i, height + 2 * i, radius + i, color);
+			Color newColor = new Color(r, g, b, alpha);
+			drawRoundedBox(matrix4f, x - i, y - i, width + 2 * i, height + 2 * i, radius + i, newColor);
 		}
 
 		// Draw the main rounded box
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 		drawRoundedBox(matrix4f, x, y, width, height, radius, color);
-
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -325,35 +310,32 @@ public class Render2D {
 	 */
 	public static void drawOutlinedBox(Matrix4f matrix4f, float x, float y, float width, float height,
 			Color outlineColor, Color backgroundColor) {
-		RenderSystem.setShaderColor(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(),
-				backgroundColor.getAlpha());
+
+		int backgroundColorInt = backgroundColor.getColorAsInt();
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
-		bufferBuilder.vertex(matrix4f, x, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x, y + height, 0);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		bufferBuilder.vertex(matrix4f, x, y, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).color(backgroundColorInt);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(), outlineColor.getBlue(),
-				outlineColor.getAlpha());
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		int outlineColorInt = backgroundColor.getColorAsInt();
 
-		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
-		bufferBuilder.vertex(matrix4f, x, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x, y, 0);
+		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
+		bufferBuilder.vertex(matrix4f, x, y, 0).color(outlineColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).color(outlineColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).color(outlineColorInt);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).color(outlineColorInt);
+		bufferBuilder.vertex(matrix4f, x, y, 0).color(outlineColorInt);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -385,20 +367,21 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public static void drawBoxOutline(Matrix4f matrix4f, float x, float y, float width, float height, Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		int colorInt = color.getColorAsInt();
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
-		bufferBuilder.vertex(matrix4f, x, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x, y, 0);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP,
+				VertexFormats.POSITION_COLOR);
+		bufferBuilder.vertex(matrix4f, x, y, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x, y, 0).color(colorInt);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
@@ -433,102 +416,99 @@ public class Render2D {
 	 */
 	public static void drawOutlinedRoundedBox(Matrix4f matrix4f, float x, float y, float width, float height,
 			float radius, Color outlineColor, Color backgroundColor) {
+		int backgroundColorInt = backgroundColor.getColorAsInt();
+
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 
-		RenderSystem.setShaderColor(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(),
-				backgroundColor.getAlpha());
-
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION);
-		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
-		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f);
-		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
-		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.TRIANGLES, VertexFormats.POSITION_COLOR);
+		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f, backgroundColor);
+		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f, backgroundColor);
+		buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f,
+				backgroundColor);
+		buildFilledArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f, backgroundColor);
 
 		// |---
-		bufferBuilder.vertex(matrix4f, x + radius, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(backgroundColorInt);
 
 		// ---|
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(backgroundColorInt);
 
 		// _||
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(backgroundColorInt);
 
 		// |||
-		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(backgroundColorInt);
 
 		/// __|
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
 
 		// |__
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(backgroundColorInt);
 
 		// |||
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(backgroundColorInt);
 
 		/// ||-
-		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
 
 		/// |-/
-		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
 
 		/// /_|
-		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(backgroundColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(backgroundColorInt);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		RenderSystem.setShaderColor(outlineColor.getRed(), outlineColor.getGreen(), outlineColor.getBlue(),
-				outlineColor.getAlpha());
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		int outlineColorInt = backgroundColor.getColorAsInt();
 
-		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
 		// Top Left Arc and Top
-		buildArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x + radius, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
+		buildArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f, outlineColor);
+		bufferBuilder.vertex(matrix4f, x + radius, y, 0).color(outlineColorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(outlineColorInt);
 
 		// Top Right Arc and Right
-		buildArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0);
+		buildArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f, outlineColor);
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(outlineColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).color(outlineColorInt);
 
 		// Bottom Right
-		buildArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0);
+		buildArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f, outlineColor);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(outlineColorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).color(outlineColorInt);
 
 		// Bottom Left
-		buildArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
+		buildArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f, outlineColor);
+		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).color(outlineColorInt);
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(outlineColorInt);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -547,38 +527,38 @@ public class Render2D {
 	 */
 	public static void drawRoundedBoxOutline(Matrix4f matrix4f, float x, float y, float width, float height,
 			float radius, Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		int colorInt = color.getColorAsInt();
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP,
+				VertexFormats.POSITION_COLOR);
 		// Top Left Arc and Top
-		buildArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x + radius, y, 0);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0);
+		buildArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f, color);
+		bufferBuilder.vertex(matrix4f, x + radius, y, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(colorInt);
 
 		// Top Right Arc and Right
-		buildArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0);
-		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0);
+		buildArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f, color);
+		bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).color(colorInt);
 
 		// Bottom Right
-		buildArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0);
-		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0);
+		buildArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f, color);
+		bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).color(colorInt);
 
 		// Bottom Left
-		buildArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f);
-		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0);
-		bufferBuilder.vertex(matrix4f, x, y + radius, 0);
+		buildArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f, color);
+		bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(colorInt);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -595,20 +575,20 @@ public class Render2D {
 	 * @param color    Color to draw the line in.
 	 */
 	public static void drawLine(Matrix4f matrix4f, float x1, float y1, float x2, float y2, Color color) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		int colorInt = color.getColorAsInt();
 
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
-		bufferBuilder.vertex(matrix4f, x1, y1, 0);
-		bufferBuilder.vertex(matrix4f, x2, y2, 0);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES,
+				VertexFormats.POSITION_COLOR);
+		bufferBuilder.vertex(matrix4f, x1, y1, 0).color(colorInt);
+		bufferBuilder.vertex(matrix4f, x2, y2, 0).color(colorInt);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -644,6 +624,9 @@ public class Render2D {
 	 */
 	public static void drawHorizontalGradient(Matrix4f matrix4f, float x, float y, float width, float height,
 			Color startColor, Color endColor) {
+		int startColorInt = startColor.getColorAsInt();
+		int endColorInt = endColor.getColorAsInt();
+
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
@@ -651,10 +634,10 @@ public class Render2D {
 		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColor.getColorAsInt());
-		bufferBuilder.vertex(matrix4f, x + width, y, 0.0F).color(endColor.getColorAsInt());
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0.0F).color(endColor.getColorAsInt());
-		bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(startColor.getColorAsInt());
+		bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0.0F).color(endColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0.0F).color(endColorInt);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(startColorInt);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
@@ -688,6 +671,9 @@ public class Render2D {
 	 */
 	public static void drawVerticalGradient(Matrix4f matrix4f, float x, float y, float width, float height,
 			Color startColor, Color endColor) {
+		int startColorInt = startColor.getColorAsInt();
+		int endColorInt = endColor.getColorAsInt();
+
 		RenderSystem.enableBlend();
 		RenderSystem.disableDepthTest();
 		GL11.glEnable(GL11.GL_LINE_SMOOTH);
@@ -695,10 +681,10 @@ public class Render2D {
 		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColor.getColorAsInt());
-		bufferBuilder.vertex(matrix4f, x + width, y, 0.0F).color(startColor.getColorAsInt());
-		bufferBuilder.vertex(matrix4f, x + width, y + height, 0.0F).color(endColor.getColorAsInt());
-		bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(endColor.getColorAsInt());
+		bufferBuilder.vertex(matrix4f, x, y, 0.0F).color(startColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y, 0.0F).color(startColorInt);
+		bufferBuilder.vertex(matrix4f, x + width, y + height, 0.0F).color(endColorInt);
+		bufferBuilder.vertex(matrix4f, x, y + height, 0.0F).color(endColorInt);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
@@ -839,8 +825,10 @@ public class Render2D {
 	 * @param sweepAngle    Sweep angle of the arc.
 	 */
 	private static void buildFilledArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius,
-			float startAngle, float sweepAngle) {
+			float startAngle, float sweepAngle, Color color) {
 		double roundedInterval = (sweepAngle / radius);
+
+		int colorInt = color.getColorAsInt();
 
 		for (int i = 0; i < radius; i++) {
 			double angle = Math.toRadians(startAngle + (i * roundedInterval));
@@ -850,9 +838,9 @@ public class Render2D {
 			float radiusX2 = (float) Math.cos(angle2) * radius;
 			float radiusY2 = (float) Math.sin(angle2) * radius;
 
-			bufferBuilder.vertex(matrix, x, y, 0);
-			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0);
-			bufferBuilder.vertex(matrix, x + radiusX2, y + radiusY2, 0);
+			bufferBuilder.vertex(matrix, x, y, 0).color(colorInt);
+			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).color(colorInt);
+			bufferBuilder.vertex(matrix, x + radiusX2, y + radiusY2, 0).color(colorInt);
 		}
 	}
 
@@ -868,15 +856,16 @@ public class Render2D {
 	 * @param sweepAngle    Sweep angle of the arc.
 	 */
 	private static void buildArc(BufferBuilder bufferBuilder, Matrix4f matrix, float x, float y, float radius,
-			float startAngle, float sweepAngle) {
+			float startAngle, float sweepAngle, Color color) {
 		float roundedInterval = (sweepAngle / radius);
 
+		int colorInt = color.getColorAsInt();
 		for (int i = 0; i < radius; i++) {
 			double angle = Math.toRadians(startAngle + (i * roundedInterval));
 			float radiusX1 = (float) (Math.cos(angle) * radius);
 			float radiusY1 = (float) Math.sin(angle) * radius;
 
-			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0);
+			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).color(colorInt);
 		}
 	}
 

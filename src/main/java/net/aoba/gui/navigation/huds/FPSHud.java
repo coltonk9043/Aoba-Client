@@ -13,10 +13,11 @@ public class FPSHud extends HudWindow {
 	private static final MinecraftClient MC = MinecraftClient.getInstance();
 
 	public FPSHud(int x, int y) {
-		super("FPSHud", x, y);
-		resizeMode = ResizeMode.None;
+		super("FPSHud", x, y, 50, 24);
+		this.minWidth = 50f;
 		this.minHeight = 20f;
 		this.maxHeight = 20f;
+		resizeMode = ResizeMode.None;
 	}
 
 	@Override
@@ -26,13 +27,6 @@ public class FPSHud extends HudWindow {
 			if (pos.isDrawable()) {
 				int fps = MC.getCurrentFps();
 				String fpsText = "FPS: " + fps;
-
-				int textWidth = MC.textRenderer.getWidth(fpsText);
-				int textHeight = MC.textRenderer.fontHeight;
-
-				// setWidth(textWidth * 2);
-				// setHeight(textHeight * 2);
-
 				Render2D.drawString(drawContext, fpsText, pos.getX(), pos.getY(),
 						GuiManager.foregroundColor.getValue().getColorAsInt());
 			}

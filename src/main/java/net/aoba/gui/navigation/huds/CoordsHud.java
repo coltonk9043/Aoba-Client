@@ -13,10 +13,11 @@ public class CoordsHud extends HudWindow {
 	private static final MinecraftClient MC = MinecraftClient.getInstance();
 
 	public CoordsHud(int x, int y) {
-		super("CoordsHud", x, y);
-		resizeMode = ResizeMode.None;
+		super("CoordsHud", x, y, 50, 24);
+		this.minWidth = 50f;
 		this.minHeight = 20f;
 		this.maxHeight = 20f;
+		resizeMode = ResizeMode.None;
 	}
 
 	@Override
@@ -26,13 +27,6 @@ public class CoordsHud extends HudWindow {
 			if (pos.isDrawable()) {
 				String coordsText = String.format("X: %.1f, Y: %.1f, Z: %.1f", MC.player.getX(), MC.player.getY(),
 						MC.player.getZ());
-
-				int textWidth = MC.textRenderer.getWidth(coordsText);
-				int textHeight = MC.textRenderer.fontHeight;
-
-				// setWidth(textWidth * 2);
-				// setHeight(textHeight * 2);
-
 				Render2D.drawString(drawContext, coordsText, pos.getX(), pos.getY(),
 						GuiManager.foregroundColor.getValue().getColorAsInt());
 			}

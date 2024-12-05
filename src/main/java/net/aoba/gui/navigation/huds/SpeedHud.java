@@ -12,10 +12,10 @@ public class SpeedHud extends HudWindow {
 	private String speedText = null;
 
 	public SpeedHud(int x, int y) {
-		super("SpeedHud", x, y);
+		super("SpeedHud", x, y, 50, 24);
+		this.minWidth = 50f;
 		this.minHeight = 20f;
 		this.maxHeight = 20f;
-
 		resizeMode = ResizeMode.None;
 	}
 
@@ -34,9 +34,6 @@ public class SpeedHud extends HudWindow {
 			double speed = distance * 20 * 3.6;
 
 			speedText = String.format("Speed: %.2f km/h", speed);
-
-			int textWidth = MC.textRenderer.getWidth(speedText);
-			// setWidth(textWidth * 2);
 		} else
 			speedText = null;
 	}

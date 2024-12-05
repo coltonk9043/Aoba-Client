@@ -60,6 +60,13 @@ public class Color {
 		this.alpha = alpha;
 	}
 
+	public Color(float r, float g, float b, float alpha) {
+		this.r = (int) (r * 255f);
+		this.g = (int) (g * 255f);
+		this.b = (int) (b * 255f);
+		this.alpha = (int) (alpha * 255f);
+	}
+
 	public Color getAsSolid() {
 		return new Color(r, g, b, 255);
 	}

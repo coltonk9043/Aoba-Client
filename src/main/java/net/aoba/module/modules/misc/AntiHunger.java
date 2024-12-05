@@ -56,17 +56,19 @@ public class AntiHunger extends Module implements SendPacketListener, SendMoveme
 			return;
 		}
 
-		if (MC.player.hasVehicle() || MC.player.isTouchingWater() || MC.player.isSubmergedInWater())
-			return;
+		if (MC.player != null) {
+			if (MC.player.hasVehicle() || MC.player.isTouchingWater() || MC.player.isSubmergedInWater())
+				return;
+
+			if (event.GetPacket() instanceof PlayerMoveC2SPacket packet && onGround.getValue() && MC.player.isOnGround()
+					&& MC.player.fallDistance <= 0.0 && !MC.interactionManager.isBreakingBlock()) {
+				((IPlayerMoveC2SPacket) packet).setOnGround(false);
+			}
+		}
 
 		if (event.GetPacket() instanceof ClientCommandC2SPacket packet && sprint.getValue()) {
 			if (packet.getMode() == ClientCommandC2SPacket.Mode.START_SPRINTING)
 				event.cancel();
-		}
-
-		if (event.GetPacket() instanceof PlayerMoveC2SPacket packet && onGround.getValue() && MC.player.isOnGround()
-				&& MC.player.fallDistance <= 0.0 && !MC.interactionManager.isBreakingBlock()) {
-			((IPlayerMoveC2SPacket) packet).setOnGround(false);
 		}
 	}
 

@@ -15,10 +15,11 @@ public class PingHud extends HudWindow {
 	String pingText = null;
 
 	public PingHud(int x, int y) {
-		super("PingHud", x, y);
-		resizeMode = ResizeMode.None;
+		super("PingHud", x, y, 50, 24);
+		this.minWidth = 50f;
 		this.minHeight = 20f;
 		this.maxHeight = 20f;
+		resizeMode = ResizeMode.None;
 	}
 
 	@Override
@@ -32,9 +33,6 @@ public class PingHud extends HudWindow {
 			} else {
 				pingText = "Ping: ?";
 			}
-
-			int textWidth = MC.textRenderer.getWidth(pingText);
-			// setWidth(textWidth * 2);
 		} else
 			pingText = null;
 	}

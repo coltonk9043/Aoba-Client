@@ -10,12 +10,11 @@ import net.minecraft.client.gui.DrawContext;
 public class WatermarkHud extends HudWindow {
 
 	public WatermarkHud(int x, int y) {
-		super("WatermarkHud", x, y);
-
-		resizeMode = ResizeMode.None;
-
+		super("WatermarkHud", x, y, 50, 24);
+		this.minWidth = 50f;
 		this.minHeight = 20f;
 		this.maxHeight = 20f;
+		resizeMode = ResizeMode.None;
 	}
 
 	@Override
@@ -24,13 +23,6 @@ public class WatermarkHud extends HudWindow {
 			Rectangle pos = position.getValue();
 			if (pos.isDrawable()) {
 				String watermarkText = "Aoba Client";
-
-				int textWidth = MC.textRenderer.getWidth(watermarkText);
-				int textHeight = MC.textRenderer.fontHeight;
-
-				// setWidth(textWidth * 2);
-				// setHeight(textHeight * 2);
-
 				Render2D.drawString(drawContext, watermarkText, pos.getX(), pos.getY(),
 						GuiManager.foregroundColor.getValue().getColorAsInt());
 			}

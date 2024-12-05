@@ -11,10 +11,10 @@ public class DayHud extends HudWindow {
 	private String timeText = null;
 
 	public DayHud(int x, int y) {
-		super("DayHud", x, y);
-		this.minHeight = 20f;
-		this.maxHeight = 20f;
-
+		super("DayHud", x, y, 50, 24);
+		this.minWidth = 50f;
+		this.minHeight = 24f;
+		this.maxHeight = 24f;
 		resizeMode = ResizeMode.None;
 	}
 
@@ -22,8 +22,6 @@ public class DayHud extends HudWindow {
 	public void update() {
 		super.update();
 		timeText = "Day: " + (int) (MC.world.getTime() / 24000);
-		int textWidth = MC.textRenderer.getWidth(timeText);
-		// setMinWidth(textWidth * 2);
 	}
 
 	@Override

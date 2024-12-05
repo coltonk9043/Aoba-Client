@@ -283,12 +283,12 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public void SetHudActive(HudWindow hud, boolean state) {
 		if (state) {
 			pinnedHuds.put(hud.getClass(), hud);
-			hudPane.AddWindow(hud);
 			hud.activated.silentSetValue(true);
+			hudPane.AddWindow(hud);
 		} else {
 			this.pinnedHuds.remove(hud.getClass());
-			hudPane.RemoveWindow(hud);
 			hud.activated.silentSetValue(false);
+			hudPane.RemoveWindow(hud);
 		}
 	}
 

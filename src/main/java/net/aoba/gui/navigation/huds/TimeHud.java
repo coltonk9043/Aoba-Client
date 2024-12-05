@@ -11,11 +11,10 @@ public class TimeHud extends HudWindow {
 	private String timeText = null;
 
 	public TimeHud(int x, int y) {
-		super("TimeHud", x, y);
-
+		super("TimeHud", x, y, 80, 24);
+		this.minWidth = 80f;
 		this.minHeight = 20f;
 		this.maxHeight = 20f;
-
 		resizeMode = ResizeMode.None;
 	}
 
@@ -41,8 +40,6 @@ public class TimeHud extends HudWindow {
 		timeString = new StringBuilder(hours + ":" + sm.charAt(0) + sm.charAt(1) + suffix);
 
 		timeText = timeString.toString();
-		int textWidth = MC.textRenderer.getWidth(timeText);
-		// setWidth(textWidth * 2);
 	}
 
 	@Override
