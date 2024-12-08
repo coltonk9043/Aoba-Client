@@ -43,7 +43,7 @@ public class ModuleArrayListHud extends HudWindow {
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
 
-		if (this.isMouseOver && event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
+		if (this.hovered && event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
 			TextAlign currentValue = textAlign.getValue();
 			TextAlign[] enumConstants = currentValue.getDeclaringClass().getEnumConstants();
 			int currentIndex = java.util.Arrays.asList(enumConstants).indexOf(currentValue);
@@ -88,7 +88,7 @@ public class ModuleArrayListHud extends HudWindow {
 				case TextAlign.Center:
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
-						float centerTextWidth = Render2D.getStringWidth(mod.getName());
+						float centerTextWidth = Render2D.getStringWidth(mod.getName()) / 2.0f;
 						Render2D.drawString(drawContext, mod.getName(),
 								pos.getX() + (pos.getWidth() / 2.0f) - centerTextWidth, yPosition,
 								GuiManager.foregroundColor.getValue().getColorAsInt());
@@ -98,7 +98,7 @@ public class ModuleArrayListHud extends HudWindow {
 				case TextAlign.Right:
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
-						float rightTextWidth = Render2D.getStringWidth(mod.getName()) * 2;
+						float rightTextWidth = Render2D.getStringWidth(mod.getName());
 						Render2D.drawString(drawContext, mod.getName(), pos.getX() + pos.getWidth() - rightTextWidth,
 								yPosition, GuiManager.foregroundColor.getValue().getColorAsInt());
 						iteration.incrementAndGet();

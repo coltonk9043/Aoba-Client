@@ -74,7 +74,7 @@ public class HudComponent extends Component {
 		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
 			if (this.hovered) {
 				boolean visibility = hud.activated.getValue();
-				Aoba.getInstance().guiManager.SetHudActive(hud, !visibility);
+				Aoba.getInstance().guiManager.setHudActive(hud, !visibility);
 			}
 		}
 	}

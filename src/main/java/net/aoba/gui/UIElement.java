@@ -28,9 +28,8 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
+import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.gui.colors.Colors;
-import net.aoba.gui.navigation.huds.ModuleSelectorHud;
-import net.aoba.gui.navigation.huds.RadarHud;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -59,7 +58,7 @@ public abstract class UIElement {
 	// Actual physical size on the screen.
 	protected Size preferredSize;
 	protected Rectangle actualSize;
-
+	protected String tooltip = null;
 	protected boolean visible = true;
 	protected boolean hovered = false;
 	protected boolean isHitTestVisible = true;
@@ -85,6 +84,10 @@ public abstract class UIElement {
 			onInitialized();
 			invalidateMeasure();
 		}
+	}
+
+	public boolean isInitialized() {
+		return this.initialized;
 	}
 
 	protected void onInitialized() {
@@ -176,10 +179,6 @@ public abstract class UIElement {
 
 	public void setHeight(Float height) {
 		if (this.height != height) {
-			if (this instanceof ModuleSelectorHud) {
-				System.out.println();
-			}
-
 			this.height = height;
 			invalidateMeasure();
 		}
@@ -238,10 +237,6 @@ public abstract class UIElement {
 		visible = bool;
 		hovered = false;
 
-		// for (UIElement child : children) {
-		// child.setVisible(bool);
-		// }
-
 		// If parent is not null, notify the parent.
 		if (parent != null) {
 			parent.onChildChanged(this);
@@ -277,9 +272,6 @@ public abstract class UIElement {
 			if (parent != null) {
 				parent.invalidateMeasure();
 			} else {
-				if (this instanceof RadarHud) {
-					System.out.println();
-				}
 				// Construct new bounds based off of width/height constraints.
 				Size size;
 				if (parent == null)
@@ -333,7 +325,6 @@ public abstract class UIElement {
 	 */
 	public void measure(Size availableSize) {
 		if (!isVisible()) {
-			preferredSize = Size.ZERO;
 			return;
 		}
 
@@ -493,9 +484,71 @@ public abstract class UIElement {
 	}
 
 	public void onMouseMove(MouseMoveEvent event) {
+		boolean wasHovered = hovered;
+		if (isHitTestVisible() && isVisible()) {
+			// Propagate to children.
+			Iterator<UIElement> tabIterator = getChildren().iterator();
+			while (tabIterator.hasNext()) {
+				tabIterator.next().onMouseMove(event);
+			}
+
+			if (event.isCancelled()) {
+				this.hovered = false;
+				if (wasHovered) {
+					GuiManager.setTooltip(null);
+				}
+			} else {
+				float mouseX = (float) event.getX();
+				float mouseY = (float) event.getY();
+
+				this.hovered = actualSize.intersects(mouseX, mouseY);
+
+				if (!event.isCancelled() && hovered) {
+					event.cancel();
+					String tooltip = getTooltip();
+					if (tooltip != null) {
+						GuiManager.setTooltip(tooltip);
+					} else {
+						GuiManager.setTooltip(null);
+					}
+				} else if (wasHovered) {
+					GuiManager.setTooltip(null);
+				}
+			}
+		} else {
+			this.hovered = false;
+			if (wasHovered) {
+				GuiManager.setTooltip(null);
+			}
+		}
 	}
 
 	public void onMouseClick(MouseClickEvent event) {
+		// Propagate to children.
+		Iterator<UIElement> tabIterator = getChildren().iterator();
+		while (tabIterator.hasNext()) {
+			tabIterator.next().onMouseClick(event);
+			if (event.isCancelled())
+				break;
+		}
+	}
 
+	public void onMouseScroll(MouseScrollEvent event) {
+		// Propagate to children.
+		Iterator<UIElement> tabIterator = getChildren().iterator();
+		while (tabIterator.hasNext()) {
+			tabIterator.next().onMouseScroll(event);
+			if (event.isCancelled())
+				break;
+		}
+	}
+
+	public String getTooltip() {
+
+		return tooltip;
+	}
+
+	public void setTooltip(String tooltip) {
+		this.tooltip = tooltip;
 	}
 }

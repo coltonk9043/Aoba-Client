@@ -18,16 +18,11 @@
 
 package net.aoba.gui.components;
 
-import java.util.Iterator;
-
-import net.aoba.Aoba;
-import net.aoba.event.events.MouseClickEvent;
-import net.aoba.event.events.MouseMoveEvent;
-import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
 import net.aoba.gui.UIElement;
 
 public abstract class Component extends UIElement {
+	public String header = null;
 
 	public Component() {
 		super();
@@ -38,55 +33,5 @@ public abstract class Component extends UIElement {
 	public void onVisibilityChanged() {
 		super.onVisibilityChanged();
 		hovered = false;
-	}
-
-	/**
-	 * Triggers when the mouse is moved.
-	 *
-	 * @param mouseMoveEvent Event fired.
-	 */
-	public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
-		if (isHitTestVisible()) {
-			// Propagate to children.
-			Iterator<UIElement> tabIterator = getChildren().iterator();
-			while (tabIterator.hasNext()) {
-				tabIterator.next().onMouseMove(mouseMoveEvent);
-			}
-
-			boolean wasHovered = hovered;
-			if (mouseMoveEvent.isCancelled() || !visible || !Aoba.getInstance().guiManager.isClickGuiOpen()) {
-				this.hovered = false;
-				if (wasHovered) {
-					GuiManager.setTooltip(null);
-				}
-			} else {
-
-				float mouseX = (float) mouseMoveEvent.getX();
-				float mouseY = (float) mouseMoveEvent.getY();
-
-				this.hovered = actualSize.intersects(mouseX, mouseY);
-
-				String tooltip = getTooltip();
-				if (hovered && tooltip != null) {
-					GuiManager.setTooltip(tooltip);
-					mouseMoveEvent.cancel();
-				} else if (wasHovered) {
-					GuiManager.setTooltip(null);
-				}
-			}
-		}
-
-	}
-
-	public void onMouseClick(MouseClickEvent event) {
-		// Propagate to children.
-		Iterator<UIElement> tabIterator = getChildren().iterator();
-		while (tabIterator.hasNext()) {
-			tabIterator.next().onMouseClick(event);
-		}
-	}
-
-	public String getTooltip() {
-		return null;
 	}
 }

@@ -58,6 +58,7 @@ public class SliderComponent extends Component {
 		this.floatSetting = floatSetting;
 		minValue = floatSetting.min_value;
 		maxValue = floatSetting.max_value;
+		header = floatSetting.displayName;
 		value = floatSetting.getValue();
 		currentSliderPosition = (float) ((value - minValue) / (maxValue - minValue));
 
@@ -149,6 +150,10 @@ public class SliderComponent extends Component {
 				new Color(255, 255, 255, 255));
 
 		Render2D.drawCircle(matrix4f, actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
+
+		if (header != null) {
+			Render2D.drawString(drawContext, header, actualX, actualY + 8, 0xFFFFFF);
+		}
 
 		String valueText = String.format("%.02f", value);
 		int textSize = mc.textRenderer.getWidth(valueText) * 2;

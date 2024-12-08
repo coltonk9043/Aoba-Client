@@ -28,6 +28,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Size;
 import net.aoba.gui.colors.Color;
@@ -75,6 +76,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 			this.text = s;
 		});
 
+		this.header = stringSetting.displayName;
 		this.text = stringSetting.getValue();
 	}
 
@@ -105,11 +107,8 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 			focusAnimationProgress = Math.max(0.0f, focusAnimationProgress - partialTicks * 0.1f);
 		}
 
-		Color borderColor = isErrorState ? errorBorderColor
-				: new Color(115 + (int) (140 * focusAnimationProgress), 115, 115, 200);
-
-		Render2D.drawOutlinedRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor,
-				new Color(115, 115, 115, 200));
+		Render2D.drawOutlinedRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, 3.0f,
+				GuiManager.borderColor.getValue(), new Color(115, 115, 115, 200));
 
 		if (text != null && !text.isEmpty()) {
 			int visibleStringLength = (int) (actualWidth - 16 / 10);
@@ -148,9 +147,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 					if (stringSetting != null)
 						stringSetting.setValue(text);
 				}
-
 			} else if (keyIsValid(key) || key == GLFW.GLFW_KEY_SPACE) {
-				System.out.println(key);
 				char keyCode = (char) key;
 
 				if (key != GLFW.GLFW_KEY_SPACE && !Screen.hasShiftDown())

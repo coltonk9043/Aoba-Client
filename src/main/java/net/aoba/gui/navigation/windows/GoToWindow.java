@@ -168,7 +168,6 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				"GoTo will automatically walk/fly your player to specific coordinates.");
 		stackPanel.addChild(label);
 
-		stackPanel.addChild(new StringComponent("Mode"));
 		EnumComponent<Pathfinder> pathfinderModeComponent = new EnumComponent<Pathfinder>(pathfinderMode);
 		stackPanel.addChild(pathfinderModeComponent);
 
@@ -178,12 +177,10 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		CheckboxComponent avoidLavaCheckbox = new CheckboxComponent(avoidLava);
 		stackPanel.addChild(avoidLavaCheckbox);
 
-		radiusHeader = new StringComponent("Radius");
 		stackPanel.addChild(radiusHeader);
 		radiusSlider = new SliderComponent(radius);
 		stackPanel.addChild(radiusSlider);
 
-		flyMaxSpeedHeader = new StringComponent("Max Speed");
 		stackPanel.addChild(flyMaxSpeedHeader);
 		flyMaxSpeedSlider = new SliderComponent(maxSpeed);
 		stackPanel.addChild(flyMaxSpeedSlider);

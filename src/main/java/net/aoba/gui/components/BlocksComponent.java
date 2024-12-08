@@ -68,7 +68,13 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 
 	@Override
 	public void measure(Size availableSize) {
-		preferredSize = new Size(availableSize.getWidth(), 40.0f);
+		if (collapsed)
+			preferredSize = new Size(availableSize.getWidth(), COLLAPSED_HEIGHT);
+		else
+			preferredSize = new Size(availableSize.getWidth(), EXPANDED_HEIGHT);
+
+		visibleColumns = (int) Math.floor((preferredSize.getWidth()) / BLOCK_WIDTH) - 1;
+		visibleRows = (int) Math.floor((preferredSize.getHeight() - 25) / BLOCK_WIDTH);
 	}
 
 	/**
@@ -153,10 +159,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 				Rectangle collapseHitbox = new Rectangle((actualX + 4), actualY, actualWidth, 24.0f);
 				if (collapseHitbox.intersects(mouseX, mouseY)) {
 					collapsed = !collapsed;
-					/*
-					 * if (collapsed) this.setHeight(COLLAPSED_HEIGHT); else
-					 * this.setHeight(EXPANDED_HEIGHT);
-					 */
+					invalidateMeasure();
 					event.cancel();
 				} else {
 					Rectangle blockHitbox = new Rectangle(actualX + 4, actualY + 24, actualWidth, actualHeight - 24);

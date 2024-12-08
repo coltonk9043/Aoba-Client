@@ -80,17 +80,17 @@ public class KillAura extends Module implements TickListener {
 			.id("killaura_rotation_mode").displayName("Rotation Mode")
 			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
 
-	private FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation")
+	private FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation").displayName("Max Rotation")
 			.description("The max speed that KillAura will rotate").defaultValue(10.0f).minValue(1.0f).maxValue(360.0f)
 			.build();
 
 	private FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
-			.description("The randomness of the player's yaw").defaultValue(0.0f).minValue(0.0f).maxValue(60.0f)
-			.step(1.0f).build();
+			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
+			.minValue(0.0f).maxValue(60.0f).step(1.0f).build();
 
 	private FloatSetting pitchRandomness = FloatSetting.builder().id("killaura_pitch_randomness")
-			.description("The randomness of the player's pitch").defaultValue(0.0f).minValue(0.0f).maxValue(60.0f)
-			.step(1.0f).build();
+			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
+			.minValue(0.0f).maxValue(60.0f).step(1.0f).build();
 
 	private LivingEntity entityToAttack;
 

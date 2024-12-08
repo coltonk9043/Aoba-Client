@@ -26,12 +26,14 @@ import java.util.stream.Collectors;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
+import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
+import net.aoba.event.listeners.MouseScrollListener;
 import net.minecraft.client.gui.DrawContext;
 
 // TODO: Turn Page into a UI element.
-public class Page implements MouseMoveListener, MouseClickListener {
+public class Page implements MouseMoveListener, MouseClickListener, MouseScrollListener {
 	protected String title;
 	protected List<Window> tabs = new ArrayList<Window>();
 
@@ -51,17 +53,19 @@ public class Page implements MouseMoveListener, MouseClickListener {
 		return this.title;
 	}
 
-	public void AddWindow(Window hud) {
+	public void addWindow(Window hud) {
 		hud.parentPage = this;
 		hud.setVisible(this.isVisible);
 		tabs.add(hud);
-		hud.initialize();
+		if (hud.isInitialized())
+			hud.invalidateMeasure();
+		else
+			hud.initialize();
 	}
 
-	public void RemoveWindow(Window hud) {
+	public void removeWindow(Window hud) {
 		hud.parentPage = null;
 		tabs.remove(hud);
-		hud.initialize();
 	}
 
 	public void setVisible(boolean state) {
@@ -70,10 +74,12 @@ public class Page implements MouseMoveListener, MouseClickListener {
 		if (isVisible) {
 			Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
 			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
+			Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
 
 		} else {
 			Aoba.getInstance().eventManager.RemoveListener(MouseMoveListener.class, this);
 			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
+			Aoba.getInstance().eventManager.RemoveListener(MouseScrollListener.class, this);
 		}
 
 		for (Window hud : tabs) {
@@ -119,6 +125,13 @@ public class Page implements MouseMoveListener, MouseClickListener {
 	public void onMouseClick(MouseClickEvent mouseClickEvent) {
 		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
 			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.onMouseClick(mouseClickEvent));
+		}
+	}
+
+	@Override
+	public void onMouseScroll(MouseScrollEvent event) {
+		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
+			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.onMouseScroll(event));
 		}
 	}
 }

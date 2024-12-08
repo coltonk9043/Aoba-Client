@@ -18,7 +18,6 @@
 
 package net.aoba.gui.navigation;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.joml.Matrix4f;
@@ -46,7 +45,6 @@ public class Window extends UIElement {
 
 	public RectangleSetting position;
 
-	public boolean isMouseOver = false;
 	public boolean isMoving = false;
 	public boolean isResizing = false;
 
@@ -125,6 +123,8 @@ public class Window extends UIElement {
 
 	@Override
 	protected Size getStartingSize(Size availableSize) {
+		// Account for minimum size.
+
 		return availableSize;
 	}
 
@@ -153,12 +153,9 @@ public class Window extends UIElement {
 
 	@Override
 	public void onMouseMove(MouseMoveEvent event) {
-		// Propagate to children.
-		if (!isMoving || !isResizing) {
-			Iterator<UIElement> tabIterator = getChildren().iterator();
-			while (tabIterator.hasNext()) {
-				tabIterator.next().onMouseMove(event);
-			}
+		// Propagate to children ONLY if the user is not moving or resizing the window.
+		if (!isMoving && !isResizing) {
+			super.onMouseMove(event);
 		}
 
 		if (!event.isCancelled() && isVisible()) {
@@ -230,23 +227,12 @@ public class Window extends UIElement {
 					break;
 				}
 			}
-
-			// Cancel the event if the mouse is over this HUD (prevents other from being
-			// hovered if no action occurs)
-			isMouseOver = pos.intersects((float) mouseX, (float) mouseY);
-			if (isMouseOver)
-				event.cancel();
-		} else {
-			isMouseOver = false;
 		}
 	}
 
 	public void onMouseClick(MouseClickEvent event) {
 		// Propagate to children.
-		Iterator<UIElement> tabIterator = getChildren().iterator();
-		while (tabIterator.hasNext()) {
-			tabIterator.next().onMouseClick(event);
-		}
+		super.onMouseClick(event);
 
 		// Check to see if the event is cancelled. If not, execute branch.
 		if (!event.isCancelled()) {

@@ -120,12 +120,12 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			.defaultValue(new Color(0, 0, 0, 50)).build();
 
 	public static FloatSetting roundingRadius = FloatSetting.builder().id("hud_rounding_radius")
-			.description("The radius of the rounding on hud.").defaultValue(6f).minValue(0f).maxValue(10f).step(1f)
-			.build();
+			.displayName("Corner Rounding").description("The radius of the rounding on hud.").defaultValue(6f)
+			.minValue(0f).maxValue(10f).step(1f).build();
 
 	public static FloatSetting dragSmoothening = FloatSetting.builder().id("gui_drag_smoothening")
-			.description("The value for the dragging smoothening").defaultValue(1.0f).minValue(0.1f).maxValue(2.0f)
-			.step(0.1f).build();
+			.displayName("Drag Smooth Speed").description("The value for the dragging smoothening").defaultValue(1.0f)
+			.minValue(0.1f).maxValue(2.0f).step(0.1f).build();
 
 	public static RainbowColor rainbowColor = new RainbowColor();
 	public static RandomColor randomColor = new RandomColor();
@@ -159,9 +159,9 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 	public void Initialize() {
 		System.out.println("Initializing");
-		toolsPane.AddWindow(new AuthCrackerWindow());
-		toolsPane.AddWindow(new GoToWindow());
-		toolsPane.AddWindow(new MacroWindow());
+		toolsPane.addWindow(new AuthCrackerWindow());
+		toolsPane.addWindow(new GoToWindow());
+		toolsPane.addWindow(new MacroWindow());
 
 		moduleSelector = new ModuleSelectorHud();
 		armorHud = new ArmorHud(0, 0);
@@ -178,8 +178,8 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 		ArrayList<HudWindow> huds = Lists.newArrayList(moduleSelector, armorHud, radarHud, timeHud, dayHud,
 				moduleArrayListHud, watermarkHud, coordsHud, netherCoordsHud, fpsHud, pingHud, speedHud);
-		hudPane.AddWindow(new HudOptionsWindow());
-		hudPane.AddWindow(new ToggleHudsTab(huds));
+		hudPane.addWindow(new HudOptionsWindow());
+		hudPane.addWindow(new ToggleHudsTab(huds));
 		Map<String, Category> categories = Category.getAllCategories();
 		float xOffset = 50;
 
@@ -209,19 +209,19 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			// Loop through modules and add them to the correct category
 			for (Module module : Aoba.getInstance().moduleManager.modules) {
 				if (module.getCategory().equals(category)) {
-					ModuleComponent button = new ModuleComponent(module.getName(), module);
+					ModuleComponent button = new ModuleComponent(module);
 					stackPanel.addChild(button);
 				}
 			}
 
 			tab.addChild(stackPanel);
 			tab.setMaxWidth(600f);
-			modulesPane.AddWindow(tab);
+			modulesPane.addWindow(tab);
 
 			xOffset += tab.getMinWidth() + 10;
 		}
 
-		modulesPane.AddWindow(new SettingsWindow());
+		modulesPane.addWindow(new SettingsWindow());
 
 		clickGuiNavBar.addPane(modulesPane);
 		clickGuiNavBar.addPane(toolsPane);
@@ -252,10 +252,10 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			tooltip = tt;
 	}
 
-	public void AddWindow(Window hud, String pageName) {
+	public void addWindow(Window hud, String pageName) {
 		for (Page page : clickGuiNavBar.getPanes()) {
 			if (page.getTitle().equals(pageName)) {
-				page.AddWindow(hud);
+				page.addWindow(hud);
 				page.moveToFront(hud);
 				hud.initialize();
 				break;
@@ -263,10 +263,10 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		}
 	}
 
-	public void RemoveWindow(Window hud, String pageName) {
+	public void removeWindow(Window hud, String pageName) {
 		for (Page page : clickGuiNavBar.getPanes()) {
 			if (page.getTitle().equals(pageName)) {
-				page.RemoveWindow(hud);
+				page.removeWindow(hud);
 				break;
 			}
 		}
@@ -280,15 +280,15 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		}
 	}
 
-	public void SetHudActive(HudWindow hud, boolean state) {
+	public void setHudActive(HudWindow hud, boolean state) {
 		if (state) {
 			pinnedHuds.put(hud.getClass(), hud);
 			hud.activated.silentSetValue(true);
-			hudPane.AddWindow(hud);
+			hudPane.addWindow(hud);
 		} else {
 			this.pinnedHuds.remove(hud.getClass());
 			hud.activated.silentSetValue(false);
-			hudPane.RemoveWindow(hud);
+			hudPane.removeWindow(hud);
 		}
 	}
 

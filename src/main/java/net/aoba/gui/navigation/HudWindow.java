@@ -31,7 +31,7 @@ public class HudWindow extends Window {
 	}
 
 	private void onActivatedChanged(Boolean state) {
-		Aoba.getInstance().guiManager.SetHudActive(this, state.booleanValue());
+		Aoba.getInstance().guiManager.setHudActive(this, state.booleanValue());
 	}
 
 	@Override
@@ -44,7 +44,6 @@ public class HudWindow extends Window {
 	@Override
 	public void setVisible(boolean state) {
 		if (!state) {
-			isMouseOver = false;
 			isMoving = false;
 		}
 	}
@@ -70,7 +69,7 @@ public class HudWindow extends Window {
 							dragColor);
 				}
 			}
-			if (Aoba.getInstance().guiManager.isClickGuiOpen() && isMouseOver) {
+			if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
 				Render2D.drawBoxOutline(drawContext.getMatrices().peek().getPositionMatrix(), x, y, width, height,
 						hoverColor);
 			}

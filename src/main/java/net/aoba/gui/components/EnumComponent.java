@@ -22,13 +22,13 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 	public EnumComponent(EnumSetting<T> enumSetting) {
 		super();
 		this.enumSetting = enumSetting;
-
+		this.header = enumSetting.displayName;
 		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	@Override
 	public void measure(Size availableSize) {
-		preferredSize = new Size(availableSize.getWidth(), 30.0f);
+		preferredSize = new Size(availableSize.getWidth(), 55.0f);
 	}
 
 	@Override
@@ -43,19 +43,23 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 		float actualX = actualSize.getX();
 		float actualY = actualSize.getY();
 		float actualWidth = actualSize.getWidth();
-		float actualHeight = actualSize.getHeight();
 
-		float centeredY = actualY + actualHeight / 2.0f - 8.0f;
+		// Draw Header
+		if (header != null) {
+			Render2D.drawString(drawContext, header, actualX, actualY + 8, 0xFFFFFF);
+		}
+
 		// Left Arrow and Right Arrow
-		Render2D.drawString(drawContext, "<", actualX, centeredY,
+		Render2D.drawString(drawContext, "<", actualX, actualY + 34,
 				hoveringLeftButton ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
-		Render2D.drawString(drawContext, ">", actualX + actualWidth - 8.0f, centeredY,
+		Render2D.drawString(drawContext, ">", actualX + actualWidth - 8.0f, actualY + 34,
 				hoveringRightButton ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
 
 		// Text
 		String enumValue = this.enumSetting.getValue().toString();
 		float stringWidth = Render2D.getStringWidth(enumValue);
-		Render2D.drawString(drawContext, enumValue, actualX + (actualWidth / 2.0f) - stringWidth, centeredY, 0xFFFFFF);
+		Render2D.drawString(drawContext, enumValue, actualX + (actualWidth / 2.0f) - stringWidth, actualY + 34,
+				0xFFFFFF);
 	}
 
 	@Override

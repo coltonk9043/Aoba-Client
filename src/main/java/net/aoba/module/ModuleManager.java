@@ -38,6 +38,7 @@ import net.aoba.module.modules.combat.AntiKnockback;
 import net.aoba.module.modules.combat.AutoRespawn;
 import net.aoba.module.modules.combat.AutoSoup;
 import net.aoba.module.modules.combat.AutoTotem;
+import net.aoba.module.modules.combat.BedAura;
 import net.aoba.module.modules.combat.BowAimbot;
 import net.aoba.module.modules.combat.Criticals;
 import net.aoba.module.modules.combat.CrystalAura;
@@ -46,7 +47,20 @@ import net.aoba.module.modules.combat.MaceAura;
 import net.aoba.module.modules.combat.Nametags;
 import net.aoba.module.modules.combat.Reach;
 import net.aoba.module.modules.combat.TriggerBot;
-import net.aoba.module.modules.misc.*;
+import net.aoba.module.modules.misc.AntiCactus;
+import net.aoba.module.modules.misc.AntiHunger;
+import net.aoba.module.modules.misc.AutoEat;
+import net.aoba.module.modules.misc.AutoFish;
+import net.aoba.module.modules.misc.AutoShear;
+import net.aoba.module.modules.misc.AutoWalk;
+import net.aoba.module.modules.misc.DiscordRPCModule;
+import net.aoba.module.modules.misc.EXPThrower;
+import net.aoba.module.modules.misc.FakePlayer;
+import net.aoba.module.modules.misc.FastBreak;
+import net.aoba.module.modules.misc.FastPlace;
+import net.aoba.module.modules.misc.MCA;
+import net.aoba.module.modules.misc.Timer;
+import net.aoba.module.modules.misc.XCarry;
 import net.aoba.module.modules.movement.ClickTP;
 import net.aoba.module.modules.movement.EntityControl;
 import net.aoba.module.modules.movement.FastLadder;
@@ -115,16 +129,18 @@ public class ModuleManager implements KeyDownListener {
 	public AutoTotem autoTotem = new AutoTotem();
 	public AutoRespawn autorespawn = new AutoRespawn();
 	public AutoWalk autowalk = new AutoWalk();
-	public FakePlayer fakeplayer = new FakePlayer();
+	public BedAura bedAura = new BedAura();
 	public BowAimbot bowaimbot = new BowAimbot();
 	public Breadcrumbs breadcrumbs = new Breadcrumbs();
 	public ChestESP chestesp = new ChestESP();
 	public Criticals criticals = new Criticals();
 	public CrystalAura crystalaura = new CrystalAura();
 	public ClickTP clickTP = new ClickTP();
+	public DiscordRPCModule discordRPC = new DiscordRPCModule();
 	public EntityControl entityControl = new EntityControl();
 	public EntityESP entityesp = new EntityESP();
 	public EXPThrower expthrower = new EXPThrower();
+	public FakePlayer fakeplayer = new FakePlayer();
 	public FastLadder fastladder = new FastLadder();
 	public FastPlace fastplace = new FastPlace();
 	public FastBreak fastbreak = new FastBreak();
@@ -171,7 +187,6 @@ public class ModuleManager implements KeyDownListener {
 	public XCarry xCarry = new XCarry();
 	public XRay xray = new XRay();
 	public Zoom zoom = new Zoom();
-	public DiscordRPCModule discordRPC = new DiscordRPCModule();
 
 	public ModuleManager(List<IAddon> addons) {
 		try {

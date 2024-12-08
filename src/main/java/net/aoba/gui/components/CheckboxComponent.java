@@ -21,6 +21,7 @@ package net.aoba.gui.components;
 import org.joml.Matrix4f;
 
 import net.aoba.event.events.MouseClickEvent;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Size;
 import net.aoba.gui.colors.Color;
@@ -35,10 +36,6 @@ public class CheckboxComponent extends Component {
 	private String text;
 	private BooleanSetting checkbox;
 	private Runnable onClick;
-	private boolean isHovered = false;
-	private float animationProgress = 0.0f;
-	private Color hoverBorderColor = new Color(255, 255, 255);
-	private Color clickAnimationColor = new Color(255, 255, 0);
 
 	public CheckboxComponent(BooleanSetting checkbox) {
 		super();
@@ -70,19 +67,12 @@ public class CheckboxComponent extends Component {
 		float actualY = this.getActualSize().getY();
 		float actualWidth = this.getActualSize().getWidth();
 
-		// Determine border color based on hover and click state
-		Color borderColor = isHovered ? hoverBorderColor : new Color(128, 128, 128);
-		if (animationProgress > 0) {
-			borderColor = clickAnimationColor;
-			animationProgress -= partialTicks; // Decrease animation progress
-		}
-
 		// Determine fill color based on checkbox state
 		Color fillColor = this.checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
 
 		Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
-		Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, 3, borderColor,
-				fillColor);
+		Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, 3,
+				GuiManager.borderColor.getValue(), fillColor);
 	}
 
 	/**
@@ -99,7 +89,6 @@ public class CheckboxComponent extends Component {
 		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
 			if (hovered) {
 				checkbox.toggle();
-				animationProgress = 1.0f; // Reset animation progress on click
 				if (onClick != null)
 					onClick.run();
 				event.cancel();
@@ -109,7 +98,6 @@ public class CheckboxComponent extends Component {
 
 	public void setChecked(boolean checked) {
 		checkbox.setValue(checked);
-		animationProgress = 1.0f;
 	}
 
 	public boolean isChecked() {

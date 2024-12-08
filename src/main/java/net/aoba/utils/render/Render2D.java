@@ -326,7 +326,7 @@ public class Render2D {
 		bufferBuilder.vertex(matrix4f, x, y + height, 0).color(backgroundColorInt);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		int outlineColorInt = backgroundColor.getColorAsInt();
+		int outlineColorInt = outlineColor.getColorAsInt();
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
 		bufferBuilder.vertex(matrix4f, x, y, 0).color(outlineColorInt);
@@ -484,7 +484,7 @@ public class Render2D {
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		int outlineColorInt = backgroundColor.getColorAsInt();
+		int outlineColorInt = outlineColor.getColorAsInt();
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
 		// Top Left Arc and Top
@@ -703,26 +703,14 @@ public class Render2D {
 	public static void drawItem(DrawContext drawContext, ItemStack stack, float x, float y) {
 		MinecraftClient MC = MinecraftClient.getInstance();
 		BakedModel bakedModel = MC.getItemRenderer().getModel(stack, null, null, 0);
-
 		boolean sidelit = bakedModel.isSideLit();
-
-		MatrixStack matrixStack = drawContext.getMatrices();
-		matrixStack.push();
-		matrixStack.translate(x + 8, y + 8, 150);
-		matrixStack.scale(16.0f, -16.0f, 16.0f);
-
 		if (!sidelit) {
 			DiffuseLighting.disableGuiDepthLighting();
 		}
-
-		// TODO: MC.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI,
-		// false, matrixStack,
-		// drawContext., 0xF000F0, OverlayTexture.DEFAULT_UV, bakedModel);
-
+		drawContext.drawItem(stack, (int) x, (int) y);
 		if (!sidelit) {
 			DiffuseLighting.enableGuiDepthLighting();
 		}
-		matrixStack.pop();
 	}
 
 	/**

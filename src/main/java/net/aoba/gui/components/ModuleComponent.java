@@ -44,19 +44,18 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class ModuleComponent extends Component {
-	private String text;
 	private Module module;
 
 	private CloseableWindow lastSettingsTab = null;
 	private boolean spinning = false;
 	private float spinAngle = 0;
 
-	public ModuleComponent(String text, Module module) {
+	public ModuleComponent(Module module) {
 		super();
 
-		this.text = text;
+		this.header = module.getName();
 		this.module = module;
-
+		this.tooltip = module.getDescription();
 		this.setMargin(new Margin(8f, null, 8f, null));
 	}
 
@@ -84,8 +83,11 @@ public class ModuleComponent extends Component {
 		float actualY = this.getActualSize().getY();
 		float actualWidth = this.getActualSize().getWidth();
 
-		Render2D.drawString(drawContext, this.text, actualX, actualY + 8, module.state.getValue() ? 0x00FF00
-				: this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
+		if (this.header != null) {
+			Render2D.drawString(drawContext, this.header, actualX, actualY + 8, module.state.getValue() ? 0x00FF00
+					: this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
+		}
+
 		if (module.hasSettings()) {
 			Color hudColor = GuiManager.foregroundColor.getValue();
 
@@ -159,7 +161,6 @@ public class ModuleComponent extends Component {
 							}
 
 							if (c != null) {
-								stackPanel.addChild(new StringComponent(setting.displayName));
 								stackPanel.addChild(c);
 							}
 						}
@@ -172,11 +173,11 @@ public class ModuleComponent extends Component {
 
 						lastSettingsTab.setMinWidth(250.0f);
 						lastSettingsTab.setMaxWidth(600f);
-						Aoba.getInstance().guiManager.AddWindow(lastSettingsTab, "Modules");
+						Aoba.getInstance().guiManager.addWindow(lastSettingsTab, "Modules");
 						lastSettingsTab.initialize();
 						spinning = true;
 					} else {
-						Aoba.getInstance().guiManager.RemoveWindow(lastSettingsTab, "Modules");
+						Aoba.getInstance().guiManager.removeWindow(lastSettingsTab, "Modules");
 						spinning = false;
 						lastSettingsTab = null;
 					}
@@ -187,9 +188,5 @@ public class ModuleComponent extends Component {
 				event.cancel();
 			}
 		}
-	}
-
-	public String getTooltip() {
-		return module.getDescription();
 	}
 }

@@ -34,7 +34,7 @@ public class CloseableWindow extends Window {
 					if (onClose != null)
 						onClose.run();
 
-					parentPage.RemoveWindow(this);
+					parentPage.removeWindow(this);
 					event.cancel();
 					return;
 				}
