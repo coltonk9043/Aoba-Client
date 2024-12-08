@@ -92,7 +92,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 		float actualY = this.getActualSize().getY();
 		float actualWidth = this.getActualSize().getWidth();
 
-		Render2D.drawString(drawContext, text, actualX + 6, actualY + 6, 0xFFFFFF);
+		Render2D.drawString(drawContext, text, actualX, actualY + 6, 0xFFFFFF);
 		Render2D.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6,
 				GuiManager.foregroundColor.getValue().getColorAsInt());
 

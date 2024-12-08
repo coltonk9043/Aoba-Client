@@ -75,9 +75,6 @@ public class FakePlayer extends Module {
 	public void onDisable() {
 		if (fakePlayer == null)
 			return;
-
-		// TODO: 1.21.3 changed this
-		// fakePlayer.kill(fakePlayer.getWorld());
 		fakePlayer.setRemoved(Entity.RemovalReason.KILLED);
 		fakePlayer.onRemoved();
 		fakePlayer = null;

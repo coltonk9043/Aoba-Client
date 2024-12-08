@@ -39,7 +39,7 @@ import net.minecraft.util.math.Vec3d;
 public class ItemESP extends Module implements Render3DListener {
 
 	private ColorSetting color = ColorSetting.builder().id("itemesp_color").displayName("Color").description("Color")
-			.defaultValue(new Color(0, 1f, 1f)).build();
+			.defaultValue(new Color(0, 1f, 1f, 0.3f)).build();
 
 	private BooleanSetting visibilityToggle = BooleanSetting.builder().id("itemesp_visibility")
 			.displayName("Visibility").defaultValue(true).build();

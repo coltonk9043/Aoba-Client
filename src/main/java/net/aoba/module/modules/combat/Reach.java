@@ -27,46 +27,40 @@ import net.aoba.settings.types.FloatSetting;
 
 public class Reach extends Module {
 
-    private FloatSetting distance;
+	private FloatSetting distance;
 
-    public Reach() {
-    	super("Reach");
+	public Reach() {
+		super("Reach");
 
-        this.setCategory(Category.of("Combat"));
-        this.setDescription("Allows you to reach further.");
+		this.setCategory(Category.of("Combat"));
+		this.setDescription("Allows you to reach further.");
 
-        distance = FloatSetting.builder()
-        		.id("reach_distance")
-        		.displayName("Distance")
-        		.description("Distance, in blocks, that you can reach.")
-        		.defaultValue(5f)
-        		.minValue(1f)
-        		.maxValue(15f)
-        		.step(1f)
-        		.build();
-        this.addSetting(distance);
-    }
+		distance = FloatSetting.builder().id("reach_distance").displayName("Distance")
+				.description("Distance, in blocks, that you can reach.").defaultValue(5f).minValue(1f).maxValue(128f)
+				.step(1f).build();
+		this.addSetting(distance);
+	}
 
-    public float getReach() {
-        return distance.getValue().floatValue();
-    }
+	public float getReach() {
+		return distance.getValue().floatValue();
+	}
 
-    @Override
-    public void onDisable() {
+	@Override
+	public void onDisable() {
 
-    }
+	}
 
-    @Override
-    public void onEnable() {
+	@Override
+	public void onEnable() {
 
-    }
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
-    public void setReachLength(float reach) {
-        this.distance.setValue(reach);
-    }
+	public void setReachLength(float reach) {
+		this.distance.setValue(reach);
+	}
 }

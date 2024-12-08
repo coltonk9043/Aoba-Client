@@ -41,7 +41,7 @@ import net.minecraft.util.math.Box;
 public class SpawnerESP extends Module implements Render3DListener {
 
 	private ColorSetting color = ColorSetting.builder().id("spawneresp_color").displayName("Color").description("Color")
-			.defaultValue(new Color(0f, 1f, 1f)).build();
+			.defaultValue(new Color(0f, 1f, 1f, 0.3f)).build();
 
 	private FloatSetting lineThickness = FloatSetting.builder().id("spawneresp_linethickness")
 			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)

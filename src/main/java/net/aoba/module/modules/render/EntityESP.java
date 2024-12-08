@@ -53,13 +53,14 @@ public class EntityESP extends Module implements Render3DListener {
 			.displayName("Draw Mode").description("Draw Mode").defaultValue(DrawMode.Model).build();
 
 	private ColorSetting color_passive = ColorSetting.builder().id("entityesp_color_passive")
-			.displayName("Passive Color").description("Passive Color").defaultValue(new Color(0, 1f, 1f)).build();
+			.displayName("Passive Color").description("Passive Color").defaultValue(new Color(0f, 1f, 0f, 0.3f))
+			.build();
 
 	private ColorSetting color_enemies = ColorSetting.builder().id("entityesp_color_enemy").displayName("Enemy Color")
-			.description("Enemy Color").defaultValue(new Color(0, 1f, 1f)).build();
+			.description("Enemy Color").defaultValue(new Color(1, 0f, 0f, 0.3f)).build();
 
 	private ColorSetting color_misc = ColorSetting.builder().id("entityesp_color_misc").displayName("Misc. Color")
-			.description("Misc. Color").defaultValue(new Color(0, 1f, 1f)).build();
+			.description("Misc. Color").defaultValue(new Color(0, 0f, 1f, 0.3f)).build();
 
 	private BooleanSetting showPassiveEntities = BooleanSetting.builder().id("entityesp_show_passive")
 			.displayName("Show Passive Entities").description("Show Passive Entities.").defaultValue(true).build();

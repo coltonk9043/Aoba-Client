@@ -76,9 +76,9 @@ public class WorldRendererMixin {
 
 	@Inject(at = @At("HEAD"), method = "hasBlindnessOrDarkness(Lnet/minecraft/client/render/Camera;)Z", cancellable = true)
 	private void onHasBlindnessOrDarknessEffect(Camera camera, CallbackInfoReturnable<Boolean> cir) {
-		// TODO: NoRender
-		// if (Aoba.getInstance().moduleManager.nooverlay.getState())
-		// cir.setReturnValue(false);
+		if (Aoba.getInstance().moduleManager.norender.state.getValue()) {
+			cir.setReturnValue(false);
+		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "drawBlockOutline(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/entity/Entity;DDDLnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;I)V", cancellable = true)

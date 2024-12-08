@@ -18,7 +18,7 @@
 
 package net.aoba.module.modules.world;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -29,6 +29,7 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.settings.types.BlocksSetting;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.minecraft.block.Block;
@@ -44,13 +45,15 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 public class Surround extends Module implements TickListener {
-
-	public static final ArrayList<Block> blocks = Lists.newArrayList(Blocks.OBSIDIAN, Blocks.ENDER_CHEST,
-			Blocks.ENCHANTING_TABLE, Blocks.ANVIL, Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL, Blocks.CRYING_OBSIDIAN,
-			Blocks.NETHERITE_BLOCK, Blocks.ANCIENT_DEBRIS, Blocks.RESPAWN_ANCHOR);
-
 	public FloatSetting placeHeight = FloatSetting.builder().id("surround_height").displayName("Height")
 			.description("Height that surround walls will go.").defaultValue(1f).minValue(1f).maxValue(3f).step(1.0f)
+			.build();
+
+	public BlocksSetting blocks = BlocksSetting.builder().id("surround_blocks").displayName("Blocks")
+			.description("Blocks that will be used to place surrounding blocks.")
+			.defaultValue(new HashSet<Block>(Lists.newArrayList(Blocks.OBSIDIAN, Blocks.ENDER_CHEST,
+					Blocks.ENCHANTING_TABLE, Blocks.ANVIL, Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL,
+					Blocks.CRYING_OBSIDIAN, Blocks.NETHERITE_BLOCK, Blocks.ANCIENT_DEBRIS, Blocks.RESPAWN_ANCHOR)))
 			.build();
 
 	public BooleanSetting alignCharacter = BooleanSetting.builder().id("surround_align").displayName("Align")
@@ -73,6 +76,7 @@ public class Surround extends Module implements TickListener {
 		this.setDescription("Surrounds the player with blocks.");
 
 		this.addSetting(placeHeight);
+		this.addSetting(blocks);
 		this.addSetting(alignCharacter);
 		this.addSetting(autoDisable);
 		this.addSetting(legit);
@@ -100,9 +104,10 @@ public class Surround extends Module implements TickListener {
 	}
 
 	private int getBlockInventorySlot() {
+		HashSet<Block> availableBlocks = blocks.getValue();
 		for (int i = 0; i < 36; i++) {
 			ItemStack stack = MC.player.getInventory().getStack(i);
-			if (stack != null && blocks.contains(Block.getBlockFromItem(stack.getItem()))) {
+			if (stack != null && availableBlocks.contains(Block.getBlockFromItem(stack.getItem()))) {
 				return i;
 			}
 		}

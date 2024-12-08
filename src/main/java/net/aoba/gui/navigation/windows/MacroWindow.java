@@ -1,10 +1,7 @@
 package net.aoba.gui.navigation.windows;
 
-import java.util.function.Function;
-
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.gui.UIElement;
 import net.aoba.gui.components.ButtonComponent;
 import net.aoba.gui.components.ItemsComponent;
 import net.aoba.gui.components.SeparatorComponent;
@@ -76,32 +73,30 @@ public class MacroWindow extends Window {
 		replayButton.addChild(replayButtonText);
 		stackPanel.addChild(replayButton);
 
-		stackPanel.addChild(new StringComponent("Filename:"));
-
-		filenameText = new TextBoxComponent();
-		stackPanel.addChild(filenameText);
-
-		saveButton = new ButtonComponent(new Runnable() {
-			@Override
-			public void run() {
-				AobaClient aoba = Aoba.getInstance();
-				Macro currentMacro = aoba.macroManager.getCurrentlySelected();
-				currentMacro.setName(filenameText.getText());
-				aoba.macroManager.addMacro(currentMacro);
-
-				// Reload the items control.
-				macrosList.setItemsSource(aoba.macroManager.getMacros());
-			}
-		});
-
-		saveButton.addChild(new StringComponent("Save"));
-
-		stackPanel.addChild(saveButton);
-
-		// Add Macros ItemComponents
-		Function<Macro, UIElement> test = s -> new StringComponent(s.getName());
-		macrosList = new ItemsComponent<Macro>(Aoba.getInstance().macroManager.getMacros(), test);
-		stackPanel.addChild(macrosList);
+		/**
+		 * stackPanel.addChild(new StringComponent("Filename:"));
+		 * 
+		 * filenameText = new TextBoxComponent(); stackPanel.addChild(filenameText);
+		 * 
+		 * saveButton = new ButtonComponent(new Runnable() {
+		 * 
+		 * @Override public void run() { AobaClient aoba = Aoba.getInstance(); Macro
+		 *           currentMacro = aoba.macroManager.getCurrentlySelected();
+		 *           currentMacro.setName(filenameText.getText());
+		 *           aoba.macroManager.addMacro(currentMacro);
+		 * 
+		 *           // Reload the items control.
+		 *           macrosList.setItemsSource(aoba.macroManager.getMacros()); } });
+		 * 
+		 *           saveButton.addChild(new StringComponent("Save"));
+		 * 
+		 *           stackPanel.addChild(saveButton);
+		 * 
+		 *           // Add Macros ItemComponents Function<Macro, UIElement> test = s ->
+		 *           new StringComponent(s.getName()); macrosList = new
+		 *           ItemsComponent<Macro>(Aoba.getInstance().macroManager.getMacros(),
+		 *           test); stackPanel.addChild(macrosList);
+		 */
 
 		// Add stackpanel to child.
 		addChild(stackPanel);

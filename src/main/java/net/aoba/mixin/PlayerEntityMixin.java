@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
+import net.aoba.module.modules.combat.Reach;
 import net.aoba.module.modules.misc.FastBreak;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -65,5 +66,21 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 	@Inject(at = { @At("HEAD") }, method = "getOffGroundSpeed()F", cancellable = true)
 	protected void onGetOffGroundSpeed(CallbackInfoReturnable<Float> cir) {
 		return;
+	}
+
+	@Inject(at = { @At("HEAD") }, method = "getBlockInteractionRange()D", cancellable = true)
+	private void onBlockInteractionRange(CallbackInfoReturnable<Double> cir) {
+		if (Aoba.getInstance().moduleManager.reach.state.getValue()) {
+			Reach reach = (Reach) Aoba.getInstance().moduleManager.reach;
+			cir.setReturnValue((double) reach.getReach());
+		}
+	}
+
+	@Inject(at = { @At("HEAD") }, method = "getEntityInteractionRange()D", cancellable = true)
+	private void onEntityInteractionRange(CallbackInfoReturnable<Double> cir) {
+		if (Aoba.getInstance().moduleManager.reach.state.getValue()) {
+			Reach reach = (Reach) Aoba.getInstance().moduleManager.reach;
+			cir.setReturnValue((double) reach.getReach());
+		}
 	}
 }
