@@ -43,8 +43,8 @@ public record Rotation(double yaw, double pitch) {
 
 	public static Rotation rotationFrom(Entity target) {
 		MinecraftClient MC = MinecraftClient.getInstance();
-		Vec3d playerPos = MC.player.getPos();
-		Vec3d targetPos = target.getPos();
+		Vec3d playerPos = MC.player.getEyePos();
+		Vec3d targetPos = target.getPos().add(0, target.getStandingEyeHeight() / 2.0f, 0);
 
 		double deltaX = targetPos.x - playerPos.x;
 		double deltaY = targetPos.y - playerPos.y;
@@ -56,8 +56,7 @@ public record Rotation(double yaw, double pitch) {
 
 	public static Rotation rotationFrom(Vec3d vec) {
 		MinecraftClient MC = MinecraftClient.getInstance();
-		Vec3d playerPos = MC.player.getPos();
-
+		Vec3d playerPos = MC.player.getEyePos();
 		double deltaX = vec.x - playerPos.x;
 		double deltaY = vec.y - playerPos.y;
 		double deltaZ = vec.z - playerPos.z;
