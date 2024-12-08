@@ -66,7 +66,6 @@ public record Rotation(double yaw, double pitch) {
 				.wrapDegrees((-Math.toDegrees(Math.atan2(deltaY, Math.sqrt(deltaX * deltaX + deltaZ * deltaZ))))));
 	}
 
-	// TODO: 1.21.3 update broke these!
 	public static Rotation getPlayerRotationDeltaFromEntity(Entity target) {
 		Rotation fromPlayer = rotationFrom(target);
 		ClientPlayerEntity player = MC.player;
