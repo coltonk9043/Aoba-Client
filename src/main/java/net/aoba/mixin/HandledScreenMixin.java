@@ -88,8 +88,9 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 			Item focusedItem = stack.getItem();
 			if (focusedItem instanceof BlockItem bi && bi.getBlock() instanceof ShulkerBoxBlock) {
 				try {
-					Color c = new Color(
-							Objects.requireNonNull(ShulkerBoxBlock.getColor(stack.getItem())).getEntityColor());
+					ShulkerBoxBlock shulkerBoxBlock = (ShulkerBoxBlock) bi.getBlock();
+
+					Color c = new Color(Objects.requireNonNull(shulkerBoxBlock.getColor()).getEntityColor());
 					colors = new float[] { c.getRed() / 255f, c.getGreen() / 255f, c.getRed() / 255f,
 							c.getAlpha() / 255f };
 				} catch (NullPointerException npe) {

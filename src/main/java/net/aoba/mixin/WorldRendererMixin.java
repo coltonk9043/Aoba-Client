@@ -33,7 +33,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.WorldRenderer;
@@ -48,10 +47,10 @@ public class WorldRendererMixin {
 	@Shadow
 	private Frustum frustum;
 
-	@Inject(at = @At("TAIL"), method = "render(Lnet/minecraft/client/util/ObjectAllocator;Lnet/minecraft/client/render/RenderTickCounter;ZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lnet/minecraft/client/render/LightmapTextureManager;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V", cancellable = false)
+	@Inject(at = @At("TAIL"), method = "render(Lnet/minecraft/client/util/ObjectAllocator;Lnet/minecraft/client/render/RenderTickCounter;ZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V", cancellable = false)
 	public void render(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline,
-			Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager,
-			Matrix4f positionMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
+			Camera camera, GameRenderer gameRenderer, Matrix4f positionMatrix, Matrix4f projectionMatrix,
+			CallbackInfo ci) {
 		if (Aoba.getInstance().moduleManager != null) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

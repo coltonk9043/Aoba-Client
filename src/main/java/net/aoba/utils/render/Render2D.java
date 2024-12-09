@@ -15,11 +15,9 @@ import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -702,15 +700,7 @@ public class Render2D {
 	 */
 	public static void drawItem(DrawContext drawContext, ItemStack stack, float x, float y) {
 		MinecraftClient MC = MinecraftClient.getInstance();
-		BakedModel bakedModel = MC.getItemRenderer().getModel(stack, null, null, 0);
-		boolean sidelit = bakedModel.isSideLit();
-		if (!sidelit) {
-			DiffuseLighting.disableGuiDepthLighting();
-		}
 		drawContext.drawItem(stack, (int) x, (int) y);
-		if (!sidelit) {
-			DiffuseLighting.enableGuiDepthLighting();
-		}
 	}
 
 	/**
