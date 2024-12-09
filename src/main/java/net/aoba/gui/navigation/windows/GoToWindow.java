@@ -57,9 +57,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	private ButtonComponent startButton;
 	private StringComponent startButtonText;
 	private ButtonComponent setPositionButton;
-	private StringComponent radiusHeader;
 	private SliderComponent radiusSlider;
-	private StringComponent flyMaxSpeedHeader;
 	private SliderComponent flyMaxSpeedSlider;
 
 	private EnumSetting<Pathfinder> pathfinderMode;
@@ -103,9 +101,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 					}
 
 					// Disable Radius setting if not teleport
-					radiusHeader.setVisible(var == Pathfinder.Teleport);
 					radiusSlider.setVisible(var == Pathfinder.Teleport);
-					flyMaxSpeedHeader.setVisible(var == Pathfinder.Fly);
 					flyMaxSpeedSlider.setVisible(var == Pathfinder.Fly);
 
 					if (isStarted)
@@ -177,11 +173,9 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		CheckboxComponent avoidLavaCheckbox = new CheckboxComponent(avoidLava);
 		stackPanel.addChild(avoidLavaCheckbox);
 
-		stackPanel.addChild(radiusHeader);
 		radiusSlider = new SliderComponent(radius);
 		stackPanel.addChild(radiusSlider);
 
-		stackPanel.addChild(flyMaxSpeedHeader);
 		flyMaxSpeedSlider = new SliderComponent(maxSpeed);
 		stackPanel.addChild(flyMaxSpeedSlider);
 
