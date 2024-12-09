@@ -5,6 +5,7 @@
   "client": [
     "SodiumBlockRendererMixin",
     "SodiumBlockOcclusionCacheMixin",
+    "SodiumFluidRendererImplMixin",
     "SodiumLightDataAccessMixin"
   ],
   "injectors": {

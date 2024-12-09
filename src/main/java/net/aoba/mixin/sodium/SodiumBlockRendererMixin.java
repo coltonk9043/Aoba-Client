@@ -20,9 +20,8 @@ public abstract class SodiumBlockRendererMixin {
 		AobaClient aoba = Aoba.getInstance();
 		XRay xray = (XRay) aoba.moduleManager.xray;
 		if (xray.state.getValue()) {
-			if (xray.isXRayBlock(state.getBlock())) {
+			if (!xray.isXRayBlock(state.getBlock())) {
 				ci.cancel();
-				return;
 			}
 		}
 	}

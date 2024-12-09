@@ -34,15 +34,14 @@ import net.minecraft.util.math.Direction;
 @Mixin(Block.class)
 public abstract class BlockMixin implements ItemConvertible {
 
-	@Inject(at = { @At("HEAD") }, method = {
-			"shouldDrawSide(Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/Direction;)Z" }, cancellable = true)
+	@Inject(at = { @At("RETURN") }, method = {
+			"shouldDrawSide" }, cancellable = true)
 	private static void onShouldDrawSide(BlockState state, BlockState otherState, Direction side,
-			CallbackInfoReturnable<Boolean> cir) {
+										 CallbackInfoReturnable<Boolean> cir) {
 		AobaClient aoba = Aoba.getInstance();
 		XRay xray = (XRay) aoba.moduleManager.xray;
 		if (xray.state.getValue()) {
-			boolean isXray = xray.isXRayBlock(state.getBlock());
-			cir.setReturnValue(isXray);
+			cir.setReturnValue(xray.isXRayBlock(state.getBlock()));
 		}
 	}
 

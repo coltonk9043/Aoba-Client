@@ -29,7 +29,7 @@ import net.minecraft.util.math.BlockPos;
 
 @Mixin(ChunkOcclusionDataBuilder.class)
 public class ChunkOcclusionDataBuilderMixin {
-	@Inject(at = { @At("HEAD") }, method = { "markClosed(Lnet/minecraft/util/math/BlockPos;)V" }, cancellable = true)
+	@Inject(at = { @At("HEAD") }, method = { "markClosed" }, cancellable = true)
 	private void onMarkClosed(BlockPos pos, CallbackInfo ci) {
 		if (Aoba.getInstance().moduleManager.xray.state.getValue()) {
 			ci.cancel();
