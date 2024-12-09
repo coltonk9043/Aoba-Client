@@ -47,7 +47,7 @@ public abstract class SodiumLightDataAccessMixin {
 	private int compute_modifyBL(int light) {
 		if (xray.state.getValue()) {
 			BlockState state = level.getBlockState(pos);
-			if (!xray.isXRayBlock(state.getBlock()))
+			if (xray.isXRayBlock(state.getBlock()))
 				return FULL_LIGHT;
 		}
 

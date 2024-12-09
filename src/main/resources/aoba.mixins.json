@@ -15,7 +15,7 @@
 		"interfaces.ICuboid",
 		"interfaces.IEntityModel",
 		"interfaces.IPlayerMoveC2SPacket",
-		"interfaces.IMouse",
+		"interfaces.IMouse"
 	],
 	"client": [
 		"AbstractBlockStateMixin",
@@ -23,7 +23,6 @@
 		"AbstractSignEditScreenMixin",
 		"BackgroundRendererMixin",
 		"BlockMixin",
-		"BlockModelRendererMixin",
 		"CactusBlockMixin",
 		"CameraMixin",
 		"ChatHudMixin",
@@ -40,6 +39,7 @@
 		"EntityMixin",
 		"EntityRendererMixin",
 		"FluidBlockMixin",
+		"FluidRendererMixin",
 		"GameOptionsMixin",
 		"GameRendererMixin",
 		"HungerManagerMixin",

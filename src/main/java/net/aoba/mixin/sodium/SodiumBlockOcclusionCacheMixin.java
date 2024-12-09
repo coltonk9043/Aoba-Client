@@ -17,13 +17,13 @@ import net.minecraft.world.BlockView;
 @Mixin(value = BlockOcclusionCache.class, remap = false)
 public abstract class SodiumBlockOcclusionCacheMixin {
 
-	@Inject(at = { @At("TAIL") }, method = "shouldDrawSide", cancellable = true)
+	@Inject(at = { @At("RETURN") }, method = "shouldDrawSide", cancellable = true)
 	private void onShouldDrawSide(BlockState state, BlockView view, BlockPos pos, Direction facing,
-			CallbackInfoReturnable<Boolean> cir) {
+								  CallbackInfoReturnable<Boolean> cir) {
 		AobaClient aoba = Aoba.getInstance();
 		XRay xray = aoba.moduleManager.xray;
 		if (xray.state.getValue()) {
-			cir.setReturnValue(!xray.isXRayBlock(state.getBlock()));
+			cir.setReturnValue(xray.isXRayBlock(state.getBlock()));
 		}
 	}
 }

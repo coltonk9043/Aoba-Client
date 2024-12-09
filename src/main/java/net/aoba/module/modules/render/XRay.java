@@ -23,6 +23,7 @@ package net.aoba.module.modules.render;
 
 import java.util.HashSet;
 
+import net.aoba.settings.types.BooleanSetting;
 import org.lwjgl.glfw.GLFW;
 
 import com.google.common.collect.Lists;
@@ -45,11 +46,17 @@ public class XRay extends Module {
 					Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_COAL_ORE)))
 			.onUpdate(this::ReloadRenderer).build();
 
+	public BooleanSetting fluids = BooleanSetting.builder().id("fluids").displayName("Show Fluids")
+			.description("Show fluids (water/lava) when using Xray")
+			.defaultValue(true)
+			.onUpdate(this::ReloadRenderer).build();
+
 	public XRay() {
 		super("XRay", InputUtil.fromKeyCode(GLFW.GLFW_KEY_X, 0));
 		this.setCategory(Category.of("Render"));
 		this.setDescription("Allows the player to see ores.");
 		this.addSetting(blocks);
+		this.addSetting(fluids);
 	}
 
 	@Override
@@ -77,6 +84,12 @@ public class XRay extends Module {
 	}
 
 	public void ReloadRenderer(HashSet<Block> block) {
+		if (MC.worldRenderer != null && state.getValue()) {
+			MC.worldRenderer.reload();
+		}
+	}
+
+	public void ReloadRenderer(Boolean fluids) {
 		if (MC.worldRenderer != null && state.getValue()) {
 			MC.worldRenderer.reload();
 		}
