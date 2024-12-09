@@ -9,7 +9,6 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
@@ -699,7 +698,6 @@ public class Render2D {
 	 * @param y           Y position to draw the item.
 	 */
 	public static void drawItem(DrawContext drawContext, ItemStack stack, float x, float y) {
-		MinecraftClient MC = MinecraftClient.getInstance();
 		drawContext.drawItem(stack, (int) x, (int) y);
 	}
 

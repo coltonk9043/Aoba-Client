@@ -40,14 +40,14 @@ public class ListComponent extends Component implements MouseClickListener {
 
 	public ListComponent(List<String> itemsSource) {
 		super();
-		this.setMargin(new Margin(2f, null, 2f, null));
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.itemsSource = itemsSource;
 	}
 
 	public ListComponent(List<String> itemsSource, StringSetting listSetting) {
 		super();
 		this.listSetting = listSetting;
-		this.setMargin(new Margin(2f, null, 2f, null));
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.itemsSource = itemsSource;
 	}
 

@@ -63,7 +63,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 		this.text = setting.displayName;
 		blocks = setting;
 
-		this.setMargin(new Margin(4f, null, 4f, null));
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	@Override
@@ -73,8 +73,8 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 		else
 			preferredSize = new Size(availableSize.getWidth(), EXPANDED_HEIGHT);
 
-		visibleColumns = (int) Math.floor((preferredSize.getWidth()) / BLOCK_WIDTH) - 1;
-		visibleRows = (int) Math.floor((preferredSize.getHeight() - 25) / BLOCK_WIDTH);
+		visibleColumns = (int) Math.floor((preferredSize.getWidth()) / (BLOCK_WIDTH + BLOCK_MARGIN));
+		visibleRows = (int) Math.floor((preferredSize.getHeight() - 25) / (BLOCK_WIDTH + BLOCK_MARGIN));
 	}
 
 	/**

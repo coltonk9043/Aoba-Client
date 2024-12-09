@@ -56,7 +56,7 @@ public class ModuleComponent extends Component {
 		this.header = module.getName();
 		this.module = module;
 		this.tooltip = module.getDescription();
-		this.setMargin(new Margin(8f, null, 8f, null));
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	@Override
