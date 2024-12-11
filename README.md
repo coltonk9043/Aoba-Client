@@ -1,3 +1,20 @@
+<img src="https://www.aobaclient.com/_next/image?url=%2Faoba-name.png&w=640&q=75" alt="Aoba Name" width="320" height="120">
+<br>
+<table>
+  <tr>
+    <th><a href="#server-invite">Discord</a></th>
+    <td>
+      <a target="_blank" href="https://discord.gg/krV9VrCMVm">
+        <img src="https://dcbadge.limes.pink/api/server/krV9VrCMVm" alt="Discord Server Badge" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <th>Website</th>
+    <td><a target="_blank" href="https://www.aobaclient.com/">https://www.aobaclient.com/</a></td>
+  </tr>
+</table>
+
 # 🚨 Important Notice! 🚨  
 
 If you are considering downloading **Aoba Client for Minecraft Java Edition** (PC) or **Pojav Launcher** (Android/iOS), please make sure to download it **only** from our **official repository** or our website: [aobaclient.com](https://aobaclient.com).  
