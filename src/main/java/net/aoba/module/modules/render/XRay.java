@@ -43,7 +43,7 @@ public class XRay extends Module {
 					Blocks.IRON_BLOCK, Blocks.COAL_ORE, Blocks.COAL_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.REDSTONE_ORE,
 					Blocks.LAPIS_ORE, Blocks.LAPIS_BLOCK, Blocks.NETHER_QUARTZ_ORE, Blocks.MOSSY_COBBLESTONE,
 					Blocks.STONE_BRICKS, Blocks.OAK_PLANKS, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
-					Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_COAL_ORE)))
+					Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_COAL_ORE, Blocks.ANCIENT_DEBRIS)))
 			.onUpdate(this::ReloadRenderer).build();
 
 	public BooleanSetting fluids = BooleanSetting.builder().id("fluids").displayName("Show Fluids")

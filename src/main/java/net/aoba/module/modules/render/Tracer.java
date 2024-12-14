@@ -29,6 +29,7 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.render.Render2D;
 import net.aoba.utils.render.Render3D;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -37,6 +38,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
 public class Tracer extends Module implements Render3DListener {
@@ -84,37 +86,31 @@ public class Tracer extends Module implements Render3DListener {
 
 	@Override
 	public void onRender(Render3DEvent event) {
-		Vec3d eyePosition = new Vec3d(0, 0, 1);
-		Camera camera = MC.gameRenderer.getCamera();
-		Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity,
-				event.getRenderTickCounter().getTickDelta(true));
-
-		eyePosition = eyePosition.rotateX((float) -Math.toRadians(camera.getPitch()));
-		eyePosition = eyePosition.rotateY((float) -Math.toRadians(camera.getYaw()));
-		eyePosition = eyePosition.add(MC.cameraEntity.getEyePos());
-		eyePosition = eyePosition.subtract(offset);
+		if (Render2D.center == null) {
+			return;
+		}
 
 		float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
 		for (Entity entity : MC.world.getEntities()) {
 			if (entity instanceof LivingEntity && (entity != MC.player)) {
 				Vec3d interpolated = Render3D.getEntityPositionInterpolated(entity, tickDelta);
 				if (entity instanceof AnimalEntity) {
-					Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_passive.getValue(),
+					Render3D.drawLine3D(event.GetMatrix(), Render2D.center, interpolated, color_passive.getValue(),
 							lineWidth.getValue());
 				} else if (entity instanceof Monster) {
-					Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_enemies.getValue(),
+					Render3D.drawLine3D(event.GetMatrix(), Render2D.center, interpolated, color_enemies.getValue(),
 							lineWidth.getValue());
 				} else {
-					Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_misc.getValue(),
+					Render3D.drawLine3D(event.GetMatrix(), Render2D.center, interpolated, color_misc.getValue(),
 							lineWidth.getValue());
 				}
 			}
 		}
 
 		for (AbstractClientPlayerEntity player : MC.world.getPlayers()) {
+			if (player == MC.player) continue;
 			Vec3d interpolated = Render3D.getEntityPositionInterpolated(player, tickDelta);
-			Render3D.drawLine3D(event.GetMatrix(), eyePosition, interpolated, color_player.getValue(),
-					lineWidth.getValue());
+			Render3D.drawLine3D(event.GetMatrix(), Render2D.center, interpolated, color_player.getValue(), lineWidth.getValue());
 		}
 	}
 }

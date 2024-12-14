@@ -18,6 +18,10 @@
 
 package net.aoba.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import net.aoba.utils.render.Render2D;
+import net.minecraft.client.render.RenderTickCounter;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -58,6 +62,15 @@ public abstract class GameRendererMixin {
 			return 0;
 		}
 		return MathHelper.lerp(delta, first, second);
+	}
+
+	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = {"ldc=hand"}))
+	private void onRenderWorld(RenderTickCounter tickCounter, CallbackInfo ci, @Local(ordinal = 2) Matrix4f matrix4f3, @Local(ordinal = 1) float tickDelta, @Local MatrixStack matrixStack) {
+		if (client == null && client.world == null && client.player == null) {
+			return;
+		}
+
+		Render2D.updateScreenCenter();
 	}
 
 	@Inject(method = "showFloatingItem", at = @At("HEAD"), cancellable = true)
