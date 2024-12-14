@@ -186,7 +186,7 @@ public class MainMenuScreen extends Screen {
 		if (AobaClient.addons.isEmpty()) {
 			String noAddonsText = "No addons loaded";
 			int textWidth = this.textRenderer.getWidth(noAddonsText);
-			drawContext.drawTextWithShadow(this.textRenderer, noAddonsText, this.width - textWidth - 2, 10, 0xFFFFFF);
+			drawContext.drawTextWithShadow(this.textRenderer, noAddonsText, this.width - textWidth - 15, 10, 0xFFFFFF);
 		} else {
 			int yOffset = 10;
 			for (IAddon addon : AobaClient.addons) {
@@ -201,21 +201,26 @@ public class MainMenuScreen extends Screen {
 				drawContext.drawTextWithShadow(this.textRenderer, addonName,
 						this.width - addonNameWidth - byTextWidth - authorWidth - 2, yOffset, 0x50C878);
 
-				drawContext.drawTextWithShadow(this.textRenderer, byText, this.width - byTextWidth - authorWidth - 2,
+				drawContext.drawTextWithShadow(this.textRenderer, byText, this.width - byTextWidth - authorWidth - 15,
 						yOffset, 0xFFFFFF);
 
-				drawContext.drawTextWithShadow(this.textRenderer, author, this.width - authorWidth - 2, yOffset,
+				drawContext.drawTextWithShadow(this.textRenderer, author, this.width - authorWidth - 15, yOffset,
 						0xFF0000);
 
 				yOffset += 10;
 			}
 		}
 
-		// News Peek!
-		Render2D.drawOutlinedRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), width - 110, 30, 100, 30,
-				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
-				GuiManager.backgroundColor.getValue());
-		drawContext.drawTextWithShadow(this.textRenderer, "News coming soon!", width - 105, 40, Colors.WHITE);
+		int newsTextHeight = this.textRenderer.fontHeight;
+		int newsBoxHeight = newsTextHeight + 20;
+		int newsTextWidth = this.textRenderer.getWidth("Aoba 1.4.4 released!") + 10;
+		Render2D.drawOutlinedRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), width - newsTextWidth - 15, 30, newsTextWidth, newsBoxHeight,
+				GuiManager.roundingRadius.getValue(),
+				GuiManager.borderColor.getValue(),
+				GuiManager.backgroundColor.getValue()
+		);
+		drawContext.drawTextWithShadow(this.textRenderer, "Aoba 1.4.4 released!", width - newsTextWidth - 9, 40, Colors.WHITE);
+
 
 		RenderSystem.enableCull();
 	}
