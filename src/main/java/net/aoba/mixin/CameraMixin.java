@@ -1,5 +1,7 @@
 package net.aoba.mixin;
 
+import net.aoba.module.modules.movement.Freecam;
+import net.aoba.module.modules.render.NoRender;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,7 +45,10 @@ public class CameraMixin {
 	@Inject(at = {
 			@At("HEAD") }, method = "getSubmersionType()Lnet/minecraft/block/enums/CameraSubmersionType;", cancellable = true)
 	private void onGetSubmersionType(CallbackInfoReturnable<CameraSubmersionType> cir) {
-		if (Aoba.getInstance().moduleManager.freecam.state.getValue()) {
+		Freecam freecam = Aoba.getInstance().moduleManager.freecam;
+		NoRender norender = Aoba.getInstance().moduleManager.norender;
+
+		if (freecam.state.getValue() || (norender.state.getValue() && norender.getNoLiquidOverlay())) {
 			cir.setReturnValue(CameraSubmersionType.NONE);
 		}
 	}
