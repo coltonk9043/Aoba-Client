@@ -58,7 +58,6 @@ public class MacroRecorder
 	public void addToMacroManager() {
 		if (!recording && currentMacro != null) {
 			Macro macro = new Macro(currentMacro);
-			Aoba.getInstance().macroManager.addMacro(macro);
 			Aoba.getInstance().macroManager.setCurrentlySelected(macro);
 			currentMacro = null;
 		}

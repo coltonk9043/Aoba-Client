@@ -61,7 +61,6 @@ public class DirectLoginAltScreen extends Screen {
 	}
 
 	private void onButtonLoginPressed() {
-		boolean loggedIn;
 		if (isCracked.isChecked()) {
 			Aoba.getInstance().altManager.loginCracked(this.textFieldAltUsername.getText());
 			client.setScreen(this.parent);
@@ -69,14 +68,9 @@ public class DirectLoginAltScreen extends Screen {
 		} else {
 			Alt alt = new Alt(this.textFieldAltUsername.getText(), false);
 			alt.auth();
-			loggedIn = Aoba.getInstance().altManager.login(alt);
+			Aoba.getInstance().altManager.login(alt);
 		}
-
-		if (!loggedIn) {
-			didLoginError = true;
-		} else {
-			client.setScreen(this.parent);
-		}
+		client.setScreen(this.parent);
 	}
 
 	@Override

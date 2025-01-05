@@ -1,8 +1,15 @@
 package net.aoba.gui.navigation.windows;
 
+import java.util.function.Function;
+
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
+import net.aoba.gui.GridDefinition;
+import net.aoba.gui.GridDefinition.RelativeUnit;
+import net.aoba.gui.Margin;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.components.ButtonComponent;
+import net.aoba.gui.components.GridComponent;
 import net.aoba.gui.components.ItemsComponent;
 import net.aoba.gui.components.SeparatorComponent;
 import net.aoba.gui.components.StackPanelComponent;
@@ -61,42 +68,67 @@ public class MacroWindow extends Window {
 		startButton.addChild(startButtonText);
 		stackPanel.addChild(startButton);
 
-		replayRunnable = new Runnable() {
+		stackPanel.addChild(new StringComponent("Filename:"));
+
+		filenameText = new TextBoxComponent();
+		stackPanel.addChild(filenameText);
+
+		saveButton = new ButtonComponent(new Runnable() {
+
 			@Override
 			public void run() {
 				AobaClient aoba = Aoba.getInstance();
-				aoba.macroManager.getPlayer().play(aoba.macroManager.getCurrentlySelected());
-			}
-		};
-		replayButton = new ButtonComponent(replayRunnable);
-		replayButtonText = new StringComponent("Replay");
-		replayButton.addChild(replayButtonText);
-		stackPanel.addChild(replayButton);
+				Macro currentMacro = aoba.macroManager.getCurrentlySelected();
+				currentMacro.setName(filenameText.getText());
+				aoba.macroManager.addMacro(currentMacro);
 
-		/**
-		 * stackPanel.addChild(new StringComponent("Filename:"));
-		 * 
-		 * filenameText = new TextBoxComponent(); stackPanel.addChild(filenameText);
-		 * 
-		 * saveButton = new ButtonComponent(new Runnable() {
-		 * 
-		 * @Override public void run() { AobaClient aoba = Aoba.getInstance(); Macro
-		 *           currentMacro = aoba.macroManager.getCurrentlySelected();
-		 *           currentMacro.setName(filenameText.getText());
-		 *           aoba.macroManager.addMacro(currentMacro);
-		 * 
-		 *           // Reload the items control.
-		 *           macrosList.setItemsSource(aoba.macroManager.getMacros()); } });
-		 * 
-		 *           saveButton.addChild(new StringComponent("Save"));
-		 * 
-		 *           stackPanel.addChild(saveButton);
-		 * 
-		 *           // Add Macros ItemComponents Function<Macro, UIElement> test = s ->
-		 *           new StringComponent(s.getName()); macrosList = new
-		 *           ItemsComponent<Macro>(Aoba.getInstance().macroManager.getMacros(),
-		 *           test); stackPanel.addChild(macrosList);
-		 */
+				// Reload the items control.
+				macrosList.setItemsSource(aoba.macroManager.getMacros());
+			}
+		});
+
+		saveButton.addChild(new StringComponent("Save"));
+
+		stackPanel.addChild(saveButton);
+
+		// Add Macros ItemComponents
+		Function<Macro, UIElement> test = (s -> {
+			GridComponent macroItemGrid = new GridComponent();
+			macroItemGrid.addColumnDefinition(new GridDefinition(1.0f, RelativeUnit.Relative));
+			macroItemGrid.addColumnDefinition(new GridDefinition(50f, RelativeUnit.Absolute));
+			macroItemGrid.addColumnDefinition(new GridDefinition(50f, RelativeUnit.Absolute));
+
+			macroItemGrid.addChild(new StringComponent(s.getName()));
+
+			ButtonComponent playMacroButton = new ButtonComponent(new Runnable() {
+				@Override
+				public void run() {
+					Aoba.getInstance().macroManager.getPlayer().play(s);
+				}
+			});
+
+			playMacroButton.addChild(new StringComponent("▶"));
+			playMacroButton.setMargin(new Margin(2f));
+			macroItemGrid.addChild(playMacroButton);
+
+			ButtonComponent deleteMacroButton = new ButtonComponent(new Runnable() {
+				@Override
+				public void run() {
+					Aoba.getInstance().macroManager.removeMacro(s);
+					// Reload the items control.
+					macrosList.setItemsSource(Aoba.getInstance().macroManager.getMacros());
+				}
+			});
+
+			deleteMacroButton.addChild(new StringComponent("🗑"));
+			deleteMacroButton.setMargin(new Margin(2f));
+			macroItemGrid.addChild(deleteMacroButton);
+
+			return macroItemGrid;
+		});
+
+		macrosList = new ItemsComponent<Macro>(Aoba.getInstance().macroManager.getMacros(), test);
+		stackPanel.addChild(macrosList);
 
 		// Add stackpanel to child.
 		addChild(stackPanel);

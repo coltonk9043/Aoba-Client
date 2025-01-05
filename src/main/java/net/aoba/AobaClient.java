@@ -81,13 +81,15 @@ public class AobaClient {
 		IMC = (IMinecraftClient) MC;
 	}
 
+	/**
+	 * Initializes systems and loads any assets.
+	 */
 	public void loadAssets() {
 		LogUtils.getLogger().info("[Aoba] Starting Client");
-
 		eventManager = new EventManager();
 
+		// Register any addons.
 		LogUtils.getLogger().info("[Aoba] Starting addon initialization");
-
 		for (EntrypointContainer<IAddon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("aoba",
 				IAddon.class)) {
 			IAddon addon = entrypoint.getEntrypoint();
@@ -139,7 +141,7 @@ public class AobaClient {
 	}
 
 	/**
-	 * Called when the client is shutting down.
+	 * Called when the client is shutting down. Saves persistent data.
 	 */
 	public void endClient() {
 		try {

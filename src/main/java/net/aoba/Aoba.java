@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.aoba;
 
 import net.fabricmc.api.ModInitializer;
@@ -25,20 +24,20 @@ import net.fabricmc.api.ModInitializer;
  * A class to initialize and hold the Singleton of Aoba Client.
  */
 public class Aoba implements ModInitializer {
-    public static AobaClient instance;
+	public static AobaClient instance;
 
-    @Override
-    public void onInitialize() {
-        instance = new AobaClient();
-        instance.Initialize();
-    }
+	@Override
+	public void onInitialize() {
+		instance = new AobaClient();
+		instance.Initialize();
+	}
 
-    /**
-     * Returns the singleton instance of Aoba client.
-     *
-     * @return Aoba Client
-     */
-    public static AobaClient getInstance() {
-        return instance;
-    }
+	/**
+	 * Returns the singleton instance of Aoba client.
+	 * 
+	 * @return Aoba Client
+	 */
+	public static AobaClient getInstance() {
+		return instance;
+	}
 }

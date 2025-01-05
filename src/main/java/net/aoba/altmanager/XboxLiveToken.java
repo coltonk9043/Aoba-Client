@@ -22,35 +22,35 @@
 package net.aoba.altmanager;
 
 public class XboxLiveToken {
-    private final String token;
-    private final String hash;
+	private final String token;
+	private final String hash;
 
-    /**
-     * Constructor for an Xbox Live Token
-     *
-     * @param token
-     * @param uhs
-     */
-    public XboxLiveToken(String token, String uhs) {
-        this.token = token;
-        this.hash = uhs;
-    }
+	/**
+	 * Constructor for an Xbox Live Token
+	 * 
+	 * @param token
+	 * @param uhs
+	 */
+	public XboxLiveToken(String token, String uhs) {
+		this.token = token;
+		this.hash = uhs;
+	}
 
-    /**
-     * Returns the token of the Xbox Live Token.
-     *
-     * @return The token of the Xbox Live Token.
-     */
-    public String getToken() {
-        return token;
-    }
+	/**
+	 * Returns the token of the Xbox Live Token.
+	 * 
+	 * @return The token of the Xbox Live Token.
+	 */
+	public String getToken() {
+		return token;
+	}
 
-    /**
-     * Returns the hash of the Xbox Live Token.
-     *
-     * @return The hash of the Xbox Live Token.
-     */
-    public String getHash() {
-        return hash;
-    }
+	/**
+	 * Returns the hash of the Xbox Live Token.
+	 * 
+	 * @return The hash of the Xbox Live Token.
+	 */
+	public String getHash() {
+		return hash;
+	}
 }

@@ -57,6 +57,10 @@ public class MacroManager {
 		macros.put(macro.getName(), macro);
 	}
 
+	public void removeMacro(Macro macro) {
+		macros.remove(macro.getName(), macro);
+	}
+
 	public MacroRecorder getRecorder() {
 		return recorder;
 	}
