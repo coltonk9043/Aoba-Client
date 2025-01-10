@@ -1,5 +1,7 @@
 package net.aoba.utils.rotation;
 
+import org.joml.Quaternionf;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
@@ -24,8 +26,6 @@ public record Rotation(double yaw, double pitch) {
 		double deltaPitch = this.pitch - player.getPitch();
 
 		// Round to nearest GCD
-		double newg1 = deltaYaw - (deltaYaw % gcd);
-
 		double g1 = Math.round(deltaYaw / gcd) * gcd;
 		double g2 = Math.round(deltaPitch / gcd) * gcd;
 
@@ -34,6 +34,30 @@ public record Rotation(double yaw, double pitch) {
 		double pitch = player.getPitch() + g2;
 
 		return new Rotation(yaw, MathHelper.clamp(pitch, -90f, 90f));
+	}
+
+	public double magnitude() {
+		float yaw = MathHelper.wrapDegrees((float) yaw());
+		float pitch = MathHelper.wrapDegrees((float) pitch());
+		return Math.sqrt(yaw * yaw + pitch * pitch);
+	}
+
+	public Quaternionf toQuaternion() {
+		float radPerDeg = MathHelper.RADIANS_PER_DEGREE;
+		float yawRad = -MathHelper.wrapDegrees((float) yaw) * radPerDeg;
+		float pitchRad = MathHelper.wrapDegrees((float) pitch) * radPerDeg;
+
+		float sinYaw = MathHelper.sin(yawRad / 2);
+		float cosYaw = MathHelper.cos(yawRad / 2);
+		float sinPitch = MathHelper.sin(pitchRad / 2);
+		float cosPitch = MathHelper.cos(pitchRad / 2);
+
+		float x = sinPitch * cosYaw;
+		float y = cosPitch * sinYaw;
+		float z = -sinPitch * sinYaw;
+		float w = cosPitch * cosYaw;
+
+		return new Quaternionf(x, y, z, w);
 	}
 
 	public static Rotation difference(Rotation rotation1, Rotation rotation2) {
@@ -45,6 +69,19 @@ public record Rotation(double yaw, double pitch) {
 		MinecraftClient MC = MinecraftClient.getInstance();
 		Vec3d playerPos = MC.player.getEyePos();
 		Vec3d targetPos = target.getPos().add(0, target.getStandingEyeHeight() / 2.0f, 0);
+
+		double deltaX = targetPos.x - playerPos.x;
+		double deltaY = targetPos.y - playerPos.y;
+		double deltaZ = targetPos.z - playerPos.z;
+
+		return new Rotation(MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(deltaZ, deltaX)) - 90f), MathHelper
+				.wrapDegrees((-Math.toDegrees(Math.atan2(deltaY, Math.sqrt(deltaX * deltaX + deltaZ * deltaZ))))));
+	}
+
+	public static Rotation rotationFrom(Entity target, float frameDelta) {
+		MinecraftClient MC = MinecraftClient.getInstance();
+		Vec3d playerPos = MC.player.getLerpedPos(frameDelta).add(0, target.getStandingEyeHeight(), 0);
+		Vec3d targetPos = target.getLerpedPos(frameDelta).add(0, target.getStandingEyeHeight() / 2.0f, 0);
 
 		double deltaX = targetPos.x - playerPos.x;
 		double deltaY = targetPos.y - playerPos.y;

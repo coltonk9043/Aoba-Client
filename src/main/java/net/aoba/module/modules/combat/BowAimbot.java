@@ -6,21 +6,17 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
-import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.bowaimbot.BowAimbotTargets;
-import net.aoba.utils.bowaimbot.BowAimbotUtils;
-import net.aoba.utils.render.Render3D;
-import net.minecraft.client.MinecraftClient;
+import net.aoba.utils.rotation.Rotation;
+import net.aoba.utils.rotation.RotationMode;
+import net.aoba.utils.rotation.goals.RotationGoal;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BowItem;
@@ -29,10 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 
-public class BowAimbot extends Module implements TickListener, Render3DListener {
-
-	private Entity temp = null;
-
+public class BowAimbot extends Module implements TickListener {
 	private BooleanSetting targetAnimals = BooleanSetting.builder().id("bowaimbot_target_mobs")
 			.displayName("Target Mobs").description("Target mobs.").defaultValue(false).build();
 
@@ -48,14 +41,11 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
 			.maxValue(10f).step(1f).build();
 
 	private int currentTick = 0;
-	private boolean skip;
 	private float velocity;
 	private double posX;
 	private double posY;
 	private double posZ;
-	private float neededPitch;
 	private double d;
-	private float neededYaw;
 
 	public BowAimbot() {
 		super("BowAimbot");
@@ -74,7 +64,6 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
 		if (Aoba.getInstance().moduleManager.trajectory.state.getValue())
 			Aoba.getInstance().moduleManager.trajectory.toggle();
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
 	}
 
 	@Override
@@ -82,7 +71,6 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
 		if (!Aoba.getInstance().moduleManager.trajectory.state.getValue())
 			Aoba.getInstance().moduleManager.trajectory.toggle();
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
 	}
 
 	@Override
@@ -97,33 +85,32 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
 
 	@Override
 	public void onTick(TickEvent.Post event) {
-		skip = false;
 		currentTick++;
 
 		ItemStack stack = MC.player.getInventory().getMainHandStack();
 		Item item = stack.getItem();
+
 		if (!(item instanceof BowItem || item instanceof CrossbowItem)) {
-			temp = null;
+			Aoba.getInstance().rotationManager.setGoal(null);
 			return;
 		}
 
 		if (item instanceof BowItem && !MC.options.useKey.isPressed() && !MC.player.isUsingItem()) {
-			temp = null;
+			Aoba.getInstance().rotationManager.setGoal(null);
 			return;
 		}
-
 		if (item instanceof CrossbowItem && !CrossbowItem.isCharged(stack)) {
-			temp = null;
+			Aoba.getInstance().rotationManager.setGoal(null);
 			return;
 		}
-
-		velocity = (72000 - MC.player.getItemUseTimeLeft()) / 20F;
-		velocity = (velocity * velocity + velocity * 2) / 3;
-		if (velocity > 1)
-			velocity = 1;
 
 		if (currentTick >= frequency.getValue()) {
+			velocity = (72000 - MC.player.getItemUseTimeLeft()) / 20F;
+			velocity = (velocity * velocity + velocity * 2) / 3;
+			if (velocity > 1)
+				velocity = 1;
 
+			Entity temp = null;
 			if (targetAnimals.getValue() && targetPlayers.getValue()) {
 				if (filterEntities(Stream.of(temp)) == null)
 					temp = filterEntities(StreamSupport.stream(MC.world.getEntities().spliterator(), true));
@@ -141,46 +128,46 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
 					temp = null;
 			}
 
-			if (temp == null)
-				return;
+			if (temp != null) {
+				double hDistance = Math.sqrt(posX * posX + posZ * posZ);
+				double hDistanceSq = hDistance * hDistance;
+				float g = 0.006F;
+				float velocitySq = velocity * velocity;
+				float velocityPow4 = velocitySq * velocitySq;
 
-			double hDistance = Math.sqrt(posX * posX + posZ * posZ);
-			double hDistanceSq = hDistance * hDistance;
-			float g = 0.006F;
-			float velocitySq = velocity * velocity;
-			float velocityPow4 = velocitySq * velocitySq;
+				d = temp.squaredDistanceTo(MC.player.getEyePos()) * (predictMovement.getValue() / 100);
+				posY = temp.getY() + (temp.getY() - temp.lastRenderY) * d + temp.getHeight() * 0.5 - MC.player.getY()
+						- MC.player.getEyeHeight(MC.player.getPose());
+				float neededPitch = (float) -Math.toDegrees(
+						Math.atan((velocitySq - Math.sqrt(velocityPow4 - g * (g * hDistanceSq + 2 * posY * velocitySq)))
+								/ (g * hDistance)));
+				posZ = temp.getZ() + (temp.getZ() - temp.lastRenderZ) * d - MC.player.getZ();
+				posX = temp.getX() + (temp.getX() - temp.lastRenderX) * d - MC.player.getX();
+				float neededYaw = (float) Math.toDegrees(Math.atan2(posZ, posX)) - 90;
 
-			d = temp.squaredDistanceTo(MC.player.getEyePos()) * (predictMovement.getValue() / 100);
-			posY = temp.getY() + (temp.getY() - temp.lastRenderY) * d + temp.getHeight() * 0.5 - MC.player.getY()
-					- MC.player.getEyeHeight(MC.player.getPose());
-			neededPitch = (float) -Math.toDegrees(
-					Math.atan((velocitySq - Math.sqrt(velocityPow4 - g * (g * hDistanceSq + 2 * posY * velocitySq)))
-							/ (g * hDistance)));
-			posZ = temp.getZ() + (temp.getZ() - temp.lastRenderZ) * d - MC.player.getZ();
-			posX = temp.getX() + (temp.getX() - temp.lastRenderX) * d - MC.player.getX();
-			neededYaw = (float) Math.toDegrees(Math.atan2(posZ, posX)) - 90;
+				currentTick = 0;
 
-			currentTick = 0;
+				Rotation rotation = new Rotation(neededYaw, neededPitch);
+				RotationGoal goal = RotationGoal.builder().goal(rotation).mode(RotationMode.INSTANT).build();
+				Aoba.getInstance().rotationManager.setGoal(goal);
+			} else
+				Aoba.getInstance().rotationManager.setGoal(null);
 		}
 	}
 
 	private Entity filterEntities(Stream<Entity> s) {
 		Stream<Entity> stream = s.filter(BowAimbotTargets.IS_ATTACKABLE);
-
 		return stream.min(Priority.ANGLE_DIST.comparator).orElse(null);
 	}
 
 	private Entity filterPlayers(Stream<AbstractClientPlayerEntity> s) {
 		Stream<AbstractClientPlayerEntity> stream = s.filter(BowAimbotTargets.IS_ATTACKABLE);
-
 		return stream.min(Priority.ANGLE_DIST.comparator).orElse(null);
 	}
 
-	static MinecraftClient MC = AobaClient.MC;
-
 	private enum Priority {
-		ANGLE_DIST("", e -> Math.pow(BowAimbotUtils.getAngleToLookVec(e.getBoundingBox().getCenter()), 2)
-				+ MC.player.squaredDistanceTo(e));
+		ANGLE_DIST("",
+				e -> Math.pow(getAngleToLookVec(e.getBoundingBox().getCenter()), 2) + MC.player.squaredDistanceTo(e));
 
 		private final String name;
 		private final Comparator<Entity> comparator;
@@ -194,19 +181,10 @@ public class BowAimbot extends Module implements TickListener, Render3DListener 
 		public String toString() {
 			return name;
 		}
-	}
 
-	@Override
-	public void onRender(Render3DEvent event) {
-		if (skip)
-			return;
-		if (temp != null) {
-			Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(temp,
-					event.getRenderTickCounter().getTickDelta(true));
-			MC.player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES,
-					temp.getEyePos().add(offset).add(posX, posY, posZ));
-			MC.player.setYaw(neededYaw);
-			MC.player.setPitch(neededPitch);
+		public static double getAngleToLookVec(Vec3d vec) {
+			Rotation rotation = Rotation.getPlayerRotationDeltaFromPosition(vec);
+			return rotation.magnitude();
 		}
 	}
 }

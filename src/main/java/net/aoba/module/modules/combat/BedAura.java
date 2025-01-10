@@ -18,10 +18,10 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render3D;
 import net.aoba.utils.rotation.Rotation;
 import net.aoba.utils.rotation.RotationMode;
+import net.aoba.utils.rotation.goals.RotationGoal;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
 import net.minecraft.util.Hand;
@@ -53,11 +53,11 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 
 	private FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
-			.minValue(0.0f).maxValue(60.0f).step(1.0f).build();
+			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
 	private FloatSetting pitchRandomness = FloatSetting.builder().id("killaura_pitch_randomness")
 			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
-			.minValue(0.0f).maxValue(60.0f).step(1.0f).build();
+			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
 	private BlockPos currentBlockToBreak = null;
 
@@ -84,6 +84,7 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 		Aoba.getInstance().eventManager.RemoveListener(BlockStateListener.class, this);
+		Aoba.getInstance().rotationManager.setGoal(null);
 	}
 
 	@Override
@@ -149,35 +150,11 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 				currentBlockToBreak = null;
 			} else {
 
-				switch (rotationMode.getValue()) {
-				case RotationMode.NONE:
-					break;
-				case RotationMode.SMOOTH:
-					float rotationDegreesPerTick = maxRotation.getValue();
-
-					Rotation rotation = Rotation.getPlayerRotationDeltaFromPosition(currentBlockToBreak.toCenterPos());
-
-					float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
-							rotationDegreesPerTick);
-					float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
-							rotationDegreesPerTick);
-
-					// Apply Pitch / Yaw randomness and
-					double pitchRandom = Math.random() * pitchRandomness.getValue();
-					double yawRandom = Math.random() * yawRandomness.getValue();
-
-					maxYawRotationDelta += yawRandom;
-					maxPitchRotation += pitchRandom;
-
-					Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
-							MC.player.getPitch() + maxPitchRotation).roundToGCD();
-					MC.player.setYaw((float) newRotation.yaw());
-					MC.player.setPitch((float) newRotation.pitch());
-					break;
-				case RotationMode.INSTANT:
-					MC.player.lookAt(EntityAnchor.FEET, currentBlockToBreak.toCenterPos());
-					break;
-				}
+				RotationGoal rotation = RotationGoal.builder()
+						.goal(Rotation.rotationFrom(currentBlockToBreak.toCenterPos())).mode(rotationMode.getValue())
+						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
+						.yawRandomness(yawRandomness.getValue()).build();
+				Aoba.getInstance().rotationManager.setGoal(rotation);
 
 				if (legit.getValue()) {
 					HitResult ray = MC.crosshairTarget;

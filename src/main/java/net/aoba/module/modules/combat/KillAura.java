@@ -32,9 +32,8 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.utils.rotation.Rotation;
 import net.aoba.utils.rotation.RotationMode;
-import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
+import net.aoba.utils.rotation.goals.EntityGoal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -86,11 +85,11 @@ public class KillAura extends Module implements TickListener {
 
 	private FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
-			.minValue(0.0f).maxValue(60.0f).step(1.0f).build();
+			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
 	private FloatSetting pitchRandomness = FloatSetting.builder().id("killaura_pitch_randomness")
 			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
-			.minValue(0.0f).maxValue(60.0f).step(1.0f).build();
+			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
 	private LivingEntity entityToAttack;
 
@@ -116,6 +115,7 @@ public class KillAura extends Module implements TickListener {
 	@Override
 	public void onDisable() {
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().rotationManager.setGoal(null);
 	}
 
 	@Override
@@ -185,34 +185,10 @@ public class KillAura extends Module implements TickListener {
 
 		// If the entity is found, we want to attach it.
 		if (found) {
-			switch (rotationMode.getValue()) {
-			case RotationMode.NONE:
-				break;
-			case RotationMode.SMOOTH:
-				float rotationDegreesPerTick = maxRotation.getValue();
-				Rotation rotation = Rotation.getPlayerRotationDeltaFromEntity(entityToAttack);
-
-				float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
-						rotationDegreesPerTick);
-				float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
-						rotationDegreesPerTick);
-
-				// Apply Pitch / Yaw randomness and
-				double pitchRandom = Math.random() * pitchRandomness.getValue();
-				double yawRandom = Math.random() * yawRandomness.getValue();
-
-				maxYawRotationDelta += yawRandom;
-				maxPitchRotation += pitchRandom;
-
-				Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
-						MC.player.getPitch() + maxPitchRotation).roundToGCD();
-				MC.player.setYaw((float) newRotation.yaw());
-				MC.player.setPitch((float) newRotation.pitch());
-				break;
-			case RotationMode.INSTANT:
-				MC.player.lookAt(EntityAnchor.EYES, entityToAttack.getEyePos());
-				break;
-			}
+			EntityGoal rotation = EntityGoal.builder().goal(entityToAttack).mode(rotationMode.getValue())
+					.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
+					.yawRandomness(yawRandomness.getValue()).build();
+			Aoba.getInstance().rotationManager.setGoal(rotation);
 
 			if (MC.player.getAttackCooldownProgress(0) == 1) {
 
@@ -235,6 +211,8 @@ public class KillAura extends Module implements TickListener {
 					}
 				}
 			}
+		} else {
+			Aoba.getInstance().rotationManager.setGoal(null);
 		}
 	}
 

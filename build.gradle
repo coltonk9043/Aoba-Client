@@ -13,15 +13,6 @@ base {
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
-
-    maven {
-        name = "meteor-maven"
-        url = "https://maven.meteordev.org/releases"
-    }
-    maven {
-        name = "meteor-maven-snapshots"
-        url = "https://maven.meteordev.org/snapshots"
-    }
     maven {
         name = 'babbaj-repo'
         url = 'https://babbaj.github.io/maven/'
@@ -54,6 +45,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation("maven.modrinth:sodium:${project.sodium_version}")
+
     modImplementation files("libs/baritone-standalone-fabric-1.13.0.jar")
     implementation "dev.babbaj:nether-pathfinder:1.4.1"
 

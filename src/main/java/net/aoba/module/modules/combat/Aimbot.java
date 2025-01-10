@@ -22,23 +22,19 @@
 package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.utils.render.Render3D;
+import net.aoba.utils.rotation.goals.EntityGoal;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 
-public class Aimbot extends Module implements TickListener, Render3DListener {
+public class Aimbot extends Module implements TickListener {
 
 	private LivingEntity temp = null;
 
@@ -81,50 +77,17 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 	@Override
 	public void onDisable() {
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+		Aoba.getInstance().rotationManager.setGoal(null);
 	}
 
 	@Override
 	public void onEnable() {
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
-	}
-
-	@Override
-	public void onRender(Render3DEvent event) {
-		if (temp != null) {
-			Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(temp,
-					event.getRenderTickCounter().getTickDelta(true));
-			Vec3d targetPos = temp.getEyePos().add(offset);
-			Vec3d playerPos = MC.player.getEyePos();
-			Vec3d direction = targetPos.subtract(playerPos).normalize();
-
-			float yaw = (float) Math.toDegrees(Math.atan2(direction.z, direction.x)) - 90F;
-			float pitch = (float) -Math.toDegrees(
-					Math.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z)));
-
-			float currentYaw = MC.player.getYaw();
-			float currentPitch = MC.player.getPitch();
-
-			float deltaYaw = MathHelper.wrapDegrees(yaw - currentYaw);
-			float deltaPitch = MathHelper.wrapDegrees(pitch - currentPitch);
-
-			float speed = rotationSpeed.getValue();
-			float smoothYaw = currentYaw + MathHelper.clamp(deltaYaw, -speed, speed);
-			float smoothPitch = currentPitch + MathHelper.clamp(deltaPitch, -speed, speed);
-
-			if (Math.abs(deltaYaw) > 180) {
-				smoothYaw = currentYaw - MathHelper.clamp(deltaYaw, -speed, speed);
-			}
-
-			MC.player.setYaw(smoothYaw);
-			MC.player.setPitch(smoothPitch);
-		}
 	}
 
 	@Override
@@ -183,7 +146,12 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 				}
 			}
 
-			temp = entityFound;
+			if (entityFound != null) {
+				EntityGoal rotation = EntityGoal.builder().goal(entityFound).maxRotation(rotationSpeed.getValue())
+						.build();
+				Aoba.getInstance().rotationManager.setGoal(rotation);
+			}
+
 			currentTick = 0;
 		} else {
 			if (temp != null && temp.squaredDistanceTo(MC.player) >= radiusSqr) {
