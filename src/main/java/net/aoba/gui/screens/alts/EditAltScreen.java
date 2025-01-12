@@ -19,14 +19,12 @@
 package net.aoba.gui.screens.alts;
 
 import net.aoba.Aoba;
-import net.aoba.altmanager.Alt;
+import net.aoba.managers.altmanager.Alt;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 public class EditAltScreen extends Screen {

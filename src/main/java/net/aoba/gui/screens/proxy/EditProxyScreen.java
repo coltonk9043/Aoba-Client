@@ -18,8 +18,7 @@
 
 package net.aoba.gui.screens.proxy;
 
-import net.aoba.Aoba;
-import net.aoba.proxymanager.Socks5Proxy;
+import net.aoba.managers.proxymanager.Socks5Proxy;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;

@@ -28,7 +28,7 @@ import org.lwjgl.opengl.GL11;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import net.aoba.altmanager.Alt;
+import net.aoba.managers.altmanager.Alt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

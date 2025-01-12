@@ -3,7 +3,7 @@ package net.aoba.gui.screens.proxy;
 import net.aoba.utils.render.Render2D;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.aoba.proxymanager.Socks5Proxy;
+import net.aoba.managers.proxymanager.Socks5Proxy;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;

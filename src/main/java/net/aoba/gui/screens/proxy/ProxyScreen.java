@@ -1,7 +1,7 @@
 package net.aoba.gui.screens.proxy;
 
 import net.aoba.Aoba;
-import net.aoba.proxymanager.Socks5Proxy;
+import net.aoba.managers.proxymanager.Socks5Proxy;
 import net.aoba.utils.render.TextureBank;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;

@@ -21,7 +21,7 @@ package net.aoba.gui.screens.alts;
 import java.util.List;
 
 import net.aoba.Aoba;
-import net.aoba.altmanager.Alt;
+import net.aoba.managers.altmanager.Alt;
 import net.aoba.utils.render.TextureBank;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.CubeMapRenderer;

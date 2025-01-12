@@ -16,7 +16,7 @@ import net.aoba.gui.components.StackPanelComponent;
 import net.aoba.gui.components.StringComponent;
 import net.aoba.gui.components.TextBoxComponent;
 import net.aoba.gui.navigation.Window;
-import net.aoba.macros.Macro;
+import net.aoba.managers.macros.Macro;
 
 public class MacroWindow extends Window {
 	private ButtonComponent startButton;

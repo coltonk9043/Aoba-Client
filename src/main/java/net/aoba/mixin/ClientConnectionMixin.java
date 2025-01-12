@@ -24,7 +24,7 @@ import io.netty.handler.proxy.Socks5ProxyHandler;
 import net.aoba.Aoba;
 import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.events.SendPacketEvent;
-import net.aoba.proxymanager.Socks5Proxy;
+import net.aoba.managers.proxymanager.Socks5Proxy;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.network.PacketCallbacks;

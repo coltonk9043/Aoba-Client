@@ -26,18 +26,18 @@ import java.util.List;
 
 import com.mojang.logging.LogUtils;
 
-import net.aoba.altmanager.AltManager;
+import net.aoba.managers.altmanager.AltManager;
 import net.aoba.api.IAddon;
 import net.aoba.cmd.CommandManager;
 import net.aoba.cmd.GlobalChat;
-import net.aoba.combatmanager.CombatManager;
+import net.aoba.managers.CombatManager;
 import net.aoba.event.EventManager;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
-import net.aoba.macros.MacroManager;
+import net.aoba.managers.macros.MacroManager;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.ModuleManager;
-import net.aoba.proxymanager.ProxyManager;
+import net.aoba.managers.proxymanager.ProxyManager;
 import net.aoba.settings.SettingManager;
 import net.aoba.settings.friends.FriendsList;
 import net.aoba.utils.discord.RPCManager;
