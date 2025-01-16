@@ -26,22 +26,18 @@ import java.util.List;
 
 import com.mojang.logging.LogUtils;
 
+import net.aoba.managers.*;
 import net.aoba.managers.altmanager.AltManager;
 import net.aoba.api.IAddon;
-import net.aoba.cmd.CommandManager;
-import net.aoba.cmd.GlobalChat;
-import net.aoba.managers.CombatManager;
-import net.aoba.event.EventManager;
+import net.aoba.command.GlobalChat;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
 import net.aoba.managers.macros.MacroManager;
 import net.aoba.mixin.interfaces.IMinecraftClient;
-import net.aoba.module.ModuleManager;
 import net.aoba.managers.proxymanager.ProxyManager;
-import net.aoba.settings.SettingManager;
 import net.aoba.settings.friends.FriendsList;
 import net.aoba.utils.discord.RPCManager;
-import net.aoba.utils.rotation.RotationManager;
+import net.aoba.managers.rotation.RotationManager;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.MinecraftClient;
@@ -69,6 +65,7 @@ public class AobaClient {
 	public GlobalChat globalChat;
 	public EventManager eventManager;
 	public MacroManager macroManager;
+	public InteractionManager interactionManager;
 
 	public static List<IAddon> addons = new ArrayList<>();
 
@@ -128,6 +125,8 @@ public class AobaClient {
 		LogUtils.getLogger().info("[Aoba] Loading Alts");
 		altManager = new AltManager();
 		proxyManager = new ProxyManager();
+		interactionManager = new InteractionManager();
+		LogUtils.getLogger().info("[Aoba] Initializing Interaction Manager");
 
 		LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 

@@ -33,7 +33,7 @@ import net.aoba.gui.components.StackPanelComponent;
 import net.aoba.gui.components.StringComponent;
 import net.aoba.gui.components.TextBoxComponent;
 import net.aoba.gui.navigation.Window;
-import net.aoba.settings.SettingManager;
+import net.aoba.managers.SettingManager;
 
 /**
  * Represents the Settings window that contains a list of all of the available

@@ -37,7 +37,7 @@ import com.mojang.logging.LogUtils;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.FontChangedEvent;
-import net.aoba.settings.SettingManager;
+import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.StringSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.Font;

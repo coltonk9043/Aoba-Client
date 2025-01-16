@@ -3,7 +3,7 @@ package net.aoba.api;
 import java.util.List;
 import java.util.Optional;
 
-import net.aoba.cmd.Command;
+import net.aoba.command.Command;
 import net.aoba.module.Module;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;

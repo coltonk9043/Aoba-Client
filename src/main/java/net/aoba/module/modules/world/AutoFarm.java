@@ -25,27 +25,20 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.managers.InteractionManager;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
 import net.minecraft.block.*;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 
 public class AutoFarm extends Module implements TickListener
 {
 
-    private FloatSetting radius = FloatSetting.builder().id("autofarm_radius").displayName("Radius")
-            .description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
+    private FloatSetting radius = FloatSetting.builder().id("autofarm_radius").displayName("Radius").description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
 
     public AutoFarm()
     {
@@ -95,15 +88,11 @@ public class AutoFarm extends Module implements TickListener
                     Block block = MC.world.getBlockState(mutableBlockPos).getBlock();
                     BlockState blockState = MC.world.getBlockState(mutableBlockPos);
 
-                    if (block instanceof CropBlock)
+                    if (block instanceof CropBlock crop)
                     {
-                        CropBlock crop = (CropBlock) block;
                         if (!crop.canGrow(MC.world, null, mutableBlockPos, blockState))
                         {
-                            MC.player.networkHandler.sendPacket(
-                                    new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, mutableBlockPos, Direction.NORTH));
-                            MC.player.networkHandler.sendPacket(
-                                    new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, mutableBlockPos, Direction.NORTH));
+                            InteractionManager.destroyBlock(mutableBlockPos);
                         }
                         else
                         {
@@ -112,7 +101,7 @@ public class AutoFarm extends Module implements TickListener
                     }
                     else if (block instanceof FarmlandBlock)
                     {
-                        handleFarmland(mutableBlockPos, x, y, z);
+                        handleFarmland(mutableBlockPos);
                     }
                 }
             }
@@ -121,45 +110,21 @@ public class AutoFarm extends Module implements TickListener
 
     private void fertilizeCrops(BlockPos.Mutable mutableBlockPos)
     {
-        boolean hasBoneMeal = false;
-        for (int i = 0; i < 9; i++)
+        if (InteractionManager.selectItem(stack -> stack.getItem() == Items.BONE_MEAL))
         {
-            ItemStack stack = MC.player.getInventory().getStack(i);
-            if (stack.getItem() == Items.BONE_MEAL)
-            {
-                MC.player.getInventory().selectedSlot = i;
-                hasBoneMeal = true;
-                break;
-            }
-        }
-        if (hasBoneMeal)
-        {
-            BlockHitResult rayTrace = new BlockHitResult(Vec3d.ZERO, Direction.UP, mutableBlockPos, false);
-            MC.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
+            InteractionManager.useItemOnBlock(mutableBlockPos, Hand.MAIN_HAND);
         }
     }
 
-    private void handleFarmland(BlockPos.Mutable mutableBlockPos, int x, int y, int z)
+    private void handleFarmland(BlockPos.Mutable mutableBlockPos)
     {
-        BlockPos.Mutable blockAbovePos = mutableBlockPos.move(Direction.UP);
+        BlockPos blockAbovePos = mutableBlockPos.up();
         Block blockAbove = MC.world.getBlockState(blockAbovePos).getBlock();
         if (blockAbove == Blocks.AIR)
         {
-            boolean hasSeed = false;
-            for (int i = 0; i < 9; i++)
+            if (InteractionManager.selectItem(ModuleUtils::isPlantable))
             {
-                ItemStack stack = MC.player.getInventory().getStack(i);
-                if (ModuleUtils.isPlantable(stack))
-                {
-                    MC.player.getInventory().selectedSlot = i;
-                    hasSeed = true;
-                    break;
-                }
-            }
-            if (hasSeed)
-            {
-                BlockHitResult rayTrace = new BlockHitResult(Vec3d.ZERO, Direction.UP, mutableBlockPos, false);
-                MC.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, rayTrace, 0));
+                InteractionManager.useItemOnBlock(mutableBlockPos, Hand.MAIN_HAND);
             }
         }
     }

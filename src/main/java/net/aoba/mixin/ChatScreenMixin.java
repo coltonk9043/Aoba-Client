@@ -26,9 +26,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.aoba.Aoba;
-import net.aoba.cmd.CommandManager;
-import net.aoba.cmd.GlobalChat;
-import net.aoba.cmd.GlobalChat.ChatType;
+import net.aoba.managers.CommandManager;
+import net.aoba.command.GlobalChat;
+import net.aoba.command.GlobalChat.ChatType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;

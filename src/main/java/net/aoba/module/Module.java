@@ -33,7 +33,7 @@ import net.aoba.AobaClient;
 import net.aoba.interfaces.IClientPlayerInteractionManager;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.settings.Setting;
-import net.aoba.settings.SettingManager;
+import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.FindItemResult;

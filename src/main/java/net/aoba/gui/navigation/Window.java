@@ -30,7 +30,7 @@ import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
 import net.aoba.gui.Size;
 import net.aoba.gui.UIElement;
-import net.aoba.settings.SettingManager;
+import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.RectangleSetting;
 import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.render.Render2D;

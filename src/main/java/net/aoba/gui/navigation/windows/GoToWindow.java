@@ -26,7 +26,7 @@ import net.aoba.managers.pathfinding.FlyPathManager;
 import net.aoba.managers.pathfinding.PathNode;
 import net.aoba.managers.pathfinding.TeleportPathManager;
 import net.aoba.managers.pathfinding.WalkingPathManager;
-import net.aoba.settings.SettingManager;
+import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;

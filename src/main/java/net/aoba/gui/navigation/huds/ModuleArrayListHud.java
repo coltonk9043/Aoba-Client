@@ -11,7 +11,7 @@ import net.aoba.gui.ResizeMode;
 import net.aoba.gui.TextAlign;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.module.Module;
-import net.aoba.settings.SettingManager;
+import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;

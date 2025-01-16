@@ -20,7 +20,7 @@ package net.aoba.mixin;
 
 import com.google.common.collect.Lists;
 import net.aoba.Aoba;
-import net.aoba.cmd.GlobalChat;
+import net.aoba.command.GlobalChat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;

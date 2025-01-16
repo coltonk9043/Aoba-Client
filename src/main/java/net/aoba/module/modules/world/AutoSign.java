@@ -21,7 +21,7 @@
  */
 package net.aoba.module.modules.world;
 
-import net.aoba.cmd.CommandManager;
+import net.aoba.managers.CommandManager;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 

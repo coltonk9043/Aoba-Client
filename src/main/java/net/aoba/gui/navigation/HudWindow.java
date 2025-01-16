@@ -6,7 +6,7 @@ import net.aoba.Aoba;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
-import net.aoba.settings.SettingManager;
+import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;

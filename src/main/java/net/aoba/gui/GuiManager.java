@@ -70,7 +70,7 @@ import net.aoba.gui.navigation.windows.SettingsWindow;
 import net.aoba.gui.navigation.windows.ToggleHudsTab;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.SettingManager;
+import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;

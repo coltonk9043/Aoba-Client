@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.aoba.Aoba;
-import net.aoba.cmd.CommandManager;
+import net.aoba.managers.CommandManager;
 import net.aoba.event.events.GameLeftEvent;
 import net.aoba.event.events.SendMessageEvent;
 import net.minecraft.client.MinecraftClient;
