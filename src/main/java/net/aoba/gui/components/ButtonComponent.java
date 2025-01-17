@@ -48,7 +48,7 @@ public class ButtonComponent extends Component {
 	public ButtonComponent(Runnable onClick) {
 		super();
 
-		this.setMargin(new Margin(8f, 4f, 8f, 4f));
+		this.setMargin(new Margin(8f, 2f, 8f, 2f));
 
 		this.onClick = onClick;
 	}

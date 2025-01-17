@@ -1,109 +1,79 @@
+/*
+ * Aoba Hacked Client
+ * Copyright (C) 2019-2024 coltonk9043
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.aoba.managers.macros;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.LinkedList;
 
-import net.aoba.managers.macros.actions.KeyClickMacroEvent;
 import net.aoba.managers.macros.actions.MacroEvent;
-import net.aoba.managers.macros.actions.MouseClickMacroEvent;
-import net.aoba.managers.macros.actions.MouseMoveMacroEvent;
-import net.aoba.managers.macros.actions.MouseScrollMacroEvent;
 import net.minecraft.client.MinecraftClient;
 
+/**
+ * Represents a Macro that contains a list of events.
+ */
 public class Macro {
 	private String name;
 	private String filePath;
 	private LinkedList<MacroEvent> events;
 
-	public Macro(File file) {
-		this.name = file.getName();
-		this.filePath = file.getPath();
-		this.events = new LinkedList<MacroEvent>();
-		try {
-			DataInputStream in = new DataInputStream(new FileInputStream(filePath));
-
-			String className = null;
-			while ((className = in.readUTF()) != null) {
-				// Read Macros
-				// TODO: I HATTEE writing stuff out in plaintext, but I also hate files that
-				// cant be modified externally.
-				// I can't think of a way to make these macros something that can be easily
-				// modified in Notepad without
-				// making a giant file. If possible, any chance we can write into xml format???
-				MacroEvent event = null;
-				if (className.equals(KeyClickMacroEvent.class.getName())) {
-					event = new KeyClickMacroEvent();
-				} else if (className.equals(MouseClickMacroEvent.class.getName())) {
-					event = new MouseClickMacroEvent();
-				} else if (className.equals(MouseMoveMacroEvent.class.getName())) {
-					event = new MouseMoveMacroEvent();
-				} else if (className.equals(MouseScrollMacroEvent.class.getName())) {
-					event = new MouseScrollMacroEvent();
-				} else
-					System.out.println("Could not find Macro type.");
-
-				if (event != null) {
-					event.read(in);
-					events.add(event);
-				}
-			}
-			in.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			// Read all of the data.
-		}
+	public Macro() {
 	}
 
 	public Macro(LinkedList<MacroEvent> events) {
 		this.events = events;
 	}
 
+	/**
+	 * Getter for the name of the Macro
+	 * 
+	 * @return Name of the Macro
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Getter for the file path of the Macro
+	 * 
+	 * @return File path of the Macro
+	 */
 	public String getFilePath() {
 		return filePath;
 	}
 
+	/**
+	 * Getter for the events in the Macro
+	 * 
+	 * @return LinkedList of events
+	 */
 	public LinkedList<MacroEvent> getEvents() {
 		return events;
 	}
 
+	/**
+	 * Setter for the name of the Macro
+	 * 
+	 * @param name Value to set Macro's name to.
+	 */
 	public void setName(String name) {
 		this.name = name;
 		MinecraftClient MC = MinecraftClient.getInstance();
 		this.filePath = MC.runDirectory + File.separator + "aoba" + File.separator + "macros" + File.separator + name
 				+ ".macro";
-	}
-
-	public void save() {
-		try {
-			File macroFile = new File(filePath);
-			if (!macroFile.exists() && !macroFile.createNewFile()) {
-				throw new IOException("Failed to create config file: " + macroFile.getAbsolutePath());
-			}
-
-			DataOutputStream out = new DataOutputStream(new FileOutputStream(macroFile));
-			MacroEvent event = events.poll();
-			while (event != null) {
-				event.write(out);
-				event = events.poll();
-			}
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }

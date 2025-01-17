@@ -70,11 +70,15 @@ public class MacroWindow extends Window {
 
 		stackPanel.addChild(new StringComponent("Filename:"));
 
+		GridComponent fileNameGrid = new GridComponent();
+		fileNameGrid.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative));
+		fileNameGrid.addColumnDefinition(new GridDefinition(75, RelativeUnit.Absolute));
+
 		filenameText = new TextBoxComponent();
-		stackPanel.addChild(filenameText);
+		fileNameGrid.addChild(filenameText);
 
+		// Save Button
 		saveButton = new ButtonComponent(new Runnable() {
-
 			@Override
 			public void run() {
 				AobaClient aoba = Aoba.getInstance();
@@ -86,17 +90,23 @@ public class MacroWindow extends Window {
 				macrosList.setItemsSource(aoba.macroManager.getMacros());
 			}
 		});
-
+		saveButton.setMargin(new Margin(0f, 2f, 8f, 2f));
 		saveButton.addChild(new StringComponent("Save"));
+		fileNameGrid.addChild(saveButton);
+		stackPanel.addChild(fileNameGrid);
 
-		stackPanel.addChild(saveButton);
+		// Macros List Label
+		StringComponent macroListLabel = new StringComponent("Macros");
+		stackPanel.addChild(macroListLabel);
+		stackPanel.addChild(new SeparatorComponent());
 
 		// Add Macros ItemComponents
 		Function<Macro, UIElement> test = (s -> {
 			GridComponent macroItemGrid = new GridComponent();
 			macroItemGrid.addColumnDefinition(new GridDefinition(1.0f, RelativeUnit.Relative));
-			macroItemGrid.addColumnDefinition(new GridDefinition(50f, RelativeUnit.Absolute));
-			macroItemGrid.addColumnDefinition(new GridDefinition(50f, RelativeUnit.Absolute));
+			macroItemGrid.addColumnDefinition(new GridDefinition(35f, RelativeUnit.Absolute));
+			macroItemGrid.addColumnDefinition(new GridDefinition(35f, RelativeUnit.Absolute));
+			macroItemGrid.setMargin(new Margin(4f, 0f, 4f, 0f));
 
 			macroItemGrid.addChild(new StringComponent(s.getName()));
 

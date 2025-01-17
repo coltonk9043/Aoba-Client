@@ -19,6 +19,9 @@ import net.aoba.managers.macros.actions.MouseClickMacroEvent;
 import net.aoba.managers.macros.actions.MouseMoveMacroEvent;
 import net.aoba.managers.macros.actions.MouseScrollMacroEvent;
 
+/**
+ * Class responsible for recording Macros
+ */
 public class MacroRecorder
 		implements MouseClickListener, MouseMoveListener, MouseScrollListener, KeyDownListener, KeyUpListener {
 
@@ -26,6 +29,9 @@ public class MacroRecorder
 	private long startTime = 0;
 	private boolean recording = false;
 
+	/**
+	 * Begins recording a Macro
+	 */
 	public void startRecording() {
 		if (!recording) {
 			currentMacro = new LinkedList<MacroEvent>();
@@ -40,6 +46,9 @@ public class MacroRecorder
 		}
 	}
 
+	/**
+	 * Stops recording a Macro
+	 */
 	public void stopRecording() {
 		if (recording) {
 			recording = false;
@@ -55,6 +64,9 @@ public class MacroRecorder
 		}
 	}
 
+	/**
+	 * Adds the Macro to the Macro manager.
+	 */
 	public void addToMacroManager() {
 		if (!recording && currentMacro != null) {
 			Macro macro = new Macro(currentMacro);
@@ -96,6 +108,9 @@ public class MacroRecorder
 	@Override
 	public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
 		if (!Aoba.getInstance().guiManager.isClickGuiOpen()) {
+			if (mouseMoveEvent.getX() == 0 && mouseMoveEvent.getY() == 0)
+				return;
+
 			long timeStamp = System.nanoTime() - startTime;
 			currentMacro.add(new MouseMoveMacroEvent(timeStamp, mouseMoveEvent.getX(), mouseMoveEvent.getY()));
 		}
