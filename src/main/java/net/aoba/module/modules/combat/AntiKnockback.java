@@ -33,7 +33,11 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityStatuses;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
 import net.minecraft.util.math.Vec3d;
@@ -46,8 +50,17 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 	private FloatSetting vertical = FloatSetting.builder().id("antiknockback_vertical").displayName("Vertical")
 			.description("Vertical Velocity").defaultValue(0f).minValue(0f).maxValue(1f).step(0.01f).build();
 
-	private BooleanSetting noPush = BooleanSetting.builder().id("antiknockback_vertical").displayName("No Push")
+	private BooleanSetting noPushEntites = BooleanSetting.builder().id("antiknockback_no_push_entities").displayName("No Push Entities")
 			.description("Prevents being pushed by entites.").defaultValue(true).build();
+
+	private BooleanSetting noPushBlocks = BooleanSetting.builder().id("antiknockback_no_push_blocks").displayName("No Push Blocks")
+			.description("Prevents being pushed by blocks.").defaultValue(true).build();
+
+	private BooleanSetting noPushLiquids = BooleanSetting.builder().id("antiknockback_no_push_liquids").displayName("No Push Liquids")
+			.description("Prevents being pushed by liquids.").defaultValue(true).build();
+
+	private BooleanSetting noPushFishhook = BooleanSetting.builder().id("antiknockback_no_push_fishhook").displayName("No Push Fishhook")
+			.description("Prevents being pulled by the fishhook.").defaultValue(true).build();
 
 	public AntiKnockback() {
 		super("AntiKnockback");
@@ -57,11 +70,22 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 
 		this.addSetting(horizontal);
 		this.addSetting(vertical);
-		this.addSetting(noPush);
+		this.addSetting(noPushEntites);
+		this.addSetting(noPushBlocks);
+		this.addSetting(noPushLiquids);
+		this.addSetting(noPushFishhook);
 	}
 
-	public boolean getNoPush() {
-		return this.noPush.getValue();
+	public boolean getNoPushEntities() {
+		return this.noPushEntites.getValue();
+	}
+
+	public boolean getNoPushBlocks() {
+		return this.noPushBlocks.getValue();
+	}
+
+	public boolean getNoPushLiquids() {
+		return this.noPushLiquids.getValue();
 	}
 
 	@Override
@@ -102,6 +126,17 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 				Vec3d knockback = knockbackOptional.get();
 				((IExplosionS2CPacket) packet)
 						.setPlayerKnockback(Optional.of(knockback.multiply(horizontal.getValue())));
+			}
+		}
+
+		//Cancel being launched with a fishing rod.
+		if (packet instanceof EntityStatusS2CPacket entityStatusS2CPacket) {
+			if (entityStatusS2CPacket.getStatus() == EntityStatuses.PULL_HOOKED_ENTITY && noPushFishhook.getValue()) {
+				Entity entity = entityStatusS2CPacket.getEntity(mc.world);
+
+				if (entity instanceof FishingBobberEntity fishingBobberEntity && fishingBobberEntity.getHookedEntity() == mc.player) {
+					readPacketEvent.cancel();
+				}
 			}
 		}
 	}

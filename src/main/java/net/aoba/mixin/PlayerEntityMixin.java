@@ -18,6 +18,8 @@
 
 package net.aoba.mixin;
 
+import net.aoba.module.modules.combat.AntiKnockback;
+import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -81,6 +83,15 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 		if (Aoba.getInstance().moduleManager.reach.state.getValue()) {
 			Reach reach = (Reach) Aoba.getInstance().moduleManager.reach;
 			cir.setReturnValue((double) reach.getReach());
+		}
+	}
+
+	@Inject(method = "isPushedByFluids", at = @At("HEAD"), cancellable = true)
+	private void onIsPushedByFluids(CallbackInfoReturnable<Boolean> cir) {
+		AntiKnockback antiKnockback = (AntiKnockback) Aoba.getInstance().moduleManager.antiknockback;
+
+		if (antiKnockback.state.getValue() && antiKnockback.getNoPushLiquids()) {
+			cir.setReturnValue(false);
 		}
 	}
 }
