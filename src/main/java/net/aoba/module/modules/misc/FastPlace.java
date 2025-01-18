@@ -25,23 +25,28 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.settings.types.FloatSetting;
 
 public class FastPlace extends Module implements TickListener {
-	IMinecraftClient iMC;
+
+	private FloatSetting speed = FloatSetting.builder().id("fastplace_delay").displayName("Delay")
+			.description("Delay at which blocks are placed in ticks..").defaultValue(0f).minValue(0f).maxValue(5f)
+			.step(1f).build();
 
 	public FastPlace() {
 		super("FastPlace");
 
 		this.setCategory(Category.of("Misc"));
 		this.setDescription("Places blocks exceptionally fast");
+
+		this.addSetting(speed);
 	}
 
 	@Override
 	public void onDisable() {
-		IMC.setItemUseCooldown(4);
+		IMC.setItemUseCooldown(5);
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
@@ -57,7 +62,10 @@ public class FastPlace extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		IMC.setItemUseCooldown(0);
+		int currentItemCooldown = IMC.getItemUseCooldown();
+		int speedValue = speed.getValue().intValue();
+		if (currentItemCooldown == 0 || currentItemCooldown > speedValue)
+			IMC.setItemUseCooldown(speedValue);
 	}
 
 	@Override

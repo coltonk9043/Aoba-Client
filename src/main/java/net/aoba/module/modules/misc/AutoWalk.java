@@ -27,13 +27,20 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.settings.types.BooleanSetting;
 
 public class AutoWalk extends Module implements TickListener {
+	private BooleanSetting automaticJump = BooleanSetting.builder().id("autowalk_automatic_jump")
+			.displayName("Automatically Jump").description("Automatically jumps when you hit a wall.")
+			.defaultValue(true).build();
+
 	public AutoWalk() {
 		super("AutoWalk");
 
 		this.setCategory(Category.of("Misc"));
-		this.setDescription("Automatically walks for you.");
+		this.setDescription("Automatically forward walks for you.");
+
+		this.addSetting(automaticJump);
 	}
 
 	@Override
@@ -54,11 +61,13 @@ public class AutoWalk extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-
+		MC.options.forwardKey.setPressed(true);
+		if (MC.player.horizontalCollision && MC.player.isOnGround())
+			MC.player.jump();
 	}
 
 	@Override
 	public void onTick(Post event) {
-		MC.options.forwardKey.setPressed(true);
+
 	}
 }
