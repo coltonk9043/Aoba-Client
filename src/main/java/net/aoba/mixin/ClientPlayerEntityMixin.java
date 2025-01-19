@@ -18,6 +18,7 @@
 
 package net.aoba.mixin;
 
+import net.aoba.module.modules.combat.AntiKnockback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -155,5 +156,14 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		SendMovementPacketEvent.Post sendMovementPacketPostEvent = new SendMovementPacketEvent.Post();
 
 		Aoba.getInstance().eventManager.Fire(sendMovementPacketPostEvent);
+	}
+
+	@Inject(method = "pushOutOfBlocks", at = @At("HEAD"), cancellable = true)
+	private void onPushOutOfBlocks(double x, double z, CallbackInfo ci) {
+		AntiKnockback antiKnockback = (AntiKnockback) Aoba.getInstance().moduleManager.antiknockback;
+
+		if (antiKnockback.state.getValue() && antiKnockback.getNoPushBlocks()) {
+			ci.cancel();
+		}
 	}
 }

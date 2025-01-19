@@ -42,9 +42,9 @@ public abstract class LivingEntityMixin extends EntityMixin {
 	}
 
 	@Inject(method = "pushAwayFrom", at = @At("HEAD"), cancellable = true)
-	private void hookNoPush(CallbackInfo info) {
+	private void onPushAwayFrom(CallbackInfo info) {
 		AntiKnockback antiKnockback = Aoba.getInstance().moduleManager.antiknockback;
-		if (antiKnockback.state.getValue() && antiKnockback.getNoPush())
+		if (antiKnockback.state.getValue() && antiKnockback.getNoPushEntities())
 			info.cancel();
 	}
 }
