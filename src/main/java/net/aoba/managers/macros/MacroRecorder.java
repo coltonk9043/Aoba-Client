@@ -85,8 +85,8 @@ public class MacroRecorder
 
 	@Override
 	public void onKeyUp(KeyUpEvent event) {
-		// Don't record the Aoba GUI button.
 		if (event.GetKey() != Aoba.getInstance().guiManager.clickGuiButton.getValue().getCode()
+				&& event.GetKey() != 256
 				&& !Aoba.getInstance().guiManager.isClickGuiOpen()) {
 			long timeStamp = System.nanoTime() - startTime;
 			currentMacro.add(new KeyClickMacroEvent(timeStamp, event.GetKey(), event.GetScanCode(), event.GetAction(),
@@ -96,14 +96,15 @@ public class MacroRecorder
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
-		// Don't record the Aoba GUI button.
 		if (event.GetKey() != Aoba.getInstance().guiManager.clickGuiButton.getValue().getCode()
+				&& event.GetKey() != 256
 				&& !Aoba.getInstance().guiManager.isClickGuiOpen()) {
 			long timeStamp = System.nanoTime() - startTime;
 			currentMacro.add(new KeyClickMacroEvent(timeStamp, event.GetKey(), event.GetScanCode(), event.GetAction(),
 					event.GetModifiers()));
 		}
 	}
+
 
 	@Override
 	public void onMouseScroll(MouseScrollEvent event) {

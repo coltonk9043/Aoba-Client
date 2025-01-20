@@ -41,7 +41,7 @@ public abstract class MacroEvent {
 	/**
 	 * Reads the data from a DataInputStream
 	 * 
-	 * @param fs DataInputStream to read from.
+	 * @param in DataInputStream to read from.
 	 */
 	public void read(DataInputStream in) throws IOException {
 		timestamp = in.readLong();
