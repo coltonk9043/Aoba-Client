@@ -130,6 +130,14 @@ public class AobaClient {
 
 		LogUtils.getLogger().info("[Aoba] Aoba-chan initialized and ready to play!");
 
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				endClient();
+			} catch (Exception e) {
+				LogUtils.getLogger().error("[Aoba] Error during shutdown: ", e);
+			}
+		}));
+
 		SettingManager.loadGlobalSettings();
 		SettingManager.loadSettings();
 		globalChat = new GlobalChat();
