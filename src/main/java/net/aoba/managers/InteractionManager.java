@@ -29,9 +29,13 @@ public class InteractionManager
 
     public static void useItemOnBlock(BlockPos blockPos, Hand hand)
     {
-        BlockHitResult rayTrace = new BlockHitResult(Vec3d.ZERO, Direction.UP, blockPos, false);
+        Vec3d playerPos = MC.player.getPos();
+        Vec3d lookDirection = new Vec3d(blockPos.getX() - playerPos.x, blockPos.getY() - playerPos.y, blockPos.getZ() - playerPos.z);
+
+        BlockHitResult rayTrace = new BlockHitResult(playerPos.add(lookDirection), Direction.UP, blockPos, false);
         MC.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(hand, rayTrace, 0));
     }
+
 
     public static boolean selectItem(Predicate<ItemStack> condition)
     {

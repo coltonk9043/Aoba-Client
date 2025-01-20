@@ -118,7 +118,7 @@ public class MacroManager {
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream(filePath));
 
-			// Read until it cannot be read any more.
+			// Read until it cannot be read anymore.
 			String className = null;
 			while ((className = in.readUTF()) != null) {
 				// Read Macros
@@ -128,7 +128,7 @@ public class MacroManager {
 						// Instantiate the class from the type found in the 'MACRO_NAME_TO_CLASS'
 						// HashMap.
 						Class<?> macroClass = MACRO_NAME_TO_CLASS.get(className);
-						event = (MacroEvent) macroClass.getDeclaredConstructor().newInstance(null);
+						event = (MacroEvent) macroClass.getDeclaredConstructor().newInstance((Object[]) null);
 
 						// If the Macro exists, read its content.
 						if (event != null) {

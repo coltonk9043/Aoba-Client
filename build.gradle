@@ -25,6 +25,15 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+
+    maven {
+        name = "meteor-maven"
+        url = uri("https://maven.meteordev.org/releases")
+    }
+    maven {
+        name = "meteor-maven-snapshots"
+        url = uri("https://maven.meteordev.org/snapshots")
+    }
 }
 
 configurations {
@@ -41,13 +50,12 @@ dependencies {
     modCompileOnly("maven.modrinth:lithium:${project.lithium_version}") { transitive = false }
     modCompileOnly("maven.modrinth:iris:${project.iris_version}") { transitive = false }
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modImplementation("maven.modrinth:sodium:${project.sodium_version}")
+    modImplementation("meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT")
 
-    modImplementation files("libs/baritone-standalone-fabric-1.13.0.jar")
-    implementation "dev.babbaj:nether-pathfinder:1.4.1"
+    implementation "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"
 
     libImpl("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }
     libImpl("io.netty:netty-codec-socks:${project.netty_version}") { transitive = false }

@@ -82,9 +82,7 @@ public class AutoFarm extends Module implements TickListener
             {
                 for (int z = -rad; z < rad; z++)
                 {
-                    mutableBlockPos.set(MC.player.getBlockPos().getX() + x,
-                            MC.player.getBlockPos().getY() + y,
-                            MC.player.getBlockPos().getZ() + z);
+                    mutableBlockPos.set(x, y, z);
                     Block block = MC.world.getBlockState(mutableBlockPos).getBlock();
                     BlockState blockState = MC.world.getBlockState(mutableBlockPos);
 
