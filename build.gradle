@@ -42,33 +42,41 @@ configurations {
 }
 
 dependencies {
-    // To change the versions see the gradle.properties file
+    // Minecraft and Mappings
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+
+    // Fabric API and Loader
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Rendering Mods
     modCompileOnly("maven.modrinth:sodium:${project.sodium_version}") { transitive = false }
     modCompileOnly("maven.modrinth:lithium:${project.lithium_version}") { transitive = false }
     modCompileOnly("maven.modrinth:iris:${project.iris_version}") { transitive = false }
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
     modImplementation("maven.modrinth:sodium:${project.sodium_version}")
     modImplementation("meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT")
 
+    // Custom Implementations
     implementation "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"
 
+    // Library Dependencies
     libImpl("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }
     libImpl("io.netty:netty-codec-socks:${project.netty_version}") { transitive = false }
 
+    // Add libImpl dependencies to implementation
     configurations.libImpl.dependencies.each {
         implementation(it)
     }
 
+    // Add modImpl dependencies to modImplementation and include them
     configurations.modImpl.dependencies.each {
         modImplementation(it)
         include(it)
     }
 }
+
 
 processResources {
     inputs.property "version", project.version

@@ -2,16 +2,17 @@
 	"schemaVersion": 1,
 	"id": "aoba",
 	"version": "1.4.4",
-	"name": "Aoba Hacked Client",
-	"description": "A Minecraft Fabric 1.21.3 utility mod.",
+	"name": "Aoba Client",
+	"description": "A Minecraft Fabric 1.21.4 utility mod.",
 	"authors": [
-		"Cocolots"
+		"Cocolots",
+		"cvs0"
 	],
 	"contact": {
 		"homepage": "https://aobaclient.com",
-		"sources": "https://github.com/coltonk9043/Aoba-MC-Hacked-Client",
-		"issues": "https://github.com/coltonk9043/Aoba-MC-Hacked-Client/issues",
-		"discord": "https://discord.gg/bVwuXQea"
+		"sources": "https://github.com/coltonk9043/Aoba-Client",
+		"issues": "https://github.com/coltonk9043/Aoba-Client/issues",
+		"discord": "https://discord.gg/jEu6WfnyR6"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/aoba/icon.png",
@@ -27,7 +28,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.16.9",
-		"minecraft": "~1.21.3",
+		"minecraft": "~1.21.4",
 		"java": ">=21",
 		"fabric-api": "*"
 	}

@@ -36,6 +36,7 @@ We want to stress that we have **NEVER** used, and will **NEVER** use, platforms
 - **Customizable ClickGUI**: Navigate an interactive GUI with movable, pinnable windows and detailed customization options.  
 - **Extensive Hacks Library**: Explore a variety of mods with rebindable keybinds to suit your preferences.  
 - **Addon System**: Expand the client with custom-made addons using our flexible addon template, inspired by the Meteor Client.  
+- **Proxy Manager**: Manage proxy connections within Minecraft.
 
 ---
 
