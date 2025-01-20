@@ -41,8 +41,6 @@ public class HudOptionsWindow extends Window {
 		// Keybinds Header
 		stackPanel.addChild(new StringComponent("Keybinds", GuiManager.foregroundColor.getValue(), true));
 
-		stackPanel.addChild(new CheckboxComponent(GuiManager.enableCustomTitle));
-
 		KeybindComponent clickGuiKeybindComponent = new KeybindComponent(Aoba.getInstance().guiManager.clickGuiButton);
 
 		stackPanel.addChild(clickGuiKeybindComponent);
@@ -67,6 +65,8 @@ public class HudOptionsWindow extends Window {
 				.addChild(new StringComponent("GUI / HUD Responsiveness", GuiManager.foregroundColor.getValue(), true));
 
 		stackPanel.addChild(new SliderComponent(GuiManager.dragSmoothening));
+		stackPanel.addChild(new CheckboxComponent(GuiManager.enableCustomTitle));
+		stackPanel.addChild(new CheckboxComponent(GuiManager.enableTooltips));
 
 		this.addChild(stackPanel);
 	}

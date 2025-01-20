@@ -97,6 +97,9 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public static BooleanSetting enableCustomTitle = BooleanSetting.builder().id("enable_custom_title")
 			.displayName("Enable Custom Title Screen").defaultValue(true).build();
 
+	public static BooleanSetting enableTooltips = BooleanSetting.builder().id("enable_tooltips")
+			.displayName("Enable Tooltips").defaultValue(true).build();
+
 	public static ColorSetting foregroundColor = ColorSetting.builder().id("hud_foreground_color")
 			.displayName("GUI Foreground Color").description("Color of the foreground.")
 			.defaultValue(new Color(238, 21, 247)).build();
@@ -343,7 +346,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		}
 
 		// Draw Tooltip on top of all UI elements
-		if (tooltip != null) {
+		if (tooltip != null && GuiManager.enableTooltips.getValue()) {
 			int mouseX = (int) MC.mouse.getX();
 			int mouseY = (int) MC.mouse.getY();
 			int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
