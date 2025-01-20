@@ -28,7 +28,7 @@ public class EntitlementToken {
 	/**
 	 * Returns an instance of an AuthToken from JSON text.
 	 * 
-	 * @param json JSON text to parse.
+	 * @param object JSON text to parse.
 	 * @return AuthToken object with properties filled from JSON.
 	 */
 	public static EntitlementToken fromJson(JsonObject object) {

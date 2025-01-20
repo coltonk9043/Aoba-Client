@@ -1,3 +1,11 @@
+/*
+ * Aoba Hacked Client
+ * Copyright (C) 2019-2024 coltonk9043
+ *
+ * Licensed under the GNU General Public License, Version 3 or later.
+ * See <http://www.gnu.org/licenses/>.
+ */
+
 package net.aoba.utils.system;
 
 import static net.aoba.AobaClient.MC;
@@ -5,8 +13,6 @@ import static net.aoba.AobaClient.MC;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class HWIDUtil {
-	// I know its called getHWID, we just arent using the HWID anymore and i havent
-	// renamed it.
 	public static String getHWID() {
 		return DigestUtils.sha256Hex(DigestUtils.sha256Hex(System.getenv("os") + System.getProperty("os.name")
 				+ System.getProperty("os.arch") + System.getProperty("user.name") + System.getenv("SystemRoot")
