@@ -107,21 +107,21 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 	@Override
 	public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
 		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
-			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.onMouseMove(mouseMoveEvent));
+			tabs.reversed().stream().toList().forEach(s -> s.onMouseMove(mouseMoveEvent));
 		}
 	}
 
 	@Override
 	public void onMouseClick(MouseClickEvent mouseClickEvent) {
 		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
-			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.onMouseClick(mouseClickEvent));
+			tabs.reversed().stream().toList().forEach(s -> s.onMouseClick(mouseClickEvent));
 		}
 	}
 
 	@Override
 	public void onMouseScroll(MouseScrollEvent event) {
 		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
-			tabs.reversed().stream().collect(Collectors.toList()).forEach(s -> s.onMouseScroll(event));
+			tabs.reversed().stream().toList().forEach(s -> s.onMouseScroll(event));
 		}
 	}
 }

@@ -11,6 +11,7 @@ package net.aoba.command;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -110,6 +111,8 @@ public class GlobalChat {
 						socket.close();
 					} catch (UnknownHostException e) {
 						LogUtils.getLogger().error("Cannot connect to chat server");
+					} catch (ConnectException e) {
+						LogUtils.getLogger().error("Error connecting to chat server: ", e);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

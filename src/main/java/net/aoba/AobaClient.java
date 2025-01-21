@@ -67,6 +67,7 @@ public class AobaClient
     public GlobalChat globalChat;
     public EventManager eventManager;
     public MacroManager macroManager;
+    public EntityManager entityManager;
 
     public static List<IAddon> addons = new ArrayList<>();
     private static Logger LOGGER;
@@ -131,6 +132,9 @@ public class AobaClient
 
         LOGGER.info("[Aoba] Initializing Combat Manager");
         combatManager = new CombatManager();
+
+        LOGGER.info("[Aoba] Initializing Entity Manager");
+        entityManager = new EntityManager();
 
         LOGGER.info("[Aoba] Initializing Macro Manager");
         macroManager = new MacroManager();
