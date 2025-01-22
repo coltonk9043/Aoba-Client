@@ -1,7 +1,5 @@
 package net.aoba.mixin;
 
-import net.aoba.module.modules.movement.Freecam;
-import net.aoba.module.modules.render.NoRender;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -10,6 +8,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
+import net.aoba.module.modules.movement.Freecam;
+import net.aoba.module.modules.render.NoRender;
 import net.minecraft.block.enums.CameraSubmersionType;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
@@ -33,7 +34,8 @@ public class CameraMixin {
 			@At("HEAD") }, method = "update(Lnet/minecraft/world/BlockView;Lnet/minecraft/entity/Entity;ZZF)V", cancellable = true)
 	private void onCameraUdate(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView,
 			float tickDelta, CallbackInfo ci) {
-		if (Aoba.getInstance().moduleManager.freecam.state.getValue()) {
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba != null && aoba.moduleManager.freecam.state.getValue()) {
 			this.ready = true;
 			this.area = area;
 			this.lastTickDelta = tickDelta;
@@ -45,8 +47,12 @@ public class CameraMixin {
 	@Inject(at = {
 			@At("HEAD") }, method = "getSubmersionType()Lnet/minecraft/block/enums/CameraSubmersionType;", cancellable = true)
 	private void onGetSubmersionType(CallbackInfoReturnable<CameraSubmersionType> cir) {
-		Freecam freecam = Aoba.getInstance().moduleManager.freecam;
-		NoRender norender = Aoba.getInstance().moduleManager.norender;
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba == null)
+			return;
+
+		Freecam freecam = aoba.moduleManager.freecam;
+		NoRender norender = aoba.moduleManager.norender;
 
 		if (freecam.state.getValue() || (norender.state.getValue() && norender.getNoLiquidOverlay())) {
 			cir.setReturnValue(CameraSubmersionType.NONE);

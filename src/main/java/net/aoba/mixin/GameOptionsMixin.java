@@ -27,6 +27,9 @@ public class GameOptionsMixin {
 			return;
 
 		AobaClient aoba = Aoba.getInstance();
+		if (aoba == null)
+			return;
+
 		if (aoba.moduleManager.fullbright.state.getValue() || aoba.moduleManager.xray.state.getValue()) {
 			cir.setReturnValue(fullbrightOption);
 		}
