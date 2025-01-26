@@ -18,9 +18,6 @@
 
 package net.aoba.mixin;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.render.RenderTickCounter;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,11 +26,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.module.modules.render.NoRender;
+import net.aoba.utils.render.Render2D;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -50,7 +52,8 @@ public abstract class GameRendererMixin {
 	@Inject(at = { @At("HEAD") }, method = {
 			"bobView(Lnet/minecraft/client/util/math/MatrixStack;F)V" }, cancellable = true)
 	private void onBobViewWhenHurt(MatrixStack matrixStack, float f, CallbackInfo ci) {
-		if (Aoba.getInstance().moduleManager.norender.state.getValue()) {
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba != null && aoba.moduleManager.norender.state.getValue()) {
 			ci.cancel();
 		}
 	}
@@ -58,14 +61,17 @@ public abstract class GameRendererMixin {
 	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F", ordinal = 0), method = {
 			"renderWorld(Lnet/minecraft/client/render/RenderTickCounter;)V" })
 	private float nauseaLerp(float delta, float first, float second) {
-		if (Aoba.getInstance().moduleManager.norender.state.getValue()) {
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba != null && aoba.moduleManager.norender.state.getValue())
 			return 0;
-		}
+
 		return MathHelper.lerp(delta, first, second);
 	}
 
-	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = {"ldc=hand"}))
-	private void onRenderWorld(RenderTickCounter tickCounter, CallbackInfo ci, @Local(ordinal = 2) Matrix4f matrix4f3, @Local(ordinal = 1) float tickDelta, @Local MatrixStack matrixStack) {
+	@Inject(method = "renderWorld", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = {
+			"ldc=hand" }))
+	private void onRenderWorld(RenderTickCounter tickCounter, CallbackInfo ci, @Local(ordinal = 2) Matrix4f matrix4f3,
+			@Local(ordinal = 1) float tickDelta, @Local MatrixStack matrixStack) {
 		if (client == null && client.world == null && client.player == null) {
 			return;
 		}
@@ -75,7 +81,11 @@ public abstract class GameRendererMixin {
 
 	@Inject(method = "showFloatingItem", at = @At("HEAD"), cancellable = true)
 	private void onShowFloatingItem(ItemStack floatingItem, CallbackInfo info) {
-		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba == null)
+			return;
+
+		NoRender norender = (NoRender) aoba.moduleManager.norender;
 		if (floatingItem.getItem() == Items.TOTEM_OF_UNDYING && norender.state.getValue()
 				&& norender.getNoTotemAnimation()) {
 			info.cancel();
