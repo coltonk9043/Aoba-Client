@@ -64,7 +64,7 @@ public class AddonScreen extends Screen {
 		this.descriptionWidget = new TextFieldWidget(textRenderer, 282, 112, this.width - 314, this.height - 160,
 				Text.of(""));
 		descriptionWidget.setEditable(false);
-		descriptionWidget.setFocusUnlocked(false);
+		descriptionWidget.setFocusUnlocked(true);
 		this.addDrawableChild(this.descriptionWidget);
 
 		// Set the selected addon if any exist.
@@ -88,17 +88,20 @@ public class AddonScreen extends Screen {
 
 		// Draw Addon Information
 		if (selectedAddon != null) {
-			// Although selected addon is TECHNICALLY what we need... we need an icon
-			// identifier :(
-			AddonSelectionList.NormalEntry entry = (AddonSelectionList.NormalEntry) addonListSelector
-					.getSelectedOrNull();
+			AddonSelectionList.NormalEntry entry = (AddonSelectionList.NormalEntry) addonListSelector.getSelectedOrNull();
 			if (entry != null) {
-				drawContext.drawTexture(RenderLayer::getGuiTextured, entry.getIcon(), 282, 68, 0, 0, 48, 48, 48, 48);
+				// Draw the border
+				drawContext.fill(281, 59, 331, 109, 0xFFFFFFFF);
+				drawContext.fill(282, 60, 330, 108, 0xFF000000);
+
+				// Draw the texture
+				drawContext.drawTexture(RenderLayer::getGuiTextured, entry.getIcon(), 282, 60, 0, 0, 48, 48, 48, 48);
 			}
 			drawContext.drawTextWithShadow(textRenderer, selectedAddon.getName(), 338, 68, 16777215);
 			drawContext.drawTextWithShadow(textRenderer, selectedAddon.getVersion(), 338, 80, 16777215);
 			drawContext.drawTextWithShadow(textRenderer, "By " + selectedAddon.getAuthor(), 338, 92, 16777215);
 		}
+
 	}
 
 	public void setSelected(AddonSelectionList.NormalEntry selected) {

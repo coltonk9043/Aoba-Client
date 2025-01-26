@@ -26,8 +26,7 @@ public class AobaCreditsScreen extends Screen {
 	protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(
 			AOBA_PANORAMA_RENDERER);
 
-	private static final List<String> CONTRIBUTORS = Arrays.asList("coltonk9043", "cvs0", "Sukikoo", "Xateser",
-			"Huckle");
+	private static final List<String> CONTRIBUTORS = Arrays.asList("coltonk9043", "cvs0", "Tewxx", "OsakiTsukiko", "Logging4J", "TangyKiwi", "Xatsec", "BatchDebug");
 
 	private int currentContributorIndex = 0;
 	private float animationProgress = 0.0f;

@@ -100,9 +100,13 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 			// Draws the strings onto the screen.
 			TextRenderer textRenderer = this.mc.textRenderer;
 
+			drawContext.fill(x + 7, y + 7, x + 41, y + 41, 0xFFFFFFFF);
+			drawContext.fill(x + 8, y + 8, x + 40, y + 40, 0xFF000000);
+
 			drawContext.drawTexture(RenderLayer::getGuiTextured, iconIdentifier, x + 8, y + 8, 0, 0, 32, 32, 32, 32);
 			drawContext.drawTextWithShadow(textRenderer, addon.getName(), (x + 54), y + 10, 16777215);
 			drawContext.drawTextWithShadow(textRenderer, addon.getDescription(), (x + 54), y + 22, 16777215);
+
 		}
 
 		@Override
