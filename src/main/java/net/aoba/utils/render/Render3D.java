@@ -9,19 +9,12 @@
 package net.aoba.utils.render;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.aoba.gui.colors.Color;
-import net.aoba.mixin.interfaces.ICuboid;
-import net.aoba.mixin.interfaces.IModelPart;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgramKeys;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelPart.Cuboid;
-import net.minecraft.client.model.ModelPart.Quad;
-import net.minecraft.client.model.ModelPart.Vertex;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Tessellator;
@@ -30,6 +23,7 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
@@ -41,6 +35,8 @@ import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 
 public class Render3D {
+	private static MinecraftClient MC = MinecraftClient.getInstance();
+
 	public static void draw3DBox(MatrixStack matrixStack, Box box, Color color, float lineThickness) {
 		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
@@ -161,21 +157,18 @@ public class Render3D {
 
 	public static void drawEntityModel(MatrixStack matrixStack, float partialTicks, Entity entity, Color color,
 			float lineWidth) {
-		EntityRenderer<?, ?> renderer = MinecraftClient.getInstance().getEntityRenderDispatcher().getRenderer(entity);
+		EntityRenderer<?, ?> renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
 
 		if (entity instanceof LivingEntity) {
 			matrixStack.push();
 
 			LivingEntity livingEntity = (LivingEntity) entity;
-			LivingEntityRenderer<?, ?, ?> leRenderer = (LivingEntityRenderer<?, ?, ?>) renderer;
-			EntityModel<?> model = leRenderer.getModel();
-
+			LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> leRenderer = (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) renderer;
+			EntityModel<LivingEntityRenderState> model = leRenderer.getModel();
+			LivingEntityRenderState renderState = leRenderer.getAndUpdateRenderState(livingEntity, partialTicks);
+			renderState.baby = livingEntity.isBaby();
+			model.setAngles(renderState);
 			Direction sleepDirection = livingEntity.getSleepingDirection();
-			// Setup transforms
-
-			// model.handSwingProgress = livingEntity.getHandSwingProgress(partialTicks);
-			// model.riding = livingEntity.hasVehicle();
-			// model.child = livingEntity.isBaby();
 
 			// Interpolate entity position and body rotations.
 			Vec3d interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks);
@@ -242,16 +235,9 @@ public class Render3D {
 			RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 			// Draw Vertices
-			boolean hasVertices = false;
 			BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
-			Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
-			for (ModelPart part : model.getParts()) {
-				hasVertices |= buildModelPartVertices(matrix4f, entity, part, bufferBuilder);
-			}
-
-			if (hasVertices)
-				BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+			model.render(matrixStack, bufferBuilder, 0, 0);
+			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
 			RenderSystem.setShaderColor(1, 1, 1, 1);
 			RenderSystem.enableCull();
@@ -280,48 +266,6 @@ public class Render3D {
 		default:
 			return 0.0f;
 		}
-	}
-
-	private static boolean buildModelPartVertices(Matrix4f matrix4f, Entity entity, ModelPart part,
-			BufferBuilder bufferBuilder) {
-		if (!part.visible)
-			return false;
-
-		// ModelPart is a final class so it cannot be cast to an IModelPart.
-		// Casting it to an object tricks the compiler to cast it.
-		IModelPart iModelPart = (IModelPart) (Object) part;
-
-		MatrixStack modelMatrixStack = new MatrixStack();
-		part.rotate(modelMatrixStack);
-
-		boolean result = false;
-		for (Cuboid cuboid : iModelPart.getCuboids()) {
-			result |= renderCuboid(matrix4f, modelMatrixStack.peek().getPositionMatrix(), bufferBuilder, cuboid);
-		}
-
-		for (ModelPart child : iModelPart.getChildren().values()) {
-			result |= buildModelPartVertices(matrix4f, entity, child, bufferBuilder);
-		}
-
-		return result;
-	}
-
-	private static boolean renderCuboid(Matrix4f transformation, Matrix4f partTransform, BufferBuilder bufferBuilder,
-			Cuboid cuboid) {
-		boolean result = false;
-		Vector3f vector3f = new Vector3f();
-		ICuboid iCuboid = (ICuboid) cuboid;
-		for (Quad quad : iCuboid.getSides()) {
-			for (Vertex vertex : quad.vertices()) {
-				float i = vertex.pos().x() / 16.0f;
-				float j = vertex.pos().y() / 16.0f;
-				float k = vertex.pos().z() / 16.0f;
-				partTransform.transformPosition(i, j, k, vector3f);
-				bufferBuilder.vertex(transformation, vector3f.x(), vector3f.y(), vector3f.z());
-				result |= true;
-			}
-		}
-		return result;
 	}
 
 	private static void buildLine3d(MatrixStack matrixStack, BufferBuilder bufferBuilder, float x1, float y1, float z1,

@@ -58,9 +58,9 @@ import net.aoba.gui.navigation.windows.HudOptionsWindow;
 import net.aoba.gui.navigation.windows.MacroWindow;
 import net.aoba.gui.navigation.windows.SettingsWindow;
 import net.aoba.gui.navigation.windows.ToggleHudsTab;
+import net.aoba.managers.SettingManager;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
@@ -69,6 +69,8 @@ import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.input.Input;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.Framebuffer;
+import net.minecraft.client.gl.SimpleFramebuffer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -123,6 +125,8 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public static RainbowColor rainbowColor = new RainbowColor();
 	public static RandomColor randomColor = new RandomColor();
 
+	private Framebuffer guiFrameBuffer;
+
 	public ModuleSelectorHud moduleSelector;
 	public ArmorHud armorHud;
 	public RadarHud radarHud;
@@ -139,6 +143,10 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public GuiManager() {
 		clickGuiNavBar = new NavigationBar();
 
+		net.minecraft.client.util.Window window = MC.getWindow();
+
+		guiFrameBuffer = new SimpleFramebuffer(window.getWidth(), window.getHeight(), false);
+
 		SettingManager.registerGlobalSetting(borderColor);
 		SettingManager.registerGlobalSetting(backgroundColor);
 		SettingManager.registerGlobalSetting(foregroundColor);
@@ -148,6 +156,10 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(Render2DListener.class, this);
+	}
+
+	public Framebuffer getFrameBuffer() {
+		return guiFrameBuffer;
 	}
 
 	public void Initialize() {
