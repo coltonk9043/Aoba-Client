@@ -25,24 +25,24 @@ public class Aimbot extends Module implements TickListener {
 
 	private LivingEntity temp = null;
 
-	private BooleanSetting targetAnimals = BooleanSetting.builder().id("aimbot_target_mobs").displayName("Target Mobs")
+	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("aimbot_target_mobs").displayName("Target Mobs")
 			.description("Target mobs.").defaultValue(false).build();
 
-	private BooleanSetting targetPlayers = BooleanSetting.builder().id("aimbot_target_players")
+	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("aimbot_target_players")
 			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
 
-	private BooleanSetting targetFriends = BooleanSetting.builder().id("aimbot_target_friends")
+	private final BooleanSetting targetFriends = BooleanSetting.builder().id("aimbot_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(true).build();
 
-	private FloatSetting frequency = FloatSetting.builder().id("aimbot_frequency").displayName("Ticks")
+	private final FloatSetting frequency = FloatSetting.builder().id("aimbot_frequency").displayName("Ticks")
 			.description("How frequent the aimbot updates (Lower = Laggier)").defaultValue(1.0f).minValue(1.0f)
 			.maxValue(1.0f).step(1.0f).build();
 
-	private FloatSetting radius = FloatSetting.builder().id("aimbot_radius").displayName("Radius")
+	private final FloatSetting radius = FloatSetting.builder().id("aimbot_radius").displayName("Radius")
 			.description("Radius that the aimbot will lock onto a target.").defaultValue(64.0f).minValue(1.0f)
 			.maxValue(256.0f).step(1.0f).build();
 
-	private FloatSetting rotationSpeed = FloatSetting.builder().id("aimbot_rotation_speed")
+	private final FloatSetting rotationSpeed = FloatSetting.builder().id("aimbot_rotation_speed")
 			.displayName("Rotation Speed").description("Speed of the rotation.").defaultValue(1.0f).minValue(0.1f)
 			.maxValue(5.0f).step(0.1f).build();
 

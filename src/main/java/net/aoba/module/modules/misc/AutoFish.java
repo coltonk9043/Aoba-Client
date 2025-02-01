@@ -22,10 +22,10 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 
 public class AutoFish extends Module implements ReceivePacketListener {
-	private BooleanSetting autoSwitch = BooleanSetting.builder().id("autofish_autoswitch").displayName("Auto Switch")
+	private final BooleanSetting autoSwitch = BooleanSetting.builder().id("autofish_autoswitch").displayName("Auto Switch")
 			.description("Automatically switch to fishing rod before casting.").defaultValue(true).build();
 
-	private BooleanSetting autoToggle = BooleanSetting.builder().id("autofish_autotoggle").displayName("Auto Toggle")
+	private final BooleanSetting autoToggle = BooleanSetting.builder().id("autofish_autotoggle").displayName("Auto Toggle")
 			.description("Automatically toggles off if no fishing rod is found in the hotbar.").defaultValue(false)
 			.build();
 

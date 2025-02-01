@@ -14,18 +14,18 @@ import net.fabricmc.api.ModInitializer;
  * Initializes and provides access to the Aoba Client singleton.
  */
 public class Aoba implements ModInitializer {
-	private static AobaClient instance;
+	private static AobaClient INSTANCE;
 
 	@Override
 	public void onInitialize() {
-		instance = new AobaClient();
-		instance.Initialize();
+		INSTANCE = new AobaClient();
+		INSTANCE.Initialize();
 	}
 
 	/**
 	 * @return Singleton instance of AobaClient.
 	 */
 	public static AobaClient getInstance() {
-		return instance;
+		return INSTANCE;
 	}
 }

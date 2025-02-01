@@ -37,11 +37,6 @@ public class DamageUtils {
 		return blockState.getCollisionShape(MC.world, blockPos).raycast(context.start(), context.end(), blockPos);
 	};
 
-	public static float crystalDamage(LivingEntity target, Vec3d targetPos, Box targetBox, Vec3d explosionPos,
-			RaycastFactory raycastFactory) {
-		return explosionDamage(target, targetPos, targetBox, explosionPos, 12f, raycastFactory);
-	}
-
 	public static float crystalDamage(LivingEntity target, Vec3d crystal) {
 		return explosionDamage(target, crystal, 12f, false);
 	}

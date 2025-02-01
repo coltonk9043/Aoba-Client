@@ -18,9 +18,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 
 public class Sneak extends Module implements TickListener {
-
-	private final MinecraftClient MC = MinecraftClient.getInstance();
-
 	public Sneak() {
 		super("Sneak");
 		this.setCategory(Category.of("Movement"));

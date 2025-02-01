@@ -20,7 +20,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class Spider extends Module implements TickListener {
 
-	private FloatSetting speed = FloatSetting.builder().id("spider_speed").displayName("Speed")
+	private final FloatSetting speed = FloatSetting.builder().id("spider_speed").displayName("Speed")
 			.description("Speed that the player climbs up blocks.").defaultValue(0.1f).minValue(0.05f).maxValue(1f)
 			.step(0.05f).build();
 

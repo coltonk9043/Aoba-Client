@@ -18,7 +18,7 @@ import net.aoba.settings.types.BooleanSetting;
 
 public class Jesus extends Module implements TickListener {
 
-	public BooleanSetting legit = BooleanSetting.builder().id("jesus_legit").displayName("Legit")
+	private final BooleanSetting legit = BooleanSetting.builder().id("jesus_legit").displayName("Legit")
 			.description("Whether or not the player will swim as close to the surface as possible.").defaultValue(true)
 			.build();
 
@@ -42,6 +42,10 @@ public class Jesus extends Module implements TickListener {
 	@Override
 	public void onToggle() {
 
+	}
+
+	public boolean getLegit() {
+		return this.legit.getValue();
 	}
 
 	@Override

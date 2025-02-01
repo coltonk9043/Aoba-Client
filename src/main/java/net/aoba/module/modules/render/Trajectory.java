@@ -48,10 +48,10 @@ import net.minecraft.world.RaycastContext.FluidHandling;
 
 public class Trajectory extends Module implements Render3DListener {
 
-	private ColorSetting color = ColorSetting.builder().id("trajectory_color").displayName("Color").description("Color")
+	private final ColorSetting color = ColorSetting.builder().id("trajectory_color").displayName("Color").description("Color")
 			.defaultValue(new Color(0f, 1f, 1f)).build();
 
-	private FloatSetting blipSize = FloatSetting.builder().id("trajectory_blipsize").displayName("Blip Size")
+	private final FloatSetting blipSize = FloatSetting.builder().id("trajectory_blipsize").displayName("Blip Size")
 			.description("Blip Size").defaultValue(0.15f).minValue(0.05f).maxValue(1f).step(0.05f).build();
 
 	public Trajectory() {

@@ -20,7 +20,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class NoSlowdown extends Module implements TickListener {
 
-	private FloatSetting slowdownMultiplier = FloatSetting.builder().id("noslowdown_multiplier")
+	private final FloatSetting slowdownMultiplier = FloatSetting.builder().id("noslowdown_multiplier")
 			.displayName("Multiplier").description("NoSlowdown walk speed multiplier.").defaultValue(0f).minValue(0f)
 			.maxValue(1f).step(0.1f).build();
 

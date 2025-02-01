@@ -30,7 +30,7 @@ public class Criticals extends Module implements SendPacketListener {
 		INTERACT, ATTACK, INTERACT_AT
 	}
 
-	private BooleanSetting legit = BooleanSetting.builder().id("criticals_legit").displayName("Legit")
+	private final BooleanSetting legit = BooleanSetting.builder().id("criticals_legit").displayName("Legit")
 			.description("Whether or not we will use the 'legit' mode.").defaultValue(false).build();
 
 	public Criticals() {

@@ -19,7 +19,7 @@ import net.aoba.settings.types.FloatSetting;
 
 public class NoJumpDelay extends Module implements TickListener {
 
-	private FloatSetting delay = FloatSetting.builder().id("nojumpdelay_delay").displayName("Delay")
+	private final FloatSetting delay = FloatSetting.builder().id("nojumpdelay_delay").displayName("Delay")
 			.description("NoJumpDelay Delay.").defaultValue(1f).minValue(0f).maxValue(20f).step(1f).build();
 
 	public NoJumpDelay() {

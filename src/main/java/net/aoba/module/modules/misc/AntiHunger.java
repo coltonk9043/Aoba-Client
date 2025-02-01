@@ -23,10 +23,10 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 public class AntiHunger extends Module implements SendPacketListener, SendMovementPacketListener {
 	private boolean lastOnGround, ignorePacket;
 
-	public BooleanSetting sprint = BooleanSetting.builder().id("antihunger_sprint").displayName("Sprint")
+	private final BooleanSetting sprint = BooleanSetting.builder().id("antihunger_sprint").displayName("Sprint")
 			.description("Change sprint packets.").defaultValue(true).build();
 
-	public BooleanSetting onGround = BooleanSetting.builder().id("antihunger_onground").displayName("On Ground")
+	private final BooleanSetting onGround = BooleanSetting.builder().id("antihunger_onground").displayName("On Ground")
 			.description("Fakes onGround.").defaultValue(true).build();
 
 	public AntiHunger() {

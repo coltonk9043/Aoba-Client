@@ -213,7 +213,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
     		.step(0.5f)
     		.build();
 
-    private ColorSetting color = ColorSetting.builder()
+    private final ColorSetting color = ColorSetting.builder()
 			.id("tilebreaker_color")
 			.displayName("Color")
 			.description("Color")

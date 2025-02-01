@@ -29,20 +29,18 @@ import com.mojang.logging.LogUtils;
 import net.aoba.AobaClient;
 import net.aoba.managers.altmanager.login.MicrosoftAuth;
 import net.aoba.mixin.interfaces.IMinecraftClient;
-import net.aoba.utils.system.HWIDUtil;
+import net.aoba.utils.system.SystemUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.session.Session;
 import net.minecraft.client.session.Session.AccountType;
 import net.minecraft.util.Uuids;
 
+import static net.aoba.AobaClient.MC;
+
 /**
  * Class that manages all of the Alt accounts in Aoba.
  */
 public class AltManager {
-	// Constants
-	private final MinecraftClient mc;
-
-	// Varialbes
 	private ArrayList<Alt> alts = new ArrayList<Alt>();
 	private String encryptKey;
 
@@ -50,7 +48,6 @@ public class AltManager {
 	 * Constructor for the Alt Manager system.
 	 */
 	public AltManager() {
-		mc = AobaClient.MC;
 		this.encryptKey = generateEncryptionKey();
 		readAlts();
 	}
@@ -61,7 +58,7 @@ public class AltManager {
 	 * @return A unique encryption key.
 	 */
 	private String generateEncryptionKey() {
-		String hwid = HWIDUtil.getHWID();
+		String hwid = SystemUtils.getSystemSecureVariable();
 
 		// Use the first 16 bytes of the HWID as the encryption key
 		return hwid.length() >= 16 ? hwid.substring(0, 16) : String.format("%-16s", hwid).replace(' ', '0');
@@ -206,7 +203,7 @@ public class AltManager {
 	 */
 	public void loginCracked(String alt) {
 		try {
-			IMinecraftClient iMC = (IMinecraftClient) this.mc;
+			IMinecraftClient iMC = (IMinecraftClient) MC;
 			UUID offlineAlt = Uuids.getOfflinePlayerUuid(alt);
 			iMC.setSession(new Session(alt, offlineAlt, "", Optional.empty(), Optional.empty(), AccountType.MOJANG));
 			LogUtils.getLogger().info("Logged in as " + alt);

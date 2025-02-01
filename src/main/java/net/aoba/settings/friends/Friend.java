@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class Friend {
 	private String username;
-	private UUID uuid;
+	private final UUID uuid;
 	
 	public Friend(String username, UUID uuid) {
 		this.username = username;

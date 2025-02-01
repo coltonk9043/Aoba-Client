@@ -18,7 +18,7 @@ import net.aoba.settings.types.FloatSetting;
 
 public class FastPlace extends Module implements TickListener {
 
-	private FloatSetting speed = FloatSetting.builder().id("fastplace_delay").displayName("Delay")
+	private final FloatSetting speed = FloatSetting.builder().id("fastplace_delay").displayName("Delay")
 			.description("Delay at which blocks are placed in ticks..").defaultValue(0f).minValue(0f).maxValue(5f)
 			.step(1f).build();
 

@@ -19,7 +19,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class Glide extends Module implements TickListener {
 
-	private FloatSetting fallSpeed = FloatSetting.builder().id("glide_fallspeed").displayName("Fall Speed")
+	private final FloatSetting fallSpeed = FloatSetting.builder().id("glide_fallspeed").displayName("Fall Speed")
 			.description("The speed at which the player will fall.").defaultValue(0.2f).minValue(0.1f).maxValue(2f)
 			.step(0.1f).build();
 

@@ -30,7 +30,7 @@ import net.minecraft.util.Hand;
 
 public class AutoTotem extends Module implements PlayerHealthListener, ReceivePacketListener {
 
-	public FloatSetting healthTrigger= FloatSetting.builder()
+	private final FloatSetting healthTrigger = FloatSetting.builder()
 			.id("autototem_health")
 			.displayName("Health")
 			.description("The health at which the totem will be placed into your hand.")
@@ -39,8 +39,8 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 			.maxValue(20.0f)
 			.step(1.0f)
 			.build();
-	
-	public FloatSetting crystalRadiusTrigger= FloatSetting.builder()
+
+	private final FloatSetting crystalRadiusTrigger = FloatSetting.builder()
 			.id("autototem_crystal_radius")
 			.displayName("Crystal Radius")
 			.description("The radius at which a placed end crystal will trigger autototem.")
@@ -49,8 +49,8 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 			.maxValue(10.0f)
 			.step(1.0f)
 			.build();
-	
-	public BooleanSetting mainHand = BooleanSetting.builder()
+
+	private final BooleanSetting mainHand = BooleanSetting.builder()
 		    .id("autototem_mainhand")
 		    .displayName("Mainhand")
 		    .description("Places totem in main hand instead of off-hand")

@@ -26,7 +26,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 
 public class TriggerBot extends Module implements TickListener {
-    private FloatSetting radius = FloatSetting.builder()
+	private final FloatSetting radius = FloatSetting.builder()
     		.id("triggerbot_radius")
     		.displayName("Radius")
     		.description("Radius that TriggerBot will trigger.")
@@ -35,36 +35,36 @@ public class TriggerBot extends Module implements TickListener {
     		.maxValue(10f)
     		.step(0.1f)
     		.build();
-    
-	private BooleanSetting targetAnimals = BooleanSetting.builder()
+
+	private final BooleanSetting targetAnimals = BooleanSetting.builder()
 		    .id("triggerbot_target_animals")
 		    .displayName("Target Animals")
 		    .description("Target animals.")
 		    .defaultValue(false)
 		    .build();
-	
-	private BooleanSetting targetMonsters = BooleanSetting.builder()
+
+	private final BooleanSetting targetMonsters = BooleanSetting.builder()
 		    .id("triggerbot_target_monsters")
 		    .displayName("Target Monsters")
 		    .description("Target Monsters.")
 		    .defaultValue(true)
 		    .build();
-	
-	private BooleanSetting targetPlayers = BooleanSetting.builder()
+
+	private final BooleanSetting targetPlayers = BooleanSetting.builder()
 		    .id("triggerbot_target_players")
 		    .displayName("Target Players")
 		    .description("Target Players.")
 		    .defaultValue(true)
 		    .build();
-	
-	private BooleanSetting targetFriends = BooleanSetting.builder()
+
+	private final BooleanSetting targetFriends = BooleanSetting.builder()
 		    .id("triggerbot_target_friends")
 		    .displayName("Target Friends")
 		    .description("Target Friends.")
 		    .defaultValue(false)
 		    .build();
-	
-    private FloatSetting attackDelay = FloatSetting.builder()
+
+	private final FloatSetting attackDelay = FloatSetting.builder()
     		.id("triggerbot_attack_delay")
     		.displayName("Attack Delay")
     		.description("Delay in milliseconds between attacks.")
@@ -73,8 +73,8 @@ public class TriggerBot extends Module implements TickListener {
     		.maxValue(500f)
     		.step(10f)
     		.build();
-    
-    private FloatSetting randomness = FloatSetting.builder()
+
+	private final FloatSetting randomness = FloatSetting.builder()
     		.id("triggerbot_randomness")
     		.displayName("Randomness")
     		.description("The randomness of the delay between when TriggerBot will hit a target.")

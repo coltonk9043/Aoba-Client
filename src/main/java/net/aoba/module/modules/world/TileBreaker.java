@@ -33,10 +33,10 @@ import net.minecraft.util.math.Direction;
 public class TileBreaker extends Module implements TickListener, Render3DListener {
 	private ArrayList<Block> blocks = new ArrayList<Block>();
 
-	private FloatSetting radius = FloatSetting.builder().id("tilebreaker_radius").displayName("Radius")
+	private final FloatSetting radius = FloatSetting.builder().id("tilebreaker_radius").displayName("Radius")
 			.description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
 
-	private ColorSetting color = ColorSetting.builder().id("tilebreaker_color").displayName("Color")
+	private final ColorSetting color = ColorSetting.builder().id("tilebreaker_color").displayName("Color")
 			.description("Color").defaultValue(new Color(0f, 1f, 1f)).build();
 
 	public TileBreaker() {

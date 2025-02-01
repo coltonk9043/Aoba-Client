@@ -38,16 +38,16 @@ import net.minecraft.util.math.Direction;
 
 public class Nuker extends Module implements Render3DListener, TickListener, BlockStateListener {
 
-	private BooleanSetting creative = BooleanSetting.builder().id("nuker_creative").displayName("Creative")
+	private final BooleanSetting creative = BooleanSetting.builder().id("nuker_creative").displayName("Creative")
 			.description("Creative").defaultValue(false).build();
 
-	private ColorSetting color = ColorSetting.builder().id("nuker_color").displayName("Color").description("Color")
+	private final ColorSetting color = ColorSetting.builder().id("nuker_color").displayName("Color").description("Color")
 			.defaultValue(new Color(0f, 1f, 1f)).build();
 
-	private FloatSetting radius = FloatSetting.builder().id("nuker_radius").displayName("Radius").description("Radius")
+	private final FloatSetting radius = FloatSetting.builder().id("nuker_radius").displayName("Radius").description("Radius")
 			.defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
 
-	private BlocksSetting blacklist = BlocksSetting.builder().id("nuker_blacklist").displayName("Blacklist")
+	private final BlocksSetting blacklist = BlocksSetting.builder().id("nuker_blacklist").displayName("Blacklist")
 			.description("Blocks that will not be broken by Nuker.").defaultValue(new HashSet<Block>()).build();
 
 	private BlockPos currentBlockToBreak = null;

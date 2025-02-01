@@ -25,23 +25,23 @@ import net.minecraft.util.math.Vec3d;
 
 public class ItemESP extends Module implements Render3DListener {
 
-	private ColorSetting color = ColorSetting.builder().id("itemesp_color").displayName("Color").description("Color")
+	private final ColorSetting color = ColorSetting.builder().id("itemesp_color").displayName("Color").description("Color")
 			.defaultValue(new Color(0, 1f, 1f, 0.3f)).build();
 
-	private BooleanSetting visibilityToggle = BooleanSetting.builder().id("itemesp_visibility")
+	private final BooleanSetting visibilityToggle = BooleanSetting.builder().id("itemesp_visibility")
 			.displayName("Visibility").defaultValue(true).build();
 
-	private FloatSetting range = FloatSetting.builder().id("itemesp_range").displayName("Range")
+	private final FloatSetting range = FloatSetting.builder().id("itemesp_range").displayName("Range")
 			.description("Range that the ESP will be drawn on items.").defaultValue(100f).minValue(10f).maxValue(500f)
 			.step(5f).build();
 
-	private ColorSetting rareItemColor = ColorSetting.builder().id("itemesp_rare_color").displayName("Rare Item Color")
+	private final ColorSetting rareItemColor = ColorSetting.builder().id("itemesp_rare_color").displayName("Rare Item Color")
 			.description("Rare Item Color").defaultValue(new Color(1f, 0.5f, 0f)).build();
 
-	private BooleanSetting colorRarity = BooleanSetting.builder().id("itemesp_color_rarity").displayName("Color Rarity")
+	private final BooleanSetting colorRarity = BooleanSetting.builder().id("itemesp_color_rarity").displayName("Color Rarity")
 			.defaultValue(true).build();
 
-	private FloatSetting lineThickness = FloatSetting.builder().id("itemesp_linethickness")
+	private final FloatSetting lineThickness = FloatSetting.builder().id("itemesp_linethickness")
 			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
 			.minValue(0f).maxValue(5f).step(0.1f).build();
 

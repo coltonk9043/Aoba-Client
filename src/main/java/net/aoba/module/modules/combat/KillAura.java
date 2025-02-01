@@ -35,29 +35,29 @@ public class KillAura extends Module implements TickListener {
 		LOWESTHP, CLOSEST
 	}
 
-	private Priority priority = Priority.CLOSEST;
+	private Priority priority = Priority.CLOSEST; // why isnt this a setting???
 
-	private FloatSetting radius = FloatSetting.builder().id("killaura_radius").displayName("Radius")
+	private final FloatSetting radius = FloatSetting.builder().id("killaura_radius").displayName("Radius")
 			.description("Radius that KillAura will target entities.").defaultValue(5f).minValue(0.1f).maxValue(10f)
 			.step(0.1f).build();
 
-	private BooleanSetting targetAnimals = BooleanSetting.builder().id("killaura_target_animals")
+	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("killaura_target_animals")
 			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
 
-	private BooleanSetting targetMonsters = BooleanSetting.builder().id("killaura_target_monsters")
+	private final BooleanSetting targetMonsters = BooleanSetting.builder().id("killaura_target_monsters")
 			.displayName("Target Monsters").description("Target Monsters.").defaultValue(true).build();
 
-	private BooleanSetting targetPlayers = BooleanSetting.builder().id("killaura_target_players")
+	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("killaura_target_players")
 			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
 
-	private BooleanSetting targetFriends = BooleanSetting.builder().id("killaura_target_friends")
+	private final BooleanSetting targetFriends = BooleanSetting.builder().id("killaura_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
 
-	private FloatSetting randomness = FloatSetting.builder().id("killaura_randomness").displayName("Randomness")
+	private final FloatSetting randomness = FloatSetting.builder().id("killaura_randomness").displayName("Randomness")
 			.description("The randomness of the delay between when KillAura will hit a target.").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(60.0f).step(1.0f).build();
 
-	private BooleanSetting legit = BooleanSetting.builder().id("killaura_legit").displayName("Legit")
+	private final BooleanSetting legit = BooleanSetting.builder().id("killaura_legit").displayName("Legit")
 			.description(
 					"Whether a raycast will be used to ensure that KillAura will not hit a player outside of the view")
 			.defaultValue(false).build();
@@ -66,15 +66,15 @@ public class KillAura extends Module implements TickListener {
 			.id("killaura_rotation_mode").displayName("Rotation Mode")
 			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
 
-	private FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation").displayName("Max Rotation")
+	private final FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation").displayName("Max Rotation")
 			.description("The max speed that KillAura will rotate").defaultValue(10.0f).minValue(1.0f).maxValue(360.0f)
 			.build();
 
-	private FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
+	private final FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
-	private FloatSetting pitchRandomness = FloatSetting.builder().id("killaura_pitch_randomness")
+	private final FloatSetting pitchRandomness = FloatSetting.builder().id("killaura_pitch_randomness")
 			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 

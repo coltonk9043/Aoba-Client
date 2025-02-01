@@ -28,7 +28,7 @@ public abstract class Setting<T> {
 	public TYPE type;
 
 	// Consumers
-	private HashSet<Consumer<T>> onUpdate = new HashSet<Consumer<T>>();
+	private final HashSet<Consumer<T>> onUpdate = new HashSet<Consumer<T>>();
 
 	public Setting(String ID, String description, T default_value) {
 
@@ -116,13 +116,12 @@ public abstract class Setting<T> {
 	 * Function that handles when the value is updated.
 	 */
 	public void update() {
-		if (onUpdate != null) {
-			for (Consumer<T> consumer : onUpdate) {
-				if (consumer != null)
-					consumer.accept(value);
-			}
-		}
-	}
+        for (Consumer<T> consumer : onUpdate)
+        {
+            if (consumer != null)
+                consumer.accept(value);
+        }
+    }
 
 	public void addOnUpdate(Consumer<T> consumer) {
 		this.onUpdate.add(consumer);
@@ -155,6 +154,7 @@ public abstract class Setting<T> {
 	 * @param <S>
 	 * @param <T>
 	 */
+	@SuppressWarnings("unchecked")
 	public abstract static class BUILDER<B extends BUILDER<?, ?, ?>, S extends Setting<T>, T> {
 		protected String id;
 		protected String displayName;

@@ -45,8 +45,6 @@ import java.util.List;
 
 public class AobaClient
 {
-    public static final String NAME = "Aoba";
-    public static final String VERSION = "1.21.3";
     public static final String AOBA_VERSION = "1.4.4";
 
     public static MinecraftClient MC;
@@ -61,7 +59,6 @@ public class AobaClient
     public GuiManager guiManager;
     public FontManager fontManager;
     public CombatManager combatManager;
-    public RPCManager rpcManager;
     public SettingManager settingManager;
     public FriendsList friendsList;
     public GlobalChat globalChat;
@@ -190,5 +187,4 @@ public class AobaClient
             LOGGER.error("[Aoba] Error saving data", e);
         }
     }
-
 }

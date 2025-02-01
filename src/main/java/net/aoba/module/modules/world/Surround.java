@@ -35,24 +35,24 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 public class Surround extends Module implements TickListener {
-	public FloatSetting placeHeight = FloatSetting.builder().id("surround_height").displayName("Height")
+	private final FloatSetting placeHeight = FloatSetting.builder().id("surround_height").displayName("Height")
 			.description("Height that surround walls will go.").defaultValue(1f).minValue(1f).maxValue(3f).step(1.0f)
 			.build();
 
-	public BlocksSetting blocks = BlocksSetting.builder().id("surround_blocks").displayName("Blocks")
+	private final BlocksSetting blocks = BlocksSetting.builder().id("surround_blocks").displayName("Blocks")
 			.description("Blocks that will be used to place surrounding blocks.")
 			.defaultValue(new HashSet<Block>(Lists.newArrayList(Blocks.OBSIDIAN, Blocks.ENDER_CHEST,
 					Blocks.ENCHANTING_TABLE, Blocks.ANVIL, Blocks.CHIPPED_ANVIL, Blocks.DAMAGED_ANVIL,
 					Blocks.CRYING_OBSIDIAN, Blocks.NETHERITE_BLOCK, Blocks.ANCIENT_DEBRIS, Blocks.RESPAWN_ANCHOR)))
 			.build();
 
-	public BooleanSetting alignCharacter = BooleanSetting.builder().id("surround_align").displayName("Align")
+	private final BooleanSetting alignCharacter = BooleanSetting.builder().id("surround_align").displayName("Align")
 			.description("Aligns the character to the nearest block.").defaultValue(false).build();
 
-	public BooleanSetting autoDisable = BooleanSetting.builder().id("surround_autodisable").displayName("Auto-Disable")
+	private final BooleanSetting autoDisable = BooleanSetting.builder().id("surround_autodisable").displayName("Auto-Disable")
 			.description("Disables the module when the blocks have finished placing.").defaultValue(false).build();
 
-	public BooleanSetting legit = BooleanSetting.builder().id("surround_legit").displayName("Legit")
+	private final BooleanSetting legit = BooleanSetting.builder().id("surround_legit").displayName("Legit")
 			.description("Whether or not to simulate a player looking and clicking to place.").defaultValue(false)
 			.build();
 

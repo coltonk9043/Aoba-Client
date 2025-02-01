@@ -25,7 +25,15 @@ import net.minecraft.util.Hand;
 
 public class AutoSoup extends Module implements PlayerHealthListener {
 
-	private FloatSetting health;
+	private final FloatSetting health = FloatSetting.builder()
+			.id("autosoup_health")
+			.displayName("Min. Health")
+			.description("Minimum health that the AutoSoup will trigger.")
+			.defaultValue(6f)
+			.minValue(1f)
+			.maxValue(20f)
+			.step(1f)
+			.build();
 	
 	private int previousSlot = -1;
 	
@@ -34,16 +42,6 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 
         this.setCategory(Category.of("Combat"));
 		this.setDescription("Automatically consumes soup when health is low. (KitPVP)");
-		
-		health = FloatSetting.builder()
-				.id("autosoup_health")
-				.displayName("Min. Health")
-				.description("Minimum health that the AutoSoup will trigger.")
-				.defaultValue(6f)
-				.minValue(1f)
-				.maxValue(20f)
-				.step(1f)
-				.build();
 
 		this.addSetting(health);
 	}

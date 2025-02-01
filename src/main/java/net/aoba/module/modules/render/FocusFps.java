@@ -13,7 +13,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 
 public class FocusFps extends Module {
-	private FloatSetting fps = FloatSetting.builder().id("focusfps_fps").displayName("FPS")
+	private final FloatSetting fps = FloatSetting.builder().id("focusfps_fps").displayName("FPS")
 			.description("The FPS for when the window is not in focus.").defaultValue(30f).minValue(1f).maxValue(45f)
 			.step(1f).build();
 

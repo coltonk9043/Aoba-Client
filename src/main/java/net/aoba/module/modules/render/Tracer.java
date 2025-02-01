@@ -32,14 +32,14 @@ import java.util.List;
 public class Tracer extends Module implements Render3DListener,
         TickListener
 {
-    private ColorSetting color_player = ColorSetting.builder().id("tracer_color_player").displayName("Player Color").description("Player Color").defaultValue(new Color(1f, 1f, 0f)).build();
-    private ColorSetting color_passive = ColorSetting.builder().id("tracer_color_passive").displayName("Passive Color").description("Passive Color").defaultValue(new Color(0f, 1f, 1f)).build();
-    private ColorSetting color_enemies = ColorSetting.builder().id("tracer_color_enemy").displayName("Enemy Color").description("Enemy Color").defaultValue(new Color(0f, 1f, 1f)).build();
-    private ColorSetting color_misc = ColorSetting.builder().id("tracer_color_misc").displayName("Misc. Color").description("Misc. Color").defaultValue(new Color(0f, 1f, 1f)).build();
-    private FloatSetting lineWidth = FloatSetting.builder().id("tracer_line_width").displayName("Line Width").description("Width of the tracer lines.").defaultValue(1f).minValue(0.1f).maxValue(10f).step(0.1f).build();
-    private FloatSetting lines = FloatSetting.builder().id("tracer_lines").displayName("Max Lines").description("The maximum amount of lines that can be rendered at once.").defaultValue(100f).minValue(1f).maxValue(300f).step(1f).build();
-    private EnumSetting<TracerTarget> target = EnumSetting.<TracerTarget>builder().id("tracer_targetmode").displayName("Tracer Target").description("The part of the body the tracer will target.").defaultValue(TracerTarget.Head).build();
-    private EnumSetting<TracerMode> mode = EnumSetting.<TracerMode>builder().id("tracer_mode").displayName("Tracer Mode").description("The tracer mode.").defaultValue(TracerMode.Stem).build();
+    private final ColorSetting color_player = ColorSetting.builder().id("tracer_color_player").displayName("Player Color").description("Player Color").defaultValue(new Color(1f, 1f, 0f)).build();
+    private final ColorSetting color_passive = ColorSetting.builder().id("tracer_color_passive").displayName("Passive Color").description("Passive Color").defaultValue(new Color(0f, 1f, 1f)).build();
+    private final ColorSetting color_enemies = ColorSetting.builder().id("tracer_color_enemy").displayName("Enemy Color").description("Enemy Color").defaultValue(new Color(0f, 1f, 1f)).build();
+    private final ColorSetting color_misc = ColorSetting.builder().id("tracer_color_misc").displayName("Misc. Color").description("Misc. Color").defaultValue(new Color(0f, 1f, 1f)).build();
+    private final FloatSetting lineWidth = FloatSetting.builder().id("tracer_line_width").displayName("Line Width").description("Width of the tracer lines.").defaultValue(1f).minValue(0.1f).maxValue(10f).step(0.1f).build();
+    private final FloatSetting lines = FloatSetting.builder().id("tracer_lines").displayName("Max Lines").description("The maximum amount of lines that can be rendered at once.").defaultValue(100f).minValue(1f).maxValue(300f).step(1f).build();
+    private final EnumSetting<TracerTarget> target = EnumSetting.<TracerTarget>builder().id("tracer_targetmode").displayName("Tracer Target").description("The part of the body the tracer will target.").defaultValue(TracerTarget.Head).build();
+    private final EnumSetting<TracerMode> mode = EnumSetting.<TracerMode>builder().id("tracer_mode").displayName("Tracer Mode").description("The tracer mode.").defaultValue(TracerMode.Stem).build();
 
     List<Entity> sorted = new ArrayList<>();
 

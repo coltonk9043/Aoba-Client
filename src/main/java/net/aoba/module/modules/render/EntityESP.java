@@ -118,8 +118,7 @@ public class EntityESP extends Module implements Render3DListener {
 							Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
 							break;
 						case DrawMode.Model:
-							Render3D.drawEntityModel(matrixStack, partialTicks, entity, color,
-									lineThickness.getValue());
+							Render3D.drawEntityModel(matrixStack, partialTicks, entity, color);
 							break;
 						}
 					}

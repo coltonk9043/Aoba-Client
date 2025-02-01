@@ -28,24 +28,24 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 
 public class MaceAura extends Module implements TickListener {
-	private FloatSetting radius = FloatSetting.builder().id("maceaura_radius").displayName("Radius")
+	private final FloatSetting radius = FloatSetting.builder().id("maceaura_radius").displayName("Radius")
 			.description("Radius that MaceAura will trigger").defaultValue(5f).minValue(0.1f).maxValue(10f).step(0.1f)
 			.build();
 
-	private FloatSetting height = FloatSetting.builder().id("maceaura_height").displayName("Height")
+	private final FloatSetting height = FloatSetting.builder().id("maceaura_height").displayName("Height")
 			.description("Determines how high MaceAura will jump. Higher distance = more damage.").defaultValue(100f)
 			.minValue(1f).maxValue(255f).build();
 
-	private BooleanSetting targetAnimals = BooleanSetting.builder().id("maceaura_target_animals")
+	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("maceaura_target_animals")
 			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
 
-	private BooleanSetting targetMonsters = BooleanSetting.builder().id("maceaura_target_monsters")
+	private final BooleanSetting targetMonsters = BooleanSetting.builder().id("maceaura_target_monsters")
 			.displayName("Target Monsters").description("Target Monsters.").defaultValue(true).build();
 
-	private BooleanSetting targetPlayers = BooleanSetting.builder().id("maceaura_target_players")
+	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("maceaura_target_players")
 			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
 
-	private BooleanSetting targetFriends = BooleanSetting.builder().id("maceaura_target_friends")
+	private final BooleanSetting targetFriends = BooleanSetting.builder().id("maceaura_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
 
 	private LivingEntity entityToAttack;

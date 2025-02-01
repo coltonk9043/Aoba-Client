@@ -20,7 +20,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 
 public class Speed extends Module implements TickListener {
 
-	private FloatSetting speedSetting = FloatSetting.builder().id("speed_setting").displayName("Speed")
+	private final FloatSetting speedSetting = FloatSetting.builder().id("speed_setting").displayName("Speed")
 			.description("Speed.").defaultValue(0.1f).minValue(0.1f).maxValue(6f).step(0.1f).build();
 
 	public Speed() {

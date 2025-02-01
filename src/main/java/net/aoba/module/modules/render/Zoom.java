@@ -21,7 +21,7 @@ public class Zoom extends Module implements TickListener {
 
 	private Integer lastFov = null;
 
-	private FloatSetting zoomFactor = FloatSetting.builder().id("zoom_factor").displayName("Factor")
+	private final FloatSetting zoomFactor = FloatSetting.builder().id("zoom_factor").displayName("Factor")
 			.description("The zoom factor that the zoom will use.").defaultValue(2f).minValue(1f).maxValue(3.6f)
 			.step(0.1f).build();
 

@@ -14,10 +14,10 @@ import net.aoba.settings.types.BooleanSetting;
 
 public class Tooltips extends Module {
 
-	public BooleanSetting storage = BooleanSetting.builder().id("tooltips_storage").displayName("Storage")
+	private final BooleanSetting storage = BooleanSetting.builder().id("tooltips_storage").displayName("Storage")
 			.description("Renders the contents of the storage item.").defaultValue(true).build();
 
-	public BooleanSetting maps = BooleanSetting.builder().id("tooltips_maps").displayName("Maps")
+	private final BooleanSetting maps = BooleanSetting.builder().id("tooltips_maps").displayName("Maps")
 			.description("Render a map preview").defaultValue(true).build();
 
 	public Tooltips() {
@@ -44,7 +44,7 @@ public class Tooltips extends Module {
 
 	}
 
-	public Boolean getStorage() {
+	public boolean getStorage() {
 		return this.storage.getValue();
 	}
 

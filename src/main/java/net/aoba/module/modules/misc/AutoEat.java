@@ -23,15 +23,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 
 public class AutoEat extends Module implements FoodLevelListener, PlayerHealthListener {
-	private FloatSetting hungerSetting = FloatSetting.builder().id("autoeat_hunger").displayName("Hunger")
+	private final FloatSetting hungerSetting = FloatSetting.builder().id("autoeat_hunger").displayName("Hunger")
 			.description("Determines when AutoEat will trigger.").defaultValue(10f).minValue(1f).maxValue(20f).step(1f)
 			.build();
 
-	private FloatSetting healthSetting = FloatSetting.builder().id("autoeat_health").displayName("Health")
+	private final FloatSetting healthSetting = FloatSetting.builder().id("autoeat_health").displayName("Health")
 			.description("Determines when AutoEat will trigger based on health.").defaultValue(10f).minValue(1f)
 			.maxValue(20f).step(1f).build();
 
-	private BooleanSetting prioritizeGapples = BooleanSetting.builder().id("prioritize_gapples")
+	private final BooleanSetting prioritizeGapples = BooleanSetting.builder().id("prioritize_gapples")
 			.displayName("Prioritize Gapples").description("Prioritizes enchanted golden apples and golden apples.")
 			.defaultValue(true).build();
 

@@ -34,17 +34,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 
 public class BowAimbot extends Module implements TickListener {
-	private BooleanSetting targetAnimals = BooleanSetting.builder().id("bowaimbot_target_mobs")
+	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("bowaimbot_target_mobs")
 			.displayName("Target Mobs").description("Target mobs.").defaultValue(false).build();
 
-	private BooleanSetting targetPlayers = BooleanSetting.builder().id("bowaimbot_target_players")
+	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("bowaimbot_target_players")
 			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
 
-	private FloatSetting frequency = FloatSetting.builder().id("bowaimbot_frequency").displayName("Ticks")
+	private final FloatSetting frequency = FloatSetting.builder().id("bowaimbot_frequency").displayName("Ticks")
 			.description("How frequent the aimbot updates (Lower = Laggier)").defaultValue(1.0f).minValue(1.0f)
 			.maxValue(20.0f).step(1.0f).build();
 
-	private FloatSetting predictMovement = FloatSetting.builder().id("bowaimbot_prediction").displayName("Prediction")
+	private final FloatSetting predictMovement = FloatSetting.builder().id("bowaimbot_prediction").displayName("Prediction")
 			.description("Sets the strength of BowAimbot's movement prediction").defaultValue(2f).minValue(0f)
 			.maxValue(10f).step(1f).build();
 

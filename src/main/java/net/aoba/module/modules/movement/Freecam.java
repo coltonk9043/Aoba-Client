@@ -27,7 +27,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class Freecam extends Module implements TickListener, Render3DListener {
-	private FloatSetting flySpeed = FloatSetting.builder().id("freecam_speed").displayName("Speed")
+	private final FloatSetting flySpeed = FloatSetting.builder().id("freecam_speed").displayName("Speed")
 			.description("Speed of the Freecam.").defaultValue(2f).minValue(0.1f).maxValue(15f).step(0.5f).build();
 
 	private FakePlayerEntity fakePlayer;

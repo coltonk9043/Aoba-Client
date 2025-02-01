@@ -29,11 +29,11 @@ import net.minecraft.util.hit.HitResult;
 
 public class AutoShear extends Module implements TickListener {
 
-	private FloatSetting radius = FloatSetting.builder().id("autoshear_radius").displayName("Radius")
+	private final FloatSetting radius = FloatSetting.builder().id("autoshear_radius").displayName("Radius")
 			.description("Radius that AutoShear will trigger on Mobs.").defaultValue(5f).minValue(0.1f).maxValue(10f)
 			.step(0.1f).build();
 
-	private BooleanSetting legit = BooleanSetting.builder().id("autoshear_legit").displayName("Legit")
+	private final BooleanSetting legit = BooleanSetting.builder().id("autoshear_legit").displayName("Legit")
 			.description("Whether a raycast will be used to ensure that AutoShear will only shear visible sheep.")
 			.defaultValue(false).build();
 
@@ -41,15 +41,15 @@ public class AutoShear extends Module implements TickListener {
 			.id("autoshear_rotation_mode").displayName("Rotation Mode")
 			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
 
-	private FloatSetting maxRotation = FloatSetting.builder().id("autoshear_max_rotation").displayName("Max Rotation")
+	private final FloatSetting maxRotation = FloatSetting.builder().id("autoshear_max_rotation").displayName("Max Rotation")
 			.description("The max speed that AutoShear will rotate").defaultValue(10.0f).minValue(1.0f).maxValue(360.0f)
 			.build();
 
-	private FloatSetting yawRandomness = FloatSetting.builder().id("autoshear_yaw_randomness")
+	private final FloatSetting yawRandomness = FloatSetting.builder().id("autoshear_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
-	private FloatSetting pitchRandomness = FloatSetting.builder().id("autoshear_pitch_randomness")
+	private final FloatSetting pitchRandomness = FloatSetting.builder().id("autoshear_pitch_randomness")
 			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 

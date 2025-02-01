@@ -16,7 +16,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 
 public class Step extends Module {
 
-	private FloatSetting stepHeight = FloatSetting.builder().id("step_height").displayName("Height")
+	private final FloatSetting stepHeight = FloatSetting.builder().id("step_height").displayName("Height")
 			.description("Height that the player will step up.").defaultValue(1f).minValue(0f).maxValue(2f).step(0.5f)
 			.build();
 

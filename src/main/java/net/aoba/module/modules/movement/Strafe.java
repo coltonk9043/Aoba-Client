@@ -18,7 +18,7 @@ import net.aoba.settings.types.FloatSetting;
 
 public class Strafe extends Module implements TickListener {
 
-	private FloatSetting intensity = FloatSetting.builder().id("strafe_intensity").displayName("Intensity")
+	private final FloatSetting intensity = FloatSetting.builder().id("strafe_intensity").displayName("Intensity")
 			.description("Strafe intensity.").defaultValue(0.1f).minValue(0f).maxValue(0.3f).step(0.1f).build();
 
 	public Strafe() {

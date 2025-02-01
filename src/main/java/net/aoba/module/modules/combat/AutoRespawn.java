@@ -19,7 +19,15 @@ import net.aoba.settings.types.FloatSetting;
 
 public class AutoRespawn extends Module implements PlayerDeathListener, TickListener {
 
-    private FloatSetting respawnDelay;
+    private final FloatSetting respawnDelay = FloatSetting.builder()
+            .id("autorespawn_delay")
+            .displayName("Delay")
+            .description("The delay between dying and automatically respawning.")
+            .defaultValue(0.0f)
+            .minValue(0.0f)
+            .maxValue(100.0f)
+            .step(1.0f)
+            .build();;
 
     private int tick;
 
@@ -28,16 +36,6 @@ public class AutoRespawn extends Module implements PlayerDeathListener, TickList
 
         this.setCategory(Category.of("Combat"));
         this.setDescription("Automatically respawns when you die.");
-
-        respawnDelay = FloatSetting.builder()
-        		.id("autorespawn_delay")
-        		.displayName("Delay")
-        		.description("The delay between dying and automatically respawning.")
-        		.defaultValue(0.0f)
-        		.minValue(0.0f)
-        		.maxValue(100.0f)
-        		.step(1.0f)
-        		.build();
         		
         this.addSetting(respawnDelay);
     }

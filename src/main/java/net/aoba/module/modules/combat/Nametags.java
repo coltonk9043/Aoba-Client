@@ -15,7 +15,7 @@ import net.aoba.settings.types.FloatSetting;
 
 public class Nametags extends Module {
 
-    private FloatSetting scale = FloatSetting.builder()
+    private final FloatSetting scale = FloatSetting.builder()
     		.id("nametags_scale")
     		.displayName("Scale")
     		.description("Scale of the NameTags")
@@ -24,15 +24,15 @@ public class Nametags extends Module {
     		.maxValue(5f)
     		.step(0.25f)
     		.build();
-    
-    private BooleanSetting onlyPlayers = BooleanSetting.builder()
+
+    private final BooleanSetting onlyPlayers = BooleanSetting.builder()
     		.id("nametags_onlyPlayers")
     		.displayName("Only Players")
     		.description("Whether Nametags are only enlarged for players.")
     		.defaultValue(false)
     		.build();
-    
-    private BooleanSetting alwaysVisible = BooleanSetting.builder()
+
+    private final BooleanSetting alwaysVisible = BooleanSetting.builder()
     		.id("nametags_alwaysVisible")
     		.displayName("Always Visible")
     		.description("Whether Nametags will always be displayed.")

@@ -25,7 +25,7 @@ import net.minecraft.util.math.BlockPos;
 public class AutoFarm extends Module implements TickListener
 {
 
-    private FloatSetting radius = FloatSetting.builder().id("autofarm_radius").displayName("Radius").description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
+    private final FloatSetting radius = FloatSetting.builder().id("autofarm_radius").displayName("Radius").description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
 
     public AutoFarm()
     {

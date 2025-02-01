@@ -31,22 +31,22 @@ import net.minecraft.util.math.Vec3d;
 
 public class AntiKnockback extends Module implements ReceivePacketListener {
 
-	private FloatSetting horizontal = FloatSetting.builder().id("antiknockback_horizontal").displayName("Horizontal")
+	private final FloatSetting horizontal = FloatSetting.builder().id("antiknockback_horizontal").displayName("Horizontal")
 			.description("Horizontal Velocity").defaultValue(0f).minValue(0f).maxValue(1f).step(0.01f).build();
 
-	private FloatSetting vertical = FloatSetting.builder().id("antiknockback_vertical").displayName("Vertical")
+	private final FloatSetting vertical = FloatSetting.builder().id("antiknockback_vertical").displayName("Vertical")
 			.description("Vertical Velocity").defaultValue(0f).minValue(0f).maxValue(1f).step(0.01f).build();
 
-	private BooleanSetting noPushEntites = BooleanSetting.builder().id("antiknockback_no_push_entities").displayName("No Push Entities")
+	private final BooleanSetting noPushEntites = BooleanSetting.builder().id("antiknockback_no_push_entities").displayName("No Push Entities")
 			.description("Prevents being pushed by entites.").defaultValue(true).build();
 
-	private BooleanSetting noPushBlocks = BooleanSetting.builder().id("antiknockback_no_push_blocks").displayName("No Push Blocks")
+	private final BooleanSetting noPushBlocks = BooleanSetting.builder().id("antiknockback_no_push_blocks").displayName("No Push Blocks")
 			.description("Prevents being pushed by blocks.").defaultValue(true).build();
 
-	private BooleanSetting noPushLiquids = BooleanSetting.builder().id("antiknockback_no_push_liquids").displayName("No Push Liquids")
+	private final BooleanSetting noPushLiquids = BooleanSetting.builder().id("antiknockback_no_push_liquids").displayName("No Push Liquids")
 			.description("Prevents being pushed by liquids.").defaultValue(true).build();
 
-	private BooleanSetting noPushFishhook = BooleanSetting.builder().id("antiknockback_no_push_fishhook").displayName("No Push Fishhook")
+	private final BooleanSetting noPushFishhook = BooleanSetting.builder().id("antiknockback_no_push_fishhook").displayName("No Push Fishhook")
 			.description("Prevents being pulled by the fishhook.").defaultValue(true).build();
 
 	public AntiKnockback() {

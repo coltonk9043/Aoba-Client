@@ -53,9 +53,9 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 		if (fastBreak.state.getValue()) {
 			// Multiply the break speed and override the return value.
 			float speed = inventory.getBlockBreakingSpeed(blockState);
-			speed *= fastBreak.multiplier.getValue();
+			speed *= fastBreak.getMultiplier();
 
-			if (!fastBreak.ignoreWater.getValue()) {
+			if (!fastBreak.shouldIgnoreWater()) {
 				if (isSubmergedIn(FluidTags.WATER) || isSubmergedIn(FluidTags.LAVA) || !isOnGround()) {
 					speed /= 5.0F;
 				}

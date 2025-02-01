@@ -17,7 +17,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 
 public class AutoWalk extends Module implements TickListener {
-	private BooleanSetting automaticJump = BooleanSetting.builder().id("autowalk_automatic_jump")
+	private final BooleanSetting automaticJump = BooleanSetting.builder().id("autowalk_automatic_jump")
 			.displayName("Automatically Jump").description("Automatically jumps when you hit a wall.")
 			.defaultValue(true).build();
 

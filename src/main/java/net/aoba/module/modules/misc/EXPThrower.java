@@ -20,19 +20,19 @@ import net.aoba.utils.FindItemResult;
 import net.minecraft.item.Items;
 
 public class EXPThrower extends Module implements TickListener {
-	private FloatSetting pitchSetting = FloatSetting.builder().id("expthrower_pitch").displayName("Pitch")
+	private final FloatSetting pitchSetting = FloatSetting.builder().id("expthrower_pitch").displayName("Pitch")
 			.description("The pitch angle for throwing XP bottles.").defaultValue(90.0f).minValue(0f).maxValue(90f)
 			.step(1f).build();
 
-	private BooleanSetting autoSwapSetting = BooleanSetting.builder().id("expthrower_auto_swap")
+	private final BooleanSetting autoSwapSetting = BooleanSetting.builder().id("expthrower_auto_swap")
 			.displayName("Auto Swap").description("Automatically swap to XP bottles if not in hand.").defaultValue(true)
 			.build();
 
-	private FloatSetting throwDelaySetting = FloatSetting.builder().id("expthrower_throw_delay")
+	private final FloatSetting throwDelaySetting = FloatSetting.builder().id("expthrower_throw_delay")
 			.displayName("Throw Delay").description("Delay between throws in ticks.").defaultValue(20f).minValue(1f)
 			.maxValue(100f).step(1f).build();
 
-	private BooleanSetting autoToggleSetting = BooleanSetting.builder().id("expthrower_auto_toggle")
+	private final BooleanSetting autoToggleSetting = BooleanSetting.builder().id("expthrower_auto_toggle")
 			.displayName("Auto Toggle").description("Automatically toggle off when no XP bottles are found.")
 			.defaultValue(true).build();
 

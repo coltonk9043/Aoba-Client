@@ -34,9 +34,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 
-public class Render3D {
-	private static MinecraftClient MC = MinecraftClient.getInstance();
+import static net.aoba.AobaClient.MC;
 
+public class Render3D {
 	public static void draw3DBox(MatrixStack matrixStack, Box box, Color color, float lineThickness) {
 		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
@@ -155,15 +155,14 @@ public class Render3D {
 		RenderSystem.disableBlend();
 	}
 
-	public static void drawEntityModel(MatrixStack matrixStack, float partialTicks, Entity entity, Color color,
-			float lineWidth) {
+    @SuppressWarnings("unchecked")
+	public static void drawEntityModel(MatrixStack matrixStack, float partialTicks, Entity entity, Color color) {
 		EntityRenderer<?, ?> renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
 
-		if (entity instanceof LivingEntity) {
+		if (entity instanceof LivingEntity livingEntity) {
 			matrixStack.push();
 
-			LivingEntity livingEntity = (LivingEntity) entity;
-			LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> leRenderer = (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) renderer;
+            LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> leRenderer = (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) renderer;
 			EntityModel<LivingEntityRenderState> model = leRenderer.getModel();
 			LivingEntityRenderState renderState = leRenderer.getAndUpdateRenderState(livingEntity, partialTicks);
 			renderState.baby = livingEntity.isBaby();
@@ -250,22 +249,14 @@ public class Render3D {
 	}
 
 	private static float getYaw(Direction direction) {
-		switch (direction) {
-		case SOUTH: {
-			return 90.0f;
-		}
-		case WEST: {
-			return 0.0f;
-		}
-		case NORTH: {
-			return 270.0f;
-		}
-		case EAST: {
-			return 180.0f;
-		}
-		default:
-			return 0.0f;
-		}
+        return switch (direction)
+        {
+            case SOUTH -> 90.0f;
+            case WEST -> 0.0f;
+            case NORTH -> 270.0f;
+            case EAST -> 180.0f;
+            default -> 0.0f;
+        };
 	}
 
 	private static void buildLine3d(MatrixStack matrixStack, BufferBuilder bufferBuilder, float x1, float y1, float z1,
@@ -309,5 +300,4 @@ public class Render3D {
 		Vec3d interpolated = getEntityPositionInterpolated(entity, delta);
 		return entity.getPos().subtract(interpolated);
 	}
-
 }

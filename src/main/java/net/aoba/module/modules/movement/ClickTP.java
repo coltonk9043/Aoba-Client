@@ -27,7 +27,7 @@ import net.minecraft.world.RaycastContext;
 
 public class ClickTP extends Module implements MouseClickListener {
 
-	private FloatSetting distance = FloatSetting.builder().id("clicktp_distance").displayName("Max Distance")
+	private final FloatSetting distance = FloatSetting.builder().id("clicktp_distance").displayName("Max Distance")
 			.description("Max Distance to teleport.").defaultValue(10f).minValue(1.0f).maxValue(200f).step(1.0f)
 			.build();
 

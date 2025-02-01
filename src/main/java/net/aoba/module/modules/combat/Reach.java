@@ -14,7 +14,9 @@ import net.aoba.settings.types.FloatSetting;
 
 public class Reach extends Module {
 
-	private FloatSetting distance;
+	private final FloatSetting distance = FloatSetting.builder().id("reach_distance").displayName("Distance")
+			.description("Distance, in blocks, that you can reach.").defaultValue(5f).minValue(1f).maxValue(128f)
+			.step(1f).build();;
 
 	public Reach() {
 		super("Reach");
@@ -22,9 +24,6 @@ public class Reach extends Module {
 		this.setCategory(Category.of("Combat"));
 		this.setDescription("Allows you to reach further.");
 
-		distance = FloatSetting.builder().id("reach_distance").displayName("Distance")
-				.description("Distance, in blocks, that you can reach.").defaultValue(5f).minValue(1f).maxValue(128f)
-				.step(1f).build();
 		this.addSetting(distance);
 	}
 

@@ -46,6 +46,11 @@ public class HttpUtils {
 
 	public static class BUILDER {
 		private final HttpRequest.Builder builder;
+		private static final HttpClient client = HttpClient.newBuilder()
+				.version(Version.HTTP_2)
+				.followRedirects(Redirect.NORMAL)
+				.build();
+
 
 		private BUILDER(String url) {
 			builder = HttpRequest.newBuilder(createURI(url)).header("User-Agent",
@@ -88,8 +93,6 @@ public class HttpUtils {
 		}
 
 		public Optional<String> get() {
-			HttpClient client = HttpClient.newBuilder().version(Version.HTTP_2).followRedirects(Redirect.NORMAL)
-					.build();
 			HttpRequest request = builder.build();
 			try {
 				HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
@@ -106,8 +109,6 @@ public class HttpUtils {
 		}
 
 		public Optional<String> post(String payload) {
-			HttpClient client = HttpClient.newBuilder().version(Version.HTTP_2).followRedirects(Redirect.NORMAL)
-					.build();
 			builder.POST(HttpRequest.BodyPublishers.ofString(payload));
 			HttpRequest request = builder.build();
 
@@ -126,8 +127,6 @@ public class HttpUtils {
 		}
 
 		public Optional<String> put(String payload) {
-			HttpClient client = HttpClient.newBuilder().version(Version.HTTP_2).followRedirects(Redirect.NORMAL)
-					.build();
 			builder.PUT(HttpRequest.BodyPublishers.ofString(payload));
 			HttpRequest request = builder.build();
 
@@ -146,8 +145,6 @@ public class HttpUtils {
 		}
 
 		public Optional<String> delete() {
-			HttpClient client = HttpClient.newBuilder().version(Version.HTTP_2).followRedirects(Redirect.NORMAL)
-					.build();
 			builder.DELETE();
 			HttpRequest request = builder.build();
 

@@ -24,22 +24,22 @@ import net.minecraft.util.math.Vec3d;
 
 public class Fly extends Module implements TickListener, SendMovementPacketListener {
 
-	private FloatSetting flySpeed = FloatSetting.builder().id("fly_speed").displayName("Speed")
+	private final FloatSetting flySpeed = FloatSetting.builder().id("fly_speed").displayName("Speed")
 			.description("Fly speed.").defaultValue(2f).minValue(0.1f).maxValue(15f).step(0.5f).build();
 
-	private FloatSetting sprintSpeedMultiplier = FloatSetting.builder().id("fly_sprint_speed_multiplier")
+	private final FloatSetting sprintSpeedMultiplier = FloatSetting.builder().id("fly_sprint_speed_multiplier")
 			.displayName("Sprint Speed Multiplier").description("Speed multiplier when sprinting.").defaultValue(1.5f)
 			.minValue(1.0f).maxValue(3.0f).step(0.1f).build();
 
-	private FloatSetting jumpMotionY = FloatSetting.builder().id("fly_jump_motion_y").displayName("Jump Motion Y")
+	private final FloatSetting jumpMotionY = FloatSetting.builder().id("fly_jump_motion_y").displayName("Jump Motion Y")
 			.description("Upward motion when jump key is pressed.").defaultValue(0.3f).minValue(0.1f).maxValue(2.0f)
 			.step(0.1f).build();
 
-	private FloatSetting sneakMotionY = FloatSetting.builder().id("fly_sneak_motion_y").displayName("Sneak Motion Y")
+	private final FloatSetting sneakMotionY = FloatSetting.builder().id("fly_sneak_motion_y").displayName("Sneak Motion Y")
 			.description("Downward motion when sneak key is pressed.").defaultValue(-0.3f).minValue(-2.0f).maxValue(0f)
 			.step(0.1f).build();
 
-	private BooleanSetting antiKick = BooleanSetting.builder().id("fly_antikick").displayName("AntiKick")
+	private final BooleanSetting antiKick = BooleanSetting.builder().id("fly_antikick").displayName("AntiKick")
 			.description("Prevents the player from being kicked.").defaultValue(false).build();
 
 	public Fly() {

@@ -20,16 +20,16 @@ import net.aoba.utils.render.Render3D;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 
 public class PlayerESP extends Module implements Render3DListener {
-	private ColorSetting color_default = ColorSetting.builder().id("playeresp_color_default")
+	private final ColorSetting color_default = ColorSetting.builder().id("playeresp_color_default")
 			.displayName("Default Color").description("Default Color").defaultValue(new Color(1f, 1f, 0f)).build();
 
-	private ColorSetting color_friendly = ColorSetting.builder().id("playeresp_color_friendly")
+	private final ColorSetting color_friendly = ColorSetting.builder().id("playeresp_color_friendly")
 			.displayName("Friendly Color").description("Friendly Color").defaultValue(new Color(0f, 1f, 0f)).build();
 
-	private ColorSetting color_enemy = ColorSetting.builder().id("playeresp_color_enemy").displayName("Enemy Color")
+	private final ColorSetting color_enemy = ColorSetting.builder().id("playeresp_color_enemy").displayName("Enemy Color")
 			.description("Enemy Color").defaultValue(new Color(1f, 0f, 0f)).build();
 
-	private FloatSetting lineThickness = FloatSetting.builder().id("playeresp_linethickness")
+	private final FloatSetting lineThickness = FloatSetting.builder().id("playeresp_linethickness")
 			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
 			.minValue(0f).maxValue(5f).step(0.1f).build();
 

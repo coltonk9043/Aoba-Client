@@ -23,7 +23,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.util.InputUtil;
 
 public class XRay extends Module {
-	public BlocksSetting blocks = BlocksSetting.builder().id("xray_blocks").displayName("Blocks")
+	private final BlocksSetting blocks = BlocksSetting.builder().id("xray_blocks").displayName("Blocks")
 			.description("Blocks that can be seen in Xray")
 			.defaultValue(new HashSet<Block>(Lists.newArrayList(Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK,
 					Blocks.DIAMOND_ORE, Blocks.DIAMOND_BLOCK, Blocks.GOLD_ORE, Blocks.GOLD_BLOCK, Blocks.IRON_ORE,
@@ -80,5 +80,9 @@ public class XRay extends Module {
 		if (MC.worldRenderer != null && state.getValue()) {
 			MC.worldRenderer.reload();
 		}
+	}
+
+	public HashSet<Block> getBlocks() {
+		return blocks.getValue();
 	}
 }

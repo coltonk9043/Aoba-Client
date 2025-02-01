@@ -15,11 +15,11 @@ import net.aoba.settings.types.FloatSetting;
 
 public class FastBreak extends Module {
 
-	public FloatSetting multiplier = FloatSetting.builder().id("fastbreak_multiplier").displayName("Multiplier")
+	private final FloatSetting multiplier = FloatSetting.builder().id("fastbreak_multiplier").displayName("Multiplier")
 			.description("Multiplier for how fast the blocks will break.").defaultValue(1.25f).minValue(1.0f)
 			.maxValue(10.0f).step(0.05f).build();
 
-	public BooleanSetting ignoreWater = BooleanSetting.builder().id("fastbreak_ignore_water")
+	private final BooleanSetting ignoreWater = BooleanSetting.builder().id("fastbreak_ignore_water")
 			.displayName("Ignore Water").description("Ignores the slowdown that being in water causes.")
 			.defaultValue(false).build();
 
@@ -33,12 +33,16 @@ public class FastBreak extends Module {
 		this.addSetting(ignoreWater);
 	}
 
-	public void setMultiplier(float multiplier) {
-		this.multiplier.setValue(multiplier);
+	public float getMultiplier() {
+		return this.multiplier.getValue();
 	}
 
-	public float getMultiplier() {
-		return this.multiplier.getValue().floatValue();
+	public boolean shouldIgnoreWater() {
+		return this.ignoreWater.getValue();
+	}
+
+	public void setMultiplier(float multiplier) {
+		this.multiplier.setValue(multiplier);
 	}
 
 	@Override

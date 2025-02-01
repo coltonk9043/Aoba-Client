@@ -26,10 +26,10 @@ import net.minecraft.util.math.Vec3d;
 
 public class Breadcrumbs extends Module implements Render3DListener, TickListener {
 
-	private ColorSetting color = ColorSetting.builder().id("breadcrumbs_color").displayName("Color")
+	private final ColorSetting color = ColorSetting.builder().id("breadcrumbs_color").displayName("Color")
 			.description("Color").defaultValue(new Color(0, 1f, 1f)).build();
 
-	public FloatSetting lineThickness = FloatSetting.builder().id("breadcrumbs_linethickness")
+	public final FloatSetting lineThickness = FloatSetting.builder().id("breadcrumbs_linethickness")
 			.displayName("Line Thickness").description("Line Thickness.").defaultValue(1f).minValue(0.1f).maxValue(10f)
 			.step(0.1f).build();
 
