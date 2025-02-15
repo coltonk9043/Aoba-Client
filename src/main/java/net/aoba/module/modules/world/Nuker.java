@@ -19,6 +19,7 @@ import net.aoba.event.listeners.BlockStateListener;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BlocksSetting;
@@ -41,11 +42,11 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 	private final BooleanSetting creative = BooleanSetting.builder().id("nuker_creative").displayName("Creative")
 			.description("Creative").defaultValue(false).build();
 
-	private final ColorSetting color = ColorSetting.builder().id("nuker_color").displayName("Color").description("Color")
-			.defaultValue(new Color(0f, 1f, 1f)).build();
+	private final ColorSetting color = ColorSetting.builder().id("nuker_color").displayName("Color")
+			.description("Color").defaultValue(new Color(0f, 1f, 1f)).build();
 
-	private final FloatSetting radius = FloatSetting.builder().id("nuker_radius").displayName("Radius").description("Radius")
-			.defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
+	private final FloatSetting radius = FloatSetting.builder().id("nuker_radius").displayName("Radius")
+			.description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
 
 	private final BlocksSetting blacklist = BlocksSetting.builder().id("nuker_blacklist").displayName("Blacklist")
 			.description("Blocks that will not be broken by Nuker.").defaultValue(new HashSet<Block>()).build();
@@ -61,6 +62,15 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 		this.addSetting(radius);
 		this.addSetting(color);
 		this.addSetting(blacklist);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Negativity);
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	public void setRadius(int radius) {

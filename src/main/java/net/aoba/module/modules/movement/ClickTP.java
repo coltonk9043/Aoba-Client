@@ -11,6 +11,7 @@ package net.aoba.module.modules.movement;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -37,6 +38,15 @@ public class ClickTP extends Module implements MouseClickListener {
 		this.setDescription("Allows the user to teleport where they are looking.");
 
 		this.addSetting(distance);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Karhu);
+
 	}
 
 	@Override

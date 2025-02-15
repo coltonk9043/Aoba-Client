@@ -8,6 +8,7 @@
 
 package net.aoba.module.modules.combat;
 
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -25,6 +26,11 @@ public class Reach extends Module {
 		this.setDescription("Allows you to reach further.");
 
 		this.addSetting(distance);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Buzz);
 	}
 
 	public float getReach() {

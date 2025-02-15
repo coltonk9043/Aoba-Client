@@ -12,6 +12,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -29,6 +30,11 @@ public class FastPlace extends Module implements TickListener {
 		this.setDescription("Places blocks exceptionally fast");
 
 		this.addSetting(speed);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Negativity);
 	}
 
 	@Override

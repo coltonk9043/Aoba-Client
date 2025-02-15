@@ -11,16 +11,18 @@ package net.aoba.module;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.interfaces.IClientPlayerInteractionManager;
+import net.aoba.managers.SettingManager;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.settings.Setting;
-import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.FindItemResult;
@@ -44,8 +46,11 @@ public abstract class Module {
 	public final KeybindSetting keyBind;
 	private final List<Setting<?>> settings = new ArrayList<Setting<?>>();
 
+	private final HashSet<AntiCheat> knownDetectable = new HashSet<AntiCheat>();
+
 	protected static final MinecraftClient MC = AobaClient.MC;
 	protected final IMinecraftClient IMC = AobaClient.IMC;
+	protected static final AobaClient AOBA_CLIENT = Aoba.getInstance();
 
 	/**
 	 * Constructor for the module, initializing it with a specified keybind.
@@ -229,7 +234,26 @@ public abstract class Module {
 	 * The state is then updated accordingly.
 	 */
 	public void toggle() {
-		state.setValue(!state.getValue());
+		if (isDetectable(AOBA_CLIENT.moduleManager.antiCheat.getValue()))
+			state.setValue(false);
+		else
+			state.setValue(!state.getValue());
+	}
+
+	public boolean isDetectable(AntiCheat anticheat) {
+		return knownDetectable.contains(anticheat);
+	}
+
+	public void setDetectable(AntiCheat anticheat) {
+		setDetectable(anticheat, true);
+	}
+
+	public void setDetectable(AntiCheat anticheat, boolean state) {
+		if (state) {
+			knownDetectable.add(anticheat);
+		} else {
+			knownDetectable.remove(anticheat);
+		}
 	}
 
 	/**

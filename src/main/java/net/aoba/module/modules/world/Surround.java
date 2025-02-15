@@ -17,6 +17,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BlocksSetting;
@@ -49,8 +50,9 @@ public class Surround extends Module implements TickListener {
 	private final BooleanSetting alignCharacter = BooleanSetting.builder().id("surround_align").displayName("Align")
 			.description("Aligns the character to the nearest block.").defaultValue(false).build();
 
-	private final BooleanSetting autoDisable = BooleanSetting.builder().id("surround_autodisable").displayName("Auto-Disable")
-			.description("Disables the module when the blocks have finished placing.").defaultValue(false).build();
+	private final BooleanSetting autoDisable = BooleanSetting.builder().id("surround_autodisable")
+			.displayName("Auto-Disable").description("Disables the module when the blocks have finished placing.")
+			.defaultValue(false).build();
 
 	private final BooleanSetting legit = BooleanSetting.builder().id("surround_legit").displayName("Legit")
 			.description("Whether or not to simulate a player looking and clicking to place.").defaultValue(false)
@@ -70,6 +72,14 @@ public class Surround extends Module implements TickListener {
 		this.addSetting(alignCharacter);
 		this.addSetting(autoDisable);
 		this.addSetting(legit);
+
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Negativity);
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	@Override

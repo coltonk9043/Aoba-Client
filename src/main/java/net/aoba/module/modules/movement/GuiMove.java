@@ -12,6 +12,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.minecraft.client.gui.screen.ChatScreen;
@@ -23,6 +24,8 @@ public class GuiMove extends Module implements TickListener {
 		super("GuiMove");
 		this.setCategory(Category.of("Movement"));
 		this.setDescription("Lets the player move while inside of menus using arrow keys..");
+
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import net.aoba.event.events.SendPacketEvent;
 import net.aoba.event.listeners.SendMovementPacketListener;
 import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.mixin.interfaces.IPlayerMoveC2SPacket;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -36,6 +37,14 @@ public class AntiHunger extends Module implements SendPacketListener, SendMoveme
 
 		this.addSetting(sprint);
 		this.addSetting(onGround);
+
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Negativity);
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	@Override

@@ -8,6 +8,7 @@
 
 package net.aoba.module.modules.misc;
 
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -23,6 +24,15 @@ public class Timer extends Module {
 		this.setCategory(Category.of("Misc"));
 		this.setDescription("Increases the speed of Minecraft.");
 		this.addSetting(multiplier);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Negativity);
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	public float getMultiplier() {

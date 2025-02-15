@@ -11,11 +11,13 @@ package net.aoba.module.modules.combat;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EntityGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.managers.rotation.goals.EntityGoal;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
@@ -25,8 +27,8 @@ public class Aimbot extends Module implements TickListener {
 
 	private LivingEntity temp = null;
 
-	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("aimbot_target_mobs").displayName("Target Mobs")
-			.description("Target mobs.").defaultValue(false).build();
+	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("aimbot_target_mobs")
+			.displayName("Target Mobs").description("Target mobs.").defaultValue(false).build();
 
 	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("aimbot_target_players")
 			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
@@ -42,9 +44,21 @@ public class Aimbot extends Module implements TickListener {
 			.description("Radius that the aimbot will lock onto a target.").defaultValue(64.0f).minValue(1.0f)
 			.maxValue(256.0f).step(1.0f).build();
 
-	private final FloatSetting rotationSpeed = FloatSetting.builder().id("aimbot_rotation_speed")
-			.displayName("Rotation Speed").description("Speed of the rotation.").defaultValue(1.0f).minValue(0.1f)
-			.maxValue(5.0f).step(0.1f).build();
+	private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
+			.id("aimbot_rotation_mode").displayName("Rotation Mode")
+			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
+
+	private final FloatSetting maxRotation = FloatSetting.builder().id("aimbot_max_rotation")
+			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(10.0f)
+			.minValue(1.0f).maxValue(360.0f).build();
+
+	private final FloatSetting yawRandomness = FloatSetting.builder().id("aimbot_yaw_randomness")
+			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
+			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
+
+	private final FloatSetting pitchRandomness = FloatSetting.builder().id("aimbot_pitch_randomness")
+			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
+			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
 	private int currentTick = 0;
 
@@ -53,12 +67,15 @@ public class Aimbot extends Module implements TickListener {
 		this.setCategory(Category.of("Combat"));
 		this.setDescription("Locks your crosshair towards a desired player or entity.");
 
-		this.addSetting(rotationSpeed);
 		this.addSetting(targetAnimals);
 		this.addSetting(targetPlayers);
 		this.addSetting(targetFriends);
 		this.addSetting(frequency);
 		this.addSetting(radius);
+		this.addSetting(rotationMode);
+		this.addSetting(maxRotation);
+		this.addSetting(yawRandomness);
+		this.addSetting(pitchRandomness);
 	}
 
 	@Override
@@ -86,8 +103,7 @@ public class Aimbot extends Module implements TickListener {
 	public void onTick(TickEvent.Post event) {
 		currentTick++;
 
-		float radiusSqr = radius.getValue() * radius.getValue();
-
+		float radiusSqr = radius.getValueSqr();
 		if (currentTick >= frequency.getValue()) {
 			LivingEntity entityFound = null;
 
@@ -134,9 +150,12 @@ public class Aimbot extends Module implements TickListener {
 			}
 
 			if (entityFound != null) {
-				EntityGoal rotation = EntityGoal.builder().goal(entityFound).maxRotation(rotationSpeed.getValue())
-						.build();
+				EntityGoal rotation = EntityGoal.builder().goal(entityFound).mode(rotationMode.getValue())
+						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
+						.yawRandomness(yawRandomness.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
+			} else {
+				Aoba.getInstance().rotationManager.setGoal(null);
 			}
 
 			currentTick = 0;

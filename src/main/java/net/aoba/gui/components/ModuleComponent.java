@@ -32,6 +32,7 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Colors;
 
 public class ModuleComponent extends Component {
 	private Module module;
@@ -74,8 +75,12 @@ public class ModuleComponent extends Component {
 		float actualWidth = this.getActualSize().getWidth();
 
 		if (this.header != null) {
-			Render2D.drawString(drawContext, this.header, actualX, actualY + 8, module.state.getValue() ? 0x00FF00
-					: this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
+			if (module.isDetectable(AOBA.moduleManager.antiCheat.getValue())) {
+				Render2D.drawString(drawContext, this.header, actualX, actualY + 8, Colors.GRAY);
+			} else {
+				Render2D.drawString(drawContext, this.header, actualX, actualY + 8, module.state.getValue() ? 0x00FF00
+						: this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
+			}
 		}
 
 		if (module.hasSettings()) {
@@ -172,7 +177,8 @@ public class ModuleComponent extends Component {
 						lastSettingsTab = null;
 					}
 				} else {
-					module.toggle();
+					if (!module.isDetectable(AOBA.moduleManager.antiCheat.getValue()))
+						module.toggle();
 				}
 
 				event.cancel();

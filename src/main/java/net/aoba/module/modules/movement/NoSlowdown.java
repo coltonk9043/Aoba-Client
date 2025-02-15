@@ -13,6 +13,7 @@ import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.mixin.interfaces.IEntity;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
@@ -30,6 +31,13 @@ public class NoSlowdown extends Module implements TickListener {
 		this.setDescription("Prevents the player from being slowed down by blocks.");
 
 		this.addSetting(slowdownMultiplier);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	@Override

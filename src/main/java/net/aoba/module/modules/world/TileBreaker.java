@@ -17,6 +17,7 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
@@ -48,6 +49,15 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 
 		this.addSetting(color);
 		this.addSetting(radius);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Negativity);
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	public void setRadius(int radius) {

@@ -19,70 +19,65 @@ import net.aoba.settings.types.FloatSetting;
 
 public class AutoRespawn extends Module implements PlayerDeathListener, TickListener {
 
-    private final FloatSetting respawnDelay = FloatSetting.builder()
-            .id("autorespawn_delay")
-            .displayName("Delay")
-            .description("The delay between dying and automatically respawning.")
-            .defaultValue(0.0f)
-            .minValue(0.0f)
-            .maxValue(100.0f)
-            .step(1.0f)
-            .build();;
+	private final FloatSetting respawnDelay = FloatSetting.builder().id("autorespawn_delay").displayName("Delay")
+			.description("The delay between dying and automatically respawning.").defaultValue(0.0f).minValue(0.0f)
+			.maxValue(100.0f).step(1.0f).build();;
 
-    private int tick;
+	private int tick;
 
-    public AutoRespawn() {
-    	super("AutoRespawn");
+	public AutoRespawn() {
+		super("AutoRespawn");
 
-        this.setCategory(Category.of("Combat"));
-        this.setDescription("Automatically respawns when you die.");
-        		
-        this.addSetting(respawnDelay);
-    }
+		this.setCategory(Category.of("Combat"));
+		this.setDescription("Automatically respawns when you die.");
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-        Aoba.getInstance().eventManager.RemoveListener(PlayerDeathListener.class, this);
-    }
+		this.addSetting(respawnDelay);
+	}
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(PlayerDeathListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(PlayerDeathListener.class, this);
+	}
 
-    @Override
-    public void onToggle() {
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(PlayerDeathListener.class, this);
+	}
 
-    }
+	@Override
+	public void onToggle() {
 
-    @Override
-    public void onPlayerDeath(PlayerDeathEvent readPacketEvent) {
-        if (respawnDelay.getValue() == 0.0f) {
-            respawn();
-        } else {
-            tick = 0;
-            Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-        }
-    }
+	}
 
-    @Override
-    public void onTick(TickEvent.Pre event) {
+	@Override
+	public void onPlayerDeath(PlayerDeathEvent readPacketEvent) {
+		if (respawnDelay.getValue() == 0.0f) {
+			respawn();
+		} else {
+			tick = 0;
+			Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		}
+		readPacketEvent.cancel();
+	}
 
-    }
-    
-    @Override
-    public void onTick(TickEvent.Post event) {
-        if (tick < respawnDelay.getValue()) {
-            tick++;
-        } else {
-            respawn();
-        }
-    }
+	@Override
+	public void onTick(TickEvent.Pre event) {
 
-    private void respawn() {
-        MC.player.requestRespawn();
-        MC.setScreen(null);
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+	}
+
+	@Override
+	public void onTick(TickEvent.Post event) {
+		if (tick < respawnDelay.getValue()) {
+			tick++;
+		} else {
+			respawn();
+		}
+	}
+
+	private void respawn() {
+		MC.player.requestRespawn();
+		MC.setScreen(null);
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 }

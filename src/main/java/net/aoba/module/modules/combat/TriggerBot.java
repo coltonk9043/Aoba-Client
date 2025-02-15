@@ -12,6 +12,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -26,129 +27,97 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 
 public class TriggerBot extends Module implements TickListener {
-	private final FloatSetting radius = FloatSetting.builder()
-    		.id("triggerbot_radius")
-    		.displayName("Radius")
-    		.description("Radius that TriggerBot will trigger.")
-    		.defaultValue(5f)
-    		.minValue(0.1f)
-    		.maxValue(10f)
-    		.step(0.1f)
-    		.build();
+	private final FloatSetting radius = FloatSetting.builder().id("triggerbot_radius").displayName("Radius")
+			.description("Radius that TriggerBot will trigger.").defaultValue(5f).minValue(0.1f).maxValue(10f)
+			.step(0.1f).build();
 
-	private final BooleanSetting targetAnimals = BooleanSetting.builder()
-		    .id("triggerbot_target_animals")
-		    .displayName("Target Animals")
-		    .description("Target animals.")
-		    .defaultValue(false)
-		    .build();
+	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("triggerbot_target_animals")
+			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
 
-	private final BooleanSetting targetMonsters = BooleanSetting.builder()
-		    .id("triggerbot_target_monsters")
-		    .displayName("Target Monsters")
-		    .description("Target Monsters.")
-		    .defaultValue(true)
-		    .build();
+	private final BooleanSetting targetMonsters = BooleanSetting.builder().id("triggerbot_target_monsters")
+			.displayName("Target Monsters").description("Target Monsters.").defaultValue(true).build();
 
-	private final BooleanSetting targetPlayers = BooleanSetting.builder()
-		    .id("triggerbot_target_players")
-		    .displayName("Target Players")
-		    .description("Target Players.")
-		    .defaultValue(true)
-		    .build();
+	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("triggerbot_target_players")
+			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
 
-	private final BooleanSetting targetFriends = BooleanSetting.builder()
-		    .id("triggerbot_target_friends")
-		    .displayName("Target Friends")
-		    .description("Target Friends.")
-		    .defaultValue(false)
-		    .build();
+	private final BooleanSetting targetFriends = BooleanSetting.builder().id("triggerbot_target_friends")
+			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
 
-	private final FloatSetting attackDelay = FloatSetting.builder()
-    		.id("triggerbot_attack_delay")
-    		.displayName("Attack Delay")
-    		.description("Delay in milliseconds between attacks.")
-    		.defaultValue(0f)
-    		.minValue(0f)
-    		.maxValue(500f)
-    		.step(10f)
-    		.build();
+	private final FloatSetting attackDelay = FloatSetting.builder().id("triggerbot_attack_delay")
+			.displayName("Attack Delay").description("Delay in milliseconds between attacks.").defaultValue(0f)
+			.minValue(0f).maxValue(500f).step(10f).build();
 
-	private final FloatSetting randomness = FloatSetting.builder()
-    		.id("triggerbot_randomness")
-    		.displayName("Randomness")
-    		.description("The randomness of the delay between when TriggerBot will hit a target.")
-    		.defaultValue(0.0f)
-    		.minValue(0.0f)
-    		.maxValue(60.0f)
-    		.step(1f)
-    		.build();
-    
-    private long lastAttackTime;
+	private final FloatSetting randomness = FloatSetting.builder().id("triggerbot_randomness").displayName("Randomness")
+			.description("The randomness of the delay between when TriggerBot will hit a target.").defaultValue(0.0f)
+			.minValue(0.0f).maxValue(60.0f).step(1f).build();
 
-    public TriggerBot() {
-    	super("Triggerbot");
+	private long lastAttackTime;
 
-        this.setCategory(Category.of("Combat"));
-        this.setDescription("Attacks anything you are looking at.");
+	public TriggerBot() {
+		super("Triggerbot");
 
-        this.addSetting(attackDelay);
-        this.addSetting(radius);
-        this.addSetting(targetAnimals);
-        this.addSetting(targetMonsters);
-        this.addSetting(targetPlayers);
-        this.addSetting(targetFriends);
-        this.addSetting(randomness);
-        
-        this.lastAttackTime = 0L;
-    }
+		this.setCategory(Category.of("Combat"));
+		this.setDescription("Attacks anything you are looking at.");
 
-    @Override
-    public void onDisable() {
-        Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
-    }
+		this.addSetting(attackDelay);
+		this.addSetting(radius);
+		this.addSetting(targetAnimals);
+		this.addSetting(targetMonsters);
+		this.addSetting(targetPlayers);
+		this.addSetting(targetFriends);
+		this.addSetting(randomness);
 
-    @Override
-    public void onEnable() {
-        Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
-    }
+		this.setDetectable(AntiCheat.Grim);
 
-    @Override
-    public void onToggle() {
+		this.lastAttackTime = 0L;
+	}
 
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+	}
 
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+	}
+
+	@Override
+	public void onToggle() {
+
+	}
 
 	@Override
 	public void onTick(Pre event) {
 		int randomnessValue = randomness.getValue().intValue();
-		boolean state = randomnessValue == 0 || (Math.round(Math.random() * Math.round(randomness.max_value))) % randomnessValue == 0;
-		
+		boolean state = randomnessValue == 0
+				|| (Math.round(Math.random() * Math.round(randomness.max_value))) % randomnessValue == 0;
+
 		if (MC.player.getAttackCooldownProgress(0) == 1 && state) {
-            HitResult ray = MC.crosshairTarget;
+			HitResult ray = MC.crosshairTarget;
 
-            if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
-                EntityHitResult entityResult = (EntityHitResult) ray;
-                Entity ent = entityResult.getEntity();
+			if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
+				EntityHitResult entityResult = (EntityHitResult) ray;
+				Entity ent = entityResult.getEntity();
 
-                if (!(ent instanceof LivingEntity)) {
-                    return;
-                }
+				if (!(ent instanceof LivingEntity)) {
+					return;
+				}
 
-                if (ent instanceof AnimalEntity && !this.targetAnimals.getValue())
-                    return;
-                if (ent instanceof PlayerEntity && !this.targetPlayers.getValue())
-                    return;
-                if (ent instanceof Monster && !this.targetMonsters.getValue())
-                    return;
+				if (ent instanceof AnimalEntity && !this.targetAnimals.getValue())
+					return;
+				if (ent instanceof PlayerEntity && !this.targetPlayers.getValue())
+					return;
+				if (ent instanceof Monster && !this.targetMonsters.getValue())
+					return;
 
-                if (System.currentTimeMillis() - this.lastAttackTime >= attackDelay.getValue()) {
-                    MC.interactionManager.attackEntity(MC.player, entityResult.getEntity());
-                    MC.player.swingHand(Hand.MAIN_HAND);
-                    this.lastAttackTime = System.currentTimeMillis();
-                }
-            }
-        }
+				if (System.currentTimeMillis() - this.lastAttackTime >= attackDelay.getValue()) {
+					MC.interactionManager.attackEntity(MC.player, entityResult.getEntity());
+					MC.player.swingHand(Hand.MAIN_HAND);
+					this.lastAttackTime = System.currentTimeMillis();
+				}
+			}
+		}
 	}
 
 	@Override

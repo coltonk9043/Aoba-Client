@@ -14,13 +14,14 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EntityGoal;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.managers.rotation.RotationMode;
-import net.aoba.managers.rotation.goals.EntityGoal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -66,9 +67,9 @@ public class KillAura extends Module implements TickListener {
 			.id("killaura_rotation_mode").displayName("Rotation Mode")
 			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
 
-	private final FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation").displayName("Max Rotation")
-			.description("The max speed that KillAura will rotate").defaultValue(10.0f).minValue(1.0f).maxValue(360.0f)
-			.build();
+	private final FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation")
+			.displayName("Max Rotation").description("The max speed that KillAura will rotate").defaultValue(10.0f)
+			.minValue(1.0f).maxValue(360.0f).build();
 
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
@@ -97,6 +98,9 @@ public class KillAura extends Module implements TickListener {
 		this.addSetting(maxRotation);
 		this.addSetting(yawRandomness);
 		this.addSetting(pitchRandomness);
+
+		this.setDetectable(AntiCheat.Matrix); // NPC
+
 	}
 
 	@Override

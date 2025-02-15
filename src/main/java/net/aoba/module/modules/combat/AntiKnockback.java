@@ -15,6 +15,7 @@ import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.mixin.interfaces.IEntityVelocityUpdateS2CPacket;
 import net.aoba.mixin.interfaces.IExplosionS2CPacket;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -31,23 +32,26 @@ import net.minecraft.util.math.Vec3d;
 
 public class AntiKnockback extends Module implements ReceivePacketListener {
 
-	private final FloatSetting horizontal = FloatSetting.builder().id("antiknockback_horizontal").displayName("Horizontal")
-			.description("Horizontal Velocity").defaultValue(0f).minValue(0f).maxValue(1f).step(0.01f).build();
+	private final FloatSetting horizontal = FloatSetting.builder().id("antiknockback_horizontal")
+			.displayName("Horizontal").description("Horizontal Velocity").defaultValue(0f).minValue(0f).maxValue(1f)
+			.step(0.01f).build();
 
 	private final FloatSetting vertical = FloatSetting.builder().id("antiknockback_vertical").displayName("Vertical")
 			.description("Vertical Velocity").defaultValue(0f).minValue(0f).maxValue(1f).step(0.01f).build();
 
-	private final BooleanSetting noPushEntites = BooleanSetting.builder().id("antiknockback_no_push_entities").displayName("No Push Entities")
-			.description("Prevents being pushed by entites.").defaultValue(true).build();
+	private final BooleanSetting noPushEntites = BooleanSetting.builder().id("antiknockback_no_push_entities")
+			.displayName("No Push Entities").description("Prevents being pushed by entites.").defaultValue(true)
+			.build();
 
-	private final BooleanSetting noPushBlocks = BooleanSetting.builder().id("antiknockback_no_push_blocks").displayName("No Push Blocks")
-			.description("Prevents being pushed by blocks.").defaultValue(true).build();
+	private final BooleanSetting noPushBlocks = BooleanSetting.builder().id("antiknockback_no_push_blocks")
+			.displayName("No Push Blocks").description("Prevents being pushed by blocks.").defaultValue(true).build();
 
-	private final BooleanSetting noPushLiquids = BooleanSetting.builder().id("antiknockback_no_push_liquids").displayName("No Push Liquids")
-			.description("Prevents being pushed by liquids.").defaultValue(true).build();
+	private final BooleanSetting noPushLiquids = BooleanSetting.builder().id("antiknockback_no_push_liquids")
+			.displayName("No Push Liquids").description("Prevents being pushed by liquids.").defaultValue(true).build();
 
-	private final BooleanSetting noPushFishhook = BooleanSetting.builder().id("antiknockback_no_push_fishhook").displayName("No Push Fishhook")
-			.description("Prevents being pulled by the fishhook.").defaultValue(true).build();
+	private final BooleanSetting noPushFishhook = BooleanSetting.builder().id("antiknockback_no_push_fishhook")
+			.displayName("No Push Fishhook").description("Prevents being pulled by the fishhook.").defaultValue(true)
+			.build();
 
 	public AntiKnockback() {
 		super("AntiKnockback");
@@ -61,6 +65,13 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 		this.addSetting(noPushBlocks);
 		this.addSetting(noPushLiquids);
 		this.addSetting(noPushFishhook);
+
+		// Vulcan, AACV5, Grim Matrix, and Karhu detectable.
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	public boolean getNoPushEntities() {
@@ -96,13 +107,15 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 		Packet<?> packet = readPacketEvent.GetPacket();
 
 		if (packet instanceof EntityVelocityUpdateS2CPacket velocityUpdatePacket) {
-			if (velocityUpdatePacket.getEntityId() == mc.player.getId()) {
-				((IEntityVelocityUpdateS2CPacket) packet)
-						.setVelocityX((int) (velocityUpdatePacket.getVelocityX() * 8000d * horizontal.getValue()));
-				((IEntityVelocityUpdateS2CPacket) packet)
-						.setVelocityY((int) (velocityUpdatePacket.getVelocityY() * 8000d * vertical.getValue()));
-				((IEntityVelocityUpdateS2CPacket) packet)
-						.setVelocityZ((int) (velocityUpdatePacket.getVelocityZ() * 8000d * horizontal.getValue()));
+			if (mc.player != null) {
+				if (velocityUpdatePacket.getEntityId() == mc.player.getId()) {
+					((IEntityVelocityUpdateS2CPacket) packet)
+							.setVelocityX((int) (velocityUpdatePacket.getVelocityX() * 8000d * horizontal.getValue()));
+					((IEntityVelocityUpdateS2CPacket) packet)
+							.setVelocityY((int) (velocityUpdatePacket.getVelocityY() * 8000d * vertical.getValue()));
+					((IEntityVelocityUpdateS2CPacket) packet)
+							.setVelocityZ((int) (velocityUpdatePacket.getVelocityZ() * 8000d * horizontal.getValue()));
+				}
 			}
 		}
 
@@ -116,12 +129,13 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 			}
 		}
 
-		//Cancel being launched with a fishing rod.
+		// Cancel being launched with a fishing rod.
 		if (packet instanceof EntityStatusS2CPacket entityStatusS2CPacket) {
 			if (entityStatusS2CPacket.getStatus() == EntityStatuses.PULL_HOOKED_ENTITY && noPushFishhook.getValue()) {
 				Entity entity = entityStatusS2CPacket.getEntity(mc.world);
 
-				if (entity instanceof FishingBobberEntity fishingBobberEntity && fishingBobberEntity.getHookedEntity() == mc.player) {
+				if (entity instanceof FishingBobberEntity fishingBobberEntity
+						&& fishingBobberEntity.getHookedEntity() == mc.player) {
 					readPacketEvent.cancel();
 				}
 			}

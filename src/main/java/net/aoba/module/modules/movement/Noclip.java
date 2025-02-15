@@ -12,6 +12,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -28,8 +29,9 @@ public class Noclip extends Module implements TickListener {
 			.displayName("Speed Multiplier").description("Noclip speed multiplier.").defaultValue(1.5f).minValue(0.1f)
 			.maxValue(15f).step(0.1f).build();
 
-	private final BooleanSetting onGround = BooleanSetting.builder().id("noclip_onground").displayName("On Ground Packet")
-			.description("Whether to send the onground packet while moving.").defaultValue(true).build();
+	private final BooleanSetting onGround = BooleanSetting.builder().id("noclip_onground")
+			.displayName("On Ground Packet").description("Whether to send the onground packet while moving.")
+			.defaultValue(true).build();
 
 	private final FloatSetting packetDistanceThreshold = FloatSetting.builder().id("noclip_packet_distance_threshold")
 			.displayName("Packet Distance Threshold").description("Distance threshold for sending packets.")
@@ -59,6 +61,15 @@ public class Noclip extends Module implements TickListener {
 		this.addSetting(packetCountOffset);
 		this.addSetting(yawOffset);
 		this.addSetting(maxPackets);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Negativity);
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	public void setSpeed(float speed) {

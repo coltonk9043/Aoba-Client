@@ -13,6 +13,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.SendPacketEvent;
 import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.mixin.interfaces.IPlayerInteractEntityC2SPacket;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -40,6 +41,15 @@ public class Criticals extends Module implements SendPacketListener {
 		this.setDescription("Makes all attacks into critical strikes.");
 
 		this.addSetting(legit);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Karhu);
+
 	}
 
 	@Override

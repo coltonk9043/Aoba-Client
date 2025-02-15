@@ -52,6 +52,7 @@ import net.aoba.gui.navigation.huds.RadarHud;
 import net.aoba.gui.navigation.huds.SpeedHud;
 import net.aoba.gui.navigation.huds.TimeHud;
 import net.aoba.gui.navigation.huds.WatermarkHud;
+import net.aoba.gui.navigation.windows.AntiCheatWindow;
 import net.aoba.gui.navigation.windows.AuthCrackerWindow;
 import net.aoba.gui.navigation.windows.GoToWindow;
 import net.aoba.gui.navigation.windows.HudOptionsWindow;
@@ -227,6 +228,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		}
 
 		modulesPane.addWindow(new SettingsWindow());
+		modulesPane.addWindow(new AntiCheatWindow());
 
 		clickGuiNavBar.addPane(modulesPane);
 		clickGuiNavBar.addPane(toolsPane);

@@ -11,6 +11,7 @@ package net.aoba.module.modules.misc;
 import net.aoba.Aoba;
 import net.aoba.event.events.SendPacketEvent;
 import net.aoba.event.listeners.SendPacketListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.minecraft.network.packet.Packet;
@@ -21,6 +22,9 @@ public class XCarry extends Module implements SendPacketListener {
 		super("XCarry");
 		this.setCategory(Category.of("Misc"));
 		this.setDescription("Allows you to store items in your crafting slot..");
+
+		this.isDetectable(AntiCheat.Negativity);
+
 	}
 
 	@Override

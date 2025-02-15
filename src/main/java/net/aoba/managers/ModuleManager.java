@@ -19,6 +19,7 @@ import net.aoba.Aoba;
 import net.aoba.api.IAddon;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.listeners.KeyDownListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Module;
 import net.aoba.module.modules.combat.Aimbot;
 import net.aoba.module.modules.combat.AntiInvis;
@@ -93,13 +94,14 @@ import net.aoba.module.modules.world.Scaffold;
 import net.aoba.module.modules.world.Surround;
 import net.aoba.module.modules.world.TileBreaker;
 import net.aoba.settings.Setting;
+import net.aoba.settings.types.EnumSetting;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil.Key;
 
 public class ModuleManager implements KeyDownListener {
-	public ArrayList<net.aoba.module.Module> modules = new ArrayList<net.aoba.module.Module>();
+	private static MinecraftClient MC = MinecraftClient.getInstance();
 
-	private MinecraftClient mc = MinecraftClient.getInstance();
+	public ArrayList<Module> modules = new ArrayList<Module>();
 
 	// Modules
 	public Aimbot aimbot = new Aimbot();
@@ -175,13 +177,24 @@ public class ModuleManager implements KeyDownListener {
 	public XRay xray = new XRay();
 	public Zoom zoom = new Zoom();
 
+	public EnumSetting<AntiCheat> antiCheat = EnumSetting.<AntiCheat>builder().id("aoba_anticheat")
+			.displayName("Current AntiCheat")
+			.description(
+					"This setting will disable any modules or features that are known to be detected by a specific anticheat. ")
+			.defaultValue(AntiCheat.Vanilla).onUpdate(s -> {
+				for (Module module : this.modules) {
+					if (module.isDetectable(s))
+						module.state.setValue(false);
+				}
+			}).build();
+
 	public ModuleManager(List<IAddon> addons) {
 		try {
 			// Attempts to find each field of type Module and add it to the module list.
 			for (Field field : ModuleManager.class.getDeclaredFields()) {
-				if (!net.aoba.module.Module.class.isAssignableFrom(field.getType()))
+				if (!Module.class.isAssignableFrom(field.getType()))
 					continue;
-				net.aoba.module.Module module = (net.aoba.module.Module) field.get(this);
+				Module module = (Module) field.get(this);
 				addModule(module);
 			}
 
@@ -196,7 +209,7 @@ public class ModuleManager implements KeyDownListener {
 		}
 
 		// Registers all Module settings to the settings manager.
-		for (net.aoba.module.Module module : modules) {
+		for (Module module : modules) {
 			for (Setting<?> setting : module.getSettings()) {
 				SettingManager.registerSetting(setting);
 			}
@@ -205,18 +218,18 @@ public class ModuleManager implements KeyDownListener {
 		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 	}
 
-	public void addModule(net.aoba.module.Module module) {
+	public void addModule(Module module) {
 		modules.add(module);
 	}
 
 	public void disableAll() {
-		for (net.aoba.module.Module module : modules) {
+		for (Module module : modules) {
 			module.state.setValue(false);
 		}
 	}
 
-	public net.aoba.module.Module getModuleByName(String string) {
-		for (net.aoba.module.Module module : modules) {
+	public Module getModuleByName(String string) {
+		for (Module module : modules) {
 			if (module.getName().equalsIgnoreCase(string)) {
 				return module;
 			}
@@ -226,8 +239,11 @@ public class ModuleManager implements KeyDownListener {
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
-		if (mc.currentScreen == null) {
+		if (MC.currentScreen == null) {
 			for (Module module : modules) {
+				if (module.isDetectable(antiCheat.getValue()))
+					continue;
+
 				Key binding = module.getBind().getValue();
 				if (binding.getCode() == event.GetKey()) {
 					module.toggle();

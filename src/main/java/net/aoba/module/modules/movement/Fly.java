@@ -14,6 +14,7 @@ import net.aoba.event.events.SendMovementPacketEvent.Pre;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.SendMovementPacketListener;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -35,9 +36,9 @@ public class Fly extends Module implements TickListener, SendMovementPacketListe
 			.description("Upward motion when jump key is pressed.").defaultValue(0.3f).minValue(0.1f).maxValue(2.0f)
 			.step(0.1f).build();
 
-	private final FloatSetting sneakMotionY = FloatSetting.builder().id("fly_sneak_motion_y").displayName("Sneak Motion Y")
-			.description("Downward motion when sneak key is pressed.").defaultValue(-0.3f).minValue(-2.0f).maxValue(0f)
-			.step(0.1f).build();
+	private final FloatSetting sneakMotionY = FloatSetting.builder().id("fly_sneak_motion_y")
+			.displayName("Sneak Motion Y").description("Downward motion when sneak key is pressed.").defaultValue(-0.3f)
+			.minValue(-2.0f).maxValue(0f).step(0.1f).build();
 
 	private final BooleanSetting antiKick = BooleanSetting.builder().id("fly_antikick").displayName("AntiKick")
 			.description("Prevents the player from being kicked.").defaultValue(false).build();
@@ -52,6 +53,15 @@ public class Fly extends Module implements TickListener, SendMovementPacketListe
 		this.addSetting(jumpMotionY);
 		this.addSetting(sneakMotionY);
 		this.addSetting(antiKick);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Negativity);
+		this.setDetectable(AntiCheat.Karhu);
 	}
 
 	public void setSpeed(float speed) {

@@ -8,6 +8,7 @@
 
 package net.aoba.module.modules.misc;
 
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -31,6 +32,11 @@ public class FastBreak extends Module {
 
 		this.addSetting(multiplier);
 		this.addSetting(ignoreWater);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
 	}
 
 	public float getMultiplier() {

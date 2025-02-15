@@ -16,14 +16,14 @@ import java.util.stream.StreamSupport;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.managers.rotation.Rotation;
+import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.RotationGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.utils.bowaimbot.BowAimbotTargets;
-import net.aoba.managers.rotation.Rotation;
-import net.aoba.managers.rotation.RotationMode;
-import net.aoba.managers.rotation.goals.RotationGoal;
+import net.aoba.utils.entity.EntityUtils;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -164,12 +164,12 @@ public class BowAimbot extends Module implements TickListener {
 	}
 
 	private Entity filterEntities(Stream<Entity> s) {
-		Stream<Entity> stream = s.filter(BowAimbotTargets.IS_ATTACKABLE);
+		Stream<Entity> stream = s.filter(EntityUtils.IS_ATTACKABLE);
 		return stream.min(Priority.ANGLE_DIST.comparator).orElse(null);
 	}
 
 	private Entity filterPlayers(Stream<AbstractClientPlayerEntity> s) {
-		Stream<AbstractClientPlayerEntity> stream = s.filter(BowAimbotTargets.IS_ATTACKABLE);
+		Stream<AbstractClientPlayerEntity> stream = s.filter(EntityUtils.IS_ATTACKABLE);
 		return stream.min(Priority.ANGLE_DIST.comparator).orElse(null);
 	}
 

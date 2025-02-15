@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -22,7 +23,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -63,6 +63,16 @@ public class MaceAura extends Module implements TickListener {
 		this.addSetting(targetMonsters);
 		this.addSetting(targetPlayers);
 		this.addSetting(targetFriends);
+
+		this.setDetectable(AntiCheat.NoCheatPlus);
+		this.setDetectable(AntiCheat.Vulcan);
+		this.setDetectable(AntiCheat.AdvancedAntiCheat);
+		this.setDetectable(AntiCheat.Verus);
+		this.setDetectable(AntiCheat.Grim);
+		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(AntiCheat.Negativity);
+		this.setDetectable(AntiCheat.Karhu);
+		this.setDetectable(AntiCheat.Buzz);
 	}
 
 	@Override
@@ -87,8 +97,9 @@ public class MaceAura extends Module implements TickListener {
 
 	@Override
 	public void onTick(TickEvent.Post event) {
-		if (MC.player.getMainHandStack().getItem() == Items.MACE && MC.player.getAttackCooldownProgress(0) == 1) {
-
+		// if (MC.player.getMainHandStack().getItem() == Items.MACE &&
+		// MC.player.getAttackCooldownProgress(0) == 1) {
+		if (MC.player.getAttackCooldownProgress(0) == 1) {
 			if (entityToAttack == null) {
 				ArrayList<Entity> hitList = new ArrayList<Entity>();
 
