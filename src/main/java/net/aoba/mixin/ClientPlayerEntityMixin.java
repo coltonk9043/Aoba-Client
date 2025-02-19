@@ -18,7 +18,6 @@
 
 package net.aoba.mixin;
 
-import net.aoba.module.modules.combat.AntiKnockback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,6 +31,7 @@ import net.aoba.event.events.PlayerHealthEvent;
 import net.aoba.event.events.SendMovementPacketEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.mixin.interfaces.ICamera;
+import net.aoba.module.modules.combat.AntiKnockback;
 import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
 import net.aoba.module.modules.movement.HighJump;
@@ -147,7 +147,6 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	@Inject(method = "sendMovementPackets", at = @At("TAIL"))
 	private void onSendMovementPacketsTail(CallbackInfo info) {
 		SendMovementPacketEvent.Post sendMovementPacketPostEvent = new SendMovementPacketEvent.Post();
-
 		Aoba.getInstance().eventManager.Fire(sendMovementPacketPostEvent);
 	}
 

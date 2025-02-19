@@ -10,26 +10,28 @@ package net.aoba.managers.rotation.goals;
 
 import net.aoba.managers.rotation.Rotation;
 import net.aoba.managers.rotation.RotationMode;
+import net.minecraft.util.math.Vec3d;
 
-public class RotationGoal extends Goal<Rotation> {
+public class Vec3dGoal extends Goal<Vec3d> {
+
 	@Override
 	public Rotation getGoalRotation(float tickDelta) {
-		return this.rotationGoal;
+		return Rotation.rotationFrom(rotationGoal);
 	}
 
 	// Builder
-	public static RotationGoal.BUILDER builder() {
-		return new RotationGoal.BUILDER();
+	public static Vec3dGoal.BUILDER builder() {
+		return new Vec3dGoal.BUILDER();
 	}
 
 	public static class BUILDER {
-		private RotationGoal goal;
+		private Vec3dGoal goal;
 
 		public BUILDER() {
-			goal = new RotationGoal();
+			goal = new Vec3dGoal();
 		}
 
-		public BUILDER goal(Rotation rotation) {
+		public BUILDER goal(Vec3d rotation) {
 			goal.rotationGoal = rotation;
 			return this;
 		}
@@ -59,8 +61,9 @@ public class RotationGoal extends Goal<Rotation> {
 			return this;
 		}
 
-		public RotationGoal build() {
+		public Vec3dGoal build() {
 			return goal;
 		}
 	}
+
 }

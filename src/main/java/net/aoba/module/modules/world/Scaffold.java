@@ -12,15 +12,17 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
+import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.Vec3dGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.managers.rotation.Rotation;
-import net.aoba.managers.rotation.RotationMode;
-import net.minecraft.command.argument.EntityAnchorArgumentType;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -34,17 +36,33 @@ public class Scaffold extends Module implements TickListener {
 	}
 
 	private final FloatSetting radius = FloatSetting.builder().id("scaffold_radius").displayName("Radius")
-			.description("How far Scaffold will place a block below the player.").defaultValue(5f).minValue(1f)
-			.maxValue(10f).step(1f).build();
+			.description("How far Scaffold will place a block below the player.").defaultValue(4f).minValue(1f)
+			.maxValue(10f).step(0.5f).build();
 
 	private final FloatSetting placeDelay = FloatSetting.builder().id("scaffold_place_delay").displayName("Place Delay")
 			.description("How long (in ticks) until Scaffold will place the next block below the player.")
-			.defaultValue(0f).minValue(1f).maxValue(20f).step(1f).build();
+			.defaultValue(0f).minValue(0f).maxValue(20f).step(1f).build();
 
 	private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
 			.id("scaffold_rotation_mode").displayName("Rotation Mode")
-			.description("Controls how the player's view rotates when a block is to be placed.")
-			.defaultValue(RotationMode.NONE).build();
+			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
+
+	private final FloatSetting maxRotation = FloatSetting.builder().id("scaffold_max_rotation")
+			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(10.0f)
+			.minValue(1.0f).maxValue(360.0f).build();
+
+	private final FloatSetting yawRandomness = FloatSetting.builder().id("scaffold_yaw_randomness")
+			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
+			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
+
+	private final FloatSetting pitchRandomness = FloatSetting.builder().id("scaffold_pitch_randomness")
+			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
+			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
+
+	private final BooleanSetting fakeRotation = BooleanSetting.builder().id("scaffold_fake_rotation")
+			.displayName("Fake Rotation")
+			.description("Spoofs the client's rotation so that the player appears rotated on the server")
+			.defaultValue(false).build();
 
 	private final BooleanSetting swingHand = BooleanSetting.builder().id("scaffold_swing_hand")
 			.displayName("Swing Hand").description("Swing hand when placing blocks.").defaultValue(true).build();
@@ -60,6 +78,10 @@ public class Scaffold extends Module implements TickListener {
 		this.addSetting(radius);
 		this.addSetting(placeDelay);
 		this.addSetting(rotationMode);
+		this.addSetting(maxRotation);
+		this.addSetting(yawRandomness);
+		this.addSetting(pitchRandomness);
+		this.addSetting(fakeRotation);
 		this.addSetting(swingHand);
 	}
 
@@ -79,52 +101,38 @@ public class Scaffold extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		ScaffoldPlaceResult placementPos = findBlockPosToPlace();
+		PlayerInventory inventory = MC.player.getInventory();
+		ItemStack currentHand = inventory.getMainHandStack();
+		if (currentHand.getItem() instanceof BlockItem) {
+			ScaffoldPlaceResult placementPos = findBlockPosToPlace();
 
-		if (curDelay >= placeDelay.getValue()) {
-			if (placementPos != null) {
-				Vec3d placementPosVec = placementPos.pos.toCenterPos();
+			if (curDelay >= placeDelay.getValue()) {
+				if (placementPos != null) {
+					Vec3d placementPosVec = placementPos.pos.toCenterPos();
 
-				switch (rotationMode.getValue()) {
-				case NONE:
-					break;
-				case INSTANT:
-					MC.player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, placementPosVec);
-					break;
-				case SMOOTH:
-					// Instant rotation for now because im too dumb to figure out smooth rotation
-					float rotationDegreesPerTick = 10f;
-					Rotation rotation = Rotation.getPlayerRotationDeltaFromPosition(placementPosVec);
+					Vec3dGoal rotation = Vec3dGoal.builder().goal(placementPosVec).mode(rotationMode.getValue())
+							.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
+							.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue()).build();
+					Aoba.getInstance().rotationManager.setGoal(rotation);
 
-					float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
-							rotationDegreesPerTick);
-					float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
-							rotationDegreesPerTick);
+					BlockHitResult rayTrace = new BlockHitResult(MC.player.getPos(), placementPos.direction,
+							placementPos.pos, false);
+					ActionResult result = MC.interactionManager.interactBlock(MC.player, Hand.MAIN_HAND, rayTrace);
 
-					Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
-							MC.player.getPitch() + maxPitchRotation);
-					MC.player.setYaw((float) newRotation.yaw());
-					MC.player.setPitch((float) newRotation.pitch());
-					break;
-				default:
-					break;
-				}
+					if (result.isAccepted()) {
+						if (swingHand.getValue())
+							MC.player.swingHand(Hand.MAIN_HAND);
+						else
+							MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+					}
 
-				BlockHitResult rayTrace = new BlockHitResult(MC.player.getPos(), placementPos.direction,
-						placementPos.pos, false);
-				ActionResult result = MC.interactionManager.interactBlock(MC.player, Hand.MAIN_HAND, rayTrace);
-
-				if (result.isAccepted()) {
-					if (swingHand.getValue())
-						MC.player.swingHand(Hand.MAIN_HAND);
+					curDelay = 0;
 				} else
-					MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
-
-				curDelay = 0;
+					curDelay++;
 			} else
 				curDelay++;
-		} else
-			curDelay++;
+		}
+
 	}
 
 	@Override

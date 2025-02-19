@@ -15,7 +15,8 @@
     "interfaces.ICuboid",
     "interfaces.IEntityModel",
     "interfaces.IPlayerMoveC2SPacket",
-    "interfaces.IMouse"
+    "interfaces.IMouse",
+	"interfaces.IClientPlayerEntity"
   ],
   "client": [
     "AbstractBlockStateMixin",

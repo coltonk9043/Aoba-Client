@@ -44,6 +44,10 @@ public record Rotation(double yaw, double pitch) {
 		return new Rotation(yaw, MathHelper.clamp(pitch, -90f, 90f));
 	}
 
+	public Rotation clamp() {
+		return new Rotation(yaw % 360.0f, pitch % 360.0f);
+	}
+
 	public double magnitude() {
 		float yaw = MathHelper.wrapDegrees((float) yaw());
 		float pitch = MathHelper.wrapDegrees((float) pitch());

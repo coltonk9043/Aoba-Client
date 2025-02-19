@@ -22,6 +22,7 @@ public abstract class Goal<T> {
 	protected float maxRotation = 10.0f;
 	protected float yawRandomness = 0f;
 	protected float pitchRandomness = 0f;
+	protected boolean fakeRotation = false;
 
 	/**
 	 * Getter for rotationGoal
@@ -73,6 +74,10 @@ public abstract class Goal<T> {
 	 */
 	public float getPitchRandomness() {
 		return pitchRandomness;
+	}
+
+	public boolean isFakeRotation() {
+		return fakeRotation;
 	}
 
 }
