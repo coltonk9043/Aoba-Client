@@ -113,9 +113,18 @@ public class EntityESP extends Module implements Render3DListener {
 							double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
 							double interpolatedZ = MathHelper.lerp(partialTicks, entity.prevZ, entity.getZ());
 
-							Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(),
-									interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
+
+							Vec3d camPos = MC.gameRenderer.getCamera().getPos();
+							if (camPos == null) camPos = Vec3d.ZERO;
+
+							Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX() - camPos.x,
+									interpolatedY - entity.getY() - camPos.y, interpolatedZ - entity.getZ() - camPos.z);
+
+							matrixStack.push();
+							matrixStack.translate(camPos);
+
 							Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
+							matrixStack.pop();
 							break;
 						case DrawMode.Model:
 							Render3D.drawEntityModel(matrixStack, partialTicks, entity, color);
