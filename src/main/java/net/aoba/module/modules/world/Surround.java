@@ -23,6 +23,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BlocksSetting;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -114,25 +115,6 @@ public class Surround extends Module implements TickListener {
 		return -1;
 	}
 
-	private void placeBlock(BlockPos pos, Hand hand) {
-		for (Direction direction : Direction.values()) {
-			BlockPos offsetPos = pos.offset(direction);
-			if (!MC.world.isInBuildLimit(offsetPos))
-				continue;
-
-			if (MC.world.getBlockState(offsetPos).isSolidBlock(MC.world, offsetPos)) {
-				if (legit.getValue()) {
-					MC.player.swingHand(hand);
-				} else {
-					MC.player.networkHandler.sendPacket(new HandSwingC2SPacket(hand));
-				}
-
-				MC.interactionManager.interactBlock(MC.player, hand,
-						new BlockHitResult(Vec3d.ofCenter(pos), direction.getOpposite(), pos, false));
-				break;
-			}
-		}
-	}
 
 	private void breakBlock(BlockPos pos, Hand hand) {
 		MC.interactionManager.attackBlock(pos, Direction.UP);
@@ -169,10 +151,10 @@ public class Surround extends Module implements TickListener {
 					newPos.west());
 			for (BlockPos pos : placePositions) {
 				if (MC.world.getBlockState(pos).isReplaceable()) {
-					placeBlock(pos, hand);
+					InteractionUtils.placeBlock(pos, hand, true);
 				} else if (BREAKABLE_BLOCKS.contains(MC.world.getBlockState(pos).getBlock())) {
 					breakBlock(pos, hand);
-					placeBlock(pos, hand);
+					InteractionUtils.placeBlock(pos, hand, true);
 				}
 			}
 		}

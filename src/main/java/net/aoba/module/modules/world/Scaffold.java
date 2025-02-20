@@ -19,6 +19,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItem;
@@ -114,18 +115,8 @@ public class Scaffold extends Module implements TickListener {
 							.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
 							.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue()).build();
 					Aoba.getInstance().rotationManager.setGoal(rotation);
-
-					BlockHitResult rayTrace = new BlockHitResult(MC.player.getPos(), placementPos.direction,
-							placementPos.pos, false);
-					ActionResult result = MC.interactionManager.interactBlock(MC.player, Hand.MAIN_HAND, rayTrace);
-
-					if (result.isAccepted()) {
-						if (swingHand.getValue())
-							MC.player.swingHand(Hand.MAIN_HAND);
-						else
-							MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
-					}
-
+					
+					InteractionUtils.placeBlock(placementPos.pos, Hand.MAIN_HAND, true);
 					curDelay = 0;
 				} else
 					curDelay++;
