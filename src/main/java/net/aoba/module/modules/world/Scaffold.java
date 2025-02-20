@@ -89,6 +89,7 @@ public class Scaffold extends Module implements TickListener {
 	@Override
 	public void onDisable() {
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().rotationManager.setGoal(null);
 	}
 
 	@Override
@@ -107,23 +108,21 @@ public class Scaffold extends Module implements TickListener {
 		if (currentHand.getItem() instanceof BlockItem) {
 			ScaffoldPlaceResult placementPos = findBlockPosToPlace();
 
-			if (curDelay >= placeDelay.getValue()) {
-				if (placementPos != null) {
-					Vec3d placementPosVec = placementPos.pos.toCenterPos();
+			if (curDelay >= placeDelay.getValue() && placementPos != null) {
+				Vec3d placementPosVec = placementPos.pos.toCenterPos();
 
-					Vec3dGoal rotation = Vec3dGoal.builder().goal(placementPosVec).mode(rotationMode.getValue())
-							.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
-							.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue()).build();
-					Aoba.getInstance().rotationManager.setGoal(rotation);
-					
-					InteractionUtils.placeBlock(placementPos.pos, Hand.MAIN_HAND, true);
-					curDelay = 0;
-				} else
-					curDelay++;
-			} else
+				Vec3dGoal rotation = Vec3dGoal.builder().goal(placementPosVec).mode(rotationMode.getValue())
+						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
+						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue()).build();
+				Aoba.getInstance().rotationManager.setGoal(rotation);
+
+				InteractionUtils.placeBlock(placementPos.pos, Hand.MAIN_HAND, true);
+				curDelay = 0;
+			} else {
+				Aoba.getInstance().rotationManager.setGoal(null);
 				curDelay++;
+			}
 		}
-
 	}
 
 	@Override
