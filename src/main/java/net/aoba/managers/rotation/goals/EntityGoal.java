@@ -56,6 +56,11 @@ public class EntityGoal extends Goal<Entity> {
 			return this;
 		}
 
+		public BUILDER fakeRotation(boolean state) {
+			goal.fakeRotation = state;
+			return this;
+		}
+
 		public EntityGoal build() {
 			return goal;
 		}

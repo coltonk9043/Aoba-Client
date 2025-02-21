@@ -26,22 +26,16 @@ public record Rotation(double yaw, double pitch) {
 
 	public Rotation roundToGCD() {
 		double gcd = RotationManager.getGCD();
-		ClientPlayerEntity player = MC.player;
-		// Rotation serverRotation = RotationManager.serverRotation;
-
-		// Get Deltas
-		double deltaYaw = this.yaw - player.getYaw();
-		double deltaPitch = this.pitch - player.getPitch();
 
 		// Round to nearest GCD
-		double g1 = Math.round(deltaYaw / gcd) * gcd;
-		double g2 = Math.round(deltaPitch / gcd) * gcd;
+		double g1 = Math.round(this.yaw / gcd) * gcd;
+		double g2 = Math.round(this.pitch / gcd) * gcd;
 
-		// Add corrected rotation to server rotation
-		double yaw = player.getYaw() + g1;
-		double pitch = player.getPitch() + g2;
+		return new Rotation(g1, MathHelper.clamp(g2, -90f, 90f));
+	}
 
-		return new Rotation(yaw, MathHelper.clamp(pitch, -90f, 90f));
+	public Rotation clamp() {
+		return new Rotation(MathHelper.wrapDegrees(yaw), MathHelper.wrapDegrees(pitch));
 	}
 
 	public double magnitude() {

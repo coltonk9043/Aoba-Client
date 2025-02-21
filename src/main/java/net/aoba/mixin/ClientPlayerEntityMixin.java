@@ -18,7 +18,6 @@
 
 package net.aoba.mixin;
 
-import net.aoba.module.modules.combat.AntiKnockback;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,6 +31,7 @@ import net.aoba.event.events.PlayerHealthEvent;
 import net.aoba.event.events.SendMovementPacketEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.mixin.interfaces.ICamera;
+import net.aoba.module.modules.combat.AntiKnockback;
 import net.aoba.module.modules.movement.Fly;
 import net.aoba.module.modules.movement.Freecam;
 import net.aoba.module.modules.movement.HighJump;
@@ -138,17 +138,20 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		Aoba.getInstance().eventManager.Fire(sendMovementPacketPreEvent);
 	}
 
-	@Inject(method = "sendMovementPackets", at = @At("HEAD"))
+	@Inject(method = "sendMovementPackets", at = @At("HEAD"), cancellable = true)
 	private void onSendMovementPacketsHead(CallbackInfo info) {
 		SendMovementPacketEvent.Pre sendMovementPacketPreEvent = new SendMovementPacketEvent.Pre();
 		Aoba.getInstance().eventManager.Fire(sendMovementPacketPreEvent);
+		if (sendMovementPacketPreEvent.isCancelled())
+			info.cancel();
 	}
 
-	@Inject(method = "sendMovementPackets", at = @At("TAIL"))
+	@Inject(method = "sendMovementPackets", at = @At("TAIL"), cancellable = true)
 	private void onSendMovementPacketsTail(CallbackInfo info) {
 		SendMovementPacketEvent.Post sendMovementPacketPostEvent = new SendMovementPacketEvent.Post();
-
 		Aoba.getInstance().eventManager.Fire(sendMovementPacketPostEvent);
+		if (sendMovementPacketPostEvent.isCancelled())
+			info.cancel();
 	}
 
 	@Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V", ordinal = 1, shift = At.Shift.AFTER))

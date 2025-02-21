@@ -18,6 +18,14 @@
 
 package net.aoba.mixin;
 
+import java.net.InetSocketAddress;
+
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.proxy.Socks5ProxyHandler;
@@ -30,39 +38,35 @@ import net.minecraft.network.NetworkSide;
 import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.handler.PacketSizeLogger;
 import net.minecraft.network.packet.Packet;
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.net.InetSocketAddress;
 
 @Mixin(ClientConnection.class)
 public class ClientConnectionMixin {
 
-    @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;handlePacket(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;)V", ordinal = 0)}, method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V", cancellable = true)
-    protected void onChannelRead(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo ci) {
-        ReceivePacketEvent event = new ReceivePacketEvent(packet);
-        Aoba.getInstance().eventManager.Fire(event);
-    }
+	@Inject(at = {
+			@At(value = "INVOKE", target = "Lnet/minecraft/network/ClientConnection;handlePacket(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;)V", ordinal = 0) }, method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V", cancellable = true)
+	protected void onChannelRead(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo ci) {
+		ReceivePacketEvent event = new ReceivePacketEvent(packet);
+		Aoba.getInstance().eventManager.Fire(event);
+	}
 
-    @Inject(at = @At("HEAD"), method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;)V", cancellable = true)
-    private void onSend(Packet<?> packet, @Nullable PacketCallbacks callback, CallbackInfo ci) {
-        SendPacketEvent event = new SendPacketEvent(packet);
-        Aoba.getInstance().eventManager.Fire(event);
+	@Inject(at = @At("HEAD"), method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;Z)V", cancellable = true)
+	private void onSend(Packet<?> packet, @Nullable PacketCallbacks callback, boolean flush, CallbackInfo ci) {
+		SendPacketEvent event = new SendPacketEvent(packet);
+		Aoba.getInstance().eventManager.Fire(event);
 
-        if (event.isCancelled()) {
-            ci.cancel();
-        }
-    }
+		if (event.isCancelled()) {
+			ci.cancel();
+		}
+	}
 
-    @Inject(method = "addHandlers", at = @At("RETURN"))
-    private static void addHandlersHook(ChannelPipeline pipeline, NetworkSide side, boolean local, PacketSizeLogger packetSizeLogger, CallbackInfo ci) {
-        Socks5Proxy proxy = Aoba.getInstance().proxyManager.getActiveProxy();
+	@Inject(method = "addHandlers", at = @At("RETURN"))
+	private static void addHandlersHook(ChannelPipeline pipeline, NetworkSide side, boolean local,
+			PacketSizeLogger packetSizeLogger, CallbackInfo ci) {
+		Socks5Proxy proxy = Aoba.getInstance().proxyManager.getActiveProxy();
 
-        if (proxy != null && side == NetworkSide.CLIENTBOUND && !local) {
-            pipeline.addFirst(new Socks5ProxyHandler(new InetSocketAddress(proxy.getIp(), proxy.getPort()), proxy.getUsername(), proxy.getPassword()));
-        }
-    }
+		if (proxy != null && side == NetworkSide.CLIENTBOUND && !local) {
+			pipeline.addFirst(new Socks5ProxyHandler(new InetSocketAddress(proxy.getIp(), proxy.getPort()),
+					proxy.getUsername(), proxy.getPassword()));
+		}
+	}
 }

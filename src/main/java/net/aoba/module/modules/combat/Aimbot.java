@@ -60,6 +60,11 @@ public class Aimbot extends Module implements TickListener {
 			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
+	private final BooleanSetting fakeRotation = BooleanSetting.builder().id("aimbot_fake_rotation")
+			.displayName("Fake Rotation")
+			.description("Spoofs the client's rotation so that the player appears rotated on the server")
+			.defaultValue(false).build();
+
 	private int currentTick = 0;
 
 	public Aimbot() {
@@ -76,6 +81,7 @@ public class Aimbot extends Module implements TickListener {
 		this.addSetting(maxRotation);
 		this.addSetting(yawRandomness);
 		this.addSetting(pitchRandomness);
+		this.addSetting(fakeRotation);
 	}
 
 	@Override
@@ -152,7 +158,7 @@ public class Aimbot extends Module implements TickListener {
 			if (entityFound != null) {
 				EntityGoal rotation = EntityGoal.builder().goal(entityFound).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
-						.yawRandomness(yawRandomness.getValue()).build();
+						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
 			} else {
 				Aoba.getInstance().rotationManager.setGoal(null);
