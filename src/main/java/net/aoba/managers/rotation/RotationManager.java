@@ -178,9 +178,9 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 			iPlayer.setTicksSinceLastPositionPacketSent(0);
 		}
 
-		iPlayer.getLastOnGround(MC.player.isOnGround());
-		iPlayer.getLastHorizontalCollision(MC.player.horizontalCollision);
-		iPlayer.getAutoJumpEnabled(MC.options.getAutoJump().getValue());
+		iPlayer.setLastOnGround(MC.player.isOnGround());
+		iPlayer.setLastHorizontalCollision(MC.player.horizontalCollision);
+		iPlayer.setAutoJumpEnabled(MC.options.getAutoJump().getValue());
 	}
 
 	@Override

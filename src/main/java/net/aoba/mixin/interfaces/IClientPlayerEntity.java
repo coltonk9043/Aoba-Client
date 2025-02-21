@@ -53,11 +53,11 @@ public interface IClientPlayerEntity {
 	void setTicksSinceLastPositionPacketSent(int value);
 
 	@Accessor("lastOnGround")
-	void getLastOnGround(boolean value);
+	void setLastOnGround(boolean value);
 
 	@Accessor("lastHorizontalCollision")
-	void getLastHorizontalCollision(boolean value);
+	void setLastHorizontalCollision(boolean value);
 
 	@Accessor("autoJumpEnabled")
-	void getAutoJumpEnabled(boolean value);
+	void setAutoJumpEnabled(boolean value);
 }
