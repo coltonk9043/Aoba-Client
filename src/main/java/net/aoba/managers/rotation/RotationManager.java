@@ -147,8 +147,6 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 		if (currentGoal.getRotationMode() == RotationMode.NONE)
 			return;
 
-		event.cancel();
-
 		// Fabricate our own packet.
 		IClientPlayerEntity iPlayer = (IClientPlayerEntity) MC.player;
 		double d = MC.player.getX() - iPlayer.getLastX();
@@ -161,15 +159,15 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 		boolean bl2 = g != 0.0 || h != 0.0;
 
 		if (bl && bl2) {
+			event.cancel();
 			MC.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.Full(MC.player.getX(), MC.player.getY(),
 					MC.player.getZ(), serverYaw, serverPitch, MC.player.isOnGround(), MC.player.horizontalCollision));
-		} else if (bl) {
-			MC.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(MC.player.getX(),
-					MC.player.getY(), MC.player.getZ(), MC.player.isOnGround(), MC.player.horizontalCollision));
 		} else if (bl2) {
+			event.cancel();
 			MC.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(serverYaw, serverPitch,
 					MC.player.isOnGround(), MC.player.horizontalCollision));
-		}
+		} else
+			return; // View was not affected, return.
 
 		if (bl) {
 			iPlayer.setLastX(MC.player.getX());
