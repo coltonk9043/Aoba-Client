@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.Render3DListener;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
@@ -20,6 +21,7 @@ public class Render3DEvent extends AbstractEvent {
 	MatrixStack matrices;
 	Frustum frustum;
 	RenderTickCounter renderTickCounter;
+	Camera camera;
 
 	public MatrixStack GetMatrix() {
 		return matrices;
@@ -33,10 +35,15 @@ public class Render3DEvent extends AbstractEvent {
 		return frustum;
 	}
 
-	public Render3DEvent(MatrixStack matrix4f, Frustum frustum, RenderTickCounter renderTickCounter) {
+	public Camera getCamera() {
+		return camera;
+	}
+
+	public Render3DEvent(MatrixStack matrix4f, Frustum frustum, Camera camera, RenderTickCounter renderTickCounter) {
 		this.matrices = matrix4f;
 		this.renderTickCounter = renderTickCounter;
 		this.frustum = frustum;
+		this.camera = camera;
 	}
 
 	@Override

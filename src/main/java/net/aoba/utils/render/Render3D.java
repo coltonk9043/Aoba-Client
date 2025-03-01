@@ -8,15 +8,17 @@
 
 package net.aoba.utils.render;
 
+import static net.aoba.AobaClient.MC;
+
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.aoba.gui.colors.Color;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
@@ -34,11 +36,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 
-import static net.aoba.AobaClient.MC;
-
 public class Render3D {
-	public static void draw3DBox(MatrixStack matrixStack, Box box, Color color, float lineThickness) {
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+	public static void draw3DBox(MatrixStack matrixStack, Camera camera, Box box, Color color, float lineThickness) {
+		Box newBox = box.offset(camera.getPos().multiply(-1));
 
 		MatrixStack.Entry entry = matrixStack.peek();
 		Matrix4f matrix4f = entry.getPositionMatrix();
@@ -50,43 +50,44 @@ public class Render3D {
 		RenderSystem.disableCull();
 		RenderSystem.disableDepthTest();
 
-		RenderSystem.setShader(ShaderProgramKeys.POSITION);
+		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
 
-		RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		float r = color.getRed();
+		float g = color.getGreen();
+		float b = color.getBlue();
+		float a = color.getAlpha();
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ);
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ);
+		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ);
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.minZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.minZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.minY, (float) box.maxZ);
-		bufferBuilder.vertex(matrix4f, (float) box.maxX, (float) box.maxY, (float) box.maxZ);
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.minZ);
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.minY, (float) box.maxZ);
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.maxZ);
-		bufferBuilder.vertex(matrix4f, (float) box.minX, (float) box.maxY, (float) box.minZ);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 
 		RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
 
@@ -94,30 +95,30 @@ public class Render3D {
 
 		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
 
-		buildLine3d(matrixStack, bufferBuilder, (float) box.minX, (float) box.minY, (float) box.minZ, (float) box.maxX,
-				(float) box.minY, (float) box.minZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.maxX, (float) box.minY, (float) box.minZ, (float) box.maxX,
-				(float) box.minY, (float) box.maxZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.maxX, (float) box.minY, (float) box.maxZ, (float) box.minX,
-				(float) box.minY, (float) box.maxZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.minX, (float) box.minY, (float) box.maxZ, (float) box.minX,
-				(float) box.minY, (float) box.minZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.minX, (float) box.minY, (float) box.minZ, (float) box.minX,
-				(float) box.maxY, (float) box.minZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.maxX, (float) box.minY, (float) box.minZ, (float) box.maxX,
-				(float) box.maxY, (float) box.minZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.maxX, (float) box.minY, (float) box.maxZ, (float) box.maxX,
-				(float) box.maxY, (float) box.maxZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.minX, (float) box.minY, (float) box.maxZ, (float) box.minX,
-				(float) box.maxY, (float) box.maxZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.minX, (float) box.maxY, (float) box.minZ, (float) box.maxX,
-				(float) box.maxY, (float) box.minZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.maxX, (float) box.maxY, (float) box.minZ, (float) box.maxX,
-				(float) box.maxY, (float) box.maxZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.maxX, (float) box.maxY, (float) box.maxZ, (float) box.minX,
-				(float) box.maxY, (float) box.maxZ, color);
-		buildLine3d(matrixStack, bufferBuilder, (float) box.minX, (float) box.maxY, (float) box.maxZ, (float) box.minX,
-				(float) box.maxY, (float) box.minZ, color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.minZ, box.maxX, box.minY, box.minZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.minZ, box.maxX, box.minY, box.maxZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.maxZ, box.minX, box.minY, box.maxZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.maxZ, box.minX, box.minY, box.minZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.minZ, box.minX, box.maxY, box.minZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.minZ, box.maxX, box.maxY, box.minZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.maxZ, box.maxX, box.maxY, box.maxZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.maxZ, box.minX, box.maxY, box.maxZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.minZ, box.maxX, box.maxY, box.minZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.maxY, box.minZ, box.maxX, box.maxY, box.maxZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.maxY, box.maxZ, box.minX, box.maxY, box.maxZ,
+				color);
+		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.maxZ, box.minX, box.maxY, box.minZ,
+				color);
 
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
@@ -127,13 +128,13 @@ public class Render3D {
 		RenderSystem.disableBlend();
 	}
 
-	public static void drawLine3D(MatrixStack matrixStack, Vec3d pos1, Vec3d pos2, Color color, float lineWidth) {
-		drawLine3D(matrixStack, (float) pos1.x, (float) pos1.y, (float) pos1.z, (float) pos2.x, (float) pos2.y,
-				(float) pos2.z, color, lineWidth);
+	public static void drawLine3D(MatrixStack matrixStack, Camera camera, Vec3d pos1, Vec3d pos2, Color color,
+			float lineWidth) {
+		drawLine3D(matrixStack, camera, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, lineWidth);
 	}
 
-	public static void drawLine3D(MatrixStack matrixStack, float x1, float y1, float z1, float x2, float y2, float z2,
-			Color color, float lineWidth) {
+	public static void drawLine3D(MatrixStack matrixStack, Camera camera, double x1, double y1, double z1, double x2,
+			double y2, double z2, Color color, float lineWidth) {
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
@@ -141,13 +142,12 @@ public class Render3D {
 		RenderSystem.disableDepthTest();
 
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 
 		RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
 		RenderSystem.lineWidth(lineWidth);
 
 		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
-		buildLine3d(matrixStack, bufferBuilder, x1, y1, z1, x2, y2, z2, color);
+		buildLine3d(matrixStack, camera, bufferBuilder, x1, y1, z1, x2, y2, z2, color);
 		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 		RenderSystem.enableCull();
 		RenderSystem.lineWidth(1f);
@@ -155,14 +155,15 @@ public class Render3D {
 		RenderSystem.disableBlend();
 	}
 
-    @SuppressWarnings("unchecked")
-	public static void drawEntityModel(MatrixStack matrixStack, float partialTicks, Entity entity, Color color) {
+	@SuppressWarnings("unchecked")
+	public static void drawEntityModel(MatrixStack matrixStack, Camera camera, float partialTicks, Entity entity,
+			Color color) {
 		EntityRenderer<?, ?> renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
 
 		if (entity instanceof LivingEntity livingEntity) {
 			matrixStack.push();
 
-            LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> leRenderer = (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) renderer;
+			LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> leRenderer = (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) renderer;
 			EntityModel<LivingEntityRenderState> model = leRenderer.getModel();
 			LivingEntityRenderState renderState = leRenderer.getAndUpdateRenderState(livingEntity, partialTicks);
 			renderState.baby = livingEntity.isBaby();
@@ -170,7 +171,8 @@ public class Render3D {
 			Direction sleepDirection = livingEntity.getSleepingDirection();
 
 			// Interpolate entity position and body rotations.
-			Vec3d interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks);
+			Vec3d interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks)
+					.add(camera.getPos().multiply(-1));
 			float interpolatedBodyYaw = MathHelper.lerpAngleDegrees(partialTicks, livingEntity.prevBodyYaw,
 					livingEntity.bodyYaw);
 			// Translate by the entity's interpolated position.
@@ -249,31 +251,32 @@ public class Render3D {
 	}
 
 	private static float getYaw(Direction direction) {
-        return switch (direction)
-        {
-            case SOUTH -> 90.0f;
-            case WEST -> 0.0f;
-            case NORTH -> 270.0f;
-            case EAST -> 180.0f;
-            default -> 0.0f;
-        };
+		return switch (direction) {
+		case SOUTH -> 90.0f;
+		case WEST -> 0.0f;
+		case NORTH -> 270.0f;
+		case EAST -> 180.0f;
+		default -> 0.0f;
+		};
 	}
 
-	private static void buildLine3d(MatrixStack matrixStack, BufferBuilder bufferBuilder, float x1, float y1, float z1,
-			float x2, float y2, float z2, Color color) {
+	private static void buildLine3d(MatrixStack matrixStack, Camera camera, BufferBuilder bufferBuilder, double x1,
+			double y1, double z1, double x2, double y2, double z2, Color color) {
 		MatrixStack.Entry entry = matrixStack.peek();
 		Matrix4f matrix4f = entry.getPositionMatrix();
-
+		Vec3d cameraPos = camera.getPos();
 		Vec3d normalized = new Vec3d(x2 - x1, y2 - y1, z2 - z1).normalize();
 
 		float r = color.getRed();
 		float g = color.getGreen();
 		float b = color.getBlue();
 
-		bufferBuilder.vertex(matrix4f, x1, y1, z1).color(r, g, b, 1.0f).normal(entry, (float) normalized.x,
-				(float) normalized.y, (float) normalized.z);
-		bufferBuilder.vertex(matrix4f, x2, y2, z2).color(r, g, b, 1.0f).normal(entry, (float) normalized.x,
-				(float) normalized.y, (float) normalized.z);
+		bufferBuilder
+				.vertex(matrix4f, (float) (x1 - cameraPos.x), (float) (y1 - cameraPos.y), (float) (z1 - cameraPos.z))
+				.color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
+		bufferBuilder
+				.vertex(matrix4f, (float) (x2 - cameraPos.x), (float) (y2 - cameraPos.y), (float) (z2 - cameraPos.z))
+				.color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
 	}
 
 	/**

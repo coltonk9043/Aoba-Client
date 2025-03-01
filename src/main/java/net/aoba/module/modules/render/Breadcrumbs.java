@@ -70,7 +70,7 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 		Vec3d prevPosition = null;
 		for (Vec3d position : positions) {
 			if (prevPosition != null) {
-				Render3D.drawLine3D(event.GetMatrix(), prevPosition, position, color.getValue(),
+				Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), prevPosition, position, color.getValue(),
 						lineThickness.getValue().floatValue());
 			}
 			prevPosition = position;

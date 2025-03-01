@@ -17,6 +17,9 @@ import net.aoba.event.listeners.BlockStateListener;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
+import net.aoba.managers.rotation.Rotation;
+import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.RotationGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -24,9 +27,6 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render3D;
-import net.aoba.managers.rotation.Rotation;
-import net.aoba.managers.rotation.RotationMode;
-import net.aoba.managers.rotation.goals.RotationGoal;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -40,11 +40,11 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 
 public class BedAura extends Module implements Render3DListener, TickListener, BlockStateListener {
-	private final ColorSetting color = ColorSetting.builder().id("nuker_color").displayName("Color").description("Color")
-			.defaultValue(new Color(0f, 1f, 1f)).build();
+	private final ColorSetting color = ColorSetting.builder().id("nuker_color").displayName("Color")
+			.description("Color").defaultValue(new Color(0f, 1f, 1f)).build();
 
-	private final FloatSetting radius = FloatSetting.builder().id("nuker_radius").displayName("Radius").description("Radius")
-			.defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
+	private final FloatSetting radius = FloatSetting.builder().id("nuker_radius").displayName("Radius")
+			.description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
 
 	private final BooleanSetting legit = BooleanSetting.builder().id("killaura_legit").displayName("Legit")
 			.description(
@@ -55,9 +55,9 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 			.id("killaura_rotation_mode").displayName("Rotation Mode")
 			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
 
-	private final FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation").displayName("Max Rotation")
-			.description("The max speed that KillAura will rotate").defaultValue(10.0f).minValue(1.0f).maxValue(360.0f)
-			.build();
+	private final FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation")
+			.displayName("Max Rotation").description("The max speed that KillAura will rotate").defaultValue(10.0f)
+			.minValue(1.0f).maxValue(360.0f).build();
 
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
@@ -109,7 +109,8 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 	@Override
 	public void onRender(Render3DEvent event) {
 		if (currentBlockToBreak != null) {
-			Render3D.draw3DBox(event.GetMatrix(), new Box(currentBlockToBreak), color.getValue(), 1.0f);
+			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(currentBlockToBreak), color.getValue(),
+					1.0f);
 		}
 	}
 

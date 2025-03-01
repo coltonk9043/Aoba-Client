@@ -27,8 +27,8 @@ import net.minecraft.util.math.Box;
 
 public class SpawnerESP extends Module implements Render3DListener {
 
-	private final ColorSetting color = ColorSetting.builder().id("spawneresp_color").displayName("Color").description("Color")
-			.defaultValue(new Color(0f, 1f, 1f, 0.3f)).build();
+	private final ColorSetting color = ColorSetting.builder().id("spawneresp_color").displayName("Color")
+			.description("Color").defaultValue(new Color(0f, 1f, 1f, 0.3f)).build();
 
 	private final FloatSetting lineThickness = FloatSetting.builder().id("spawneresp_linethickness")
 			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
@@ -66,7 +66,8 @@ public class SpawnerESP extends Module implements Render3DListener {
 		for (BlockEntity blockEntity : blockEntities) {
 			if (blockEntity instanceof MobSpawnerBlockEntity) {
 				Box box = new Box(blockEntity.getPos());
-				Render3D.draw3DBox(event.GetMatrix(), box, color.getValue(), lineThickness.getValue().floatValue());
+				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, color.getValue(),
+						lineThickness.getValue().floatValue());
 			}
 		}
 	}

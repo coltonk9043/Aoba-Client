@@ -46,7 +46,6 @@ import net.minecraft.client.util.ObjectAllocator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
@@ -76,13 +75,13 @@ public class WorldRendererMixin {
 			RenderSystem.disableCull();
 			GL11.glEnable(GL11.GL_LINE_SMOOTH);
 
-			MatrixStack matrixStack = new MatrixStack();
-			matrixStack.multiplyPositionMatrix(positionMatrix);
-			Vec3d camPos = camera.getPos();
-			matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
+			RenderSystem.getModelViewStack().pushMatrix().mul(positionMatrix);
 
-			Render3DEvent renderEvent = new Render3DEvent(matrixStack, frustum, tickCounter);
+			MatrixStack matrixStack = new MatrixStack();
+			Render3DEvent renderEvent = new Render3DEvent(matrixStack, frustum, camera, tickCounter);
 			Aoba.getInstance().eventManager.Fire(renderEvent);
+
+			RenderSystem.getModelViewStack().popMatrix();
 
 			GL11.glDisable(GL11.GL_LINE_SMOOTH);
 			RenderSystem.enableDepthTest();

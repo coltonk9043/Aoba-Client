@@ -23,56 +23,49 @@ import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.entity.TrappedChestBlockEntity;
 import net.minecraft.util.math.Box;
 
-public class ChestESP extends Module implements Render3DListener
-{
+public class ChestESP extends Module implements Render3DListener {
 
-    private final ColorSetting color = ColorSetting.builder().id("chestesp_color").displayName("Color").description("Color")
-            .defaultValue(new Color(0, 1f, 1f, 0.3f)).build();
+	private final ColorSetting color = ColorSetting.builder().id("chestesp_color").displayName("Color")
+			.description("Color").defaultValue(new Color(0, 1f, 1f, 0.3f)).build();
 
-    private final FloatSetting lineThickness = FloatSetting.builder().id("chestesp_linethickness")
-            .displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
-            .minValue(0f).maxValue(5f).step(0.1f).build();
+	private final FloatSetting lineThickness = FloatSetting.builder().id("chestesp_linethickness")
+			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
+			.minValue(0f).maxValue(5f).step(0.1f).build();
 
-    public ChestESP()
-    {
-        super("ChestESP");
-        this.setCategory(Category.of("Render"));
-        this.setDescription("Allows the player to see Chests with an ESP.");
+	public ChestESP() {
+		super("ChestESP");
+		this.setCategory(Category.of("Render"));
+		this.setDescription("Allows the player to see Chests with an ESP.");
 
-        this.addSetting(color);
-        this.addSetting(lineThickness);
-    }
+		this.addSetting(color);
+		this.addSetting(lineThickness);
+	}
 
-    @Override
-    public void onDisable()
-    {
-        Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
-    }
+	@Override
+	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
+	}
 
-    @Override
-    public void onEnable()
-    {
-        Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
-    }
+	@Override
+	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+	}
 
-    @Override
-    public void onToggle()
-    {
+	@Override
+	public void onToggle() {
 
-    }
+	}
 
-    @Override
-    public void onRender(Render3DEvent event)
-    {
-        ModuleUtils.getTileEntities().forEach(blockEntity ->
-        {
-            if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity
-                    || blockEntity instanceof BarrelBlockEntity)
-            {
-                Box box = new Box(blockEntity.getPos());
-                Render3D.draw3DBox(event.GetMatrix(), box, color.getValue(), lineThickness.getValue().floatValue());
-            }
-        });
-    }
+	@Override
+	public void onRender(Render3DEvent event) {
+		ModuleUtils.getTileEntities().forEach(blockEntity -> {
+			if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity
+					|| blockEntity instanceof BarrelBlockEntity) {
+				Box box = new Box(blockEntity.getPos());
+				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, color.getValue(),
+						lineThickness.getValue().floatValue());
+			}
+		});
+	}
 
 }

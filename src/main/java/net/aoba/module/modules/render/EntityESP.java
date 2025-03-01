@@ -115,10 +115,11 @@ public class EntityESP extends Module implements Render3DListener {
 
 							Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(),
 									interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
-							Render3D.draw3DBox(matrixStack, boundingBox, color, lineThickness.getValue());
+							Render3D.draw3DBox(matrixStack, event.getCamera(), boundingBox, color,
+									lineThickness.getValue());
 							break;
 						case DrawMode.Model:
-							Render3D.drawEntityModel(matrixStack, partialTicks, entity, color);
+							Render3D.drawEntityModel(matrixStack, camera, partialTicks, entity, color);
 							break;
 						}
 					}

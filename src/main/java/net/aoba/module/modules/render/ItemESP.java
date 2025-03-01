@@ -25,8 +25,8 @@ import net.minecraft.util.math.Vec3d;
 
 public class ItemESP extends Module implements Render3DListener {
 
-	private final ColorSetting color = ColorSetting.builder().id("itemesp_color").displayName("Color").description("Color")
-			.defaultValue(new Color(0, 1f, 1f, 0.3f)).build();
+	private final ColorSetting color = ColorSetting.builder().id("itemesp_color").displayName("Color")
+			.description("Color").defaultValue(new Color(0, 1f, 1f, 0.3f)).build();
 
 	private final BooleanSetting visibilityToggle = BooleanSetting.builder().id("itemesp_visibility")
 			.displayName("Visibility").defaultValue(true).build();
@@ -35,11 +35,12 @@ public class ItemESP extends Module implements Render3DListener {
 			.description("Range that the ESP will be drawn on items.").defaultValue(100f).minValue(10f).maxValue(500f)
 			.step(5f).build();
 
-	private final ColorSetting rareItemColor = ColorSetting.builder().id("itemesp_rare_color").displayName("Rare Item Color")
-			.description("Rare Item Color").defaultValue(new Color(1f, 0.5f, 0f)).build();
+	private final ColorSetting rareItemColor = ColorSetting.builder().id("itemesp_rare_color")
+			.displayName("Rare Item Color").description("Rare Item Color").defaultValue(new Color(1f, 0.5f, 0f))
+			.build();
 
-	private final BooleanSetting colorRarity = BooleanSetting.builder().id("itemesp_color_rarity").displayName("Color Rarity")
-			.defaultValue(true).build();
+	private final BooleanSetting colorRarity = BooleanSetting.builder().id("itemesp_color_rarity")
+			.displayName("Color Rarity").defaultValue(true).build();
 
 	private final FloatSetting lineThickness = FloatSetting.builder().id("itemesp_linethickness")
 			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
@@ -80,7 +81,7 @@ public class ItemESP extends Module implements Render3DListener {
 				Vec3d itemPos = entity.getPos();
 				if (playerPos.distanceTo(itemPos) <= range.getValue()) {
 					Color finalColor = colorRarity.getValue() ? getColorBasedOnItemRarity(entity) : color.getValue();
-					Render3D.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), finalColor,
+					Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), entity.getBoundingBox(), finalColor,
 							lineThickness.getValue().floatValue());
 				}
 			}

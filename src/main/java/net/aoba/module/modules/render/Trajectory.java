@@ -48,8 +48,8 @@ import net.minecraft.world.RaycastContext.FluidHandling;
 
 public class Trajectory extends Module implements Render3DListener {
 
-	private final ColorSetting color = ColorSetting.builder().id("trajectory_color").displayName("Color").description("Color")
-			.defaultValue(new Color(0f, 1f, 1f)).build();
+	private final ColorSetting color = ColorSetting.builder().id("trajectory_color").displayName("Color")
+			.description("Color").defaultValue(new Color(0f, 1f, 1f)).build();
 
 	private final FloatSetting blipSize = FloatSetting.builder().id("trajectory_blipsize").displayName("Blip Size")
 			.description("Blip Size").defaultValue(0.15f).minValue(0.05f).maxValue(1f).step(0.05f).build();
@@ -168,7 +168,7 @@ public class Trajectory extends Module implements Render3DListener {
 				Vec3d pos1 = landPosition.add(-size, -size, -size);
 				Vec3d pos2 = landPosition.add(size, size, size);
 				Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
-				Render3D.draw3DBox(event.GetMatrix(), box, renderColor, 1.0f);
+				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, renderColor, 1.0f);
 			}
 		}
 	}

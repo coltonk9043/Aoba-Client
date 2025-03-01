@@ -26,8 +26,8 @@ public class PlayerESP extends Module implements Render3DListener {
 	private final ColorSetting color_friendly = ColorSetting.builder().id("playeresp_color_friendly")
 			.displayName("Friendly Color").description("Friendly Color").defaultValue(new Color(0f, 1f, 0f)).build();
 
-	private final ColorSetting color_enemy = ColorSetting.builder().id("playeresp_color_enemy").displayName("Enemy Color")
-			.description("Enemy Color").defaultValue(new Color(1f, 0f, 0f)).build();
+	private final ColorSetting color_enemy = ColorSetting.builder().id("playeresp_color_enemy")
+			.displayName("Enemy Color").description("Enemy Color").defaultValue(new Color(1f, 0f, 0f)).build();
 
 	private final FloatSetting lineThickness = FloatSetting.builder().id("playeresp_linethickness")
 			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
@@ -63,8 +63,8 @@ public class PlayerESP extends Module implements Render3DListener {
 	public void onRender(Render3DEvent event) {
 		for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
 			if (entity != MC.player) {
-				Render3D.draw3DBox(event.GetMatrix(), entity.getBoundingBox(), color_default.getValue(),
-						lineThickness.getValue().floatValue());
+				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), entity.getBoundingBox(),
+						color_default.getValue(), lineThickness.getValue().floatValue());
 			}
 		}
 	}
