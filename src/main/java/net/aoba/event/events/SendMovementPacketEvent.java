@@ -33,7 +33,7 @@ public class SendMovementPacketEvent {
 	public static class Post extends AbstractEvent {
 		@Override
 		public void Fire(ArrayList<? extends AbstractListener> listeners) {
-			for (AbstractListener listener : List.copyOf(listeners)) {
+			for (AbstractListener listener : listeners) {
 				SendMovementPacketListener sendMovementPacketListener = (SendMovementPacketListener) listener;
 				sendMovementPacketListener.onSendMovementPacket(this);
 			}

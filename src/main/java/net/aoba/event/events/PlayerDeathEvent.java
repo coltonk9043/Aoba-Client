@@ -8,27 +8,26 @@
 
 package net.aoba.event.events;
 
+import java.util.ArrayList;
+
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.PlayerDeathListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PlayerDeathEvent extends AbstractEvent {
-    public PlayerDeathEvent() {
-    }
+	public PlayerDeathEvent() {
+	}
 
-    @Override
-    public void Fire(ArrayList<? extends AbstractListener> listeners) {
-        for (AbstractListener listener : List.copyOf(listeners)) {
-            PlayerDeathListener playerDeathListener = (PlayerDeathListener) listener;
-            playerDeathListener.onPlayerDeath(this);
-        }
-    }
+	@Override
+	public void Fire(ArrayList<? extends AbstractListener> listeners) {
+		for (AbstractListener listener : listeners) {
+			PlayerDeathListener playerDeathListener = (PlayerDeathListener) listener;
+			playerDeathListener.onPlayerDeath(this);
+		}
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Class<PlayerDeathListener> GetListenerClassType() {
-        return PlayerDeathListener.class;
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public Class<PlayerDeathListener> GetListenerClassType() {
+		return PlayerDeathListener.class;
+	}
 }

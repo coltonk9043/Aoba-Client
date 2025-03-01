@@ -9,7 +9,6 @@
 package net.aoba.event.events;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.Render3DListener;
@@ -42,7 +41,7 @@ public class Render3DEvent extends AbstractEvent {
 
 	@Override
 	public void Fire(ArrayList<? extends AbstractListener> listeners) {
-		for (AbstractListener listener : List.copyOf(listeners)) {
+		for (AbstractListener listener : listeners) {
 			Render3DListener renderListener = (Render3DListener) listener;
 			renderListener.onRender(this);
 		}
