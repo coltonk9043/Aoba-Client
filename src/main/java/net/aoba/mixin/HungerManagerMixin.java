@@ -6,8 +6,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.logging.LogUtils;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.FoodLevelEvent;
 import net.minecraft.client.MinecraftClient;
@@ -29,21 +27,23 @@ public class HungerManagerMixin {
 	@Inject(at = { @At("HEAD") }, method = {
 			"update(Lnet/minecraft/server/network/ServerPlayerEntity;)V" }, cancellable = true)
 	private void onHungerUpdate(ServerPlayerEntity player, CallbackInfo ci) {
+		// TODO: Right now we're only handling client player. Does any other player ever
+		// get used???
 		MinecraftClient mc = MinecraftClient.getInstance();
+		if (mc.player == null)
+			return;
 
-		// TODO: Fix for client player.
-		// if (player == mc.player) {
-		Difficulty difficulty = player.getWorld().getDifficulty();
-		if (this.exhaustion > 4.0f) {
-			if (this.saturationLevel <= 0.0f && difficulty != Difficulty.PEACEFUL) {
-				LogUtils.getLogger().info("HUNGER EVENT ");
-				// Fire Event
-				int newFoodLevel = Math.max(this.foodLevel - 1, 0);
-				FoodLevelEvent event = new FoodLevelEvent(newFoodLevel);
-				Aoba.getInstance().eventManager.Fire(event);
+		if (player.getUuid().equals(mc.player.getUuid())) {
+			Difficulty difficulty = player.getWorld().getDifficulty();
+			if (this.exhaustion > 4.0f) {
+				if (this.saturationLevel <= 0.0f && difficulty != Difficulty.PEACEFUL) {
+					// Fire Event
+					int newFoodLevel = Math.max(this.foodLevel - 1, 0);
+					FoodLevelEvent event = new FoodLevelEvent(newFoodLevel);
+					Aoba.getInstance().eventManager.Fire(event);
+				}
 			}
 		}
-		// }
 	}
 
 	@Inject(at = { @At("HEAD") }, method = { "setFoodLevel(I)V" }, cancellable = true)

@@ -16,7 +16,8 @@
     "interfaces.IEntityModel",
     "interfaces.IPlayerMoveC2SPacket",
     "interfaces.IMouse",
-	"interfaces.IClientPlayerEntity"
+	"interfaces.IClientPlayerEntity",
+	"interfaces.IBossBarS2CPacket"
   ],
   "client": [
     "AbstractBlockStateMixin",
@@ -46,6 +47,7 @@
     "HungerManagerMixin",
     "IngameHudMixin",
     "InGameOverlayRendererMixin",
+	"ItemStackMixin",
     "KeyboardMixin",
     "LightmapTextureManagerMixin",
     "LivingEntityMixin",

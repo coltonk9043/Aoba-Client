@@ -77,7 +77,10 @@ dependencies {
     }
 }
 
-
+loom {
+	accessWidenerPath = file("src/main/resources/aoba.accesswidener")
+}
+    
 processResources {
     inputs.property "version", project.version
 

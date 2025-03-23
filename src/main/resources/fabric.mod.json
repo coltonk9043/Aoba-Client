@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "aoba",
-	"version": "1.4.4",
+	"version": "1.4.5",
 	"name": "Aoba Client",
 	"description": "A Minecraft Fabric 1.21.4 utility mod.",
 	"authors": [
@@ -26,6 +26,7 @@
 		"aoba.mixins.json",
 		"aoba-sodium.mixins.json"
 	],
+	"accessWidener" : "aoba.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.16.9",
 		"minecraft": "~1.21.4",

@@ -40,6 +40,7 @@ import net.aoba.module.modules.misc.AntiCactus;
 import net.aoba.module.modules.misc.AntiHunger;
 import net.aoba.module.modules.misc.AutoEat;
 import net.aoba.module.modules.misc.AutoFish;
+import net.aoba.module.modules.misc.AutoOminousBottle;
 import net.aoba.module.modules.misc.AutoShear;
 import net.aoba.module.modules.misc.AutoWalk;
 import net.aoba.module.modules.misc.DiscordRPCModule;
@@ -112,6 +113,7 @@ public class ModuleManager implements KeyDownListener {
 	public AutoFarm autofarm = new AutoFarm();
 	public AutoFish autofish = new AutoFish();
 	public AntiHunger antihunger = new AntiHunger();
+	public AutoOminousBottle autoOminousBottle = new AutoOminousBottle();
 	public AutoShear autoShear = new AutoShear();
 	public AutoSign autosign = new AutoSign();
 	public AutoSoup autosoup = new AutoSoup();
