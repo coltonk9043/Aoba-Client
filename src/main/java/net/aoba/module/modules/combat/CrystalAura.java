@@ -131,7 +131,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 			.description("Distance an enemy must be to a wall for crystals to be placed or attacked through it.")
 			.defaultValue(3f).minValue(0f).maxValue(8f).step(0.5f).build();
 
-	private final ColorSetting color = ColorSetting.builder().id("tilebreaker_color").displayName("Color")
+	private final ColorSetting color = ColorSetting.builder().id("crystalaura_color").displayName("Color")
 			.description("Color").defaultValue(new Color(0, 1f, 1f)).build();
 
 	private long lastAttackTime;
