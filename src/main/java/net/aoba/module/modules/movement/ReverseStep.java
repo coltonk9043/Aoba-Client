@@ -22,12 +22,14 @@ public class ReverseStep extends Module implements TickListener {
 		this.setCategory(Category.of("Movement"));
 		this.setDescription("Steps. But in reverse...");
 
-		this.setDetectable(AntiCheat.NoCheatPlus);
-		this.setDetectable(AntiCheat.Vulcan);
-		this.setDetectable(AntiCheat.AdvancedAntiCheat);
-		this.setDetectable(AntiCheat.Grim);
-		this.setDetectable(AntiCheat.Matrix);
-		this.setDetectable(AntiCheat.Karhu);
+		this.setDetectable(
+		    AntiCheat.NoCheatPlus,
+		    AntiCheat.Vulcan,
+		    AntiCheat.AdvancedAntiCheat,
+		    AntiCheat.Grim,
+		    AntiCheat.Matrix,
+		    AntiCheat.Karhu
+		);
 	}
 
 	@Override

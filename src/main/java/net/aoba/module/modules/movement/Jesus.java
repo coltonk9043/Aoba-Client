@@ -29,14 +29,16 @@ public class Jesus extends Module implements TickListener {
 		this.setDescription("Allows the player to walk on water.");
 		this.addSetting(legit);
 
-		this.setDetectable(AntiCheat.NoCheatPlus);
-		this.setDetectable(AntiCheat.Vulcan);
-		this.setDetectable(AntiCheat.AdvancedAntiCheat);
-		this.setDetectable(AntiCheat.Verus);
-		this.setDetectable(AntiCheat.Grim);
-		this.setDetectable(AntiCheat.Matrix);
-		this.setDetectable(AntiCheat.Karhu);
-		this.setDetectable(AntiCheat.Buzz);
+		this.setDetectable(
+		    AntiCheat.NoCheatPlus,
+		    AntiCheat.Vulcan,
+		    AntiCheat.AdvancedAntiCheat,
+		    AntiCheat.Verus,
+		    AntiCheat.Grim,
+		    AntiCheat.Matrix,
+		    AntiCheat.Karhu,
+		    AntiCheat.Buzz
+		);
 	}
 
 	@Override

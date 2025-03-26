@@ -157,6 +157,17 @@ public abstract class Module {
 	}
 
 	/**
+	 * Adds multiple settings to the module.
+	 *
+	 * @param settings The array of {@link Setting} objects to be added to the module's settings list.
+	 */
+	public void addSettings(Setting<?>... settings) {
+		for (Setting<?> setting : settings) {
+			this.addSetting(setting);
+		}
+	}
+
+	/**
 	 * Retrieves the list of settings associated with the module.
 	 *
 	 * @return A {@link List} of {@link Setting} objects that belong to this module.
@@ -246,6 +257,17 @@ public abstract class Module {
 
 	public void setDetectable(AntiCheat anticheat) {
 		setDetectable(anticheat, true);
+	}
+
+	/**
+	 * Sets multiple anti-cheats as detectable.
+	 *
+	 * @param anticheats The array of {@link AntiCheat} objects to be set as detectable.
+	 */
+	public void setDetectable(AntiCheat... anticheats) {
+		for (AntiCheat anticheat : anticheats) {
+			setDetectable(anticheat, true);
+		}
 	}
 
 	public void setDetectable(AntiCheat anticheat, boolean state) {

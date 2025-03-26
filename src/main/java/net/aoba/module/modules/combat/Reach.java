@@ -27,10 +27,12 @@ public class Reach extends Module {
 
 		this.addSetting(distance);
 
-		this.setDetectable(AntiCheat.NoCheatPlus);
-		this.setDetectable(AntiCheat.AdvancedAntiCheat);
-		this.setDetectable(AntiCheat.Grim);
-		this.setDetectable(AntiCheat.Buzz);
+		this.setDetectable(
+				AntiCheat.NoCheatPlus,
+				AntiCheat.AdvancedAntiCheat,
+				AntiCheat.Grim,
+				AntiCheat.Buzz
+		);
 	}
 
 	public float getReach() {

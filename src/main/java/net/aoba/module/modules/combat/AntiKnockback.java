@@ -67,11 +67,11 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 		this.addSetting(noPushFishhook);
 
 		// Vulcan, AACV5, Grim Matrix, and Karhu detectable.
-		this.setDetectable(AntiCheat.Vulcan);
-		this.setDetectable(AntiCheat.AdvancedAntiCheat);
-		this.setDetectable(AntiCheat.Grim);
-		this.setDetectable(AntiCheat.Matrix);
-		this.setDetectable(AntiCheat.Karhu);
+		this.setDetectable(AntiCheat.Vulcan,
+				AntiCheat.AdvancedAntiCheat,
+				AntiCheat.Grim,
+				AntiCheat.Matrix,
+				AntiCheat.Karhu);
 	}
 
 	public boolean getNoPushEntities() {

@@ -33,10 +33,12 @@ public class FastBreak extends Module {
 		this.addSetting(multiplier);
 		this.addSetting(ignoreWater);
 
-		this.setDetectable(AntiCheat.NoCheatPlus);
-		this.setDetectable(AntiCheat.AdvancedAntiCheat);
-		this.setDetectable(AntiCheat.Grim);
-		this.setDetectable(AntiCheat.Matrix);
+		this.setDetectable(
+				AntiCheat.NoCheatPlus,
+				AntiCheat.AdvancedAntiCheat,
+				AntiCheat.Grim,
+				AntiCheat.Matrix
+		);
 	}
 
 	public float getMultiplier() {

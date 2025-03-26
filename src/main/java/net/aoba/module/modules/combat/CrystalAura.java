@@ -146,7 +146,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 		this.setCategory(Category.of("Combat"));
 		this.setDescription("Attacks anything within your personal space with a End Crystal.");
 
-		this.addSetting(ignoreWalls);
+		this.addSettings(ignoreWalls);
 		this.addSetting(swingHand);
 		this.addSetting(handSetting);
 		this.addSetting(radius);
@@ -208,8 +208,6 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 	}
 
 	private void placeCrystal() {
-		List<AbstractClientPlayerEntity> players = MC.world.getPlayers();
-
 		Hand hand = handSetting.getValue() == HandSetting.MAIN_HAND ? Hand.MAIN_HAND : Hand.OFF_HAND;
 
 		FindItemResult result = Module.find(Items.END_CRYSTAL);
@@ -217,7 +215,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 		if (!result.found() && !result.isHotbar())
 			return;
 
-		for (PlayerEntity player : players) {
+		for (PlayerEntity player : Aoba.getInstance().entityManager.getPlayers()) {
 			if (player == MC.player || MC.player.squaredDistanceTo(player) > radius.getValueSqr())
 				continue;
 			if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))

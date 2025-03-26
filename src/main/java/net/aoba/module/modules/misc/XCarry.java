@@ -24,7 +24,6 @@ public class XCarry extends Module implements SendPacketListener {
 		this.setDescription("Allows you to store items in your crafting slot..");
 
 		this.isDetectable(AntiCheat.Negativity);
-
 	}
 
 	@Override

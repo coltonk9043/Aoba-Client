@@ -26,6 +26,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
+import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
@@ -134,32 +135,38 @@ public class MainMenuScreen extends Screen
         else
             smallScreenHeightOffset = 0;
 
-        float widgetHeight = ((BUTTON_HEIGHT + SPACING) * 5);
-        int startX = (int) ((this.width - this.BUTTON_WIDTH) / 2.0f);
+        int columns = 2;
+        int rows = 3;
+        float widgetHeight = ((BUTTON_HEIGHT + SPACING) * rows);
+        int startX = (int) ((this.width - (BUTTON_WIDTH * columns + SPACING * (columns - 1))) / 2.0f);
         int startY = (int) ((this.height - widgetHeight) / 2) + smallScreenHeightOffset;
 
-        // TODO: Left Alignment uses X coordinate of 50. Use this once news is done!
         AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX, startY, BUTTON_WIDTH, BUTTON_HEIGHT,
                 Text.of("Singleplayer"));
         singleplayerButton.setPressAction(b -> client.setScreen(new SelectWorldScreen(this)));
         this.addDrawableChild(singleplayerButton);
 
-        AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX, startY + BUTTON_HEIGHT + SPACING,
+        AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY,
                 BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Multiplayer"));
         multiplayerButton.setPressAction(b -> client.setScreen(new MultiplayerScreen(this)));
         this.addDrawableChild(multiplayerButton);
 
-        AobaButtonWidget settingsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 2),
+        AobaButtonWidget realmsButton = new AobaButtonWidget(startX, startY + BUTTON_HEIGHT + SPACING,
+                BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Realms"));
+        realmsButton.setPressAction(b -> client.setScreen(new RealmsMainScreen(this)));
+        this.addDrawableChild(realmsButton);
+
+        AobaButtonWidget settingsButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY + BUTTON_HEIGHT + SPACING,
                 BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Settings"));
         settingsButton.setPressAction(b -> client.setScreen(new OptionsScreen(this, MC.options)));
         this.addDrawableChild(settingsButton);
 
-        AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 3),
+        AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 2),
                 BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Addons"));
         addonsButton.setPressAction(b -> client.setScreen(new AddonScreen(this)));
         this.addDrawableChild(addonsButton);
 
-        AobaButtonWidget quitButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 4),
+        AobaButtonWidget quitButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY + ((BUTTON_HEIGHT + SPACING) * 2),
                 BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Quit"));
         quitButton.setPressAction(b -> client.stop());
         this.addDrawableChild(quitButton);
@@ -240,13 +247,13 @@ public class MainMenuScreen extends Screen
 
         int newsTextHeight = this.textRenderer.fontHeight;
         int newsBoxHeight = newsTextHeight + 20;
-        int newsTextWidth = this.textRenderer.getWidth("Aoba 1.4.4 released!") + 10;
+        int newsTextWidth = this.textRenderer.getWidth("Aoba " + fetchedVersion + " released!") + 10;
         Render2D.drawOutlinedRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), width - newsTextWidth - 10, 30, newsTextWidth, newsBoxHeight,
                 GuiManager.roundingRadius.getValue(),
                 GuiManager.borderColor.getValue(),
                 GuiManager.backgroundColor.getValue()
         );
-        drawContext.drawTextWithShadow(this.textRenderer, "Aoba 1.4.4 released!", width - newsTextWidth - 5, 40, Colors.WHITE);
+        drawContext.drawTextWithShadow(this.textRenderer, "Aoba " + fetchedVersion + " released!", width - newsTextWidth - 5, 40, Colors.WHITE);
 
 
         RenderSystem.enableCull();

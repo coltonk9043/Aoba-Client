@@ -31,10 +31,12 @@ public class FastPlace extends Module implements TickListener {
 
 		this.addSetting(speed);
 
-		this.setDetectable(AntiCheat.NoCheatPlus);
-		this.setDetectable(AntiCheat.AdvancedAntiCheat);
-		this.setDetectable(AntiCheat.Matrix);
-		this.setDetectable(AntiCheat.Negativity);
+		this.setDetectable(
+		    AntiCheat.NoCheatPlus,
+		    AntiCheat.AdvancedAntiCheat,
+		    AntiCheat.Matrix,
+		    AntiCheat.Negativity
+		);
 	}
 
 	@Override

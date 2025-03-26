@@ -32,12 +32,14 @@ public class NoSlowdown extends Module implements TickListener {
 
 		this.addSetting(slowdownMultiplier);
 
-		this.setDetectable(AntiCheat.NoCheatPlus);
-		this.setDetectable(AntiCheat.Vulcan);
-		this.setDetectable(AntiCheat.AdvancedAntiCheat);
-		this.setDetectable(AntiCheat.Grim);
-		this.setDetectable(AntiCheat.Matrix);
-		this.setDetectable(AntiCheat.Karhu);
+		this.setDetectable(
+		    AntiCheat.NoCheatPlus,
+		    AntiCheat.Vulcan,
+		    AntiCheat.AdvancedAntiCheat,
+		    AntiCheat.Grim,
+		    AntiCheat.Matrix,
+		    AntiCheat.Karhu
+		);
 	}
 
 	@Override

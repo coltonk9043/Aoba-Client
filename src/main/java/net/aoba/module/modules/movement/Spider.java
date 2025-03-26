@@ -31,13 +31,15 @@ public class Spider extends Module implements TickListener {
 		this.setDescription("Allows players to climb up blocks like a spider.");
 		this.addSetting(speed);
 
-		this.setDetectable(AntiCheat.NoCheatPlus);
-		this.setDetectable(AntiCheat.Vulcan);
-		this.setDetectable(AntiCheat.AdvancedAntiCheat);
-		this.setDetectable(AntiCheat.Grim);
-		this.setDetectable(AntiCheat.Matrix);
-		this.setDetectable(AntiCheat.Negativity);
-		this.setDetectable(AntiCheat.Karhu);
+		this.setDetectable(
+		    AntiCheat.NoCheatPlus,
+		    AntiCheat.Vulcan,
+		    AntiCheat.AdvancedAntiCheat,
+		    AntiCheat.Grim,
+		    AntiCheat.Matrix,
+		    AntiCheat.Negativity,
+		    AntiCheat.Karhu
+		);
 	}
 
 	@Override

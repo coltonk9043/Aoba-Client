@@ -74,13 +74,15 @@ public class Surround extends Module implements TickListener {
 		this.addSetting(autoDisable);
 		this.addSetting(legit);
 
-		this.setDetectable(AntiCheat.Vulcan);
-		this.setDetectable(AntiCheat.AdvancedAntiCheat);
-		this.setDetectable(AntiCheat.Verus);
-		this.setDetectable(AntiCheat.Grim);
-		this.setDetectable(AntiCheat.Matrix);
-		this.setDetectable(AntiCheat.Negativity);
-		this.setDetectable(AntiCheat.Karhu);
+		this.setDetectable(
+		    AntiCheat.Vulcan,
+		    AntiCheat.AdvancedAntiCheat,
+		    AntiCheat.Verus,
+		    AntiCheat.Grim,
+		    AntiCheat.Matrix,
+		    AntiCheat.Negativity,
+		    AntiCheat.Karhu
+		);
 	}
 
 	@Override

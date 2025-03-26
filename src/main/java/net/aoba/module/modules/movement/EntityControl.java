@@ -34,7 +34,7 @@ public class EntityControl extends Module implements TickListener
 
         if (MC.world != null)
         {
-            for (Entity entity : MC.world.getEntities())
+            for (Entity entity : Aoba.getInstance().entityManager.getEntities())
             {
                 if (entity instanceof AbstractHorseEntity)
                     ((IHorseBaseEntity) entity).setSaddled(false);
@@ -65,7 +65,7 @@ public class EntityControl extends Module implements TickListener
     {
         if (MC.world != null)
         {
-            for (Entity entity : MC.world.getEntities())
+            for (Entity entity : Aoba.getInstance().entityManager.getEntities())
             {
                 if (entity instanceof AbstractHorseEntity)
                     ((IHorseBaseEntity) entity).setSaddled(true);

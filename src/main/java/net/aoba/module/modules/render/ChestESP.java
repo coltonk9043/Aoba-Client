@@ -37,8 +37,7 @@ public class ChestESP extends Module implements Render3DListener {
 		this.setCategory(Category.of("Render"));
 		this.setDescription("Allows the player to see Chests with an ESP.");
 
-		this.addSetting(color);
-		this.addSetting(lineThickness);
+		this.addSettings(color, lineThickness);
 	}
 
 	@Override
@@ -67,5 +66,4 @@ public class ChestESP extends Module implements Render3DListener {
 			}
 		});
 	}
-
 }
