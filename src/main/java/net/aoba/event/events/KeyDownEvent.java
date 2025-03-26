@@ -51,10 +51,11 @@ public class KeyDownEvent extends AbstractEvent {
 
 	@Override
 	public void Fire(ArrayList<? extends AbstractListener> listeners) {
-		for (AbstractListener listener : listeners) {
-			KeyDownListener keyDownListener = (KeyDownListener) listener;
-			keyDownListener.onKeyDown(this);
-		}
+	    ArrayList<AbstractListener> listenersCopy = new ArrayList<>(listeners);
+	    for (AbstractListener listener : listenersCopy) {
+	        KeyDownListener keyDownListener = (KeyDownListener) listener;
+	        keyDownListener.onKeyDown(this);
+	    }
 	}
 
 	@SuppressWarnings("unchecked")

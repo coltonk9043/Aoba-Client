@@ -86,18 +86,31 @@ public class MacroWindow extends Window {
 		fileNameGrid.addChild(filenameText);
 
 		// Save Button
-		saveButton = new ButtonComponent(new Runnable() {
-			@Override
-			public void run() {
-				AobaClient aoba = Aoba.getInstance();
-				Macro currentMacro = aoba.macroManager.getCurrentlySelected();
-				currentMacro.setName(filenameText.getText());
-				aoba.macroManager.addMacro(currentMacro);
+		saveButton = new ButtonComponent(() ->
+        {
+            String filename = filenameText.getText();
+            if (filename == null || filename.trim().isEmpty()) {
+                // Handle the error, e.g., show an error message or set an error state
+                filenameText.setErrorState(true);
+                return;
+            }
 
-				// Reload the items control.
-				macrosList.setItemsSource(aoba.macroManager.getMacros());
-			}
-		});
+            AobaClient aoba = Aoba.getInstance();
+            Macro currentMacro = aoba.macroManager.getCurrentlySelected();
+            if (currentMacro == null) {
+                // Handle the error, e.g., show an error message or set an error state
+                filenameText.setErrorState(true);
+                return;
+            }
+
+            currentMacro.setName(filename);
+            aoba.macroManager.addMacro(currentMacro);
+			filenameText.setText("");
+
+            // Reload the items control.
+            macrosList.setItemsSource(aoba.macroManager.getMacros());
+        });
+
 		saveButton.setMargin(new Margin(0f, 2f, 8f, 2f));
 		saveButton.addChild(new StringComponent("Save"));
 		fileNameGrid.addChild(saveButton);

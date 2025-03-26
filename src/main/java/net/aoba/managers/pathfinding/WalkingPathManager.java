@@ -33,9 +33,11 @@ public class WalkingPathManager extends AbstractPathManager {
      * @param pos The starting position for path recalculation.
      * @return An ArrayList of PathNode representing the recalculated path.
      */
-	@Override
-	public ArrayList<PathNode> recalculatePath(BlockPos pos) {
-		if (target != null) {
+    public ArrayList<PathNode> recalculatePath(BlockPos pos) {
+        if (target != null) {
+            if (MC.player == null || MC.player.isDead()) {
+                return null;
+            }
             // Priority queue to store nodes to be explored, ordered by their cost
             PriorityQueue<PathFinderEntry> queue = new PriorityQueue<>(Comparator.comparing(e -> e.cost));
 

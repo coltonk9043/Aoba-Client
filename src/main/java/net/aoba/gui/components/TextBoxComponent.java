@@ -1,11 +1,3 @@
-/*
- * Aoba Hacked Client
- * Copyright (C) 2019-2024 coltonk9043
- *
- * Licensed under the GNU General Public License, Version 3 or later.
- * See <http://www.gnu.org/licenses/>.
- */
-
 package net.aoba.gui.components;
 
 import java.util.function.Consumer;
@@ -97,8 +89,8 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 			focusAnimationProgress = Math.max(0.0f, focusAnimationProgress - partialTicks * 0.1f);
 		}
 
-		Render2D.drawOutlinedRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, 3.0f,
-				GuiManager.borderColor.getValue(), new Color(115, 115, 115, 200));
+		Color borderColor = isErrorState ? errorBorderColor : GuiManager.borderColor.getValue();
+		Render2D.drawOutlinedRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor, new Color(115, 115, 115, 200));
 
 		if (text != null && !text.isEmpty()) {
 			int visibleStringLength = (int) (actualWidth - 16 / 10);
@@ -114,7 +106,9 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 		super.onMouseClick(event);
 		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
 			if (hovered) {
-				setListeningForKey(true);
+				if (!listeningForKey) {
+					setListeningForKey(true);
+				}
 				event.cancel();
 			} else {
 				setListeningForKey(false);
@@ -138,14 +132,17 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 						stringSetting.setValue(text);
 				}
 			} else if (keyIsValid(key) || key == GLFW.GLFW_KEY_SPACE) {
-				char keyCode = (char) key;
+				String keyName = GLFW.glfwGetKeyName(key, event.GetScanCode());
+				if (keyName != null && !keyName.isEmpty()) {
+					char keyCode = keyName.charAt(0);
 
-				if (key != GLFW.GLFW_KEY_SPACE && !Screen.hasShiftDown())
-					keyCode = Character.toLowerCase(keyCode);
+					if (key != GLFW.GLFW_KEY_SPACE && !Screen.hasShiftDown())
+						keyCode = Character.toLowerCase(keyCode);
 
-				text += "" + keyCode;
-				if (stringSetting != null)
-					stringSetting.setValue(text);
+					text += keyCode;
+					if (stringSetting != null)
+						stringSetting.setValue(text);
+				}
 			}
 
 			event.cancel();

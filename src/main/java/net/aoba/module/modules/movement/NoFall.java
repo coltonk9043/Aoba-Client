@@ -41,7 +41,7 @@ public class NoFall extends Module implements TickListener, SendPacketListener {
 	private final EnumSetting<Mode> mode = EnumSetting.<Mode>builder().id("nofall_mode").displayName("Mode")
 			.description("Controls how NoFall will react to fall damage.").defaultValue(Mode.Packet).build();
 
-	private final BooleanSetting ignoreElytra = BooleanSetting.builder().id("nofall_ignore_elytra")
+	private final BooleanSetting ignoreElytra = BooleanSetting.builder().id("nofall_ignore_elytra").displayName("Ignore Elytra")
 			.description("Does not trigger NoFall when the player is flying with an elytra.").defaultValue(false)
 			.build();
 

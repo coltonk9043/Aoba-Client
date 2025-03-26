@@ -105,22 +105,20 @@ public class ModuleComponent extends Component {
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
 
-		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+		if ((event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) ||
+				(event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN)) {
 			if (hovered) {
 				float mouseX = (float) event.mouseX;
 				float actualX = actualSize.getX();
 				float actualY = actualSize.getY();
 				float actualWidth = actualSize.getWidth();
 
-				boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34)
-						&& mouseX <= (actualX + actualWidth));
-				if (isOnOptionsButton) {
+				boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
+				if (isOnOptionsButton || event.button == MouseButton.RIGHT) {
 					spinning = true;
 					if (lastSettingsTab == null) {
-						lastSettingsTab = new CloseableWindow(this.module.getName(), actualX + actualWidth + 1,
-								actualY);
+						lastSettingsTab = new CloseableWindow(this.module.getName(), actualX + actualWidth + 1, actualY);
 						lastSettingsTab.setMinWidth(320.0f);
-						// lastSettingsTab.setInheritHeightFromChildren(true);
 						StackPanelComponent stackPanel = new StackPanelComponent();
 
 						StringComponent titleComponent = new StringComponent(module.getName() + " Settings");
@@ -130,8 +128,6 @@ public class ModuleComponent extends Component {
 						stackPanel.addChild(new SeparatorComponent());
 
 						KeybindComponent keybindComponent = new KeybindComponent(module.getBind());
-						// keybindComponent.setSize(new Rectangle(null, null, null, 30f));
-
 						stackPanel.addChild(keybindComponent);
 
 						for (Setting<?> setting : this.module.getSettings()) {
@@ -143,8 +139,6 @@ public class ModuleComponent extends Component {
 								c = new SliderComponent((FloatSetting) setting);
 							} else if (setting instanceof BooleanSetting) {
 								c = new CheckboxComponent((BooleanSetting) setting);
-								// }else if (setting instanceof StringListSetting) {
-								// c = new ListComponent(stackPanel, (IndexedStringListSetting) setting);
 							} else if (setting instanceof ColorSetting) {
 								c = new ColorPickerComponent((ColorSetting) setting);
 							} else if (setting instanceof BlocksSetting) {
