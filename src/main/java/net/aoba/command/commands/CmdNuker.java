@@ -25,7 +25,7 @@ public class CmdNuker extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Nuker module = (Nuker) Aoba.getInstance().moduleManager.nuker;
+		Nuker module = Aoba.getInstance().moduleManager.nuker;
 
 		switch (parameters[0]) {
 		case "radius":

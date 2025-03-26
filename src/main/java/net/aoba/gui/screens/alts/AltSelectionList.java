@@ -37,20 +37,20 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 
 	public AltSelectionList(AltScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l) {
 		super(minecraftClient, i, j, k, l);
-		this.owner = ownerIn;
+		owner = ownerIn;
 	}
 
 	public void updateAlts() {
-		this.clearEntries();
-		for (Alt alt : this.owner.getAltList()) {
-			AltSelectionList.NormalEntry entry = new AltSelectionList.NormalEntry(this.owner, alt);
+		clearEntries();
+		for (Alt alt : owner.getAltList()) {
+			AltSelectionList.NormalEntry entry = new AltSelectionList.NormalEntry(owner, alt);
 			altList.add(entry);
 		}
-		this.setList();
+		setList();
 	}
 
 	private void setList() {
-		this.altList.forEach(this::addEntry);
+		altList.forEach(this::addEntry);
 	}
 
 	public void setSelected(@Nullable Entry entry) {
@@ -59,7 +59,7 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		Entry AltSelectionList$entry = this.getSelectedOrNull();
+		Entry AltSelectionList$entry = getSelectedOrNull();
 		return AltSelectionList$entry != null && AltSelectionList$entry.keyPressed(keyCode, scanCode, modifiers)
 				|| super.keyPressed(keyCode, scanCode, modifiers);
 	}
@@ -79,9 +79,9 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 		private PlayerListEntry entry;
 
 		protected NormalEntry(AltScreen ownerIn, Alt alt) {
-			this.owner = ownerIn;
+			owner = ownerIn;
 			this.alt = alt;
-			this.mc = MinecraftClient.getInstance();
+			mc = MinecraftClient.getInstance();
 
 			try {
 				String name = alt.getUsername();
@@ -90,8 +90,7 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 				}
 
 				UUID uuid = Uuids.getOfflinePlayerUuid(name);
-				;
-				entry = new PlayerListEntry(new GameProfile(uuid, name), false);
+                entry = new PlayerListEntry(new GameProfile(uuid, name), false);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -99,11 +98,11 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 		}
 
 		public void getAltList() {
-			this.owner.getAltList();
+			owner.getAltList();
 		}
 
 		public Alt getAltData() {
-			return this.alt;
+			return alt;
 		}
 
 		@Override
@@ -113,23 +112,23 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 			String description;
 
 			// Generates the description of an alt.
-			if (this.alt.isCracked()) {
+			if (alt.isCracked()) {
 				description = "Cracked Account";
 			} else {
 				description = "Microsoft Account";
 			}
 
 			// Draws the strings onto the screen.
-			TextRenderer textRenderer = this.mc.textRenderer;
-			drawContext.drawTextWithShadow(textRenderer, "Username: " + this.alt.getEmail(), (x + 32 + 3), (y + 2),
+			TextRenderer textRenderer = mc.textRenderer;
+			drawContext.drawTextWithShadow(textRenderer, "Username: " + alt.getEmail(), (x + 32 + 3), (y + 2),
 					16777215);
-			drawContext.drawTextWithShadow(textRenderer, "Username: " + this.alt.getEmail(), (x + 32 + 3), (y + 2),
+			drawContext.drawTextWithShadow(textRenderer, "Username: " + alt.getEmail(), (x + 32 + 3), (y + 2),
 					16777215);
 			drawContext.drawText(textRenderer, description, (x + 32 + 3), (y + 12),
-					this.alt.isCracked() ? 0xFF0000 : 0x00FF00, true);
+					alt.isCracked() ? 0xFF0000 : 0x00FF00, true);
 
 			// Draws the respective player head.
-			this.drawHead(drawContext, x + 4, y + 4);
+			drawHead(drawContext, x + 4, y + 4);
 		}
 
 		private void drawHead(DrawContext drawContext, int x, int y) {
@@ -159,20 +158,20 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 
 		@Override
 		public boolean mouseClicked(double mouseX, double mouseY, int button) {
-			double d0 = mouseX - (double) AltSelectionList.this.getRowLeft();
+			double d0 = mouseX - (double) getRowLeft();
 
 			if (d0 <= 32.0D) {
 				if (d0 < 32.0D && d0 > 16.0D) {
-					this.owner.setSelected(this);
-					this.owner.loginToSelected();
+					owner.setSelected(this);
+					owner.loginToSelected();
 					return true;
 				}
 			}
-			this.owner.setSelected(this);
-			if (Util.getMeasuringTimeMs() - this.lastClickTime < 250L) {
-				this.owner.loginToSelected();
+			owner.setSelected(this);
+			if (Util.getMeasuringTimeMs() - lastClickTime < 250L) {
+				owner.loginToSelected();
 			}
-			this.lastClickTime = Util.getMeasuringTimeMs();
+			lastClickTime = Util.getMeasuringTimeMs();
 			return false;
 		}
 

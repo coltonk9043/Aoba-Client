@@ -85,7 +85,7 @@ public abstract class GameRendererMixin {
 		if (aoba == null)
 			return;
 
-		NoRender norender = (NoRender) aoba.moduleManager.norender;
+		NoRender norender = aoba.moduleManager.norender;
 		if (floatingItem.getItem() == Items.TOTEM_OF_UNDYING && norender.state.getValue()
 				&& norender.getNoTotemAnimation()) {
 			info.cancel();

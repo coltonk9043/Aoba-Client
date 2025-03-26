@@ -36,14 +36,14 @@ public class FastLadder extends Module implements TickListener {
 
 	public FastLadder() {
 		super("FastLadder");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Allows players to climb up Ladders faster");
+		setCategory(Category.of("Movement"));
+		setDescription("Allows players to climb up Ladders faster");
 
-		this.addSetting(ladderSpeed);
-		this.addSetting(accelerationBoost);
-		this.addSetting(decelerationPenalty);
+		addSetting(ladderSpeed);
+		addSetting(accelerationBoost);
+		addSetting(decelerationPenalty);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,

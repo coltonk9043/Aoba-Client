@@ -40,12 +40,12 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 	}
 
 	public String getTitle() {
-		return this.title;
+		return title;
 	}
 
 	public void addWindow(Window hud) {
 		hud.parentPage = this;
-		hud.setVisible(this.isVisible);
+		hud.setVisible(isVisible);
 		tabs.add(hud);
 		if (hud.isInitialized())
 			hud.invalidateMeasure();
@@ -59,7 +59,7 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 	}
 
 	public void setVisible(boolean state) {
-		this.isVisible = state;
+		isVisible = state;
 
 		if (isVisible) {
 			Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
@@ -78,7 +78,7 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 	}
 
 	public void update() {
-		if (this.isVisible) {
+		if (isVisible) {
 			Iterator<Window> tabIterator = tabs.iterator();
 			while (tabIterator.hasNext()) {
 				tabIterator.next().update();
@@ -87,7 +87,7 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 	}
 
 	public void render(DrawContext drawContext, float partialTicks) {
-		if (this.isVisible) {
+		if (isVisible) {
 			Iterator<Window> tabIterator = tabs.iterator();
 			while (tabIterator.hasNext()) {
 				tabIterator.next().draw(drawContext, partialTicks);

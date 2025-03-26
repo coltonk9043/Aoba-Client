@@ -39,8 +39,8 @@ public abstract class SodiumLightDataAccessMixin {
 	private void onInit(CallbackInfo info) {
 		AobaClient aoba = Aoba.getInstance();
 
-		xray = (XRay) aoba.moduleManager.xray;
-		fb = (Fullbright) aoba.moduleManager.fullbright;
+		xray = aoba.moduleManager.xray;
+		fb = aoba.moduleManager.fullbright;
 	}
 
 	@ModifyVariable(method = "compute", at = @At(value = "TAIL"), name = "bl")

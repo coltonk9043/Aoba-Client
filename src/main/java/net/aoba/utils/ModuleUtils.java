@@ -43,7 +43,7 @@ public class ModuleUtils {
         ChunkPos min = new ChunkPos(center.x - radius, center.z - radius);
         ChunkPos max = new ChunkPos(center.x + radius, center.z + radius);
 
-        Stream<WorldChunk> stream = Stream.<ChunkPos>iterate(min, pos -> {
+        Stream<WorldChunk> stream = Stream.iterate(min, pos -> {
             int x = pos.x;
             int z = pos.z;
             x++;

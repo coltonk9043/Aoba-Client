@@ -35,13 +35,13 @@ public class PlayerESP extends Module implements Render3DListener {
 
 	public PlayerESP() {
 		super("PlayerESP");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Allows the player to see other players with an ESP.");
+		setCategory(Category.of("Render"));
+		setDescription("Allows the player to see other players with an ESP.");
 
-		this.addSetting(color_default);
-		this.addSetting(color_friendly);
-		this.addSetting(color_enemy);
-		this.addSetting(lineThickness);
+		addSetting(color_default);
+		addSetting(color_friendly);
+		addSetting(color_enemy);
+		addSetting(lineThickness);
 	}
 
 	@Override

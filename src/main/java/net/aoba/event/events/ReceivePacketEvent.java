@@ -16,7 +16,7 @@ import net.minecraft.network.packet.Packet;
 
 public class ReceivePacketEvent extends AbstractEvent {
 
-	private Packet<?> packet;
+	private final Packet<?> packet;
 
 	public Packet<?> GetPacket() {
 		return packet;

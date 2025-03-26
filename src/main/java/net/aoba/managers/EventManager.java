@@ -8,10 +8,7 @@
 
 package net.aoba.managers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.mojang.logging.LogUtils;
@@ -32,7 +29,7 @@ public class EventManager {
 		try {
 			ArrayList<AbstractListener> listOfListeners = listeners.get(object);
 			if (listOfListeners == null) {
-				listOfListeners = new ArrayList<>(Arrays.asList(listener));
+				listOfListeners = new ArrayList<>(Collections.singletonList(listener));
 				listeners.put((Class<AbstractListener>) object, listOfListeners);
 			} else {
 				listOfListeners.add(listener);

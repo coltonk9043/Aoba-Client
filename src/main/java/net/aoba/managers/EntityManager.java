@@ -22,9 +22,9 @@ public class EntityManager implements TickListener
     private volatile List<BlockEntity> blockEntities;
 
     public EntityManager() {
-        this.players = Collections.emptyList();
-        this.entities = Collections.emptyList();
-        this.blockEntities = Collections.emptyList();
+        players = Collections.emptyList();
+        entities = Collections.emptyList();
+        blockEntities = Collections.emptyList();
 
         Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
     }

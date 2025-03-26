@@ -34,11 +34,11 @@ public class AutoFarm extends Module implements TickListener {
 
 	public AutoFarm() {
 		super("AutoFarm");
-		this.setCategory(Category.of("World"));
-		this.setDescription("Automatically plants, fertilizes, and harvests crops.");
-		this.addSetting(radius);
+		setCategory(Category.of("World"));
+		setDescription("Automatically plants, fertilizes, and harvests crops.");
+		addSetting(radius);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,

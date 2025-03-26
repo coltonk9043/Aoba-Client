@@ -25,7 +25,7 @@ public class Vec3dGoal extends Goal<Vec3d> {
 	}
 
 	public static class BUILDER {
-		private Vec3dGoal goal;
+		private final Vec3dGoal goal;
 
 		public BUILDER() {
 			goal = new Vec3dGoal();

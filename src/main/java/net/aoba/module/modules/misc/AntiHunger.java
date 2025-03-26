@@ -32,13 +32,13 @@ public class AntiHunger extends Module implements SendPacketListener, SendMoveme
 
 	public AntiHunger() {
 		super("AntiHunger");
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Reduces the amount of hunger that is consumed.");
+		setCategory(Category.of("Misc"));
+		setDescription("Reduces the amount of hunger that is consumed.");
 
-		this.addSetting(sprint);
-		this.addSetting(onGround);
+		addSetting(sprint);
+		addSetting(onGround);
 
-		this.setDetectable(
+		setDetectable(
 				AntiCheat.Vulcan,
 				AntiCheat.AdvancedAntiCheat,
 				AntiCheat.Verus,

@@ -25,7 +25,7 @@ public class CmdPlayerESP extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		PlayerESP module = (PlayerESP) Aoba.getInstance().moduleManager.playeresp;
+		PlayerESP module = Aoba.getInstance().moduleManager.playeresp;
 
 		switch (parameters[0]) {
 		case "toggle":

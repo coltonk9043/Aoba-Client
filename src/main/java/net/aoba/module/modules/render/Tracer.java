@@ -61,17 +61,17 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 
 	public Tracer() {
 		super("Tracer");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Points toward other players and entities with a line.");
+		setCategory(Category.of("Render"));
+		setDescription("Points toward other players and entities with a line.");
 
-		this.addSetting(color_player);
-		this.addSetting(color_passive);
-		this.addSetting(color_enemies);
-		this.addSetting(color_misc);
-		this.addSetting(lineWidth);
-		this.addSetting(lines);
-		this.addSetting(target);
-		this.addSetting(mode);
+		addSetting(color_player);
+		addSetting(color_passive);
+		addSetting(color_enemies);
+		addSetting(color_misc);
+		addSetting(lineWidth);
+		addSetting(lines);
+		addSetting(target);
+		addSetting(mode);
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 				color = new Color(Math.min((int) red, 255), baseColor.getGreen(), baseColor.getBlue(),
 						baseColor.getAlpha());
 
-				final Vec3d rotation = new Vec3d(0, 0, 75).rotateX(-(float) Math.toRadians(renderEntity.getPitch()))
+				Vec3d rotation = new Vec3d(0, 0, 75).rotateX(-(float) Math.toRadians(renderEntity.getPitch()))
 						.rotateY(-(float) Math.toRadians(renderEntity.getYaw())).add(renderEntity.getEyePos());
 
 				Vec3d eyePos = renderEntity.getEyePos();

@@ -24,7 +24,7 @@ public class DirectLoginAltScreen extends Screen {
 
 	private TextFieldWidget textFieldAltUsername;
 	private CheckboxWidget isCracked;
-	private boolean didLoginError = false;
+	private final boolean didLoginError = false;
 
 	protected DirectLoginAltScreen(Screen parent) {
 		super(Text.of("Direct Login"));
@@ -34,47 +34,47 @@ public class DirectLoginAltScreen extends Screen {
 	public void init() {
 		super.init();
 
-		this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 50, 200, 20,
+		textFieldAltUsername = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 50, 200, 20,
 				Text.of("Enter Name"));
-		this.addDrawableChild(this.textFieldAltUsername);
+		addDrawableChild(textFieldAltUsername);
 
-		this.isCracked = CheckboxWidget.builder(Text.of("Cracked?"), textRenderer)
-				.pos(this.width / 2 - 100, height / 2 - 20).maxWidth(200).build();
-		this.addDrawableChild(this.isCracked);
+		isCracked = CheckboxWidget.builder(Text.of("Cracked?"), textRenderer)
+				.pos(width / 2 - 100, height / 2 - 20).maxWidth(200).build();
+		addDrawableChild(isCracked);
 
-		this.buttonLoginAlt = ButtonWidget.builder(Text.of("Login"), b -> this.onButtonLoginPressed())
-				.dimensions(this.width / 2 - 100, this.height / 2 + 24, 200, 20).build();
-		this.addDrawableChild(this.buttonLoginAlt);
+		buttonLoginAlt = ButtonWidget.builder(Text.of("Login"), b -> onButtonLoginPressed())
+				.dimensions(width / 2 - 100, height / 2 + 24, 200, 20).build();
+		addDrawableChild(buttonLoginAlt);
 
-		this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(this.parent))
-				.dimensions(this.width / 2 - 100, this.height / 2 + 46, 200, 20).build());
+		addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(parent))
+				.dimensions(width / 2 - 100, height / 2 + 46, 200, 20).build());
 	}
 
 	private void onButtonLoginPressed() {
 		if (isCracked.isChecked()) {
-			Aoba.getInstance().altManager.loginCracked(this.textFieldAltUsername.getText());
-			client.setScreen(this.parent);
+			Aoba.getInstance().altManager.loginCracked(textFieldAltUsername.getText());
+			client.setScreen(parent);
 			return;
 		} else {
-			Alt alt = new Alt(this.textFieldAltUsername.getText(), false);
+			Alt alt = new Alt(textFieldAltUsername.getText(), false);
 			alt.auth();
 			Aoba.getInstance().altManager.login(alt);
 		}
-		client.setScreen(this.parent);
+		client.setScreen(parent);
 	}
 
 	@Override
 	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
 		super.render(drawContext, mouseX, mouseY, partialTicks);
-		drawContext.drawCenteredTextWithShadow(textRenderer, this.title.getString(), this.width / 2, 20, 16777215);
-		drawContext.drawTextWithShadow(textRenderer, "Enter Username/Email", this.width / 2 - 100, height / 2 - 60,
+		drawContext.drawCenteredTextWithShadow(textRenderer, title.getString(), width / 2, 20, 16777215);
+		drawContext.drawTextWithShadow(textRenderer, "Enter Username/Email", width / 2 - 100, height / 2 - 60,
 				16777215);
 		// drawStringWithShadow(matrixStack,textRenderer, "Microsoft: ", this.width / 2
 		// - 100, height / 2 - 10, 16777215);
-		this.textFieldAltUsername.render(drawContext, mouseX, mouseY, partialTicks);
+		textFieldAltUsername.render(drawContext, mouseX, mouseY, partialTicks);
 		if (didLoginError) {
 			drawContext.drawTextWithShadow(textRenderer, "Incorrect Login (Try using Email rather than Username)",
-					this.width / 2 - 140, 116, 0xFF0000);
+					width / 2 - 140, 116, 0xFF0000);
 		}
 
 	}

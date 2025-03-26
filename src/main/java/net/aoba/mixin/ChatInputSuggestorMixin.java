@@ -61,10 +61,10 @@ public abstract class ChatInputSuggestorMixin {
     @Inject(at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/TextFieldWidget;getCursor()I", ordinal = 0)}, method = "refresh()V", cancellable = true)
     private void onRefresh(CallbackInfo ci) {
         String prefix = CommandManager.PREFIX.getValue();
-        String string = this.textField.getText();
+        String string = textField.getText();
 
         if (string.length() > 0) {
-            int cursorPos = this.textField.getCursor();
+            int cursorPos = textField.getCursor();
             String string2 = string.substring(0, cursorPos);
 
             if (string2.charAt(0) == CommandManager.PREFIX.getValue().charAt(0)) {
@@ -106,8 +106,8 @@ public abstract class ChatInputSuggestorMixin {
                     }
                 }
 
-                this.pendingSuggestions = builder.buildFuture();
-                this.show(false);
+                pendingSuggestions = builder.buildFuture();
+                show(false);
             }
         }
     }

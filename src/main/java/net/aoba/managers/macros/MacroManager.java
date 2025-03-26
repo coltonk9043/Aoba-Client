@@ -36,17 +36,17 @@ import net.minecraft.client.MinecraftClient;
  * loading Macros.
  */
 public class MacroManager {
-	private static MinecraftClient MC = MinecraftClient.getInstance();
+	private static final MinecraftClient MC = MinecraftClient.getInstance();
 
-	private HashMap<Class<?>, String> MACRO_CLASS_TO_NAME = new HashMap<Class<?>, String>();
-	private HashMap<String, Class<?>> MACRO_NAME_TO_CLASS = new HashMap<String, Class<?>>();
+	private final HashMap<Class<?>, String> MACRO_CLASS_TO_NAME = new HashMap<Class<?>, String>();
+	private final HashMap<String, Class<?>> MACRO_NAME_TO_CLASS = new HashMap<String, Class<?>>();
 
-	private HashMap<String, Macro> macros = new HashMap<String, Macro>();
+	private final HashMap<String, Macro> macros = new HashMap<String, Macro>();
 
 	private Macro currentSelected = null;
 
-	private MacroRecorder recorder;
-	private MacroPlayer player;
+	private final MacroRecorder recorder;
+	private final MacroPlayer player;
 
 	public MacroManager() {
 		// Register default macro types (I don't like this but reduces file size
@@ -231,7 +231,7 @@ public class MacroManager {
 	 * @param macro
 	 */
 	public void setCurrentlySelected(Macro macro) {
-		this.currentSelected = macro;
+		currentSelected = macro;
 	}
 
 	/**

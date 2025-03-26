@@ -38,7 +38,7 @@ public class PinnableWindow extends Window {
 	}
 
 	public final void setPinned(boolean pin) {
-		this.isPinned.setValue(pin);
+		isPinned.setValue(pin);
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class PinnableWindow extends Window {
 
 				Rectangle pinHitbox = new Rectangle(pos.getX() + pos.getWidth() - 24, pos.getY() + 4, 16.0f, 16.0f);
 				if (pinHitbox.intersects(mouseX, mouseY)) {
-					this.isPinned.setValue(!isPinned.getValue());
+					isPinned.setValue(!isPinned.getValue());
 					event.cancel();
 					return;
 				}
@@ -61,7 +61,7 @@ public class PinnableWindow extends Window {
 		}
 
 		// Cancel any other movements if it is pinned.
-		if (this.isPinned())
+		if (isPinned())
 			event.cancel();
 
 		super.onMouseClick(event);
@@ -80,7 +80,7 @@ public class PinnableWindow extends Window {
 			float y = pos.getY().floatValue();
 			float width = pos.getWidth().floatValue();
 
-			if (this.isPinned.getValue()) {
+			if (isPinned.getValue()) {
 				Render2D.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(),
 						new Color(154, 0, 0, 200));
 				Render2D.drawRoundedBoxOutline(matrix4f, x + width - 23, y + 8, 15, 15,

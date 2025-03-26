@@ -26,12 +26,12 @@ public class FastPlace extends Module implements TickListener {
 	public FastPlace() {
 		super("FastPlace");
 
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Places blocks exceptionally fast");
+		setCategory(Category.of("Misc"));
+		setDescription("Places blocks exceptionally fast");
 
-		this.addSetting(speed);
+		addSetting(speed);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.AdvancedAntiCheat,
 		    AntiCheat.Matrix,

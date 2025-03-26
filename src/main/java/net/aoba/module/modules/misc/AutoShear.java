@@ -56,15 +56,15 @@ public class AutoShear extends Module implements TickListener {
 	public AutoShear() {
 		super("AutoShear");
 
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Automatically shears Sheep that are near you.");
+		setCategory(Category.of("Misc"));
+		setDescription("Automatically shears Sheep that are near you.");
 
-		this.addSetting(radius);
-		this.addSetting(legit);
-		this.addSetting(rotationMode);
-		this.addSetting(maxRotation);
-		this.addSetting(yawRandomness);
-		this.addSetting(pitchRandomness);
+		addSetting(radius);
+		addSetting(legit);
+		addSetting(rotationMode);
+		addSetting(maxRotation);
+		addSetting(yawRandomness);
+		addSetting(pitchRandomness);
 	}
 
 	@Override
@@ -90,8 +90,8 @@ public class AutoShear extends Module implements TickListener {
 	@Override
 	public void onTick(Post event) {
 		SheepEntity foundEntity = null;
-		for (Entity entity : MC.world.getEntities()) {
-			if (!(entity instanceof SheepEntity))
+		for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
+			if (!(entity instanceof SheepEntity sheep))
 				continue;
 
 			// Ensure that the sheap is within a range.
@@ -99,8 +99,7 @@ public class AutoShear extends Module implements TickListener {
 				continue;
 
 			// Get if the sheep is shearable.
-			SheepEntity sheep = (SheepEntity) entity;
-			if (!sheep.isShearable() || sheep.isSheared() || sheep.isBaby())
+            if (!sheep.isShearable() || sheep.isSheared() || sheep.isBaby())
 				continue;
 
 			foundEntity = sheep;
@@ -130,14 +129,12 @@ public class AutoShear extends Module implements TickListener {
 						if (ent == foundEntity) {
 							MC.player.swingHand(Hand.MAIN_HAND);
 							MC.interactionManager.interactEntity(MC.player, foundEntity, hand);
-							return;
-						}
+                        }
 					}
 				} else {
 					MC.player.swingHand(Hand.MAIN_HAND);
 					MC.interactionManager.interactEntity(MC.player, foundEntity, hand);
-					return;
-				}
+                }
 			}
 		} else
 			// No entity found, reset the rotation goal.

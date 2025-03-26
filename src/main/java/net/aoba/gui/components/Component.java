@@ -15,8 +15,7 @@ public abstract class Component extends UIElement {
 	public String header = null;
 
 	public Component() {
-		super();
-		this.margin = new Margin();
+        margin = new Margin();
 	}
 
 	@Override

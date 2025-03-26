@@ -36,7 +36,7 @@ public abstract class AbstractPathManager {
 	 * @return Current target.
 	 */
 	public BlockPos getTarget() {
-		return this.target;
+		return target;
 	}
 
 	/**

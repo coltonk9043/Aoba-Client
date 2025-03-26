@@ -11,5 +11,5 @@ package net.aoba.event.listeners;
 import net.aoba.event.events.PlayerHealthEvent;
 
 public interface PlayerHealthListener extends AbstractListener {
-    public abstract void onHealthChanged(PlayerHealthEvent readPacketEvent);
+    void onHealthChanged(PlayerHealthEvent readPacketEvent);
 }

@@ -30,8 +30,7 @@ public class BlocksSetting extends Setting<HashSet<Block>> {
     
     public static class BUILDER extends Setting.BUILDER<BUILDER, BlocksSetting, HashSet<Block>> {
 		protected BUILDER() {
-			super();
-		}
+        }
 
 		@Override
 		public BlocksSetting build() {

@@ -41,13 +41,13 @@ public class EXPThrower extends Module implements TickListener {
 	public EXPThrower() {
 		super("EXPThrower");
 
-		this.setCategory(Category.of("misc"));
-		this.setDescription("Automatically uses XP bottles.");
+		setCategory(Category.of("misc"));
+		setDescription("Automatically uses XP bottles.");
 
-		this.addSetting(pitchSetting);
-		this.addSetting(autoSwapSetting);
-		this.addSetting(throwDelaySetting);
-		this.addSetting(autoToggleSetting);
+		addSetting(pitchSetting);
+		addSetting(autoSwapSetting);
+		addSetting(throwDelaySetting);
+		addSetting(autoToggleSetting);
 	}
 
 	@Override

@@ -49,23 +49,23 @@ public class AddonScreen extends Screen {
 
 		// Left Side
 		Path addonsPath = MinecraftClient.getInstance().getResourcePackDir().getParent().resolve("mods");
-		this.addDrawableChild(ButtonWidget
+		addDrawableChild(ButtonWidget
 				.builder(Text.of("Open Addons Folder"), button -> Util.getOperatingSystem().open(addonsPath))
-				.dimensions(16, this.height - 40, 120, 20).build());
+				.dimensions(16, height - 40, 120, 20).build());
 
-		this.addDrawableChild(ButtonWidget.builder(Text.of("Done"), b -> client.setScreen(this.parentScreen))
-				.dimensions(146, this.height - 40, 120, 20).build());
+		addDrawableChild(ButtonWidget.builder(Text.of("Done"), b -> client.setScreen(parentScreen))
+				.dimensions(146, height - 40, 120, 20).build());
 
-		this.addonListSelector = new AddonSelectionList(this, this.client, 250, this.height, 16, 48);
-		this.addonListSelector.setDimensionsAndPosition(250, this.height - 80, 16, 32);
-		this.addDrawableChild(this.addonListSelector);
+		addonListSelector = new AddonSelectionList(this, client, 250, height, 16, 48);
+		addonListSelector.setDimensionsAndPosition(250, height - 80, 16, 32);
+		addDrawableChild(addonListSelector);
 
 		// Right Side
-		this.descriptionWidget = new TextFieldWidget(textRenderer, 282, 112, this.width - 314, this.height - 160,
+		descriptionWidget = new TextFieldWidget(textRenderer, 282, 112, width - 314, height - 160,
 				Text.of(""));
 		descriptionWidget.setEditable(false);
 		descriptionWidget.setFocusUnlocked(true);
-		this.addDrawableChild(this.descriptionWidget);
+		addDrawableChild(descriptionWidget);
 
 		// Set the selected addon if any exist.
 		List<NormalEntry> entries = addonListSelector.getAddons();
@@ -81,7 +81,7 @@ public class AddonScreen extends Screen {
 
 	@Override
 	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
-		this.renderBackground(drawContext, mouseX, mouseY, partialTicks);
+		renderBackground(drawContext, mouseX, mouseY, partialTicks);
 
 		super.render(drawContext, mouseX, mouseY, partialTicks);
 		drawContext.drawCenteredTextWithShadow(textRenderer, "Addons", 145, 16, 16777215);
@@ -105,7 +105,7 @@ public class AddonScreen extends Screen {
 	}
 
 	public void setSelected(AddonSelectionList.NormalEntry selected) {
-		this.addonListSelector.setSelected(selected);
+		addonListSelector.setSelected(selected);
 		selectedAddon = selected.getAddon();
 
 		if (descriptionWidget != null) {
@@ -120,6 +120,6 @@ public class AddonScreen extends Screen {
 
 	@Override
 	protected void renderPanoramaBackground(DrawContext context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, this.width, this.height, 1.0f, delta);
+		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
 	}
 }

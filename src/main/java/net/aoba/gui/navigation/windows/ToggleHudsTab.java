@@ -35,7 +35,7 @@ public class ToggleHudsTab extends Window {
 		}
 
 		addChild(stackPanel);
-		this.setMinWidth(300.0f);
+		setMinWidth(300.0f);
 	}
 
 	@Override

@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(PlayerInteractEntityC2SPacket.class)
 public interface IPlayerInteractEntityC2SPacket {
     @Invoker("write")
-    public void invokeWrite(PacketByteBuf buf);
+    void invokeWrite(PacketByteBuf buf);
 }

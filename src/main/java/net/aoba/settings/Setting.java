@@ -33,10 +33,10 @@ public abstract class Setting<T> {
 	public Setting(String ID, String description, T default_value) {
 
 		this.ID = ID;
-		this.displayName = TextUtils.IDToName(ID);
+		displayName = TextUtils.IDToName(ID);
 		this.description = description;
 		this.default_value = default_value;
-		this.value = default_value;
+		value = default_value;
 	}
 
 	public Setting(String ID, String displayName, String description, T default_value) {
@@ -44,7 +44,7 @@ public abstract class Setting<T> {
 		this.displayName = displayName;
 		this.description = description;
 		this.default_value = default_value;
-		this.value = default_value;
+		value = default_value;
 	}
 
 	public Setting(String ID, String displayName, String description, T default_value, Consumer<T> onUpdate) {
@@ -53,16 +53,16 @@ public abstract class Setting<T> {
 		this.description = description;
 		this.default_value = default_value;
 		this.onUpdate.add(onUpdate);
-		this.value = default_value;
+		value = default_value;
 	}
 
 	public Setting(String ID, String description, T default_value, Consumer<T> onUpdate) {
 		this.ID = ID;
-		this.displayName = TextUtils.IDToName(ID);
+		displayName = TextUtils.IDToName(ID);
 		this.description = description;
 		this.default_value = default_value;
 		this.onUpdate.add(onUpdate);
-		this.value = default_value;
+		value = default_value;
 	}
 
 	/**
@@ -124,11 +124,11 @@ public abstract class Setting<T> {
     }
 
 	public void addOnUpdate(Consumer<T> consumer) {
-		this.onUpdate.add(consumer);
+		onUpdate.add(consumer);
 	}
 
 	public void removeOnUpdate(Consumer<T> consumer) {
-		this.onUpdate.add(consumer);
+		onUpdate.add(consumer);
 	}
 
 	/**

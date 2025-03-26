@@ -20,8 +20,8 @@ import net.minecraft.client.network.ClientPlayerEntity;
 public class Sneak extends Module implements TickListener {
 	public Sneak() {
 		super("Sneak");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Makes the player appear like they're sneaking.");
+		setCategory(Category.of("Movement"));
+		setDescription("Makes the player appear like they're sneaking.");
 	}
 
 	@Override

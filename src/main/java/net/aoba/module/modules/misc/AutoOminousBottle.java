@@ -38,7 +38,7 @@ public class AutoOminousBottle extends Module implements ReceivePacketListener, 
 		setCategory(Category.of("Misc"));
 		setDescription("Automatically drinks a ominous potion when a raid ends.");
 
-		this.addSetting(swapBack);
+		addSetting(swapBack);
 	}
 
 	@Override
@@ -64,9 +64,8 @@ public class AutoOminousBottle extends Module implements ReceivePacketListener, 
 		// Figure out a way to make it only occur on Raids
 
 		Packet<?> packet = e.GetPacket();
-		if (packet instanceof BossBarS2CPacket) {
-			BossBarS2CPacket bossPacket = (BossBarS2CPacket) packet;
-			IBossBarS2CPacket iPacket = (IBossBarS2CPacket) bossPacket;
+		if (packet instanceof BossBarS2CPacket bossPacket) {
+            IBossBarS2CPacket iPacket = (IBossBarS2CPacket) bossPacket;
 			BossBarS2CPacket.Action action = iPacket.getAction();
 			if (action.getType() == BossBarS2CPacket.Type.REMOVE) {
 				FindItemResult result = findInHotbar(Items.OMINOUS_BOTTLE);

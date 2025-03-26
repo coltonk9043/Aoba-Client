@@ -35,8 +35,8 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 	private static final float COLLAPSED_HEIGHT = 30f;
 	private static final float EXPANDED_HEIGHT = 135f;
 
-	private BlocksSetting blocks;
-	private String text;
+	private final BlocksSetting blocks;
+	private final String text;
 	private int visibleRows;
 	private int visibleColumns;
 	private int scroll = 0;
@@ -49,11 +49,10 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 	 * @param setting The {@link BlocksSetting} BlockSetting that this component will use.
 	 */
 	public BlocksComponent(BlocksSetting setting) {
-		super();
-		this.text = setting.displayName;
+        text = setting.displayName;
 		blocks = setting;
 
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	@Override
@@ -78,9 +77,9 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
 
 		Render2D.drawString(drawContext, text, actualX, actualY + 6, 0xFFFFFF);
 		Render2D.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6,
@@ -114,7 +113,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 
 	@Override
 	public void onMouseScroll(MouseScrollEvent event) {
-		if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.hovered) {
+		if (Aoba.getInstance().guiManager.isClickGuiOpen() && hovered) {
 			if (event.GetVertical() > 0 && scroll > 0) {
 				scroll--;
 			} else if (event.GetVertical() < 0 && (scroll + visibleRows) < (Registries.BLOCK.size() / visibleColumns)) {
@@ -127,7 +126,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 	@Override
 	public void onVisibilityChanged() {
 		super.onVisibilityChanged();
-		if (this.isVisible())
+		if (isVisible())
 			Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
 		else
 			Aoba.getInstance().eventManager.RemoveListener(MouseScrollListener.class, this);
@@ -164,12 +163,12 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 
 						Block block = Registries.BLOCK.get(index);
 						if (block != null) {
-							if (this.blocks.getValue().contains(block)) {
-								this.blocks.getValue().remove(block);
-								this.blocks.update();
+							if (blocks.getValue().contains(block)) {
+								blocks.getValue().remove(block);
+								blocks.update();
 							} else {
-								this.blocks.getValue().add(block);
-								this.blocks.update();
+								blocks.getValue().add(block);
+								blocks.update();
 							}
 
 							event.cancel();

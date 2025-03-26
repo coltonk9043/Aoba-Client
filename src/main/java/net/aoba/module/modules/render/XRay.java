@@ -40,10 +40,10 @@ public class XRay extends Module {
 
 	public XRay() {
 		super("XRay", InputUtil.fromKeyCode(GLFW.GLFW_KEY_X, 0));
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Allows the player to see ores.");
-		this.addSetting(blocks);
-		this.addSetting(fluids);
+		setCategory(Category.of("Render"));
+		setDescription("Allows the player to see ores.");
+		addSetting(blocks);
+		addSetting(fluids);
 	}
 
 	@Override
@@ -64,11 +64,8 @@ public class XRay extends Module {
 
 	public boolean isXRayBlock(Block b) {
 		HashSet<Block> blockList = blocks.getValue();
-		if (blockList.contains(b)) {
-			return true;
-		}
-		return false;
-	}
+        return blockList.contains(b);
+    }
 
 	public void ReloadRenderer(HashSet<Block> block) {
 		if (MC.worldRenderer != null && state.getValue()) {

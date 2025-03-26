@@ -72,11 +72,11 @@ public abstract class EntityRendererMixin<T extends Entity> {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		AobaClient aoba = Aoba.getInstance();
 
-		double d = dispatcher.getSquaredDistanceToCamera((Entity) entity);
+		double d = dispatcher.getSquaredDistanceToCamera(entity);
 		if (d > 4096.0) {
 			return;
 		}
-		boolean bl = !((Entity) entity).isSneaky();
+		boolean bl = !entity.isSneaky();
 		// TODO: Get name line height
 		int i = "deadmau5".equals(text.getString()) ? -10 : 0;
 		matrices.push();
@@ -86,14 +86,14 @@ public abstract class EntityRendererMixin<T extends Entity> {
 		if (aoba.moduleManager.nametags.state.getValue()) {
 			float scale;
 
-			Nametags nameTagsModule = (Nametags) aoba.moduleManager.nametags;
+			Nametags nameTagsModule = aoba.moduleManager.nametags;
 			scale = (float) nameTagsModule.getNametagScale();
 			matrices.scale(scale, scale, scale);
 		}
 		Matrix4f matrix4f = matrices.peek().getPositionMatrix();
 		float g = mc.options.getTextBackgroundOpacity(0.25f);
 		int j = (int) (g * 255.0f) << 24;
-		TextRenderer textRenderer = this.getTextRenderer();
+		TextRenderer textRenderer = getTextRenderer();
 		float h = (float) -textRenderer.getWidth(text) / 2;
 		textRenderer.draw(text, h, (float) i, 0x20FFFFFF, false, matrix4f, vertexConsumers,
 				bl ? TextRenderer.TextLayerType.SEE_THROUGH : TextRenderer.TextLayerType.NORMAL, j, light);

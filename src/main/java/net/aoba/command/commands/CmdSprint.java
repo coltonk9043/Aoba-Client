@@ -25,7 +25,7 @@ public class CmdSprint extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Sprint module = (Sprint) Aoba.getInstance().moduleManager.sprint;
+		Sprint module = Aoba.getInstance().moduleManager.sprint;
 
 		switch (parameters[0]) {
 		case "toggle":

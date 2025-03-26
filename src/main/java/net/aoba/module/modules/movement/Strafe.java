@@ -9,8 +9,7 @@
 package net.aoba.module.modules.movement;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent.Post;
-import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
@@ -24,12 +23,12 @@ public class Strafe extends Module implements TickListener {
 
 	public Strafe() {
 		super("Strafe");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Makes the user able to change directions mid-air");
+		setCategory(Category.of("Movement"));
+		setDescription("Makes the user able to change directions mid-air");
 
-		this.addSetting(intensity);
+		addSetting(intensity);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,
@@ -57,7 +56,7 @@ public class Strafe extends Module implements TickListener {
 	}
 
 	@Override
-	public void onTick(Pre event) {
+	public void onTick(TickEvent.Pre event) {
 		if (MC.player.input.movementForward != 0 || MC.player.input.movementSideways != 0) {
 
 			if (MC.player.isOnGround() && MC.options.jumpKey.isPressed())
@@ -95,7 +94,7 @@ public class Strafe extends Module implements TickListener {
 	}
 
 	@Override
-	public void onTick(Post event) {
+	public void onTick(TickEvent.Post event) {
 
 	}
 }

@@ -16,8 +16,8 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 
 public class Render2DEvent extends AbstractEvent {
-	private DrawContext matrices;
-	private RenderTickCounter renderTickCounter;
+	private final DrawContext matrices;
+	private final RenderTickCounter renderTickCounter;
 
 	public DrawContext getDrawContext() {
 		return matrices;
@@ -28,7 +28,7 @@ public class Render2DEvent extends AbstractEvent {
 	}
 
 	public Render2DEvent(DrawContext context, RenderTickCounter renderTickCounter) {
-		this.matrices = context;
+		matrices = context;
 		this.renderTickCounter = renderTickCounter;
 	}
 

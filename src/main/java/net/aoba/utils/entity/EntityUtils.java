@@ -41,11 +41,11 @@ public class EntityUtils {
 			&& !AOBA_CLIENT.friendsList.contains(p.getUuid()) && p != MC.player && !(p instanceof FakePlayerEntity);
 
 	public static Stream<Entity> getAttackableEntities() {
-		return StreamSupport.stream(MC.world.getEntities().spliterator(), true).filter(IS_ATTACKABLE);
+		return StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true).filter(IS_ATTACKABLE);
 	}
 
 	public static Stream<AnimalEntity> getValidAnimals() {
-		return StreamSupport.stream(MC.world.getEntities().spliterator(), true).filter(AnimalEntity.class::isInstance)
+		return StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true).filter(AnimalEntity.class::isInstance)
 				.map(e -> (AnimalEntity) e).filter(IS_VALID_ANIMAL);
 	}
 

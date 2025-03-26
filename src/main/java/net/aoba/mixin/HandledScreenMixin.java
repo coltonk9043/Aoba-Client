@@ -65,7 +65,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
 	@Inject(method = "render", at = @At("TAIL"))
 	private void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-		Tooltips tooltips = (Tooltips) Aoba.getInstance().moduleManager.tooltips;
+		Tooltips tooltips = Aoba.getInstance().moduleManager.tooltips;
 
 		if (tooltips.state.getValue() && focusedSlot != null && !focusedSlot.getStack().isEmpty()
 				&& client.player.playerScreenHandler.getCursorStack().isEmpty()) {
@@ -195,7 +195,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
 	@Inject(method = "drawMouseoverTooltip", at = @At("HEAD"), cancellable = true)
 	private void onDrawMouseoverTooltip(DrawContext context, int x, int y, CallbackInfo ci) {
-		Tooltips tooltips = (Tooltips) Aoba.getInstance().moduleManager.tooltips;
+		Tooltips tooltips = Aoba.getInstance().moduleManager.tooltips;
 
 		if (focusedSlot != null && !focusedSlot.getStack().isEmpty()
 				&& client.player.playerScreenHandler.getCursorStack().isEmpty()) {

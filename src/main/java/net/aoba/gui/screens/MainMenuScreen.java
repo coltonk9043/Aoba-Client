@@ -54,10 +54,10 @@ public class MainMenuScreen extends Screen
     protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(
             AOBA_PANORAMA_RENDERER);
 
-    final int LOGO_HEIGHT = Math.max(58, this.height / 12);
-    final int BUTTON_WIDTH = Math.max(150, this.width / 6);
-    final int BUTTON_HEIGHT = Math.max(25, this.height / 20);
-    final int SPACING = Math.max(5, this.height / 100);
+    final int LOGO_HEIGHT = Math.max(58, height / 12);
+    final int BUTTON_WIDTH = Math.max(150, width / 6);
+    final int BUTTON_HEIGHT = Math.max(25, height / 20);
+    final int SPACING = Math.max(5, height / 100);
 
     int smallScreenHeightOffset = 0;
 
@@ -130,7 +130,7 @@ public class MainMenuScreen extends Screen
     {
         super.init();
 
-        if (this.height <= 650)
+        if (height <= 650)
             smallScreenHeightOffset = 40;
         else
             smallScreenHeightOffset = 0;
@@ -138,48 +138,48 @@ public class MainMenuScreen extends Screen
         int columns = 2;
         int rows = 3;
         float widgetHeight = ((BUTTON_HEIGHT + SPACING) * rows);
-        int startX = (int) ((this.width - (BUTTON_WIDTH * columns + SPACING * (columns - 1))) / 2.0f);
-        int startY = (int) ((this.height - widgetHeight) / 2) + smallScreenHeightOffset;
+        int startX = (int) ((width - (BUTTON_WIDTH * columns + SPACING * (columns - 1))) / 2.0f);
+        int startY = (int) ((height - widgetHeight) / 2) + smallScreenHeightOffset;
 
         AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX, startY, BUTTON_WIDTH, BUTTON_HEIGHT,
                 Text.of("Singleplayer"));
         singleplayerButton.setPressAction(b -> client.setScreen(new SelectWorldScreen(this)));
-        this.addDrawableChild(singleplayerButton);
+        addDrawableChild(singleplayerButton);
 
         AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY,
                 BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Multiplayer"));
         multiplayerButton.setPressAction(b -> client.setScreen(new MultiplayerScreen(this)));
-        this.addDrawableChild(multiplayerButton);
+        addDrawableChild(multiplayerButton);
 
         AobaButtonWidget realmsButton = new AobaButtonWidget(startX, startY + BUTTON_HEIGHT + SPACING,
                 BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Realms"));
         realmsButton.setPressAction(b -> client.setScreen(new RealmsMainScreen(this)));
-        this.addDrawableChild(realmsButton);
+        addDrawableChild(realmsButton);
 
         AobaButtonWidget settingsButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY + BUTTON_HEIGHT + SPACING,
                 BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Settings"));
         settingsButton.setPressAction(b -> client.setScreen(new OptionsScreen(this, MC.options)));
-        this.addDrawableChild(settingsButton);
+        addDrawableChild(settingsButton);
 
         AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 2),
                 BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Addons"));
         addonsButton.setPressAction(b -> client.setScreen(new AddonScreen(this)));
-        this.addDrawableChild(addonsButton);
+        addDrawableChild(addonsButton);
 
         AobaButtonWidget quitButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY + ((BUTTON_HEIGHT + SPACING) * 2),
                 BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Quit"));
         quitButton.setPressAction(b -> client.stop());
-        this.addDrawableChild(quitButton);
+        addDrawableChild(quitButton);
 
-        AobaImageButtonWidget creditsButton = new AobaImageButtonWidget(this.width - 20 - 10, this.height - 20 - 10, 20,
+        AobaImageButtonWidget creditsButton = new AobaImageButtonWidget(width - 20 - 10, height - 20 - 10, 20,
                 20, TextureBank.aoba);
         creditsButton.setPressAction(b -> MC.setScreen(new AobaCreditsScreen()));
-        this.addDrawableChild(creditsButton);
+        addDrawableChild(creditsButton);
 
-        AobaImageButtonWidget discordButton = new AobaImageButtonWidget(this.width - 60, this.height - 30, 20, 20,
+        AobaImageButtonWidget discordButton = new AobaImageButtonWidget(width - 60, height - 30, 20, 20,
                 TextureBank.discord);
         discordButton.setPressAction(b -> Util.getOperatingSystem().open("https://discord.gg/CDa4etPFtk"));
-        this.addDrawableChild(discordButton);
+        addDrawableChild(discordButton);
     }
 
     @Override
@@ -192,31 +192,31 @@ public class MainMenuScreen extends Screen
 
 
         float widgetHeight = (BUTTON_HEIGHT + SPACING) * 5;
-        int startX = (this.width - BUTTON_WIDTH) / 2;
-        int startY = (int) ((this.height - widgetHeight) / 2 + smallScreenHeightOffset);
+        int startX = (width - BUTTON_WIDTH) / 2;
+        int startY = (int) ((height - widgetHeight) / 2 + smallScreenHeightOffset);
 
         int logoWidth = (int) (LOGO_HEIGHT * (185.0 / LOGO_HEIGHT));
-        int logoX = (this.width - logoWidth) / 2;
+        int logoX = (width - logoWidth) / 2;
         int logoY = startY - LOGO_HEIGHT - 10;
         drawContext.drawTexture(RenderLayer::getGuiTextured, TextureBank.mainmenu_logo, logoX, logoY, 0, 0, logoWidth, LOGO_HEIGHT, 185, LOGO_HEIGHT);
 
 
-        drawContext.drawTextWithShadow(this.textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, this.height - 10,
+        drawContext.drawTextWithShadow(textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, height - 10,
                 0xFF00FF);
 
         // Draw out of date if out of date.
         // TODO: Add option to hide if on previous versions.
         if (fetchedVersion != null && !fetchedVersion.equals(AobaClient.AOBA_VERSION))
         {
-            drawContext.drawTextWithShadow(this.textRenderer, "New version available: " + fetchedVersion, 2,
-                    this.height - 20, 0xFF00FF);
+            drawContext.drawTextWithShadow(textRenderer, "New version available: " + fetchedVersion, 2,
+                    height - 20, 0xFF00FF);
         }
 
         if (AobaClient.addons.isEmpty())
         {
             String noAddonsText = "No addons loaded";
-            int textWidth = this.textRenderer.getWidth(noAddonsText);
-            drawContext.drawTextWithShadow(this.textRenderer, noAddonsText, this.width - textWidth - 15, 10, 0xFFFFFF);
+            int textWidth = textRenderer.getWidth(noAddonsText);
+            drawContext.drawTextWithShadow(textRenderer, noAddonsText, width - textWidth - 15, 10, 0xFFFFFF);
         }
         else
         {
@@ -227,33 +227,33 @@ public class MainMenuScreen extends Screen
                 String byText = " by ";
                 String author = addon.getAuthor();
 
-                int addonNameWidth = this.textRenderer.getWidth(addonName);
-                int byTextWidth = this.textRenderer.getWidth(byText);
-                int authorWidth = this.textRenderer.getWidth(author);
+                int addonNameWidth = textRenderer.getWidth(addonName);
+                int byTextWidth = textRenderer.getWidth(byText);
+                int authorWidth = textRenderer.getWidth(author);
 
-                drawContext.drawTextWithShadow(this.textRenderer, addonName,
-                        this.width - addonNameWidth - byTextWidth - authorWidth - 20, yOffset, 0x50C878);
+                drawContext.drawTextWithShadow(textRenderer, addonName,
+                        width - addonNameWidth - byTextWidth - authorWidth - 20, yOffset, 0x50C878);
 
-                drawContext.drawTextWithShadow(this.textRenderer, byText,
-                        this.width - byTextWidth - authorWidth - 15, yOffset, 0xFFFFFF);
+                drawContext.drawTextWithShadow(textRenderer, byText,
+                        width - byTextWidth - authorWidth - 15, yOffset, 0xFFFFFF);
 
-                drawContext.drawTextWithShadow(this.textRenderer, author,
-                        this.width - authorWidth - 10, yOffset, 0xFF0000);
+                drawContext.drawTextWithShadow(textRenderer, author,
+                        width - authorWidth - 10, yOffset, 0xFF0000);
 
 
                 yOffset += 10;
             }
         }
 
-        int newsTextHeight = this.textRenderer.fontHeight;
+        int newsTextHeight = textRenderer.fontHeight;
         int newsBoxHeight = newsTextHeight + 20;
-        int newsTextWidth = this.textRenderer.getWidth("Aoba " + fetchedVersion + " released!") + 10;
+        int newsTextWidth = textRenderer.getWidth("Aoba " + fetchedVersion + " released!") + 10;
         Render2D.drawOutlinedRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), width - newsTextWidth - 10, 30, newsTextWidth, newsBoxHeight,
                 GuiManager.roundingRadius.getValue(),
                 GuiManager.borderColor.getValue(),
                 GuiManager.backgroundColor.getValue()
         );
-        drawContext.drawTextWithShadow(this.textRenderer, "Aoba " + fetchedVersion + " released!", width - newsTextWidth - 5, 40, Colors.WHITE);
+        drawContext.drawTextWithShadow(textRenderer, "Aoba " + fetchedVersion + " released!", width - newsTextWidth - 5, 40, Colors.WHITE);
 
 
         RenderSystem.enableCull();
@@ -262,6 +262,6 @@ public class MainMenuScreen extends Screen
     @Override
     protected void renderPanoramaBackground(DrawContext context, float delta)
     {
-        AOBA_ROTATING_PANORAMA_RENDERER.render(context, this.width, this.height, 1.0f, delta);
+        AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
     }
 }

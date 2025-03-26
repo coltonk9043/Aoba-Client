@@ -48,11 +48,11 @@ public class ItemESP extends Module implements Render3DListener {
 
 	public ItemESP() {
 		super("ItemESP");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Allows the player to see items with an ESP.");
+		setCategory(Category.of("Render"));
+		setDescription("Allows the player to see items with an ESP.");
 
-		this.addSetting(color);
-		this.addSetting(lineThickness);
+		addSetting(color);
+		addSetting(lineThickness);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class ItemESP extends Module implements Render3DListener {
 			return;
 
 		Vec3d playerPos = MC.player.getPos();
-		for (Entity entity : MC.world.getEntities()) {
+		for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 			if (entity instanceof ItemEntity) {
 				Vec3d itemPos = entity.getPos();
 				if (playerPos.distanceTo(itemPos) <= range.getValue()) {
@@ -91,9 +91,8 @@ public class ItemESP extends Module implements Render3DListener {
 	private Color getColorBasedOnItemRarity(Entity entity) {
 		boolean isRare = false;
 
-		if (entity instanceof ItemEntity) {
-			ItemEntity itemEntity = (ItemEntity) entity;
-			isRare = itemEntity.getStack().getRarity() == Rarity.RARE;
+		if (entity instanceof ItemEntity itemEntity) {
+            isRare = itemEntity.getStack().getRarity() == Rarity.RARE;
 		}
 
 		return isRare ? rareItemColor.getValue() : color.getValue();

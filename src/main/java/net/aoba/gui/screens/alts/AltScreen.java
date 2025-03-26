@@ -39,47 +39,48 @@ public class AltScreen extends Screen {
 	public void init() {
 		super.init();
 
-		this.altListSelector = new AltSelectionList(this, this.client, this.width, this.height, 32, 36);
-		this.altListSelector.updateAlts();
-		this.altListSelector.setDimensionsAndPosition(this.width, this.height - 64 - 32, 0, 32);
-		this.addDrawableChild(this.altListSelector);
+		altListSelector = new AltSelectionList(this, client, width, height, 32, 36);
+		altListSelector.updateAlts();
+		altListSelector.setDimensionsAndPosition(width, height - 64 - 32, 0, 32);
+		addDrawableChild(altListSelector);
 
-		this.deleteButton = ButtonWidget.builder(Text.of("Delete Alt"), b -> this.deleteSelected())
-				.dimensions(this.width / 2 - 154, this.height - 28, 100, 20).build();
-		this.deleteButton.active = false;
-		this.addDrawableChild(this.deleteButton);
+		deleteButton = ButtonWidget.builder(Text.of("Delete Alt"), b -> deleteSelected())
+				.dimensions(width / 2 - 154, height - 28, 100, 20).build();
+		deleteButton.active = false;
+		addDrawableChild(deleteButton);
 
-		this.addDrawableChild(
+		addDrawableChild(
 				ButtonWidget.builder(Text.of("Direct Login"), b -> client.setScreen(new DirectLoginAltScreen(this)))
-						.dimensions(this.width / 2 - 50, this.height - 52, 100, 20).build());
+						.dimensions(width / 2 - 50, height - 52, 100, 20).build());
 
-		this.addDrawableChild(ButtonWidget.builder(Text.of("Add Alt"), b -> client.setScreen(new AddAltScreen(this)))
-				.dimensions(this.width / 2 + 4 + 50, this.height - 52, 100, 20).build());
+		addDrawableChild(ButtonWidget.builder(Text.of("Add Alt"), b -> client.setScreen(new AddAltScreen(this)))
+				.dimensions(width / 2 + 4 + 50, height - 52, 100, 20).build());
 
-		this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(this.parentScreen))
-				.dimensions(this.width / 2 + 54, this.height - 28, 100, 20).build());
+		addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(parentScreen))
+				.dimensions(width / 2 + 54, height - 28, 100, 20).build());
 
-		this.editButton = ButtonWidget.builder(Text.of("Edit Alt"), b -> this.editSelected())
-				.dimensions(this.width / 2 - 50, this.height - 28, 100, 20).build();
-		this.editButton.active = false;
-		this.addDrawableChild(this.editButton);
+		editButton = ButtonWidget.builder(Text.of("Edit Alt"), b -> editSelected())
+				.dimensions(width / 2 - 50, height - 28, 100, 20).build();
+		editButton.active = false;
+		addDrawableChild(editButton);
 	}
 
 	@Override
 	public void tick() {
-		AltSelectionList.Entry altselectionlist$entry = this.altListSelector.getSelectedOrNull();
+		AltSelectionList.Entry altselectionlist$entry = altListSelector.getSelectedOrNull();
 		if (altselectionlist$entry == null)
-			return;
+        {
+        }
 	}
 
 	@Override
 	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
-		this.renderBackground(drawContext, mouseX, mouseY, partialTicks);
-		this.altListSelector.render(drawContext, mouseX, mouseY, partialTicks);
+		renderBackground(drawContext, mouseX, mouseY, partialTicks);
+		altListSelector.render(drawContext, mouseX, mouseY, partialTicks);
 
 		super.render(drawContext, mouseX, mouseY, partialTicks);
 		drawContext.drawCenteredTextWithShadow(textRenderer,
-				"Currently Logged Into: " + MinecraftClient.getInstance().getSession().getUsername(), this.width / 2,
+				"Currently Logged Into: " + MinecraftClient.getInstance().getSession().getUsername(), width / 2,
 				20, 16777215);
 	}
 
@@ -88,21 +89,21 @@ public class AltScreen extends Screen {
 	}
 
 	public void refreshAltList() {
-		this.client.setScreen(new AltScreen(this.parentScreen));
+		client.setScreen(new AltScreen(parentScreen));
 	}
 
 	public void setSelected(AltSelectionList.Entry selected) {
-		this.altListSelector.setSelected(selected);
-		this.setEdittable();
+		altListSelector.setSelected(selected);
+		setEdittable();
 	}
 
 	protected void setEdittable() {
-		this.editButton.active = true;
-		this.deleteButton.active = true;
+		editButton.active = true;
+		deleteButton.active = true;
 	}
 
 	public void loginToSelected() {
-		AltSelectionList.Entry altselectionlist$entry = this.altListSelector.getSelectedOrNull();
+		AltSelectionList.Entry altselectionlist$entry = altListSelector.getSelectedOrNull();
 		if (altselectionlist$entry == null) {
 			return;
 		}
@@ -116,7 +117,7 @@ public class AltScreen extends Screen {
 	}
 
 	public void editSelected() {
-		Alt alt = ((AltSelectionList.NormalEntry) this.altListSelector.getSelectedOrNull()).getAltData();
+		Alt alt = ((AltSelectionList.NormalEntry) altListSelector.getSelectedOrNull()).getAltData();
 		if (alt == null) {
 			return;
 		}
@@ -124,16 +125,16 @@ public class AltScreen extends Screen {
 	}
 
 	public void deleteSelected() {
-		Alt alt = ((AltSelectionList.NormalEntry) this.altListSelector.getSelectedOrNull()).getAltData();
+		Alt alt = ((AltSelectionList.NormalEntry) altListSelector.getSelectedOrNull()).getAltData();
 		if (alt == null) {
 			return;
 		}
 		Aoba.getInstance().altManager.removeAlt(alt);
-		this.refreshAltList();
+		refreshAltList();
 	}
 
 	@Override
 	protected void renderPanoramaBackground(DrawContext context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, this.width, this.height, 1.0f, delta);
+		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
 	}
 }

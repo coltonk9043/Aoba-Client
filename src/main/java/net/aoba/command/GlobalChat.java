@@ -37,19 +37,19 @@ public class GlobalChat {
 
 	public final List<ChatHudLine.Visible> messages = Lists.newArrayList();
 
-	private Gson gson;
+	private final Gson gson;
 	private Socket socket;
 	private Thread chatSocketListenerThread;
 	private PrintWriter out;
 	private BufferedReader in;
 	private boolean started = false;
 
-	private BooleanSetting enabled = BooleanSetting.builder().id("global_chat_enabled")
+	private final BooleanSetting enabled = BooleanSetting.builder().id("global_chat_enabled")
 			.description("Whether or not global chat is enabled or disabled.").defaultValue(true).build();
 
 	public GlobalChat() {
 		gson = new Gson();
-		SettingManager.registerSetting(this.enabled);
+		SettingManager.registerSetting(enabled);
 	}
 
 	private void Send(String json) {
@@ -66,7 +66,7 @@ public class GlobalChat {
 	private void SendChatMessage(String message) {
 		MinecraftClient MC = MinecraftClient.getInstance();
 		if (MC != null && MC.inGameHud != null) {
-			this.messages.add(0, new ChatHudLine.Visible(MC.inGameHud.getTicks(), Text.of(message).asOrderedText(),
+			messages.add(0, new ChatHudLine.Visible(MC.inGameHud.getTicks(), Text.of(message).asOrderedText(),
 					MessageIndicator.system(), false));
 
 		}

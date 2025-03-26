@@ -25,7 +25,7 @@ public class CmdAimbot extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Aimbot module = (Aimbot) Aoba.getInstance().moduleManager.aimbot;
+		Aimbot module = Aoba.getInstance().moduleManager.aimbot;
 
 		switch (parameters[0]) {
 		case "toggle":

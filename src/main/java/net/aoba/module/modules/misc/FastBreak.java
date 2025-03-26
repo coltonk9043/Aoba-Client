@@ -27,13 +27,13 @@ public class FastBreak extends Module {
 	public FastBreak() {
 		super("FastBreak");
 
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Breaks blocks quicker based on a multiplier.");
+		setCategory(Category.of("Misc"));
+		setDescription("Breaks blocks quicker based on a multiplier.");
 
-		this.addSetting(multiplier);
-		this.addSetting(ignoreWater);
+		addSetting(multiplier);
+		addSetting(ignoreWater);
 
-		this.setDetectable(
+		setDetectable(
 				AntiCheat.NoCheatPlus,
 				AntiCheat.AdvancedAntiCheat,
 				AntiCheat.Grim,
@@ -42,11 +42,11 @@ public class FastBreak extends Module {
 	}
 
 	public float getMultiplier() {
-		return this.multiplier.getValue();
+		return multiplier.getValue();
 	}
 
 	public boolean shouldIgnoreWater() {
-		return this.ignoreWater.getValue();
+		return ignoreWater.getValue();
 	}
 
 	public void setMultiplier(float multiplier) {

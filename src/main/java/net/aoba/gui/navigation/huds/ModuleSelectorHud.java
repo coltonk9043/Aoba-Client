@@ -29,17 +29,17 @@ public class ModuleSelectorHud extends HudWindow {
 
 	private static final float ROW_HEIGHT = 30.0f;
 
-	private KeyBinding keybindUp;
-	private KeyBinding keybindDown;
-	private KeyBinding keybindLeft;
-	private KeyBinding keybindRight;
+	private final KeyBinding keybindUp;
+	private final KeyBinding keybindDown;
+	private final KeyBinding keybindLeft;
+	private final KeyBinding keybindRight;
 
 	private int index = 0;
 	private int indexMods = 0;
 	private boolean isCategoryMenuOpen = false;
 
-	private List<Category> categories = new ArrayList<>();
-	private ArrayList<Module> modules = new ArrayList<Module>();
+	private final List<Category> categories = new ArrayList<>();
+	private final ArrayList<Module> modules = new ArrayList<Module>();
 
 	public ModuleSelectorHud() {
 		super("ModuleSelectorHud", 0, 0);
@@ -53,15 +53,15 @@ public class ModuleSelectorHud extends HudWindow {
 
 		resizeMode = ResizeMode.Width;
 
-		this.keybindUp = new KeyBinding("key.tabup", GLFW.GLFW_KEY_UP, "key.categories.aoba");
-		this.keybindDown = new KeyBinding("key.tabdown", GLFW.GLFW_KEY_DOWN, "key.categories.aoba");
-		this.keybindLeft = new KeyBinding("key.tableft", GLFW.GLFW_KEY_LEFT, "key.categories.aoba");
-		this.keybindRight = new KeyBinding("key.tabright", GLFW.GLFW_KEY_RIGHT, "key.categories.aoba");
+		keybindUp = new KeyBinding("key.tabup", GLFW.GLFW_KEY_UP, "key.categories.aoba");
+		keybindDown = new KeyBinding("key.tabdown", GLFW.GLFW_KEY_DOWN, "key.categories.aoba");
+		keybindLeft = new KeyBinding("key.tableft", GLFW.GLFW_KEY_LEFT, "key.categories.aoba");
+		keybindRight = new KeyBinding("key.tabright", GLFW.GLFW_KEY_RIGHT, "key.categories.aoba");
 	}
 
 	@Override
 	public void update() {
-		if (this.keybindUp.isPressed()) {
+		if (keybindUp.isPressed()) {
 			if (!isCategoryMenuOpen) {
 				if (index == 0) {
 					index = categories.size() - 1;
@@ -75,20 +75,20 @@ public class ModuleSelectorHud extends HudWindow {
 					indexMods -= 1;
 				}
 			}
-			this.keybindUp.setPressed(false);
-		} else if (this.keybindDown.isPressed()) {
+			keybindUp.setPressed(false);
+		} else if (keybindDown.isPressed()) {
 			if (!isCategoryMenuOpen) {
 				index = (index + 1) % categories.size();
 			} else {
 				indexMods = (indexMods + 1) % modules.size();
 			}
-			this.keybindDown.setPressed(false);
-		} else if (this.keybindRight.isPressed()) {
+			keybindDown.setPressed(false);
+		} else if (keybindRight.isPressed()) {
 			if (!isCategoryMenuOpen) {
 				isCategoryMenuOpen = true;
 				if (modules.isEmpty()) {
 					for (Module module : AOBA.moduleManager.modules) {
-						if (module.isCategory(this.categories.get(this.index))) {
+						if (module.isCategory(categories.get(index))) {
 							modules.add(module);
 						}
 					}
@@ -96,14 +96,14 @@ public class ModuleSelectorHud extends HudWindow {
 			} else {
 				modules.get(indexMods).toggle();
 			}
-			this.keybindRight.setPressed(false);
-		} else if (this.keybindLeft.isPressed()) {
-			if (this.isCategoryMenuOpen) {
-				this.indexMods = 0;
-				this.modules.clear();
-				this.isCategoryMenuOpen = false;
+			keybindRight.setPressed(false);
+		} else if (keybindLeft.isPressed()) {
+			if (isCategoryMenuOpen) {
+				indexMods = 0;
+				modules.clear();
+				isCategoryMenuOpen = false;
 			}
-			this.keybindLeft.setPressed(false);
+			keybindLeft.setPressed(false);
 		}
 	}
 
@@ -129,16 +129,16 @@ public class ModuleSelectorHud extends HudWindow {
 					GuiManager.borderColor.getValue());
 
 			// For every category, draw a cell for it.
-			for (int i = 0; i < this.categories.size(); i++) {
+			for (int i = 0; i < categories.size(); i++) {
 				Render2D.drawString(drawContext, ">>", x + width - 24, y + (ROW_HEIGHT * i) + 8,
 						GuiManager.foregroundColor.getValue());
 
 				// Draws the name of the category dependent on whether it is selected.
-				if (this.index == i)
-					Render2D.drawString(drawContext, "> " + this.categories.get(i).getName(), x + 8,
+				if (index == i)
+					Render2D.drawString(drawContext, "> " + categories.get(i).getName(), x + 8,
 							y + (ROW_HEIGHT * i) + 8, GuiManager.foregroundColor.getValue());
 				else
-					Render2D.drawString(drawContext, this.categories.get(i).getName(), x + 8, y + (ROW_HEIGHT * i) + 8,
+					Render2D.drawString(drawContext, categories.get(i).getName(), x + 8, y + (ROW_HEIGHT * i) + 8,
 							0xFFFFFF);
 			}
 
@@ -153,7 +153,7 @@ public class ModuleSelectorHud extends HudWindow {
 
 				// For every mod, draw a cell for it.
 				for (int i = 0; i < modules.size(); i++) {
-					if (this.indexMods == i) {
+					if (indexMods == i) {
 						Render2D.drawString(drawContext, "> " + modules.get(i).getName(), x + width + 5,
 								y + (i * ROW_HEIGHT) + (index * ROW_HEIGHT) + 8,
 								modules.get(i).state.getValue() ? 0x00FF00

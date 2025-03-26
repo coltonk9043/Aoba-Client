@@ -16,8 +16,7 @@ import net.minecraft.client.gui.DrawContext;
 public class SeparatorComponent extends Component {
 
 	public SeparatorComponent() {
-		super();
-	}
+    }
 
 	@Override
 	public void measure(Size availableSize) {
@@ -26,10 +25,10 @@ public class SeparatorComponent extends Component {
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
-		float actualHeight = this.getActualSize().getHeight();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
+		float actualHeight = getActualSize().getHeight();
 
 		Render2D.drawLine(drawContext.getMatrices().peek().getPositionMatrix(), actualX, actualY, actualX + actualWidth,
 				actualY + actualHeight, GuiManager.borderColor.getValue());

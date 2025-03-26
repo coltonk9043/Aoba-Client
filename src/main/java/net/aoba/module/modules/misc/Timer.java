@@ -21,11 +21,11 @@ public class Timer extends Module {
 	public Timer() {
 		super("Timer");
 
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Increases the speed of Minecraft.");
-		this.addSetting(multiplier);
+		setCategory(Category.of("Misc"));
+		setDescription("Increases the speed of Minecraft.");
+		addSetting(multiplier);
 
-		this.setDetectable(
+		setDetectable(
 				AntiCheat.NoCheatPlus,
 				AntiCheat.Vulcan,
 				AntiCheat.AdvancedAntiCheat,
@@ -38,7 +38,7 @@ public class Timer extends Module {
 	}
 
 	public float getMultiplier() {
-		return this.multiplier.getValue().floatValue();
+		return multiplier.getValue().floatValue();
 	}
 
 	public void setMultipler(float multiplier) {

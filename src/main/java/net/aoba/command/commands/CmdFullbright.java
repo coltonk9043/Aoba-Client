@@ -25,7 +25,7 @@ public class CmdFullbright extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Fullbright module = (Fullbright) Aoba.getInstance().moduleManager.fullbright;
+		Fullbright module = Aoba.getInstance().moduleManager.fullbright;
 
 		switch (parameters[0]) {
 		case "toggle":

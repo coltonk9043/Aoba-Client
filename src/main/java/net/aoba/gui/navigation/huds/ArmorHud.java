@@ -21,10 +21,10 @@ public class ArmorHud extends HudWindow {
 
 	public ArmorHud(int x, int y) {
 		super("ArmorHud", x, y);
-		this.minHeight = 256f;
-		this.maxHeight = 256f;
-		this.minWidth = 16f;
-		this.maxWidth = 16f;
+		minHeight = 256f;
+		maxHeight = 256f;
+		minWidth = 16f;
+		maxWidth = 16f;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class ArmorHud extends HudWindow {
 			if (pos.isDrawable()) {
 				DefaultedList<ItemStack> armors = MC.player.getInventory().armor;
 
-				float scale = this.getActualSize().getHeight() / 64.0f;
+				float scale = getActualSize().getHeight() / 64.0f;
 
 				float x1 = pos.getX() / scale;
 				float y2 = (pos.getY() + pos.getHeight()) / scale;

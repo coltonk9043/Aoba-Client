@@ -26,8 +26,8 @@ import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.math.MathHelper;
 
 public class RotationManager implements TickListener, Render3DListener, SendPacketListener, SendMovementPacketListener {
-	private static MinecraftClient MC = MinecraftClient.getInstance();
-	private static AobaClient AOBA = Aoba.getInstance();
+	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final AobaClient AOBA = Aoba.getInstance();
 
 	private Goal<?> currentGoal = null;
 
@@ -108,9 +108,9 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 		Rotation currentGoalRotation = currentGoal.getGoalRotation(tickDelta);
 
 		switch (currentGoal.getRotationMode()) {
-		case RotationMode.NONE:
+		case NONE:
 			return null;
-		case RotationMode.SMOOTH:
+		case SMOOTH:
 			// Gets the difference between the players view and the goal.
 			Rotation difference = Rotation.difference(new Rotation(startYaw, startPitch), currentGoalRotation);
 
@@ -132,7 +132,7 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 			Rotation newRotation = new Rotation(startYaw + maxYawRotationDelta, startPitch + maxPitchRotation)
 					.roundToGCD().clamp();
 			return newRotation;
-		case RotationMode.INSTANT:
+		case INSTANT:
 			return currentGoalRotation;
 		default:
 			return null;
@@ -152,8 +152,8 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 		double d = MC.player.getX() - iPlayer.getLastX();
 		double e = MC.player.getY() - iPlayer.getLastY();
 		double f = MC.player.getZ() - iPlayer.getLastZ();
-		double g = (double) (serverYaw - lastServerYaw);
-		double h = (double) (serverPitch - lastServerPitch);
+		double g = serverYaw - lastServerYaw;
+		double h = serverPitch - lastServerPitch;
 
 		boolean bl = MathHelper.squaredMagnitude(d, e, f) > MathHelper.square(2.0E-4);
 		boolean bl2 = g != 0.0 || h != 0.0;

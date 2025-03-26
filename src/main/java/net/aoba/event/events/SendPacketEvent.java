@@ -16,7 +16,7 @@ import net.minecraft.network.packet.Packet;
 
 public class SendPacketEvent extends AbstractEvent {
 
-	private Packet<?> packet;
+	private final Packet<?> packet;
 
 	public SendPacketEvent(Packet<?> packet) {
 		this.packet = packet;

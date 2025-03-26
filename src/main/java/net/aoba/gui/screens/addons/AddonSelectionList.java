@@ -29,7 +29,7 @@ import net.minecraft.util.Identifier;
 public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelectionList.Entry> {
 	private final List<NormalEntry> addonList = new ArrayList<AddonSelectionList.NormalEntry>();
 
-	private AddonScreen parent;
+	private final AddonScreen parent;
 
 	public AddonSelectionList(AddonScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l) {
 		super(minecraftClient, i, j, k, l);
@@ -38,16 +38,16 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 	}
 
 	public void updateAddonList() {
-		this.clearEntries();
+		clearEntries();
 		for (IAddon addon : AobaClient.addons) {
 			AddonSelectionList.NormalEntry entry = new AddonSelectionList.NormalEntry(this, addon);
 			addonList.add(entry);
 		}
-		this.addonList.forEach(this::addEntry);
+		addonList.forEach(this::addEntry);
 	}
 
 	public List<NormalEntry> getAddons() {
-		return this.addonList;
+		return addonList;
 	}
 
 	public void setSelected(@Nullable NormalEntry entry) {
@@ -60,7 +60,7 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		Entry AltSelectionList$entry = this.getSelectedOrNull();
+		Entry AltSelectionList$entry = getSelectedOrNull();
 		return AltSelectionList$entry != null && AltSelectionList$entry.keyPressed(keyCode, scanCode, modifiers)
 				|| super.keyPressed(keyCode, scanCode, modifiers);
 	}
@@ -79,9 +79,9 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 		private final IAddon addon;
 
 		protected NormalEntry(AddonSelectionList ownerIn, IAddon addon) {
-			this.owner = ownerIn;
+			owner = ownerIn;
 			this.addon = addon;
-			this.mc = MinecraftClient.getInstance();
+			mc = MinecraftClient.getInstance();
 
 			Optional<String> iconPathOptional = addon.getIcon();
 			if (!iconPathOptional.isEmpty()) {
@@ -89,16 +89,16 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 				int firstDirectory = iconPath.indexOf('/');
 				String modNamespace = iconPath.substring(0, firstDirectory);
 				String modIconPath = iconPath.substring(firstDirectory + 1);
-				this.iconIdentifier = Identifier.of(modNamespace, modIconPath);
+				iconIdentifier = Identifier.of(modNamespace, modIconPath);
 			} else
-				this.iconIdentifier = null;
+				iconIdentifier = null;
 		}
 
 		@Override
 		public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight,
 				int mouseX, int mouseY, boolean hovered, float tickDelta) {
 			// Draws the strings onto the screen.
-			TextRenderer textRenderer = this.mc.textRenderer;
+			TextRenderer textRenderer = mc.textRenderer;
 
 			drawContext.fill(x + 7, y + 7, x + 41, y + 41, 0xFFFFFFFF);
 			drawContext.fill(x + 8, y + 8, x + 40, y + 40, 0xFF000000);
@@ -111,13 +111,13 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 
 		@Override
 		public boolean mouseClicked(double mouseX, double mouseY, int button) {
-			double d0 = mouseX - (double) AddonSelectionList.this.getRowLeft();
+			double d0 = mouseX - (double) getRowLeft();
 
 			if (d0 < 32.0D && d0 > 16.0D) {
-				this.owner.onClickEntry(this);
+				owner.onClickEntry(this);
 				return true;
 			}
-			this.owner.onClickEntry(this);
+			owner.onClickEntry(this);
 			return false;
 		}
 
@@ -127,11 +127,11 @@ public class AddonSelectionList extends AlwaysSelectedEntryListWidget<AddonSelec
 		}
 
 		public IAddon getAddon() {
-			return this.addon;
+			return addon;
 		}
 
 		public Identifier getIcon() {
-			return this.iconIdentifier;
+			return iconIdentifier;
 		}
 	}
 }

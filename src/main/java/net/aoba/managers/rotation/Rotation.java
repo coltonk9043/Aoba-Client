@@ -18,7 +18,7 @@ import net.minecraft.util.math.Vec3d;
 
 public record Rotation(double yaw, double pitch) {
 	public static Rotation ZERO = new Rotation(0, 0);
-	private static MinecraftClient MC = MinecraftClient.getInstance();
+	private static final MinecraftClient MC = MinecraftClient.getInstance();
 
 	public Rotation getRadians() {
 		return new Rotation(Math.toRadians(yaw), Math.toRadians(pitch));
@@ -28,8 +28,8 @@ public record Rotation(double yaw, double pitch) {
 		double gcd = RotationManager.getGCD();
 
 		// Round to nearest GCD
-		double g1 = Math.round(this.yaw / gcd) * gcd;
-		double g2 = Math.round(this.pitch / gcd) * gcd;
+		double g1 = Math.round(yaw / gcd) * gcd;
+		double g2 = Math.round(pitch / gcd) * gcd;
 
 		return new Rotation(g1, MathHelper.clamp(g2, -90f, 90f));
 	}

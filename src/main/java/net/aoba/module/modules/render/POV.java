@@ -25,12 +25,12 @@ public class POV extends Module implements TickListener {
 	private String povString = null;
 	private Entity povEntity = null;
 
-	private boolean fakePlayerSpawned = false;
+	private final boolean fakePlayerSpawned = false;
 
 	public POV() {
 		super("POV");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Allows the player to see someone else's point-of-view.");
+		setCategory(Category.of("Render"));
+		setDescription("Allows the player to see someone else's point-of-view.");
 	}
 
 	@Override
@@ -54,16 +54,16 @@ public class POV extends Module implements TickListener {
 	}
 
 	public void setEntityPOV(String entity) {
-		this.povString = entity;
+		povString = entity;
 	}
 
 	public Entity getEntity() {
-		return this.povEntity;
+		return povEntity;
 	}
 
 	public PlayerEntity getEntityAsPlayer() {
-		if (this.povEntity instanceof PlayerEntity) {
-			return (PlayerEntity) this.povEntity;
+		if (povEntity instanceof PlayerEntity) {
+			return (PlayerEntity) povEntity;
 		} else {
 			return null;
 		}

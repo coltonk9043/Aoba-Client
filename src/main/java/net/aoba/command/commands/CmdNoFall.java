@@ -25,7 +25,7 @@ public class CmdNoFall extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		NoFall module = (NoFall) Aoba.getInstance().moduleManager.nofall;
+		NoFall module = Aoba.getInstance().moduleManager.nofall;
 
 		switch (parameters[0]) {
 		case "toggle":

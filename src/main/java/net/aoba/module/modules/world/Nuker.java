@@ -55,15 +55,15 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 
 	public Nuker() {
 		super("Nuker");
-		this.setCategory(Category.of("World"));
-		this.setDescription("Destroys blocks around the player.");
+		setCategory(Category.of("World"));
+		setDescription("Destroys blocks around the player.");
 
-		this.addSetting(creative);
-		this.addSetting(radius);
-		this.addSetting(color);
-		this.addSetting(blacklist);
+		addSetting(creative);
+		addSetting(radius);
+		addSetting(color);
+		addSetting(blacklist);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,
@@ -122,8 +122,8 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 		for (int y = rad; y > -rad; y--) {
 			for (int x = -rad; x < rad; x++) {
 				for (int z = -rad; z < rad; z++) {
-					BlockPos blockpos = new BlockPos(MC.player.getBlockX() + x, (int) MC.player.getBlockY() + y,
-							(int) MC.player.getBlockZ() + z);
+					BlockPos blockpos = new BlockPos(MC.player.getBlockX() + x, MC.player.getBlockY() + y,
+							MC.player.getBlockZ() + z);
 					Block block = MC.world.getBlockState(blockpos).getBlock();
 					if (block == Blocks.AIR || blacklist.getValue().contains(block))
 						continue;

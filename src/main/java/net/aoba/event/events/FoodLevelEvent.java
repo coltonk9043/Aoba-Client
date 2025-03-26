@@ -14,7 +14,7 @@ import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.FoodLevelListener;
 
 public class FoodLevelEvent extends AbstractEvent {
-	private float foodLevel;
+	private final float foodLevel;
 
 	public FoodLevelEvent(float foodLevel) {
 		this.foodLevel = foodLevel;

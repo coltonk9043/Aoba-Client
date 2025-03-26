@@ -23,8 +23,8 @@ public class EntityControl extends Module implements TickListener
     public EntityControl()
     {
         super("EntityControl");
-        this.setDescription("Allows you to control entities without needing a saddle.");
-        this.setCategory(Category.of("Movement"));
+        setDescription("Allows you to control entities without needing a saddle.");
+        setCategory(Category.of("Movement"));
     }
 
     @Override

@@ -54,13 +54,11 @@ public abstract class EntityMixin {
 
 	@Inject(at = { @At("HEAD") }, method = "getStepHeight()F", cancellable = true)
 	public void onGetStepHeight(CallbackInfoReturnable<Float> cir) {
-		return;
-	}
+    }
 
 	@Inject(at = { @At("HEAD") }, method = "getJumpVelocityMultiplier()F", cancellable = true)
 	public void onGetJumpVelocityMultiplier(CallbackInfoReturnable<Float> cir) {
-		return;
-	}
+    }
 
 	@Inject(at = { @At("HEAD") }, method = "changeLookDirection(DD)V", cancellable = true)
 	public void onChangeLookDirection(double cursorDeltaX, double cursorDeltaY, CallbackInfo ci) {

@@ -16,7 +16,7 @@ public interface Discord extends Library {
 
     void Discord_RunCallbacks();
 
-    void Discord_Initialize(final String p0, final DiscordEventHandlers p1, final boolean p2, final String p3);
+    void Discord_Initialize(String p0, DiscordEventHandlers p1, boolean p2, String p3);
     void Discord_Shutdown();
-    void Discord_UpdatePresence(final DiscordRPC p0);
+    void Discord_UpdatePresence(DiscordRPC p0);
 }

@@ -36,7 +36,7 @@ public class KillAura extends Module implements TickListener {
 		LOWESTHP, CLOSEST
 	}
 
-	private Priority priority = Priority.CLOSEST; // why isnt this a setting???
+	private final Priority priority = Priority.CLOSEST; // why isnt this a setting???
 
 	private final FloatSetting radius = FloatSetting.builder().id("killaura_radius").displayName("Radius")
 			.description("Radius that KillAura will target entities.").defaultValue(5f).minValue(0.1f).maxValue(10f)
@@ -84,22 +84,22 @@ public class KillAura extends Module implements TickListener {
 	public KillAura() {
 		super("KillAura");
 
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Attacks anything within your personal space.");
+		setCategory(Category.of("Combat"));
+		setDescription("Attacks anything within your personal space.");
 
-		this.addSetting(radius);
-		this.addSetting(targetAnimals);
-		this.addSetting(targetMonsters);
-		this.addSetting(targetPlayers);
-		this.addSetting(targetFriends);
-		this.addSetting(legit);
-		this.addSetting(randomness);
-		this.addSetting(rotationMode);
-		this.addSetting(maxRotation);
-		this.addSetting(yawRandomness);
-		this.addSetting(pitchRandomness);
+		addSetting(radius);
+		addSetting(targetAnimals);
+		addSetting(targetMonsters);
+		addSetting(targetPlayers);
+		addSetting(targetFriends);
+		addSetting(legit);
+		addSetting(randomness);
+		addSetting(rotationMode);
+		addSetting(maxRotation);
+		addSetting(yawRandomness);
+		addSetting(pitchRandomness);
 
-		this.setDetectable(AntiCheat.Matrix); // NPC
+		setDetectable(AntiCheat.Matrix); // NPC
 
 	}
 
@@ -129,20 +129,20 @@ public class KillAura extends Module implements TickListener {
 		boolean found = false;
 
 		// Add all potential entities to the 'hitlist'
-		if (this.targetAnimals.getValue() || this.targetMonsters.getValue()) {
-			for (Entity entity : MC.world.getEntities()) {
+		if (targetAnimals.getValue() || targetMonsters.getValue()) {
+			for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 				if (MC.player.squaredDistanceTo(entity) > radius.getValueSqr())
 					continue;
-				if ((entity instanceof AnimalEntity && this.targetAnimals.getValue())
-						|| (entity instanceof Monster && this.targetMonsters.getValue())) {
+				if ((entity instanceof AnimalEntity && targetAnimals.getValue())
+						|| (entity instanceof Monster && targetMonsters.getValue())) {
 					hitList.add(entity);
 				}
 			}
 		}
 
 		// Add all potential players to the 'hitlist'
-		if (this.targetPlayers.getValue()) {
-			for (PlayerEntity player : MC.world.getPlayers()) {
+		if (targetPlayers.getValue()) {
+			for (PlayerEntity player : Aoba.getInstance().entityManager.getPlayers()) {
 				if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
 					continue;
 
@@ -160,12 +160,12 @@ public class KillAura extends Module implements TickListener {
 				entityToAttack = le;
 				found = true;
 			} else {
-				if (this.priority == Priority.LOWESTHP) {
+				if (priority == Priority.LOWESTHP) {
 					if (le.getHealth() <= entityToAttack.getHealth()) {
 						entityToAttack = le;
 						found = true;
 					}
-				} else if (this.priority == Priority.CLOSEST) {
+				} else if (priority == Priority.CLOSEST) {
 					if (MC.player.squaredDistanceTo(le) <= MC.player.squaredDistanceTo(entityToAttack)) {
 						entityToAttack = le;
 						found = true;

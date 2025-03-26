@@ -11,5 +11,5 @@ package net.aoba.utils.discord.callbacks;
 import com.sun.jna.Callback;
 
 public interface ErroredCallback extends Callback {
-    void apply(final int p0, final String p1);
+    void apply(int p0, String p1);
 }

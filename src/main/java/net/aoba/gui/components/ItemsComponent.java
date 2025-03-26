@@ -21,25 +21,23 @@ public class ItemsComponent<T> extends Component {
 	private List<T> itemsSource;
 	private Function<T, UIElement> itemGenerator;
 
-	private Component parentComponent;
+	private final Component parentComponent;
 
 	public ItemsComponent(List<T> itemsSource) {
-		super();
-		this.setMargin(new Margin(2f, null, 2f, null));
+        setMargin(new Margin(2f, null, 2f, null));
 		this.itemsSource = itemsSource;
 		parentComponent = new StackPanelComponent();
 
-		this.addChild(parentComponent);
+		addChild(parentComponent);
 	}
 
 	public ItemsComponent(List<T> itemsSource, Function<T, UIElement> itemGenerator) {
-		super();
-		this.itemGenerator = itemGenerator;
-		this.setMargin(new Margin(2f, null, 2f, null));
+        this.itemGenerator = itemGenerator;
+		setMargin(new Margin(2f, null, 2f, null));
 		this.itemsSource = itemsSource;
 		parentComponent = new StackPanelComponent();
 
-		this.addChild(parentComponent);
+		addChild(parentComponent);
 	}
 
 	@Override
@@ -55,7 +53,7 @@ public class ItemsComponent<T> extends Component {
 					parentComponent.addChild(parentComponent);
 				});
 			} else {
-				itemsSource.stream().map(s -> itemGenerator.apply((T) s)).forEach(s -> {
+				itemsSource.stream().map(s -> itemGenerator.apply(s)).forEach(s -> {
 					parentComponent.addChild(s);
 				});
 			}

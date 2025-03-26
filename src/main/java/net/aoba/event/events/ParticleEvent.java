@@ -22,7 +22,7 @@ public class ParticleEvent extends AbstractEvent {
 	}
 
 	public ParticleEffect getParticleEffect() {
-		return this.particleEffect;
+		return particleEffect;
 	}
 
 	@Override

@@ -72,7 +72,6 @@ public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkH
 				ignoreChatMessage = false;
 			}
 			ci.cancel();
-			return;
-		}
+        }
 	}
 }

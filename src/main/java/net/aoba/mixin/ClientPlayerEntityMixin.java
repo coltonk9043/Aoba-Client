@@ -61,7 +61,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 	@Inject(at = { @At("HEAD") }, method = "isCamera()Z", cancellable = true)
 	private void onIsCamera(CallbackInfoReturnable<Boolean> cir) {
-		Freecam freecam = (Freecam) Aoba.getInstance().moduleManager.freecam;
+		Freecam freecam = Aoba.getInstance().moduleManager.freecam;
 		if (freecam.state.getValue()) {
 			cir.setReturnValue(true);
 		}
@@ -83,17 +83,17 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	@Override
 	protected void onGetOffGroundSpeed(CallbackInfoReturnable<Float> cir) {
 		if (Aoba.getInstance().moduleManager.fly.state.getValue()) {
-			Fly fly = (Fly) Aoba.getInstance().moduleManager.fly;
+			Fly fly = Aoba.getInstance().moduleManager.fly;
 			cir.setReturnValue((float) fly.getSpeed());
 		} else if (Aoba.getInstance().moduleManager.noclip.state.getValue()) {
-			Noclip noclip = (Noclip) Aoba.getInstance().moduleManager.noclip;
+			Noclip noclip = Aoba.getInstance().moduleManager.noclip;
 			cir.setReturnValue(noclip.getSpeed());
 		}
 	}
 
 	@Override
 	public void onGetStepHeight(CallbackInfoReturnable<Float> cir) {
-		Step stepHack = (Step) Aoba.getInstance().moduleManager.step;
+		Step stepHack = Aoba.getInstance().moduleManager.step;
 		if (stepHack.state.getValue()) {
 			cir.setReturnValue(cir.getReturnValue());
 		}
@@ -102,7 +102,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	@Override
 	public void onGetJumpVelocityMultiplier(CallbackInfoReturnable<Float> cir) {
 		AobaClient aoba = Aoba.getInstance();
-		HighJump higherJump = (HighJump) aoba.moduleManager.higherjump;
+		HighJump higherJump = aoba.moduleManager.higherjump;
 		if (higherJump.state.getValue()) {
 			cir.setReturnValue(higherJump.getJumpHeightMultiplier());
 		}
@@ -163,7 +163,7 @@ public abstract class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 
 	@Inject(method = "pushOutOfBlocks", at = @At("HEAD"), cancellable = true)
 	private void onPushOutOfBlocks(double x, double z, CallbackInfo ci) {
-		AntiKnockback antiKnockback = (AntiKnockback) Aoba.getInstance().moduleManager.antiknockback;
+		AntiKnockback antiKnockback = Aoba.getInstance().moduleManager.antiknockback;
 
 		if (antiKnockback.state.getValue() && antiKnockback.getNoPushBlocks()) {
 			ci.cancel();

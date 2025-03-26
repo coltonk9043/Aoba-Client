@@ -14,7 +14,7 @@ import net.aoba.managers.rotation.RotationMode;
 public class RotationGoal extends Goal<Rotation> {
 	@Override
 	public Rotation getGoalRotation(float tickDelta) {
-		return this.rotationGoal;
+		return rotationGoal;
 	}
 
 	// Builder
@@ -23,7 +23,7 @@ public class RotationGoal extends Goal<Rotation> {
 	}
 
 	public static class BUILDER {
-		private RotationGoal goal;
+		private final RotationGoal goal;
 
 		public BUILDER() {
 			goal = new RotationGoal();

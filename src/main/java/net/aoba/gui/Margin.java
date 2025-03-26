@@ -22,10 +22,10 @@ public class Margin {
 	}
 
 	public Margin(Float uniformMargin) {
-		this.left = uniformMargin;
-		this.top = uniformMargin;
-		this.right = uniformMargin;
-		this.bottom = uniformMargin;
+		left = uniformMargin;
+		top = uniformMargin;
+		right = uniformMargin;
+		bottom = uniformMargin;
 	}
 
 	public Margin(Float left, Float top, Float right, Float bottom) {
@@ -36,30 +36,29 @@ public class Margin {
 	}
 
 	public Float getLeft() {
-		return this.left;
+		return left;
 	}
 
 	public Float getTop() {
-		return this.top;
+		return top;
 	}
 
 	public Float getRight() {
-		return this.right;
+		return right;
 	}
 
 	public Float getBottom() {
-		return this.bottom;
+		return bottom;
 	}
 
 	@Override
 	public boolean equals(Object other) {
 		if (this == other)
 			return true;
-		if (!(other instanceof Margin))
+		if (!(other instanceof Margin otherMargin))
 			return false;
 
-		Margin otherMargin = (Margin) other;
-		return Objects.equals(left, otherMargin.left) && Objects.equals(top, otherMargin.top)
+        return Objects.equals(left, otherMargin.left) && Objects.equals(top, otherMargin.top)
 				&& Objects.equals(right, otherMargin.right) && Objects.equals(bottom, otherMargin.bottom);
 	}
 }

@@ -39,42 +39,42 @@ public class EntityESP extends Module implements Render3DListener {
 	private final EnumSetting<DrawMode> drawMode = EnumSetting.<DrawMode>builder().id("entityesp_draw_mode")
 			.displayName("Draw Mode").description("Draw Mode").defaultValue(DrawMode.Model).build();
 
-	private ColorSetting color_passive = ColorSetting.builder().id("entityesp_color_passive")
+	private final ColorSetting color_passive = ColorSetting.builder().id("entityesp_color_passive")
 			.displayName("Passive Color").description("Passive Color").defaultValue(new Color(0f, 1f, 0f, 0.3f))
 			.build();
 
-	private ColorSetting color_enemies = ColorSetting.builder().id("entityesp_color_enemy").displayName("Enemy Color")
+	private final ColorSetting color_enemies = ColorSetting.builder().id("entityesp_color_enemy").displayName("Enemy Color")
 			.description("Enemy Color").defaultValue(new Color(1, 0f, 0f, 0.3f)).build();
 
-	private ColorSetting color_misc = ColorSetting.builder().id("entityesp_color_misc").displayName("Misc. Color")
+	private final ColorSetting color_misc = ColorSetting.builder().id("entityesp_color_misc").displayName("Misc. Color")
 			.description("Misc. Color").defaultValue(new Color(0, 0f, 1f, 0.3f)).build();
 
-	private BooleanSetting showPassiveEntities = BooleanSetting.builder().id("entityesp_show_passive")
+	private final BooleanSetting showPassiveEntities = BooleanSetting.builder().id("entityesp_show_passive")
 			.displayName("Show Passive Entities").description("Show Passive Entities.").defaultValue(true).build();
 
-	private BooleanSetting showEnemies = BooleanSetting.builder().id("entityesp_show_enemies")
+	private final BooleanSetting showEnemies = BooleanSetting.builder().id("entityesp_show_enemies")
 			.displayName("Show Enemies").description("Show Enemies.").defaultValue(true).build();
 
-	private BooleanSetting showMiscEntities = BooleanSetting.builder().id("entityesp_show_misc")
+	private final BooleanSetting showMiscEntities = BooleanSetting.builder().id("entityesp_show_misc")
 			.displayName("Show Misc Entities").description("Show Misc Entities").defaultValue(true).build();
 
-	private FloatSetting lineThickness = FloatSetting.builder().id("entityesp_linethickness")
+	private final FloatSetting lineThickness = FloatSetting.builder().id("entityesp_linethickness")
 			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
 			.minValue(0f).maxValue(5f).step(0.1f).build();
 
 	public EntityESP() {
 		super("EntityESP");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Allows the player to see entities with an ESP.");
+		setCategory(Category.of("Render"));
+		setDescription("Allows the player to see entities with an ESP.");
 
-		this.addSetting(drawMode);
-		this.addSetting(color_passive);
-		this.addSetting(color_enemies);
-		this.addSetting(color_misc);
-		this.addSetting(lineThickness);
-		this.addSetting(showPassiveEntities);
-		this.addSetting(showEnemies);
-		this.addSetting(showMiscEntities);
+		addSetting(drawMode);
+		addSetting(color_passive);
+		addSetting(color_enemies);
+		addSetting(color_misc);
+		addSetting(lineThickness);
+		addSetting(showPassiveEntities);
+		addSetting(showEnemies);
+		addSetting(showMiscEntities);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class EntityESP extends Module implements Render3DListener {
 		MatrixStack matrixStack = event.GetMatrix();
 		float partialTicks = event.getRenderTickCounter().getTickDelta(true);
 
-		for (Entity entity : MC.world.getEntities()) {
+		for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 
 			Frustum frustum = event.getFrustum();
 			Camera camera = MC.gameRenderer.getCamera();
@@ -108,7 +108,7 @@ public class EntityESP extends Module implements Render3DListener {
 					Color color = getColorForEntity(entity);
 					if (color != null) {
 						switch (drawMode.getValue()) {
-						case DrawMode.BoundingBox:
+						case BoundingBox:
 							double interpolatedX = MathHelper.lerp(partialTicks, entity.prevX, entity.getX());
 							double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
 							double interpolatedZ = MathHelper.lerp(partialTicks, entity.prevZ, entity.getZ());
@@ -118,7 +118,7 @@ public class EntityESP extends Module implements Render3DListener {
 							Render3D.draw3DBox(matrixStack, event.getCamera(), boundingBox, color,
 									lineThickness.getValue());
 							break;
-						case DrawMode.Model:
+						case Model:
 							Render3D.drawEntityModel(matrixStack, camera, partialTicks, entity, color);
 							break;
 						}

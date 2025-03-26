@@ -48,8 +48,7 @@ public class Window extends UIElement {
 	}
 
 	public Window(String ID, float x, float y, float width, float height) {
-		super();
-		this.ID = ID;
+        this.ID = ID;
 		minWidth = 180.0f;
 		minHeight = 50.0f;
 
@@ -78,12 +77,12 @@ public class Window extends UIElement {
 
 	@Override
 	public void setWidth(Float width) {
-		this.position.setWidth(width);
+		position.setWidth(width);
 	}
 
 	@Override
 	public void setHeight(Float height) {
-		this.position.setHeight(height);
+		position.setHeight(height);
 	}
 
 	public String getID() {
@@ -94,10 +93,10 @@ public class Window extends UIElement {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
-		float actualHeight = this.getActualSize().getHeight();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
+		float actualHeight = getActualSize().getHeight();
 
 		// Draws background depending on components width and height
 		Render2D.drawRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight,
@@ -156,21 +155,21 @@ public class Window extends UIElement {
 
 			Rectangle pos = getActualSize();
 
-			if (this.isMoving) {
+			if (isMoving) {
 				float targetX = pos.getX() + (float) mouseDeltaX;
 				float targetY = pos.getY() + (float) mouseDeltaY;
 
-				float currentX = this.position.getX();
-				float currentY = this.position.getY();
+				float currentX = position.getX();
+				float currentY = position.getY();
 
 				float interpolatedX = lerp(currentX, targetX, GuiManager.dragSmoothening.getValue());
 				float interpolatedY = lerp(currentY, targetY, GuiManager.dragSmoothening.getValue());
 
 				position.setX(interpolatedX);
 				position.setY(interpolatedY);
-			} else if (this.isResizing) {
+			} else if (isResizing) {
 				switch (grabDirection) {
-				case Direction.Top:
+				case Top:
 					float newHeightTop = getActualSize().getHeight() - (float) mouseDeltaY;
 
 					if (minHeight != null && newHeightTop < minHeight.floatValue())
@@ -182,7 +181,7 @@ public class Window extends UIElement {
 					position.setY(getActualSize().getY() + (float) mouseDeltaY);
 					position.setHeight(newHeightTop);
 					break;
-				case Direction.Bottom:
+				case Bottom:
 					float newHeightBottom = getActualSize().getHeight() + (float) mouseDeltaY;
 
 					if (minHeight != null && newHeightBottom < minHeight.floatValue())
@@ -193,7 +192,7 @@ public class Window extends UIElement {
 
 					position.setHeight(newHeightBottom);
 					break;
-				case Direction.Left:
+				case Left:
 					float newWidthLeft = getActualSize().getWidth() - (float) mouseDeltaX;
 					if (minWidth != null && newWidthLeft < minWidth.floatValue())
 						break;
@@ -204,7 +203,7 @@ public class Window extends UIElement {
 					position.setX(getActualSize().getX() + (float) mouseDeltaX);
 					position.setWidth(newWidthLeft);
 					break;
-				case Direction.Right:
+				case Right:
 					float newWidthRight = getActualSize().getWidth() + (float) mouseDeltaX;
 					if (minWidth != null && newWidthRight < minWidth.floatValue())
 						break;
@@ -262,8 +261,7 @@ public class Window extends UIElement {
 						parentPage.moveToFront(this);
 						isMoving = true;
 						event.cancel();
-						return;
-					}
+                    }
 				}
 			} else if (event.button == MouseButton.LEFT && event.action == MouseAction.UP) {
 				if (isMoving || isResizing) {

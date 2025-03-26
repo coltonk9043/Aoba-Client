@@ -21,17 +21,17 @@ public class AutoRespawn extends Module implements PlayerDeathListener, TickList
 
 	private final FloatSetting respawnDelay = FloatSetting.builder().id("autorespawn_delay").displayName("Delay")
 			.description("The delay between dying and automatically respawning.").defaultValue(0.0f).minValue(0.0f)
-			.maxValue(100.0f).step(1.0f).build();;
+			.maxValue(100.0f).step(1.0f).build();
 
-	private int tick;
+    private int tick;
 
 	public AutoRespawn() {
 		super("AutoRespawn");
 
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Automatically respawns when you die.");
+		setCategory(Category.of("Combat"));
+		setDescription("Automatically respawns when you die.");
 
-		this.addSetting(respawnDelay);
+		addSetting(respawnDelay);
 	}
 
 	@Override

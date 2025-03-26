@@ -42,8 +42,7 @@ public class IntegerSetting extends Setting<Integer> {
 		protected Integer step = 1;
 		
 		protected BUILDER() {
-			super();
-		}
+        }
 		
 		public BUILDER minValue(Integer value) {
 			minValue = value;

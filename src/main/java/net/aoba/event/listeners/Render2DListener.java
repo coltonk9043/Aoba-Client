@@ -11,5 +11,5 @@ package net.aoba.event.listeners;
 import net.aoba.event.events.Render2DEvent;
 
 public interface Render2DListener extends AbstractListener {
-	public abstract void onRender(Render2DEvent event);
+	void onRender(Render2DEvent event);
 }

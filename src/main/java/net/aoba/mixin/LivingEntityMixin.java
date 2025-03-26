@@ -19,8 +19,7 @@ import net.minecraft.server.world.ServerWorld;
 public abstract class LivingEntityMixin extends EntityMixin {
 	@Inject(at = { @At("HEAD") }, method = "setHealth(F)V")
 	public void onSetHealth(float health, CallbackInfo ci) {
-		return;
-	}
+    }
 
 	@Inject(at = { @At("HEAD") }, method = "tickNewAi()V", cancellable = true)
 	public void onTickNewAi(CallbackInfo ci) {
@@ -30,12 +29,11 @@ public abstract class LivingEntityMixin extends EntityMixin {
 	@Inject(at = {
 			@At("HEAD") }, method = "damage(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/damage/DamageSource;F)Z", cancellable = true)
 	public void onDamage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
-		return;
-	}
+    }
 
 	@Inject(method = "spawnItemParticles", at = @At("HEAD"), cancellable = true)
 	private void spawnItemParticles(ItemStack stack, int count, CallbackInfo info) {
-		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		NoRender norender = Aoba.getInstance().moduleManager.norender;
 		if (norender.state.getValue() && norender.getNoEatParticles()
 				&& stack.getComponents().contains(DataComponentTypes.FOOD))
 			info.cancel();

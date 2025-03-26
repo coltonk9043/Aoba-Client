@@ -35,10 +35,10 @@ public class HungerManagerMixin {
 
 		if (player.getUuid().equals(mc.player.getUuid())) {
 			Difficulty difficulty = player.getWorld().getDifficulty();
-			if (this.exhaustion > 4.0f) {
-				if (this.saturationLevel <= 0.0f && difficulty != Difficulty.PEACEFUL) {
+			if (exhaustion > 4.0f) {
+				if (saturationLevel <= 0.0f && difficulty != Difficulty.PEACEFUL) {
 					// Fire Event
-					int newFoodLevel = Math.max(this.foodLevel - 1, 0);
+					int newFoodLevel = Math.max(foodLevel - 1, 0);
 					FoodLevelEvent event = new FoodLevelEvent(newFoodLevel);
 					Aoba.getInstance().eventManager.Fire(event);
 				}

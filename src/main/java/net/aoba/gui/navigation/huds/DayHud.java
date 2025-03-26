@@ -20,9 +20,9 @@ public class DayHud extends HudWindow {
 
 	public DayHud(int x, int y) {
 		super("DayHud", x, y, 50, 24);
-		this.minWidth = 50f;
-		this.minHeight = 24f;
-		this.maxHeight = 24f;
+		minWidth = 50f;
+		minHeight = 24f;
+		maxHeight = 24f;
 		resizeMode = ResizeMode.None;
 	}
 

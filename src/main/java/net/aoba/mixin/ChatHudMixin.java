@@ -98,21 +98,21 @@ public abstract class ChatHudMixin {
         int v;
         int u;
         int t;
-        int visibleLinesCount = this.getVisibleLineCount();
+        int visibleLinesCount = getVisibleLineCount();
 
-        boolean bl = this.isChatFocused();
-        float f = (float) this.getChatScale();
-        int k = MathHelper.ceil((float) this.getWidth() / f);
+        boolean bl = isChatFocused();
+        float f = (float) getChatScale();
+        int k = MathHelper.ceil((float) getWidth() / f);
         int l = context.getScaledWindowHeight();
         context.getMatrices().push();
         context.getMatrices().scale(f, f, 1.0f);
         context.getMatrices().translate(4.0f, 0.0f, 0.0f);
         int m = MathHelper.floor((float) (l - 40) / f);
-        int n = this.getMessageIndex(this.toChatLineX(mouseX), this.toChatLineY(mouseY));
-        double opacity = this.client.options.getChatOpacity().getValue() * (double) 0.9f + (double) 0.1f;
-        double textOpacity = this.client.options.getTextBackgroundOpacity().getValue();
-        double chatSpacing = this.client.options.getChatLineSpacing().getValue();
-        int lineHeight = this.getLineHeight();
+        int n = getMessageIndex(toChatLineX(mouseX), toChatLineY(mouseY));
+        double opacity = client.options.getChatOpacity().getValue() * (double) 0.9f + (double) 0.1f;
+        double textOpacity = client.options.getTextBackgroundOpacity().getValue();
+        double chatSpacing = client.options.getChatLineSpacing().getValue();
+        int lineHeight = getLineHeight();
         int p = (int) Math.round(-8.0 * (chatSpacing + 1.0) + 4.0 * chatSpacing);
 
         for (int r = 0; r < Aoba.getInstance().globalChat.messages.size() && r < visibleLinesCount; ++r) {
@@ -132,13 +132,13 @@ public abstract class ChatHudMixin {
                 int z = messageIndicator.indicatorColor() | u << 24;
                 context.fill(-4, x - lineHeight, -2, x, z);
                 if (r == n && messageIndicator.icon() != null) {
-                    int aa = this.getIndicatorX(visible);
-                    int ab = y + this.client.textRenderer.fontHeight;
-                    this.drawIndicatorIcon(context, aa, ab, messageIndicator.icon());
+                    int aa = getIndicatorX(visible);
+                    int ab = y + client.textRenderer.fontHeight;
+                    drawIndicatorIcon(context, aa, ab, messageIndicator.icon());
                 }
             }
             context.getMatrices().translate(0.0f, 0.0f, 50.0f);
-            context.drawTextWithShadow(this.client.textRenderer, visible.content(), 0, y, 0xFFFFFF + (u << 24));
+            context.drawTextWithShadow(client.textRenderer, visible.content(), 0, y, 0xFFFFFF + (u << 24));
             context.getMatrices().pop();
         }
 

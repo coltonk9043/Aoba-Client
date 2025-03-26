@@ -25,7 +25,7 @@ public class CmdItemESP extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		ItemESP module = (ItemESP) Aoba.getInstance().moduleManager.itemesp;
+		ItemESP module = Aoba.getInstance().moduleManager.itemesp;
 
 		switch (parameters[0]) {
 		case "toggle":

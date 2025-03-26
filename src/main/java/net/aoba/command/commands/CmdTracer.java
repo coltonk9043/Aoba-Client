@@ -25,7 +25,7 @@ public class CmdTracer extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Tracer module = (Tracer) Aoba.getInstance().moduleManager.tracer;
+		Tracer module = Aoba.getInstance().moduleManager.tracer;
 
 		switch (parameters[0]) {
 		case "toggle":

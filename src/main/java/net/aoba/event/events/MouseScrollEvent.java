@@ -14,13 +14,12 @@ import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.MouseScrollListener;
 
 public class MouseScrollEvent extends AbstractEvent {
-	private double horizontal;
-	private double vertical;
+	private final double horizontal;
+	private final double vertical;
 
 	public MouseScrollEvent(double horizontal2, double vertical2) {
-		super();
-		this.horizontal = horizontal2;
-		this.vertical = vertical2;
+        horizontal = horizontal2;
+		vertical = vertical2;
 	}
 
 	public double GetVertical() {

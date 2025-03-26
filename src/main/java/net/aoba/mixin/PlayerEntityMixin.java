@@ -47,7 +47,7 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 	@Inject(method = "getBlockBreakingSpeed", at = @At("HEAD"), cancellable = true)
 	public void onGetBlockBreakingSpeed(BlockState blockState, CallbackInfoReturnable<Float> ci) {
 		AobaClient aoba = Aoba.getInstance();
-		FastBreak fastBreak = (FastBreak) aoba.moduleManager.fastbreak;
+		FastBreak fastBreak = aoba.moduleManager.fastbreak;
 
 		// If fast break is enabled.
 		if (fastBreak.state.getValue()) {
@@ -67,13 +67,12 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 
 	@Inject(at = { @At("HEAD") }, method = "getOffGroundSpeed()F", cancellable = true)
 	protected void onGetOffGroundSpeed(CallbackInfoReturnable<Float> cir) {
-		return;
-	}
+    }
 
 	@Inject(at = { @At("HEAD") }, method = "getBlockInteractionRange()D", cancellable = true)
 	private void onBlockInteractionRange(CallbackInfoReturnable<Double> cir) {
 		if (Aoba.getInstance().moduleManager.reach.state.getValue()) {
-			Reach reach = (Reach) Aoba.getInstance().moduleManager.reach;
+			Reach reach = Aoba.getInstance().moduleManager.reach;
 			cir.setReturnValue((double) reach.getReach());
 		}
 	}
@@ -81,14 +80,14 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 	@Inject(at = { @At("HEAD") }, method = "getEntityInteractionRange()D", cancellable = true)
 	private void onEntityInteractionRange(CallbackInfoReturnable<Double> cir) {
 		if (Aoba.getInstance().moduleManager.reach.state.getValue()) {
-			Reach reach = (Reach) Aoba.getInstance().moduleManager.reach;
+			Reach reach = Aoba.getInstance().moduleManager.reach;
 			cir.setReturnValue((double) reach.getReach());
 		}
 	}
 
 	@Inject(method = "isPushedByFluids", at = @At("HEAD"), cancellable = true)
 	private void onIsPushedByFluids(CallbackInfoReturnable<Boolean> cir) {
-		AntiKnockback antiKnockback = (AntiKnockback) Aoba.getInstance().moduleManager.antiknockback;
+		AntiKnockback antiKnockback = Aoba.getInstance().moduleManager.antiknockback;
 
 		if (antiKnockback.state.getValue() && antiKnockback.getNoPushLiquids()) {
 			cir.setReturnValue(false);

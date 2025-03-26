@@ -28,8 +28,7 @@ public class ScrollComponent extends Component implements MouseScrollListener {
 	 * depending on which direction the stack type is.
 	 */
 	public ScrollComponent() {
-		super();
-	}
+    }
 
 	@Override
 	public void update() {
@@ -39,7 +38,7 @@ public class ScrollComponent extends Component implements MouseScrollListener {
 	@Override
 	public void onVisibilityChanged() {
 		super.onVisibilityChanged();
-		if (this.isVisible())
+		if (isVisible())
 			Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
 		else
 			Aoba.getInstance().eventManager.RemoveListener(MouseScrollListener.class, this);
@@ -63,7 +62,7 @@ public class ScrollComponent extends Component implements MouseScrollListener {
 
 	@Override
 	public void onMouseScroll(MouseScrollEvent event) {
-		if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.hovered) {
+		if (Aoba.getInstance().guiManager.isClickGuiOpen() && hovered) {
 			List<UIElement> children = getChildren();
 			int childCount = children.size();
 			if (event.GetVertical() > 0 && scroll > 0) {

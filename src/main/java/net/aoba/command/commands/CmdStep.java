@@ -25,7 +25,7 @@ public class CmdStep extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Step module = (Step) Aoba.getInstance().moduleManager.step;
+		Step module = Aoba.getInstance().moduleManager.step;
 
 		switch (parameters[0]) {
 		case "height":

@@ -27,7 +27,7 @@ import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 
 public class ModuleArrayListHud extends HudWindow {
-	private EnumSetting<TextAlign> textAlign = EnumSetting.<TextAlign>builder().id("ModuleArrayListHudText_TextAlign")
+	private final EnumSetting<TextAlign> textAlign = EnumSetting.<TextAlign>builder().id("ModuleArrayListHudText_TextAlign")
 			.displayName("Text Align").description("Text Alignment").defaultValue(TextAlign.Left).build();
 
 	public ModuleArrayListHud(int x, int y) {
@@ -44,14 +44,14 @@ public class ModuleArrayListHud extends HudWindow {
 				newWidth = nameWidth;
 		}
 
-		this.setWidth(newWidth);
+		setWidth(newWidth);
 	}
 
 	@Override
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
 
-		if (this.hovered && event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
+		if (hovered && event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
 			TextAlign currentValue = textAlign.getValue();
 			TextAlign[] enumConstants = currentValue.getDeclaringClass().getEnumConstants();
 			int currentIndex = java.util.Arrays.asList(enumConstants).indexOf(currentValue);
@@ -82,10 +82,10 @@ public class ModuleArrayListHud extends HudWindow {
 			if (pos.isDrawable()) {
 				AtomicInteger iteration = new AtomicInteger(0);
 				Stream<Module> moduleStream = AOBA.moduleManager.modules.stream().filter(s -> s.state.getValue())
-						.sorted(Comparator.comparing((mod) -> ((Module) mod).getName()));
+						.sorted(Comparator.comparing((mod) -> mod.getName()));
 
 				switch (textAlign.getValue()) {
-				case TextAlign.Left:
+				case Left:
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
 						Render2D.drawString(drawContext, mod.getName(), pos.getX(), yPosition,
@@ -93,7 +93,7 @@ public class ModuleArrayListHud extends HudWindow {
 						iteration.incrementAndGet();
 					});
 					break;
-				case TextAlign.Center:
+				case Center:
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
 						float centerTextWidth = Render2D.getStringWidth(mod.getName()) / 2.0f;
@@ -103,7 +103,7 @@ public class ModuleArrayListHud extends HudWindow {
 						iteration.incrementAndGet();
 					});
 					break;
-				case TextAlign.Right:
+				case Right:
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
 						float rightTextWidth = Render2D.getStringWidth(mod.getName());

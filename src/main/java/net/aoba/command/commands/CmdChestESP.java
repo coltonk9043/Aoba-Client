@@ -25,7 +25,7 @@ public class CmdChestESP extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		ChestESP module = (ChestESP) Aoba.getInstance().moduleManager.chestesp;
+		ChestESP module = Aoba.getInstance().moduleManager.chestesp;
 
 		switch (parameters[0]) {
 		case "toggle":

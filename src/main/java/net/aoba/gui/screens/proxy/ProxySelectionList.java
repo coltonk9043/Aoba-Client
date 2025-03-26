@@ -27,28 +27,28 @@ public class ProxySelectionList extends AlwaysSelectedEntryListWidget<ProxySelec
 
     public ProxySelectionList(ProxyScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l) {
         super(minecraftClient, i, j, k, l);
-        this.owner = ownerIn;
+        owner = ownerIn;
     }
 
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        ProxySelectionList.Entry ProxySelectionList$entry = this.getSelectedOrNull();
+        ProxySelectionList.Entry ProxySelectionList$entry = getSelectedOrNull();
         return ProxySelectionList$entry != null && ProxySelectionList$entry.keyPressed(keyCode, scanCode, modifiers)
             || super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     public void updateProxies() {
-        this.clearEntries();
+        clearEntries();
 
-        for (Socks5Proxy proxy : this.owner.getProxyList()) {
-            ProxySelectionList.NormalEntry entry = new ProxySelectionList.NormalEntry(this.owner, proxy);
-            this.addEntry(entry);
+        for (Socks5Proxy proxy : owner.getProxyList()) {
+            ProxySelectionList.NormalEntry entry = new ProxySelectionList.NormalEntry(owner, proxy);
+            addEntry(entry);
         }
     }
 
     private void setList() {
-        this.proxyList.forEach(this::addEntry);
+        proxyList.forEach(this::addEntry);
     }
 
     
@@ -65,55 +65,55 @@ public class ProxySelectionList extends AlwaysSelectedEntryListWidget<ProxySelec
         private long lastClickTime;
 
         protected NormalEntry(ProxyScreen ownerIn, Socks5Proxy proxy) {
-            this.owner = ownerIn;
+            owner = ownerIn;
             this.proxy = proxy;
-            this.mc = MinecraftClient.getInstance();
+            mc = MinecraftClient.getInstance();
         }
 
         public void getProxyList() {
-            this.owner.getProxyList();
+            owner.getProxyList();
         }
 
         public Socks5Proxy getProxyData() {
-            return this.proxy;
+            return proxy;
         }
 
         @Override
         public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight,
                            int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            TextRenderer textRenderer = this.mc.textRenderer;
+            TextRenderer textRenderer = mc.textRenderer;
 
             int lineHeight = 12;
             int textY = y + (entryHeight - lineHeight * 4) / 2;
 
-            int textColor = this.owner.isActiveProxy(this.proxy) ? 0x00FF00 : 16777215;
+            int textColor = owner.isActiveProxy(proxy) ? 0x00FF00 : 16777215;
 
-            Render2D.drawStringWithScale(drawContext, "IP: " + this.proxy.getIp(), x + 32 + 3, textY, textColor, 1.0f);
-            Render2D.drawStringWithScale(drawContext, "Port: " + this.proxy.getPort(), x + 32 + 3, textY + lineHeight, textColor, 1.0f);
-            Render2D.drawStringWithScale(drawContext, "Username: " + this.proxy.getUsername(), x + 32 + 3, textY + lineHeight * 2, textColor, 1.0f);
-            Render2D.drawStringWithScale(drawContext, "*".repeat(this.proxy.getPassword().length()), x + 32 + 3, textY + lineHeight * 3, textColor, 1.0f);
+            Render2D.drawStringWithScale(drawContext, "IP: " + proxy.getIp(), x + 32 + 3, textY, textColor, 1.0f);
+            Render2D.drawStringWithScale(drawContext, "Port: " + proxy.getPort(), x + 32 + 3, textY + lineHeight, textColor, 1.0f);
+            Render2D.drawStringWithScale(drawContext, "Username: " + proxy.getUsername(), x + 32 + 3, textY + lineHeight * 2, textColor, 1.0f);
+            Render2D.drawStringWithScale(drawContext, "*".repeat(proxy.getPassword().length()), x + 32 + 3, textY + lineHeight * 3, textColor, 1.0f);
         }
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            double d0 = mouseX - (double) ProxySelectionList.this.getRowLeft();
+            double d0 = mouseX - (double) getRowLeft();
 
             if (d0 <= 32.0D) {
                 if (d0 < 32.0D && d0 > 16.0D) {
-                    this.owner.setSelected(this);
+                    owner.setSelected(this);
                     return true;
                 }
             }
-            this.owner.setSelected(this);
-            if (Util.getMeasuringTimeMs() - this.lastClickTime < 250L) {
-                Socks5Proxy proxy = this.getProxyData();
-                if (this.owner.isActiveProxy(proxy)) {
-                    this.owner.resetActive();
+            owner.setSelected(this);
+            if (Util.getMeasuringTimeMs() - lastClickTime < 250L) {
+                Socks5Proxy proxy = getProxyData();
+                if (owner.isActiveProxy(proxy)) {
+                    owner.resetActive();
                 } else {
-                    this.owner.setActive();
+                    owner.setActive();
                 }
             }
-            this.lastClickTime = Util.getMeasuringTimeMs();
+            lastClickTime = Util.getMeasuringTimeMs();
             return false;
         }
 

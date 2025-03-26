@@ -116,7 +116,7 @@ public class Color {
 	 * @param luminance
 	 */
 	public Color(float hue, float saturation, float luminance) {
-		this.setHSV(hue, saturation, luminance);
+		setHSV(hue, saturation, luminance);
 	}
 
 	/**
@@ -159,9 +159,9 @@ public class Color {
 		this.luminance = luminance;
 		Color vec = hsv2rgb(hue, saturation, luminance);
 		if (vec != null) {
-			this.r = vec.r;
-			this.g = vec.g;
-			this.b = vec.b;
+			r = vec.r;
+			g = vec.g;
+			b = vec.b;
 		}
 	}
 
@@ -172,11 +172,11 @@ public class Color {
 	 */
 	public void setHue(float hue) {
 		this.hue = hue;
-		Color vec = hsv2rgb(this.hue, this.saturation, this.luminance);
+		Color vec = hsv2rgb(this.hue, saturation, luminance);
 		if (vec != null) {
-			this.r = vec.r;
-			this.g = vec.g;
-			this.b = vec.b;
+			r = vec.r;
+			g = vec.g;
+			b = vec.b;
 		}
 	}
 
@@ -187,11 +187,11 @@ public class Color {
 	 */
 	public void setSaturation(float saturation) {
 		this.saturation = saturation;
-		Color vec = hsv2rgb(this.hue, this.saturation, this.luminance);
+		Color vec = hsv2rgb(hue, this.saturation, luminance);
 		if (vec != null) {
-			this.r = vec.r;
-			this.g = vec.g;
-			this.b = vec.b;
+			r = vec.r;
+			g = vec.g;
+			b = vec.b;
 		}
 	}
 
@@ -202,11 +202,11 @@ public class Color {
 	 */
 	public void setLuminance(float luminance) {
 		this.luminance = luminance;
-		Color vec = hsv2rgb(this.hue, this.saturation, this.luminance);
+		Color vec = hsv2rgb(hue, saturation, this.luminance);
 		if (vec != null) {
-			this.r = vec.r;
-			this.g = vec.g;
-			this.b = vec.b;
+			r = vec.r;
+			g = vec.g;
+			b = vec.b;
 		}
 	}
 
@@ -240,9 +240,9 @@ public class Color {
 	 * @return
 	 */
 	public String getColorAsString() {
-		String rs = Integer.toString((int) (r));
-		String gs = Integer.toString((int) (g));
-		String bs = Integer.toString((int) (b));
+		String rs = Integer.toString(r);
+		String gs = Integer.toString(g);
+		String bs = Integer.toString(b);
 		return rs + gs + bs;
 	}
 
@@ -253,10 +253,10 @@ public class Color {
 	 */
 	public int getColorAsInt() {
 		// Perform shifts and Bitwise AND to get color value in integer format.
-		int Alpha = ((this.alpha) << 24) & 0xFF000000;
-		int R = ((this.r) << 16) & 0x00FF0000;
-		int G = ((this.g) << 8) & 0x0000FF00;
-		int B = (this.b) & 0x000000FF;
+		int Alpha = ((alpha) << 24) & 0xFF000000;
+		int R = ((r) << 16) & 0x00FF0000;
+		int G = ((g) << 8) & 0x0000FF00;
+		int B = (b) & 0x000000FF;
 		// Return the color as a combination of these values.
 		return Alpha | R | G | B;
 	}
@@ -267,7 +267,7 @@ public class Color {
 	 * @return The color represented as Hex.
 	 */
 	public String getColorAsHex() {
-		return String.format("#%06X", this.getColorAsInt());
+		return String.format("#%06X", getColorAsInt());
 	}
 
 	/**
@@ -276,7 +276,7 @@ public class Color {
 	 * @return Red component as a float.
 	 */
 	public float getRed() {
-		return ((float) this.r) / 255.0f;
+		return ((float) r) / 255.0f;
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class Color {
 	 * @return Green component as a float.
 	 */
 	public float getGreen() {
-		return ((float) this.g) / 255.0f;
+		return ((float) g) / 255.0f;
 	}
 
 	/**
@@ -294,15 +294,15 @@ public class Color {
 	 * @return Blue component as a float.
 	 */
 	public float getBlue() {
-		return ((float) this.b) / 255.0f;
+		return ((float) b) / 255.0f;
 	}
 
 	public float getAlpha() {
-		return ((float) this.alpha) / 255.0f;
+		return ((float) alpha) / 255.0f;
 	}
 
 	public Color add(Color color) {
-		return new Color(this.r + color.r, this.g + color.g, this.b + color.b);
+		return new Color(r + color.r, g + color.g, b + color.b);
 	}
 
 	public Color add(float r, float g, float b) {
@@ -319,9 +319,9 @@ public class Color {
 	 * @return Color as a String.
 	 */
 	public static String rgbToString(int r, int g, int b) {
-		String rs = Integer.toString((int) (r));
-		String gs = Integer.toString((int) (g));
-		String bs = Integer.toString((int) (b));
+		String rs = Integer.toString(r);
+		String gs = Integer.toString(g);
+		String bs = Integer.toString(b);
 		return rs + gs + bs;
 	}
 
@@ -334,9 +334,9 @@ public class Color {
 	 * @return Color as an Integer.
 	 */
 	public static int rgbToInt(int r, int g, int b) {
-		String rs = Integer.toString((int) (r));
-		String gs = Integer.toString((int) (g));
-		String bs = Integer.toString((int) (b));
+		String rs = Integer.toString(r);
+		String gs = Integer.toString(g);
+		String bs = Integer.toString(b);
 		return Integer.parseInt(rs + gs + bs);
 	}
 

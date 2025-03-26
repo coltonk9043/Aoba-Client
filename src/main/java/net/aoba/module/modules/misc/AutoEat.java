@@ -54,14 +54,14 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
 	public AutoEat() {
 		super("AutoEat");
 
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Automatically eats the best food in your inventory.");
+		setCategory(Category.of("Misc"));
+		setDescription("Automatically eats the best food in your inventory.");
 
-		this.addSetting(fillToFull);
-		this.addSetting(swapBack);
-		this.addSetting(hungerSetting);
-		this.addSetting(healthSetting);
-		this.addSetting(prioritizeGapples);
+		addSetting(fillToFull);
+		addSetting(swapBack);
+		addSetting(hungerSetting);
+		addSetting(healthSetting);
+		addSetting(prioritizeGapples);
 	}
 
 	@Override

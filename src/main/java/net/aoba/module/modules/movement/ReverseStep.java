@@ -19,10 +19,10 @@ import net.aoba.module.Module;
 public class ReverseStep extends Module implements TickListener {
 	public ReverseStep() {
 		super("ReverseStep");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Steps. But in reverse...");
+		setCategory(Category.of("Movement"));
+		setDescription("Steps. But in reverse...");
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,

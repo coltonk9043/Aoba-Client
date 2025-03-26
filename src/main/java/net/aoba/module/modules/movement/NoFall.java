@@ -51,12 +51,12 @@ public class NoFall extends Module implements TickListener, SendPacketListener {
 
 	public NoFall() {
 		super("No-Fall");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Prevents fall damage.");
+		setCategory(Category.of("Movement"));
+		setDescription("Prevents fall damage.");
 
-		this.addSetting(mode);
-		this.addSetting(ignoreElytra);
-		this.addSetting(ignoreMace);
+		addSetting(mode);
+		addSetting(ignoreElytra);
+		addSetting(ignoreMace);
 	}
 
 	@Override

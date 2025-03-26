@@ -20,7 +20,7 @@ public class XboxLiveToken {
 	 */
 	public XboxLiveToken(String token, String uhs) {
 		this.token = token;
-		this.hash = uhs;
+		hash = uhs;
 	}
 
 	/**

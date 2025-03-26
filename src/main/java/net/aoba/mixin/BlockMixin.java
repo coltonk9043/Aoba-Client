@@ -39,7 +39,7 @@ public abstract class BlockMixin implements ItemConvertible {
 	private static void onShouldDrawSide(BlockState state, BlockState otherState, Direction side,
 										 CallbackInfoReturnable<Boolean> cir) {
 		AobaClient aoba = Aoba.getInstance();
-		XRay xray = (XRay) aoba.moduleManager.xray;
+		XRay xray = aoba.moduleManager.xray;
 		if (xray.state.getValue()) {
 			cir.setReturnValue(xray.isXRayBlock(state.getBlock()));
 		}

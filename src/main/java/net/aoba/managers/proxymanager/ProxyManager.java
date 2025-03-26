@@ -75,7 +75,7 @@ public class ProxyManager {
 	}
 
 	public ArrayList<Socks5Proxy> getProxies() {
-		return this.proxies;
+		return proxies;
 	}
 
 	public Socks5Proxy getProxyByIp(String ip) {

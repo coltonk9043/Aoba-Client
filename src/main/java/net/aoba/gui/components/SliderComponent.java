@@ -38,26 +38,24 @@ public class SliderComponent extends Component {
 	FloatSetting floatSetting;
 
 	public SliderComponent() {
-		super();
-		this.floatSetting = null;
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+        floatSetting = null;
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	public SliderComponent(FloatSetting floatSetting) {
-		super();
-		this.floatSetting = floatSetting;
+        this.floatSetting = floatSetting;
 		minValue = floatSetting.min_value;
 		maxValue = floatSetting.max_value;
 		header = floatSetting.displayName;
 		value = floatSetting.getValue();
-		currentSliderPosition = (float) ((value - minValue) / (maxValue - minValue));
+		currentSliderPosition = (value - minValue) / (maxValue - minValue);
 
 		floatSetting.addOnUpdate(f -> {
 			value = f;
-			currentSliderPosition = (float) Math.min(Math.max((value - minValue) / (maxValue - minValue), 0f), 1f);
+			currentSliderPosition = Math.min(Math.max((value - minValue) / (maxValue - minValue), 0f), 1f);
 		});
 
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	@Override
@@ -66,11 +64,11 @@ public class SliderComponent extends Component {
 	}
 
 	public float getSliderPosition() {
-		return this.currentSliderPosition;
+		return currentSliderPosition;
 	}
 
 	public void setSliderPosition(float pos) {
-		this.currentSliderPosition = pos;
+		currentSliderPosition = pos;
 	}
 
 	@Override
@@ -92,11 +90,11 @@ public class SliderComponent extends Component {
 	public void onMouseMove(MouseMoveEvent event) {
 		super.onMouseMove(event);
 
-		if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.isSliding) {
+		if (Aoba.getInstance().guiManager.isClickGuiOpen() && isSliding) {
 			double mouseX = event.getX();
 
-			float actualX = this.getActualSize().getX();
-			float actualWidth = this.getActualSize().getWidth();
+			float actualX = getActualSize().getX();
+			float actualWidth = getActualSize().getWidth();
 
 			float targetPosition = (float) Math.min(((mouseX - actualX) / actualWidth), 1f);
 			targetPosition = Math.max(0f, targetPosition);
@@ -116,7 +114,7 @@ public class SliderComponent extends Component {
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		if (this.floatSetting == null) {
+		if (floatSetting == null) {
 			return;
 		}
 
@@ -124,9 +122,9 @@ public class SliderComponent extends Component {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
 
 		float filledLength = actualWidth * currentSliderPosition;
 

@@ -45,16 +45,16 @@ public class Fly extends Module implements TickListener, SendMovementPacketListe
 
 	public Fly() {
 		super("Fly");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Allows the player to fly.");
+		setCategory(Category.of("Movement"));
+		setDescription("Allows the player to fly.");
 
-		this.addSetting(flySpeed);
-		this.addSetting(sprintSpeedMultiplier);
-		this.addSetting(jumpMotionY);
-		this.addSetting(sneakMotionY);
-		this.addSetting(antiKick);
+		addSetting(flySpeed);
+		addSetting(sprintSpeedMultiplier);
+		addSetting(jumpMotionY);
+		addSetting(sneakMotionY);
+		addSetting(antiKick);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,
@@ -67,11 +67,11 @@ public class Fly extends Module implements TickListener, SendMovementPacketListe
 	}
 
 	public void setSpeed(float speed) {
-		this.flySpeed.setValue(speed);
+		flySpeed.setValue(speed);
 	}
 
 	public double getSpeed() {
-		return this.flySpeed.getValue();
+		return flySpeed.getValue();
 	}
 
 	@Override
@@ -94,14 +94,14 @@ public class Fly extends Module implements TickListener, SendMovementPacketListe
 	@Override
 	public void onSendMovementPacket(Pre event) {
 		ClientPlayerEntity player = MC.player;
-		float speed = this.flySpeed.getValue().floatValue();
+		float speed = flySpeed.getValue().floatValue();
 		if (MC.player.isRiding()) {
 			Entity riding = MC.player.getRootVehicle();
 			Vec3d velocity = riding.getVelocity();
 			double motionY = MC.options.jumpKey.isPressed() ? jumpMotionY.getValue() : 0;
 			riding.setVelocity(velocity.x, motionY, velocity.z);
 		} else {
-			float sprintMultiplier = this.sprintSpeedMultiplier.getValue().floatValue();
+			float sprintMultiplier = sprintSpeedMultiplier.getValue().floatValue();
 			if (MC.options.sprintKey.isPressed()) {
 				speed *= sprintMultiplier;
 			}

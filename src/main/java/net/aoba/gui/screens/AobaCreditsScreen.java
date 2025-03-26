@@ -51,21 +51,21 @@ public class AobaCreditsScreen extends Screen {
 			currentContributorIndex = (currentContributorIndex + 1) % CONTRIBUTORS.size();
 		}
 
-		int textHeight = this.textRenderer.fontHeight;
+		int textHeight = textRenderer.fontHeight;
 		int totalHeight = CONTRIBUTORS.size() * (textHeight + 10);
-		int startY = this.height;
+		int startY = height;
 		int endY = -totalHeight;
 
 		int baseY = (int) (startY + (endY - startY) * animationProgress);
 		int logoHeight = 70;
 		int logoY = baseY + 20;
 
-		context.drawTexture(RenderLayer::getGuiTextured, TextureBank.mainmenu_logo, (this.width - 185) / 2, logoY - 100,
+		context.drawTexture(RenderLayer::getGuiTextured, TextureBank.mainmenu_logo, (width - 185) / 2, logoY - 100,
 				0, 0, 185, logoHeight, 185, logoHeight);
 
 		for (int i = 0; i < CONTRIBUTORS.size(); i++) {
-			int textWidth = this.textRenderer.getWidth(CONTRIBUTORS.get(i));
-			int textX = (this.width - (textWidth * 2)) / 2;
+			int textWidth = textRenderer.getWidth(CONTRIBUTORS.get(i));
+			int textX = (width - (textWidth * 2)) / 2;
 			int textY = baseY + i * (textHeight + 10);
 			float alpha = getFadeAlpha(textY);
 			drawContributorName(context, CONTRIBUTORS.get(i), textX, textY, alpha);
@@ -73,13 +73,13 @@ public class AobaCreditsScreen extends Screen {
 	}
 
 	private float getFadeAlpha(int y) {
-		float fadeHeight = this.height / 4.0f;
+		float fadeHeight = height / 4.0f;
 		float alpha = 1.0f;
 
 		if (y < fadeHeight) {
 			alpha = y / fadeHeight;
-		} else if (y > this.height - fadeHeight) {
-			alpha = (this.height - y) / fadeHeight;
+		} else if (y > height - fadeHeight) {
+			alpha = (height - y) / fadeHeight;
 		}
 
 		return Math.max(0.0f, Math.min(1.0f, alpha));
@@ -91,6 +91,6 @@ public class AobaCreditsScreen extends Screen {
 
 	@Override
 	protected void renderPanoramaBackground(DrawContext context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, this.width, this.height, 1.0f, delta);
+		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
 	}
 }

@@ -63,23 +63,23 @@ public abstract class Module {
 
 	public Module(String name, Key keybind) {
 		this.name = name;
-		this.keyBind = KeybindSetting.builder().id("key." + name.toLowerCase()).displayName(name + " Key")
+		keyBind = KeybindSetting.builder().id("key." + name.toLowerCase()).displayName(name + " Key")
 				.defaultValue(keybind).build();
 
-		this.state = BooleanSetting.builder().id("state." + name.toLowerCase()).displayName(name + " State")
+		state = BooleanSetting.builder().id("state." + name.toLowerCase()).displayName(name + " State")
 				.defaultValue(false).onUpdate(s -> {
 					if (s)
-						this.onEnable();
+						onEnable();
 					else
-						this.onDisable();
-					this.onToggle();
+						onDisable();
+					onToggle();
 				}).build();
 
-		this.addSetting(keyBind);
-		this.addSetting(state);
+		addSetting(keyBind);
+		addSetting(state);
 
-		SettingManager.registerSetting(this.keyBind);
-		SettingManager.registerSetting(this.state);
+		SettingManager.registerSetting(keyBind);
+		SettingManager.registerSetting(state);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public abstract class Module {
 	 * @return The name of the module.
 	 */
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	/**
@@ -106,7 +106,7 @@ public abstract class Module {
 	 * @return The description of the module.
 	 */
 	public String getDescription() {
-		return this.description;
+		return description;
 	}
 
 	/**
@@ -124,7 +124,7 @@ public abstract class Module {
 	 * @return The {@link Category} assigned to this module.
 	 */
 	public Category getCategory() {
-		return this.category;
+		return category;
 	}
 
 	/**
@@ -144,7 +144,7 @@ public abstract class Module {
 	 *         module.
 	 */
 	public KeybindSetting getBind() {
-		return this.keyBind;
+		return keyBind;
 	}
 
 	/**
@@ -153,7 +153,7 @@ public abstract class Module {
 	 * @param setting The {@link Setting} to be added to the module's settings list.
 	 */
 	public void addSetting(Setting<?> setting) {
-		this.settings.add(setting);
+		settings.add(setting);
 	}
 
 	/**
@@ -163,7 +163,7 @@ public abstract class Module {
 	 */
 	public void addSettings(Setting<?>... settings) {
 		for (Setting<?> setting : settings) {
-			this.addSetting(setting);
+			addSetting(setting);
 		}
 	}
 
@@ -173,7 +173,7 @@ public abstract class Module {
 	 * @return A {@link List} of {@link Setting} objects that belong to this module.
 	 */
 	public List<Setting<?>> getSettings() {
-		return this.settings;
+		return settings;
 	}
 
 	/**
@@ -183,7 +183,7 @@ public abstract class Module {
 	 *         otherwise.
 	 */
 	public boolean hasSettings() {
-		return !this.settings.isEmpty();
+		return !settings.isEmpty();
 	}
 
 	/**
@@ -282,7 +282,7 @@ public abstract class Module {
 	 * Returns the current status of the module as a string.
 	 */
 	public String getStatus() {
-		return this.state.getValue() ? "Enabled" : "Disabled";
+		return state.getValue() ? "Enabled" : "Disabled";
 	}
 
 	/**

@@ -100,7 +100,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil.Key;
 
 public class ModuleManager implements KeyDownListener {
-	private static MinecraftClient MC = MinecraftClient.getInstance();
+	private static final MinecraftClient MC = MinecraftClient.getInstance();
 
 	public ArrayList<Module> modules = new ArrayList<Module>();
 
@@ -184,7 +184,7 @@ public class ModuleManager implements KeyDownListener {
 			.description(
 					"This setting will disable any modules or features that are known to be detected by a specific anticheat. ")
 			.defaultValue(AntiCheat.Vanilla).onUpdate(s -> {
-				for (Module module : this.modules) {
+				for (Module module : modules) {
 					if (module.isDetectable(s))
 						module.state.setValue(false);
 				}

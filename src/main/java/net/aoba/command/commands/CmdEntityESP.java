@@ -25,7 +25,7 @@ public class CmdEntityESP extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		EntityESP module = (EntityESP) Aoba.getInstance().moduleManager.entityesp;
+		EntityESP module = Aoba.getInstance().moduleManager.entityesp;
 
 		switch (parameters[0]) {
 		case "toggle":

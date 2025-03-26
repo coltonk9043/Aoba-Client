@@ -19,9 +19,9 @@ public class WatermarkHud extends HudWindow {
 
 	public WatermarkHud(int x, int y) {
 		super("WatermarkHud", x, y, 50, 24);
-		this.minWidth = 50f;
-		this.minHeight = 20f;
-		this.maxHeight = 20f;
+		minWidth = 50f;
+		minHeight = 20f;
+		maxHeight = 20f;
 		resizeMode = ResizeMode.None;
 	}
 

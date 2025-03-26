@@ -41,15 +41,15 @@ public class Jetpack extends Module implements TickListener {
 
 	public Jetpack() {
 		super("Jetpack");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Like fly, but a lot more fun!");
+		setCategory(Category.of("Movement"));
+		setDescription("Like fly, but a lot more fun!");
 
-		this.addSetting(jetpackSpeed);
-		this.addSetting(thrusterParticleAmount);
-		this.addSetting(jumpMotionY);
-		this.addSetting(thrusterSpread);
+		addSetting(jetpackSpeed);
+		addSetting(thrusterParticleAmount);
+		addSetting(jumpMotionY);
+		addSetting(thrusterSpread);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,
@@ -62,11 +62,11 @@ public class Jetpack extends Module implements TickListener {
 	}
 
 	public void setSpeed(float speed) {
-		this.jetpackSpeed.setValue(speed);
+		jetpackSpeed.setValue(speed);
 	}
 
 	public double getSpeed() {
-		return this.jetpackSpeed.getValue();
+		return jetpackSpeed.getValue();
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class Jetpack extends Module implements TickListener {
 	@Override
 	public void onTick(Pre event) {
 		ClientPlayerEntity player = MC.player;
-		float speed = this.jetpackSpeed.getValue().floatValue();
+		float speed = jetpackSpeed.getValue().floatValue();
 
 		if (MC.player.fallDistance > 2f) {
 			MC.player.networkHandler.sendPacket(new OnGroundOnly(true, false));

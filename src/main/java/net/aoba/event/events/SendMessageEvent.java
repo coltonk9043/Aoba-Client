@@ -34,7 +34,7 @@ public class SendMessageEvent extends AbstractEvent {
 	}
 
 	public String getMessage() {
-		return this.message;
+		return message;
 	}
 
 	public void setMessage(String message) {

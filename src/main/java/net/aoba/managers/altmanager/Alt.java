@@ -67,10 +67,10 @@ public class Alt {
 	 * @return The username of the Alt account.
 	 */
 	public String getUsername() {
-		if (this.username == null) {
+		if (username == null) {
 			return "";
 		}
-		return this.username;
+		return username;
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class Alt {
 	 * @return The email of the Alt account.
 	 */
 	public String getEmail() {
-		return this.email;
+		return email;
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class Alt {
 	 * @return Whether the Alt account is cracked.
 	 */
 	public boolean isCracked() {
-		return this.isCracked;
+		return isCracked;
 	}
 
 	/**

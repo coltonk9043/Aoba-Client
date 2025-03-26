@@ -57,8 +57,7 @@ public class Vec3dSetting extends Setting<Vec3d> {
 		protected Float step = 1f;
 		
 		protected BUILDER() {
-			super();
-		}
+        }
 		
 		public BUILDER minValue(Float value) {
 			minValue = value;

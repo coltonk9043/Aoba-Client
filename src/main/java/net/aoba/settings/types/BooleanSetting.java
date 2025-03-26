@@ -38,8 +38,7 @@ public class BooleanSetting extends Setting<Boolean> {
     
     public static class BUILDER extends Setting.BUILDER<BUILDER, BooleanSetting, Boolean> {
 		protected BUILDER() {
-			super();
-		}
+        }
 		
 		@Override
 		public BooleanSetting build() {

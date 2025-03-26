@@ -11,7 +11,7 @@ package net.aoba.event.listeners;
 import net.aoba.event.events.ItemUsedEvent;
 
 public interface ItemUsedListener extends AbstractListener {
-	public abstract void onItemUsed(ItemUsedEvent.Pre event);
+	void onItemUsed(ItemUsedEvent.Pre event);
 
-	public abstract void onItemUsed(ItemUsedEvent.Post event);
+	void onItemUsed(ItemUsedEvent.Post event);
 }

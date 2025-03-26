@@ -34,9 +34,8 @@ public class ButtonComponent extends Component {
 	 * @param onClick OnClick delegate that will run when the button is pressed.
 	 */
 	public ButtonComponent(Runnable onClick) {
-		super();
 
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+        setMargin(new Margin(8f, 2f, 8f, 2f));
 
 		this.onClick = onClick;
 	}
@@ -123,10 +122,10 @@ public class ButtonComponent extends Component {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
-		float actualHeight = this.getActualSize().getHeight();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
+		float actualHeight = getActualSize().getHeight();
 
 		Color color = GuiManager.foregroundColor.getValue();
 		if (hovered) {
@@ -143,7 +142,7 @@ public class ButtonComponent extends Component {
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
 		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-			if (this.hovered) {
+			if (hovered) {
 				if (onClick != null)
 					onClick.run();
 				event.cancel();

@@ -59,27 +59,27 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		Walk, Fly, Teleport,
 	}
 
-	private static MinecraftClient MC = MinecraftClient.getInstance();
+	private static final MinecraftClient MC = MinecraftClient.getInstance();
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	private ButtonComponent startButton;
-	private StringComponent startButtonText;
-	private ButtonComponent setPositionButton;
+	private final ButtonComponent startButton;
+	private final StringComponent startButtonText;
+	private final ButtonComponent setPositionButton;
 	private SliderComponent radiusSlider;
 	private SliderComponent flyMaxSpeedSlider;
 
-	private EnumSetting<Pathfinder> pathfinderMode;
-	private BooleanSetting avoidWater;
-	private BooleanSetting avoidLava;
-	private FloatSetting radius;
-	private StringSetting locationX;
-	private StringSetting locationY;
-	private StringSetting locationZ;
-	private FloatSetting maxSpeed;
+	private final EnumSetting<Pathfinder> pathfinderMode;
+	private final BooleanSetting avoidWater;
+	private final BooleanSetting avoidLava;
+	private final FloatSetting radius;
+	private final StringSetting locationX;
+	private final StringSetting locationY;
+	private final StringSetting locationZ;
+	private final FloatSetting maxSpeed;
 
-	private Runnable startRunnable;
-	private Runnable clearRunnable;
-	private Runnable setPositionRunnable;
+	private final Runnable startRunnable;
+	private final Runnable clearRunnable;
+	private final Runnable setPositionRunnable;
 	private BlockPos start;
 	private BlockPos end;
 	private BlockPos actualEnd;
@@ -92,18 +92,18 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	public GoToWindow() {
 		super("Go To Location", 540, 150);
 
-		this.minWidth = 350f;
+		minWidth = 350f;
 
 		pathfinderMode = EnumSetting.<Pathfinder>builder().id("goto_pathfinder_mode").displayName("Mode")
 				.defaultValue(Pathfinder.Walk).onUpdate(var -> {
 					switch (var) {
-					case Pathfinder.Fly:
+					case Fly:
 						pathManager = new FlyPathManager();
 						break;
-					case Pathfinder.Walk:
+					case Walk:
 						pathManager = new WalkingPathManager();
 						break;
-					case Pathfinder.Teleport:
+					case Teleport:
 						pathManager = new TeleportPathManager();
 						break;
 					}
@@ -133,9 +133,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		radius = FloatSetting.builder().id("goto_radius").displayName("Teleport Radius")
 				.description("The radius that the teleport pathfinder will attempt to find a block within.")
 				.defaultValue(5.0f).minValue(1.0f).maxValue(100.0f).step(1.0f).onUpdate(s -> {
-					if (pathManager instanceof TeleportPathManager) {
-						TeleportPathManager tpManager = (TeleportPathManager) pathManager;
-						tpManager.setRadius(s);
+					if (pathManager instanceof TeleportPathManager tpManager) {
+                        tpManager.setRadius(s);
 						if (isStarted)
 							recalculatePathAsync();
 					}
@@ -154,14 +153,14 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				.defaultValue(4.0f).minValue(0.5f).maxValue(15.0f).step(0.5f).build();
 
 		// Register Settings
-		SettingManager.registerSetting(this.pathfinderMode);
-		SettingManager.registerSetting(this.avoidWater);
-		SettingManager.registerSetting(this.avoidLava);
-		SettingManager.registerSetting(this.radius);
-		SettingManager.registerSetting(this.locationX);
-		SettingManager.registerSetting(this.locationY);
-		SettingManager.registerSetting(this.locationZ);
-		SettingManager.registerSetting(this.maxSpeed);
+		SettingManager.registerSetting(pathfinderMode);
+		SettingManager.registerSetting(avoidWater);
+		SettingManager.registerSetting(avoidLava);
+		SettingManager.registerSetting(radius);
+		SettingManager.registerSetting(locationX);
+		SettingManager.registerSetting(locationY);
+		SettingManager.registerSetting(locationZ);
+		SettingManager.registerSetting(maxSpeed);
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
 
@@ -359,7 +358,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 
 	@Override
 	public void onRender(Render3DEvent event) {
-		if (this.nodes != null) {
+		if (nodes != null) {
 			Box startBox = new Box(start);
 			Box endBox = new Box(end);
 
@@ -414,7 +413,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			Vec3d nextCenterPos = next.pos.toBottomCenterPos();
 
 			switch (pathfinderMode.getValue()) {
-			case Pathfinder.Fly:
+			case Fly:
 				double velocity = Math.min(maxSpeed.getValue(), MC.player.getPos().distanceTo(nextCenterPos));
 				Vec3d direction = nextCenterPos.subtract(MC.player.getPos()).normalize().multiply(velocity);
 
@@ -427,16 +426,13 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				} else
 					MC.player.setVelocity(direction);
 				break;
-			case Pathfinder.Walk:
+			case Walk:
 				MC.player.getAbilities().flying = false;
 				MC.player.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
 				MC.options.forwardKey.setPressed(true);
-				if (next.getIsInWater() || next.getIsInLava() || next.getWasJump() || MC.player.horizontalCollision)
-					MC.options.jumpKey.setPressed(true);
-				else
-					MC.options.jumpKey.setPressed(false);
+                MC.options.jumpKey.setPressed(next.getIsInWater() || next.getIsInLava() || next.getWasJump() || MC.player.horizontalCollision);
 				break;
-			case Pathfinder.Teleport:
+			case Teleport:
 				int packetsRequired = (int) Math.ceil(MC.player.getPos().distanceTo(nextCenterPos) / 10) - 1;
 
 				for (int i = 0; i < packetsRequired; i++) {

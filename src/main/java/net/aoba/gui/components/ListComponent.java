@@ -29,15 +29,13 @@ public class ListComponent extends Component implements MouseClickListener {
 	private int selectedIndex;
 
 	public ListComponent(List<String> itemsSource) {
-		super();
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+        setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.itemsSource = itemsSource;
 	}
 
 	public ListComponent(List<String> itemsSource, StringSetting listSetting) {
-		super();
-		this.listSetting = listSetting;
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+        this.listSetting = listSetting;
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.itemsSource = itemsSource;
 	}
 
@@ -63,13 +61,13 @@ public class ListComponent extends Component implements MouseClickListener {
 
 	public void setItemsSource(List<String> itemsSource) {
 		this.itemsSource = itemsSource;
-		setSelectedIndex(this.selectedIndex);
+		setSelectedIndex(selectedIndex);
 	}
 
 	@Override
 	public void onVisibilityChanged() {
 		super.onVisibilityChanged();
-		if (this.isVisible())
+		if (isVisible())
 			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
 		else
 			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
@@ -78,9 +76,9 @@ public class ListComponent extends Component implements MouseClickListener {
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
 
 		if (listSetting != null) {
 			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(listSetting.getValue());
@@ -109,15 +107,15 @@ public class ListComponent extends Component implements MouseClickListener {
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
 
-		Rectangle actualSize = this.getActualSize();
+		Rectangle actualSize = getActualSize();
 		if (actualSize != null && actualSize.isDrawable()) {
 			if (event.button == MouseButton.LEFT) {
-				if (this.getActualSize().getY() < event.mouseY
-						&& event.mouseY < this.getActualSize().getY() + this.getActualSize().getHeight()) {
+				if (getActualSize().getY() < event.mouseY
+						&& event.mouseY < getActualSize().getY() + getActualSize().getHeight()) {
 
 					float mouseX = (float) event.mouseX;
-					float actualX = this.getActualSize().getX();
-					float actualWidth = this.getActualSize().getWidth();
+					float actualX = getActualSize().getX();
+					float actualWidth = getActualSize().getWidth();
 
 					if (mouseX > actualX && mouseX < (actualX + 32)) {
 						setSelectedIndex(Math.max(selectedIndex - 1, 0));

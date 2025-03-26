@@ -26,11 +26,11 @@ public class Glide extends Module implements TickListener {
 
 	public Glide() {
 		super("Glide");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Allows the player to glide down when in the air. Does not prevent fall damage.");
-		this.addSetting(fallSpeed);
+		setCategory(Category.of("Movement"));
+		setDescription("Allows the player to glide down when in the air. Does not prevent fall damage.");
+		addSetting(fallSpeed);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,

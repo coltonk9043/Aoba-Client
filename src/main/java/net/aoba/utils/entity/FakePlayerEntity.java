@@ -19,12 +19,12 @@ public class FakePlayerEntity extends AbstractClientPlayerEntity {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
 
         float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
-        this.setPos(player.getPos().x, player.getPos().y, player.getPos().z);
-        this.setRotation(player.getYaw(tickDelta), player.getPitch(tickDelta));
+        setPos(player.getPos().x, player.getPos().y, player.getPos().z);
+        setRotation(player.getYaw(tickDelta), player.getPitch(tickDelta));
         //this.inventory = player.getInventory();
     }
 
     public void despawn() {
-        this.remove(RemovalReason.DISCARDED);
+        remove(RemovalReason.DISCARDED);
     }
 }

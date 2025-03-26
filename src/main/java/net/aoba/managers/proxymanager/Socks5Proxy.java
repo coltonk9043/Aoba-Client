@@ -56,7 +56,7 @@ public class Socks5Proxy {
     public Socks5Proxy(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        this.username = null;
-        this.password = null;
+        username = null;
+        password = null;
     }
 }

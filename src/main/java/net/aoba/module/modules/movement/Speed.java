@@ -26,8 +26,8 @@ public class Speed extends Module implements TickListener {
 
 	public Speed() {
 		super("Speed");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Modifies the Movement-Speed of the Player");
+		setCategory(Category.of("Movement"));
+		setDescription("Modifies the Movement-Speed of the Player");
 
 		speedSetting.addOnUpdate((i) -> {
 			if (state.getValue()) {
@@ -36,9 +36,9 @@ public class Speed extends Module implements TickListener {
 			}
 		});
 
-		this.addSetting(speedSetting);
+		addSetting(speedSetting);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,

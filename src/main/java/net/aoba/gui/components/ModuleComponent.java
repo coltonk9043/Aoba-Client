@@ -35,19 +35,18 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Colors;
 
 public class ModuleComponent extends Component {
-	private Module module;
+	private final Module module;
 
 	private CloseableWindow lastSettingsTab = null;
 	private boolean spinning = false;
 	private float spinAngle = 0;
 
 	public ModuleComponent(Module module) {
-		super();
 
-		this.header = module.getName();
+        header = module.getName();
 		this.module = module;
-		this.tooltip = module.getDescription();
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		tooltip = module.getDescription();
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	@Override
@@ -70,16 +69,16 @@ public class ModuleComponent extends Component {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
 
-		if (this.header != null) {
+		if (header != null) {
 			if (module.isDetectable(AOBA.moduleManager.antiCheat.getValue())) {
-				Render2D.drawString(drawContext, this.header, actualX, actualY + 8, Colors.GRAY);
+				Render2D.drawString(drawContext, header, actualX, actualY + 8, Colors.GRAY);
 			} else {
-				Render2D.drawString(drawContext, this.header, actualX, actualY + 8, module.state.getValue() ? 0x00FF00
-						: this.hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
+				Render2D.drawString(drawContext, header, actualX, actualY + 8, module.state.getValue() ? 0x00FF00
+						: hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
 			}
 		}
 
@@ -117,7 +116,7 @@ public class ModuleComponent extends Component {
 				if (isOnOptionsButton || event.button == MouseButton.RIGHT) {
 					spinning = true;
 					if (lastSettingsTab == null) {
-						lastSettingsTab = new CloseableWindow(this.module.getName(), actualX + actualWidth + 1, actualY);
+						lastSettingsTab = new CloseableWindow(module.getName(), actualX + actualWidth + 1, actualY);
 						lastSettingsTab.setMinWidth(320.0f);
 						StackPanelComponent stackPanel = new StackPanelComponent();
 
@@ -130,8 +129,8 @@ public class ModuleComponent extends Component {
 						KeybindComponent keybindComponent = new KeybindComponent(module.getBind());
 						stackPanel.addChild(keybindComponent);
 
-						for (Setting<?> setting : this.module.getSettings()) {
-							if (setting == this.module.state)
+						for (Setting<?> setting : module.getSettings()) {
+							if (setting == module.state)
 								continue;
 
 							Component c;

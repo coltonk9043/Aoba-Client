@@ -27,46 +27,46 @@ public class AddAltScreen extends Screen {
     
     public AddAltScreen(AltScreen parentScreen) {
         super(Text.of("Alt Manager"));
-        this.parent = parentScreen;
+        parent = parentScreen;
     }
 
     public void init() {
         super.init();
 
-        this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20,
+        textFieldAltUsername = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 36, 200, 20,
                 Text.of("Enter Name"));
-        this.textFieldAltUsername.setText("");
-        this.addDrawableChild(this.textFieldAltUsername);
+        textFieldAltUsername.setText("");
+        addDrawableChild(textFieldAltUsername);
 
-        this.toggleCracked = CheckboxWidget.builder(Text.of("Cracked Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
-        this.addDrawableChild(this.toggleCracked);
+        toggleCracked = CheckboxWidget.builder(Text.of("Cracked Account?"), textRenderer).pos(width / 2 - 100, height / 2 - 12).build();
+        addDrawableChild(toggleCracked);
 
-        this.buttonAddAlt = ButtonWidget.builder(Text.of("Add Alt"), b -> this.onButtonAltAddPressed())
-                .dimensions(this.width / 2 - 100, this.height / 2 + 24, 200, 20).build();
-        this.addDrawableChild(this.buttonAddAlt);
+        buttonAddAlt = ButtonWidget.builder(Text.of("Add Alt"), b -> onButtonAltAddPressed())
+                .dimensions(width / 2 - 100, height / 2 + 24, 200, 20).build();
+        addDrawableChild(buttonAddAlt);
 
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> this.onButtonCancelPressed())
-                .dimensions(this.width / 2 - 100, this.height / 2 + 46, 200, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> onButtonCancelPressed())
+                .dimensions(width / 2 - 100, height / 2 + 46, 200, 20).build());
     }
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, mouseX, mouseY, delta);
-        drawContext.drawCenteredTextWithShadow(textRenderer, "Add Alternate Account", this.width / 2, 20, 16777215);
-        drawContext.drawCenteredTextWithShadow(textRenderer, "Username:", this.width / 2 - 75, height / 2 - 50, 16777215);
+        drawContext.drawCenteredTextWithShadow(textRenderer, "Add Alternate Account", width / 2, 20, 16777215);
+        drawContext.drawCenteredTextWithShadow(textRenderer, "Username:", width / 2 - 75, height / 2 - 50, 16777215);
     }
 
     private void onButtonAltAddPressed() {
-        Alt alt = new Alt(this.textFieldAltUsername.getText(), toggleCracked.isChecked());
+        Alt alt = new Alt(textFieldAltUsername.getText(), toggleCracked.isChecked());
         Aoba.getInstance().altManager.addAlt(alt);
         
         if(!alt.isCracked())
         	alt.auth();
         
-        this.parent.refreshAltList();
+        parent.refreshAltList();
     }
 
     public void onButtonCancelPressed() {
-        client.setScreen(this.parent);
+        client.setScreen(parent);
     }
 }

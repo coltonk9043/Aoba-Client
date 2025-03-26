@@ -21,8 +21,8 @@ import java.util.List;
 
 public class HudWindow extends Window
 {
-    private static Color hoverColor = new Color(255, 0, 0);
-    private static Color dragColor = new Color(255, 0, 0, 165);
+    private static final Color hoverColor = new Color(255, 0, 0);
+    private static final Color dragColor = new Color(255, 0, 0, 165);
     public BooleanSetting activated;
 
     public CloseableWindow optionsWindow;

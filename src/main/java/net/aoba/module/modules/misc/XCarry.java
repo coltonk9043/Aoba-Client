@@ -20,10 +20,10 @@ import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 public class XCarry extends Module implements SendPacketListener {
 	public XCarry() {
 		super("XCarry");
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Allows you to store items in your crafting slot..");
+		setCategory(Category.of("Misc"));
+		setDescription("Allows you to store items in your crafting slot..");
 
-		this.isDetectable(AntiCheat.Negativity);
+		isDetectable(AntiCheat.Negativity);
 	}
 
 	@Override
@@ -44,9 +44,8 @@ public class XCarry extends Module implements SendPacketListener {
 	@Override
 	public void onSendPacket(SendPacketEvent event) {
 		Packet<?> packet = event.GetPacket();
-		if (packet instanceof CloseHandledScreenC2SPacket) {
-			CloseHandledScreenC2SPacket closeScreenPacket = (CloseHandledScreenC2SPacket) packet;
-			if (closeScreenPacket.getSyncId() == MC.player.playerScreenHandler.syncId)
+		if (packet instanceof CloseHandledScreenC2SPacket closeScreenPacket) {
+            if (closeScreenPacket.getSyncId() == MC.player.playerScreenHandler.syncId)
 				event.cancel();
 		}
 	}

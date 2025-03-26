@@ -24,10 +24,10 @@ public class NoJumpDelay extends Module implements TickListener {
 
 	public NoJumpDelay() {
 		super("NoJumpDelay");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Makes it so the user can jump very quickly.");
+		setCategory(Category.of("Movement"));
+		setDescription("Makes it so the user can jump very quickly.");
 
-		this.addSetting(delay);
+		addSetting(delay);
 	}
 
 	@Override

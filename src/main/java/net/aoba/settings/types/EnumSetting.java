@@ -13,12 +13,12 @@ import java.util.function.Consumer;
 import net.aoba.settings.Setting;
 
 public class EnumSetting<T extends Enum<?>> extends Setting<T> {
-	private T[] enumConstants;
+	private final T[] enumConstants;
 
 	@SuppressWarnings("unchecked")
 	protected EnumSetting(String ID, String displayName, String description, T defaultValue, Consumer<T> onUpdate) {
 		super(ID, displayName, description, defaultValue, onUpdate);
-		this.enumConstants = (T[]) defaultValue.getDeclaringClass().getEnumConstants();
+		enumConstants = (T[]) defaultValue.getDeclaringClass().getEnumConstants();
 		type = TYPE.ENUM;
 	}
 
@@ -29,7 +29,7 @@ public class EnumSetting<T extends Enum<?>> extends Setting<T> {
 	@Override
 	public void setValue(T value) {
 		for (T constant : enumConstants) {
-			if (constant.equals(value)) {
+			if (constant == value) {
 				super.setValue(value);
 				return;
 			}
@@ -44,7 +44,7 @@ public class EnumSetting<T extends Enum<?>> extends Setting<T> {
 	@Override
 	protected boolean isValueValid(T value) {
 		for (T constant : enumConstants) {
-			if (constant.equals(value)) {
+			if (constant == value) {
 				return true;
 			}
 		}
@@ -57,8 +57,7 @@ public class EnumSetting<T extends Enum<?>> extends Setting<T> {
 
 	public static class BUILDER<E extends Enum<?>> extends Setting.BUILDER<BUILDER<E>, EnumSetting<E>, E> {
 		protected BUILDER() {
-			super();
-		}
+        }
 
 		@Override
 		public EnumSetting<E> build() {

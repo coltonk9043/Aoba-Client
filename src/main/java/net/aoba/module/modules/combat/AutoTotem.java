@@ -60,12 +60,12 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 	public AutoTotem() {
     	super("AutoTotem");
 
-        this.setCategory(Category.of("Combat"));
-		this.setDescription("Automatically replaced totems.");
+        setCategory(Category.of("Combat"));
+		setDescription("Automatically replaced totems.");
 
-		this.addSetting(healthTrigger);
-		this.addSetting(crystalRadiusTrigger);
-		this.addSetting(mainHand);
+		addSetting(healthTrigger);
+		addSetting(crystalRadiusTrigger);
+		addSetting(mainHand);
 	}
 	
 	@Override

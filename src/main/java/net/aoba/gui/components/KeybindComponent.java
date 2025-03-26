@@ -29,18 +29,17 @@ import net.minecraft.client.util.math.MatrixStack;
 
 public class KeybindComponent extends Component implements KeyDownListener {
 	private boolean listeningForKey;
-	private KeybindSetting keyBind;
+	private final KeybindSetting keyBind;
 
 	public KeybindComponent(KeybindSetting keyBind) {
-		super();
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+        setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.keyBind = keyBind;
 	}
 
 	@Override
 	public void onVisibilityChanged() {
 		super.onVisibilityChanged();
-		if (this.isVisible()) {
+		if (isVisible()) {
 			Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 		} else {
 			Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
@@ -64,16 +63,16 @@ public class KeybindComponent extends Component implements KeyDownListener {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
-		float actualHeight = this.getActualSize().getHeight();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
+		float actualHeight = getActualSize().getHeight();
 
 		Render2D.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
 		Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f,
 				GuiManager.borderColor.getValue(), new Color(115, 115, 115, 200));
 
-		String keyBindText = this.keyBind.getValue().getLocalizedText().getString();
+		String keyBindText = keyBind.getValue().getLocalizedText().getString();
 		if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
 			keyBindText = "N/A";
 

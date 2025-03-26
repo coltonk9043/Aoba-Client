@@ -35,17 +35,15 @@ public class ColorPickerComponent extends Component {
 	private ColorSetting color;
 
 	public ColorPickerComponent(String text) {
-		super();
-		this.text = text;
+        this.text = text;
 
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	public ColorPickerComponent(ColorSetting color) {
-		super();
-		this.text = color.displayName;
+        text = color.displayName;
 		this.color = color;
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	public void setText(String text) {
@@ -53,7 +51,7 @@ public class ColorPickerComponent extends Component {
 	}
 
 	public String getText() {
-		return this.text;
+		return text;
 	}
 
 	@Override
@@ -85,8 +83,8 @@ public class ColorPickerComponent extends Component {
 
 					} else if (!collapsed) {
 						if (mouseY > actualY + 29 && mouseY <= actualY + 59) {
-							float actualX = this.getActualSize().getX();
-							float actualWidth = this.getActualSize().getWidth();
+							float actualX = getActualSize().getX();
+							float actualWidth = getActualSize().getWidth();
 
 							Rectangle leftButton = new Rectangle(actualX + actualWidth - 128, actualY + 34, 16.0f,
 									16.0f);
@@ -121,14 +119,14 @@ public class ColorPickerComponent extends Component {
 	public void onMouseMove(MouseMoveEvent event) {
 		super.onMouseMove(event);
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
-		float actualHeight = this.getActualSize().getHeight();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
+		float actualHeight = getActualSize().getHeight();
 
 		double mouseX = event.getX();
 		double mouseY = event.getY();
-		if (Aoba.getInstance().guiManager.isClickGuiOpen() && this.isSliding) {
+		if (Aoba.getInstance().guiManager.isClickGuiOpen() && isSliding) {
 			Color colorToModify = color.getValue();
 			float vertical = (float) Math
 					.min(Math.max(1.0f - (((mouseY - (actualY + 59)) - 1) / (actualHeight - 63)), 0.0f), 1.0f);
@@ -158,12 +156,12 @@ public class ColorPickerComponent extends Component {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
-		float actualHeight = this.getActualSize().getHeight();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
+		float actualHeight = getActualSize().getHeight();
 
-		Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
+		Render2D.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
 		Render2D.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 8,
 				GuiManager.foregroundColor.getValue().getColorAsInt());
 
@@ -180,7 +178,7 @@ public class ColorPickerComponent extends Component {
 
 			// Gradients
 			Color newColor = new Color(255, 0, 0);
-			Color colorSetting = this.color.getValue();
+			Color colorSetting = color.getValue();
 			newColor.setHSV(colorSetting.getHue(), 1.0f, 1.0f);
 			Render2D.drawHorizontalGradient(matrix4f, actualX, actualY + 59, actualWidth - 76, actualHeight - 63,
 					new Color(255, 255, 255), newColor);

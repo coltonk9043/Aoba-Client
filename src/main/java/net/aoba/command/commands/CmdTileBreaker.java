@@ -25,7 +25,7 @@ public class CmdTileBreaker extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		TileBreaker module = (TileBreaker) Aoba.getInstance().moduleManager.tilebreaker;
+		TileBreaker module = Aoba.getInstance().moduleManager.tilebreaker;
 
 		switch (parameters[0]) {
 		case "radius":

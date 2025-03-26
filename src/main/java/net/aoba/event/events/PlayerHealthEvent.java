@@ -15,8 +15,8 @@ import net.aoba.event.listeners.PlayerHealthListener;
 import net.minecraft.entity.damage.DamageSource;
 
 public class PlayerHealthEvent extends AbstractEvent {
-	private float health;
-	private DamageSource source;
+	private final float health;
+	private final DamageSource source;
 
 	public PlayerHealthEvent(DamageSource source, float health) {
 		this.source = source;

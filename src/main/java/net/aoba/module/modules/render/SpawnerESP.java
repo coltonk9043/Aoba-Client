@@ -36,11 +36,11 @@ public class SpawnerESP extends Module implements Render3DListener {
 
 	public SpawnerESP() {
 		super("SpawnerESP");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Allows the player to see spawners with an ESP.");
+		setCategory(Category.of("Render"));
+		setDescription("Allows the player to see spawners with an ESP.");
 
-		this.addSetting(color);
-		this.addSetting(lineThickness);
+		addSetting(color);
+		addSetting(lineThickness);
 	}
 
 	@Override

@@ -36,27 +36,27 @@ public class ProxyScreen extends Screen {
     public void init() {
         super.init();
 
-        this.proxyListSelector = new ProxySelectionList(this, this.client, this.width, this.height, 32, 64);
-        this.proxyListSelector.updateProxies();
-        this.proxyListSelector.setDimensionsAndPosition(this.width, this.height - 70, 0, 32);
-        this.addDrawableChild(this.proxyListSelector);
+        proxyListSelector = new ProxySelectionList(this, client, width, height, 32, 64);
+        proxyListSelector.updateProxies();
+        proxyListSelector.setDimensionsAndPosition(width, height - 70, 0, 32);
+        addDrawableChild(proxyListSelector);
 
 
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Add Proxy"), b -> client.setScreen(new AddProxyScreen(this)))
-                .dimensions(this.width / 2 - 205, this.height - 28, 100, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.of("Add Proxy"), b -> client.setScreen(new AddProxyScreen(this)))
+                .dimensions(width / 2 - 205, height - 28, 100, 20).build());
 
-        this.editButton = ButtonWidget.builder(Text.of("Edit Alt"), b -> this.editSelected())
-                .dimensions(this.width / 2 - 100 , this.height - 28, 100, 20).build();
-        this.editButton.active = false;
-        this.addDrawableChild(this.editButton);
+        editButton = ButtonWidget.builder(Text.of("Edit Alt"), b -> editSelected())
+                .dimensions(width / 2 - 100 , height - 28, 100, 20).build();
+        editButton.active = false;
+        addDrawableChild(editButton);
         
-        this.deleteButton = ButtonWidget.builder(Text.of("Delete Proxy"), b -> this.deleteSelected())
-                .dimensions(this.width / 2 + 5, this.height - 28, 100, 20).build();
-        this.deleteButton.active = false;
-        this.addDrawableChild(this.deleteButton);
+        deleteButton = ButtonWidget.builder(Text.of("Delete Proxy"), b -> deleteSelected())
+                .dimensions(width / 2 + 5, height - 28, 100, 20).build();
+        deleteButton.active = false;
+        addDrawableChild(deleteButton);
         
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(this.parentScreen))
-                .dimensions(this.width / 2 + 110, this.height - 28, 100, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(parentScreen))
+                .dimensions(width / 2 + 110, height - 28, 100, 20).build());
     }
 
     public ArrayList<Socks5Proxy> getProxyList() {
@@ -64,16 +64,16 @@ public class ProxyScreen extends Screen {
     }
 
     public void refreshProxyList() {
-        this.client.setScreen(new ProxyScreen(this.parentScreen));
+        client.setScreen(new ProxyScreen(parentScreen));
     }
 
     public void setSelected(ProxySelectionList.Entry selected) {
-        this.proxyListSelector.setSelected(selected);
-        this.setEdittable();
+        proxyListSelector.setSelected(selected);
+        setEdittable();
     }
 
     public void editSelected() {
-        Socks5Proxy proxy = ((ProxySelectionList.NormalEntry) this.proxyListSelector.getSelectedOrNull()).getProxyData();
+        Socks5Proxy proxy = ((ProxySelectionList.NormalEntry) proxyListSelector.getSelectedOrNull()).getProxyData();
         if (proxy == null) {
             return;
         }
@@ -81,17 +81,17 @@ public class ProxyScreen extends Screen {
     }
 
     public void deleteSelected() {
-        Socks5Proxy proxy = ((ProxySelectionList.NormalEntry) this.proxyListSelector.getSelectedOrNull()).getProxyData();
+        Socks5Proxy proxy = ((ProxySelectionList.NormalEntry) proxyListSelector.getSelectedOrNull()).getProxyData();
         if (proxy == null) {
             return;
         }
         Aoba.getInstance().proxyManager.removeProxy(proxy);
-        this.refreshProxyList();
+        refreshProxyList();
     }
 
     protected void setEdittable() {
-        this.editButton.active = true;
-        this.deleteButton.active = true;
+        editButton.active = true;
+        deleteButton.active = true;
     }
 
     public boolean isActiveProxy(Socks5Proxy proxy) {
@@ -99,7 +99,7 @@ public class ProxyScreen extends Screen {
     }
 
     public void setActive() {
-        ProxySelectionList.Entry proxyListSelectorSelectedOrNull = this.proxyListSelector.getSelectedOrNull();
+        ProxySelectionList.Entry proxyListSelectorSelectedOrNull = proxyListSelector.getSelectedOrNull();
 
         if (proxyListSelectorSelectedOrNull == null) {
             return;
@@ -115,6 +115,6 @@ public class ProxyScreen extends Screen {
     
 	@Override
 	protected void renderPanoramaBackground(DrawContext context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, this.width, this.height, 1.0f, delta);
+		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
 	}
 }

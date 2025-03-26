@@ -27,23 +27,23 @@ import net.aoba.gui.navigation.Window;
 import net.aoba.managers.macros.Macro;
 
 public class MacroWindow extends Window {
-	private ButtonComponent startButton;
-	private StringComponent startButtonText;
+	private final ButtonComponent startButton;
+	private final StringComponent startButtonText;
 	private ButtonComponent replayButton;
 	private StringComponent replayButtonText;
 
-	private TextBoxComponent filenameText;
+	private final TextBoxComponent filenameText;
 	private ItemsComponent<Macro> macrosList;
-	private ButtonComponent saveButton;
+	private final ButtonComponent saveButton;
 
-	private Runnable startRunnable;
-	private Runnable endRunnable;
+	private final Runnable startRunnable;
+	private final Runnable endRunnable;
 	private Runnable replayRunnable;
 
 	public MacroWindow() {
 		super("Macro", 895, 150);
 
-		this.minWidth = 350f;
+		minWidth = 350f;
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
 

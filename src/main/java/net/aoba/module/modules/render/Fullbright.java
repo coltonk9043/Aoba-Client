@@ -16,8 +16,8 @@ public class Fullbright extends Module {
 	// private double previousValue = 0.0;
 	public Fullbright() {
 		super("Fullbright");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Maxes out the brightness.");
+		setCategory(Category.of("Render"));
+		setDescription("Maxes out the brightness.");
 	}
 
 	@Override

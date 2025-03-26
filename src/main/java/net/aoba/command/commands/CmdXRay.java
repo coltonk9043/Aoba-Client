@@ -27,7 +27,7 @@ public class CmdXRay extends Command {
 	@Override
 	public void runCommand(String[] parameters) throws InvalidSyntaxException {
 
-		XRay module = (XRay) Aoba.getInstance().moduleManager.xray;
+		XRay module = Aoba.getInstance().moduleManager.xray;
 
 		switch (parameters[0]) {
 		case "toggle":

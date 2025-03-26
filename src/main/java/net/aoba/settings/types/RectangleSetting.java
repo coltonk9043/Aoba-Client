@@ -143,8 +143,7 @@ public class RectangleSetting extends Setting<Rectangle> {
 
 	public static class BUILDER extends Setting.BUILDER<BUILDER, RectangleSetting, Rectangle> {
 		protected BUILDER() {
-			super();
-		}
+        }
 
 		@Override
 		public RectangleSetting build() {

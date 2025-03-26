@@ -8,6 +8,7 @@
 
 package net.aoba.gui.navigation.huds;
 
+import net.aoba.Aoba;
 import org.joml.Matrix4f;
 
 import net.aoba.gui.GuiManager;
@@ -31,8 +32,8 @@ public class RadarHud extends HudWindow {
 	public RadarHud(float x, float y) {
 		super("RadarHud", x, y, 180f, 180f);
 
-		this.minHeight = 180.0f;
-		this.minWidth = 180.0f;
+		minHeight = 180.0f;
+		minWidth = 180.0f;
 		resizeMode = ResizeMode.WidthAndHeight;
 	}
 
@@ -68,7 +69,7 @@ public class RadarHud extends HudWindow {
 				float center_y = y - 2 + (height / 2);
 
 				// Render Entities
-				for (Entity entity : MC.world.getEntities()) {
+				for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 					Color c;
 					if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
 						if (entity instanceof AnimalEntity) {
@@ -88,10 +89,10 @@ public class RadarHud extends HudWindow {
 					float fake_x = (x + (width / 2) - (width * ratio_x / 2));
 					float fake_y = (y - 1.5f + (height / 2) - (width * ratio_y / 2));
 
-					float radius_x = (float) ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y)))
+					float radius_x = ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y)))
 							+ center_x;
-					float radius_y = (float) ((sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y)))
-							+ center_y;
+					float radius_y = (sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))
+                            + center_y;
 
 					Render2D.drawBox(matrix4f, (int) (Math.min(x + width, Math.max(x, radius_x))),
 							(int) (Math.min(y + height, Math.max(y, radius_y))), 3, 3, c);
@@ -106,10 +107,10 @@ public class RadarHud extends HudWindow {
 						float fake_x = (x + (width / 2) - (width * ratio_x / 2));
 						float fake_y = (y - 1.5f + (height / 2) - (width * ratio_y / 2));
 
-						float radius_x = (float) ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y)))
+						float radius_x = ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y)))
 								+ center_x;
-						float radius_y = (float) ((sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y)))
-								+ center_y;
+						float radius_y = (sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))
+                                + center_y;
 
 						Render2D.drawBox(matrix4f, (int) (Math.min(x + width, Math.max(x, radius_x))),
 								(int) (Math.min(y + height, Math.max(y, radius_y))), 3, 3,

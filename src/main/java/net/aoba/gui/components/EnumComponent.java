@@ -22,16 +22,15 @@ import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 
 public class EnumComponent<T extends Enum<T>> extends Component {
-	private EnumSetting<T> enumSetting;
+	private final EnumSetting<T> enumSetting;
 
 	private boolean hoveringLeftButton;
 	private boolean hoveringRightButton;
 
 	public EnumComponent(EnumSetting<T> enumSetting) {
-		super();
-		this.enumSetting = enumSetting;
-		this.header = enumSetting.displayName;
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+        this.enumSetting = enumSetting;
+		header = enumSetting.displayName;
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	@Override
@@ -64,7 +63,7 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 				hoveringRightButton ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
 
 		// Text
-		String enumValue = this.enumSetting.getValue().toString();
+		String enumValue = enumSetting.getValue().toString();
 		float stringWidth = Render2D.getStringWidth(enumValue);
 		Render2D.drawString(drawContext, enumValue, actualX + (actualWidth / 2.0f) - stringWidth, actualY + 34,
 				0xFFFFFF);

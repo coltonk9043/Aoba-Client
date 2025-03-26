@@ -25,7 +25,7 @@ public class CmdFastBreak extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		FastBreak module = (FastBreak) Aoba.getInstance().moduleManager.fastbreak;
+		FastBreak module = Aoba.getInstance().moduleManager.fastbreak;
 		switch (parameters[0]) {
 		case "multiplier":
 			try {

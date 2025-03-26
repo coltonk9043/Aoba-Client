@@ -19,8 +19,8 @@ public class Sprint extends Module implements TickListener {
 
 	public Sprint() {
 		super("Sprint");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Permanently keeps player in sprinting mode.");
+		setCategory(Category.of("Movement"));
+		setDescription("Permanently keeps player in sprinting mode.");
 	}
 
 	@Override

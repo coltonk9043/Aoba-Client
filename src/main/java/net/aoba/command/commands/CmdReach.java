@@ -25,7 +25,7 @@ public class CmdReach extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Reach module = (Reach) Aoba.getInstance().moduleManager.reach;
+		Reach module = Aoba.getInstance().moduleManager.reach;
 
 		switch (parameters[0]) {
 		case "distance":

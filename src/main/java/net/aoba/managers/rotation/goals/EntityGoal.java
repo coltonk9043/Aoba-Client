@@ -25,7 +25,7 @@ public class EntityGoal extends Goal<Entity> {
 	}
 
 	public static class BUILDER {
-		private EntityGoal goal;
+		private final EntityGoal goal;
 
 		public BUILDER() {
 			goal = new EntityGoal();

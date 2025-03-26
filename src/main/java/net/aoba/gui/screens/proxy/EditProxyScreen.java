@@ -20,7 +20,7 @@ import net.minecraft.text.Text;
 public class EditProxyScreen extends Screen {
 
     private final ProxyScreen parent;
-    private Socks5Proxy proxy;
+    private final Socks5Proxy proxy;
 
     private ButtonWidget buttonSaveProxy;
     private TextFieldWidget textFieldProxyIp;
@@ -30,7 +30,7 @@ public class EditProxyScreen extends Screen {
 
     public EditProxyScreen(ProxyScreen parentScreen, Socks5Proxy proxy) {
         super(Text.of("Proxy Manager"));
-        this.parent = parentScreen;
+        parent = parentScreen;
         this.proxy = proxy;
     }
 
@@ -38,58 +38,58 @@ public class EditProxyScreen extends Screen {
     protected void init() {
         super.init();
 
-        this.textFieldProxyIp = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 76, 200, 20,
+        textFieldProxyIp = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 76, 200, 20,
                 Text.of("Enter IP"));
-        this.textFieldProxyIp.setText(this.proxy == null ? "" : proxy.getIp());
-        this.addDrawableChild(this.textFieldProxyIp);
+        textFieldProxyIp.setText(proxy == null ? "" : proxy.getIp());
+        addDrawableChild(textFieldProxyIp);
 
-        this.textFieldProxyPort = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20,
+        textFieldProxyPort = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 36, 200, 20,
                 Text.of("Enter Port"));
-        this.textFieldProxyPort.setText(this.proxy == null ? "" : String.valueOf(proxy.getPort()));
-        this.addDrawableChild(this.textFieldProxyPort);
+        textFieldProxyPort.setText(proxy == null ? "" : String.valueOf(proxy.getPort()));
+        addDrawableChild(textFieldProxyPort);
 
-        this.textFieldProxyUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 + 4, 200, 20,
+        textFieldProxyUsername = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 + 4, 200, 20,
                 Text.of("Enter Username"));
-        this.textFieldProxyUsername.setText(this.proxy == null ? "" : proxy.getUsername());
-        this.addDrawableChild(this.textFieldProxyUsername);
+        textFieldProxyUsername.setText(proxy == null ? "" : proxy.getUsername());
+        addDrawableChild(textFieldProxyUsername);
 
-        this.textFieldProxyPassword = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 + 44, 200, 20,
+        textFieldProxyPassword = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 + 44, 200, 20,
                 Text.of("Enter Password"));
-        this.textFieldProxyPassword.setText(this.proxy == null ? "" : proxy.getPassword());
-        this.textFieldProxyPassword.setRenderTextProvider((text, n) -> {
+        textFieldProxyPassword.setText(proxy == null ? "" : proxy.getPassword());
+        textFieldProxyPassword.setRenderTextProvider((text, n) -> {
             StringBuilder str = new StringBuilder();
             for (int i = 0; i < text.length(); i++)
                 str.append("*");
             return OrderedText.styledForwardsVisitedString(str.toString(), Style.EMPTY);
         });
-        this.addDrawableChild(this.textFieldProxyPassword);
+        addDrawableChild(textFieldProxyPassword);
 
-        this.buttonSaveProxy = ButtonWidget.builder(Text.of("Save Proxy"), b -> this.onButtonProxyEditPressed())
-                .dimensions(this.width / 2 - 100, this.height / 2 + 84, 200, 20).build();
-        this.addDrawableChild(this.buttonSaveProxy);
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> this.onButtonCancelPressed())
-                .dimensions(this.width / 2 - 100, this.height / 2 + 106, 200, 20).build());
+        buttonSaveProxy = ButtonWidget.builder(Text.of("Save Proxy"), b -> onButtonProxyEditPressed())
+                .dimensions(width / 2 - 100, height / 2 + 84, 200, 20).build();
+        addDrawableChild(buttonSaveProxy);
+        addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> onButtonCancelPressed())
+                .dimensions(width / 2 - 100, height / 2 + 106, 200, 20).build());
     }
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
     	super.render(drawContext, mouseX, mouseY, partialTicks);
-        drawContext.drawCenteredTextWithShadow(textRenderer, "Edit Proxy", this.width / 2, 20, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "IP:", this.width / 2 - 100, height / 2 - 90, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Port:", this.width / 2 - 100, height / 2 - 50, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 10, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Password:", this.width / 2 - 100, height / 2 + 30, 16777215);
+        drawContext.drawCenteredTextWithShadow(textRenderer, "Edit Proxy", width / 2, 20, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "IP:", width / 2 - 100, height / 2 - 90, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "Port:", width / 2 - 100, height / 2 - 50, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "Username:", width / 2 - 100, height / 2 - 10, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "Password:", width / 2 - 100, height / 2 + 30, 16777215);
     }
 
     private void onButtonProxyEditPressed() {
-        proxy.setIp(this.textFieldProxyIp.getText());
-        proxy.setPort(Integer.parseInt(this.textFieldProxyPort.getText()));
-        proxy.setUsername(this.textFieldProxyUsername.getText());
-        proxy.setPassword(this.textFieldProxyPassword.getText());
-        this.parent.refreshProxyList();
+        proxy.setIp(textFieldProxyIp.getText());
+        proxy.setPort(Integer.parseInt(textFieldProxyPort.getText()));
+        proxy.setUsername(textFieldProxyUsername.getText());
+        proxy.setPassword(textFieldProxyPassword.getText());
+        parent.refreshProxyList();
     }
 
     private void onButtonCancelPressed() {
-        client.setScreen(this.parent);
+        client.setScreen(parent);
     }
 }

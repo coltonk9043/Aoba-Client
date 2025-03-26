@@ -25,11 +25,11 @@ public class Jesus extends Module implements TickListener {
 
 	public Jesus() {
 		super("Jesus");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Allows the player to walk on water.");
-		this.addSetting(legit);
+		setCategory(Category.of("Movement"));
+		setDescription("Allows the player to walk on water.");
+		addSetting(legit);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,
@@ -57,13 +57,13 @@ public class Jesus extends Module implements TickListener {
 	}
 
 	public boolean getLegit() {
-		return this.legit.getValue();
+		return legit.getValue();
 	}
 
 	@Override
 	public void onTick(Pre event) {
 		// If Legit is enabled, simply swim.
-		if (this.legit.getValue()) {
+		if (legit.getValue()) {
 			if (MC.player.isInLava() || MC.player.isTouchingWater()) {
 				MC.options.jumpKey.setPressed(true);
 			}

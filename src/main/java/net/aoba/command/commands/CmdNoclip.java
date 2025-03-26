@@ -25,7 +25,7 @@ public class CmdNoclip extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Noclip module = (Noclip) Aoba.getInstance().moduleManager.noclip;
+		Noclip module = Aoba.getInstance().moduleManager.noclip;
 
 		switch (parameters[0]) {
 		case "speed":

@@ -28,12 +28,12 @@ public class Size {
 
 	@Nullable
 	public Float getWidth() {
-		return this.width;
+		return width;
 	}
 
 	@Nullable
 	public Float getHeight() {
-		return this.height;
+		return height;
 	}
 
 	@Override

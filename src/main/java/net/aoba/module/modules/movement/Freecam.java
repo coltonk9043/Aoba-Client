@@ -36,17 +36,17 @@ public class Freecam extends Module implements TickListener, Render3DListener {
 
 	public Freecam() {
 		super("Freecam");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Allows the player to clip through blocks (Only work clientside).");
-		this.addSetting(flySpeed);
+		setCategory(Category.of("Movement"));
+		setDescription("Allows the player to clip through blocks (Only work clientside).");
+		addSetting(flySpeed);
 	}
 
 	public void setSpeed(float speed) {
-		this.flySpeed.setValue(speed);
+		flySpeed.setValue(speed);
 	}
 
 	public double getSpeed() {
-		return this.flySpeed.getValue();
+		return flySpeed.getValue();
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class Freecam extends Module implements TickListener, Render3DListener {
 	}
 
 	public FakePlayerEntity getFakePlayer() {
-		return this.fakePlayer;
+		return fakePlayer;
 	}
 
 	@Override

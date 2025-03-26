@@ -47,7 +47,7 @@ public abstract class FluidBlockMixin extends Block implements FluidDrainable {
 			ShapeContext entityContext_1, CallbackInfoReturnable<VoxelShape> cir) {
 		// If Aoba exists and Jesus is toggled (and NOT in legit mode)
 		if (Aoba.getInstance() != null && Aoba.getInstance().moduleManager != null) {
-			Jesus jesus = (Jesus) Aoba.getInstance().moduleManager.jesus;
+			Jesus jesus = Aoba.getInstance().moduleManager.jesus;
 			if (jesus != null && jesus.state.getValue() && !jesus.getLegit()) {
 				cir.setReturnValue(VoxelShapes.fullCube());
 				cir.cancel();

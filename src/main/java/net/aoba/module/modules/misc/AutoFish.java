@@ -32,11 +32,11 @@ public class AutoFish extends Module implements ReceivePacketListener {
 	public AutoFish() {
 		super("AutoFish");
 
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Automatically fishes for you.");
+		setCategory(Category.of("Misc"));
+		setDescription("Automatically fishes for you.");
 
-		this.addSetting(autoSwitch);
-		this.addSetting(autoToggle);
+		addSetting(autoSwitch);
+		addSetting(autoToggle);
 	}
 
 	@Override
@@ -90,9 +90,8 @@ public class AutoFish extends Module implements ReceivePacketListener {
 	public void onReceivePacket(ReceivePacketEvent readPacketEvent) {
 		Packet<?> packet = readPacketEvent.GetPacket();
 
-		if (packet instanceof PlaySoundS2CPacket) {
-			PlaySoundS2CPacket soundPacket = (PlaySoundS2CPacket) packet;
-			if (soundPacket.getSound().value().equals(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH)) {
+		if (packet instanceof PlaySoundS2CPacket soundPacket) {
+            if (soundPacket.getSound().value().equals(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH)) {
 				castRod(2);
 			}
 		}

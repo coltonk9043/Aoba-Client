@@ -25,8 +25,7 @@ public class GridComponent extends Component {
 	private Float[] rowHeights;
 
 	public GridComponent() {
-		super();
-	}
+    }
 
 	public void addColumnDefinition(GridDefinition def) {
 		if (columnDefinitions == null)
@@ -145,7 +144,7 @@ public class GridComponent extends Component {
 
 	@Override
 	public void arrange(Rectangle finalSize) {
-		if (this.parent != null) {
+		if (parent != null) {
 			setActualSize(finalSize);
 		}
 

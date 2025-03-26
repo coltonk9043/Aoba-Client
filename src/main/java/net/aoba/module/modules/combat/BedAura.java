@@ -71,16 +71,16 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 
 	public BedAura() {
 		super("BedAura");
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Destroys the nearest Bed to the player.");
+		setCategory(Category.of("Combat"));
+		setDescription("Destroys the nearest Bed to the player.");
 
-		this.addSetting(radius);
-		this.addSetting(legit);
-		this.addSetting(rotationMode);
-		this.addSetting(maxRotation);
-		this.addSetting(yawRandomness);
-		this.addSetting(pitchRandomness);
-		this.addSetting(color);
+		addSetting(radius);
+		addSetting(legit);
+		addSetting(rotationMode);
+		addSetting(maxRotation);
+		addSetting(yawRandomness);
+		addSetting(pitchRandomness);
+		addSetting(color);
 	}
 
 	public void setRadius(int radius) {
@@ -131,8 +131,8 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 		for (int y = rad; y > -rad; y--) {
 			for (int x = -rad; x < rad; x++) {
 				for (int z = -rad; z < rad; z++) {
-					BlockPos blockpos = new BlockPos(MC.player.getBlockX() + x, (int) MC.player.getBlockY() + y,
-							(int) MC.player.getBlockZ() + z);
+					BlockPos blockpos = new BlockPos(MC.player.getBlockX() + x, MC.player.getBlockY() + y,
+							MC.player.getBlockZ() + z);
 					Block block = MC.world.getBlockState(blockpos).getBlock();
 					if (!isBed(block))
 						continue;

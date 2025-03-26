@@ -56,18 +56,18 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 	public AntiKnockback() {
 		super("AntiKnockback");
 
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Prevents knockback.");
+		setCategory(Category.of("Combat"));
+		setDescription("Prevents knockback.");
 
-		this.addSetting(horizontal);
-		this.addSetting(vertical);
-		this.addSetting(noPushEntites);
-		this.addSetting(noPushBlocks);
-		this.addSetting(noPushLiquids);
-		this.addSetting(noPushFishhook);
+		addSetting(horizontal);
+		addSetting(vertical);
+		addSetting(noPushEntites);
+		addSetting(noPushBlocks);
+		addSetting(noPushLiquids);
+		addSetting(noPushFishhook);
 
 		// Vulcan, AACV5, Grim Matrix, and Karhu detectable.
-		this.setDetectable(AntiCheat.Vulcan,
+		setDetectable(AntiCheat.Vulcan,
 				AntiCheat.AdvancedAntiCheat,
 				AntiCheat.Grim,
 				AntiCheat.Matrix,
@@ -75,15 +75,15 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 	}
 
 	public boolean getNoPushEntities() {
-		return this.noPushEntites.getValue();
+		return noPushEntites.getValue();
 	}
 
 	public boolean getNoPushBlocks() {
-		return this.noPushBlocks.getValue();
+		return noPushBlocks.getValue();
 	}
 
 	public boolean getNoPushLiquids() {
-		return this.noPushLiquids.getValue();
+		return noPushLiquids.getValue();
 	}
 
 	@Override

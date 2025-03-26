@@ -17,8 +17,8 @@ public class AutoSign extends Module {
 
 	public AutoSign() {
 		super("AutoSign");
-		this.setCategory(Category.of("World"));
-		this.setDescription("Automatically places sign with predefined text.");
+		setCategory(Category.of("World"));
+		setDescription("Automatically places sign with predefined text.");
 	}
 
 	public void setText(String[] text) {
@@ -26,7 +26,7 @@ public class AutoSign extends Module {
 	}
 
 	public String[] getText() {
-		return this.text;
+		return text;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class AutoSign extends Module {
 	@Override
 	public void onEnable() {
 		CommandManager.sendChatMessage("Place down a sign to set text!");
-		this.text = null;
+		text = null;
 	}
 
 	@Override

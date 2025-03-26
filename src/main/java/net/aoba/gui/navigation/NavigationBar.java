@@ -29,7 +29,7 @@ import java.util.List;
 public class NavigationBar implements MouseClickListener {
     MinecraftClient mc = MinecraftClient.getInstance();
 
-    private List<Page> options;
+    private final List<Page> options;
     private int selectedIndex;
     private float currentSelectionX;
     private float targetSelectionX;
@@ -47,11 +47,11 @@ public class NavigationBar implements MouseClickListener {
     }
 
     public List<Page> getPanes() {
-        return this.options;
+        return options;
     }
 
     public int getSelectedIndex() {
-        return this.selectedIndex;
+        return selectedIndex;
     }
 
     public Page getSelectedPage() {
@@ -59,10 +59,10 @@ public class NavigationBar implements MouseClickListener {
     }
 
     public void setSelectedIndex(int index) {
-        if (index < this.options.size()) {
-            this.options.get(selectedIndex).setVisible(false);
-            this.selectedIndex = index;
-            this.options.get(selectedIndex).setVisible(true);
+        if (index < options.size()) {
+            options.get(selectedIndex).setVisible(false);
+            selectedIndex = index;
+            options.get(selectedIndex).setVisible(true);
             targetSelectionX = index * 100; // Update target position for animation
         }
     }
@@ -115,7 +115,7 @@ public class NavigationBar implements MouseClickListener {
                     if (mouseY >= (25) && mouseY <= (50)) {
                         int mouseXInt = (int) mouseX;
                         int selection = (mouseXInt - x) / 100;
-                        this.setSelectedIndex(selection);
+                        setSelectedIndex(selection);
                         event.cancel();
                     }
                 }

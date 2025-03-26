@@ -29,7 +29,7 @@ public abstract class UIElement {
 	protected static MinecraftClient MC = MinecraftClient.getInstance();
 	protected static AobaClient AOBA = Aoba.getInstance();
 
-	private ArrayList<UIElement> children = new ArrayList<UIElement>();
+	private final ArrayList<UIElement> children = new ArrayList<UIElement>();
 	protected UIElement parent;
 
 	// Constraints (Dimensions will always adhere to these if it is not null)
@@ -60,7 +60,7 @@ public abstract class UIElement {
 	public void initialize() {
 		boolean wasInitialized = initialized;
 		if (!wasInitialized) {
-			this.initialized = true;
+			initialized = true;
 		}
 
 		for (UIElement child : children) {
@@ -76,7 +76,7 @@ public abstract class UIElement {
 	}
 
 	public boolean isInitialized() {
-		return this.initialized;
+		return initialized;
 	}
 
 	protected void onInitialized() {
@@ -140,9 +140,9 @@ public abstract class UIElement {
 		Float newWidth = size.getWidth();
 		Float newHeight = size.getHeight();
 
-		if (this.width != newWidth || this.height != newHeight) {
-			this.width = size.getWidth();
-			this.height = size.getHeight();
+		if (width != newWidth || height != newHeight) {
+			width = size.getWidth();
+			height = size.getHeight();
 			invalidateMeasure();
 		}
 	}
@@ -235,11 +235,11 @@ public abstract class UIElement {
 	}
 
 	public boolean isHitTestVisible() {
-		return this.isHitTestVisible;
+		return isHitTestVisible;
 	}
 
 	public void setIsHitTestVisible(boolean state) {
-		this.isHitTestVisible = state;
+		isHitTestVisible = state;
 	}
 
 	/**
@@ -409,7 +409,7 @@ public abstract class UIElement {
 
 			if (!oldActualSize.equals(actualSize)) {
 				for (UIElement element : children) {
-					element.arrange(this.getActualSize());
+					element.arrange(getActualSize());
 				}
 			}
 		}
@@ -423,7 +423,7 @@ public abstract class UIElement {
 		if (child == null)
 			return;
 
-		if (this.initialized && !child.initialized)
+		if (initialized && !child.initialized)
 			child.initialize();
 
 		child.setParent(this);
@@ -469,7 +469,7 @@ public abstract class UIElement {
 			children.next().dispose();
 		}
 
-		this.clearChildren();
+		clearChildren();
 	}
 
 	public void onMouseMove(MouseMoveEvent event) {
@@ -482,7 +482,7 @@ public abstract class UIElement {
 			}
 
 			if (event.isCancelled()) {
-				this.hovered = false;
+				hovered = false;
 				if (wasHovered) {
 					GuiManager.setTooltip(null);
 				}
@@ -490,22 +490,18 @@ public abstract class UIElement {
 				float mouseX = (float) event.getX();
 				float mouseY = (float) event.getY();
 
-				this.hovered = actualSize.intersects(mouseX, mouseY);
+				hovered = actualSize.intersects(mouseX, mouseY);
 
 				if (!event.isCancelled() && hovered) {
 					event.cancel();
 					String tooltip = getTooltip();
-					if (tooltip != null) {
-						GuiManager.setTooltip(tooltip);
-					} else {
-						GuiManager.setTooltip(null);
-					}
+                    GuiManager.setTooltip(tooltip);
 				} else if (wasHovered) {
 					GuiManager.setTooltip(null);
 				}
 			}
 		} else {
-			this.hovered = false;
+			hovered = false;
 			if (wasHovered) {
 				GuiManager.setTooltip(null);
 			}

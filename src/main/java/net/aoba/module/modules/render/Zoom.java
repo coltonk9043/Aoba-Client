@@ -27,15 +27,15 @@ public class Zoom extends Module implements TickListener {
 
 	public Zoom() {
 		super("Zoom");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Zooms the players camera to see further.");
-		this.addSetting(zoomFactor);
+		setCategory(Category.of("Render"));
+		setDescription("Zooms the players camera to see further.");
+		addSetting(zoomFactor);
 	}
 
 	@Override
 	public void onDisable() {
 		if (lastFov != null) {
-			MC.options.getFov().setValue((int) Math.max(30, Math.min(110, lastFov)));
+			MC.options.getFov().setValue(Math.max(30, Math.min(110, lastFov)));
 			Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 		}
 	}

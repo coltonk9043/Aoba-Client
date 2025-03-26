@@ -15,8 +15,8 @@ public class AntiInvis extends Module {
 
     public AntiInvis() {
     	super("AntiInvis");
-        this.setCategory(Category.of("Combat"));
-        this.setDescription("Reveals players who are invisible.");
+        setCategory(Category.of("Combat"));
+        setDescription("Reveals players who are invisible.");
     }
 
     @Override

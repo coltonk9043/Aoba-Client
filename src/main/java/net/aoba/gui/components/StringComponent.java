@@ -26,37 +26,34 @@ import net.minecraft.util.Formatting;
 public class StringComponent extends Component implements FontChangedListener {
 	private TextAlign textAlign = TextAlign.Left;
 	private String originalText;
-	private ArrayList<String> text = new ArrayList<String>();
-	private boolean bold;
-	private Color color;
+	private final ArrayList<String> text = new ArrayList<String>();
+	private final boolean bold;
+	private final Color color;
 
 	public StringComponent(String text) {
-		super();
-		setText(text);
-		this.color = Colors.White;
-		this.bold = false;
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
-		this.setIsHitTestVisible(false);
+        setText(text);
+		color = Colors.White;
+		bold = false;
+		setMargin(new Margin(8f, 2f, 8f, 2f));
+		setIsHitTestVisible(false);
 		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
 	}
 
 	public StringComponent(String text, boolean bold) {
-		super();
-		setText(text);
-		this.color = Colors.White;
+        setText(text);
+		color = Colors.White;
 		this.bold = bold;
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
-		this.setIsHitTestVisible(false);
+		setMargin(new Margin(8f, 2f, 8f, 2f));
+		setIsHitTestVisible(false);
 		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
 	}
 
 	public StringComponent(String text, Color color, boolean bold) {
-		super();
-		setText(text);
+        setText(text);
 		this.color = color;
 		this.bold = bold;
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
-		this.setIsHitTestVisible(false);
+		setMargin(new Margin(8f, 2f, 8f, 2f));
+		setIsHitTestVisible(false);
 		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
 	}
 
@@ -68,9 +65,9 @@ public class StringComponent extends Component implements FontChangedListener {
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
 
 		int i = 5;
 
@@ -79,16 +76,16 @@ public class StringComponent extends Component implements FontChangedListener {
 				str = Formatting.BOLD + str;
 
 			switch (textAlign) {
-			case TextAlign.Left:
-				Render2D.drawString(drawContext, str, actualX, actualY + i, this.color.getColorAsInt());
+			case Left:
+				Render2D.drawString(drawContext, str, actualX, actualY + i, color.getColorAsInt());
 				break;
-			case TextAlign.Center:
+			case Center:
 				float xPosCenter = actualX + (actualWidth / 2.0f) - Render2D.getStringWidth(str);
-				Render2D.drawString(drawContext, str, xPosCenter, actualY + i, this.color.getColorAsInt());
+				Render2D.drawString(drawContext, str, xPosCenter, actualY + i, color.getColorAsInt());
 				break;
-			case TextAlign.Right:
+			case Right:
 				float xPosRight = actualX + actualWidth - (Render2D.getStringWidth(str) * 2);
-				Render2D.drawString(drawContext, str, xPosRight, actualY + i, this.color.getColorAsInt());
+				Render2D.drawString(drawContext, str, xPosRight, actualY + i, color.getColorAsInt());
 				break;
 			}
 
@@ -103,13 +100,13 @@ public class StringComponent extends Component implements FontChangedListener {
 	 */
 	public void setText(String text) {
 		if (actualSize != null) {
-			this.originalText = text;
+			originalText = text;
 			invalidateMeasure();
 		}
 	}
 
 	public void recalculateLines(Size availableSize) {
-		this.text.clear();
+		text.clear();
 
 		if (originalText != null) {
 			TextRenderer textRenderer = Aoba.getInstance().fontManager.GetRenderer();
@@ -117,7 +114,7 @@ public class StringComponent extends Component implements FontChangedListener {
 			float width = availableSize.getWidth().floatValue();
 			float textWidth = textRenderer.getWidth(originalText) * 2.0f;
 			if (textWidth < width) {
-				this.text.add(originalText);
+				text.add(originalText);
 			} else {
 				// Single there are multiple lines, we will want to split them in a spot that
 				// makes the most sense.
@@ -134,11 +131,11 @@ public class StringComponent extends Component implements FontChangedListener {
 							break;
 
 						if (lastSpace == -1) {
-							this.text.add(originalText.substring(lastSplit));
+							text.add(originalText.substring(lastSplit));
 							lastSplit = i - 1;
 							++i;
 						} else {
-							this.text.add(originalText.substring(lastSplit, lastSpace));
+							text.add(originalText.substring(lastSplit, lastSpace));
 							lastSplit = lastSpace + 1;
 							i = lastSplit;
 							lastSpace = -1;
@@ -154,13 +151,13 @@ public class StringComponent extends Component implements FontChangedListener {
 				}
 
 				if (lastSplit != -1 && lastSplit < originalText.length())
-					this.text.add(originalText.substring(lastSplit));
+					text.add(originalText.substring(lastSplit));
 			}
 		}
 	}
 
 	public TextAlign getTextAlign() {
-		return this.textAlign;
+		return textAlign;
 	}
 
 	public void setTextAlign(TextAlign textAlign) {
@@ -174,7 +171,7 @@ public class StringComponent extends Component implements FontChangedListener {
 	 */
 
 	public String getText() {
-		return this.originalText;
+		return originalText;
 	}
 
 	@Override
@@ -184,6 +181,6 @@ public class StringComponent extends Component implements FontChangedListener {
 
 	@Override
 	public void onFontChanged(FontChangedEvent event) {
-		setText(this.originalText);
+		setText(originalText);
 	}
 }

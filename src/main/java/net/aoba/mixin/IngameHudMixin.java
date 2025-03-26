@@ -49,7 +49,7 @@ public class IngameHudMixin {
 
 	@Inject(method = "renderVignetteOverlay", at = @At("HEAD"), cancellable = true)
 	private void onRenderVignetteOverlay(DrawContext context, Entity entity, CallbackInfo ci) {
-		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		NoRender norender = Aoba.getInstance().moduleManager.norender;
 
 		if (norender.state.getValue() && norender.getNoVignette())
 			ci.cancel();
@@ -57,7 +57,7 @@ public class IngameHudMixin {
 
 	@ModifyArgs(method = "renderMiscOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderOverlay(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/util/Identifier;F)V", ordinal = 0))
 	private void onRenderPumpkinOverlay(Args args) {
-		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		NoRender norender = Aoba.getInstance().moduleManager.norender;
 
 		if (norender.state.getValue() && norender.getNoPumpkinOverlay())
 			args.set(2, 0f);
@@ -65,7 +65,7 @@ public class IngameHudMixin {
 
 	@ModifyArgs(method = "renderMiscOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderOverlay(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/util/Identifier;F)V", ordinal = 1))
 	private void onRenderPowderSnowOverlay(Args args) {
-		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		NoRender norender = Aoba.getInstance().moduleManager.norender;
 
 		if (norender.state.getValue() && norender.getNoPowderSnowOverlay())
 			args.set(2, 0f);
@@ -73,7 +73,7 @@ public class IngameHudMixin {
 
 	@Inject(method = "renderPortalOverlay", at = @At("HEAD"), cancellable = true)
 	private void onRenderPortalOverlay(DrawContext context, float nauseaStrength, CallbackInfo ci) {
-		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		NoRender norender = Aoba.getInstance().moduleManager.norender;
 
 		if (norender.state.getValue() && norender.getNoPortalOverlay())
 			ci.cancel();
@@ -85,7 +85,7 @@ public class IngameHudMixin {
 			ci.cancel();
 			return;
 		}
-		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		NoRender norender = Aoba.getInstance().moduleManager.norender;
 		if (norender.state.getValue() && norender.getNoCrosshair())
 			ci.cancel();
 	}

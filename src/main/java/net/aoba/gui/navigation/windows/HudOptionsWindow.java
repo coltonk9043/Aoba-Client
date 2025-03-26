@@ -30,7 +30,7 @@ public class HudOptionsWindow extends Window {
 	public HudOptionsWindow() {
 		super("Hud Options", 600, 200);
 
-		this.minWidth = 340.0f;
+		minWidth = 340.0f;
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
 		stackPanel.setMargin(new Margin(null, 30f, null, null));
@@ -68,7 +68,7 @@ public class HudOptionsWindow extends Window {
 		stackPanel.addChild(new CheckboxComponent(GuiManager.enableCustomTitle));
 		stackPanel.addChild(new CheckboxComponent(GuiManager.enableTooltips));
 
-		this.addChild(stackPanel);
+		addChild(stackPanel);
 	}
 
 	@Override

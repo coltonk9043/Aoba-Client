@@ -23,16 +23,15 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class CheckboxComponent extends Component {
-	private String text;
-	private BooleanSetting checkbox;
+	private final String text;
+	private final BooleanSetting checkbox;
 	private Runnable onClick;
 
 	public CheckboxComponent(BooleanSetting checkbox) {
-		super();
-		this.text = checkbox.displayName;
+        text = checkbox.displayName;
 		this.checkbox = checkbox;
 
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	@Override
@@ -53,14 +52,14 @@ public class CheckboxComponent extends Component {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
 
 		// Determine fill color based on checkbox state
-		Color fillColor = this.checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
+		Color fillColor = checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
 
-		Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
+		Render2D.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
 		Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, 3,
 				GuiManager.borderColor.getValue(), fillColor);
 	}

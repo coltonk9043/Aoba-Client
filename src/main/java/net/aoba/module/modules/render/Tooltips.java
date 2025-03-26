@@ -22,11 +22,11 @@ public class Tooltips extends Module {
 
 	public Tooltips() {
 		super("Tooltips");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Renders custom item tooltips");
+		setCategory(Category.of("Render"));
+		setDescription("Renders custom item tooltips");
 
-		this.addSetting(storage);
-		this.addSetting(maps);
+		addSetting(storage);
+		addSetting(maps);
 	}
 
 	@Override
@@ -45,10 +45,10 @@ public class Tooltips extends Module {
 	}
 
 	public boolean getStorage() {
-		return this.storage.getValue();
+		return storage.getValue();
 	}
 
 	public boolean getMap() {
-		return this.maps.getValue();
+		return maps.getValue();
 	}
 }

@@ -65,16 +65,16 @@ public class Surround extends Module implements TickListener {
 
 	public Surround() {
 		super("Surround");
-		this.setCategory(Category.of("World"));
-		this.setDescription("Surrounds the player with blocks.");
+		setCategory(Category.of("World"));
+		setDescription("Surrounds the player with blocks.");
 
-		this.addSetting(placeHeight);
-		this.addSetting(blocks);
-		this.addSetting(alignCharacter);
-		this.addSetting(autoDisable);
-		this.addSetting(legit);
+		addSetting(placeHeight);
+		addSetting(blocks);
+		addSetting(alignCharacter);
+		addSetting(autoDisable);
+		addSetting(legit);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,
 		    AntiCheat.Verus,
@@ -134,7 +134,7 @@ public class Surround extends Module implements TickListener {
 
 		// Disable the module if no block was found in the inventory.
 		if (foundBlockSlot == -1) {
-			this.state.setValue(false);
+			state.setValue(false);
 			return;
 		}
 

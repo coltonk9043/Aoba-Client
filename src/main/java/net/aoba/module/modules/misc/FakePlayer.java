@@ -64,19 +64,19 @@ public class FakePlayer extends Module {
 	public FakePlayer() {
 		super("FakePlayer");
 
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Creates a fake player entity.");
+		setCategory(Category.of("Misc"));
+		setDescription("Creates a fake player entity.");
 
-		this.addSetting(playerName);
-		this.addSetting(enableRegen);
-		this.addSetting(regenDuration);
-		this.addSetting(regenAmplifier);
-		this.addSetting(enableAbsorption);
-		this.addSetting(absorptionDuration);
-		this.addSetting(absorptionAmplifier);
-		this.addSetting(enableResistance);
-		this.addSetting(resistanceDuration);
-		this.addSetting(resistanceAmplifier);
+		addSetting(playerName);
+		addSetting(enableRegen);
+		addSetting(regenDuration);
+		addSetting(regenAmplifier);
+		addSetting(enableAbsorption);
+		addSetting(absorptionDuration);
+		addSetting(absorptionAmplifier);
+		addSetting(enableResistance);
+		addSetting(resistanceDuration);
+		addSetting(resistanceAmplifier);
 	}
 
 	@Override

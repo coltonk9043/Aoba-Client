@@ -23,7 +23,7 @@ public class DynamicMixin {
 	public void onBeginRenderTick(long long_1, CallbackInfoReturnable<Integer> cir) {
 		AobaClient aoba = Aoba.getInstance();
 		if (aoba.moduleManager != null) {
-			Timer timer = (Timer) Aoba.getInstance().moduleManager.timer;
+			Timer timer = Aoba.getInstance().moduleManager.timer;
 			if (timer.state.getValue()) {
 				lastFrameDuration *= timer.getMultiplier();
 			}

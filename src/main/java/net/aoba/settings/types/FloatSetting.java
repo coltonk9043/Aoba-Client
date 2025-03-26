@@ -33,7 +33,7 @@ public class FloatSetting extends Setting<Float> {
     @Override
     public void setValue(Float value) {
         float newValue = Math.max(min_value, Math.min(max_value, value));
-        int steps = (int) Math.round((newValue) / step);
+        int steps = Math.round((newValue) / step);
         float actualNewValue = step * steps;
         valueSqr = actualNewValue * actualNewValue;
         super.setValue(actualNewValue);
@@ -43,7 +43,7 @@ public class FloatSetting extends Setting<Float> {
     public void silentSetValue(Float value) {
         if (isValueValid(value)) {
             this.value = value;
-            this.valueSqr = value * value;
+            valueSqr = value * value;
         }
     }
     
@@ -56,7 +56,7 @@ public class FloatSetting extends Setting<Float> {
     }
     
     public Float getValueSqr() {
-    	return this.valueSqr;
+    	return valueSqr;
     }
     
     public static BUILDER builder() {
@@ -69,8 +69,7 @@ public class FloatSetting extends Setting<Float> {
 		protected Float step = 1f;
 		
 		protected BUILDER() {
-			super();
-		}
+        }
 		
 		public BUILDER minValue(Float value) {
 			minValue = value;

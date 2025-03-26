@@ -16,8 +16,8 @@ public class AntiCactus extends Module {
 	public AntiCactus() {
 		super("AntiCactus");
 
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Prevents blocks from hurting you.");
+		setCategory(Category.of("Misc"));
+		setDescription("Prevents blocks from hurting you.");
 	}
 
 	@Override

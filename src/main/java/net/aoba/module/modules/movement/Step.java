@@ -23,8 +23,8 @@ public class Step extends Module {
 
 	public Step() {
 		super("Step");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Steps up blocks.");
+		setCategory(Category.of("Movement"));
+		setDescription("Steps up blocks.");
 
 		stepHeight.addOnUpdate((i) -> {
 			if (state.getValue()) {
@@ -33,9 +33,9 @@ public class Step extends Module {
 			}
 		});
 
-		this.addSetting(stepHeight);
+		addSetting(stepHeight);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,
@@ -72,6 +72,6 @@ public class Step extends Module {
 	}
 
 	public void setStepHeight(float height) {
-		this.stepHeight.setValue(height);
+		stepHeight.setValue(height);
 	}
 }

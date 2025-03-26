@@ -32,30 +32,30 @@ public class Rectangle {
 	}
 
 	public Rectangle(Rectangle rect) {
-		this.x = rect.x;
-		this.y = rect.y;
-		this.width = rect.width;
-		this.height = rect.height;
+		x = rect.x;
+		y = rect.y;
+		width = rect.width;
+		height = rect.height;
 	}
 
 	@Nullable
 	public Float getX() {
-		return this.x;
+		return x;
 	}
 
 	@Nullable
 	public Float getY() {
-		return this.y;
+		return y;
 	}
 
 	@Nullable
 	public Float getWidth() {
-		return this.width;
+		return width;
 	}
 
 	@Nullable
 	public Float getHeight() {
-		return this.height;
+		return height;
 	}
 
 	@Override

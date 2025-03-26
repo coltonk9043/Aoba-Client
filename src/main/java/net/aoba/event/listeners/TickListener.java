@@ -11,6 +11,6 @@ package net.aoba.event.listeners;
 import net.aoba.event.events.TickEvent;
 
 public interface TickListener extends AbstractListener {
-    public abstract void onTick(TickEvent.Pre event);
-    public abstract void onTick(TickEvent.Post event);
+    void onTick(TickEvent.Pre event);
+    void onTick(TickEvent.Post event);
 }

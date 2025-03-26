@@ -33,8 +33,7 @@ public class StringSetting extends Setting<String> {
 
 	public static class BUILDER extends Setting.BUILDER<BUILDER, StringSetting, String> {
 		protected BUILDER() {
-			super();
-		}
+        }
 
 		@Override
 		public StringSetting build() {

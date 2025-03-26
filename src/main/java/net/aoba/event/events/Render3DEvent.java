@@ -40,7 +40,7 @@ public class Render3DEvent extends AbstractEvent {
 	}
 
 	public Render3DEvent(MatrixStack matrix4f, Frustum frustum, Camera camera, RenderTickCounter renderTickCounter) {
-		this.matrices = matrix4f;
+		matrices = matrix4f;
 		this.renderTickCounter = renderTickCounter;
 		this.frustum = frustum;
 		this.camera = camera;

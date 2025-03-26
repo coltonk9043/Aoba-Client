@@ -143,28 +143,28 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 	public CrystalAura() {
 		super("CrystalAura");
 
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Attacks anything within your personal space with a End Crystal.");
+		setCategory(Category.of("Combat"));
+		setDescription("Attacks anything within your personal space with a End Crystal.");
 
-		this.addSettings(ignoreWalls);
-		this.addSetting(swingHand);
-		this.addSetting(handSetting);
-		this.addSetting(radius);
-		this.addSetting(placeRadius);
-		this.addSetting(targetFriends);
-		this.addSetting(attackDelay);
-		this.addSetting(autoSwitch);
-		this.addSetting(placeDelay);
-		this.addSetting(targetMode);
-		this.addSetting(multiPlace);
-		this.addSetting(antiSuicide);
-		this.addSetting(minDamage);
-		this.addSetting(maxSelfDamage);
-		this.addSetting(enemyRange);
-		this.addSetting(wallRange);
-		this.addSetting(crystalPriority);
-		this.addSetting(rotationMode);
-		this.addSetting(color);
+		addSettings(ignoreWalls);
+		addSetting(swingHand);
+		addSetting(handSetting);
+		addSetting(radius);
+		addSetting(placeRadius);
+		addSetting(targetFriends);
+		addSetting(attackDelay);
+		addSetting(autoSwitch);
+		addSetting(placeDelay);
+		addSetting(targetMode);
+		addSetting(multiPlace);
+		addSetting(antiSuicide);
+		addSetting(minDamage);
+		addSetting(maxSelfDamage);
+		addSetting(enemyRange);
+		addSetting(wallRange);
+		addSetting(crystalPriority);
+		addSetting(rotationMode);
+		addSetting(color);
 
 		lastAttackTime = 0;
 		lastPlaceTime = 0;
@@ -210,7 +210,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 	private void placeCrystal() {
 		Hand hand = handSetting.getValue() == HandSetting.MAIN_HAND ? Hand.MAIN_HAND : Hand.OFF_HAND;
 
-		FindItemResult result = Module.find(Items.END_CRYSTAL);
+		FindItemResult result = find(Items.END_CRYSTAL);
 
 		if (!result.found() && !result.isHotbar())
 			return;
@@ -230,7 +230,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 					continue;
 
 				if (autoSwitch.getValue()) {
-					Module.swap(result.slot(), false);
+					swap(result.slot(), false);
 				}
 
 				if (multiPlace.getValue()) {
@@ -352,7 +352,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 		double enemyRangeSquared = enemyRange.getValue() * enemyRange.getValue();
 		double wallRangeSquared = wallRange.getValue() * wallRange.getValue();
 
-		Iterable<Entity> entities = MC.world.getEntities();
+		Iterable<Entity> entities = Aoba.getInstance().entityManager.getEntities();
 		for (Entity entity : entities) {
 			if (entity instanceof EndCrystalEntity) {
 				double distanceSquared = MC.player.squaredDistanceTo(entity);
@@ -469,11 +469,8 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
 		displayedBoxes.entrySet().removeIf(entry -> {
 			long renderTime = entry.getValue();
-			if (currentTime - renderTime >= BOX_DISPLAY_TIME_MS) {
-				return true;
-			}
-			return false;
-		});
+            return currentTime - renderTime >= BOX_DISPLAY_TIME_MS;
+        });
 
 		for (Map.Entry<BlockPos, Long> entry : displayedBoxes.entrySet()) {
 			BlockPos pos = entry.getKey();

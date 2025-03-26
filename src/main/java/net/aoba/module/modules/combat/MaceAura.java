@@ -53,18 +53,18 @@ public class MaceAura extends Module implements TickListener {
 	public MaceAura() {
 		super("MaceAura");
 
-		this.setCategory(Category.of("Combat"));
-		this.setDescription(
+		setCategory(Category.of("Combat"));
+		setDescription(
 				"Smashes players in your personal space with a Mace with extreme damage. Be sure to enable NoFall for best results.");
 
-		this.addSetting(radius);
-		this.addSetting(height);
-		this.addSetting(targetAnimals);
-		this.addSetting(targetMonsters);
-		this.addSetting(targetPlayers);
-		this.addSetting(targetFriends);
+		addSetting(radius);
+		addSetting(height);
+		addSetting(targetAnimals);
+		addSetting(targetMonsters);
+		addSetting(targetPlayers);
+		addSetting(targetFriends);
 
-		this.setDetectable(
+		setDetectable(
 				AntiCheat.NoCheatPlus,
 				AntiCheat.Vulcan,
 				AntiCheat.AdvancedAntiCheat,
@@ -106,28 +106,28 @@ public class MaceAura extends Module implements TickListener {
 				ArrayList<Entity> hitList = new ArrayList<Entity>();
 
 				// Add all potential entities to the 'hitlist'
-				if (this.targetAnimals.getValue() || this.targetMonsters.getValue()) {
-					for (Entity entity : MC.world.getEntities()) {
+				if (targetAnimals.getValue() || targetMonsters.getValue()) {
+					for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 						if (entity == MC.player)
 							continue;
 						if (MC.player.squaredDistanceTo(entity) > radius.getValueSqr())
 							continue;
 
-						if ((entity instanceof AnimalEntity && this.targetAnimals.getValue())
-								|| (entity instanceof Monster && this.targetMonsters.getValue())) {
+						if ((entity instanceof AnimalEntity && targetAnimals.getValue())
+								|| (entity instanceof Monster && targetMonsters.getValue())) {
 							hitList.add(entity);
 						}
 					}
 				}
 
 				// Add all potential players to the 'hitlist'
-				if (this.targetPlayers.getValue()) {
+				if (targetPlayers.getValue()) {
 					for (PlayerEntity player : MC.world.getPlayers()) {
 						if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
 							continue;
 
 						if (player == MC.player || MC.player
-								.squaredDistanceTo(player) > (this.radius.getValue() * this.radius.getValue())) {
+								.squaredDistanceTo(player) > (radius.getValue() * radius.getValue())) {
 							continue;
 						}
 						hitList.add(player);

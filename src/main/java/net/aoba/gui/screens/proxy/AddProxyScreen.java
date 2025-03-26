@@ -27,59 +27,59 @@ public class AddProxyScreen extends Screen {
 
     public AddProxyScreen(ProxyScreen parentScreen) {
         super(Text.of("Proxy Manager"));
-        this.parent = parentScreen;
+        parent = parentScreen;
     }
 
     protected void init() {
         super.init();
 
-        this.textFieldProxyIp = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 76, 200, 20, Text.of("Enter IP"));
-        this.textFieldProxyIp.setText("");
-        this.addDrawableChild(this.textFieldProxyIp);
+        textFieldProxyIp = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 76, 200, 20, Text.of("Enter IP"));
+        textFieldProxyIp.setText("");
+        addDrawableChild(textFieldProxyIp);
 
-        this.textFieldProxyPort = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20, Text.of("Enter Port"));
-        this.textFieldProxyPort.setText("");
-        this.addDrawableChild(this.textFieldProxyPort);
+        textFieldProxyPort = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 36, 200, 20, Text.of("Enter Port"));
+        textFieldProxyPort.setText("");
+        addDrawableChild(textFieldProxyPort);
 
-        this.textFieldProxyUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 + 4, 200, 20, Text.of("Enter Username"));
-        this.textFieldProxyUsername.setText("");
-        this.addDrawableChild(this.textFieldProxyUsername);
+        textFieldProxyUsername = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 + 4, 200, 20, Text.of("Enter Username"));
+        textFieldProxyUsername.setText("");
+        addDrawableChild(textFieldProxyUsername);
 
-        this.textFieldProxyPassword = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 + 44, 200, 20, Text.of("Enter Password"));
-        this.textFieldProxyPassword.setText("");
-        this.addDrawableChild(this.textFieldProxyPassword);
+        textFieldProxyPassword = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 + 44, 200, 20, Text.of("Enter Password"));
+        textFieldProxyPassword.setText("");
+        addDrawableChild(textFieldProxyPassword);
 
-        this.buttonAddProxy = ButtonWidget.builder(Text.of("Add Proxy"), b -> this.onAddProxyButtonPressed())
-                .dimensions(this.width / 2 - 100, this.height / 2 + 94, 200, 20).build();
-        this.addDrawableChild(this.buttonAddProxy);
+        buttonAddProxy = ButtonWidget.builder(Text.of("Add Proxy"), b -> onAddProxyButtonPressed())
+                .dimensions(width / 2 - 100, height / 2 + 94, 200, 20).build();
+        addDrawableChild(buttonAddProxy);
 
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> this.onButtonCancelPressed())
-                .dimensions(this.width / 2 - 100, this.height / 2 + 124, 200, 20).build());
+        addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> onButtonCancelPressed())
+                .dimensions(width / 2 - 100, height / 2 + 124, 200, 20).build());
     }
 
     private void onAddProxyButtonPressed() {
-        String ip = this.textFieldProxyIp.getText();
-        int port = Integer.parseInt(this.textFieldProxyPort.getText());
-        String username = this.textFieldProxyUsername.getText();
-        String password = this.textFieldProxyPassword.getText();
+        String ip = textFieldProxyIp.getText();
+        int port = Integer.parseInt(textFieldProxyPort.getText());
+        String username = textFieldProxyUsername.getText();
+        String password = textFieldProxyPassword.getText();
 
         Socks5Proxy newProxy = new Socks5Proxy(ip, port, username, password);
         Aoba.getInstance().proxyManager.addProxy(newProxy);
-        this.parent.refreshProxyList();
+        parent.refreshProxyList();
     }
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
     	super.render(drawContext, mouseX, mouseY, delta);
-        drawContext.drawCenteredTextWithShadow(this.textRenderer, "Add Proxy", this.width / 2, 20, 16777215);
+        drawContext.drawCenteredTextWithShadow(textRenderer, "Add Proxy", width / 2, 20, 16777215);
         
-        drawContext.drawTextWithShadow(textRenderer, "IP Address:", this.width / 2 - 100, height / 2 - 90, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Port:", this.width / 2 - 100, height / 2 - 50, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 10, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Password:", this.width / 2 - 100, height / 2 + 30, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "IP Address:", width / 2 - 100, height / 2 - 90, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "Port:", width / 2 - 100, height / 2 - 50, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "Username:", width / 2 - 100, height / 2 - 10, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "Password:", width / 2 - 100, height / 2 + 30, 16777215);
     }
 
     public void onButtonCancelPressed() {
-        client.setScreen(this.parent);
+        client.setScreen(parent);
     }
 }

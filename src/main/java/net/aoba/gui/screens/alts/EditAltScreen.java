@@ -20,7 +20,7 @@ import net.minecraft.text.Text;
 public class EditAltScreen extends Screen {
 
     private final AltScreen parent;
-    private Alt alt;
+    private final Alt alt;
 
     private ButtonWidget buttonSaveAlt;
     private CheckboxWidget toggleCracked;
@@ -29,44 +29,44 @@ public class EditAltScreen extends Screen {
 
     public EditAltScreen(AltScreen parentScreen, Alt alt) {
         super(Text.of("Alt Manager"));
-        this.parent = parentScreen;
+        parent = parentScreen;
         this.alt = alt;
     }
 
     public void init() {
         super.init();
-        this.textFieldAltUsername = new TextFieldWidget(textRenderer, this.width / 2 - 100, height / 2 - 36, 200, 20,
+        textFieldAltUsername = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 36, 200, 20,
                 Text.of("Enter Name"));
-        this.textFieldAltUsername.setText(this.alt == null ? "" : alt.getEmail());
-        this.addDrawableChild(this.textFieldAltUsername);
+        textFieldAltUsername.setText(alt == null ? "" : alt.getEmail());
+        addDrawableChild(textFieldAltUsername);
 
-        this.toggleCracked = CheckboxWidget.builder(Text.of("Cracked Account?"), textRenderer).pos(this.width / 2 - 100, height / 2 - 12).build();
-        this.addDrawableChild(this.toggleCracked);
+        toggleCracked = CheckboxWidget.builder(Text.of("Cracked Account?"), textRenderer).pos(width / 2 - 100, height / 2 - 12).build();
+        addDrawableChild(toggleCracked);
 
 
-        this.buttonSaveAlt = ButtonWidget.builder(Text.of("Save Alt"), b -> this.onButtonAltEditPressed())
-                .dimensions(this.width / 2 - 100, this.height / 2 + 24, 200, 20).build();
-        this.addDrawableChild(this.buttonSaveAlt);
-        this.addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> this.onButtonCancelPressed())
-                .dimensions(this.width / 2 - 100, this.height / 2 + 46, 200, 20).build());
+        buttonSaveAlt = ButtonWidget.builder(Text.of("Save Alt"), b -> onButtonAltEditPressed())
+                .dimensions(width / 2 - 100, height / 2 + 24, 200, 20).build();
+        addDrawableChild(buttonSaveAlt);
+        addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> onButtonCancelPressed())
+                .dimensions(width / 2 - 100, height / 2 + 46, 200, 20).build());
     }
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
         super.render(drawContext, mouseX, mouseY, partialTicks);
-        drawContext.drawCenteredTextWithShadow(textRenderer, "Edit Alternate Account", this.width / 2, 20, 16777215);
-        drawContext.drawTextWithShadow(textRenderer, "Username:", this.width / 2 - 100, height / 2 - 50, 16777215);
+        drawContext.drawCenteredTextWithShadow(textRenderer, "Edit Alternate Account", width / 2, 20, 16777215);
+        drawContext.drawTextWithShadow(textRenderer, "Username:", width / 2 - 100, height / 2 - 50, 16777215);
         
     }
 
     private void onButtonAltEditPressed() {
-        alt.setEmail(this.textFieldAltUsername.getText());
+        alt.setEmail(textFieldAltUsername.getText());
         Aoba.getInstance().altManager.saveAlts();
         alt.auth();
-        this.parent.refreshAltList();
+        parent.refreshAltList();
     }
 
     public void onButtonCancelPressed() {
-        client.setScreen(this.parent);
+        client.setScreen(parent);
     }
 }

@@ -42,12 +42,12 @@ public class Nametags extends Module {
     public Nametags() {
     	super("Nametags");
 
-        this.setCategory(Category.of("Combat"));
-        this.setDescription("Scales the nametags to be larger.");
+        setCategory(Category.of("Combat"));
+        setDescription("Scales the nametags to be larger.");
         
-        this.addSetting(scale);
-        this.addSetting(onlyPlayers);
-        this.addSetting(alwaysVisible);
+        addSetting(scale);
+        addSetting(onlyPlayers);
+        addSetting(alwaysVisible);
     }
 
     @Override
@@ -66,14 +66,14 @@ public class Nametags extends Module {
     }
 
     public double getNametagScale() {
-        return this.scale.getValue();
+        return scale.getValue();
     }
 
     public boolean getPlayersOnly() {
-        return this.onlyPlayers.getValue();
+        return onlyPlayers.getValue();
     }
 
     public boolean getAlwaysVisible() {
-        return this.alwaysVisible.getValue();
+        return alwaysVisible.getValue();
     }
 }

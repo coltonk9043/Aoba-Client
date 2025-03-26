@@ -31,35 +31,32 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 
 	private boolean isFocused = false;
 	private float focusAnimationProgress = 0.0f;
-	private Color errorBorderColor = new Color(255, 0, 0);
+	private final Color errorBorderColor = new Color(255, 0, 0);
 	private boolean isErrorState = false;
 
 	// Events
 	private Consumer<String> onTextChanged;
 
 	public TextBoxComponent() {
-		super();
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
-		this.text = "";
+        setMargin(new Margin(8f, 2f, 8f, 2f));
+		text = "";
 	}
 
 	public TextBoxComponent(String text) {
-		super();
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+        setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.text = text;
 	}
 
 	public TextBoxComponent(StringSetting stringSetting) {
-		super();
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+        setMargin(new Margin(8f, 2f, 8f, 2f));
 
 		this.stringSetting = stringSetting;
 		this.stringSetting.addOnUpdate(s -> {
-			this.text = s;
+			text = s;
 		});
 
-		this.header = stringSetting.displayName;
-		this.text = stringSetting.getValue();
+		header = stringSetting.displayName;
+		text = stringSetting.getValue();
 	}
 
 	@Override
@@ -78,10 +75,10 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 		MatrixStack matrixStack = drawContext.getMatrices();
 		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
-		float actualHeight = this.getActualSize().getHeight();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
+		float actualHeight = getActualSize().getHeight();
 
 		if (isFocused) {
 			focusAnimationProgress = Math.min(1.0f, focusAnimationProgress + partialTicks * 0.1f);
@@ -96,7 +93,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 			int visibleStringLength = (int) (actualWidth - 16 / 10);
 
 			int visibleStringIndex = Math.min(Math.max(0, text.length() - visibleStringLength - 1), text.length() - 1);
-			String visibleString = text.substring(visibleStringIndex, text.length());
+			String visibleString = text.substring(visibleStringIndex);
 			Render2D.drawString(drawContext, visibleString, actualX + 8, actualY + 8, 0xFFFFFF);
 		}
 	}
@@ -164,7 +161,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 	}
 
 	public void setErrorState(boolean isError) {
-		this.isErrorState = isError;
+		isErrorState = isError;
 	}
 
 	private void setListeningForKey(boolean state) {

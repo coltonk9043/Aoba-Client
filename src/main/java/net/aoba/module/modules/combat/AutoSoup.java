@@ -40,10 +40,10 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 	public AutoSoup() {
     	super("AutoSoup");
 
-        this.setCategory(Category.of("Combat"));
-		this.setDescription("Automatically consumes soup when health is low. (KitPVP)");
+        setCategory(Category.of("Combat"));
+		setDescription("Automatically consumes soup when health is low. (KitPVP)");
 
-		this.addSetting(health);
+		addSetting(health);
 	}
 
 	@Override

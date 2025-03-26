@@ -16,7 +16,7 @@ import net.minecraft.client.option.SimpleOption;
 public class GameOptionsMixin {
 	// TODO: Hacky but it works for now... like to implement a way to not use a
 	// dummy setting.
-	private static SimpleOption<Double> fullbrightOption = new SimpleOption<Double>("fullbright_gamma", null, null,
+	private static final SimpleOption<Double> fullbrightOption = new SimpleOption<Double>("fullbright_gamma", null, null,
 			null, null, 99999.9, null);
 
 	@Inject(at = { @At("HEAD") }, method = {

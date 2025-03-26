@@ -22,8 +22,7 @@ public class ImageComponent extends Component {
 	public Identifier image;
 
 	public ImageComponent() {
-		super();
-	}
+    }
 
 	public ImageComponent(Identifier image) {
 		this();
@@ -41,10 +40,10 @@ public class ImageComponent extends Component {
 			MatrixStack matrixStack = drawContext.getMatrices();
 			Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
-			float actualX = this.getActualSize().getX();
-			float actualY = this.getActualSize().getY();
-			float actualWidth = this.getActualSize().getWidth();
-			float actualHeight = this.getActualSize().getHeight();
+			float actualX = getActualSize().getX();
+			float actualY = getActualSize().getY();
+			float actualWidth = getActualSize().getWidth();
+			float actualHeight = getActualSize().getHeight();
 
 			Render2D.drawTexturedQuad(matrix4f, image, actualX, actualY, actualWidth, actualHeight,
 					GuiManager.foregroundColor.getValue());

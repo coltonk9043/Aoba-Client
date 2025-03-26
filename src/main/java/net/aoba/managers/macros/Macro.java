@@ -64,7 +64,7 @@ public class Macro {
 	public void setName(String name) {
 		this.name = name;
 		MinecraftClient MC = MinecraftClient.getInstance();
-		this.filePath = MC.runDirectory + File.separator + "aoba" + File.separator + "macros" + File.separator + name
+		filePath = MC.runDirectory + File.separator + "aoba" + File.separator + "macros" + File.separator + name
 				+ ".macro";
 	}
 }

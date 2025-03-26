@@ -22,9 +22,9 @@ public class CoordsHud extends HudWindow {
 
 	public CoordsHud(int x, int y) {
 		super("CoordsHud", x, y, 50, 24);
-		this.minWidth = 50f;
-		this.minHeight = 20f;
-		this.maxHeight = 20f;
+		minWidth = 50f;
+		minHeight = 20f;
+		maxHeight = 20f;
 		resizeMode = ResizeMode.None;
 	}
 

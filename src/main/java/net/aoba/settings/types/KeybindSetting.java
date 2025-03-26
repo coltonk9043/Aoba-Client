@@ -32,8 +32,7 @@ public class KeybindSetting extends Setting<Key> {
     
     public static class BUILDER extends Setting.BUILDER<BUILDER, KeybindSetting, Key> {
 		protected BUILDER() {
-			super();
-		}
+        }
 
 		@Override
 		public KeybindSetting build() {

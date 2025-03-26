@@ -56,20 +56,20 @@ public class TriggerBot extends Module implements TickListener {
 	public TriggerBot() {
 		super("Triggerbot");
 
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Attacks anything you are looking at.");
+		setCategory(Category.of("Combat"));
+		setDescription("Attacks anything you are looking at.");
 
-		this.addSetting(attackDelay);
-		this.addSetting(radius);
-		this.addSetting(targetAnimals);
-		this.addSetting(targetMonsters);
-		this.addSetting(targetPlayers);
-		this.addSetting(targetFriends);
-		this.addSetting(randomness);
+		addSetting(attackDelay);
+		addSetting(radius);
+		addSetting(targetAnimals);
+		addSetting(targetMonsters);
+		addSetting(targetPlayers);
+		addSetting(targetFriends);
+		addSetting(randomness);
 
-		this.setDetectable(AntiCheat.Grim);
+		setDetectable(AntiCheat.Grim);
 
-		this.lastAttackTime = 0L;
+		lastAttackTime = 0L;
 	}
 
 	@Override
@@ -104,17 +104,17 @@ public class TriggerBot extends Module implements TickListener {
 					return;
 				}
 
-				if (ent instanceof AnimalEntity && !this.targetAnimals.getValue())
+				if (ent instanceof AnimalEntity && !targetAnimals.getValue())
 					return;
-				if (ent instanceof PlayerEntity && !this.targetPlayers.getValue())
+				if (ent instanceof PlayerEntity && !targetPlayers.getValue())
 					return;
-				if (ent instanceof Monster && !this.targetMonsters.getValue())
+				if (ent instanceof Monster && !targetMonsters.getValue())
 					return;
 
-				if (System.currentTimeMillis() - this.lastAttackTime >= attackDelay.getValue()) {
+				if (System.currentTimeMillis() - lastAttackTime >= attackDelay.getValue()) {
 					MC.interactionManager.attackEntity(MC.player, entityResult.getEntity());
 					MC.player.swingHand(Hand.MAIN_HAND);
-					this.lastAttackTime = System.currentTimeMillis();
+					lastAttackTime = System.currentTimeMillis();
 				}
 			}
 		}

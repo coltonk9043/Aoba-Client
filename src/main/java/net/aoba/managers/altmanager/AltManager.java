@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -41,14 +42,14 @@ import static net.aoba.AobaClient.MC;
  * Class that manages all of the Alt accounts in Aoba.
  */
 public class AltManager {
-	private ArrayList<Alt> alts = new ArrayList<Alt>();
-	private String encryptKey;
+	private final ArrayList<Alt> alts = new ArrayList<Alt>();
+	private final String encryptKey;
 
 	/**
 	 * Constructor for the Alt Manager system.
 	 */
 	public AltManager() {
-		this.encryptKey = generateEncryptionKey();
+		encryptKey = generateEncryptionKey();
 		readAlts();
 	}
 
@@ -134,7 +135,7 @@ public class AltManager {
 		try {
 			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 			cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(encryptKey.getBytes(), "AES"));
-			return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+			return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -181,7 +182,7 @@ public class AltManager {
 	 * @return The Alt list.
 	 */
 	public ArrayList<Alt> getAlts() {
-		return this.alts;
+		return alts;
 	}
 
 	/**

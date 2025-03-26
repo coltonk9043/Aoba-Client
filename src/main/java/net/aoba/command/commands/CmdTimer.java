@@ -25,7 +25,7 @@ public class CmdTimer extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Timer module = (Timer) Aoba.getInstance().moduleManager.timer;
+		Timer module = Aoba.getInstance().moduleManager.timer;
 
 		switch (parameters[0]) {
 		case "toggle":
@@ -43,7 +43,7 @@ public class CmdTimer extends Command {
 		case "multiplier":
 			try {
 				float param1 = Float.parseFloat(parameters[1]);
-				Timer timer = (Timer) Aoba.getInstance().moduleManager.timer;
+				Timer timer = Aoba.getInstance().moduleManager.timer;
 				timer.setMultipler(param1);
 				CommandManager.sendChatMessage("Timer multiplier set to " + param1);
 

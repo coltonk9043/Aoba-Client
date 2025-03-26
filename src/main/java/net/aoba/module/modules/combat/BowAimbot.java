@@ -58,13 +58,13 @@ public class BowAimbot extends Module implements TickListener {
 	public BowAimbot() {
 		super("BowAimbot");
 
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Calculates the location the crosshair must be to hit an arrow shot.");
+		setCategory(Category.of("Combat"));
+		setDescription("Calculates the location the crosshair must be to hit an arrow shot.");
 
-		this.addSetting(targetAnimals);
-		this.addSetting(targetPlayers);
-		this.addSetting(frequency);
-		this.addSetting(predictMovement);
+		addSetting(targetAnimals);
+		addSetting(targetPlayers);
+		addSetting(frequency);
+		addSetting(predictMovement);
 	}
 
 	@Override
@@ -121,17 +121,17 @@ public class BowAimbot extends Module implements TickListener {
 			Entity temp = null;
 			if (targetAnimals.getValue() && targetPlayers.getValue()) {
 				if (filterEntities(Stream.of(temp)) == null)
-					temp = filterEntities(StreamSupport.stream(MC.world.getEntities().spliterator(), true));
+					temp = filterEntities(StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true));
 			}
 
 			if (!targetAnimals.getValue() && targetPlayers.getValue()) {
-				if (filterPlayers(Stream.of((AbstractClientPlayerEntity) temp)) == null)
-					temp = filterPlayers(StreamSupport.stream(MC.world.getPlayers().spliterator(), true));
+				if (filterPlayers(Stream.of((PlayerEntity) temp)) == null)
+					temp = filterPlayers(StreamSupport.stream(Aoba.getInstance().entityManager.getPlayers().spliterator(), true));
 			}
 
 			if (targetAnimals.getValue() && !targetPlayers.getValue()) {
 				if (filterEntities(Stream.of(temp)) == null)
-					temp = filterEntities(StreamSupport.stream(MC.world.getEntities().spliterator(), true));
+					temp = filterEntities(StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true));
 				if (temp instanceof PlayerEntity)
 					temp = null;
 			}
@@ -168,8 +168,8 @@ public class BowAimbot extends Module implements TickListener {
 		return stream.min(Priority.ANGLE_DIST.comparator).orElse(null);
 	}
 
-	private Entity filterPlayers(Stream<AbstractClientPlayerEntity> s) {
-		Stream<AbstractClientPlayerEntity> stream = s.filter(EntityUtils.IS_ATTACKABLE);
+	private Entity filterPlayers(Stream<PlayerEntity> s) {
+		Stream<PlayerEntity> stream = s.filter(EntityUtils.IS_ATTACKABLE);
 		return stream.min(Priority.ANGLE_DIST.comparator).orElse(null);
 	}
 
@@ -180,7 +180,7 @@ public class BowAimbot extends Module implements TickListener {
 		private final String name;
 		private final Comparator<Entity> comparator;
 
-		private Priority(String name, ToDoubleFunction<Entity> keyExtractor) {
+		Priority(String name, ToDoubleFunction<Entity> keyExtractor) {
 			this.name = name;
 			comparator = Comparator.comparingDouble(keyExtractor);
 		}

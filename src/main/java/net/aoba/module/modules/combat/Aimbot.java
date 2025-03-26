@@ -69,19 +69,19 @@ public class Aimbot extends Module implements TickListener {
 
 	public Aimbot() {
 		super("Aimbot");
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Locks your crosshair towards a desired player or entity.");
+		setCategory(Category.of("Combat"));
+		setDescription("Locks your crosshair towards a desired player or entity.");
 
-		this.addSetting(targetAnimals);
-		this.addSetting(targetPlayers);
-		this.addSetting(targetFriends);
-		this.addSetting(frequency);
-		this.addSetting(radius);
-		this.addSetting(rotationMode);
-		this.addSetting(maxRotation);
-		this.addSetting(yawRandomness);
-		this.addSetting(pitchRandomness);
-		this.addSetting(fakeRotation);
+		addSetting(targetAnimals);
+		addSetting(targetPlayers);
+		addSetting(targetFriends);
+		addSetting(frequency);
+		addSetting(radius);
+		addSetting(rotationMode);
+		addSetting(maxRotation);
+		addSetting(yawRandomness);
+		addSetting(pitchRandomness);
+		addSetting(fakeRotation);
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class Aimbot extends Module implements TickListener {
 			LivingEntity entityFound = null;
 
 			// Check for players within range of the player.
-			if (this.targetPlayers.getValue()) {
+			if (targetPlayers.getValue()) {
 				for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
 					// Skip player if targetFriends is false and the FriendsList contains the
 					// entity.
@@ -125,7 +125,7 @@ public class Aimbot extends Module implements TickListener {
 						continue;
 
 					if (entityFound == null)
-						entityFound = (LivingEntity) entity;
+						entityFound = entity;
 					else {
 						double entityDistanceToPlayer = entity.squaredDistanceTo(MC.player);
 						if (entityDistanceToPlayer < entityFound.squaredDistanceTo(MC.player)
@@ -136,8 +136,8 @@ public class Aimbot extends Module implements TickListener {
 				}
 			}
 
-			if (this.targetAnimals.getValue()) {
-				for (Entity entity : MC.world.getEntities()) {
+			if (targetAnimals.getValue()) {
+				for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 					if (entity instanceof LivingEntity) {
 						if (entity instanceof ClientPlayerEntity)
 							continue;

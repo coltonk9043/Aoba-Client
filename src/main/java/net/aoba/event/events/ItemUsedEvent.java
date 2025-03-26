@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 
 public class ItemUsedEvent {
 	public static class Pre extends AbstractEvent {
-		private ItemStack itemStack;
+		private final ItemStack itemStack;
 
 		public Pre(ItemStack itemStack) {
 			this.itemStack = itemStack;
@@ -33,7 +33,7 @@ public class ItemUsedEvent {
 	}
 
 	public static class Post extends AbstractEvent {
-		private ItemStack itemStack;
+		private final ItemStack itemStack;
 
 		public Post(ItemStack itemStack) {
 			this.itemStack = itemStack;

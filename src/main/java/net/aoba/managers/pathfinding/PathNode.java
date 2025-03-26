@@ -37,7 +37,7 @@ public class PathNode {
      */
     public PathNode(int x, int y, int z) {
     	MinecraftClient MC = MinecraftClient.getInstance();
-        this.pos = new BlockPos(x, y, z);
+        pos = new BlockPos(x, y, z);
         FluidState fluidState = MC.world.getFluidState(pos);
         isInWater = fluidState.isIn(FluidTags.WATER);
         isInLava = fluidState.isIn(FluidTags.LAVA);
@@ -132,11 +132,10 @@ public class PathNode {
         if (this == obj)
             return true;
 
-        if (obj instanceof PathNode) {
-            PathNode path = (PathNode) obj;
-            return path.pos.getX() == this.pos.getX() &&
-                    path.pos.getY() == this.pos.getY() &&
-                    path.pos.getZ() == this.pos.getZ();
+        if (obj instanceof PathNode path) {
+            return path.pos.getX() == pos.getX() &&
+                    path.pos.getY() == pos.getY() &&
+                    path.pos.getZ() == pos.getZ();
         } else {
             return false;
         }

@@ -24,10 +24,10 @@ public class AutoWalk extends Module implements TickListener {
 	public AutoWalk() {
 		super("AutoWalk");
 
-		this.setCategory(Category.of("Misc"));
-		this.setDescription("Automatically forward walks for you.");
+		setCategory(Category.of("Misc"));
+		setDescription("Automatically forward walks for you.");
 
-		this.addSetting(automaticJump);
+		addSetting(automaticJump);
 	}
 
 	@Override

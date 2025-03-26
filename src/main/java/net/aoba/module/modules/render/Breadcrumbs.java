@@ -35,16 +35,16 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 
 	private final float distanceThreshold = 1.0f; // Minimum distance to record a new position
 	private float currentTick = 0;
-	private float timer = 10;
+	private final float timer = 10;
 	private final LinkedList<Vec3d> positions = new LinkedList<>();
 	private final int maxPositions = 1000;
 
 	public Breadcrumbs() {
 		super("Breadcrumbs");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Shows breadcrumbs of where you last stepped;");
-		this.addSetting(color);
-		this.addSetting(lineThickness);
+		setCategory(Category.of("Render"));
+		setDescription("Shows breadcrumbs of where you last stepped;");
+		addSetting(color);
+		addSetting(lineThickness);
 	}
 
 	@Override

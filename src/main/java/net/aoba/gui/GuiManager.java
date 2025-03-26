@@ -126,7 +126,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public static RainbowColor rainbowColor = new RainbowColor();
 	public static RandomColor randomColor = new RandomColor();
 
-	private Framebuffer guiFrameBuffer;
+	private final Framebuffer guiFrameBuffer;
 
 	public ModuleSelectorHud moduleSelector;
 	public ArmorHud armorHud;
@@ -282,8 +282,8 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		if (clickGuiButton.getValue().getCode() == event.GetKey() && MC.currentScreen == null) {
-			setClickGuiOpen(!this.clickGuiOpen);
-			this.toggleMouse();
+			setClickGuiOpen(!clickGuiOpen);
+			toggleMouse();
 		}
 	}
 
@@ -293,7 +293,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			hud.activated.silentSetValue(true);
 			hudPane.addWindow(hud);
 		} else {
-			this.pinnedHuds.remove(hud.getClass());
+			pinnedHuds.remove(hud.getClass());
 			hud.activated.silentSetValue(false);
 			hudPane.removeWindow(hud);
 		}
@@ -309,7 +309,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		/**
 		 * Moves the selected Tab to where the user moves their mouse.
 		 */
-		if (this.clickGuiOpen) {
+		if (clickGuiOpen) {
 			clickGuiNavBar.update();
 		}
 
@@ -320,9 +320,9 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			hud.update();
 		}
 
-		if (this.esc.isPressed() && this.clickGuiOpen) {
-			this.clickGuiOpen = false;
-			this.toggleMouse();
+		if (esc.isPressed() && clickGuiOpen) {
+			clickGuiOpen = false;
+			toggleMouse();
 		}
 	}
 
@@ -341,35 +341,35 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		int guiScale = MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(), MC.forcesUnicodeFont());
 		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
 
-		net.minecraft.client.util.Window window = (net.minecraft.client.util.Window) MC.getWindow();
+		net.minecraft.client.util.Window window = MC.getWindow();
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 
 		/**
 		 * Render ClickGUI and Sidebar
 		 */
-		if (this.clickGuiOpen) {
+		if (clickGuiOpen) {
 			Render2D.drawBox(matrix, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
 			clickGuiNavBar.draw(drawContext, tickDelta);
 		}
 
 		// Render HUDS
-		if (!this.clickGuiOpen) {
+		if (!clickGuiOpen) {
 			for (Window hud : pinnedHuds.values()) {
 				hud.draw(drawContext, tickDelta);
 			}
 		}
 
 		// Draw Tooltip on top of all UI elements
-		if (tooltip != null && GuiManager.enableTooltips.getValue()) {
+		if (tooltip != null && enableTooltips.getValue()) {
 			int mouseX = (int) MC.mouse.getX();
 			int mouseY = (int) MC.mouse.getY();
 			int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
 			int tooltipHeight = 10;
 
 			Render2D.drawRoundedBox(matrixStack.peek().getPositionMatrix(), mouseX + 12, mouseY + 12,
-					(tooltipWidth + 4) * 2, (tooltipHeight + 4) * 2, GuiManager.roundingRadius.getValue(),
-					GuiManager.backgroundColor.getValue().getAsSolid());
-			Render2D.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18, GuiManager.foregroundColor.getValue());
+					(tooltipWidth + 4) * 2, (tooltipHeight + 4) * 2, roundingRadius.getValue(),
+					backgroundColor.getValue().getAsSolid());
+			Render2D.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18, foregroundColor.getValue());
 		}
 
 		matrixStack.pop();
@@ -382,11 +382,11 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	 * @return State of the Click GUI.
 	 */
 	public boolean isClickGuiOpen() {
-		return this.clickGuiOpen;
+		return clickGuiOpen;
 	}
 
 	public void setClickGuiOpen(boolean state) {
-		this.clickGuiOpen = state;
+		clickGuiOpen = state;
 		setTooltip(null);
 	}
 

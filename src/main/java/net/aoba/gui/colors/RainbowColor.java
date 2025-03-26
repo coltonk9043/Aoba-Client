@@ -12,11 +12,10 @@ import net.aoba.event.events.TickEvent;
 
 public class RainbowColor extends AnimatedColor  {
     public RainbowColor() {
-        super();
     }
 
     @Override
     public void onTick(TickEvent.Post event) {
-    	this.setHue(((this.getHue() + 1f) % 360));
+    	setHue(((getHue() + 1f) % 360));
     }
 }

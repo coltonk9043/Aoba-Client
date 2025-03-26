@@ -51,18 +51,18 @@ public class Noclip extends Module implements TickListener {
 
 	public Noclip() {
 		super("Noclip");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Allows the player to clip through blocks (Only work clientside).");
+		setCategory(Category.of("Movement"));
+		setDescription("Allows the player to clip through blocks (Only work clientside).");
 
-		this.addSetting(flySpeed);
-		this.addSetting(speedMultiplier);
-		this.addSetting(onGround);
-		this.addSetting(packetDistanceThreshold);
-		this.addSetting(packetCountOffset);
-		this.addSetting(yawOffset);
-		this.addSetting(maxPackets);
+		addSetting(flySpeed);
+		addSetting(speedMultiplier);
+		addSetting(onGround);
+		addSetting(packetDistanceThreshold);
+		addSetting(packetCountOffset);
+		addSetting(yawOffset);
+		addSetting(maxPackets);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,
@@ -75,11 +75,11 @@ public class Noclip extends Module implements TickListener {
 	}
 
 	public void setSpeed(float speed) {
-		this.flySpeed.setValue(speed);
+		flySpeed.setValue(speed);
 	}
 
 	public float getSpeed() {
-		return this.flySpeed.getValue();
+		return flySpeed.getValue();
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class Noclip extends Module implements TickListener {
 	public void onTick(Pre event) {
 		ClientPlayerEntity player = MC.player;
 
-		float speed = this.flySpeed.getDefaultValue();
+		float speed = flySpeed.getDefaultValue();
 
 		if (MC.options.sprintKey.isPressed()) {
 			speed *= speedMultiplier.getValue();

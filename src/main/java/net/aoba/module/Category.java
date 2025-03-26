@@ -21,7 +21,7 @@ public class Category {
 
 	private Category(String name) {
 		this.name = name;
-		this.icon = Identifier.of("aoba", "textures/" + name.toLowerCase() + ".png");
+		icon = Identifier.of("aoba", "textures/" + name.toLowerCase() + ".png");
 	}
 
 	public Category(String name, Identifier icon) {

@@ -25,7 +25,7 @@ public class CmdFly extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Fly module = (Fly) Aoba.getInstance().moduleManager.fly;
+		Fly module = Aoba.getInstance().moduleManager.fly;
 		switch (parameters[0]) {
 		case "speed":
 			try {

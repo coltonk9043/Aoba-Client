@@ -34,12 +34,12 @@ public class ClickTP extends Module implements MouseClickListener {
 
 	public ClickTP() {
 		super("ClickTP");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Allows the user to teleport where they are looking.");
+		setCategory(Category.of("Movement"));
+		setDescription("Allows the user to teleport where they are looking.");
 
-		this.addSetting(distance);
+		addSetting(distance);
 
-		this.setDetectable(
+		setDetectable(
 				AntiCheat.NoCheatPlus,
 				AntiCheat.Vulcan,
 				AntiCheat.AdvancedAntiCheat,

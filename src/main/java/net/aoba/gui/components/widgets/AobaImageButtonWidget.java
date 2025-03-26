@@ -86,6 +86,5 @@ public class AobaImageButtonWidget extends PressableWidget {
 	protected void appendClickableNarrations(NarrationMessageBuilder builder) {
 		// For brevity, we'll just skip this for now - if you want to add narration to
 		// your widget, you can do so here.
-		return;
-	}
+    }
 }

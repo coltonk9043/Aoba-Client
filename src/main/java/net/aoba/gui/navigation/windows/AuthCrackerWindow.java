@@ -27,13 +27,13 @@ import net.aoba.settings.types.FloatSetting;
 import net.minecraft.client.MinecraftClient;
 
 public class AuthCrackerWindow extends Window {
-	private ButtonComponent start;
-	private StringComponent startButtonText;
+	private final ButtonComponent start;
+	private final StringComponent startButtonText;
 
-	private FloatSetting delay = FloatSetting.builder().id("authcracker_delay").displayName("Delay").defaultValue(100f)
+	private final FloatSetting delay = FloatSetting.builder().id("authcracker_delay").displayName("Delay").defaultValue(100f)
 			.minValue(50f).maxValue(50000f).build();
 
-	private AuthCracker authCracker;
+	private final AuthCracker authCracker;
 
 	Runnable startRunnable;
 	Runnable endRunnable;
@@ -41,7 +41,7 @@ public class AuthCrackerWindow extends Window {
 	public AuthCrackerWindow() {
 		super("Auth Cracker", 185, 150);
 
-		this.minWidth = 350f;
+		minWidth = 350f;
 		StackPanelComponent stackPanel = new StackPanelComponent();
 
 		stackPanel.addChild(new StringComponent("AuthCracker"));
@@ -56,7 +56,7 @@ public class AuthCrackerWindow extends Window {
 
 		authCracker = new AuthCracker(delay);
 
-		this.startRunnable = new Runnable() {
+		startRunnable = new Runnable() {
 			@Override
 			public void run() {
 				authCracker.Start();
@@ -65,7 +65,7 @@ public class AuthCrackerWindow extends Window {
 			}
 		};
 
-		this.endRunnable = new Runnable() {
+		endRunnable = new Runnable() {
 			@Override
 			public void run() {
 				authCracker.Stop();
@@ -89,8 +89,8 @@ class AuthCracker {
 
 	private Thread curThread;
 	private boolean shouldContinue = true;
-	private MinecraftClient mc = MinecraftClient.getInstance();
-	private FloatSetting delay;
+	private final MinecraftClient mc = MinecraftClient.getInstance();
+	private final FloatSetting delay;
 
 	public AuthCracker(FloatSetting delay) {
 		this.delay = delay;
@@ -147,6 +147,6 @@ class AuthCracker {
 	}
 
 	public void Stop() {
-		this.shouldContinue = false;
+		shouldContinue = false;
 	}
 }

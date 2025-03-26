@@ -42,13 +42,13 @@ public class ColorSetting extends Setting<Color> {
         mode = color;
         switch (mode) {
             case Solid:
-                this.setValue(default_value);
+                setValue(default_value);
                 break;
             case Rainbow:
-                this.setValue(GuiManager.rainbowColor);
+                setValue(GuiManager.rainbowColor);
                 break;
             case Random:
-                this.setValue(GuiManager.randomColor);
+                setValue(GuiManager.randomColor);
                 break;
         }
     }
@@ -59,8 +59,7 @@ public class ColorSetting extends Setting<Color> {
     
     public static class BUILDER extends Setting.BUILDER<BUILDER, ColorSetting, Color> {
 		protected BUILDER() {
-			super();
-		}
+        }
 		
 		@Override
 		public ColorSetting build() {

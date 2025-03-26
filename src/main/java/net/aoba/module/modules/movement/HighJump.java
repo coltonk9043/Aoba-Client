@@ -21,12 +21,12 @@ public class HighJump extends Module {
 
 	public HighJump() {
 		super("HighJump");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Allows the player to jump super high!");
+		setCategory(Category.of("Movement"));
+		setDescription("Allows the player to jump super high!");
 
-		this.addSetting(multiplier);
+		addSetting(multiplier);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,

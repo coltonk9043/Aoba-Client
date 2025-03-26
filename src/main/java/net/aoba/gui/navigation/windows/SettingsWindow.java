@@ -30,8 +30,8 @@ import net.aoba.managers.SettingManager;
  * toggle-able settings.
  */
 public class SettingsWindow extends Window {
-	private TextBoxComponent fileName;
-	private ListComponent configNames;
+	private final TextBoxComponent fileName;
+	private final ListComponent configNames;
 
 	public SettingsWindow() {
 		super("Settings", 50, 770);

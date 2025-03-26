@@ -17,8 +17,8 @@ public class DiscordRPCModule extends Module {
     public DiscordRPCModule() {
         super("DiscordRPC");
 
-        this.setCategory(Category.of("Misc"));
-        this.setDescription("Toggles Discord RPC On and Off");
+        setCategory(Category.of("Misc"));
+        setDescription("Toggles Discord RPC On and Off");
     }
 
     @Override

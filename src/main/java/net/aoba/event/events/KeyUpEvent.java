@@ -21,8 +21,7 @@ public class KeyUpEvent extends AbstractEvent {
 	private final int modifiers;
 
 	public KeyUpEvent(long window, int key, int scancode, int action, int modifiers) {
-		super();
-		this.window = window;
+        this.window = window;
 		this.key = key;
 		this.scancode = scancode;
 		this.action = action;

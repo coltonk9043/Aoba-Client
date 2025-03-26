@@ -17,17 +17,17 @@ public class Reach extends Module {
 
 	private final FloatSetting distance = FloatSetting.builder().id("reach_distance").displayName("Distance")
 			.description("Distance, in blocks, that you can reach.").defaultValue(5f).minValue(1f).maxValue(128f)
-			.step(1f).build();;
+			.step(1f).build();
 
-	public Reach() {
+    public Reach() {
 		super("Reach");
 
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Allows you to reach further.");
+		setCategory(Category.of("Combat"));
+		setDescription("Allows you to reach further.");
 
-		this.addSetting(distance);
+		addSetting(distance);
 
-		this.setDetectable(
+		setDetectable(
 				AntiCheat.NoCheatPlus,
 				AntiCheat.AdvancedAntiCheat,
 				AntiCheat.Grim,
@@ -55,6 +55,6 @@ public class Reach extends Module {
 	}
 
 	public void setReachLength(float reach) {
-		this.distance.setValue(reach);
+		distance.setValue(reach);
 	}
 }

@@ -23,18 +23,16 @@ public class MouseClickEvent extends AbstractEvent {
 	public final int mods;
 
 	public MouseClickEvent(double mouseX, double mouseY, int button, int action, int mods) {
-		super();
-		this.mouseX = mouseX;
+        this.mouseX = mouseX;
 		this.mouseY = mouseY;
 		this.button = button;
 		this.action = action;
-		this.buttonNumber = -1;
+		buttonNumber = -1;
 		this.mods = mods;
 	}
 
 	public MouseClickEvent(double mouseX, double mouseY, int button, int action, int mods, int buttonNumber) {
-		super();
-		this.mouseX = mouseX;
+        this.mouseX = mouseX;
 		this.mouseY = mouseY;
 		this.button = button;
 		this.action = action;
@@ -48,7 +46,7 @@ public class MouseClickEvent extends AbstractEvent {
 			MouseClickListener mouseClickListener = (MouseClickListener) listener;
 			mouseClickListener.onMouseClick(this);
 
-			if (this.isCancelled)
+			if (isCancelled)
 				break;
 		}
 	}

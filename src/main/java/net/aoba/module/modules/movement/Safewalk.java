@@ -20,8 +20,8 @@ public class Safewalk extends Module implements TickListener {
 
 	public Safewalk() {
 		super("Safewalk");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Permanently keeps player in sneaking mode.");
+		setCategory(Category.of("Movement"));
+		setDescription("Permanently keeps player in sneaking mode.");
 	}
 
 	@Override
@@ -55,32 +55,34 @@ public class Safewalk extends Module implements TickListener {
 					x += increment;
 				}
 			}
-			for (; z != 0.0D;) {
-				if (z < increment && z >= -increment) {
-					z = 0.0D;
-				} else if (z > 0.0D) {
-					z -= increment;
-				} else {
-					z += increment;
-				}
-			}
-			for (; x != 0.0D && z != 0.0D;) {
-				if (x < increment && x >= -increment) {
-					x = 0.0D;
-				} else if (x > 0.0D) {
-					x -= increment;
-				} else {
-					x += increment;
-				}
-				if (z < increment && z >= -increment) {
-					z = 0.0D;
-				} else if (z > 0.0D) {
-					z -= increment;
-				} else {
-					z += increment;
-				}
-			}
-		}
+            while (z != 0.0D)
+            {
+                if (z < increment && z >= -increment) {
+                    z = 0.0D;
+                } else if (z > 0.0D) {
+                    z -= increment;
+                } else {
+                    z += increment;
+                }
+            }
+            while (x != 0.0D && z != 0.0D)
+            {
+                if (x < increment && x >= -increment) {
+                    x = 0.0D;
+                } else if (x > 0.0D) {
+                    x -= increment;
+                } else {
+                    x += increment;
+                }
+                if (z < increment && z >= -increment) {
+                    z = 0.0D;
+                } else if (z > 0.0D) {
+                    z -= increment;
+                } else {
+                    z += increment;
+                }
+            }
+        }
 		MC.player.setVelocity(new Vec3d(x, y, z));
 	}
 

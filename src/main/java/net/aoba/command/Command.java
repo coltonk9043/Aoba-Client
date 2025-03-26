@@ -32,7 +32,7 @@ public abstract class Command {
      * @return The name of the command.
      */
     public String getName() {
-        return this.name;
+        return name;
     }
 
     /**
@@ -41,7 +41,7 @@ public abstract class Command {
      * @return The description of the command.
      */
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     /**
@@ -50,7 +50,7 @@ public abstract class Command {
      * @return The syntax of the command.
      */
     public String getSyntax() {
-        return this.syntax;
+        return syntax;
     }
 
     /**

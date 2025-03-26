@@ -22,8 +22,7 @@ public class StackPanelComponent extends Component {
 	protected StackType stackType = StackType.Vertical;
 
 	public StackPanelComponent() {
-		super();
-	}
+    }
 
 	@Override
 	public void measure(Size availableSize) {
@@ -44,7 +43,7 @@ public class StackPanelComponent extends Component {
 
 	@Override
 	public void arrange(Rectangle finalSize) {
-		if (this.parent != null) {
+		if (parent != null) {
 			setActualSize(finalSize);
 		}
 

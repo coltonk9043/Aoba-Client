@@ -11,6 +11,5 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntityMixin 
 
     @Inject(method = "isSpectator()Z", at = @At("HEAD"), cancellable = true)
     public void onIsSpectator(CallbackInfoReturnable<Boolean> cir) {
-        return;
     }
 }

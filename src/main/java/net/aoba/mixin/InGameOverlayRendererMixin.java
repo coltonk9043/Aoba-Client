@@ -18,7 +18,7 @@ public abstract class InGameOverlayRendererMixin {
 	@Inject(method = "renderFireOverlay(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V", at = @At("HEAD"), cancellable = true)
 	private static void onRenderFireOverlay(MatrixStack matrices, VertexConsumerProvider vertexConsumers,
 			CallbackInfo info) {
-		NoRender norender = (NoRender) Aoba.getInstance().moduleManager.norender;
+		NoRender norender = Aoba.getInstance().moduleManager.norender;
 
 		if (norender.state.getValue() && norender.getNoFireOverlay())
 			info.cancel();

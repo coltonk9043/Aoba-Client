@@ -19,8 +19,8 @@ public class FocusFps extends Module {
 
 	public FocusFps() {
 		super("FocusFPS");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Limits the FPS of the game when it is not focused.");
+		setCategory(Category.of("Render"));
+		setDescription("Limits the FPS of the game when it is not focused.");
 	}
 
 	@Override
@@ -39,6 +39,6 @@ public class FocusFps extends Module {
 	}
 
 	public Float getFps() {
-		return this.fps.getValue();
+		return fps.getValue();
 	}
 }

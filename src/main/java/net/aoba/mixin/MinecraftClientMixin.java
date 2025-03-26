@@ -73,7 +73,7 @@ public abstract class MinecraftClientMixin {
 
 	@Inject(at = @At("HEAD"), method = "tick()V")
 	public void onPreTick(CallbackInfo info) {
-		if (this.world != null && player != null) {
+		if (world != null && player != null) {
 			TickEvent.Pre updateEvent = new TickEvent.Pre();
 			Aoba.getInstance().eventManager.Fire(updateEvent);
 		}
@@ -81,7 +81,7 @@ public abstract class MinecraftClientMixin {
 
 	@Inject(at = @At("TAIL"), method = "tick()V")
 	public void onPostTick(CallbackInfo info) {
-		if (this.world != null && player != null) {
+		if (world != null && player != null) {
 			TickEvent.Post updateEvent = new TickEvent.Post();
 			Aoba.getInstance().eventManager.Fire(updateEvent);
 		}

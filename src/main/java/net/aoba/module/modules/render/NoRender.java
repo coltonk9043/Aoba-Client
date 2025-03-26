@@ -49,18 +49,18 @@ public class NoRender extends Module {
 
 	public NoRender() {
 		super("NoRender");
-		this.setCategory(Category.of("Render"));
-		this.setDescription("Stops certain things from rendering.");
+		setCategory(Category.of("Render"));
+		setDescription("Stops certain things from rendering.");
 
-		this.addSetting(noEatParticles);
-		this.addSetting(noTotemAnimation);
-		this.addSetting(noVignette);
-		this.addSetting(noPumpkinOverlay);
-		this.addSetting(noFireOverlay);
-		this.addSetting(noPortalOverlay);
-		this.addSetting(noPowderSnowOverlay);
-		this.addSetting(noLiquidOverlay);
-		this.addSetting(noCrosshair);
+		addSetting(noEatParticles);
+		addSetting(noTotemAnimation);
+		addSetting(noVignette);
+		addSetting(noPumpkinOverlay);
+		addSetting(noFireOverlay);
+		addSetting(noPortalOverlay);
+		addSetting(noPowderSnowOverlay);
+		addSetting(noLiquidOverlay);
+		addSetting(noCrosshair);
 	}
 
 	@Override
@@ -79,38 +79,38 @@ public class NoRender extends Module {
 	}
 
 	public boolean getNoEatParticles() {
-		return this.noEatParticles.getValue();
+		return noEatParticles.getValue();
 	}
 
 	public boolean getNoTotemAnimation() {
-		return this.noTotemAnimation.getValue();
+		return noTotemAnimation.getValue();
 	}
 
 	public boolean getNoVignette() {
-		return this.noVignette.getValue();
+		return noVignette.getValue();
 	}
 
 	public boolean getNoPumpkinOverlay() {
-		return this.noPumpkinOverlay.getValue();
+		return noPumpkinOverlay.getValue();
 	}
 
 	public boolean getNoFireOverlay() {
-		return this.noFireOverlay.getValue();
+		return noFireOverlay.getValue();
 	}
 
 	public boolean getNoPortalOverlay() {
-		return this.noPumpkinOverlay.getValue();
+		return noPumpkinOverlay.getValue();
 	}
 
 	public boolean getNoPowderSnowOverlay() {
-		return this.noPowderSnowOverlay.getValue();
+		return noPowderSnowOverlay.getValue();
 	}
 
 	public boolean getNoLiquidOverlay() {
-		return this.noLiquidOverlay.getValue();
+		return noLiquidOverlay.getValue();
 	}
 
 	public boolean getNoCrosshair() {
-		return this.noCrosshair.getValue();
+		return noCrosshair.getValue();
 	}
 }

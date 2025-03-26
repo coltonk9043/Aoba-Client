@@ -19,15 +19,14 @@ import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 
 public class HudComponent extends Component {
-	private String text;
-	private HudWindow hud;
+	private final String text;
+	private final HudWindow hud;
 
 	public HudComponent(String text, HudWindow hud) {
-		super();
-		this.text = text;
+        this.text = text;
 		this.hud = hud;
 
-		this.setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	@Override
@@ -44,11 +43,11 @@ public class HudComponent extends Component {
 	public void draw(DrawContext drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
-		float actualX = this.getActualSize().getX();
-		float actualY = this.getActualSize().getY();
-		float actualWidth = this.getActualSize().getWidth();
+		float actualX = getActualSize().getX();
+		float actualY = getActualSize().getY();
+		float actualWidth = getActualSize().getWidth();
 
-		Render2D.drawString(drawContext, this.text, actualX, actualY + 8, 0xFFFFFF);
+		Render2D.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
 
 		if (hud.activated.getValue()) {
 			Render2D.drawString(drawContext, "-", actualX + actualWidth - 12, actualY + 8, 0xFF0000);
@@ -62,7 +61,7 @@ public class HudComponent extends Component {
 		super.onMouseClick(event);
 
 		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-			if (this.hovered) {
+			if (hovered) {
 				boolean visibility = hud.activated.getValue();
 				Aoba.getInstance().guiManager.setHudActive(hud, !visibility);
 			}

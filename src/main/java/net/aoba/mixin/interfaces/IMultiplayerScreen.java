@@ -16,5 +16,5 @@ public interface IMultiplayerScreen {
     void setServerListWidget(MultiplayerServerListWidget val);
 
     @Invoker("connect")
-    public void invokeConnect(ServerInfo entry);
+    void invokeConnect(ServerInfo entry);
 }

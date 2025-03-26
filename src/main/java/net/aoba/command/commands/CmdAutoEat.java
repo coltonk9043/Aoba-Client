@@ -25,7 +25,7 @@ public class CmdAutoEat extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		AutoEat module = (AutoEat) Aoba.getInstance().moduleManager.autoeat;
+		AutoEat module = Aoba.getInstance().moduleManager.autoeat;
 
 		switch (parameters[0]) {
 		case "toggle":

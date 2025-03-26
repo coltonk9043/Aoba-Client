@@ -15,7 +15,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 
 public class InteractionUtils {
-	private static MinecraftClient MC = MinecraftClient.getInstance();
+	private static final MinecraftClient MC = MinecraftClient.getInstance();
 	public static final int OFFHAND = 45;
 
 	public static boolean placeBlock(BlockPos blockPos, Hand hand, boolean swingHand) {

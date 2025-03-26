@@ -20,9 +20,9 @@ public class TimeHud extends HudWindow {
 
 	public TimeHud(int x, int y) {
 		super("TimeHud", x, y, 80, 24);
-		this.minWidth = 80f;
-		this.minHeight = 20f;
-		this.maxHeight = 20f;
+		minWidth = 80f;
+		minHeight = 20f;
+		maxHeight = 20f;
 		resizeMode = ResizeMode.None;
 	}
 
@@ -35,12 +35,12 @@ public class TimeHud extends HudWindow {
 		for (int n = timeString.length(); n < 4; ++n) {
 			timeString.insert(0, "0");
 		}
-		final String[] strsplit = timeString.toString().split("");
+		String[] strsplit = timeString.toString().split("");
 		String hours = strsplit[0] + strsplit[1];
 		if (hours.equalsIgnoreCase("00")) {
 			hours = "12";
 		}
-		final int minutes = (int) Math.floor(Double.parseDouble(strsplit[2] + strsplit[3]) / 100.0 * 60.0);
+		int minutes = (int) Math.floor(Double.parseDouble(strsplit[2] + strsplit[3]) / 100.0 * 60.0);
 		String sm = minutes + "";
 		if (minutes < 10) {
 			sm = "0" + minutes;

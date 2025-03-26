@@ -35,10 +35,10 @@ public class MCA extends Module implements MouseClickListener {
 	public MCA() {
 		super("MCA");
 
-		this.setCategory(Category.of("misc"));
-		this.setDescription("Middle Click Action");
+		setCategory(Category.of("misc"));
+		setDescription("Middle Click Action");
 
-		this.addSetting(mode);
+		addSetting(mode);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class MCA extends Module implements MouseClickListener {
 		if (mouseClickEvent.button == MouseButton.MIDDLE) {
 			if (mouseClickEvent.action == MouseAction.DOWN) {
 				switch (mode.getValue()) {
-				case Mode.FRIEND:
+				case FRIEND:
 					if (MC.targetedEntity == null || !(MC.targetedEntity instanceof PlayerEntity player))
 						return;
 
@@ -75,7 +75,7 @@ public class MCA extends Module implements MouseClickListener {
 						sendChatMessage("Added " + player.getName().getString() + " to friends list.");
 					}
 					break;
-				case Mode.PEARL:
+				case PEARL:
 					FindItemResult result = find(Items.ENDER_PEARL);
 					if (!result.found() || !result.isHotbar())
 						return;

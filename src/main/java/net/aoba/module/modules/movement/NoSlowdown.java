@@ -27,12 +27,12 @@ public class NoSlowdown extends Module implements TickListener {
 
 	public NoSlowdown() {
 		super("NoSlowdown");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Prevents the player from being slowed down by blocks.");
+		setCategory(Category.of("Movement"));
+		setDescription("Prevents the player from being slowed down by blocks.");
 
-		this.addSetting(slowdownMultiplier);
+		addSetting(slowdownMultiplier);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,

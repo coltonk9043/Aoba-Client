@@ -40,9 +40,9 @@ import net.minecraft.util.math.Vec3d;
 public class SettingManager {
 	private static final MinecraftClient MC = MinecraftClient.getInstance();
 
-	private static StringSetting currentConfig = StringSetting.builder().id("selected_config").defaultValue("default")
+	private static final StringSetting currentConfig = StringSetting.builder().id("selected_config").defaultValue("default")
 			.onUpdate(s -> {
-				SettingManager.loadSettings();
+				loadSettings();
 			}).build();
 
 	private final static HashSet<Setting<?>> globalSettings = new HashSet<>();

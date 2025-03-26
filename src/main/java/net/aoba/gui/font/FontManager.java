@@ -41,7 +41,7 @@ import net.minecraft.client.font.TrueTypeFontLoader.Shift;
 import net.minecraft.util.Identifier;
 
 public class FontManager {
-	private MinecraftClient MC;
+	private final MinecraftClient MC;
 	private TextRenderer currentFontRenderer;
 
 	public ConcurrentHashMap<String, TextRenderer> fontRenderers;
@@ -102,7 +102,7 @@ public class FontManager {
 	}
 
 	public void SetRenderer(TextRenderer renderer) {
-		this.currentFontRenderer = renderer;
+		currentFontRenderer = renderer;
 		Aoba.getInstance().eventManager.Fire(new FontChangedEvent());
 	}
 

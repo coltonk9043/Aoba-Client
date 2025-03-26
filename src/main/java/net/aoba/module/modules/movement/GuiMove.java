@@ -22,10 +22,10 @@ import net.minecraft.client.util.InputUtil;
 public class GuiMove extends Module implements TickListener {
 	public GuiMove() {
 		super("GuiMove");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Lets the player move while inside of menus using arrow keys..");
+		setCategory(Category.of("Movement"));
+		setDescription("Lets the player move while inside of menus using arrow keys..");
 
-		this.setDetectable(AntiCheat.Karhu);
+		setDetectable(AntiCheat.Karhu);
 	}
 
 	@Override

@@ -27,11 +27,11 @@ public class Spider extends Module implements TickListener {
 
 	public Spider() {
 		super("Spider");
-		this.setCategory(Category.of("Movement"));
-		this.setDescription("Allows players to climb up blocks like a spider.");
-		this.addSetting(speed);
+		setCategory(Category.of("Movement"));
+		setDescription("Allows players to climb up blocks like a spider.");
+		addSetting(speed);
 
-		this.setDetectable(
+		setDetectable(
 		    AntiCheat.NoCheatPlus,
 		    AntiCheat.Vulcan,
 		    AntiCheat.AdvancedAntiCheat,

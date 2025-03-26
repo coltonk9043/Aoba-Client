@@ -71,17 +71,17 @@ public class Scaffold extends Module implements TickListener {
 
 	public Scaffold() {
 		super("Scaffold");
-		this.setCategory(Category.of("World"));
-		this.setDescription("Automatically places blocks below the player.");
+		setCategory(Category.of("World"));
+		setDescription("Automatically places blocks below the player.");
 
-		this.addSetting(radius);
-		this.addSetting(placeDelay);
-		this.addSetting(rotationMode);
-		this.addSetting(maxRotation);
-		this.addSetting(yawRandomness);
-		this.addSetting(pitchRandomness);
-		this.addSetting(fakeRotation);
-		this.addSetting(swingHand);
+		addSetting(radius);
+		addSetting(placeDelay);
+		addSetting(rotationMode);
+		addSetting(maxRotation);
+		addSetting(yawRandomness);
+		addSetting(pitchRandomness);
+		addSetting(fakeRotation);
+		addSetting(swingHand);
 	}
 
 	@Override

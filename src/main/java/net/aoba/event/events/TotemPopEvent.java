@@ -16,7 +16,7 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public class TotemPopEvent extends AbstractEvent {
 	private final PlayerEntity entity;
-	private int pops;
+	private final int pops;
 
 	public TotemPopEvent(PlayerEntity entity, int pops) {
 		this.entity = entity;
@@ -24,11 +24,11 @@ public class TotemPopEvent extends AbstractEvent {
 	}
 
 	public PlayerEntity getEntity() {
-		return this.entity;
+		return entity;
 	}
 
 	public int getPops() {
-		return this.pops;
+		return pops;
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class TotemPopEvent extends AbstractEvent {
 			TotemPopListener totemPopListener = (TotemPopListener) listener;
 			totemPopListener.onTotemPop(this);
 
-			if (this.isCancelled)
+			if (isCancelled)
 				break;
 		}
 	}

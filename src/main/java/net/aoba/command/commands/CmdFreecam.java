@@ -25,7 +25,7 @@ public class CmdFreecam extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		Freecam module = (Freecam) Aoba.getInstance().moduleManager.freecam;
+		Freecam module = Aoba.getInstance().moduleManager.freecam;
 
 		switch (parameters[0]) {
 		case "toggle":

@@ -37,9 +37,9 @@ public class Friend {
 	}
 	
 	@Override
-	public boolean equals(final Object other) {
+	public boolean equals(Object other) {
 		if(other instanceof Friend)
-			return ((Friend)(other)).uuid.equals(this.uuid);
+			return ((Friend)(other)).uuid.equals(uuid);
 		return false;
 	}
 }

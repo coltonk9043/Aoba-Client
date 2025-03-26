@@ -37,12 +37,12 @@ public class Criticals extends Module implements SendPacketListener {
 	public Criticals() {
 		super("Criticals");
 
-		this.setCategory(Category.of("Combat"));
-		this.setDescription("Makes all attacks into critical strikes.");
+		setCategory(Category.of("Combat"));
+		setDescription("Makes all attacks into critical strikes.");
 
-		this.addSetting(legit);
+		addSetting(legit);
 
-		this.setDetectable(
+		setDetectable(
 				AntiCheat.NoCheatPlus,
 				AntiCheat.Vulcan,
 				AntiCheat.AdvancedAntiCheat,
@@ -71,9 +71,8 @@ public class Criticals extends Module implements SendPacketListener {
 	@Override
 	public void onSendPacket(SendPacketEvent event) {
 		Packet<?> packet = event.GetPacket();
-		if (packet instanceof PlayerInteractEntityC2SPacket) {
-			PlayerInteractEntityC2SPacket playerInteractPacket = (PlayerInteractEntityC2SPacket) packet;
-			IPlayerInteractEntityC2SPacket packetAccessor = (IPlayerInteractEntityC2SPacket) playerInteractPacket;
+		if (packet instanceof PlayerInteractEntityC2SPacket playerInteractPacket) {
+            IPlayerInteractEntityC2SPacket packetAccessor = (IPlayerInteractEntityC2SPacket) playerInteractPacket;
 
 			PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
 			packetAccessor.invokeWrite(packetBuf);

@@ -28,7 +28,7 @@ public class CmdPOV extends Command {
 		if (parameters.length != 2)
 			throw new InvalidSyntaxException(this);
 
-		POV module = (POV) Aoba.getInstance().moduleManager.pov;
+		POV module = Aoba.getInstance().moduleManager.pov;
 
 		switch (parameters[0]) {
 		case "set":

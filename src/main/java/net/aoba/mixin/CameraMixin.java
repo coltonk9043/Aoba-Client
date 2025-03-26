@@ -36,9 +36,9 @@ public class CameraMixin {
 			float tickDelta, CallbackInfo ci) {
 		AobaClient aoba = Aoba.getInstance();
 		if (aoba != null && aoba.moduleManager.freecam.state.getValue()) {
-			this.ready = true;
+			ready = true;
 			this.area = area;
-			this.lastTickDelta = tickDelta;
+			lastTickDelta = tickDelta;
 			this.thirdPerson = thirdPerson;
 			ci.cancel();
 		}

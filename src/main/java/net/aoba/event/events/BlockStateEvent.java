@@ -16,26 +16,26 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
 public class BlockStateEvent extends AbstractEvent {
-	private BlockPos blockPos;
-	private BlockState blockState;
-	private BlockState previousBlockState;
+	private final BlockPos blockPos;
+	private final BlockState blockState;
+	private final BlockState previousBlockState;
 
 	public BlockStateEvent(BlockPos blockPos, BlockState state, BlockState previousState) {
 		this.blockPos = blockPos;
-		this.blockState = state;
-		this.previousBlockState = previousState;
+		blockState = state;
+		previousBlockState = previousState;
 	}
 
 	public BlockPos getBlockPos() {
-		return this.blockPos;
+		return blockPos;
 	}
 
 	public BlockState getBlockState() {
-		return this.blockState;
+		return blockState;
 	}
 
 	public BlockState getPreviousBlockState() {
-		return this.previousBlockState;
+		return previousBlockState;
 	}
 
 	@Override

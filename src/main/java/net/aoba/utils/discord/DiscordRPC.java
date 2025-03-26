@@ -36,7 +36,7 @@ public class DiscordRPC extends Structure {
     public int partyMax;
 
     public DiscordRPC() {
-        this.setStringEncoding("UTF-8");
+        setStringEncoding("UTF-8");
     }
 
     protected List<String> getFieldOrder() {
