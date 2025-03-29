@@ -8,6 +8,10 @@
 
 package net.aoba.gui.navigation.huds;
 
+import java.util.ArrayList;
+
+import com.google.common.collect.Lists;
+
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
@@ -15,7 +19,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.collection.DefaultedList;
 
 public class ArmorHud extends HudWindow {
 
@@ -33,7 +36,12 @@ public class ArmorHud extends HudWindow {
 			Rectangle pos = position.getValue();
 
 			if (pos.isDrawable()) {
-				DefaultedList<ItemStack> armors = MC.player.getInventory().armor;
+
+				// TODO: Don't like this but they removed the armor slot func.
+				ArrayList<ItemStack> armors = Lists.newArrayList(MC.player.getInventory().getStack(103),
+						MC.player.getInventory().getStack(102), MC.player.getInventory().getStack(101),
+						MC.player.getInventory().getStack(100));
+				;
 
 				float scale = getActualSize().getHeight() / 64.0f;
 

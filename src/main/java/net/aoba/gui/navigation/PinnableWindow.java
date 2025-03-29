@@ -8,8 +8,6 @@
 
 package net.aoba.gui.navigation;
 
-import org.joml.Matrix4f;
-
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
@@ -20,7 +18,6 @@ import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class PinnableWindow extends Window {
 	protected BooleanSetting isPinned;
@@ -71,9 +68,6 @@ public class PinnableWindow extends Window {
 	public void draw(DrawContext drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
 		Rectangle pos = position.getValue();
 		if (pos.isDrawable()) {
 			float x = pos.getX().floatValue();
@@ -81,14 +75,14 @@ public class PinnableWindow extends Window {
 			float width = pos.getWidth().floatValue();
 
 			if (isPinned.getValue()) {
-				Render2D.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(),
-						new Color(154, 0, 0, 200));
-				Render2D.drawRoundedBoxOutline(matrix4f, x + width - 23, y + 8, 15, 15,
+				Render2D.drawRoundedBox(drawContext, x + width - 23, y + 8, 15, 15,
+						GuiManager.roundingRadius.getValue(), new Color(154, 0, 0, 200));
+				Render2D.drawRoundedBoxOutline(drawContext, x + width - 23, y + 8, 15, 15,
 						GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 200));
 			} else {
-				Render2D.drawRoundedBox(matrix4f, x + width - 23, y + 8, 15, 15, GuiManager.roundingRadius.getValue(),
-						new Color(128, 128, 128, 50));
-				Render2D.drawRoundedBoxOutline(matrix4f, x + width - 23, y + 8, 15, 15,
+				Render2D.drawRoundedBox(drawContext, x + width - 23, y + 8, 15, 15,
+						GuiManager.roundingRadius.getValue(), new Color(128, 128, 128, 50));
+				Render2D.drawRoundedBoxOutline(drawContext, x + width - 23, y + 8, 15, 15,
 						GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 50));
 			}
 		}

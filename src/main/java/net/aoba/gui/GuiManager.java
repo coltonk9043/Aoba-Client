@@ -12,12 +12,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
@@ -70,8 +67,6 @@ import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.input.Input;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.Framebuffer;
-import net.minecraft.client.gl.SimpleFramebuffer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -126,8 +121,6 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public static RainbowColor rainbowColor = new RainbowColor();
 	public static RandomColor randomColor = new RandomColor();
 
-	private final Framebuffer guiFrameBuffer;
-
 	public ModuleSelectorHud moduleSelector;
 	public ArmorHud armorHud;
 	public RadarHud radarHud;
@@ -146,8 +139,6 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 		net.minecraft.client.util.Window window = MC.getWindow();
 
-		guiFrameBuffer = new SimpleFramebuffer(window.getWidth(), window.getHeight(), false);
-
 		SettingManager.registerGlobalSetting(borderColor);
 		SettingManager.registerGlobalSetting(backgroundColor);
 		SettingManager.registerGlobalSetting(foregroundColor);
@@ -157,10 +148,6 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(Render2DListener.class, this);
-	}
-
-	public Framebuffer getFrameBuffer() {
-		return guiFrameBuffer;
 	}
 
 	public void Initialize() {
@@ -328,12 +315,8 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 	@Override
 	public void onRender(Render2DEvent event) {
-
-		RenderSystem.disableCull();
-		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
 		DrawContext drawContext = event.getDrawContext();
-		float tickDelta = event.getRenderTickCounter().getTickDelta(false);
+		float tickDelta = event.getRenderTickCounter().getTickProgress(false);
 
 		MatrixStack matrixStack = drawContext.getMatrices();
 		matrixStack.push();
@@ -342,13 +325,10 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
 
 		net.minecraft.client.util.Window window = MC.getWindow();
-		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 
-		/**
-		 * Render ClickGUI and Sidebar
-		 */
+		// Render ClickGUI and Topbar
 		if (clickGuiOpen) {
-			Render2D.drawBox(matrix, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
+			Render2D.drawBox(drawContext, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
 			clickGuiNavBar.draw(drawContext, tickDelta);
 		}
 
@@ -366,14 +346,11 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
 			int tooltipHeight = 10;
 
-			Render2D.drawRoundedBox(matrixStack.peek().getPositionMatrix(), mouseX + 12, mouseY + 12,
-					(tooltipWidth + 4) * 2, (tooltipHeight + 4) * 2, roundingRadius.getValue(),
-					backgroundColor.getValue().getAsSolid());
+			Render2D.drawRoundedBox(drawContext, mouseX + 12, mouseY + 12, (tooltipWidth + 4) * 2,
+					(tooltipHeight + 4) * 2, roundingRadius.getValue(), backgroundColor.getValue().getAsSolid());
 			Render2D.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18, foregroundColor.getValue());
 		}
-
 		matrixStack.pop();
-		RenderSystem.enableCull();
 	}
 
 	/**

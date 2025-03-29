@@ -14,17 +14,17 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 public class FakePlayerEntity extends AbstractClientPlayerEntity {
 
-    public FakePlayerEntity() {
-        super(MinecraftClient.getInstance().world, MinecraftClient.getInstance().player.getGameProfile());
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+	public FakePlayerEntity() {
+		super(MinecraftClient.getInstance().world, MinecraftClient.getInstance().player.getGameProfile());
+		ClientPlayerEntity player = MinecraftClient.getInstance().player;
 
-        float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
-        setPos(player.getPos().x, player.getPos().y, player.getPos().z);
-        setRotation(player.getYaw(tickDelta), player.getPitch(tickDelta));
-        //this.inventory = player.getInventory();
-    }
+		float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
+		setPos(player.getPos().x, player.getPos().y, player.getPos().z);
+		setRotation(player.getYaw(tickDelta), player.getPitch(tickDelta));
+		// this.inventory = player.getInventory();
+	}
 
-    public void despawn() {
-        remove(RemovalReason.DISCARDED);
-    }
+	public void despawn() {
+		remove(RemovalReason.DISCARDED);
+	}
 }

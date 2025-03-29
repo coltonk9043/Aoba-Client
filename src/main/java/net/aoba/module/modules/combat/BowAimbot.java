@@ -24,7 +24,6 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.entity.EntityUtils;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BowItem;
@@ -44,9 +43,9 @@ public class BowAimbot extends Module implements TickListener {
 			.description("How frequent the aimbot updates (Lower = Laggier)").defaultValue(1.0f).minValue(1.0f)
 			.maxValue(20.0f).step(1.0f).build();
 
-	private final FloatSetting predictMovement = FloatSetting.builder().id("bowaimbot_prediction").displayName("Prediction")
-			.description("Sets the strength of BowAimbot's movement prediction").defaultValue(2f).minValue(0f)
-			.maxValue(10f).step(1f).build();
+	private final FloatSetting predictMovement = FloatSetting.builder().id("bowaimbot_prediction")
+			.displayName("Prediction").description("Sets the strength of BowAimbot's movement prediction")
+			.defaultValue(2f).minValue(0f).maxValue(10f).step(1f).build();
 
 	private int currentTick = 0;
 	private float velocity;
@@ -95,7 +94,7 @@ public class BowAimbot extends Module implements TickListener {
 	public void onTick(TickEvent.Post event) {
 		currentTick++;
 
-		ItemStack stack = MC.player.getInventory().getMainHandStack();
+		ItemStack stack = MC.player.getInventory().getSelectedStack();
 		Item item = stack.getItem();
 
 		if (!(item instanceof BowItem || item instanceof CrossbowItem)) {
@@ -121,17 +120,20 @@ public class BowAimbot extends Module implements TickListener {
 			Entity temp = null;
 			if (targetAnimals.getValue() && targetPlayers.getValue()) {
 				if (filterEntities(Stream.of(temp)) == null)
-					temp = filterEntities(StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true));
+					temp = filterEntities(
+							StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true));
 			}
 
 			if (!targetAnimals.getValue() && targetPlayers.getValue()) {
 				if (filterPlayers(Stream.of((PlayerEntity) temp)) == null)
-					temp = filterPlayers(StreamSupport.stream(Aoba.getInstance().entityManager.getPlayers().spliterator(), true));
+					temp = filterPlayers(
+							StreamSupport.stream(Aoba.getInstance().entityManager.getPlayers().spliterator(), true));
 			}
 
 			if (targetAnimals.getValue() && !targetPlayers.getValue()) {
 				if (filterEntities(Stream.of(temp)) == null)
-					temp = filterEntities(StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true));
+					temp = filterEntities(
+							StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true));
 				if (temp instanceof PlayerEntity)
 					temp = null;
 			}

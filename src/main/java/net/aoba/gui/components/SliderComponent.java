@@ -8,8 +8,6 @@
 
 package net.aoba.gui.components;
 
-import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
@@ -22,9 +20,7 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class SliderComponent extends Component {
 	private float currentSliderPosition = 0.4f;
@@ -38,12 +34,12 @@ public class SliderComponent extends Component {
 	FloatSetting floatSetting;
 
 	public SliderComponent() {
-        floatSetting = null;
+		floatSetting = null;
 		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	public SliderComponent(FloatSetting floatSetting) {
-        this.floatSetting = floatSetting;
+		this.floatSetting = floatSetting;
 		minValue = floatSetting.min_value;
 		maxValue = floatSetting.max_value;
 		header = floatSetting.displayName;
@@ -118,10 +114,6 @@ public class SliderComponent extends Component {
 			return;
 		}
 
-		MinecraftClient mc = MinecraftClient.getInstance();
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
@@ -130,21 +122,22 @@ public class SliderComponent extends Component {
 
 		if (floatSetting != null) {
 			float defaultLength = actualWidth * ((floatSetting.getDefaultValue() - minValue) / (maxValue - minValue));
-			Render2D.drawBox(matrix4f, actualX + defaultLength - 2, actualY + 28, 4, 14, Colors.White);
+			Render2D.drawBox(drawContext, actualX + defaultLength - 2, actualY + 28, 4, 14, Colors.White);
 		}
 
-		Render2D.drawBox(matrix4f, actualX, actualY + 34, filledLength, 2, GuiManager.foregroundColor.getValue());
-		Render2D.drawBox(matrix4f, actualX + filledLength, actualY + 34, (actualWidth - filledLength), 2,
+		Render2D.drawBox(drawContext, actualX, actualY + 34, filledLength, 2, GuiManager.foregroundColor.getValue());
+		Render2D.drawBox(drawContext, actualX + filledLength, actualY + 34, (actualWidth - filledLength), 2,
 				new Color(255, 255, 255, 255));
 
-		Render2D.drawCircle(matrix4f, actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
+		Render2D.drawCircle(drawContext, actualX + filledLength, actualY + 35, 6,
+				GuiManager.foregroundColor.getValue());
 
 		if (header != null) {
 			Render2D.drawString(drawContext, header, actualX, actualY + 8, 0xFFFFFF);
 		}
 
 		String valueText = String.format("%.02f", value);
-		int textSize = mc.textRenderer.getWidth(valueText) * 2;
+		int textSize = MC.textRenderer.getWidth(valueText) * 2;
 		Render2D.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
 
 		super.draw(drawContext, partialTicks);

@@ -43,8 +43,8 @@ public class EntityESP extends Module implements Render3DListener {
 			.displayName("Passive Color").description("Passive Color").defaultValue(new Color(0f, 1f, 0f, 0.3f))
 			.build();
 
-	private final ColorSetting color_enemies = ColorSetting.builder().id("entityesp_color_enemy").displayName("Enemy Color")
-			.description("Enemy Color").defaultValue(new Color(1, 0f, 0f, 0.3f)).build();
+	private final ColorSetting color_enemies = ColorSetting.builder().id("entityesp_color_enemy")
+			.displayName("Enemy Color").description("Enemy Color").defaultValue(new Color(1, 0f, 0f, 0.3f)).build();
 
 	private final ColorSetting color_misc = ColorSetting.builder().id("entityesp_color_misc").displayName("Misc. Color")
 			.description("Misc. Color").defaultValue(new Color(0, 0f, 1f, 0.3f)).build();
@@ -94,7 +94,7 @@ public class EntityESP extends Module implements Render3DListener {
 	@Override
 	public void onRender(Render3DEvent event) {
 		MatrixStack matrixStack = event.GetMatrix();
-		float partialTicks = event.getRenderTickCounter().getTickDelta(true);
+		float partialTicks = event.getRenderTickCounter().getTickProgress(true);
 
 		for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 
@@ -109,9 +109,9 @@ public class EntityESP extends Module implements Render3DListener {
 					if (color != null) {
 						switch (drawMode.getValue()) {
 						case BoundingBox:
-							double interpolatedX = MathHelper.lerp(partialTicks, entity.prevX, entity.getX());
-							double interpolatedY = MathHelper.lerp(partialTicks, entity.prevY, entity.getY());
-							double interpolatedZ = MathHelper.lerp(partialTicks, entity.prevZ, entity.getZ());
+							double interpolatedX = MathHelper.lerp(partialTicks, entity.lastX, entity.getX());
+							double interpolatedY = MathHelper.lerp(partialTicks, entity.lastY, entity.getY());
+							double interpolatedZ = MathHelper.lerp(partialTicks, entity.lastZ, entity.getZ());
 
 							Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(),
 									interpolatedY - entity.getY(), interpolatedZ - entity.getZ());

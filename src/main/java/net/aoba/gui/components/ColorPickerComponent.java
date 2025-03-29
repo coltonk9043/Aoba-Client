@@ -8,8 +8,6 @@
 
 package net.aoba.gui.components;
 
-import org.joml.Matrix4f;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
@@ -25,7 +23,6 @@ import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class ColorPickerComponent extends Component {
 
@@ -35,13 +32,13 @@ public class ColorPickerComponent extends Component {
 	private ColorSetting color;
 
 	public ColorPickerComponent(String text) {
-        this.text = text;
+		this.text = text;
 
 		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
 
 	public ColorPickerComponent(ColorSetting color) {
-        text = color.displayName;
+		text = color.displayName;
 		this.color = color;
 		setMargin(new Margin(8f, 2f, 8f, 2f));
 	}
@@ -153,9 +150,6 @@ public class ColorPickerComponent extends Component {
 
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
@@ -180,45 +174,46 @@ public class ColorPickerComponent extends Component {
 			Color newColor = new Color(255, 0, 0);
 			Color colorSetting = color.getValue();
 			newColor.setHSV(colorSetting.getHue(), 1.0f, 1.0f);
-			Render2D.drawHorizontalGradient(matrix4f, actualX, actualY + 59, actualWidth - 76, actualHeight - 63,
+			Render2D.drawHorizontalGradient(drawContext, actualX, actualY + 59, actualWidth - 76, actualHeight - 63,
 					new Color(255, 255, 255), newColor);
-			Render2D.drawVerticalGradient(matrix4f, actualX, actualY + 59, actualWidth - 76, actualHeight - 63,
+			Render2D.drawVerticalGradient(drawContext, actualX, actualY + 59, actualWidth - 76, actualHeight - 63,
 					new Color(0, 0, 0, 0), new Color(0, 0, 0));
 
 			// Draw Hue Rectangle
 			float increment = ((actualHeight - 63) / 6.0f);
-			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59, 30, increment,
+			Render2D.drawVerticalGradient(drawContext, actualX + actualWidth - 68, actualY + 59, 30, increment,
 					new Color(255, 0, 0), new Color(255, 255, 0));
-			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59 + increment, 30, increment,
-					new Color(255, 255, 0), new Color(0, 255, 0));
-			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59 + (2 * increment), 30,
+			Render2D.drawVerticalGradient(drawContext, actualX + actualWidth - 68, actualY + 59 + increment, 30,
+					increment, new Color(255, 255, 0), new Color(0, 255, 0));
+			Render2D.drawVerticalGradient(drawContext, actualX + actualWidth - 68, actualY + 59 + (2 * increment), 30,
 					increment, new Color(0, 255, 0), new Color(0, 255, 255));
-			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59 + (3 * increment), 30,
+			Render2D.drawVerticalGradient(drawContext, actualX + actualWidth - 68, actualY + 59 + (3 * increment), 30,
 					increment, new Color(0, 255, 255), new Color(0, 0, 255));
-			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59 + (4 * increment), 30,
+			Render2D.drawVerticalGradient(drawContext, actualX + actualWidth - 68, actualY + 59 + (4 * increment), 30,
 					increment, new Color(0, 0, 255), new Color(255, 0, 255));
-			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 68, actualY + 59 + (5 * increment), 30,
+			Render2D.drawVerticalGradient(drawContext, actualX + actualWidth - 68, actualY + 59 + (5 * increment), 30,
 					increment, new Color(255, 0, 255), new Color(255, 0, 0));
 
 			// Draw Alpha Rectangle
-			Render2D.drawVerticalGradient(matrix4f, actualX + actualWidth - 30, actualY + 59, 30, actualHeight - 63,
+			Render2D.drawVerticalGradient(drawContext, actualX + actualWidth - 30, actualY + 59, 30, actualHeight - 63,
 					new Color(255, 255, 255), new Color(0, 0, 0));
 
 			// Draw Outlines
-			Render2D.drawBoxOutline(matrix4f, actualX, actualY + 59, actualWidth - 76, actualHeight - 63, Colors.Black);
-			Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 68, actualY + 59, 30, actualHeight - 63,
+			Render2D.drawBoxOutline(drawContext, actualX, actualY + 59, actualWidth - 76, actualHeight - 63,
 					Colors.Black);
-			Render2D.drawBoxOutline(matrix4f, actualX + actualWidth - 30, actualY + 59, 30, actualHeight - 63,
+			Render2D.drawBoxOutline(drawContext, actualX + actualWidth - 68, actualY + 59, 30, actualHeight - 63,
+					Colors.Black);
+			Render2D.drawBoxOutline(drawContext, actualX + actualWidth - 30, actualY + 59, 30, actualHeight - 63,
 					Colors.Black);
 
 			// Draw Indicators
-			Render2D.drawCircle(matrix4f, actualX + (colorSetting.getSaturation() * (actualWidth - 76)),
+			Render2D.drawCircle(drawContext, actualX + (colorSetting.getSaturation() * (actualWidth - 76)),
 					actualY + 59 + ((1.0f - colorSetting.getLuminance()) * (actualHeight - 63)), 3,
 					new Color(255, 255, 255, 255));
-			Render2D.drawOutlinedBox(matrix4f, actualX + actualWidth - 68,
+			Render2D.drawOutlinedBox(drawContext, actualX + actualWidth - 68,
 					actualY + 59 + ((colorSetting.getHue() / 360.0f) * (actualHeight - 63)), 30, 3, Colors.Black,
 					new Color(255, 255, 255, 255));
-			Render2D.drawOutlinedBox(matrix4f, actualX + actualWidth - 30,
+			Render2D.drawOutlinedBox(drawContext, actualX + actualWidth - 30,
 					actualY + 59 + (((255.0f - (colorSetting.getAlpha() * 255)) / 255.0f) * (actualHeight - 63)), 30, 3,
 					Colors.Black, new Color(255, 255, 255, 255));
 		}

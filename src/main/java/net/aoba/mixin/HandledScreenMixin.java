@@ -20,14 +20,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.aoba.Aoba;
 import net.aoba.module.modules.render.Tooltips;
 import net.aoba.utils.render.Render2D;
-import net.aoba.utils.render.TextureBank;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
@@ -101,19 +99,15 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 			int tooltipWidth = 150;
 			int nameHeight = 12;
 
-			RenderSystem.disableDepthTest();
 			Render2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 10, offsetY - 10,
 					new Color(255, 255, 255).getRGB(), 1.0f);
-			RenderSystem.enableDepthTest();
 
 			draw(context, compoundTag.stream().toList(), offsetX, offsetY + nameHeight, mouseX, mouseY, colors);
 
-			RenderSystem.disableDepthTest();
 			context.fill(offsetX, offsetY - nameHeight, offsetX + tooltipWidth, offsetY,
 					new Color(0, 0, 0, 128).getRGB());
 			Render2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 5, offsetY - 10,
 					new Color(255, 255, 255).getRGB(), 1.0f);
-			RenderSystem.enableDepthTest();
 
 		} catch (Exception ignore) {
 			return false;
@@ -124,7 +118,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 	@Unique
 	private void draw(DrawContext context, List<ItemStack> itemStacks, int offsetX, int offsetY, int mouseX, int mouseY,
 			float[] colors) {
-		RenderSystem.disableDepthTest();
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 
 		offsetX += 8;
@@ -151,20 +144,22 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 			}
 		}
 		DiffuseLighting.disableGuiDepthLighting();
-		RenderSystem.enableDepthTest();
 	}
 
 	private void drawBackground(DrawContext context, int x, int y, float[] colors) {
-		RenderSystem.disableBlend();
-		RenderSystem.setShaderColor(colors[0], colors[1], colors[2], 1F);
-		RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-		RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-		context.drawTexture(RenderLayer::getGuiTextured, TextureBank.container, x, y, 0, 0, 176, 67, 176, 67);
-		RenderSystem.enableBlend();
+		// RenderSystem.disableBlend();
+		// RenderSystem.setShaderColor(colors[0], colors[1], colors[2], 1F);
+		// RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER,
+		// GL11.GL_LINEAR);
+		// RenderSystem.texParameter(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
+		// GL11.GL_LINEAR_MIPMAP_LINEAR);
+		// context.drawTexture(RenderLayer::getGuiTextured, TextureBank.container, x, y,
+		// 0, 0, 176, 67, 176, 67);
+		// RenderSystem.enableBlend();
 	}
 
 	private void drawMapPreview(DrawContext context, ItemStack stack, int x, int y) {
-		RenderSystem.enableBlend();
+		// RenderSystem.enableBlend();
 		context.getMatrices().push();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 

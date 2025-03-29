@@ -13,26 +13,26 @@ import net.minecraft.util.math.Vec3d;
 
 public class Interpolation {
 	public static Vec3d interpolatedEyePos() {
-		return MC.player.getCameraPosVec(MC.getRenderTickCounter().getTickDelta(false));
+		return MC.player.getCameraPosVec(MC.getRenderTickCounter().getTickProgress(false));
 	}
 
 	public static Vec3d interpolatedEyeVec() {
-		return MC.player.getClientCameraPosVec(MC.getRenderTickCounter().getTickDelta(false));
+		return MC.player.getClientCameraPosVec(MC.getRenderTickCounter().getTickProgress(false));
 	}
 
 	public static Vec3d interpolateEntity(Entity entity) {
-		double x = interpolateLastTickPos(entity.getX(), entity.prevX);
-		double y = interpolateLastTickPos(entity.getY(), entity.prevY);
-		double z = interpolateLastTickPos(entity.getZ(), entity.prevZ);
+		double x = interpolateLastTickPos(entity.getX(), entity.lastX);
+		double y = interpolateLastTickPos(entity.getY(), entity.lastY);
+		double z = interpolateLastTickPos(entity.getZ(), entity.lastZ);
 		return new Vec3d(x, y, z);
 	}
 
 	public static double interpolateLastTickPos(double pos, double lastPos) {
-		return lastPos + (pos - lastPos) * MC.getRenderTickCounter().getTickDelta(false);
+		return lastPos + (pos - lastPos) * MC.getRenderTickCounter().getTickProgress(false);
 	}
 
 	public static Vec3d interpolatedEyeVec(PlayerEntity player) {
-		return player.getClientCameraPosVec(MC.getRenderTickCounter().getTickDelta(false));
+		return player.getClientCameraPosVec(MC.getRenderTickCounter().getTickProgress(false));
 	}
 
 	public static Vec3d interpolateVectors(Vec3d vec) {

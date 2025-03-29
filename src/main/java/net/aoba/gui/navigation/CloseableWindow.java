@@ -8,8 +8,6 @@
 
 package net.aoba.gui.navigation;
 
-import org.joml.Matrix4f;
-
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
@@ -17,7 +15,6 @@ import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class CloseableWindow extends Window {
 
@@ -56,17 +53,13 @@ public class CloseableWindow extends Window {
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
-
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
 		Rectangle pos = getActualSize();
 		if (pos.isDrawable()) {
 			float x = pos.getX().floatValue();
 			float y = pos.getY().floatValue();
 			float width = pos.getWidth().floatValue();
-			Render2D.drawLine(matrix4f, x + width - 23, y + 8, x + width - 8, y + 23, new Color(255, 0, 0, 255));
-			Render2D.drawLine(matrix4f, x + pos.getWidth() - 23, pos.getY() + 23, x + width - 8, y + 8,
+			Render2D.drawLine(drawContext, x + width - 23, y + 8, x + width - 8, y + 23, new Color(255, 0, 0, 255));
+			Render2D.drawLine(drawContext, x + pos.getWidth() - 23, pos.getY() + 23, x + width - 8, y + 8,
 					new Color(255, 0, 0, 255));
 		}
 	}

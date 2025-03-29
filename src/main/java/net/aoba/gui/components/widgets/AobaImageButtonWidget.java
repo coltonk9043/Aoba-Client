@@ -10,11 +10,6 @@ package net.aoba.gui.components.widgets;
 
 import java.util.function.Consumer;
 
-import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.aoba.gui.GuiManager;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
@@ -68,15 +63,14 @@ public class AobaImageButtonWidget extends PressableWidget {
 
 	@Override
 	protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-		Matrix4f matrix = context.getMatrices().peek().getPositionMatrix();
-
 		if (background) {
-			RenderSystem.disableCull();
-			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			Render2D.drawOutlinedRoundedBox(matrix, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(),
-					GuiManager.borderColor.getValue(), GuiManager.backgroundColor.getValue());
+			// RenderSystem.disableCull();
+			// RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			Render2D.drawOutlinedRoundedBox(context, getX(), getY(), width, height,
+					GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
+					GuiManager.backgroundColor.getValue());
 
-			RenderSystem.enableCull();
+			// RenderSystem.enableCull();
 		}
 
 		context.drawTexture(RenderLayer::getGuiTextured, image, getX(), getY(), u, v, width, height, width, height);
@@ -86,5 +80,5 @@ public class AobaImageButtonWidget extends PressableWidget {
 	protected void appendClickableNarrations(NarrationMessageBuilder builder) {
 		// For brevity, we'll just skip this for now - if you want to add narration to
 		// your widget, you can do so here.
-    }
+	}
 }

@@ -15,17 +15,17 @@ import net.minecraft.client.render.RenderTickCounter.Dynamic;
 @Mixin(Dynamic.class)
 public class DynamicMixin {
 	@Shadow
-	private float lastFrameDuration;
+	private float dynamicDeltaTicks;
 
 	@Inject(at = {
-			@At(value = "FIELD", target = "Lnet/minecraft/client/render/RenderTickCounter$Dynamic;prevTimeMillis:J", opcode = Opcodes.PUTFIELD, ordinal = 0) }, method = {
+			@At(value = "FIELD", target = "Lnet/minecraft/client/render/RenderTickCounter$Dynamic;lastTimeMillis:J", opcode = Opcodes.PUTFIELD, ordinal = 0) }, method = {
 					"beginRenderTick(J)I" })
 	public void onBeginRenderTick(long long_1, CallbackInfoReturnable<Integer> cir) {
 		AobaClient aoba = Aoba.getInstance();
 		if (aoba.moduleManager != null) {
 			Timer timer = Aoba.getInstance().moduleManager.timer;
 			if (timer.state.getValue()) {
-				lastFrameDuration *= timer.getMultiplier();
+				dynamicDeltaTicks *= timer.getMultiplier();
 			}
 		}
 	}

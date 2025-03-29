@@ -102,7 +102,7 @@ public class Scaffold extends Module implements TickListener {
 	@Override
 	public void onTick(Pre event) {
 		PlayerInventory inventory = MC.player.getInventory();
-		ItemStack currentHand = inventory.getMainHandStack();
+		ItemStack currentHand = inventory.getSelectedStack();
 		if (currentHand.getItem() instanceof BlockItem) {
 			ScaffoldPlaceResult placementPos = findBlockPosToPlace();
 

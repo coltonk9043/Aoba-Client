@@ -9,8 +9,6 @@
 package net.aoba.gui.navigation.huds;
 
 import net.aoba.Aoba;
-import org.joml.Matrix4f;
-
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
@@ -19,7 +17,6 @@ import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -40,9 +37,6 @@ public class RadarHud extends HudWindow {
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		if (isVisible()) {
-			MatrixStack matrixStack = drawContext.getMatrices();
-			Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
 			Rectangle pos = getActualSize();
 			if (pos.isDrawable()) {
 				float x = pos.getX().floatValue();
@@ -51,15 +45,13 @@ public class RadarHud extends HudWindow {
 				float height = pos.getHeight().floatValue();
 
 				// Draws background depending on components width and height
-				Render2D.drawRoundedBox(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
-						GuiManager.backgroundColor.getValue());
-				Render2D.drawRoundedBoxOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
-						GuiManager.borderColor.getValue());
+				Render2D.drawOutlinedRoundedBox(drawContext, x, y, width, height, GuiManager.roundingRadius.getValue(),
+						GuiManager.borderColor.getValue(), GuiManager.backgroundColor.getValue());
 
 				// Draw the 'Radar'
-				Render2D.drawBox(matrix4f, x, y + (height / 2), width - 1, 1, new Color(128, 128, 128, 255));
-				Render2D.drawBox(matrix4f, x + (width / 2), y, 1, height, new Color(128, 128, 128, 255));
-				Render2D.drawBox(matrix4f, x + (width / 2) - 2, y + (height / 2) - 2, 5, 5,
+				Render2D.drawBox(drawContext, x, y + (height / 2), width - 1, 1, new Color(128, 128, 128, 255));
+				Render2D.drawBox(drawContext, x + (width / 2), y, 1, height, new Color(128, 128, 128, 255));
+				Render2D.drawBox(drawContext, x + (width / 2) - 2, y + (height / 2) - 2, 5, 5,
 						GuiManager.foregroundColor.getValue());
 
 				float sin_theta = (float) Math.sin(Math.toRadians(-MC.player.getRotationClient().y));
@@ -89,12 +81,10 @@ public class RadarHud extends HudWindow {
 					float fake_x = (x + (width / 2) - (width * ratio_x / 2));
 					float fake_y = (y - 1.5f + (height / 2) - (width * ratio_y / 2));
 
-					float radius_x = ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y)))
-							+ center_x;
-					float radius_y = (sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))
-                            + center_y;
+					float radius_x = ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y))) + center_x;
+					float radius_y = (sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y)) + center_y;
 
-					Render2D.drawBox(matrix4f, (int) (Math.min(x + width, Math.max(x, radius_x))),
+					Render2D.drawBox(drawContext, (int) (Math.min(x + width, Math.max(x, radius_x))),
 							(int) (Math.min(y + height, Math.max(y, radius_y))), 3, 3, c);
 				}
 
@@ -110,9 +100,9 @@ public class RadarHud extends HudWindow {
 						float radius_x = ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y)))
 								+ center_x;
 						float radius_y = (sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))
-                                + center_y;
+								+ center_y;
 
-						Render2D.drawBox(matrix4f, (int) (Math.min(x + width, Math.max(x, radius_x))),
+						Render2D.drawBox(drawContext, (int) (Math.min(x + width, Math.max(x, radius_x))),
 								(int) (Math.min(y + height, Math.max(y, radius_y))), 3, 3,
 								new Color(255, 255, 255, 255));
 						Render2D.drawStringWithScale(drawContext, entity.getName().getString(),

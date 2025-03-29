@@ -31,10 +31,8 @@ import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 
 public class Surround extends Module implements TickListener {
 	private final FloatSetting placeHeight = FloatSetting.builder().id("surround_height").displayName("Height")
@@ -74,15 +72,8 @@ public class Surround extends Module implements TickListener {
 		addSetting(autoDisable);
 		addSetting(legit);
 
-		setDetectable(
-		    AntiCheat.Vulcan,
-		    AntiCheat.AdvancedAntiCheat,
-		    AntiCheat.Verus,
-		    AntiCheat.Grim,
-		    AntiCheat.Matrix,
-		    AntiCheat.Negativity,
-		    AntiCheat.Karhu
-		);
+		setDetectable(AntiCheat.Vulcan, AntiCheat.AdvancedAntiCheat, AntiCheat.Verus, AntiCheat.Grim, AntiCheat.Matrix,
+				AntiCheat.Negativity, AntiCheat.Karhu);
 	}
 
 	@Override
@@ -117,7 +108,6 @@ public class Surround extends Module implements TickListener {
 		return -1;
 	}
 
-
 	private void breakBlock(BlockPos pos, Hand hand) {
 		MC.interactionManager.attackBlock(pos, Direction.UP);
 		if (legit.getValue()) {
@@ -130,7 +120,7 @@ public class Surround extends Module implements TickListener {
 	@Override
 	public void onTick(Pre event) {
 		int foundBlockSlot = getBlockInventorySlot();
-		int oldSlot = MC.player.getInventory().selectedSlot;
+		int oldSlot = MC.player.getInventory().getSelectedSlot();
 
 		// Disable the module if no block was found in the inventory.
 		if (foundBlockSlot == -1) {
@@ -139,7 +129,7 @@ public class Surround extends Module implements TickListener {
 		}
 
 		// Change the selected slot and determine which hand it is in.
-		MC.player.getInventory().selectedSlot = foundBlockSlot;
+		MC.player.getInventory().setSelectedSlot(foundBlockSlot);
 		MC.player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(foundBlockSlot));
 		Hand hand = foundBlockSlot == 40 ? Hand.OFF_HAND : Hand.MAIN_HAND;
 
@@ -162,7 +152,7 @@ public class Surround extends Module implements TickListener {
 		}
 
 		// Return Selected Slot back to original slot.
-		MC.player.getInventory().selectedSlot = oldSlot;
+		MC.player.getInventory().setSelectedSlot(oldSlot);
 		MC.player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(oldSlot));
 
 		// Disable state if auto-disable is enabled.

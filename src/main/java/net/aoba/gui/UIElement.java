@@ -97,7 +97,7 @@ public abstract class UIElement {
 	 */
 	public void draw(DrawContext drawContext, float partialTicks) {
 		if (DEBUG) {
-			Render2D.drawBoxOutline(drawContext.getMatrices().peek().getPositionMatrix(), actualSize, Colors.Red);
+			Render2D.drawBoxOutline(drawContext, actualSize, Colors.Red);
 		}
 
 		if (isVisible()) {
@@ -495,7 +495,7 @@ public abstract class UIElement {
 				if (!event.isCancelled() && hovered) {
 					event.cancel();
 					String tooltip = getTooltip();
-                    GuiManager.setTooltip(tooltip);
+					GuiManager.setTooltip(tooltip);
 				} else if (wasHovered) {
 					GuiManager.setTooltip(null);
 				}

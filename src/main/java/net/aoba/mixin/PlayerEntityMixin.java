@@ -18,8 +18,6 @@
 
 package net.aoba.mixin;
 
-import net.aoba.module.modules.combat.AntiKnockback;
-import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
+import net.aoba.module.modules.combat.AntiKnockback;
 import net.aoba.module.modules.combat.Reach;
 import net.aoba.module.modules.misc.FastBreak;
 import net.minecraft.block.BlockState;
@@ -41,8 +40,10 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 	@Shadow
 	private PlayerInventory inventory;
 
-	@Shadow
-	public abstract boolean isSpectator();
+	@Inject(method = "isSpectator()Z", at = @At("HEAD"), cancellable = true)
+	public void onIsSpectator(CallbackInfoReturnable<Boolean> cir) {
+
+	}
 
 	@Inject(method = "getBlockBreakingSpeed", at = @At("HEAD"), cancellable = true)
 	public void onGetBlockBreakingSpeed(BlockState blockState, CallbackInfoReturnable<Float> ci) {
@@ -52,12 +53,12 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 		// If fast break is enabled.
 		if (fastBreak.state.getValue()) {
 			// Multiply the break speed and override the return value.
-			float speed = inventory.getBlockBreakingSpeed(blockState);
-			speed *= fastBreak.getMultiplier();
+			// float speed = inventory.getBlockBreakingSpeed(blockState);
+			float speed = fastBreak.getMultiplier();
 
 			if (!fastBreak.shouldIgnoreWater()) {
 				if (isSubmergedIn(FluidTags.WATER) || isSubmergedIn(FluidTags.LAVA) || !isOnGround()) {
-					speed /= 5.0F;
+					// speed /= 5.0F;
 				}
 			}
 
@@ -67,7 +68,7 @@ public abstract class PlayerEntityMixin extends LivingEntityMixin {
 
 	@Inject(at = { @At("HEAD") }, method = "getOffGroundSpeed()F", cancellable = true)
 	protected void onGetOffGroundSpeed(CallbackInfoReturnable<Float> cir) {
-    }
+	}
 
 	@Inject(at = { @At("HEAD") }, method = "getBlockInteractionRange()D", cancellable = true)
 	private void onBlockInteractionRange(CallbackInfoReturnable<Double> cir) {

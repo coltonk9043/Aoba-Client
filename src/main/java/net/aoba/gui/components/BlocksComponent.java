@@ -46,10 +46,11 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 	/**
 	 * Constructor for button component.
 	 *
-	 * @param setting The {@link BlocksSetting} BlockSetting that this component will use.
+	 * @param setting The {@link BlocksSetting} BlockSetting that this component
+	 *                will use.
 	 */
 	public BlocksComponent(BlocksSetting setting) {
-        text = setting.displayName;
+		text = setting.displayName;
 		blocks = setting;
 
 		setMargin(new Margin(8f, 2f, 8f, 2f));
@@ -97,7 +98,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 					Block block = Registries.BLOCK.get(index);
 
 					if (blocks.getValue().contains(block)) {
-						Render2D.drawBox(matrix4f, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1),
+						Render2D.drawBox(drawContext, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1),
 								((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25)), BLOCK_WIDTH,
 								BLOCK_WIDTH, new Color(0, 255, 0, 55));
 					}

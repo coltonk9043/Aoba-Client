@@ -12,16 +12,11 @@ import static net.aoba.AobaClient.MC;
 
 import org.joml.Matrix4f;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.aoba.gui.colors.Color;
-import net.minecraft.client.gl.ShaderProgramKeys;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
@@ -43,21 +38,16 @@ public class Render3D {
 		MatrixStack.Entry entry = matrixStack.peek();
 		Matrix4f matrix4f = entry.getPositionMatrix();
 
-		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.disableCull();
-		RenderSystem.disableDepthTest();
-
-		RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
-
 		float r = color.getRed();
 		float g = color.getGreen();
 		float b = color.getBlue();
 		float a = color.getAlpha();
 
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+		// Drawing Logic
+		VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
+		RenderLayer layer = RenderLayers.QUADS;
+		VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
+
 		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
 		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
 		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
@@ -87,13 +77,11 @@ public class Render3D {
 		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
 		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
 		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
-		RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
+		vertexConsumerProvider.draw(layer);
 
-		RenderSystem.lineWidth(lineThickness);
-
-		bufferBuilder = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
+		layer = RenderLayers.LINES;
+		bufferBuilder = vertexConsumerProvider.getBuffer(layer);
 
 		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.minZ, box.maxX, box.minY, box.minZ,
 				color);
@@ -120,39 +108,25 @@ public class Render3D {
 		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.maxZ, box.minX, box.maxY, box.minZ,
 				color);
 
-		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+		vertexConsumerProvider.draw(layer);
 
-		RenderSystem.enableCull();
-		RenderSystem.lineWidth(1f);
-		RenderSystem.enableDepthTest();
-		RenderSystem.disableBlend();
+		// RenderSystem.enableCull();
+		// RenderSystem.lineWidth(1f);
+		// RenderSystem.enableDepthTest();
+		// RenderSystem.disableBlend();
 	}
 
-	public static void drawLine3D(MatrixStack matrixStack, Camera camera, Vec3d pos1, Vec3d pos2, Color color,
-			float lineWidth) {
-		drawLine3D(matrixStack, camera, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color, lineWidth);
+	public static void drawLine3D(MatrixStack matrixStack, Camera camera, Vec3d pos1, Vec3d pos2, Color color) {
+		drawLine3D(matrixStack, camera, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color);
 	}
 
 	public static void drawLine3D(MatrixStack matrixStack, Camera camera, double x1, double y1, double z1, double x2,
-			double y2, double z2, Color color, float lineWidth) {
-
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.disableCull();
-		RenderSystem.disableDepthTest();
-
-		Tessellator tessellator = RenderSystem.renderThreadTesselator();
-
-		RenderSystem.setShader(ShaderProgramKeys.RENDERTYPE_LINES);
-		RenderSystem.lineWidth(lineWidth);
-
-		BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
+			double y2, double z2, Color color) {
+		VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
+		RenderLayer layer = RenderLayers.LINES;
+		VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
 		buildLine3d(matrixStack, camera, bufferBuilder, x1, y1, z1, x2, y2, z2, color);
-		BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-		RenderSystem.enableCull();
-		RenderSystem.lineWidth(1f);
-		RenderSystem.enableDepthTest();
-		RenderSystem.disableBlend();
+		vertexConsumerProvider.draw(layer);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -173,7 +147,7 @@ public class Render3D {
 			// Interpolate entity position and body rotations.
 			Vec3d interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks)
 					.add(camera.getPos().multiply(-1));
-			float interpolatedBodyYaw = MathHelper.lerpAngleDegrees(partialTicks, livingEntity.prevBodyYaw,
+			float interpolatedBodyYaw = MathHelper.lerpAngleDegrees(partialTicks, livingEntity.lastBodyYaw,
 					livingEntity.bodyYaw);
 			// Translate by the entity's interpolated position.
 			matrixStack.translate(interpolatedEntityPosition.getX(), interpolatedEntityPosition.getY(),
@@ -223,29 +197,11 @@ public class Render3D {
 			// Apply offset for correct rendering on screen. (Not sure why though!)
 			matrixStack.scale(-1.0f, -1.0f, 1.0f);
 			matrixStack.translate(0.0f, -1.501f, 0.0f);
-
-			// Render Vertices
-			Tessellator tessellator = RenderSystem.renderThreadTesselator();
-
-			RenderSystem.enableBlend();
-			RenderSystem.defaultBlendFunc();
-			RenderSystem.disableCull();
-			RenderSystem.disableDepthTest();
-
-			RenderSystem.setShader(ShaderProgramKeys.POSITION);
-			RenderSystem.setShaderColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-
-			// Draw Vertices
-			BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
-			model.render(matrixStack, bufferBuilder, 0, 0);
-			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-
-			RenderSystem.setShaderColor(1, 1, 1, 1);
-			RenderSystem.enableCull();
-			RenderSystem.lineWidth(1f);
-			RenderSystem.enableDepthTest();
-			RenderSystem.disableBlend();
-
+			VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
+			RenderLayer layer = RenderLayers.QUADS;
+			VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
+			model.render(matrixStack, bufferBuilder, 0, 0, color.getColorAsInt());
+			vertexConsumerProvider.draw(layer);
 			matrixStack.pop();
 		}
 	}
@@ -260,7 +216,7 @@ public class Render3D {
 		};
 	}
 
-	private static void buildLine3d(MatrixStack matrixStack, Camera camera, BufferBuilder bufferBuilder, double x1,
+	private static void buildLine3d(MatrixStack matrixStack, Camera camera, VertexConsumer bufferBuilder, double x1,
 			double y1, double z1, double x2, double y2, double z2, Color color) {
 		MatrixStack.Entry entry = matrixStack.peek();
 		Matrix4f matrix4f = entry.getPositionMatrix();
@@ -287,9 +243,9 @@ public class Render3D {
 	 * @return Vec3d representing the interpolated position of the entity.
 	 */
 	public static Vec3d getEntityPositionInterpolated(Entity entity, float delta) {
-		return new Vec3d(MathHelper.lerp(delta, entity.prevX, entity.getX()),
-				MathHelper.lerp(delta, entity.prevY, entity.getY()),
-				MathHelper.lerp(delta, entity.prevZ, entity.getZ()));
+		return new Vec3d(MathHelper.lerp(delta, entity.lastX, entity.getX()),
+				MathHelper.lerp(delta, entity.lastY, entity.getY()),
+				MathHelper.lerp(delta, entity.lastZ, entity.getZ()));
 	}
 
 	/**

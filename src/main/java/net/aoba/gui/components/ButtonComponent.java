@@ -35,7 +35,7 @@ public class ButtonComponent extends Component {
 	 */
 	public ButtonComponent(Runnable onClick) {
 
-        setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 
 		this.onClick = onClick;
 	}
@@ -132,7 +132,7 @@ public class ButtonComponent extends Component {
 			color = color.add(45, 45, 45);
 		}
 
-		Render2D.drawOutlinedRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, 3.0f,
+		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f,
 				GuiManager.borderColor.getValue(), color);
 
 		super.draw(drawContext, partialTicks);

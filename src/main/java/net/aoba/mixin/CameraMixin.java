@@ -28,7 +28,7 @@ public class CameraMixin {
 	private boolean thirdPerson;
 
 	@Shadow
-	private float lastTickDelta;
+	private float lastTickProgress;
 
 	@Inject(at = {
 			@At("HEAD") }, method = "update(Lnet/minecraft/world/BlockView;Lnet/minecraft/entity/Entity;ZZF)V", cancellable = true)
@@ -38,7 +38,7 @@ public class CameraMixin {
 		if (aoba != null && aoba.moduleManager.freecam.state.getValue()) {
 			ready = true;
 			this.area = area;
-			lastTickDelta = tickDelta;
+			lastTickProgress = tickDelta;
 			this.thirdPerson = thirdPerson;
 			ci.cancel();
 		}

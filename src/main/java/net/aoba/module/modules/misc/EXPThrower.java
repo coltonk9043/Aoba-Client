@@ -32,9 +32,13 @@ public class EXPThrower extends Module implements TickListener {
 			.displayName("Throw Delay").description("Delay between throws in ticks.").defaultValue(20f).minValue(1f)
 			.maxValue(100f).step(1f).build();
 
-	private final BooleanSetting autoToggleSetting = BooleanSetting.builder().id("expthrower_auto_toggle")
-			.displayName("Auto Toggle").description("Automatically toggle off when no XP bottles are found.")
-			.defaultValue(true).build();
+	// Disabled for now due to changes with event system... need a kind of
+	// dispatcher.
+	// private final BooleanSetting autoToggleSetting =
+	// BooleanSetting.builder().id("expthrower_auto_toggle")
+	// .displayName("Auto Toggle").description("Automatically toggle off when no XP
+	// bottles are found.")
+	// .defaultValue(true).build();
 
 	private long lastThrowTime = 0;
 
@@ -47,7 +51,7 @@ public class EXPThrower extends Module implements TickListener {
 		addSetting(pitchSetting);
 		addSetting(autoSwapSetting);
 		addSetting(throwDelaySetting);
-		addSetting(autoToggleSetting);
+		// addSetting(autoToggleSetting);
 	}
 
 	@Override
@@ -80,22 +84,24 @@ public class EXPThrower extends Module implements TickListener {
 		}
 
 		FindItemResult exp = findInHotbar(Items.EXPERIENCE_BOTTLE);
-		if (!exp.found()) {
-			if (autoToggleSetting.getValue()) {
-				toggle();
-			}
-			return;
-		}
+		// if (!exp.found()) {
+		// if (autoToggleSetting.getValue()) {
+		// toggle();
+		// }
+		// return;
+		// }
 
 		rotatePitch(pitchSetting.getValue());
 
 		if (exp.getHand() != null) {
 			MC.interactionManager.interactItem(MC.player, exp.getHand());
-		} else if (autoSwapSetting.getValue()) {
-			swap(exp.slot(), true);
-			MC.interactionManager.interactItem(MC.player, exp.getHand());
-			swapBack();
 		}
+		// TODO: Fix this.
+		// else if (autoSwapSetting.getValue()) {
+		// swap(exp.slot(), true);
+		// MC.interactionManager.interactItem(MC.player, exp.getHand());
+		// swapBack();
+		// }
 
 		lastThrowTime = currentTime;
 	}

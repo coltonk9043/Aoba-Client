@@ -11,7 +11,6 @@ package net.aoba.gui.navigation.huds;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.gui.GuiManager;
@@ -23,7 +22,6 @@ import net.aoba.module.Module;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class ModuleSelectorHud extends HudWindow {
 
@@ -112,8 +110,6 @@ public class ModuleSelectorHud extends HudWindow {
 		super.draw(drawContext, partialTicks);
 
 		// Gets the client and window.
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 		Rectangle pos = getActualSize();
 
 		if (pos.isDrawable()) {
@@ -123,9 +119,9 @@ public class ModuleSelectorHud extends HudWindow {
 			float height = pos.getHeight().floatValue();
 
 			// Draws background depending on components width and height
-			Render2D.drawRoundedBox(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
+			Render2D.drawRoundedBox(drawContext, x, y, width, height, GuiManager.roundingRadius.getValue(),
 					GuiManager.backgroundColor.getValue());
-			Render2D.drawRoundedBoxOutline(matrix4f, x, y, width, height, GuiManager.roundingRadius.getValue(),
+			Render2D.drawRoundedBoxOutline(drawContext, x, y, width, height, GuiManager.roundingRadius.getValue(),
 					GuiManager.borderColor.getValue());
 
 			// For every category, draw a cell for it.
@@ -145,9 +141,10 @@ public class ModuleSelectorHud extends HudWindow {
 			// If any particular category menu is open.
 			if (isCategoryMenuOpen) {
 				// Draw the table underneath
-				Render2D.drawRoundedBox(matrix4f, x + width, y + (ROW_HEIGHT * index), 165, ROW_HEIGHT * modules.size(),
-						GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-				Render2D.drawRoundedBoxOutline(matrix4f, x + width, y + (ROW_HEIGHT * index), 165,
+				Render2D.drawRoundedBox(drawContext, x + width, y + (ROW_HEIGHT * index), 165,
+						ROW_HEIGHT * modules.size(), GuiManager.roundingRadius.getValue(),
+						GuiManager.backgroundColor.getValue());
+				Render2D.drawRoundedBoxOutline(drawContext, x + width, y + (ROW_HEIGHT * index), 165,
 						ROW_HEIGHT * modules.size(), GuiManager.roundingRadius.getValue(),
 						GuiManager.borderColor.getValue());
 

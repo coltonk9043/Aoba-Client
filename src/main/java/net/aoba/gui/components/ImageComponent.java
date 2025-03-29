@@ -8,13 +8,10 @@
 
 package net.aoba.gui.components;
 
-import org.joml.Matrix4f;
-
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Size;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 public class ImageComponent extends Component {
@@ -22,7 +19,7 @@ public class ImageComponent extends Component {
 	public Identifier image;
 
 	public ImageComponent() {
-    }
+	}
 
 	public ImageComponent(Identifier image) {
 		this();
@@ -37,15 +34,12 @@ public class ImageComponent extends Component {
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		if (image != null) {
-			MatrixStack matrixStack = drawContext.getMatrices();
-			Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
 			float actualX = getActualSize().getX();
 			float actualY = getActualSize().getY();
 			float actualWidth = getActualSize().getWidth();
 			float actualHeight = getActualSize().getHeight();
 
-			Render2D.drawTexturedQuad(matrix4f, image, actualX, actualY, actualWidth, actualHeight,
+			Render2D.drawTexturedQuad(drawContext, image, actualX, actualY, actualWidth, actualHeight,
 					GuiManager.foregroundColor.getValue());
 		}
 		super.draw(drawContext, partialTicks);

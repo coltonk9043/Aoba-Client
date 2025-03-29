@@ -159,7 +159,8 @@ public abstract class Module {
 	/**
 	 * Adds multiple settings to the module.
 	 *
-	 * @param settings The array of {@link Setting} objects to be added to the module's settings list.
+	 * @param settings The array of {@link Setting} objects to be added to the
+	 *                 module's settings list.
 	 */
 	public void addSettings(Setting<?>... settings) {
 		for (Setting<?> setting : settings) {
@@ -262,7 +263,8 @@ public abstract class Module {
 	/**
 	 * Sets multiple anti-cheats as detectable.
 	 *
-	 * @param anticheats The array of {@link AntiCheat} objects to be set as detectable.
+	 * @param anticheats The array of {@link AntiCheat} objects to be set as
+	 *                   detectable.
 	 */
 	public void setDetectable(AntiCheat... anticheats) {
 		for (AntiCheat anticheat : anticheats) {
@@ -360,7 +362,8 @@ public abstract class Module {
 		}
 
 		if (testInMainHand(isGood)) {
-			return new FindItemResult(MC.player.getInventory().selectedSlot, MC.player.getMainHandStack().getCount());
+			return new FindItemResult(MC.player.getInventory().getSelectedSlot(),
+					MC.player.getMainHandStack().getCount());
 		}
 
 		return find(isGood, 0, 8);
@@ -435,13 +438,13 @@ public abstract class Module {
 
 		if (swapBack) {
 			if (previousSlot == -1) {
-				previousSlot = MC.player.getInventory().selectedSlot;
+				previousSlot = MC.player.getInventory().getSelectedSlot();
 			}
 		} else {
 			previousSlot = -1;
 		}
 
-		MC.player.getInventory().selectedSlot = slot;
+		MC.player.getInventory().setSelectedSlot(slot);
 		((IClientPlayerInteractionManager) MC.interactionManager).aoba$syncSelected();
 		return true;
 	}

@@ -38,8 +38,6 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 			.displayName("Enemy Color").description("Enemy Color").defaultValue(new Color(0f, 1f, 1f)).build();
 	private final ColorSetting color_misc = ColorSetting.builder().id("tracer_color_misc").displayName("Misc. Color")
 			.description("Misc. Color").defaultValue(new Color(0f, 1f, 1f)).build();
-	private final FloatSetting lineWidth = FloatSetting.builder().id("tracer_line_width").displayName("Line Width")
-			.description("Width of the tracer lines.").defaultValue(1f).minValue(0.1f).maxValue(10f).step(0.1f).build();
 	private final FloatSetting lines = FloatSetting.builder().id("tracer_lines").displayName("Max Lines")
 			.description("The maximum amount of lines that can be rendered at once.").defaultValue(100f).minValue(1f)
 			.maxValue(300f).step(1f).build();
@@ -68,7 +66,6 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 		addSetting(color_passive);
 		addSetting(color_enemies);
 		addSetting(color_misc);
-		addSetting(lineWidth);
 		addSetting(lines);
 		addSetting(target);
 		addSetting(mode);
@@ -146,18 +143,18 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 
 				if (mode.getValue() == TracerMode.Stem) {
 					Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), new Vec3d(x, y, z),
-							new Vec3d(x, renderEntity.getHeight() + y, z), color, lineWidth.getValue());
+							new Vec3d(x, renderEntity.getHeight() + y, z), color);
 				}
 
 				Vec3d start = new Vec3d(rotation.x, rotation.y, rotation.z);
 
 				switch (target.getValue()) {
 				case Head -> Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start,
-						new Vec3d(x, y + entity.getHeight() - 0.18f, z), color, lineWidth.getValue());
+						new Vec3d(x, y + entity.getHeight() - 0.18f, z), color);
 				case Body -> Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start,
-						new Vec3d(x, y + entity.getHeight() / 2.0f, z), color, lineWidth.getValue());
-				case Feet -> Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start, new Vec3d(x, y, z), color,
-						lineWidth.getValue());
+						new Vec3d(x, y + entity.getHeight() / 2.0f, z), color);
+				case Feet ->
+					Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start, new Vec3d(x, y, z), color);
 				}
 
 				if (mode.getValue() == TracerMode.Fill) {

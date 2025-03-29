@@ -79,7 +79,7 @@ public class MCA extends Module implements MouseClickListener {
 					FindItemResult result = find(Items.ENDER_PEARL);
 					if (!result.found() || !result.isHotbar())
 						return;
-					previousSlot = MC.player.getInventory().selectedSlot;
+					previousSlot = MC.player.getInventory().getSelectedSlot();
 					if (!result.isMainHand()) {
 						swap(result.slot(), false);
 						MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);

@@ -20,7 +20,6 @@ import net.aoba.gui.colors.Color;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
-import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render3D;
 import net.minecraft.util.math.Vec3d;
 
@@ -28,10 +27,6 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 
 	private final ColorSetting color = ColorSetting.builder().id("breadcrumbs_color").displayName("Color")
 			.description("Color").defaultValue(new Color(0, 1f, 1f)).build();
-
-	public final FloatSetting lineThickness = FloatSetting.builder().id("breadcrumbs_linethickness")
-			.displayName("Line Thickness").description("Line Thickness.").defaultValue(1f).minValue(0.1f).maxValue(10f)
-			.step(0.1f).build();
 
 	private final float distanceThreshold = 1.0f; // Minimum distance to record a new position
 	private float currentTick = 0;
@@ -44,7 +39,6 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 		setCategory(Category.of("Render"));
 		setDescription("Shows breadcrumbs of where you last stepped;");
 		addSetting(color);
-		addSetting(lineThickness);
 	}
 
 	@Override
@@ -70,8 +64,7 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 		Vec3d prevPosition = null;
 		for (Vec3d position : positions) {
 			if (prevPosition != null) {
-				Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), prevPosition, position, color.getValue(),
-						lineThickness.getValue().floatValue());
+				Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), prevPosition, position, color.getValue());
 			}
 			prevPosition = position;
 		}

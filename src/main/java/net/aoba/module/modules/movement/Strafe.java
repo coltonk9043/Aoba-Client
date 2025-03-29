@@ -15,6 +15,7 @@ import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
+import net.minecraft.util.math.Vec2f;
 
 public class Strafe extends Module implements TickListener {
 
@@ -28,16 +29,8 @@ public class Strafe extends Module implements TickListener {
 
 		addSetting(intensity);
 
-		setDetectable(
-		    AntiCheat.NoCheatPlus,
-		    AntiCheat.Vulcan,
-		    AntiCheat.AdvancedAntiCheat,
-		    AntiCheat.Verus,
-		    AntiCheat.Grim,
-		    AntiCheat.Matrix,
-		    AntiCheat.Negativity,
-		    AntiCheat.Karhu
-		);
+		setDetectable(AntiCheat.NoCheatPlus, AntiCheat.Vulcan, AntiCheat.AdvancedAntiCheat, AntiCheat.Verus,
+				AntiCheat.Grim, AntiCheat.Matrix, AntiCheat.Negativity, AntiCheat.Karhu);
 	}
 
 	@Override
@@ -57,7 +50,8 @@ public class Strafe extends Module implements TickListener {
 
 	@Override
 	public void onTick(TickEvent.Pre event) {
-		if (MC.player.input.movementForward != 0 || MC.player.input.movementSideways != 0) {
+		Vec2f playerInput = MC.player.input.getMovementInput();
+		if (playerInput.x != 0 || playerInput.y != 0) {
 
 			if (MC.player.isOnGround() && MC.options.jumpKey.isPressed())
 				MC.player.addVelocity(0, MC.player.getVelocity().y, 0);

@@ -7,20 +7,20 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 @Mixin(ClientPlayerEntity.class)
 public interface IClientPlayerEntity {
-	@Accessor("lastX")
-	double getLastX();
+	// @Accessor("lastX")
+	// double getLastX();
 
-	@Accessor("lastBaseY")
-	double getLastY();
+	// @Accessor("lastBaseY")
+	// double getLastY();
 
-	@Accessor("lastZ")
-	double getLastZ();
+	// @Accessor("lastZ")
+	// double getLastZ();
 
-	@Accessor("lastYaw")
-	float getLastYaw();
+	// @Accessor("lastYaw")
+	// float getLastYaw();
 
-	@Accessor("lastPitch")
-	float getLastPitch();
+	// @Accessor("lastPitch")
+	// float getLastPitch();
 
 	@Accessor("ticksSinceLastPositionPacketSent")
 	int getTicksSinceLastPositionPacketSent();
@@ -34,20 +34,20 @@ public interface IClientPlayerEntity {
 	@Accessor("autoJumpEnabled")
 	boolean getAutoJumpEnabled();
 
-	@Accessor("lastX")
-	void setLastX(double value);
+	// @Accessor("lastX")
+	// void setLastX(double value);
 
-	@Accessor("lastBaseY")
-	void setLastY(double value);
+	// @Accessor("lastBaseY")
+	// void setLastY(double value);
 
-	@Accessor("lastZ")
-	void setLastZ(double value);
+	// @Accessor("lastZ")
+	// void setLastZ(double value);
 
-	@Accessor("lastYaw")
-	void setLastYaw(float value);
+	// @Accessor("lastYaw")
+	// void setLastYaw(float value);
 
-	@Accessor("lastPitch")
-	void setLastPitch(float value);
+	// @Accessor("lastPitch")
+	// void setLastPitch(float value);
 
 	@Accessor("ticksSinceLastPositionPacketSent")
 	void setTicksSinceLastPositionPacketSent(int value);

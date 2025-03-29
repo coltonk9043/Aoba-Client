@@ -1,5 +1,5 @@
 plugins {
-    id "fabric-loom" version "1.9-SNAPSHOT"
+    id "fabric-loom" version "1.10-SNAPSHOT"
     id 'maven-publish'
 }
 
@@ -56,7 +56,7 @@ dependencies {
     modCompileOnly("maven.modrinth:iris:${project.iris_version}") { transitive = false }
 
     modImplementation("maven.modrinth:sodium:${project.sodium_version}")
-    modImpl("meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT")
+    //modImpl("meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT")
 
     // Custom Implementations
     implementation "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"

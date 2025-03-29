@@ -33,9 +33,9 @@ public class SpeedHud extends HudWindow {
 
 		PlayerEntity player = MC.player;
 		if (player != null) {
-			double dx = player.getX() - player.prevX;
-			double dz = player.getZ() - player.prevZ;
-			double dy = player.getY() - player.prevY;
+			double dx = player.getX() - player.lastX;
+			double dz = player.getZ() - player.lastZ;
+			double dy = player.getY() - player.lastY;
 
 			double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 

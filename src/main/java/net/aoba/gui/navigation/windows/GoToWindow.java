@@ -134,7 +134,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				.description("The radius that the teleport pathfinder will attempt to find a block within.")
 				.defaultValue(5.0f).minValue(1.0f).maxValue(100.0f).step(1.0f).onUpdate(s -> {
 					if (pathManager instanceof TeleportPathManager tpManager) {
-                        tpManager.setRadius(s);
+						tpManager.setRadius(s);
 						if (isStarted)
 							recalculatePathAsync();
 					}
@@ -375,7 +375,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 
 				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, Colors.Red, 1);
 				Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), first.pos.toCenterPos(),
-						second.pos.toCenterPos(), Colors.Red, 1.0f);
+						second.pos.toCenterPos(), Colors.Red);
 			}
 		}
 	}
@@ -430,7 +430,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				MC.player.getAbilities().flying = false;
 				MC.player.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
 				MC.options.forwardKey.setPressed(true);
-                MC.options.jumpKey.setPressed(next.getIsInWater() || next.getIsInLava() || next.getWasJump() || MC.player.horizontalCollision);
+				MC.options.jumpKey.setPressed(next.getIsInWater() || next.getIsInLava() || next.getWasJump()
+						|| MC.player.horizontalCollision);
 				break;
 			case Teleport:
 				int packetsRequired = (int) Math.ceil(MC.player.getPos().distanceTo(nextCenterPos) / 10) - 1;

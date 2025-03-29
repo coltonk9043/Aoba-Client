@@ -11,9 +11,6 @@ package net.aoba.module.modules.render;
 import java.util.function.Predicate;
 
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
@@ -25,13 +22,8 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.client.gl.ShaderProgramKeys;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.BowItem;
@@ -81,7 +73,8 @@ public class Trajectory extends Module implements Render3DListener {
 	@Override
 	public void onRender(Render3DEvent event) {
 		Color renderColor = color.getValue();
-		Matrix4f matrix = event.GetMatrix().peek().getPositionMatrix();
+		MatrixStack matrixStack = event.GetMatrix();
+		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 
 		ItemStack itemStack = MC.player.getMainHandStack();
 		if (ModuleUtils.isThrowable(itemStack)) {
@@ -93,7 +86,7 @@ public class Trajectory extends Module implements Render3DListener {
 
 			Camera camera = MC.gameRenderer.getCamera();
 			Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity,
-					event.getRenderTickCounter().getTickDelta(true));
+					event.getRenderTickCounter().getTickProgress(true));
 			Vec3d eyePos = MC.cameraEntity.getEyePos();
 
 			// Calculate look direction.
@@ -105,21 +98,8 @@ public class Trajectory extends Module implements Render3DListener {
 			Vec3d prevPoint = new Vec3d(0, 0, 0).add(eyePos).subtract(offset).add(right);
 			Vec3d landPosition = null;
 
-			RenderSystem.setShaderColor(renderColor.getRed(), renderColor.getGreen(), renderColor.getBlue(),
-					renderColor.getAlpha());
-
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-			Tessellator tessellator = RenderSystem.renderThreadTesselator();
-
-			RenderSystem.setShader(ShaderProgramKeys.POSITION);
-
-			BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION);
-
 			for (int iteration = 0; iteration < 150; iteration++) {
 				Vec3d nextPoint = prevPoint.add(velocity.multiply(0.1));
-				bufferBuilder.vertex(matrix, (float) prevPoint.x, (float) prevPoint.y, (float) prevPoint.z);
 
 				// Check to see if we have collided with a block.
 				RaycastContext context = new RaycastContext(prevPoint, nextPoint, RaycastContext.ShapeType.COLLIDER,
@@ -129,8 +109,7 @@ public class Trajectory extends Module implements Render3DListener {
 					// Arrow is collided with a block, draw one last vertice and set land position
 					// to the raycast result position.
 					landPosition = result.getPos();
-					bufferBuilder.vertex(matrix, (float) landPosition.x, (float) landPosition.y,
-							(float) landPosition.z);
+					Render3D.drawLine3D(matrixStack, camera, prevPoint, landPosition, renderColor);
 					break;
 				} else {
 					// We did NOT find a collision with a block, check entities.
@@ -143,24 +122,17 @@ public class Trajectory extends Module implements Render3DListener {
 						// Arrow is collided with an entity, draw one last vertice and set land position
 						// to the raycast result position.
 						landPosition = entityResult.getPos();
-						bufferBuilder.vertex(matrix, (float) landPosition.x, (float) landPosition.y,
-								(float) landPosition.z);
+						Render3D.drawLine3D(matrixStack, camera, prevPoint, landPosition, renderColor);
 						break;
 					} else {
 						// No collisions from raycast, draw next vertice.
-						bufferBuilder.vertex(matrix, (float) nextPoint.x, (float) nextPoint.y, (float) nextPoint.z);
+						Render3D.drawLine3D(matrixStack, camera, prevPoint, nextPoint, renderColor);
 					}
 				}
 
 				prevPoint = nextPoint;
 				velocity = velocity.multiply(0.99).add(0, throwableGravity(itemStack.getItem()), 0);
 			}
-
-			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-			RenderSystem.setShaderColor(1, 1, 1, 1);
-
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
-			GL11.glDisable(GL11.GL_BLEND);
 
 			// Draw Cube if a landing position exists.
 			if (landPosition != null) {

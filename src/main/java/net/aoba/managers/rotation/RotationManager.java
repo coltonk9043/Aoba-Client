@@ -81,7 +81,7 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 		lastServerPitch = serverPitch;
 
 		if (currentGoal != null) {
-			float tickDelta = event.getRenderTickCounter().getTickDelta(true);
+			float tickDelta = event.getRenderTickCounter().getTickProgress(true);
 			Rotation currentGoalRotation;
 			if (currentGoal.isFakeRotation()) {
 				currentGoalRotation = getRotationFromGoal(serverYaw, serverPitch, tickDelta);
@@ -149,9 +149,10 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 
 		// Fabricate our own packet.
 		IClientPlayerEntity iPlayer = (IClientPlayerEntity) MC.player;
-		double d = MC.player.getX() - iPlayer.getLastX();
-		double e = MC.player.getY() - iPlayer.getLastY();
-		double f = MC.player.getZ() - iPlayer.getLastZ();
+
+		double d = MC.player.getX() - MC.player.lastX;
+		double e = MC.player.getY() - MC.player.lastY;
+		double f = MC.player.getZ() - MC.player.lastZ;
 		double g = serverYaw - lastServerYaw;
 		double h = serverPitch - lastServerPitch;
 
@@ -170,9 +171,9 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 			return; // View was not affected, return.
 
 		if (bl) {
-			iPlayer.setLastX(MC.player.getX());
-			iPlayer.setLastY(MC.player.getY());
-			iPlayer.setLastZ(MC.player.getZ());
+			MC.player.lastX = MC.player.getX();
+			MC.player.lastY = MC.player.getY();
+			MC.player.lastZ = MC.player.getZ();
 			iPlayer.setTicksSinceLastPositionPacketSent(0);
 		}
 

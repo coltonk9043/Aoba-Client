@@ -106,7 +106,7 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
 	}
 
 	private boolean isCurrentlyHandEdible() {
-		Item item = MC.player.getInventory().getMainHandStack().getItem();
+		Item item = MC.player.getInventory().getSelectedStack().getItem();
 		FoodComponent food = item.getComponents().get(DataComponentTypes.FOOD);
 		return food != null;
 	}
@@ -156,14 +156,14 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
 
 				if (bestFood != null) {
 					if (swapBack.getValue()) {
-						previousSlot = MC.player.getInventory().selectedSlot;
+						previousSlot = MC.player.getInventory().getSelectedSlot();
 						AobaClient.LOGGER.info("[Aoba] Setting previous slot to: " + previousSlot);
 					}
 
 					lastUsedItemStack = MC.player.getInventory().getStack(foodSlot);
 					isEating = true;
 					AobaClient.LOGGER.info("[Aoba] Eating Slot: " + foodSlot);
-					MC.player.getInventory().selectedSlot = foodSlot;
+					MC.player.getInventory().setSelectedSlot(foodSlot);
 					MC.options.useKey.setPressed(true);
 				}
 			}
@@ -198,7 +198,7 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
 				isEating = false;
 				if (swapBack.getValue() && previousSlot != -1) {
 					AobaClient.LOGGER.info("[Aoba] Swapping back to : " + previousSlot);
-					MC.player.getInventory().selectedSlot = previousSlot;
+					MC.player.getInventory().setSelectedSlot(previousSlot);
 					previousSlot = -1;
 				}
 			}

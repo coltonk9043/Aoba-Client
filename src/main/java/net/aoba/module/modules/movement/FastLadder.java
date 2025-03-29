@@ -17,6 +17,7 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
 public class FastLadder extends Module implements TickListener {
@@ -43,14 +44,8 @@ public class FastLadder extends Module implements TickListener {
 		addSetting(accelerationBoost);
 		addSetting(decelerationPenalty);
 
-		setDetectable(
-		    AntiCheat.NoCheatPlus,
-		    AntiCheat.Vulcan,
-		    AntiCheat.AdvancedAntiCheat,
-		    AntiCheat.Verus,
-		    AntiCheat.Grim,
-		    AntiCheat.Matrix
-		);
+		setDetectable(AntiCheat.NoCheatPlus, AntiCheat.Vulcan, AntiCheat.AdvancedAntiCheat, AntiCheat.Verus,
+				AntiCheat.Grim, AntiCheat.Matrix);
 
 	}
 
@@ -76,13 +71,14 @@ public class FastLadder extends Module implements TickListener {
 		if (!player.isClimbing() || !player.horizontalCollision)
 			return;
 
-		if (player.input.movementForward == 0 && player.input.movementSideways == 0)
+		Vec2f playerInput = player.input.getMovementInput();
+		if (playerInput.x == 0 && playerInput.y == 0)
 			return;
 
 		Vec3d velocity = player.getVelocity();
 		double yVelocity = ladderSpeed.getValue() + accelerationBoost.getValue();
 
-		if (player.input.movementForward == 0 && player.input.movementSideways != 0) {
+		if (playerInput.x == 0 && playerInput.y != 0) {
 			yVelocity -= decelerationPenalty.getValue();
 		}
 

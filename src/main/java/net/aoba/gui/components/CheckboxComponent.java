@@ -28,7 +28,7 @@ public class CheckboxComponent extends Component {
 	private Runnable onClick;
 
 	public CheckboxComponent(BooleanSetting checkbox) {
-        text = checkbox.displayName;
+		text = checkbox.displayName;
 		this.checkbox = checkbox;
 
 		setMargin(new Margin(8f, 2f, 8f, 2f));
@@ -60,7 +60,7 @@ public class CheckboxComponent extends Component {
 		Color fillColor = checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
 
 		Render2D.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
-		Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 24, actualY + 5, 20, 20, 3,
+		Render2D.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 24, actualY + 5, 20, 20, 3,
 				GuiManager.borderColor.getValue(), fillColor);
 	}
 

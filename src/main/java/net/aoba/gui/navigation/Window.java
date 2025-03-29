@@ -10,8 +10,6 @@ package net.aoba.gui.navigation;
 
 import java.util.List;
 
-import org.joml.Matrix4f;
-
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.gui.Direction;
@@ -27,7 +25,6 @@ import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class Window extends UIElement {
 	protected String ID;
@@ -48,7 +45,7 @@ public class Window extends UIElement {
 	}
 
 	public Window(String ID, float x, float y, float width, float height) {
-        this.ID = ID;
+		this.ID = ID;
 		minWidth = 180.0f;
 		minHeight = 50.0f;
 
@@ -90,20 +87,15 @@ public class Window extends UIElement {
 	}
 
 	public void draw(DrawContext drawContext, float partialTicks) {
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 		float actualHeight = getActualSize().getHeight();
 
 		// Draws background depending on components width and height
-		Render2D.drawRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight,
-				GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
-		Render2D.drawRoundedBoxOutline(matrix4f, actualX, actualY, actualWidth, actualHeight,
-				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
-
+		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight,
+				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
+				GuiManager.backgroundColor.getValue());
 		List<UIElement> children = getChildren();
 		for (UIElement child : children) {
 			child.draw(drawContext, partialTicks);
@@ -261,7 +253,7 @@ public class Window extends UIElement {
 						parentPage.moveToFront(this);
 						isMoving = true;
 						event.cancel();
-                    }
+					}
 				}
 			} else if (event.button == MouseButton.LEFT && event.action == MouseAction.UP) {
 				if (isMoving || isResizing) {

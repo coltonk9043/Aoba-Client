@@ -10,7 +10,6 @@ package net.aoba.gui.components;
 
 import static net.aoba.utils.render.TextureBank.gear;
 
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import net.aoba.Aoba;
@@ -43,7 +42,7 @@ public class ModuleComponent extends Component {
 
 	public ModuleComponent(Module module) {
 
-        header = module.getName();
+		header = module.getName();
 		this.module = module;
 		tooltip = module.getDescription();
 		setMargin(new Margin(8f, 2f, 8f, 2f));
@@ -67,7 +66,6 @@ public class ModuleComponent extends Component {
 		super.draw(drawContext, partialTicks);
 
 		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
@@ -90,11 +88,11 @@ public class ModuleComponent extends Component {
 				matrixStack.translate((actualX + actualWidth - 8), (actualY + 14), 0);
 				matrixStack.multiply(new Quaternionf().rotateZ((float) Math.toRadians(spinAngle)));
 				matrixStack.translate(-(actualX + actualWidth - 8), -(actualY + 14), 0);
-				Render2D.drawTexturedQuad(matrixStack.peek().getPositionMatrix(), gear, (actualX + actualWidth - 16),
-						(actualY + 6), 16, 16, hudColor);
+				Render2D.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16,
+						hudColor);
 				matrixStack.pop();
 			} else {
-				Render2D.drawTexturedQuad(matrix4f, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16,
+				Render2D.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16,
 						hudColor);
 			}
 		}
@@ -104,15 +102,16 @@ public class ModuleComponent extends Component {
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
 
-		if ((event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) ||
-				(event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN)) {
+		if ((event.button == MouseButton.LEFT && event.action == MouseAction.DOWN)
+				|| (event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN)) {
 			if (hovered) {
 				float mouseX = (float) event.mouseX;
 				float actualX = actualSize.getX();
 				float actualY = actualSize.getY();
 				float actualWidth = actualSize.getWidth();
 
-				boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34) && mouseX <= (actualX + actualWidth));
+				boolean isOnOptionsButton = (mouseX >= (actualX + actualWidth - 34)
+						&& mouseX <= (actualX + actualWidth));
 				if (isOnOptionsButton || event.button == MouseButton.RIGHT) {
 					spinning = true;
 					if (lastSettingsTab == null) {

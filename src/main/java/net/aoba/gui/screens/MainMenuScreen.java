@@ -8,9 +8,24 @@
 
 package net.aoba.gui.screens;
 
+import static net.aoba.AobaClient.MC;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpClient.Version;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
 import net.aoba.gui.GuiManager;
@@ -31,237 +46,192 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Util;
-import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpClient.Redirect;
-import java.net.http.HttpClient.Version;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+public class MainMenuScreen extends Screen {
+	protected static final CubeMapRenderer AOBA_PANORAMA_RENDERER = new CubeMapRenderer(TextureBank.mainmenu_panorama);
+	protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(
+			AOBA_PANORAMA_RENDERER);
 
-import static net.aoba.AobaClient.MC;
+	final int LOGO_HEIGHT = Math.max(58, height / 12);
+	final int BUTTON_WIDTH = Math.max(150, width / 6);
+	final int BUTTON_HEIGHT = Math.max(25, height / 20);
+	final int SPACING = Math.max(5, height / 100);
 
-public class MainMenuScreen extends Screen
-{
-    protected static final CubeMapRenderer AOBA_PANORAMA_RENDERER = new CubeMapRenderer(TextureBank.mainmenu_panorama);
-    protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(
-            AOBA_PANORAMA_RENDERER);
+	int smallScreenHeightOffset = 0;
 
-    final int LOGO_HEIGHT = Math.max(58, height / 12);
-    final int BUTTON_WIDTH = Math.max(150, width / 6);
-    final int BUTTON_HEIGHT = Math.max(25, height / 20);
-    final int SPACING = Math.max(5, height / 100);
+	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private String fetchedVersion = null;
 
-    int smallScreenHeightOffset = 0;
+	public MainMenuScreen() {
+		super(Text.of("Aoba Client Main Menu"));
 
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private String fetchedVersion = null;
+		// Async fetch latest release from GitHub
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				fetchLatestVersion();
+			}
+		});
+	}
 
-    public MainMenuScreen()
-    {
-        super(Text.of("Aoba Client Main Menu"));
+	private static URI createURI(String url) {
+		try {
+			URI uri = new URI(url);
+			return uri;
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 
-        // Async fetch latest release from GitHub
-        executor.execute(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                fetchLatestVersion();
-            }
-        });
-    }
+	private void fetchLatestVersion() {
+		try {
+			HttpClient client = HttpClient.newBuilder().version(Version.HTTP_2).followRedirects(Redirect.NORMAL)
+					.build();
 
-    private static URI createURI(String url)
-    {
-        try
-        {
-            URI uri = new URI(url);
-            return uri;
-        } catch (URISyntaxException e)
-        {
-            throw new IllegalArgumentException(e);
-        }
-    }
+			HttpRequest request = HttpRequest
+					.newBuilder(
+							createURI("https://api.github.com/repos/coltonk9043/Aoba-MC-Hacked-Client/releases/latest"))
+					.header("User-Agent",
+							"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
+					.header("Accept", "application/json").header("Content-Type", "application/x-www-form-urlencoded")
+					.GET().build();
 
-    private void fetchLatestVersion()
-    {
-        try
-        {
-            HttpClient client = HttpClient.newBuilder().version(Version.HTTP_2).followRedirects(Redirect.NORMAL)
-                    .build();
+			HttpResponse<String> response;
+			response = client.send(request, BodyHandlers.ofString());
+			String responseString = response.body();
 
-            HttpRequest request = HttpRequest
-                    .newBuilder(
-                            createURI("https://api.github.com/repos/coltonk9043/Aoba-MC-Hacked-Client/releases/latest"))
-                    .header("User-Agent",
-                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
-                    .header("Accept", "application/json").header("Content-Type", "application/x-www-form-urlencoded")
-                    .GET().build();
+			int status = response.statusCode();
+			if (status != HttpURLConnection.HTTP_OK) {
+				throw new IllegalArgumentException("Device token could not be fetched. Invalid status code " + status);
+			}
 
-            HttpResponse<String> response;
-            response = client.send(request, BodyHandlers.ofString());
-            String responseString = response.body();
+			JsonObject json = new Gson().fromJson(responseString, JsonObject.class);
+			String tagName = json.get("tag_name").getAsString();
+			if (tagName != null)
+				fetchedVersion = tagName;
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
-            int status = response.statusCode();
-            if (status != HttpURLConnection.HTTP_OK)
-            {
-                throw new IllegalArgumentException("Device token could not be fetched. Invalid status code " + status);
-            }
+	public void init() {
+		super.init();
 
-            JsonObject json = new Gson().fromJson(responseString, JsonObject.class);
-            String tagName = json.get("tag_name").getAsString();
-            if (tagName != null)
-                fetchedVersion = tagName;
-        } catch (IOException | InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-    }
+		if (height <= 650)
+			smallScreenHeightOffset = 40;
+		else
+			smallScreenHeightOffset = 0;
 
-    public void init()
-    {
-        super.init();
+		int columns = 2;
+		int rows = 3;
+		float widgetHeight = ((BUTTON_HEIGHT + SPACING) * rows);
+		int startX = (int) ((width - (BUTTON_WIDTH * columns + SPACING * (columns - 1))) / 2.0f);
+		int startY = (int) ((height - widgetHeight) / 2) + smallScreenHeightOffset;
 
-        if (height <= 650)
-            smallScreenHeightOffset = 40;
-        else
-            smallScreenHeightOffset = 0;
+		AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX, startY, BUTTON_WIDTH, BUTTON_HEIGHT,
+				Text.of("Singleplayer"));
+		singleplayerButton.setPressAction(b -> client.setScreen(new SelectWorldScreen(this)));
+		addDrawableChild(singleplayerButton);
 
-        int columns = 2;
-        int rows = 3;
-        float widgetHeight = ((BUTTON_HEIGHT + SPACING) * rows);
-        int startX = (int) ((width - (BUTTON_WIDTH * columns + SPACING * (columns - 1))) / 2.0f);
-        int startY = (int) ((height - widgetHeight) / 2) + smallScreenHeightOffset;
+		AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY, BUTTON_WIDTH,
+				BUTTON_HEIGHT, Text.of("Multiplayer"));
+		multiplayerButton.setPressAction(b -> client.setScreen(new MultiplayerScreen(this)));
+		addDrawableChild(multiplayerButton);
 
-        AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX, startY, BUTTON_WIDTH, BUTTON_HEIGHT,
-                Text.of("Singleplayer"));
-        singleplayerButton.setPressAction(b -> client.setScreen(new SelectWorldScreen(this)));
-        addDrawableChild(singleplayerButton);
+		AobaButtonWidget realmsButton = new AobaButtonWidget(startX, startY + BUTTON_HEIGHT + SPACING, BUTTON_WIDTH,
+				BUTTON_HEIGHT, Text.of("Realms"));
+		realmsButton.setPressAction(b -> client.setScreen(new RealmsMainScreen(this)));
+		addDrawableChild(realmsButton);
 
-        AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Multiplayer"));
-        multiplayerButton.setPressAction(b -> client.setScreen(new MultiplayerScreen(this)));
-        addDrawableChild(multiplayerButton);
+		AobaButtonWidget settingsButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING,
+				startY + BUTTON_HEIGHT + SPACING, BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Settings"));
+		settingsButton.setPressAction(b -> client.setScreen(new OptionsScreen(this, MC.options)));
+		addDrawableChild(settingsButton);
 
-        AobaButtonWidget realmsButton = new AobaButtonWidget(startX, startY + BUTTON_HEIGHT + SPACING,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Realms"));
-        realmsButton.setPressAction(b -> client.setScreen(new RealmsMainScreen(this)));
-        addDrawableChild(realmsButton);
+		AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 2),
+				BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Addons"));
+		addonsButton.setPressAction(b -> client.setScreen(new AddonScreen(this)));
+		addDrawableChild(addonsButton);
 
-        AobaButtonWidget settingsButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY + BUTTON_HEIGHT + SPACING,
-                BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Settings"));
-        settingsButton.setPressAction(b -> client.setScreen(new OptionsScreen(this, MC.options)));
-        addDrawableChild(settingsButton);
+		AobaButtonWidget quitButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING,
+				startY + ((BUTTON_HEIGHT + SPACING) * 2), BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Quit"));
+		quitButton.setPressAction(b -> client.stop());
+		addDrawableChild(quitButton);
 
-        AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 2),
-                BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Addons"));
-        addonsButton.setPressAction(b -> client.setScreen(new AddonScreen(this)));
-        addDrawableChild(addonsButton);
+		AobaImageButtonWidget creditsButton = new AobaImageButtonWidget(width - 20 - 10, height - 20 - 10, 20, 20,
+				TextureBank.aoba);
+		creditsButton.setPressAction(b -> MC.setScreen(new AobaCreditsScreen()));
+		addDrawableChild(creditsButton);
 
-        AobaButtonWidget quitButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY + ((BUTTON_HEIGHT + SPACING) * 2),
-                BUTTON_WIDTH, BUTTON_HEIGHT, Text.of("Quit"));
-        quitButton.setPressAction(b -> client.stop());
-        addDrawableChild(quitButton);
+		AobaImageButtonWidget discordButton = new AobaImageButtonWidget(width - 60, height - 30, 20, 20,
+				TextureBank.discord);
+		discordButton.setPressAction(b -> Util.getOperatingSystem().open("https://discord.gg/CDa4etPFtk"));
+		addDrawableChild(discordButton);
+	}
 
-        AobaImageButtonWidget creditsButton = new AobaImageButtonWidget(width - 20 - 10, height - 20 - 10, 20,
-                20, TextureBank.aoba);
-        creditsButton.setPressAction(b -> MC.setScreen(new AobaCreditsScreen()));
-        addDrawableChild(creditsButton);
+	@Override
+	public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+		super.render(drawContext, mouseX, mouseY, delta);
 
-        AobaImageButtonWidget discordButton = new AobaImageButtonWidget(width - 60, height - 30, 20, 20,
-                TextureBank.discord);
-        discordButton.setPressAction(b -> Util.getOperatingSystem().open("https://discord.gg/CDa4etPFtk"));
-        addDrawableChild(discordButton);
-    }
+		float widgetHeight = (BUTTON_HEIGHT + SPACING) * 5;
+		int startX = (width - BUTTON_WIDTH) / 2;
+		int startY = (int) ((height - widgetHeight) / 2 + smallScreenHeightOffset);
 
-    @Override
-    public void render(DrawContext drawContext, int mouseX, int mouseY, float delta)
-    {
-        super.render(drawContext, mouseX, mouseY, delta);
+		int logoWidth = (int) (LOGO_HEIGHT * (185.0 / LOGO_HEIGHT));
+		int logoX = (width - logoWidth) / 2;
+		int logoY = startY - LOGO_HEIGHT - 10;
+		drawContext.drawTexture(RenderLayer::getGuiTextured, TextureBank.mainmenu_logo, logoX, logoY, 0, 0, logoWidth,
+				LOGO_HEIGHT, 185, LOGO_HEIGHT);
 
-        RenderSystem.disableCull();
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		drawContext.drawTextWithShadow(textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, height - 10, 0xFF00FF);
 
+		// Draw out of date if out of date.
+		// TODO: Add option to hide if on previous versions.
+		if (fetchedVersion != null && !fetchedVersion.equals(AobaClient.AOBA_VERSION)) {
+			drawContext.drawTextWithShadow(textRenderer, "New version available: " + fetchedVersion, 2, height - 20,
+					0xFF00FF);
+		}
 
-        float widgetHeight = (BUTTON_HEIGHT + SPACING) * 5;
-        int startX = (width - BUTTON_WIDTH) / 2;
-        int startY = (int) ((height - widgetHeight) / 2 + smallScreenHeightOffset);
+		if (AobaClient.addons.isEmpty()) {
+			String noAddonsText = "No addons loaded";
+			int textWidth = textRenderer.getWidth(noAddonsText);
+			drawContext.drawTextWithShadow(textRenderer, noAddonsText, width - textWidth - 15, 10, 0xFFFFFF);
+		} else {
+			int yOffset = 10;
+			for (IAddon addon : AobaClient.addons) {
+				String addonName = addon.getName();
+				String byText = " by ";
+				String author = addon.getAuthor();
 
-        int logoWidth = (int) (LOGO_HEIGHT * (185.0 / LOGO_HEIGHT));
-        int logoX = (width - logoWidth) / 2;
-        int logoY = startY - LOGO_HEIGHT - 10;
-        drawContext.drawTexture(RenderLayer::getGuiTextured, TextureBank.mainmenu_logo, logoX, logoY, 0, 0, logoWidth, LOGO_HEIGHT, 185, LOGO_HEIGHT);
+				int addonNameWidth = textRenderer.getWidth(addonName);
+				int byTextWidth = textRenderer.getWidth(byText);
+				int authorWidth = textRenderer.getWidth(author);
 
+				drawContext.drawTextWithShadow(textRenderer, addonName,
+						width - addonNameWidth - byTextWidth - authorWidth - 20, yOffset, 0x50C878);
 
-        drawContext.drawTextWithShadow(textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, height - 10,
-                0xFF00FF);
+				drawContext.drawTextWithShadow(textRenderer, byText, width - byTextWidth - authorWidth - 15, yOffset,
+						0xFFFFFF);
 
-        // Draw out of date if out of date.
-        // TODO: Add option to hide if on previous versions.
-        if (fetchedVersion != null && !fetchedVersion.equals(AobaClient.AOBA_VERSION))
-        {
-            drawContext.drawTextWithShadow(textRenderer, "New version available: " + fetchedVersion, 2,
-                    height - 20, 0xFF00FF);
-        }
+				drawContext.drawTextWithShadow(textRenderer, author, width - authorWidth - 10, yOffset, 0xFF0000);
 
-        if (AobaClient.addons.isEmpty())
-        {
-            String noAddonsText = "No addons loaded";
-            int textWidth = textRenderer.getWidth(noAddonsText);
-            drawContext.drawTextWithShadow(textRenderer, noAddonsText, width - textWidth - 15, 10, 0xFFFFFF);
-        }
-        else
-        {
-            int yOffset = 10;
-            for (IAddon addon : AobaClient.addons)
-            {
-                String addonName = addon.getName();
-                String byText = " by ";
-                String author = addon.getAuthor();
+				yOffset += 10;
+			}
+		}
 
-                int addonNameWidth = textRenderer.getWidth(addonName);
-                int byTextWidth = textRenderer.getWidth(byText);
-                int authorWidth = textRenderer.getWidth(author);
+		int newsTextHeight = textRenderer.fontHeight;
+		int newsBoxHeight = newsTextHeight + 20;
+		int newsTextWidth = textRenderer.getWidth("Aoba " + fetchedVersion + " released!") + 10;
+		Render2D.drawOutlinedRoundedBox(drawContext, width - newsTextWidth - 10, 30, newsTextWidth, newsBoxHeight,
+				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
+				GuiManager.backgroundColor.getValue());
+		drawContext.drawTextWithShadow(textRenderer, "Aoba " + fetchedVersion + " released!", width - newsTextWidth - 5,
+				40, Colors.WHITE);
+	}
 
-                drawContext.drawTextWithShadow(textRenderer, addonName,
-                        width - addonNameWidth - byTextWidth - authorWidth - 20, yOffset, 0x50C878);
-
-                drawContext.drawTextWithShadow(textRenderer, byText,
-                        width - byTextWidth - authorWidth - 15, yOffset, 0xFFFFFF);
-
-                drawContext.drawTextWithShadow(textRenderer, author,
-                        width - authorWidth - 10, yOffset, 0xFF0000);
-
-
-                yOffset += 10;
-            }
-        }
-
-        int newsTextHeight = textRenderer.fontHeight;
-        int newsBoxHeight = newsTextHeight + 20;
-        int newsTextWidth = textRenderer.getWidth("Aoba " + fetchedVersion + " released!") + 10;
-        Render2D.drawOutlinedRoundedBox(drawContext.getMatrices().peek().getPositionMatrix(), width - newsTextWidth - 10, 30, newsTextWidth, newsBoxHeight,
-                GuiManager.roundingRadius.getValue(),
-                GuiManager.borderColor.getValue(),
-                GuiManager.backgroundColor.getValue()
-        );
-        drawContext.drawTextWithShadow(textRenderer, "Aoba " + fetchedVersion + " released!", width - newsTextWidth - 5, 40, Colors.WHITE);
-
-
-        RenderSystem.enableCull();
-    }
-
-    @Override
-    protected void renderPanoramaBackground(DrawContext context, float delta)
-    {
-        AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
-    }
+	// TODO: Throws exception... Something to do with texture loading / rendering...
+	// @Override
+	// protected void renderPanoramaBackground(DrawContext context, float delta) {
+	// AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
+	// }
 }

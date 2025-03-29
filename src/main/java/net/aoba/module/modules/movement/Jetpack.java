@@ -49,16 +49,8 @@ public class Jetpack extends Module implements TickListener {
 		addSetting(jumpMotionY);
 		addSetting(thrusterSpread);
 
-		setDetectable(
-		    AntiCheat.NoCheatPlus,
-		    AntiCheat.Vulcan,
-		    AntiCheat.AdvancedAntiCheat,
-		    AntiCheat.Verus,
-		    AntiCheat.Grim,
-		    AntiCheat.Matrix,
-		    AntiCheat.Negativity,
-		    AntiCheat.Karhu
-		);
+		setDetectable(AntiCheat.NoCheatPlus, AntiCheat.Vulcan, AntiCheat.AdvancedAntiCheat, AntiCheat.Verus,
+				AntiCheat.Grim, AntiCheat.Matrix, AntiCheat.Negativity, AntiCheat.Karhu);
 	}
 
 	public void setSpeed(float speed) {
@@ -112,10 +104,11 @@ public class Jetpack extends Module implements TickListener {
 
 				int particleAmount = thrusterParticleAmount.getValue().intValue();
 				for (int i = 0; i < particleAmount; i++) {
-					MC.world.addParticle(ParticleTypes.FLAME, player.getX() + leftThrusterX, player.getY() + 0.5f,
+					MC.world.addParticleClient(ParticleTypes.FLAME, player.getX() + leftThrusterX, player.getY() + 0.5f,
 							player.getZ() + leftThrusterZ, leftThrusterX, -0.5f, leftThrusterZ);
-					MC.world.addParticle(ParticleTypes.FLAME, player.getX() + rightThrusterX, player.getY() + 0.5f,
-							player.getZ() + rightThrusterZ, rightThrusterX, -0.5f, rightThrusterZ);
+					MC.world.addParticleClient(ParticleTypes.FLAME, player.getX() + rightThrusterX,
+							player.getY() + 0.5f, player.getZ() + rightThrusterZ, rightThrusterX, -0.5f,
+							rightThrusterZ);
 				}
 				playerSpeed = playerSpeed.add(0, speed / 20.0f, 0);
 			}

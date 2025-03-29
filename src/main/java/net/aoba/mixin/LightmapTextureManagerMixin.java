@@ -25,11 +25,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
 import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.entity.LivingEntity;
 
 @Mixin(LightmapTextureManager.class)
 public class LightmapTextureManagerMixin {
-	@Inject(at = { @At("HEAD") }, method = { "getDarknessFactor(F)F" }, cancellable = true)
-	private void onGetDarknessFactor(float delta, CallbackInfoReturnable<Float> cir) {
+	@Inject(at = { @At("HEAD") }, method = {
+			"getDarkness(Lnet/minecraft/entity/LivingEntity;FF)F" }, cancellable = true)
+	private void onGetDarknessFactor(LivingEntity entity, float factor, float tickProgress,
+			CallbackInfoReturnable<Float> cir) {
 		if (Aoba.getInstance().moduleManager.norender.state.getValue()) {
 			cir.setReturnValue(0F);
 		}

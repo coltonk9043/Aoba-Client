@@ -8,7 +8,6 @@
 
 package net.aoba.gui.components;
 
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
@@ -25,14 +24,13 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class KeybindComponent extends Component implements KeyDownListener {
 	private boolean listeningForKey;
 	private final KeybindSetting keyBind;
 
 	public KeybindComponent(KeybindSetting keyBind) {
-        setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.keyBind = keyBind;
 	}
 
@@ -60,16 +58,13 @@ public class KeybindComponent extends Component implements KeyDownListener {
 	public void draw(DrawContext drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 		float actualHeight = getActualSize().getHeight();
 
 		Render2D.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
-		Render2D.drawOutlinedRoundedBox(matrix4f, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f,
+		Render2D.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f,
 				GuiManager.borderColor.getValue(), new Color(115, 115, 115, 200));
 
 		String keyBindText = keyBind.getValue().getLocalizedText().getString();

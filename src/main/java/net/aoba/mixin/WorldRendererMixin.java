@@ -27,15 +27,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.mojang.blaze3d.platform.GlStateManager.DstFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SrcFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.GameRenderer;
@@ -58,21 +54,17 @@ public class WorldRendererMixin {
 			CallbackInfo ci) {
 
 		// Get old (main) framebuffer
-		MinecraftClient MC = gameRenderer.getClient();
-		Framebuffer oldBuffer = MC.getFramebuffer();
-		oldBuffer.endWrite();
+		// MinecraftClient MC = gameRenderer.getClient();
+		// Framebuffer oldBuffer = MC.getFramebuffer();
+		// oldBuffer.endWrite();
 
 		// Get the GUI frame buffer and begin writing to it.
-		Framebuffer frameBuffer = Aoba.getInstance().guiManager.getFrameBuffer();
-		frameBuffer.resize(MC.getWindow().getFramebufferWidth(), MC.getWindow().getFramebufferHeight());
-		frameBuffer.beginWrite(false);
+		// Framebuffer frameBuffer = Aoba.getInstance().guiManager.getFrameBuffer();
+		// frameBuffer.resize(MC.getWindow().getFramebufferWidth(),
+		// MC.getWindow().getFramebufferHeight());
+		// frameBuffer.beginWrite(false);
 
 		if (Aoba.getInstance().moduleManager != null) {
-			RenderSystem.enableBlend();
-			RenderSystem.blendFuncSeparate(SrcFactor.SRC_ALPHA, DstFactor.ONE_MINUS_SRC_ALPHA, SrcFactor.ZERO,
-					DstFactor.ONE);
-			RenderSystem.disableDepthTest();
-			RenderSystem.disableCull();
 			GL11.glEnable(GL11.GL_LINE_SMOOTH);
 
 			RenderSystem.getModelViewStack().pushMatrix().mul(positionMatrix);
@@ -84,21 +76,17 @@ public class WorldRendererMixin {
 			RenderSystem.getModelViewStack().popMatrix();
 
 			GL11.glDisable(GL11.GL_LINE_SMOOTH);
-			RenderSystem.enableDepthTest();
-			RenderSystem.disableBlend();
 
 		}
 
-		frameBuffer.endWrite();
-		oldBuffer.beginWrite(false);
+		// frameBuffer.endWrite();
+		// oldBuffer.beginWrite(false);
 
 		// Write frame buffer to the main framebuffer.
-		RenderSystem.enableBlend();
-		RenderSystem.blendFuncSeparate(SrcFactor.SRC_ALPHA, DstFactor.ONE_MINUS_SRC_ALPHA, SrcFactor.ZERO,
-				DstFactor.ONE);
-		frameBuffer.drawInternal(MC.getWindow().getFramebufferWidth(), MC.getWindow().getFramebufferHeight());
-		RenderSystem.disableBlend();
-		RenderSystem.defaultBlendFunc();
+
+		// frameBuffer.drawInternal(MC.getWindow().getFramebufferWidth(),
+		// MC.getWindow().getFramebufferHeight());
+
 	}
 
 	@Inject(at = @At("HEAD"), method = "hasBlindnessOrDarkness(Lnet/minecraft/client/render/Camera;)Z", cancellable = true)

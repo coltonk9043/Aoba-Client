@@ -35,7 +35,7 @@ import net.minecraft.entity.Entity;
 
 @Mixin(InGameHud.class)
 public class IngameHudMixin {
-	@Inject(at = @At("HEAD"), method = "renderPlayerList(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V")
+	@Inject(at = @At("TAIL"), method = "renderPlayerList(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V")
 	private void onRenderPlayerList(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
 		Render2DEvent renderEvent = new Render2DEvent(context, tickCounter);
 		Aoba.getInstance().eventManager.Fire(renderEvent);

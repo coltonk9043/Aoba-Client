@@ -3,7 +3,6 @@ package net.aoba.gui.components;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
@@ -20,7 +19,6 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class TextBoxComponent extends Component implements KeyDownListener {
 	private boolean listeningForKey;
@@ -38,17 +36,17 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 	private Consumer<String> onTextChanged;
 
 	public TextBoxComponent() {
-        setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 		text = "";
 	}
 
 	public TextBoxComponent(String text) {
-        setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.text = text;
 	}
 
 	public TextBoxComponent(StringSetting stringSetting) {
-        setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 
 		this.stringSetting = stringSetting;
 		this.stringSetting.addOnUpdate(s -> {
@@ -72,8 +70,6 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 	@Override
 	public void draw(DrawContext drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
@@ -87,7 +83,8 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 		}
 
 		Color borderColor = isErrorState ? errorBorderColor : GuiManager.borderColor.getValue();
-		Render2D.drawOutlinedRoundedBox(matrix4f, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor, new Color(115, 115, 115, 200));
+		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor,
+				new Color(115, 115, 115, 200));
 
 		if (text != null && !text.isEmpty()) {
 			int visibleStringLength = (int) (actualWidth - 16 / 10);

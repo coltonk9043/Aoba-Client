@@ -65,17 +65,17 @@ public class AutoOminousBottle extends Module implements ReceivePacketListener, 
 
 		Packet<?> packet = e.GetPacket();
 		if (packet instanceof BossBarS2CPacket bossPacket) {
-            IBossBarS2CPacket iPacket = (IBossBarS2CPacket) bossPacket;
+			IBossBarS2CPacket iPacket = (IBossBarS2CPacket) bossPacket;
 			BossBarS2CPacket.Action action = iPacket.getAction();
 			if (action.getType() == BossBarS2CPacket.Type.REMOVE) {
 				FindItemResult result = findInHotbar(Items.OMINOUS_BOTTLE);
 				if (result.found()) {
 					if (swapBack.getValue()) {
-						previousSlot = MC.player.getInventory().selectedSlot;
+						previousSlot = MC.player.getInventory().getSelectedSlot();
 					}
 
 					int slot = result.slot();
-					MC.player.getInventory().selectedSlot = slot;
+					MC.player.getInventory().setSelectedSlot(slot);
 					lastUsedItemStack = MC.player.getInventory().getStack(slot);
 					MC.options.useKey.setPressed(true);
 				}
@@ -96,7 +96,7 @@ public class AutoOminousBottle extends Module implements ReceivePacketListener, 
 				lastUsedItemStack = null;
 
 				if (swapBack.getValue() && previousSlot != -1) {
-					MC.player.getInventory().selectedSlot = previousSlot;
+					MC.player.getInventory().setSelectedSlot(previousSlot);
 					previousSlot = -1;
 				}
 			}
