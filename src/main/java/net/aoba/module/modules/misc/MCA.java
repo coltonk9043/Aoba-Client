@@ -18,12 +18,13 @@ import net.aoba.utils.FindItemResult;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 
 public class MCA extends Module implements MouseClickListener {
 	public enum Mode {
-		FRIEND, PEARL
+		FRIEND, PEARL, FIREWORK
 	}
 
 	private final EnumSetting<Mode> mode = EnumSetting.<Mode>builder().id("mca_mode").displayName("Mode")
@@ -58,42 +59,49 @@ public class MCA extends Module implements MouseClickListener {
 
 	@Override
 	public void onMouseClick(MouseClickEvent mouseClickEvent) {
-		if (mouseClickEvent.button == MouseButton.MIDDLE) {
-			if (mouseClickEvent.action == MouseAction.DOWN) {
-				switch (mode.getValue()) {
-				case FRIEND:
-					if (MC.targetedEntity == null || !(MC.targetedEntity instanceof PlayerEntity player))
-						return;
+		if (mouseClickEvent.button != MouseButton.MIDDLE) return;
 
-					if (Aoba.getInstance().friendsList.contains(player)) {
-						Aoba.getInstance().friendsList.removeFriend(player);
-						mouseClickEvent.cancel();
-						sendChatMessage("Removed " + player.getName().getString() + " from friends list.");
-					} else {
-						Aoba.getInstance().friendsList.addFriend(player);
-						mouseClickEvent.cancel();
-						sendChatMessage("Added " + player.getName().getString() + " to friends list.");
-					}
-					break;
-				case PEARL:
-					FindItemResult result = find(Items.ENDER_PEARL);
-					if (!result.found() || !result.isHotbar())
-						return;
-					previousSlot = MC.player.getInventory().getSelectedSlot();
-					if (!result.isMainHand()) {
-						swap(result.slot(), false);
-						MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
-						mouseClickEvent.cancel();
-					}
-					break;
-				}
-			} else if (mouseClickEvent.action == MouseAction.UP) {
-				if (mode.getValue() == Mode.PEARL && previousSlot != -1) {
-					swap(previousSlot, false);
-					previousSlot = -1;
-					mouseClickEvent.cancel();
-				}
+		if (mouseClickEvent.action == MouseAction.DOWN) {
+			switch (mode.getValue()) {
+				case FRIEND -> handleFriend(mouseClickEvent);
+				case PEARL -> handleItem(mouseClickEvent, Items.ENDER_PEARL);
+				case FIREWORK -> handleItem(mouseClickEvent, Items.FIREWORK_ROCKET);
 			}
+		} else if (mouseClickEvent.action == MouseAction.UP) {
+			if ((mode.getValue() == Mode.PEARL || mode.getValue() == Mode.FIREWORK) && previousSlot != -1) {
+				swap(previousSlot, false);
+				previousSlot = -1;
+				mouseClickEvent.cancel();
+			}
+		}
+	}
+
+	private void handleFriend(MouseClickEvent event) {
+		if (!(MC.targetedEntity instanceof PlayerEntity player)) return;
+
+		String playerName = player.getName().getString();
+
+		if (Aoba.getInstance().friendsList.contains(player)) {
+			Aoba.getInstance().friendsList.removeFriend(player);
+			sendChatMessage("Removed " + playerName + " from friends list.");
+		} else {
+			Aoba.getInstance().friendsList.addFriend(player);
+			sendChatMessage("Added " + playerName + " to friends list.");
+		}
+
+		event.cancel();
+	}
+
+	private void handleItem(MouseClickEvent event, Item item) {
+		FindItemResult itemResult = find(item);
+		if (!itemResult.found() || !itemResult.isHotbar()) return;
+
+		previousSlot = MC.player.getInventory().getSelectedSlot();
+
+		if (!itemResult.isMainHand()) {
+			swap(itemResult.slot(), false);
+			MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+			event.cancel();
 		}
 	}
 }
