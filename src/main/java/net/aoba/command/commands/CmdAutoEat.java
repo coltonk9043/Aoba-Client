@@ -16,53 +16,71 @@ import net.aoba.module.modules.misc.AutoEat;
 
 public class CmdAutoEat extends Command {
 
-	public CmdAutoEat() {
-		super("autoeat", "Automatically eats when the player is hungry.", "[toggle/set] [value]");
-	}
+    private static final int MAX_HUNGER = 20;
 
-	@Override
-	public void runCommand(String[] parameters) throws InvalidSyntaxException {
-		if (parameters.length != 2)
-			throw new InvalidSyntaxException(this);
+    public CmdAutoEat() {
+        super("autoeat", "Automatically eats when the player is hungry.", "[toggle/set] [value]");
+    }
 
-		AutoEat module = Aoba.getInstance().moduleManager.autoeat;
+    @Override
+    public void runCommand(String[] parameters) throws InvalidSyntaxException {
+        if (parameters == null || parameters.length != 2) {
+            throw new InvalidSyntaxException(this);
+        }
 
-		switch (parameters[0]) {
-		case "toggle":
-			String state = parameters[1].toLowerCase();
-			if (state.equals("on")) {
-				module.state.setValue(true);
-				CommandManager.sendChatMessage("AutoEat toggled ON");
-			} else if (state.equals("off")) {
-				module.state.setValue(false);
-				CommandManager.sendChatMessage("AutoEat toggled OFF");
-			} else {
-				CommandManager.sendChatMessage("Invalid value. [ON/OFF]");
-			}
-			break;
-		case "set":
-			String setting = parameters[1].toLowerCase();
-			if (setting.isEmpty()) {
-				CommandManager.sendChatMessage("Please enter the number of hearts to set to.");
-			} else {
-				module.setHunger((int) Math.min(Double.parseDouble(setting) * 2, 20));
-				CommandManager.sendChatMessage("AutoEat hunger set to " + setting + " hearts.");
-			}
-			break;
-		default:
-			throw new InvalidSyntaxException(this);
-		}
-	}
+        AutoEat module = Aoba.getInstance().moduleManager.autoeat;
 
-	@Override
-	public String[] getAutocorrect(String previousParameter) {
-		switch (previousParameter) {
-		case "toggle":
-			return new String[] { "on", "off" };
-		case "set":
-			return new String[] { "1", "2", "4", "6", "8" };
-		default:
-			return new String[] { "toggle", "set" };
-		}
-	}
+        switch (parameters[0].toLowerCase()) {
+            case "toggle":
+                toggleAutoEat(module, parameters[1]);
+                break;
+            case "set":
+                setHunger(module, parameters[1]);
+                break;
+            default:
+                throw new InvalidSyntaxException(this);
+        }
+    }
+
+    private void toggleAutoEat(AutoEat module, String state) {
+        if (state.equalsIgnoreCase("on")) {
+            module.state.setValue(true);
+            sendChatMessage("AutoEat toggled ON");
+        } else if (state.equalsIgnoreCase("off")) {
+            module.state.setValue(false);
+            sendChatMessage("AutoEat toggled OFF");
+        } else {
+            sendChatMessage("Invalid value. [ON/OFF]");
+        }
+    }
+
+    private void setHunger(AutoEat module, String setting) {
+        try {
+            int hunger = (int) Math.min(Double.parseDouble(setting) * 2, MAX_HUNGER);
+            module.setHunger(hunger);
+            sendChatMessage("AutoEat hunger set to " + setting + " hearts.");
+        } catch (NumberFormatException e) {
+            sendChatMessage("Invalid hunger value.");
+        }
+    }
+
+    private void sendChatMessage(String message) {
+        CommandManager.sendChatMessage(message);
+    }
+
+    @Override
+    public String[] getAutocorrect(String previousParameter) {
+        if (previousParameter == null) {
+            return new String[] { "toggle", "set" };
+        }
+
+        switch (previousParameter.toLowerCase()) {
+            case "toggle":
+                return new String[] { "on", "off" };
+            case "set":
+                return new String[] { "1", "2", "4", "6", "8" };
+            default:
+                return new String[] { "toggle", "set" };
+        }
+    }
 }
