@@ -68,9 +68,8 @@ public class AltScreen extends Screen {
 	@Override
 	public void tick() {
 		AltSelectionList.Entry altselectionlist$entry = altListSelector.getSelectedOrNull();
-		if (altselectionlist$entry == null)
-        {
-        }
+		if (altselectionlist$entry == null) {
+		}
 	}
 
 	@Override
@@ -80,8 +79,8 @@ public class AltScreen extends Screen {
 
 		super.render(drawContext, mouseX, mouseY, partialTicks);
 		drawContext.drawCenteredTextWithShadow(textRenderer,
-				"Currently Logged Into: " + MinecraftClient.getInstance().getSession().getUsername(), width / 2,
-				20, 16777215);
+				"Currently Logged Into: " + MinecraftClient.getInstance().getSession().getUsername(), width / 2, 20,
+				16777215);
 	}
 
 	public List<Alt> getAltList() {
@@ -135,6 +134,6 @@ public class AltScreen extends Screen {
 
 	@Override
 	protected void renderPanoramaBackground(DrawContext context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
+		// AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
 	}
 }

@@ -28,11 +28,9 @@ import com.google.gson.JsonObject;
 
 import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
-import net.aoba.gui.GuiManager;
 import net.aoba.gui.components.widgets.AobaButtonWidget;
 import net.aoba.gui.components.widgets.AobaImageButtonWidget;
 import net.aoba.gui.screens.addons.AddonScreen;
-import net.aoba.utils.render.Render2D;
 import net.aoba.utils.render.TextureBank;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -44,7 +42,6 @@ import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
 import net.minecraft.util.Util;
 
 public class MainMenuScreen extends Screen {
@@ -167,6 +164,8 @@ public class MainMenuScreen extends Screen {
 				TextureBank.discord);
 		discordButton.setPressAction(b -> Util.getOperatingSystem().open("https://discord.gg/CDa4etPFtk"));
 		addDrawableChild(discordButton);
+
+		// AOBA_PANORAMA_RENDERER.registerTextures(MC.getTextureManager());
 	}
 
 	@Override
@@ -219,19 +218,20 @@ public class MainMenuScreen extends Screen {
 			}
 		}
 
-		int newsTextHeight = textRenderer.fontHeight;
-		int newsBoxHeight = newsTextHeight + 20;
-		int newsTextWidth = textRenderer.getWidth("Aoba " + fetchedVersion + " released!") + 10;
-		Render2D.drawOutlinedRoundedBox(drawContext, width - newsTextWidth - 10, 30, newsTextWidth, newsBoxHeight,
-				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
-				GuiManager.backgroundColor.getValue());
-		drawContext.drawTextWithShadow(textRenderer, "Aoba " + fetchedVersion + " released!", width - newsTextWidth - 5,
-				40, Colors.WHITE);
+		/**
+		 * int newsTextHeight = textRenderer.fontHeight; int newsBoxHeight =
+		 * newsTextHeight + 20; int newsTextWidth = textRenderer.getWidth("Aoba " +
+		 * fetchedVersion + " released!") + 10;
+		 * Render2D.drawOutlinedRoundedBox(drawContext, width - newsTextWidth - 10, 30,
+		 * newsTextWidth, newsBoxHeight, GuiManager.roundingRadius.getValue(),
+		 * GuiManager.borderColor.getValue(), GuiManager.backgroundColor.getValue());
+		 * drawContext.drawTextWithShadow(textRenderer, "Aoba " + fetchedVersion + "
+		 * released!", width - newsTextWidth - 5, 40, Colors.WHITE);
+		 **/
 	}
 
-	// TODO: Throws exception... Something to do with texture loading / rendering...
-	// @Override
-	// protected void renderPanoramaBackground(DrawContext context, float delta) {
-	// AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
-	// }
+	@Override
+	protected void renderPanoramaBackground(DrawContext context, float delta) {
+		// AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
+	}
 }
