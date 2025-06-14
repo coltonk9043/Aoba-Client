@@ -41,7 +41,7 @@ jobs:
         if: ${{ env.NEW_COMMIT_COUNT > 0 }}
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: weekly-${{env.time}}
+          automatic_release_tag: weekly
           prerelease: true
           title: Weekly Build ${{env.time}}
           files: |
