@@ -8,107 +8,132 @@
 
 package net.aoba.utils.render;
 
-import static net.aoba.AobaClient.MC;
-
 import org.joml.Matrix4f;
 
 import net.aoba.gui.colors.Color;
+import net.aoba.utils.render.mesh.MeshRenderer;
+import net.aoba.utils.render.mesh.builders.LineMeshBuilder;
+import net.aoba.utils.render.mesh.builders.TriMeshBuilder;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 
 public class Render3D {
-	public static void draw3DBox(MatrixStack matrixStack, Camera camera, Box box, Color color, float lineThickness) {
+	public final TriMeshBuilder triangles;
+	public final LineMeshBuilder lines;
+
+	public Render3D() {
+		triangles = new TriMeshBuilder(AobaRenderPipelines.TRIS);
+		lines = new LineMeshBuilder(AobaRenderPipelines.LINES);
+	}
+
+	public void begin() {
+		triangles.begin();
+		lines.begin();
+	}
+
+	public void end() {
+		triangles.end();
+		lines.end();
+		render();
+	}
+
+	private void render() {
+		// MeshRenderer.begin().withFramebuffer(MinecraftClient.getInstance().getFramebuffer())
+		// .withPipeline(AobaRenderPipelines.TRIS).withMesh(triangles).end();
+
+		MeshRenderer.begin().withFramebuffer(MinecraftClient.getInstance().getFramebuffer())
+				.withPipeline(AobaRenderPipelines.LINES).withMesh(lines).end();
+	}
+
+	public void draw3DBox(MatrixStack matrixStack, Camera camera, Box box, Color color, float lineThickness) {
 		Box newBox = box.offset(camera.getPos().multiply(-1));
 
-		MatrixStack.Entry entry = matrixStack.peek();
-		Matrix4f matrix4f = entry.getPositionMatrix();
+		triangles.triangle(triangles.vec3d(newBox.minX, newBox.minY, newBox.minZ).color(color).next(),
+				triangles.vec3d(newBox.maxX, newBox.minY, newBox.minZ).color(color).next(),
+				triangles.vec3d(newBox.maxX, newBox.minY, newBox.maxZ).color(color).next());
 
-		float r = color.getRed();
-		float g = color.getGreen();
-		float b = color.getBlue();
-		float a = color.getAlpha();
-
-		// Drawing Logic
-		VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
-		RenderLayer layer = RenderLayers.QUADS;
-		VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
-
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-
-		vertexConsumerProvider.draw(layer);
-
-		layer = RenderLayers.LINES;
-		bufferBuilder = vertexConsumerProvider.getBuffer(layer);
-
-		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.minZ, box.maxX, box.minY, box.minZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.minZ, box.maxX, box.minY, box.maxZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.maxZ, box.minX, box.minY, box.maxZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.maxZ, box.minX, box.minY, box.minZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.minZ, box.minX, box.maxY, box.minZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.minZ, box.maxX, box.maxY, box.minZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.maxZ, box.maxX, box.maxY, box.maxZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.maxZ, box.minX, box.maxY, box.maxZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.minZ, box.maxX, box.maxY, box.minZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.maxY, box.minZ, box.maxX, box.maxY, box.maxZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.maxY, box.maxZ, box.minX, box.maxY, box.maxZ,
-				color);
-		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.maxZ, box.minX, box.maxY, box.minZ,
-				color);
-
-		vertexConsumerProvider.draw(layer);
+//
+//		MatrixStack.Entry entry = matrixStack.peek();
+//		Matrix4f matrix4f = entry.getPositionMatrix();
+//
+//		float r = color.getRed();
+//		float g = color.getGreen();
+//		float b = color.getBlue();
+//		float a = color.getAlpha();
+//
+//		// Drawing Logic
+//		VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
+//		//RenderLayer layer = RenderLayers.QUADS;
+//		VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
+//
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+//
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+//
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+//
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+//
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+//
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+//
+//		vertexConsumerProvider.draw(layer);
+//
+//		layer = RenderLayers.LINES;
+//		bufferBuilder = vertexConsumerProvider.getBuffer(layer);
+//
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.minZ, box.maxX, box.minY, box.minZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.minZ, box.maxX, box.minY, box.maxZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.maxZ, box.minX, box.minY, box.maxZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.maxZ, box.minX, box.minY, box.minZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.minZ, box.minX, box.maxY, box.minZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.minZ, box.maxX, box.maxY, box.minZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.maxZ, box.maxX, box.maxY, box.maxZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.maxZ, box.minX, box.maxY, box.maxZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.minZ, box.maxX, box.maxY, box.minZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.maxY, box.minZ, box.maxX, box.maxY, box.maxZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.maxY, box.maxZ, box.minX, box.maxY, box.maxZ,
+//				color);
+//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.maxZ, box.minX, box.maxY, box.minZ,
+//				color);
+//
+//		vertexConsumerProvider.draw(layer);
 
 		// RenderSystem.enableCull();
 		// RenderSystem.lineWidth(1f);
@@ -116,94 +141,90 @@ public class Render3D {
 		// RenderSystem.disableBlend();
 	}
 
-	public static void drawLine3D(MatrixStack matrixStack, Camera camera, Vec3d pos1, Vec3d pos2, Color color) {
+	public void drawLine3D(MatrixStack matrixStack, Camera camera, Vec3d pos1, Vec3d pos2, Color color) {
 		drawLine3D(matrixStack, camera, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color);
 	}
 
-	public static void drawLine3D(MatrixStack matrixStack, Camera camera, double x1, double y1, double z1, double x2,
+	public void drawLine3D(MatrixStack matrixStack, Camera camera, double x1, double y1, double z1, double x2,
 			double y2, double z2, Color color) {
-		VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
-		RenderLayer layer = RenderLayers.LINES;
-		VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
-		buildLine3d(matrixStack, camera, bufferBuilder, x1, y1, z1, x2, y2, z2, color);
-		vertexConsumerProvider.draw(layer);
+		lines.line(lines.vec3d(x1, y1, z1).color(color).next(), lines.vec3d(x2, y2, z2).color(color).next());
 	}
 
 	@SuppressWarnings("unchecked")
 	public static void drawEntityModel(MatrixStack matrixStack, Camera camera, float partialTicks, Entity entity,
 			Color color) {
-		EntityRenderer<?, ?> renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
-
-		if (entity instanceof LivingEntity livingEntity) {
-			matrixStack.push();
-
-			LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> leRenderer = (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) renderer;
-			EntityModel<LivingEntityRenderState> model = leRenderer.getModel();
-			LivingEntityRenderState renderState = leRenderer.getAndUpdateRenderState(livingEntity, partialTicks);
-			renderState.baby = livingEntity.isBaby();
-			model.setAngles(renderState);
-			Direction sleepDirection = livingEntity.getSleepingDirection();
-
-			// Interpolate entity position and body rotations.
-			Vec3d interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks)
-					.add(camera.getPos().multiply(-1));
-			float interpolatedBodyYaw = MathHelper.lerpAngleDegrees(partialTicks, livingEntity.lastBodyYaw,
-					livingEntity.bodyYaw);
-			// Translate by the entity's interpolated position.
-			matrixStack.translate(interpolatedEntityPosition.getX(), interpolatedEntityPosition.getY(),
-					interpolatedEntityPosition.getZ());
-
-			// If entity is sleeping, move their render position by their sleeping offset.
-			if (livingEntity.isInPose(EntityPose.SLEEPING) && sleepDirection != null) {
-				float sleepingEyeHeight = livingEntity.getEyeHeight(EntityPose.STANDING) - 0.1f;
-				matrixStack.translate(-sleepDirection.getOffsetX() * sleepingEyeHeight, 0.0f,
-						-sleepDirection.getOffsetZ() * sleepingEyeHeight);
-			}
-
-			// Scale by the entity's scale.
-			float entityScale = livingEntity.getScale();
-			matrixStack.scale(entityScale, entityScale, entityScale);
-
-			// If Entity is frozen (similar to shaking from zombie conversion shakes.
-			if (entity.isFrozen()) {
-				interpolatedBodyYaw += (float) (Math.cos((livingEntity.age * 3.25) * Math.PI * 0.4f));
-			}
-
-			// Rotate entity if they are sleeping.
-			if (!livingEntity.isInPose(EntityPose.SLEEPING)) {
-				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0f - interpolatedBodyYaw));
-			}
-
-			// Check for rotations based off of the entity's state (dead, alive, sleeping,
-			// using riptide?, etc...)
-			if (livingEntity.deathTime > 0) {
-				float dyingAngle = MathHelper.sqrt((livingEntity.deathTime + partialTicks - 1.0f) / 20.0f * 1.6f);
-				if (dyingAngle > 1.0f) {
-					dyingAngle = 1.0f;
-				}
-
-				matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(dyingAngle * 90f));
-			} else if (livingEntity.isUsingRiptide()) {
-				matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90.0f - livingEntity.getPitch()));
-				matrixStack
-						.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((livingEntity.age + partialTicks) * -75.0f));
-			} else if (livingEntity.isInPose(EntityPose.SLEEPING)) {
-				float sleepAngle = sleepDirection != null ? getYaw(sleepDirection) : interpolatedBodyYaw;
-				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(sleepAngle));
-				matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(90.0f));
-				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(270.0f));
-			}
-
-			// Apply offset for correct rendering on screen. (Not sure why though!)
-			matrixStack.scale(-1.0f, -1.0f, 1.0f);
-			matrixStack.translate(0.0f, -1.501f, 0.0f);
-			VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
-			RenderLayer layer = RenderLayers.QUADS;
-			VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
-			model.render(matrixStack, bufferBuilder, 0, 0, color.getColorAsInt());
-			vertexConsumerProvider.draw(layer);
-			matrixStack.pop();
-		}
+//		EntityRenderer<?, ?> renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
+//
+//		if (entity instanceof LivingEntity livingEntity) {
+//			matrixStack.push();
+//
+//			LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> leRenderer = (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) renderer;
+//			EntityModel<LivingEntityRenderState> model = leRenderer.getModel();
+//			LivingEntityRenderState renderState = leRenderer.getAndUpdateRenderState(livingEntity, partialTicks);
+//			renderState.baby = livingEntity.isBaby();
+//			model.setAngles(renderState);
+//			Direction sleepDirection = livingEntity.getSleepingDirection();
+//
+//			// Interpolate entity position and body rotations.
+//			Vec3d interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks)
+//					.add(camera.getPos().multiply(-1));
+//			float interpolatedBodyYaw = MathHelper.lerpAngleDegrees(partialTicks, livingEntity.lastBodyYaw,
+//					livingEntity.bodyYaw);
+//			// Translate by the entity's interpolated position.
+//			matrixStack.translate(interpolatedEntityPosition.getX(), interpolatedEntityPosition.getY(),
+//					interpolatedEntityPosition.getZ());
+//
+//			// If entity is sleeping, move their render position by their sleeping offset.
+//			if (livingEntity.isInPose(EntityPose.SLEEPING) && sleepDirection != null) {
+//				float sleepingEyeHeight = livingEntity.getEyeHeight(EntityPose.STANDING) - 0.1f;
+//				matrixStack.translate(-sleepDirection.getOffsetX() * sleepingEyeHeight, 0.0f,
+//						-sleepDirection.getOffsetZ() * sleepingEyeHeight);
+//			}
+//
+//			// Scale by the entity's scale.
+//			float entityScale = livingEntity.getScale();
+//			matrixStack.scale(entityScale, entityScale, entityScale);
+//
+//			// If Entity is frozen (similar to shaking from zombie conversion shakes.
+//			if (entity.isFrozen()) {
+//				interpolatedBodyYaw += (float) (Math.cos((livingEntity.age * 3.25) * Math.PI * 0.4f));
+//			}
+//
+//			// Rotate entity if they are sleeping.
+//			if (!livingEntity.isInPose(EntityPose.SLEEPING)) {
+//				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0f - interpolatedBodyYaw));
+//			}
+//
+//			// Check for rotations based off of the entity's state (dead, alive, sleeping,
+//			// using riptide?, etc...)
+//			if (livingEntity.deathTime > 0) {
+//				float dyingAngle = MathHelper.sqrt((livingEntity.deathTime + partialTicks - 1.0f) / 20.0f * 1.6f);
+//				if (dyingAngle > 1.0f) {
+//					dyingAngle = 1.0f;
+//				}
+//
+//				matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(dyingAngle * 90f));
+//			} else if (livingEntity.isUsingRiptide()) {
+//				matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90.0f - livingEntity.getPitch()));
+//				matrixStack
+//						.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((livingEntity.age + partialTicks) * -75.0f));
+//			} else if (livingEntity.isInPose(EntityPose.SLEEPING)) {
+//				float sleepAngle = sleepDirection != null ? getYaw(sleepDirection) : interpolatedBodyYaw;
+//				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(sleepAngle));
+//				matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(90.0f));
+//				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(270.0f));
+//			}
+//
+//			// Apply offset for correct rendering on screen. (Not sure why though!)
+//			matrixStack.scale(-1.0f, -1.0f, 1.0f);
+//			matrixStack.translate(0.0f, -1.501f, 0.0f);
+//			VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
+//			RenderLayer layer = RenderLayers.QUADS;
+//			VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
+//			model.render(matrixStack, bufferBuilder, 0, 0, color.getColorAsInt());
+//			vertexConsumerProvider.draw(layer);
+//			matrixStack.pop();
+//		}
 	}
 
 	private static float getYaw(Direction direction) {

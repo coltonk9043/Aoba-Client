@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.proxy.Socks5ProxyHandler;
@@ -35,7 +36,6 @@ import net.aoba.event.events.SendPacketEvent;
 import net.aoba.managers.proxymanager.Socks5Proxy;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
-import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.handler.PacketSizeLogger;
 import net.minecraft.network.packet.Packet;
 
@@ -49,8 +49,8 @@ public class ClientConnectionMixin {
 		Aoba.getInstance().eventManager.Fire(event);
 	}
 
-	@Inject(at = @At("HEAD"), method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;Z)V", cancellable = true)
-	private void onSend(Packet<?> packet, @Nullable PacketCallbacks callback, boolean flush, CallbackInfo ci) {
+	@Inject(at = @At("HEAD"), method = "send(Lnet/minecraft/network/packet/Packet;Lio/netty/channel/ChannelFutureListener;)V", cancellable = true)
+	private void onSend(Packet<?> packet, @Nullable ChannelFutureListener channelFutureListener, CallbackInfo ci) {
 		SendPacketEvent event = new SendPacketEvent(packet);
 		Aoba.getInstance().eventManager.Fire(event);
 

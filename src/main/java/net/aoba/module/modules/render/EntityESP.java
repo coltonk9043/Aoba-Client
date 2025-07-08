@@ -93,6 +93,7 @@ public class EntityESP extends Module implements Render3DListener {
 
 	@Override
 	public void onRender(Render3DEvent event) {
+		Render3D renderer = event.getRenderer();
 		MatrixStack matrixStack = event.GetMatrix();
 		float partialTicks = event.getRenderTickCounter().getTickProgress(true);
 
@@ -115,7 +116,7 @@ public class EntityESP extends Module implements Render3DListener {
 
 							Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(),
 									interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
-							Render3D.draw3DBox(matrixStack, event.getCamera(), boundingBox, color,
+							renderer.draw3DBox(matrixStack, event.getCamera(), boundingBox, color,
 									lineThickness.getValue());
 							break;
 						case Model:

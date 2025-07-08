@@ -11,7 +11,6 @@ package net.aoba.gui.navigation;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
@@ -20,6 +19,7 @@ import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.event.listeners.MouseScrollListener;
+import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 
 // TODO: Turn Page into a UI element.
@@ -86,11 +86,11 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 		}
 	}
 
-	public void render(DrawContext drawContext, float partialTicks) {
+	public void render(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		if (isVisible) {
 			Iterator<Window> tabIterator = tabs.iterator();
 			while (tabIterator.hasNext()) {
-				tabIterator.next().draw(drawContext, partialTicks);
+				tabIterator.next().draw(renderer, drawContext, partialTicks);
 			}
 		}
 	}

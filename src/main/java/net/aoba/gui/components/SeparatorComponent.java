@@ -24,13 +24,13 @@ public class SeparatorComponent extends Component {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 		float actualHeight = getActualSize().getHeight();
 
-		Render2D.drawLine(drawContext, actualX, actualY, actualX + actualWidth, actualY + actualHeight,
+		renderer.drawLine(drawContext, actualX, actualY, actualX + actualWidth, actualY + actualHeight,
 				GuiManager.borderColor.getValue());
 	}
 }

@@ -3,7 +3,7 @@
 	"id": "aoba",
 	"version": "1.4.5",
 	"name": "Aoba Client",
-	"description": "A Minecraft Fabric 1.21.4 utility mod.",
+	"description": "A Minecraft Fabric 1.21.6 utility mod.",
 	"authors": [
 		"Cocolots",
 		"cvs0"
@@ -28,8 +28,8 @@
 	],
 	"accessWidener" : "aoba.accesswidener",
 	"depends": {
-		"fabricloader": ">=0.16.9",
-		"minecraft": "~1.21.4",
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.21.6",
 		"java": ">=21",
 		"fabric-api": "*"
 	}

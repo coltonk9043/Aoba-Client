@@ -25,27 +25,55 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import com.mojang.blaze3d.systems.ProjectionType;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.event.events.Render2DEvent;
+import net.aoba.mixin.interfaces.IProjectionMatrix2;
 import net.aoba.module.modules.render.NoRender;
+import net.aoba.utils.render.mesh.MeshRenderer;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.render.ProjectionMatrix2;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.profiler.Profilers;
 
 @Mixin(InGameHud.class)
 public class IngameHudMixin {
-	@Inject(at = @At("TAIL"), method = "renderPlayerList(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V")
-	private void onRenderPlayerList(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-		Render2DEvent renderEvent = new Render2DEvent(context, tickCounter);
-		Aoba.getInstance().eventManager.Fire(renderEvent);
-	}
 
-//	@Inject(at = { @At(value = "TAIL") }, method = {
-//			"renderAutosaveIndicator(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V" })
-//	private void onRender(DrawContext context, RenderTickCounter tickDelta, CallbackInfo ci) {
-//
-//	}
+	private static final ProjectionMatrix2 matrix = new ProjectionMatrix2("aoba-projection-matrix", -10, 100, true);
+
+	@Inject(at = @At("TAIL"), method = "render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V")
+	private void onRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+
+		context.createNewRootLayer();
+
+		Profiler profiler = Profilers.get();
+		profiler.push("aoba-2d");
+
+		float width = MinecraftClient.getInstance().getWindow().getFramebufferWidth();
+		float height = MinecraftClient.getInstance().getWindow().getFramebufferHeight();
+
+		RenderSystem.setProjectionMatrix(matrix.set(width, height), ProjectionType.ORTHOGRAPHIC);
+		MeshRenderer.projection.set(((IProjectionMatrix2) matrix).executeGetMatrix(width, height));
+
+		Render2DEvent renderEvent = new Render2DEvent(context, tickCounter);
+		AobaClient client = Aoba.getInstance();
+		client.renderer2D.begin();
+		client.eventManager.Fire(renderEvent);
+		client.renderer2D.end();
+		context.createNewRootLayer();
+
+		RenderSystem.setProjectionMatrix(matrix.set(width, height), ProjectionType.PERSPECTIVE);
+		MeshRenderer.projection.set(((IProjectionMatrix2) matrix).executeGetMatrix(width, height));
+
+		profiler.pop();
+	}
 
 	@Inject(method = "renderVignetteOverlay", at = @At("HEAD"), cancellable = true)
 	private void onRenderVignetteOverlay(DrawContext context, Entity entity, CallbackInfo ci) {

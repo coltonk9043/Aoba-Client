@@ -18,14 +18,11 @@ import net.aoba.AobaClient;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.events.MouseScrollEvent;
-import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
 public abstract class UIElement {
-	public static boolean DEBUG = false;
-
 	protected static MinecraftClient MC = MinecraftClient.getInstance();
 	protected static AobaClient AOBA = Aoba.getInstance();
 
@@ -95,15 +92,11 @@ public abstract class UIElement {
 	 * @param drawContext  DrawContext of the game.
 	 * @param partialTicks Partial Ticks of the game.
 	 */
-	public void draw(DrawContext drawContext, float partialTicks) {
-		if (DEBUG) {
-			Render2D.drawBoxOutline(drawContext, actualSize, Colors.Red);
-		}
-
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		if (isVisible()) {
 			for (UIElement child : children) {
 				if (child.visible) {
-					child.draw(drawContext, partialTicks);
+					child.draw(renderer, drawContext, partialTicks);
 				}
 			}
 		}

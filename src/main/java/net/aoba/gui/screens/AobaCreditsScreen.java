@@ -11,13 +11,13 @@ package net.aoba.gui.screens;
 import java.util.Arrays;
 import java.util.List;
 
-import net.aoba.utils.render.Render2D;
+import net.aoba.Aoba;
 import net.aoba.utils.render.TextureBank;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 
@@ -26,7 +26,8 @@ public class AobaCreditsScreen extends Screen {
 	protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(
 			AOBA_PANORAMA_RENDERER);
 
-	private static final List<String> CONTRIBUTORS = Arrays.asList("coltonk9043", "cvs0", "Tewxx", "OsakiTsukiko", "Logging4J", "TangyKiwi", "Xatsec", "BatchDebug");
+	private static final List<String> CONTRIBUTORS = Arrays.asList("coltonk9043", "cvs0", "Tewxx", "OsakiTsukiko",
+			"Logging4J", "TangyKiwi", "Xatsec", "BatchDebug");
 
 	private int currentContributorIndex = 0;
 	private float animationProgress = 0.0f;
@@ -60,8 +61,8 @@ public class AobaCreditsScreen extends Screen {
 		int logoHeight = 70;
 		int logoY = baseY + 20;
 
-		context.drawTexture(RenderLayer::getGuiTextured, TextureBank.mainmenu_logo, (width - 185) / 2, logoY - 100,
-				0, 0, 185, logoHeight, 185, logoHeight);
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, TextureBank.mainmenu_logo, (width - 185) / 2, logoY - 100, 0,
+				0, 185, logoHeight, 185, logoHeight);
 
 		for (int i = 0; i < CONTRIBUTORS.size(); i++) {
 			int textWidth = textRenderer.getWidth(CONTRIBUTORS.get(i));
@@ -86,11 +87,11 @@ public class AobaCreditsScreen extends Screen {
 	}
 
 	private void drawContributorName(DrawContext context, String contributor, int x, int y, float alpha) {
-		Render2D.drawString(context, contributor, (float) x, (float) y, Colors.WHITE);
+		Aoba.getInstance().renderer2D.drawString(context, contributor, (float) x, (float) y, Colors.WHITE);
 	}
 
 	@Override
 	protected void renderPanoramaBackground(DrawContext context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
+		// AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
 	}
 }

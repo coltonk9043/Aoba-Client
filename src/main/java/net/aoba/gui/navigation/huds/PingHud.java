@@ -46,13 +46,13 @@ public class PingHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
+		super.draw(renderer, drawContext, partialTicks);
 
 		if (pingText != null && isVisible()) {
 			Rectangle pos = position.getValue();
 			if (pos.isDrawable()) {
-				Render2D.drawString(drawContext, pingText, pos.getX(), pos.getY(),
+				renderer.drawString(drawContext, pingText, pos.getX(), pos.getY(),
 						GuiManager.foregroundColor.getValue().getColorAsInt());
 			}
 		}

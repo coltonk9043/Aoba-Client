@@ -57,11 +57,11 @@ public class HudWindow extends Window {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		if (isVisible()) {
 			List<UIElement> children = getChildren();
 			for (UIElement child : children) {
-				child.draw(drawContext, partialTicks);
+				child.draw(renderer, drawContext, partialTicks);
 			}
 
 			Rectangle pos = getActualSize();
@@ -73,11 +73,11 @@ public class HudWindow extends Window {
 
 			if (isMoving) {
 				if (pos.isDrawable()) {
-					Render2D.drawBox(drawContext, x, y, width, height, dragColor);
+					renderer.drawBox(drawContext, x, y, width, height, dragColor);
 				}
 			}
 			if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
-				Render2D.drawBoxOutline(drawContext, x, y, width, height, hoverColor);
+				renderer.drawBoxOutline(drawContext, x, y, width, height, hoverColor);
 			}
 		}
 	}

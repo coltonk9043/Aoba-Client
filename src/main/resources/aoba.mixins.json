@@ -17,13 +17,13 @@
     "interfaces.IPlayerMoveC2SPacket",
     "interfaces.IMouse",
 	"interfaces.IClientPlayerEntity",
-	"interfaces.IBossBarS2CPacket"
+	"interfaces.IBossBarS2CPacket",
+	"interfaces.IProjectionMatrix2"
   ],
   "client": [
     "AbstractBlockStateMixin",
     "AbstractClientPlayerEntityMixin",
     "AbstractSignEditScreenMixin",
-    "BackgroundRendererMixin",
     "BlockMixin",
     "CactusBlockMixin",
     "CameraMixin",
@@ -56,7 +56,9 @@
     "MultiplayerScreenMixin",
     "ParticleManagerMixin",
     "PlayerEntityMixin",
+	"RenderSystemMixin",
     "ScreenMixin",
+	"ShaderLoaderMixin",
     "SimpleOptionMixin",
     "SoundSystemMixin",
     "TitleScreenMixin",

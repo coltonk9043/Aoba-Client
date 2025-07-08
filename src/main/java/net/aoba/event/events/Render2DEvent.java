@@ -10,8 +10,10 @@ package net.aoba.event.events;
 
 import java.util.ArrayList;
 
+import net.aoba.Aoba;
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.Render2DListener;
+import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 
@@ -25,6 +27,10 @@ public class Render2DEvent extends AbstractEvent {
 
 	public RenderTickCounter getRenderTickCounter() {
 		return renderTickCounter;
+	}
+
+	public Render2D getRenderer() {
+		return Aoba.getInstance().renderer2D;
 	}
 
 	public Render2DEvent(DrawContext context, RenderTickCounter renderTickCounter) {

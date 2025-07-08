@@ -32,16 +32,16 @@ public class ImageComponent extends Component {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		if (image != null) {
 			float actualX = getActualSize().getX();
 			float actualY = getActualSize().getY();
 			float actualWidth = getActualSize().getWidth();
 			float actualHeight = getActualSize().getHeight();
 
-			Render2D.drawTexturedQuad(drawContext, image, actualX, actualY, actualWidth, actualHeight,
+			renderer.drawTexturedQuad(drawContext, image, actualX, actualY, actualWidth, actualHeight,
 					GuiManager.foregroundColor.getValue());
 		}
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, drawContext, partialTicks);
 	}
 }

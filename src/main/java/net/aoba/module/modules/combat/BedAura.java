@@ -108,8 +108,9 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 
 	@Override
 	public void onRender(Render3DEvent event) {
+		Render3D renderer = event.getRenderer();
 		if (currentBlockToBreak != null) {
-			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(currentBlockToBreak), color.getValue(),
+			renderer.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(currentBlockToBreak), color.getValue(),
 					1.0f);
 		}
 	}

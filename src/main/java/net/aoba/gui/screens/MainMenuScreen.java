@@ -32,6 +32,7 @@ import net.aoba.gui.components.widgets.AobaButtonWidget;
 import net.aoba.gui.components.widgets.AobaImageButtonWidget;
 import net.aoba.gui.screens.addons.AddonScreen;
 import net.aoba.utils.render.TextureBank;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
@@ -40,7 +41,6 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 
@@ -179,7 +179,7 @@ public class MainMenuScreen extends Screen {
 		int logoWidth = (int) (LOGO_HEIGHT * (185.0 / LOGO_HEIGHT));
 		int logoX = (width - logoWidth) / 2;
 		int logoY = startY - LOGO_HEIGHT - 10;
-		drawContext.drawTexture(RenderLayer::getGuiTextured, TextureBank.mainmenu_logo, logoX, logoY, 0, 0, logoWidth,
+		drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, TextureBank.mainmenu_logo, logoX, logoY, 0, 0, logoWidth,
 				LOGO_HEIGHT, 185, LOGO_HEIGHT);
 
 		drawContext.drawTextWithShadow(textRenderer, "Aoba " + AobaClient.AOBA_VERSION, 2, height - 10, 0xFF00FF);

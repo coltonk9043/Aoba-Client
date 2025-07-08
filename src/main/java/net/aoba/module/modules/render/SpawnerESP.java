@@ -60,13 +60,15 @@ public class SpawnerESP extends Module implements Render3DListener {
 
 	@Override
 	public void onRender(Render3DEvent event) {
+		Render3D renderer = event.getRenderer();
+
 		ArrayList<BlockEntity> blockEntities = ModuleUtils.getTileEntities()
 				.collect(Collectors.toCollection(ArrayList::new));
 
 		for (BlockEntity blockEntity : blockEntities) {
 			if (blockEntity instanceof MobSpawnerBlockEntity) {
 				Box box = new Box(blockEntity.getPos());
-				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, color.getValue(),
+				renderer.draw3DBox(event.GetMatrix(), event.getCamera(), box, color.getValue(),
 						lineThickness.getValue().floatValue());
 			}
 		}

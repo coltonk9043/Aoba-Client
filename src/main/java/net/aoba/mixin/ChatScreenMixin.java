@@ -18,6 +18,7 @@
 
 package net.aoba.mixin;
 
+import org.joml.Matrix3x2fStack;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,14 +27,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.aoba.Aoba;
-import net.aoba.managers.CommandManager;
 import net.aoba.command.GlobalChat;
 import net.aoba.command.GlobalChat.ChatType;
+import net.aoba.managers.CommandManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.math.MatrixStack;
 
 @Mixin(ChatScreen.class)
 public class ChatScreenMixin extends ScreenMixin {
@@ -92,15 +92,15 @@ public class ChatScreenMixin extends ScreenMixin {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		MinecraftClient mc = MinecraftClient.getInstance();
-		MatrixStack matrixStack = context.getMatrices();
-		matrixStack.push();
+		Matrix3x2fStack matrixStack = context.getMatrices();
+		matrixStack.pushMatrix();
 
 		int guiScale = mc.getWindow().calculateScaleFactor(mc.options.getGuiScale().getValue(), mc.forcesUnicodeFont());
-		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
+		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale);
 		/*
 		 * serverChatButton.draw(context, delta); globalChatButton.draw(context, delta);
 		 */
-		matrixStack.pop();
+		matrixStack.popMatrix();
 		GL11.glEnable(GL11.GL_CULL_FACE);
 	}
 

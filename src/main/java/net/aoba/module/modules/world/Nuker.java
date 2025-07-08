@@ -63,16 +63,8 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 		addSetting(color);
 		addSetting(blacklist);
 
-		setDetectable(
-		    AntiCheat.NoCheatPlus,
-		    AntiCheat.Vulcan,
-		    AntiCheat.AdvancedAntiCheat,
-		    AntiCheat.Verus,
-		    AntiCheat.Grim,
-		    AntiCheat.Matrix,
-		    AntiCheat.Negativity,
-		    AntiCheat.Karhu
-		);
+		setDetectable(AntiCheat.NoCheatPlus, AntiCheat.Vulcan, AntiCheat.AdvancedAntiCheat, AntiCheat.Verus,
+				AntiCheat.Grim, AntiCheat.Matrix, AntiCheat.Negativity, AntiCheat.Karhu);
 	}
 
 	public void setRadius(int radius) {
@@ -99,8 +91,9 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 
 	@Override
 	public void onRender(Render3DEvent event) {
+		Render3D renderer = event.getRenderer();
 		if (currentBlockToBreak != null) {
-			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(currentBlockToBreak), color.getValue(),
+			renderer.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(currentBlockToBreak), color.getValue(),
 					1.0f);
 		}
 	}

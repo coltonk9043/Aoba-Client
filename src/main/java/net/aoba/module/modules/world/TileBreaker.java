@@ -50,16 +50,8 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 		addSetting(color);
 		addSetting(radius);
 
-		setDetectable(
-		    AntiCheat.NoCheatPlus,
-		    AntiCheat.Vulcan,
-		    AntiCheat.AdvancedAntiCheat,
-		    AntiCheat.Verus,
-		    AntiCheat.Grim,
-		    AntiCheat.Matrix,
-		    AntiCheat.Negativity,
-		    AntiCheat.Karhu
-		);
+		setDetectable(AntiCheat.NoCheatPlus, AntiCheat.Vulcan, AntiCheat.AdvancedAntiCheat, AntiCheat.Verus,
+				AntiCheat.Grim, AntiCheat.Matrix, AntiCheat.Negativity, AntiCheat.Karhu);
 	}
 
 	public void setRadius(int radius) {
@@ -127,6 +119,7 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 
 	@Override
 	public void onRender(Render3DEvent event) {
+		Render3D renderer = event.getRenderer();
 		int rad = radius.getValue().intValue();
 		for (int x = -rad; x < rad; x++) {
 			for (int y = rad; y > -rad; y--) {
@@ -135,7 +128,7 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 							MC.player.getBlockZ() + z);
 					Block block = MC.world.getBlockState(blockpos).getBlock();
 					if (isTileBreakerBlock(block)) {
-						Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(blockpos), color.getValue(),
+						renderer.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(blockpos), color.getValue(),
 								1.0f);
 					}
 				}

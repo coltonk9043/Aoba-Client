@@ -18,8 +18,8 @@ import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
 import net.aoba.gui.TextAlign;
 import net.aoba.gui.navigation.HudWindow;
-import net.aoba.module.Module;
 import net.aoba.managers.SettingManager;
+import net.aoba.module.Module;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
@@ -27,8 +27,9 @@ import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
 
 public class ModuleArrayListHud extends HudWindow {
-	private final EnumSetting<TextAlign> textAlign = EnumSetting.<TextAlign>builder().id("ModuleArrayListHudText_TextAlign")
-			.displayName("Text Align").description("Text Alignment").defaultValue(TextAlign.Left).build();
+	private final EnumSetting<TextAlign> textAlign = EnumSetting.<TextAlign>builder()
+			.id("ModuleArrayListHudText_TextAlign").displayName("Text Align").description("Text Alignment")
+			.defaultValue(TextAlign.Left).build();
 
 	public ModuleArrayListHud(int x, int y) {
 		super("ModuleArrayListHud", x, y);
@@ -75,7 +76,7 @@ public class ModuleArrayListHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		if (isVisible()) {
 			Rectangle pos = position.getValue();
 
@@ -88,7 +89,7 @@ public class ModuleArrayListHud extends HudWindow {
 				case Left:
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
-						Render2D.drawString(drawContext, mod.getName(), pos.getX(), yPosition,
+						renderer.drawString(drawContext, mod.getName(), pos.getX(), yPosition,
 								GuiManager.foregroundColor.getValue().getColorAsInt());
 						iteration.incrementAndGet();
 					});
@@ -97,7 +98,7 @@ public class ModuleArrayListHud extends HudWindow {
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
 						float centerTextWidth = Render2D.getStringWidth(mod.getName()) / 2.0f;
-						Render2D.drawString(drawContext, mod.getName(),
+						renderer.drawString(drawContext, mod.getName(),
 								pos.getX() + (pos.getWidth() / 2.0f) - centerTextWidth, yPosition,
 								GuiManager.foregroundColor.getValue().getColorAsInt());
 						iteration.incrementAndGet();
@@ -107,7 +108,7 @@ public class ModuleArrayListHud extends HudWindow {
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
 						float rightTextWidth = Render2D.getStringWidth(mod.getName());
-						Render2D.drawString(drawContext, mod.getName(), pos.getX() + pos.getWidth() - rightTextWidth,
+						renderer.drawString(drawContext, mod.getName(), pos.getX() + pos.getWidth() - rightTextWidth,
 								yPosition, GuiManager.foregroundColor.getValue().getColorAsInt());
 						iteration.incrementAndGet();
 					});
@@ -117,6 +118,6 @@ public class ModuleArrayListHud extends HudWindow {
 			}
 		}
 
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, drawContext, partialTicks);
 	}
 }

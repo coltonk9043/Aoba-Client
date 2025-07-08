@@ -86,19 +86,20 @@ public class Window extends UIElement {
 		return ID;
 	}
 
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 		float actualHeight = getActualSize().getHeight();
 
 		// Draws background depending on components width and height
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight,
+		renderer.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight,
 				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
 				GuiManager.backgroundColor.getValue());
+
 		List<UIElement> children = getChildren();
 		for (UIElement child : children) {
-			child.draw(drawContext, partialTicks);
+			child.draw(renderer, drawContext, partialTicks);
 		}
 	}
 

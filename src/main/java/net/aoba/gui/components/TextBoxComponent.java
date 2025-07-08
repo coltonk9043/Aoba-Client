@@ -68,8 +68,8 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
+		super.draw(renderer, drawContext, partialTicks);
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
@@ -83,7 +83,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 		}
 
 		Color borderColor = isErrorState ? errorBorderColor : GuiManager.borderColor.getValue();
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor,
+		renderer.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor,
 				new Color(115, 115, 115, 200));
 
 		if (text != null && !text.isEmpty()) {
@@ -91,7 +91,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 
 			int visibleStringIndex = Math.min(Math.max(0, text.length() - visibleStringLength - 1), text.length() - 1);
 			String visibleString = text.substring(visibleStringIndex);
-			Render2D.drawString(drawContext, visibleString, actualX + 8, actualY + 8, 0xFFFFFF);
+			renderer.drawString(drawContext, visibleString, actualX + 8, actualY + 8, 0xFFFFFF);
 		}
 	}
 

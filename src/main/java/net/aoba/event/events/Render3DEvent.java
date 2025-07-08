@@ -10,8 +10,10 @@ package net.aoba.event.events;
 
 import java.util.ArrayList;
 
+import net.aoba.Aoba;
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.Render3DListener;
+import net.aoba.utils.render.Render3D;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.RenderTickCounter;
@@ -37,6 +39,10 @@ public class Render3DEvent extends AbstractEvent {
 
 	public Camera getCamera() {
 		return camera;
+	}
+
+	public Render3D getRenderer() {
+		return Aoba.getInstance().renderer3D;
 	}
 
 	public Render3DEvent(MatrixStack matrix4f, Frustum frustum, Camera camera, RenderTickCounter renderTickCounter) {

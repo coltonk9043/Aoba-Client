@@ -10,12 +10,12 @@ package net.aoba.gui.components.widgets;
 
 import java.util.function.Consumer;
 
+import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
-import net.aoba.utils.render.Render2D;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -66,14 +66,14 @@ public class AobaImageButtonWidget extends PressableWidget {
 		if (background) {
 			// RenderSystem.disableCull();
 			// RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			Render2D.drawOutlinedRoundedBox(context, getX(), getY(), width, height,
+			Aoba.getInstance().renderer2D.drawOutlinedRoundedBox(context, getX(), getY(), width, height,
 					GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
 					GuiManager.backgroundColor.getValue());
 
 			// RenderSystem.enableCull();
 		}
 
-		context.drawTexture(RenderLayer::getGuiTextured, image, getX(), getY(), u, v, width, height, width, height);
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, image, getX(), getY(), u, v, width, height, width, height);
 	}
 
 	@Override

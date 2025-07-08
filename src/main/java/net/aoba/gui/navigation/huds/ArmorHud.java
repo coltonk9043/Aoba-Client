@@ -10,13 +10,14 @@ package net.aoba.gui.navigation.huds;
 
 import java.util.ArrayList;
 
+import org.joml.Matrix3x2fStack;
+
 import com.google.common.collect.Lists;
 
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
@@ -31,7 +32,7 @@ public class ArmorHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		if (isVisible()) {
 			Rectangle pos = position.getValue();
 
@@ -48,19 +49,20 @@ public class ArmorHud extends HudWindow {
 				float x1 = pos.getX() / scale;
 				float y2 = (pos.getY() + pos.getHeight()) / scale;
 				float yOff = 0;
-				MatrixStack matrixStack = drawContext.getMatrices();
-				matrixStack.push();
-				matrixStack.scale(scale, scale, scale);
+
+				Matrix3x2fStack matrixStack = drawContext.getMatrices();
+				matrixStack.pushMatrix();
+				matrixStack.scale(scale, scale);
 
 				for (ItemStack armor : armors) {
 					if (armor.getItem() != Items.AIR) {
-						Render2D.drawItem(drawContext, armor, x1, y2 - yOff - 16);
+						renderer.drawItem(drawContext, armor, x1, y2 - yOff - 16);
 					}
 					yOff += (16.0f);
 				}
-				matrixStack.pop();
+				matrixStack.popMatrix();
 			}
 		}
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, drawContext, partialTicks);
 	}
 }

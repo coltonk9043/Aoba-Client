@@ -358,12 +358,13 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 
 	@Override
 	public void onRender(Render3DEvent event) {
+		Render3D renderer = event.getRenderer();
 		if (nodes != null) {
 			Box startBox = new Box(start);
 			Box endBox = new Box(end);
 
-			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), startBox, Colors.Red, 1.0f);
-			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), endBox, Colors.Red, 1.0f);
+			renderer.draw3DBox(event.GetMatrix(), event.getCamera(), startBox, Colors.Red, 1.0f);
+			renderer.draw3DBox(event.GetMatrix(), event.getCamera(), endBox, Colors.Red, 1.0f);
 
 			for (int i = 0; i < nodes.size() - 1; i++) {
 				PathNode first = nodes.get(i);
@@ -373,8 +374,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				Vec3d pos2 = first.pos.toCenterPos().add(0.15f, 0.15f, 0.15f);
 				Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
 
-				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, Colors.Red, 1);
-				Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), first.pos.toCenterPos(),
+				renderer.draw3DBox(event.GetMatrix(), event.getCamera(), box, Colors.Red, 1);
+				renderer.drawLine3D(event.GetMatrix(), event.getCamera(), first.pos.toCenterPos(),
 						second.pos.toCenterPos(), Colors.Red);
 			}
 		}

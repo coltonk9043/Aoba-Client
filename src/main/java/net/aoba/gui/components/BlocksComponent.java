@@ -8,7 +8,7 @@
 
 package net.aoba.gui.components;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix3x2fStack;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
@@ -25,7 +25,6 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 
@@ -74,21 +73,20 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 	 * @param partialTicks The partial ticks used for interpolation.
 	 */
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
+		Matrix3x2fStack matrixStack = drawContext.getMatrices();
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 
-		Render2D.drawString(drawContext, text, actualX, actualY + 6, 0xFFFFFF);
-		Render2D.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6,
+		renderer.drawString(drawContext, text, actualX, actualY + 6, 0xFFFFFF);
+		renderer.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6,
 				GuiManager.foregroundColor.getValue().getColorAsInt());
 
 		if (!collapsed) {
-			matrixStack.push();
-			matrixStack.scale(2.0f, 2.0f, 2.0f);
+			matrixStack.pushMatrix();
+			matrixStack.scale(2.0f, 2.0f);
 			for (int i = scroll; i < visibleRows + scroll; i++) {
 				for (int j = 0; j < visibleColumns; j++) {
 					int index = (i * visibleColumns) + j;
@@ -98,17 +96,17 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 					Block block = Registries.BLOCK.get(index);
 
 					if (blocks.getValue().contains(block)) {
-						Render2D.drawBox(drawContext, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1),
+						renderer.drawBox(drawContext, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1),
 								((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25)), BLOCK_WIDTH,
 								BLOCK_WIDTH, new Color(0, 255, 0, 55));
 					}
-					Render2D.drawItem(drawContext, new ItemStack(block.asItem()),
+					renderer.drawItem(drawContext, new ItemStack(block.asItem()),
 							(int) ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN)) + 2) / 2.0f),
 							(int) ((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25) / 2.0f));
 				}
 			}
 
-			matrixStack.pop();
+			matrixStack.popMatrix();
 		}
 	}
 

@@ -16,17 +16,16 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.aoba.managers.altmanager.Alt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.Uuids;
@@ -90,7 +89,7 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 				}
 
 				UUID uuid = Uuids.getOfflinePlayerUuid(name);
-                entry = new PlayerListEntry(new GameProfile(uuid, name), false);
+				entry = new PlayerListEntry(new GameProfile(uuid, name), false);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -133,7 +132,6 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 
 		private void drawHead(DrawContext drawContext, int x, int y) {
 			GL11.glEnable(GL11.GL_BLEND);
-			RenderSystem.setShaderColor(1, 1, 1, 1);
 
 			// Face
 			int fw = 192;
@@ -141,7 +139,7 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 			float u = 24;
 			float v = 24;
 
-			drawContext.drawTexture(RenderLayer::getGuiTextured, entry.getSkinTextures().texture(), x, y, u, v, 24, 24,
+			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, entry.getSkinTextures().texture(), x, y, u, v, 24, 24,
 					fw, fh);
 
 			// Hat
@@ -150,7 +148,7 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 			u = 120;
 			v = 24;
 
-			drawContext.drawTexture(RenderLayer::getGuiTextured, entry.getSkinTextures().texture(), x, y, u, v, 24, 24,
+			drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, entry.getSkinTextures().texture(), x, y, u, v, 24, 24,
 					fw, fh);
 
 			GL11.glDisable(GL11.GL_BLEND);

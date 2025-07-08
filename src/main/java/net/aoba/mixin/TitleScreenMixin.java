@@ -18,15 +18,11 @@
 
 package net.aoba.mixin;
 
-import static net.aoba.AobaClient.MC;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.aoba.gui.GuiManager;
-import net.aoba.gui.screens.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.text.Text;
@@ -40,7 +36,7 @@ public abstract class TitleScreenMixin extends Screen {
 
 	@Inject(method = "init", at = @At("RETURN"))
 	public void postInitHook(CallbackInfo ci) {
-		if (GuiManager.enableCustomTitle.getValue())
-			MC.setScreen(new MainMenuScreen());
+		// if (GuiManager.enableCustomTitle.getValue())
+		// MC.setScreen(new MainMenuScreen());
 	}
 }

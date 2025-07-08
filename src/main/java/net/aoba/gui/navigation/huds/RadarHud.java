@@ -35,7 +35,7 @@ public class RadarHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		if (isVisible()) {
 			Rectangle pos = getActualSize();
 			if (pos.isDrawable()) {
@@ -45,13 +45,13 @@ public class RadarHud extends HudWindow {
 				float height = pos.getHeight().floatValue();
 
 				// Draws background depending on components width and height
-				Render2D.drawOutlinedRoundedBox(drawContext, x, y, width, height, GuiManager.roundingRadius.getValue(),
+				renderer.drawOutlinedRoundedBox(drawContext, x, y, width, height, GuiManager.roundingRadius.getValue(),
 						GuiManager.borderColor.getValue(), GuiManager.backgroundColor.getValue());
 
 				// Draw the 'Radar'
-				Render2D.drawBox(drawContext, x, y + (height / 2), width - 1, 1, new Color(128, 128, 128, 255));
-				Render2D.drawBox(drawContext, x + (width / 2), y, 1, height, new Color(128, 128, 128, 255));
-				Render2D.drawBox(drawContext, x + (width / 2) - 2, y + (height / 2) - 2, 5, 5,
+				renderer.drawBox(drawContext, x, y + (height / 2), width - 1, 1, new Color(128, 128, 128, 255));
+				renderer.drawBox(drawContext, x + (width / 2), y, 1, height, new Color(128, 128, 128, 255));
+				renderer.drawBox(drawContext, x + (width / 2) - 2, y + (height / 2) - 2, 5, 5,
 						GuiManager.foregroundColor.getValue());
 
 				float sin_theta = (float) Math.sin(Math.toRadians(-MC.player.getRotationClient().y));
@@ -84,7 +84,7 @@ public class RadarHud extends HudWindow {
 					float radius_x = ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y))) + center_x;
 					float radius_y = (sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y)) + center_y;
 
-					Render2D.drawBox(drawContext, (int) (Math.min(x + width, Math.max(x, radius_x))),
+					renderer.drawBox(drawContext, (int) (Math.min(x + width, Math.max(x, radius_x))),
 							(int) (Math.min(y + height, Math.max(y, radius_y))), 3, 3, c);
 				}
 
@@ -102,10 +102,10 @@ public class RadarHud extends HudWindow {
 						float radius_y = (sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))
 								+ center_y;
 
-						Render2D.drawBox(drawContext, (int) (Math.min(x + width, Math.max(x, radius_x))),
+						renderer.drawBox(drawContext, (int) (Math.min(x + width, Math.max(x, radius_x))),
 								(int) (Math.min(y + height, Math.max(y, radius_y))), 3, 3,
 								new Color(255, 255, 255, 255));
-						Render2D.drawStringWithScale(drawContext, entity.getName().getString(),
+						renderer.drawStringWithScale(drawContext, entity.getName().getString(),
 								(int) (Math.min(x + width - 5, Math.max(x, radius_x)))
 										- (MC.textRenderer.getWidth(entity.getName()) * 0.5f),
 								(int) (Math.min(y + 25 + height, Math.max(y, radius_y))) - 10,
@@ -114,6 +114,6 @@ public class RadarHud extends HudWindow {
 				}
 			}
 		}
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, drawContext, partialTicks);
 	}
 }

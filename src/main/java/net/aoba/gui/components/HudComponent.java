@@ -23,7 +23,7 @@ public class HudComponent extends Component {
 	private final HudWindow hud;
 
 	public HudComponent(String text, HudWindow hud) {
-        this.text = text;
+		this.text = text;
 		this.hud = hud;
 
 		setMargin(new Margin(8f, 2f, 8f, 2f));
@@ -40,19 +40,19 @@ public class HudComponent extends Component {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
+		super.draw(renderer, drawContext, partialTicks);
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 
-		Render2D.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
+		renderer.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
 
 		if (hud.activated.getValue()) {
-			Render2D.drawString(drawContext, "-", actualX + actualWidth - 12, actualY + 8, 0xFF0000);
+			renderer.drawString(drawContext, "-", actualX + actualWidth - 12, actualY + 8, 0xFF0000);
 		} else {
-			Render2D.drawString(drawContext, "+", actualX + actualWidth - 12, actualY + 8, 0x00FF00);
+			renderer.drawString(drawContext, "+", actualX + actualWidth - 12, actualY + 8, 0x00FF00);
 		}
 	}
 

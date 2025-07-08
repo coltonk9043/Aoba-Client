@@ -59,7 +59,7 @@ dependencies {
     //modImpl("meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT")
 
     // Custom Implementations
-    implementation "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"
+    //implementation "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"
 
     // Library Dependencies
     libImpl("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }

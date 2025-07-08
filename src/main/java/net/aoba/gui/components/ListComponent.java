@@ -29,12 +29,12 @@ public class ListComponent extends Component implements MouseClickListener {
 	private int selectedIndex;
 
 	public ListComponent(List<String> itemsSource) {
-        setMargin(new Margin(8f, 2f, 8f, 2f));
+		setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.itemsSource = itemsSource;
 	}
 
 	public ListComponent(List<String> itemsSource, StringSetting listSetting) {
-        this.listSetting = listSetting;
+		this.listSetting = listSetting;
 		setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.itemsSource = itemsSource;
 	}
@@ -74,7 +74,7 @@ public class ListComponent extends Component implements MouseClickListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
@@ -82,16 +82,16 @@ public class ListComponent extends Component implements MouseClickListener {
 
 		if (listSetting != null) {
 			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(listSetting.getValue());
-			Render2D.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
+			renderer.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
 					actualY + 8, 0xFFFFFF);
 		} else if (itemsSource.size() > 0) {
 			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(itemsSource.get(selectedIndex));
-			Render2D.drawString(drawContext, itemsSource.get(selectedIndex),
+			renderer.drawString(drawContext, itemsSource.get(selectedIndex),
 					actualX + (actualWidth / 2.0f) - stringWidth, actualY + 8, 0xFFFFFF);
 		}
 
-		Render2D.drawString(drawContext, "<<", actualX + 8, actualY + 4, GuiManager.foregroundColor.getValue());
-		Render2D.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4,
+		renderer.drawString(drawContext, "<<", actualX + 8, actualY + 4, GuiManager.foregroundColor.getValue());
+		renderer.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4,
 				GuiManager.foregroundColor.getValue());
 	}
 

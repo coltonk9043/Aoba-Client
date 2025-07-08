@@ -65,8 +65,8 @@ public class PinnableWindow extends Window {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
+		super.draw(renderer, drawContext, partialTicks);
 
 		Rectangle pos = position.getValue();
 		if (pos.isDrawable()) {
@@ -75,14 +75,14 @@ public class PinnableWindow extends Window {
 			float width = pos.getWidth().floatValue();
 
 			if (isPinned.getValue()) {
-				Render2D.drawRoundedBox(drawContext, x + width - 23, y + 8, 15, 15,
+				renderer.drawRoundedBox(drawContext, x + width - 23, y + 8, 15, 15,
 						GuiManager.roundingRadius.getValue(), new Color(154, 0, 0, 200));
-				Render2D.drawRoundedBoxOutline(drawContext, x + width - 23, y + 8, 15, 15,
+				renderer.drawRoundedBoxOutline(drawContext, x + width - 23, y + 8, 15, 15,
 						GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 200));
 			} else {
-				Render2D.drawRoundedBox(drawContext, x + width - 23, y + 8, 15, 15,
+				renderer.drawRoundedBox(drawContext, x + width - 23, y + 8, 15, 15,
 						GuiManager.roundingRadius.getValue(), new Color(128, 128, 128, 50));
-				Render2D.drawRoundedBoxOutline(drawContext, x + width - 23, y + 8, 15, 15,
+				renderer.drawRoundedBoxOutline(drawContext, x + width - 23, y + 8, 15, 15,
 						GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 50));
 			}
 		}

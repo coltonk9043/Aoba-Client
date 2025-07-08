@@ -55,23 +55,23 @@ public class KeybindComponent extends Component implements KeyDownListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
+		super.draw(renderer, drawContext, partialTicks);
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 		float actualHeight = getActualSize().getHeight();
 
-		Render2D.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f,
+		renderer.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
+		renderer.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f,
 				GuiManager.borderColor.getValue(), new Color(115, 115, 115, 200));
 
 		String keyBindText = keyBind.getValue().getLocalizedText().getString();
 		if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
 			keyBindText = "N/A";
 
-		Render2D.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 6, 0xFFFFFF);
+		renderer.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 6, 0xFFFFFF);
 	}
 
 	@Override

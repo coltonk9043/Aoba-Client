@@ -15,13 +15,13 @@ import net.aoba.api.IAddon;
 import net.aoba.gui.screens.addons.AddonSelectionList.NormalEntry;
 import net.aoba.utils.render.TextureBank;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.CubeMapRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Util;
@@ -61,8 +61,7 @@ public class AddonScreen extends Screen {
 		addDrawableChild(addonListSelector);
 
 		// Right Side
-		descriptionWidget = new TextFieldWidget(textRenderer, 282, 112, width - 314, height - 160,
-				Text.of(""));
+		descriptionWidget = new TextFieldWidget(textRenderer, 282, 112, width - 314, height - 160, Text.of(""));
 		descriptionWidget.setEditable(false);
 		descriptionWidget.setFocusUnlocked(true);
 		addDrawableChild(descriptionWidget);
@@ -88,14 +87,15 @@ public class AddonScreen extends Screen {
 
 		// Draw Addon Information
 		if (selectedAddon != null) {
-			AddonSelectionList.NormalEntry entry = (AddonSelectionList.NormalEntry) addonListSelector.getSelectedOrNull();
+			AddonSelectionList.NormalEntry entry = (AddonSelectionList.NormalEntry) addonListSelector
+					.getSelectedOrNull();
 			if (entry != null) {
 				// Draw the border
 				drawContext.fill(281, 59, 331, 109, 0xFFFFFFFF);
 				drawContext.fill(282, 60, 330, 108, 0xFF000000);
 
 				// Draw the texture
-				drawContext.drawTexture(RenderLayer::getGuiTextured, entry.getIcon(), 282, 60, 0, 0, 48, 48, 48, 48);
+				drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, entry.getIcon(), 282, 60, 0, 0, 48, 48, 48, 48);
 			}
 			drawContext.drawTextWithShadow(textRenderer, selectedAddon.getName(), 338, 68, 16777215);
 			drawContext.drawTextWithShadow(textRenderer, selectedAddon.getVersion(), 338, 80, 16777215);
@@ -120,6 +120,6 @@ public class AddonScreen extends Screen {
 
 	@Override
 	protected void renderPanoramaBackground(DrawContext context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
+		// AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
 	}
 }

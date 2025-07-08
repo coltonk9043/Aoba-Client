@@ -45,6 +45,8 @@ import net.aoba.managers.rotation.RotationManager;
 import net.aoba.mixin.interfaces.IMinecraftClient;
 import net.aoba.module.Module;
 import net.aoba.settings.friends.FriendsList;
+import net.aoba.utils.render.Render2D;
+import net.aoba.utils.render.Render3D;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.client.MinecraftClient;
@@ -74,6 +76,9 @@ public class AobaClient {
 	public static List<IAddon> addons = new ArrayList<>();
 	public static Logger LOGGER;
 
+	public Render3D renderer3D;
+	public Render2D renderer2D;
+
 	/**
 	 * Initializes Aoba Client and creates sub-systems.
 	 */
@@ -90,6 +95,9 @@ public class AobaClient {
 	public void loadAssets() {
 		LOGGER.info("[Aoba] Starting Client");
 		eventManager = new EventManager();
+
+		renderer3D = new Render3D();
+		renderer2D = new Render2D();
 
 		// Register any addons.
 		LogUtils.getLogger().info("[Aoba] Starting addon initialization");

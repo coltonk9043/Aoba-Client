@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3x2fStack;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,17 +16,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.aoba.Aoba;
 import net.aoba.module.modules.render.Tooltips;
-import net.aoba.utils.render.Render2D;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
-import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
@@ -99,15 +96,15 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 			int tooltipWidth = 150;
 			int nameHeight = 12;
 
-			Render2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 10, offsetY - 10,
-					new Color(255, 255, 255).getRGB(), 1.0f);
+			Aoba.getInstance().renderer2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 10,
+					offsetY - 10, new Color(255, 255, 255).getRGB(), 1.0f);
 
 			draw(context, compoundTag.stream().toList(), offsetX, offsetY + nameHeight, mouseX, mouseY, colors);
 
 			context.fill(offsetX, offsetY - nameHeight, offsetX + tooltipWidth, offsetY,
 					new Color(0, 0, 0, 128).getRGB());
-			Render2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 5, offsetY - 10,
-					new Color(255, 255, 255).getRGB(), 1.0f);
+			Aoba.getInstance().renderer2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 5,
+					offsetY - 10, new Color(255, 255, 255).getRGB(), 1.0f);
 
 		} catch (Exception ignore) {
 			return false;
@@ -125,8 +122,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
 		drawBackground(context, offsetX, offsetY, colors);
 
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		DiffuseLighting.enableGuiDepthLighting();
 		int row = 0;
 		int i = 0;
 		for (ItemStack itemStack : itemStacks) {
@@ -143,7 +138,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 				row++;
 			}
 		}
-		DiffuseLighting.disableGuiDepthLighting();
 	}
 
 	private void drawBackground(DrawContext context, int x, int y, float[] colors) {
@@ -160,8 +154,8 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
 	private void drawMapPreview(DrawContext context, ItemStack stack, int x, int y) {
 		// RenderSystem.enableBlend();
-		context.getMatrices().push();
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		Matrix3x2fStack matrixStack = context.getMatrices();
+		matrixStack.pushMatrix();
 
 		int y1 = y - 12;
 		int x1 = x + 8;
@@ -176,8 +170,8 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 			y1 += 8;
 			z = 310;
 			double scale = (double) (100 - 16) / 128.0D;
-			context.getMatrices().translate(x1, y1, z);
-			context.getMatrices().scale((float) scale, (float) scale, 0);
+			matrixStack.translate(x1, y1);
+			matrixStack.scale((float) scale, (float) scale);
 			VertexConsumerProvider.Immediate consumer = client.getBufferBuilders().getEntityVertexConsumers();
 
 			// TODO:
@@ -185,7 +179,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 			// (MapIdComponent) stack.get(DataComponentTypes.MAP_ID), mapState, false,
 			// 0xF000F0);
 		}
-		context.getMatrices().pop();
+		context.getMatrices().popMatrix();
 	}
 
 	@Inject(method = "drawMouseoverTooltip", at = @At("HEAD"), cancellable = true)

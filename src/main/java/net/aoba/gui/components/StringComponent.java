@@ -31,7 +31,7 @@ public class StringComponent extends Component implements FontChangedListener {
 	private final Color color;
 
 	public StringComponent(String text) {
-        setText(text);
+		setText(text);
 		color = Colors.White;
 		bold = false;
 		setMargin(new Margin(8f, 2f, 8f, 2f));
@@ -40,7 +40,7 @@ public class StringComponent extends Component implements FontChangedListener {
 	}
 
 	public StringComponent(String text, boolean bold) {
-        setText(text);
+		setText(text);
 		color = Colors.White;
 		this.bold = bold;
 		setMargin(new Margin(8f, 2f, 8f, 2f));
@@ -49,7 +49,7 @@ public class StringComponent extends Component implements FontChangedListener {
 	}
 
 	public StringComponent(String text, Color color, boolean bold) {
-        setText(text);
+		setText(text);
 		this.color = color;
 		this.bold = bold;
 		setMargin(new Margin(8f, 2f, 8f, 2f));
@@ -64,7 +64,7 @@ public class StringComponent extends Component implements FontChangedListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
@@ -77,15 +77,15 @@ public class StringComponent extends Component implements FontChangedListener {
 
 			switch (textAlign) {
 			case Left:
-				Render2D.drawString(drawContext, str, actualX, actualY + i, color.getColorAsInt());
+				renderer.drawString(drawContext, str, actualX, actualY + i, color.getColorAsInt());
 				break;
 			case Center:
 				float xPosCenter = actualX + (actualWidth / 2.0f) - Render2D.getStringWidth(str);
-				Render2D.drawString(drawContext, str, xPosCenter, actualY + i, color.getColorAsInt());
+				renderer.drawString(drawContext, str, xPosCenter, actualY + i, color.getColorAsInt());
 				break;
 			case Right:
 				float xPosRight = actualX + actualWidth - (Render2D.getStringWidth(str) * 2);
-				Render2D.drawString(drawContext, str, xPosRight, actualY + i, color.getColorAsInt());
+				renderer.drawString(drawContext, str, xPosRight, actualY + i, color.getColorAsInt());
 				break;
 			}
 

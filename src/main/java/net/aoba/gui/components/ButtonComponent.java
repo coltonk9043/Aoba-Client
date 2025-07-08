@@ -10,8 +10,6 @@ package net.aoba.gui.components;
 
 import java.util.List;
 
-import org.joml.Matrix4f;
-
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
@@ -22,7 +20,6 @@ import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class ButtonComponent extends Component {
 
@@ -118,10 +115,7 @@ public class ButtonComponent extends Component {
 	 * @param partialTicks The partial ticks used for interpolation.
 	 */
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
@@ -132,10 +126,10 @@ public class ButtonComponent extends Component {
 			color = color.add(45, 45, 45);
 		}
 
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f,
+		renderer.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f,
 				GuiManager.borderColor.getValue(), color);
 
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, drawContext, partialTicks);
 	}
 
 	@Override

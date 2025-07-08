@@ -29,17 +29,17 @@ public class CoordsHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		if (isVisible()) {
 			Rectangle pos = position.getValue();
 			if (pos.isDrawable()) {
 				String coordsText = String.format("X: %.1f, Y: %.1f, Z: %.1f", MC.player.getX(), MC.player.getY(),
 						MC.player.getZ());
-				Render2D.drawString(drawContext, coordsText, pos.getX(), pos.getY(),
+				renderer.drawString(drawContext, coordsText, pos.getX(), pos.getY(),
 						GuiManager.foregroundColor.getValue().getColorAsInt());
 			}
 		}
 
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, drawContext, partialTicks);
 	}
 }

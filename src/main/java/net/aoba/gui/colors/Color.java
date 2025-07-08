@@ -12,10 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector3f;
 
 public class Color {
-	private int r;
-	private int g;
-	private int b;
-	private int alpha = 255;
+	public int r; // Should only be read.
+	public int g; // Should only be read.
+	public int b; // Should only be read.
+	public int a = 255; // Should only be read.
 
 	private float hue;
 	private float saturation;
@@ -43,14 +43,14 @@ public class Color {
 
 		HSVFromRGB(r, g, b);
 
-		this.alpha = alpha;
+		this.a = alpha;
 	}
 
 	public Color(float r, float g, float b, float alpha) {
 		this.r = (int) (r * 255f);
 		this.g = (int) (g * 255f);
 		this.b = (int) (b * 255f);
-		this.alpha = (int) (alpha * 255f);
+		this.a = (int) (alpha * 255f);
 	}
 
 	public Color getAsSolid() {
@@ -70,7 +70,7 @@ public class Color {
 		int r = (int) (color1.r + (color2.r - color1.r) * factor);
 		int g = (int) (color1.g + (color2.g - color1.g) * factor);
 		int b = (int) (color1.b + (color2.b - color1.b) * factor);
-		int alpha = (int) (color1.alpha + (color2.alpha - color1.alpha) * factor);
+		int alpha = (int) (color1.a + (color2.a - color1.a) * factor);
 		return new Color(r, g, b, alpha);
 	}
 
@@ -227,11 +227,11 @@ public class Color {
 		this.r = r;
 		this.g = b;
 		this.b = b;
-		this.alpha = alpha;
+		this.a = alpha;
 	}
 
 	public void setAlpha(int alpha) {
-		this.alpha = alpha;
+		this.a = alpha;
 	}
 
 	/**
@@ -253,12 +253,22 @@ public class Color {
 	 */
 	public int getColorAsInt() {
 		// Perform shifts and Bitwise AND to get color value in integer format.
-		int Alpha = ((alpha) << 24) & 0xFF000000;
+		int Alpha = ((a) << 24) & 0xFF000000;
 		int R = ((r) << 16) & 0x00FF0000;
 		int G = ((g) << 8) & 0x0000FF00;
 		int B = (b) & 0x000000FF;
 		// Return the color as a combination of these values.
 		return Alpha | R | G | B;
+	}
+
+	public int test() {
+		// Perform shifts and Bitwise AND to get color value in integer format.
+		int Alpha = ((a) << 24) & 0xFF000000;
+		int G = ((g) << 16) & 0x00FF0000;
+		int B = ((b) << 8) & 0x0000FF00;
+		int R = (r) & 0x000000FF;
+		// Return the color as a combination of these values.
+		return Alpha | B | G | R;
 	}
 
 	/**
@@ -298,7 +308,7 @@ public class Color {
 	}
 
 	public float getAlpha() {
-		return ((float) alpha) / 255.0f;
+		return ((float) a) / 255.0f;
 	}
 
 	public Color add(Color color) {

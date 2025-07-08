@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.joml.Matrix3x2fStack;
 import org.lwjgl.glfw.GLFW;
 
 import com.google.common.collect.Lists;
@@ -25,6 +26,7 @@ import net.aoba.event.listeners.Render2DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.colors.Color;
+import net.aoba.gui.colors.Colors;
 import net.aoba.gui.colors.RainbowColor;
 import net.aoba.gui.colors.RandomColor;
 import net.aoba.gui.components.GridComponent;
@@ -70,7 +72,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class GuiManager implements KeyDownListener, TickListener, Render2DListener {
 	private static final MinecraftClient MC = MinecraftClient.getInstance();
@@ -315,42 +316,47 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 	@Override
 	public void onRender(Render2DEvent event) {
+		Render2D renderer = event.getRenderer();
+
 		DrawContext drawContext = event.getDrawContext();
 		float tickDelta = event.getRenderTickCounter().getTickProgress(false);
+		Matrix3x2fStack matrixStack = drawContext.getMatrices();
+		matrixStack.pushMatrix();
 
-		MatrixStack matrixStack = drawContext.getMatrices();
-		matrixStack.push();
-
-		int guiScale = MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(), MC.forcesUnicodeFont());
-		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
-
-		net.minecraft.client.util.Window window = MC.getWindow();
+		// int guiScale =
+		// MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(),
+		// MC.forcesUnicodeFont());
+		// matrixStack.scale(1.0f / guiScale, 1.0f / guiScale);
 
 		// Render ClickGUI and Topbar
 		if (clickGuiOpen) {
-			Render2D.drawBox(drawContext, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
-			clickGuiNavBar.draw(drawContext, tickDelta);
+			renderer.drawBox(drawContext, 0, 0, drawContext.getScaledWindowWidth(), drawContext.getScaledWindowWidth(),
+					Colors.White);
+			// clickGuiNavBar.draw(renderer, drawContext, tickDelta);
 		}
 
 		// Render HUDS
-		if (!clickGuiOpen) {
-			for (Window hud : pinnedHuds.values()) {
-				hud.draw(drawContext, tickDelta);
-			}
-		}
+		// if (!clickGuiOpen) {
+		// for (Window hud : pinnedHuds.values()) {
+		// hud.draw(renderer, drawContext, tickDelta);
+		// }
+		// }
 
 		// Draw Tooltip on top of all UI elements
-		if (tooltip != null && enableTooltips.getValue()) {
-			int mouseX = (int) MC.mouse.getX();
-			int mouseY = (int) MC.mouse.getY();
-			int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
-			int tooltipHeight = 10;
+		// if (tooltip != null && enableTooltips.getValue()) {
+		// int mouseX = (int) MC.mouse.getX();
+		// int mouseY = (int) MC.mouse.getY();
+		// int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
+		// int tooltipHeight = 10;
 
-			Render2D.drawRoundedBox(drawContext, mouseX + 12, mouseY + 12, (tooltipWidth + 4) * 2,
-					(tooltipHeight + 4) * 2, roundingRadius.getValue(), backgroundColor.getValue().getAsSolid());
-			Render2D.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18, foregroundColor.getValue());
-		}
-		matrixStack.pop();
+		// renderer.drawRoundedBox(drawContext, mouseX + 12, mouseY + 12, (tooltipWidth
+		// + 4) * 2,
+		// (tooltipHeight + 4) * 2, roundingRadius.getValue(),
+		// backgroundColor.getValue().getAsSolid());
+		// renderer.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18,
+		// foregroundColor.getValue());
+		// }
+		matrixStack.popMatrix();
 	}
 
 	/**

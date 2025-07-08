@@ -47,15 +47,15 @@ public class SpeedHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
 		if (speedText != null && isVisible()) {
 			Rectangle pos = position.getValue();
 			if (pos.isDrawable()) {
-				Render2D.drawString(drawContext, speedText, pos.getX(), pos.getY(),
+				renderer.drawString(drawContext, speedText, pos.getX(), pos.getY(),
 						GuiManager.foregroundColor.getValue().getColorAsInt());
 			}
 		}
 
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, drawContext, partialTicks);
 	}
 }

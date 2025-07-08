@@ -465,16 +465,17 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
 	@Override
 	public void onRender(Render3DEvent event) {
+		Render3D renderer = event.getRenderer();
 		long currentTime = System.currentTimeMillis();
 
 		displayedBoxes.entrySet().removeIf(entry -> {
 			long renderTime = entry.getValue();
-            return currentTime - renderTime >= BOX_DISPLAY_TIME_MS;
-        });
+			return currentTime - renderTime >= BOX_DISPLAY_TIME_MS;
+		});
 
 		for (Map.Entry<BlockPos, Long> entry : displayedBoxes.entrySet()) {
 			BlockPos pos = entry.getKey();
-			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(pos), color.getValue(), 1.0f);
+			renderer.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(pos), color.getValue(), 1.0f);
 		}
 	}
 }

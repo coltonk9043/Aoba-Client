@@ -8,8 +8,6 @@
 
 package net.aoba.gui.components;
 
-import org.joml.Matrix4f;
-
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
@@ -20,7 +18,6 @@ import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class CheckboxComponent extends Component {
 	private final String text;
@@ -46,11 +43,8 @@ public class CheckboxComponent extends Component {
 	 * @param partialTicks The partial ticks used for interpolation.
 	 */
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
-
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+	public void draw(Render2D renderer, DrawContext drawContext, float partialTicks) {
+		super.draw(renderer, drawContext, partialTicks);
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
@@ -59,8 +53,8 @@ public class CheckboxComponent extends Component {
 		// Determine fill color based on checkbox state
 		Color fillColor = checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
 
-		Render2D.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 24, actualY + 5, 20, 20, 3,
+		renderer.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
+		renderer.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 24, actualY + 5, 20, 20, 3,
 				GuiManager.borderColor.getValue(), fillColor);
 	}
 

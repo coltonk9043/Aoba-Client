@@ -75,13 +75,15 @@ public class ItemESP extends Module implements Render3DListener {
 		if (!visibilityToggle.getValue())
 			return;
 
+		Render3D renderer = event.getRenderer();
+
 		Vec3d playerPos = MC.player.getPos();
 		for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 			if (entity instanceof ItemEntity) {
 				Vec3d itemPos = entity.getPos();
 				if (playerPos.distanceTo(itemPos) <= range.getValue()) {
 					Color finalColor = colorRarity.getValue() ? getColorBasedOnItemRarity(entity) : color.getValue();
-					Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), entity.getBoundingBox(), finalColor,
+					renderer.draw3DBox(event.GetMatrix(), event.getCamera(), entity.getBoundingBox(), finalColor,
 							lineThickness.getValue().floatValue());
 				}
 			}
@@ -92,7 +94,7 @@ public class ItemESP extends Module implements Render3DListener {
 		boolean isRare = false;
 
 		if (entity instanceof ItemEntity itemEntity) {
-            isRare = itemEntity.getStack().getRarity() == Rarity.RARE;
+			isRare = itemEntity.getStack().getRarity() == Rarity.RARE;
 		}
 
 		return isRare ? rareItemColor.getValue() : color.getValue();
