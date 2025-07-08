@@ -117,13 +117,16 @@ public class BufferManager {
         
         ByteBuffer indexByteBuffer = BufferUtils.createByteBuffer(indexCount * 4);
         indexBuffer.flip();
+        
         if (indexBuffer.remaining() == 0) {
             throw new IllegalStateException("Index buffer is empty after flip, indexCount=" + indexCount);
         }
         
         IntBuffer intView = indexByteBuffer.asIntBuffer();
         intView.put(indexBuffer);
-        indexByteBuffer.flip();
+        
+        indexByteBuffer.position(0);
+        indexByteBuffer.limit(indexCount * 4);
         
         return vertexFormat.uploadImmediateIndexBuffer(indexByteBuffer);
     }
