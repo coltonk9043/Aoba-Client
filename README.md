@@ -42,7 +42,7 @@ We want to stress that we have **NEVER** used, and will **NEVER** use, platforms
 
 ### 🖥 Default Keybinds  
 
-- `~` – Open/close the **ClickGUI**.  
+- `RSHIFT` – Open/close the **ClickGUI**.  
 - `↑` – Move the menu 'cursor' **up**.  
 - `↓` – Move the menu 'cursor' **down**.  
 - `←` – Exit the current 'mod' menu.  
