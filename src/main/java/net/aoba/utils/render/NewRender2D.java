@@ -70,11 +70,17 @@ public class NewRender2D implements IRenderer {
     
     @Override
     public void render(DrawContext context) {
-        if (triangleBuffer.getVertexCount() > 0 && triangleBuffer.getIndexCount() > 0) {
-            renderBuffer(triangleBuffer, AobaRenderPipelines.TRIS_GUI, context);
-        }
-        if (lineBuffer.getVertexCount() > 0 && lineBuffer.getIndexCount() > 0) {
-            renderBuffer(lineBuffer, AobaRenderPipelines.LINES_GUI, context);
+        System.out.println("Render called - triangles: v=" + triangleBuffer.getVertexCount() + " i=" + triangleBuffer.getIndexCount() + ", lines: v=" + lineBuffer.getVertexCount() + " i=" + lineBuffer.getIndexCount());
+        try {
+            if (triangleBuffer.getVertexCount() > 0 && triangleBuffer.getIndexCount() > 0) {
+                renderBuffer(triangleBuffer, AobaRenderPipelines.TRIS_GUI, context);
+            }
+            if (lineBuffer.getVertexCount() > 0 && lineBuffer.getIndexCount() > 0) {
+                renderBuffer(lineBuffer, AobaRenderPipelines.LINES_GUI, context);
+            }
+        } finally {
+            triangleBuffer.resetAfterRender();
+            lineBuffer.resetAfterRender();
         }
     }
     
@@ -83,30 +89,26 @@ public class NewRender2D implements IRenderer {
             return;
         }
         
-        try {
-            Framebuffer framebuffer = MinecraftClient.getInstance().getFramebuffer();
-            
-            GpuTextureView colorAttachment = framebuffer.getColorAttachmentView();
-            GpuBuffer vertexBuffer = buffer.createVertexBuffer(VertexFormats.POSITION_COLOR);
-            GpuBuffer indexBuffer = buffer.createIndexBuffer(VertexFormats.POSITION_COLOR);
-            
-            UBO_DATA.proj = net.aoba.utils.render.mesh.MeshRenderer.projection;
-            UBO_DATA.modelView = RenderSystem.getModelViewMatrix();
-            
-            GpuBufferSlice matrixData = UNIFORM_STORAGE.write(UBO_DATA);
-            
-            RenderPass pass = RenderSystem.getDevice().createCommandEncoder()
-                .createRenderPass(() -> "Aoba 2D Renderer", colorAttachment, OptionalInt.empty());
-            
-            pass.setPipeline(pipeline);
-            pass.setUniform("Matrices", matrixData);
-            pass.setVertexBuffer(0, vertexBuffer);
-            pass.setIndexBuffer(indexBuffer, VertexFormat.IndexType.INT);
-            pass.drawIndexed(0, 0, buffer.getIndexCount(), 1);
-            pass.close();
-        } finally {
-            buffer.resetAfterRender();
-        }
+        Framebuffer framebuffer = MinecraftClient.getInstance().getFramebuffer();
+        
+        GpuTextureView colorAttachment = framebuffer.getColorAttachmentView();
+        GpuBuffer vertexBuffer = buffer.createVertexBuffer(VertexFormats.POSITION_COLOR);
+        GpuBuffer indexBuffer = buffer.createIndexBuffer(VertexFormats.POSITION_COLOR);
+        
+        UBO_DATA.proj = net.aoba.utils.render.mesh.MeshRenderer.projection;
+        UBO_DATA.modelView = RenderSystem.getModelViewMatrix();
+        
+        GpuBufferSlice matrixData = UNIFORM_STORAGE.write(UBO_DATA);
+        
+        RenderPass pass = RenderSystem.getDevice().createCommandEncoder()
+            .createRenderPass(() -> "Aoba 2D Renderer", colorAttachment, OptionalInt.empty());
+        
+        pass.setPipeline(pipeline);
+        pass.setUniform("Matrices", matrixData);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(indexBuffer, VertexFormat.IndexType.INT);
+        pass.drawIndexed(0, 0, buffer.getIndexCount(), 1);
+        pass.close();
     }
     
     public void drawBox(float x, float y, float width, float height, Color color) {
@@ -129,6 +131,8 @@ public class NewRender2D implements IRenderer {
         triangleBuffer.addTriangle(startVertex, startVertex + 2, startVertex + 3);
         
         currentVertexIndex += 4;
+        
+        System.out.println("Drew box: startVertex=" + startVertex + ", triangles: [" + startVertex + "," + (startVertex + 1) + "," + (startVertex + 2) + "] [" + startVertex + "," + (startVertex + 2) + "," + (startVertex + 3) + "]");
     }
     
     public void drawBox(Rectangle rect, Color color) {

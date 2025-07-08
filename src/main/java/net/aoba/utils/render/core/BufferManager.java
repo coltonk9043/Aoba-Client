@@ -107,6 +107,8 @@ public class BufferManager {
         vertexData.put(vertexBuffer);
         vertexData.flip();
         
+        System.out.println("Vertex buffer created: vertexCount=" + vertexCount + ", vertexSize=" + vertexSize + ", buffer.remaining=" + vertexData.remaining());
+        
         return vertexFormat.uploadImmediateVertexBuffer(vertexData);
     }
     
@@ -127,6 +129,8 @@ public class BufferManager {
         
         indexByteBuffer.position(0);
         indexByteBuffer.limit(indexCount * 4);
+        
+        System.out.println("Index buffer created: indexCount=" + indexCount + ", buffer.remaining=" + indexByteBuffer.remaining());
         
         return vertexFormat.uploadImmediateIndexBuffer(indexByteBuffer);
     }
