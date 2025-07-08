@@ -102,8 +102,14 @@ public class EntityESP extends Module implements Render3DListener {
 			Frustum frustum = event.getFrustum();
 			Camera camera = MC.gameRenderer.getCamera();
 			Vec3d cameraPosition = camera.getPos();
-			if (MC.getEntityRenderDispatcher().shouldRender(entity, frustum, cameraPosition.getX(),
-					cameraPosition.getY(), cameraPosition.getZ())) {
+			
+			boolean shouldRender = true;
+			if (frustum != null) {
+				shouldRender = MC.getEntityRenderDispatcher().shouldRender(entity, frustum, cameraPosition.getX(),
+						cameraPosition.getY(), cameraPosition.getZ());
+			}
+			
+			if (shouldRender) {
 				if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
 
 					Color color = getColorForEntity(entity);

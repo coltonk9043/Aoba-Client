@@ -8,6 +8,7 @@
 
 package net.aoba.utils.render;
 
+import net.minecraft.client.gui.DrawContext;
 import org.joml.Matrix4f;
 
 import net.aoba.gui.colors.Color;
@@ -25,39 +26,40 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class Render3D {
-	public final TriMeshBuilder triangles;
-	public final LineMeshBuilder lines;
+	private final NewRender3D newRenderer;
+	private final RenderManager renderManager;
 
 	public Render3D() {
-		triangles = new TriMeshBuilder(AobaRenderPipelines.TRIS);
-		lines = new LineMeshBuilder(AobaRenderPipelines.LINES);
+		this.renderManager = RenderManager.getInstance();
+		this.newRenderer = renderManager.get3D();
 	}
 
 	public void begin() {
-		triangles.begin();
-		lines.begin();
+		renderManager.begin3D();
 	}
 
 	public void end() {
-		triangles.end();
-		lines.end();
-		render();
+		renderManager.end3D();
 	}
 
-	private void render() {
-		// MeshRenderer.begin().withFramebuffer(MinecraftClient.getInstance().getFramebuffer())
-		// .withPipeline(AobaRenderPipelines.TRIS).withMesh(triangles).end();
-
-		MeshRenderer.begin().withFramebuffer(MinecraftClient.getInstance().getFramebuffer())
-				.withPipeline(AobaRenderPipelines.LINES).withMesh(lines).end();
+	public void render(DrawContext context) {
+		newRenderer.render(context);
+	}
+	
+	public void drawBoxOutline(Box box, Color color) {
+		newRenderer.drawBoxOutline(box, color);
+	}
+	
+	public void drawSphere(Vec3d center, float radius, Color color) {
+		newRenderer.drawSphere(center, radius, color);
+	}
+	
+	public void drawSphere(double x, double y, double z, float radius, Color color) {
+		newRenderer.drawSphere(x, y, z, radius, color);
 	}
 
 	public void draw3DBox(MatrixStack matrixStack, Camera camera, Box box, Color color, float lineThickness) {
-		Box newBox = box.offset(camera.getPos().multiply(-1));
-
-		triangles.triangle(triangles.vec3d(newBox.minX, newBox.minY, newBox.minZ).color(color).next(),
-				triangles.vec3d(newBox.maxX, newBox.minY, newBox.minZ).color(color).next(),
-				triangles.vec3d(newBox.maxX, newBox.minY, newBox.maxZ).color(color).next());
+		newRenderer.drawBox(box, color);
 
 //
 //		MatrixStack.Entry entry = matrixStack.peek();
@@ -142,12 +144,12 @@ public class Render3D {
 	}
 
 	public void drawLine3D(MatrixStack matrixStack, Camera camera, Vec3d pos1, Vec3d pos2, Color color) {
-		drawLine3D(matrixStack, camera, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color);
+		newRenderer.drawLine(pos1, pos2, color);
 	}
 
 	public void drawLine3D(MatrixStack matrixStack, Camera camera, double x1, double y1, double z1, double x2,
 			double y2, double z2, Color color) {
-		lines.line(lines.vec3d(x1, y1, z1).color(color).next(), lines.vec3d(x2, y2, z2).color(color).next());
+		newRenderer.drawLine(x1, y1, z1, x2, y2, z2, color);
 	}
 
 	@SuppressWarnings("unchecked")

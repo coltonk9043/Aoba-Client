@@ -14,8 +14,6 @@ import net.aoba.Aoba;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.mesh.MeshRenderer;
-import net.aoba.utils.render.mesh.builders.LineMeshBuilder;
-import net.aoba.utils.render.mesh.builders.TriMeshBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -32,31 +30,24 @@ public class Render2D {
 
 	public static MinecraftClient mc = MinecraftClient.getInstance();
 
-	public final TriMeshBuilder triangles;
-	public final LineMeshBuilder lines;
+	private final NewRender2D newRenderer;
+	private final RenderManager renderManager;
 
 	public Render2D() {
-		triangles = new TriMeshBuilder(AobaRenderPipelines.TRIS_GUI);
-		lines = new LineMeshBuilder(AobaRenderPipelines.LINES_GUI);
+		this.renderManager = RenderManager.getInstance();
+		this.newRenderer = renderManager.get2D();
 	}
 
 	public void begin() {
-		triangles.begin();
-		lines.begin();
+		renderManager.begin2D();
 	}
 
 	public void end() {
-		triangles.end();
-		lines.end();
-		render();
+		renderManager.end2D();
 	}
 
-	private void render() {
-		MeshRenderer.begin().withFramebuffer(MinecraftClient.getInstance().getFramebuffer())
-				.withPipeline(AobaRenderPipelines.TRIS_GUI).withMesh(triangles).end();
-
-		MeshRenderer.begin().withFramebuffer(MinecraftClient.getInstance().getFramebuffer())
-				.withPipeline(AobaRenderPipelines.LINES_GUI).withMesh(lines).end();
+	public void render(DrawContext context) {
+		newRenderer.render(context);
 	}
 
 	private static void bobView(MatrixStack matrices) {
@@ -97,7 +88,7 @@ public class Render2D {
 	/**
 	 * Draws a textured quad onto the screen.
 	 *
-	 * @param matrix4f Transformation matrix.
+	 * @param drawContext Transformation matrix.
 	 * @param texture
 	 * @param x1       X position to draw the quad.
 	 * @param y1       Y position to draw the quad.
@@ -128,7 +119,7 @@ public class Render2D {
 	/**
 	 * Draws a box on the screen.
 	 *
-	 * @param matrix4f Transformation matrix
+	 * @param drawContext Transformation matrix
 	 * @param size     Size and position of the box to draw.
 	 * @param color    Color of the box.
 	 */
@@ -147,12 +138,7 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public void drawBox(DrawContext drawContext, float x, float y, float width, float height, Color color) {
-		triangles.triangle(triangles.vec2d(x, y).color(color).next(), triangles.vec2d(x + width, y).color(color).next(),
-				triangles.vec2d(x, y + height).color(color).next());
-
-		triangles.triangle(triangles.vec2d(x, y + height).color(color).next(),
-				triangles.vec2d(x + width, y).color(color).next(),
-				triangles.vec2d(x + width, y + height).color(color).next());
+		newRenderer.drawBox(x, y, width, height, color);
 	}
 
 	/**
@@ -180,107 +166,26 @@ public class Render2D {
 	 */
 	public void drawRoundedBox(DrawContext drawContext, float x, float y, float width, float height, float radius,
 			Color color) {
-		if (radius == 0) {
-			drawBox(drawContext, x, y, width, height, color);
-		} else {
-			drawBox(drawContext, x, y, width, height, color);
-//			int colorInt = color.getColorAsInt();
-			//
-//					MatrixStack matrixStack = drawContext.getMatrices();
-//					Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-			//
-//					drawContext.draw(vertexConsumerProvider -> {
-//						VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(RenderLayers.TRIS_GUI);
-//						buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f, color);
-//						buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f, color);
-//						buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f,
-//								color);
-//						buildFilledArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f, color);
-			//
-//						// |---
-//						bufferBuilder.vertex(matrix4f, x + radius, y, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(colorInt);
-			//
-//						// ---|
-//						bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(colorInt);
-			//
-//						// _||
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(colorInt);
-			//
-//						// |||
-//						bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(colorInt);
-			//
-//						/// __|
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
-			//
-//						// |__
-//						bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(colorInt);
-			//
-//						// |||
-//						bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(colorInt);
-			//
-//						/// ||-
-//						bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
-			//
-//						/// |-/
-//						bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
-			//
-//						/// /_|
-//						bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(colorInt);
-//						bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(colorInt);
-//					});
-		}
+		newRenderer.drawRoundedBox(x, y, width, height, radius, color);
 	}
 
 	/**
 	 * Draws a filled circle.
 	 *
-	 * @param matrix4f Transformation matrix
+	 * @param drawContext Transformation matrix
 	 * @param x        X position of the box.
 	 * @param y        Y position of the box.
 	 * @param radius   Radius of the circle.
 	 * @param color    Color of the box.
 	 */
 	public void drawCircle(DrawContext drawContext, float x, float y, float radius, Color color) {
-
-		double roundedInterval = (360.0f / 30.0f);
-
-		for (int i = 0; i < 30; i++) {
-			double angle = Math.toRadians(0 + (i * roundedInterval));
-			double angle2 = Math.toRadians(0 + ((i + 1) * roundedInterval));
-			float radiusX1 = (float) (Math.cos(angle) * radius);
-			float radiusY1 = (float) Math.sin(angle) * radius;
-			float radiusX2 = (float) Math.cos(angle2) * radius;
-			float radiusY2 = (float) Math.sin(angle2) * radius;
-
-			triangles.triangle(triangles.vec2d(x, y).color(color).next(),
-					triangles.vec2d(x + radiusX1, y + radiusY1).color(color).next(),
-					triangles.vec2d(x + radiusX2, y + radiusY2).color(color).next());
-		}
+		newRenderer.drawCircle(x, y, radius, color);
 	}
 
 	/**
 	 * Draws a filled AND outlined box.
 	 *
-	 * @param matrix4f        Transformation matrix
+	 * @param drawContext        Transformation matrix
 	 * @param size            Size and position to draw the outlined box.
 	 * @param outlineColor    Color of the outline of the box.
 	 * @param backgroundColor Color of the fill.
@@ -293,7 +198,7 @@ public class Render2D {
 	/**
 	 * Draws a filled AND outlined box.
 	 *
-	 * @param matrix4f        Transformation matrix
+	 * @param drawContext        Transformation matrix
 	 * @param x               X position of the box.
 	 * @param y               Y position of the box.
 	 * @param width           Width of the box.
@@ -303,9 +208,7 @@ public class Render2D {
 	 */
 	public void drawOutlinedBox(DrawContext drawContext, float x, float y, float width, float height,
 			Color outlineColor, Color backgroundColor) {
-
-		drawBox(drawContext, x, y, width, height, backgroundColor);
-		drawBoxOutline(drawContext, x, y, width, height, outlineColor);
+		newRenderer.drawOutlinedBox(x, y, width, height, outlineColor, backgroundColor);
 	}
 
 	/**
@@ -315,7 +218,7 @@ public class Render2D {
 	/**
 	 * Draws the outline of a box.
 	 *
-	 * @param matrix4f Transformation matrix
+	 * @param drawContext Transformation matrix
 	 * @param size     Size and position of the box.
 	 * @param color    Color of the box.
 	 */
@@ -326,7 +229,7 @@ public class Render2D {
 	/**
 	 * Draws the outline of a box.
 	 *
-	 * @param matrix4f Transformation matrix
+	 * @param drawContext Transformation matrix
 	 * @param x        X position of the box.
 	 * @param y        Y position of the box.
 	 * @param width    Width of the box.
@@ -334,21 +237,13 @@ public class Render2D {
 	 * @param color    Color of the box.
 	 */
 	public void drawBoxOutline(DrawContext drawContext, float x, float y, float width, float height, Color color) {
-		lines.line(lines.vec2d(x, y).color(color).next(), lines.vec2d(x + width, y).color(color).next());
-
-		lines.line(lines.vec2d(x + width, y).color(color).next(),
-				lines.vec2d(x + width, y + height).color(color).next());
-
-		lines.line(lines.vec2d(x + width, y + height).color(color).next(),
-				lines.vec2d(x, y + height).color(color).next());
-
-		lines.line(lines.vec2d(x, y + height).color(color).next(), lines.vec2d(x, y).color(color).next());
+		newRenderer.drawBoxOutline(x, y, width, height, color);
 	}
 
 	/**
 	 * Draws the outline of a rounded box.
 	 *
-	 * @param matrix4f Transformation matrix
+	 * @param drawContext Transformation matrix
 	 * @param size     Size of the rounded box.
 	 * @param radius   Corner radius of the box outline.
 	 * @param color    Color of the outline of the box.
@@ -360,7 +255,7 @@ public class Render2D {
 	/**
 	 * Draws the outline of a rounded box.
 	 *
-	 * @param matrix4f        Transformation matrix
+	 * @param drawContext        Transformation matrix
 	 * @param x               X position of the box.
 	 * @param y               Y position of the box.
 	 * @param width           Width of the box.
@@ -373,7 +268,7 @@ public class Render2D {
 			float radius, Color outlineColor, Color backgroundColor) {
 		drawOutlinedBox(drawContext, x, y, width, height, outlineColor, backgroundColor);
 
-//
+		//
 //		MatrixStack matrixStack = drawContext.getMatrices();
 //		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
 //		int backgroundColorInt = backgroundColor.getColorAsInt();
@@ -523,7 +418,7 @@ public class Render2D {
 	 * @param color    Color to draw the line in.
 	 */
 	public void drawLine(DrawContext drawContext, float x1, float y1, float x2, float y2, Color color) {
-		lines.line(lines.vec2d(x1, y1).color(color).next(), lines.vec2d(x2, y2).color(color).next());
+		newRenderer.drawLine(x1, y1, x2, y2, color);
 	}
 
 	/**
@@ -556,13 +451,7 @@ public class Render2D {
 	 */
 	public void drawHorizontalGradient(DrawContext drawContext, float x, float y, float width, float height,
 			Color startColor, Color endColor) {
-		triangles.triangle(triangles.vec2d(x, y).color(startColor).next(),
-				triangles.vec2d(x + width, y).color(startColor).next(),
-				triangles.vec2d(x, y + height).color(endColor).next());
-
-		triangles.triangle(triangles.vec2d(x + width, y).color(startColor).next(),
-				triangles.vec2d(x + width, y + height).color(endColor).next(),
-				triangles.vec2d(x, y + height).color(endColor).next());
+		newRenderer.drawHorizontalGradient(x, y, width, height, startColor, endColor);
 	}
 
 	/**
@@ -591,13 +480,7 @@ public class Render2D {
 	 */
 	public void drawVerticalGradient(DrawContext drawContext, float x, float y, float width, float height,
 			Color startColor, Color endColor) {
-		triangles.triangle(triangles.vec2d(x, y).color(startColor).next(),
-				triangles.vec2d(x + width, y).color(endColor).next(),
-				triangles.vec2d(x, y + height).color(startColor).next());
-
-		triangles.triangle(triangles.vec2d(x + width, y).color(endColor).next(),
-				triangles.vec2d(x + width, y + height).color(endColor).next(),
-				triangles.vec2d(x, y + height).color(startColor).next());
+		newRenderer.drawVerticalGradient(x, y, width, height, startColor, endColor);
 	}
 
 	/**
@@ -699,58 +582,37 @@ public class Render2D {
 	}
 
 	/**
-	 * Uses a buffer builder to build a filled arc around a position and radius.
-	 *
-	 * @param bufferBuilder Buffer builder to build vertices with.
-	 * @param matrix        Transformation matrix.
-	 * @param x             X position to draw arc.
-	 * @param y             Y position to draw arc.
-	 * @param radius        Radius to draw arc.
-	 * @param startAngle    Starting angle of the arc.
-	 * @param sweepAngle    Sweep angle of the arc.
+	 * Helper: Adds a filled arc (pie slice) to the triangle mesh.
 	 */
-	private static void buildFilledArc(VertexConsumer bufferBuilder, Matrix4f matrix, float x, float y, float radius,
-			float startAngle, float sweepAngle, Color color) {
-		double roundedInterval = (sweepAngle / radius);
-
-		int colorInt = color.getColorAsInt();
-
-		for (int i = 0; i < radius; i++) {
-			double angle = Math.toRadians(startAngle + (i * roundedInterval));
-			double angle2 = Math.toRadians(startAngle + ((i + 1) * roundedInterval));
-			float radiusX1 = (float) (Math.cos(angle) * radius);
-			float radiusY1 = (float) (Math.sin(angle) * radius);
-			float radiusX2 = (float) (Math.cos(angle2) * radius);
-			float radiusY2 = (float) (Math.sin(angle2) * radius);
-
-			bufferBuilder.vertex(matrix, x, y, 0).color(colorInt);
-			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).color(colorInt);
-			bufferBuilder.vertex(matrix, x + radiusX2, y + radiusY2, 0).color(colorInt);
+	private void buildFilledArc(float cx, float cy, float radius, float startAngle, float arcAngle, Color color) {
+		int segments = Math.max(8, (int) (radius * arcAngle / 24));
+		float angleStep = arcAngle / segments;
+		for (int i = 0; i < segments; i++) {
+			float a0 = (float) Math.toRadians(startAngle + i * angleStep);
+			float a1 = (float) Math.toRadians(startAngle + (i + 1) * angleStep);
+			float x0 = cx + (float) Math.cos(a0) * radius;
+			float y0 = cy + (float) Math.sin(a0) * radius;
+			float x1 = cx + (float) Math.cos(a1) * radius;
+			float y1 = cy + (float) Math.sin(a1) * radius;
+			newRenderer.drawTriangle(cx, cy, color, x0, y0, color, x1, y1, color);
 		}
 	}
 
 	/**
-	 * Uses a buffer builder to build an arc around a position and radius.
-	 *
-	 * @param bufferBuilder Buffer builder to build vertices with.
-	 * @param matrix        Transformation matrix.
-	 * @param x             X position to draw arc.
-	 * @param y             Y position to draw arc.
-	 * @param radius        Radius to draw arc.
-	 * @param startAngle    Starting angle of the arc.
-	 * @param sweepAngle    Sweep angle of the arc.
+	 * Helper: Adds an arc outline to the line mesh.
 	 */
-	private static void buildArc(VertexConsumer bufferBuilder, Matrix4f matrix, float x, float y, float radius,
-			float startAngle, float sweepAngle, Color color) {
-		float roundedInterval = (sweepAngle / radius);
-
-		int colorInt = color.getColorAsInt();
-		for (int i = 0; i < radius; i++) {
-			double angle = Math.toRadians(startAngle + (i * roundedInterval));
-			float radiusX1 = (float) (Math.cos(angle) * radius);
-			float radiusY1 = (float) Math.sin(angle) * radius;
-
-			bufferBuilder.vertex(matrix, x + radiusX1, y + radiusY1, 0).color(colorInt);
+	private void buildArc(float cx, float cy, float radius, float startAngle, float arcAngle, Color color) {
+		int segments = Math.max(8, (int) (radius * arcAngle / 24));
+		float angleStep = arcAngle / segments;
+		float prevX = cx + (float) Math.cos(Math.toRadians(startAngle)) * radius;
+		float prevY = cy + (float) Math.sin(Math.toRadians(startAngle)) * radius;
+		for (int i = 1; i <= segments; i++) {
+			float a = (float) Math.toRadians(startAngle + i * angleStep);
+			float x = cx + (float) Math.cos(a) * radius;
+			float y = cy + (float) Math.sin(a) * radius;
+			newRenderer.drawLine(prevX, prevY, x, y, color);
+			prevX = x;
+			prevY = y;
 		}
 	}
 

@@ -34,6 +34,7 @@ import net.aoba.event.events.Render2DEvent;
 import net.aoba.mixin.interfaces.IProjectionMatrix2;
 import net.aoba.module.modules.render.NoRender;
 import net.aoba.utils.render.mesh.MeshRenderer;
+import net.aoba.utils.render.RenderManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -62,11 +63,16 @@ public class IngameHudMixin {
 		RenderSystem.setProjectionMatrix(matrix.set(width, height), ProjectionType.ORTHOGRAPHIC);
 		MeshRenderer.projection.set(((IProjectionMatrix2) matrix).executeGetMatrix(width, height));
 
+		RenderManager renderManager = RenderManager.getInstance();
+		renderManager.beginFrame();
+		
 		Render2DEvent renderEvent = new Render2DEvent(context, tickCounter);
 		AobaClient client = Aoba.getInstance();
 		client.renderer2D.begin();
 		client.eventManager.Fire(renderEvent);
 		client.renderer2D.end();
+		
+		renderManager.endFrame(context);
 		context.createNewRootLayer();
 
 		RenderSystem.setProjectionMatrix(matrix.set(width, height), ProjectionType.PERSPECTIVE);
