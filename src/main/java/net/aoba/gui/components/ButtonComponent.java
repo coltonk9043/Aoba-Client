@@ -126,9 +126,11 @@ public class ButtonComponent extends Component {
 			color = color.add(45, 45, 45);
 		}
 
-		renderer.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f,
-				GuiManager.borderColor.getValue(), color);
+		renderer.drawOutlinedBox(actualX, actualY, actualWidth, actualHeight, GuiManager.borderColor.getValue(), color);
 
+		// renderer.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth,
+		// actualHeight, 3.0f,
+		// GuiManager.borderColor.getValue(), color);
 		super.draw(renderer, drawContext, partialTicks);
 	}
 

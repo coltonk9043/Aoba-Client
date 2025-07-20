@@ -8,7 +8,6 @@
 
 package net.aoba.gui.components;
 
-import net.aoba.gui.GuiManager;
 import net.aoba.gui.Size;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.DrawContext;
@@ -39,8 +38,10 @@ public class ImageComponent extends Component {
 			float actualWidth = getActualSize().getWidth();
 			float actualHeight = getActualSize().getHeight();
 
-			renderer.drawTexturedQuad(drawContext, image, actualX, actualY, actualWidth, actualHeight,
-					GuiManager.foregroundColor.getValue());
+			// TODO:
+			// renderer.drawTexturedQuad(drawContext, image, actualX, actualY, actualWidth,
+			// actualHeight,
+			// GuiManager.foregroundColor.getValue());
 		}
 		super.draw(renderer, drawContext, partialTicks);
 	}

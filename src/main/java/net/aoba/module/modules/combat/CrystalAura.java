@@ -475,7 +475,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
 		for (Map.Entry<BlockPos, Long> entry : displayedBoxes.entrySet()) {
 			BlockPos pos = entry.getKey();
-			renderer.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(pos), color.getValue(), 1.0f);
+			renderer.drawBox(new Box(pos), color.getValue());
 		}
 	}
 }

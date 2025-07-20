@@ -54,8 +54,12 @@ public class CheckboxComponent extends Component {
 		Color fillColor = checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
 
 		renderer.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
-		renderer.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 24, actualY + 5, 20, 20, 3,
-				GuiManager.borderColor.getValue(), fillColor);
+		renderer.drawOutlinedBox(actualX + actualWidth - 24, actualY + 5, 20, 20, GuiManager.borderColor.getValue(),
+				fillColor);
+
+		// renderer.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 24,
+		// actualY + 5, 20, 20, 3,
+		// GuiManager.borderColor.getValue(), fillColor);
 	}
 
 	/**

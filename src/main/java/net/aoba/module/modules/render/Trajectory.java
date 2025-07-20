@@ -111,7 +111,7 @@ public class Trajectory extends Module implements Render3DListener {
 					// Arrow is collided with a block, draw one last vertice and set land position
 					// to the raycast result position.
 					landPosition = result.getPos();
-					renderer.drawLine3D(matrixStack, camera, prevPoint, landPosition, renderColor);
+					renderer.drawLine(prevPoint, landPosition, renderColor);
 					break;
 				} else {
 					// We did NOT find a collision with a block, check entities.
@@ -124,11 +124,11 @@ public class Trajectory extends Module implements Render3DListener {
 						// Arrow is collided with an entity, draw one last vertice and set land position
 						// to the raycast result position.
 						landPosition = entityResult.getPos();
-						renderer.drawLine3D(matrixStack, camera, prevPoint, landPosition, renderColor);
+						renderer.drawLine(prevPoint, landPosition, renderColor);
 						break;
 					} else {
 						// No collisions from raycast, draw next vertice.
-						renderer.drawLine3D(matrixStack, camera, prevPoint, nextPoint, renderColor);
+						renderer.drawLine(prevPoint, nextPoint, renderColor);
 					}
 				}
 
@@ -142,7 +142,7 @@ public class Trajectory extends Module implements Render3DListener {
 				Vec3d pos1 = landPosition.add(-size, -size, -size);
 				Vec3d pos2 = landPosition.add(size, size, size);
 				Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
-				renderer.draw3DBox(event.GetMatrix(), event.getCamera(), box, renderColor, 1.0f);
+				renderer.drawBox(box, renderColor);
 			}
 		}
 	}

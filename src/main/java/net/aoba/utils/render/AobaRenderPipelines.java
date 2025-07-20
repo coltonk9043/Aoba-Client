@@ -26,18 +26,21 @@ public class AobaRenderPipelines {
 
 	// 3D Pipelines
 	public static final RenderPipeline QUADS = RenderPipelines.register(RenderPipeline.builder()
-			.withVertexShader("core/position_color").withFragmentShader("core/position_color")
-			.withBlend(BlendFunction.TRANSLUCENT).withVertexFormat(VertexFormats.POSITION_COLOR, DrawMode.QUADS)
+			.withVertexShader(Identifier.of("aoba", "shaders/pos_color.vert"))
+			.withFragmentShader(Identifier.of("aoba", "shaders/pos_color.frag")).withBlend(BlendFunction.TRANSLUCENT)
+			.withVertexFormat(VertexFormats.POSITION_COLOR, DrawMode.QUADS)
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST).withLocation("pipeline/aoba_quads").build());
 
 	public static final RenderPipeline TRIS = RenderPipelines.register(RenderPipeline.builder()
-			.withVertexShader("core/position_color").withFragmentShader("core/position_color")
-			.withBlend(BlendFunction.TRANSLUCENT).withVertexFormat(VertexFormats.POSITION_COLOR, DrawMode.TRIANGLES)
+			.withVertexShader(Identifier.of("aoba", "shaders/pos_color.vert"))
+			.withFragmentShader(Identifier.of("aoba", "shaders/pos_color.frag")).withBlend(BlendFunction.TRANSLUCENT)
+			.withVertexFormat(VertexFormats.POSITION_COLOR, DrawMode.TRIANGLES)
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST).withLocation("pipeline/aoba_tris").build());
 
 	public static final RenderPipeline LINES = RenderPipelines.register(RenderPipeline.builder()
-			.withVertexShader("core/position_color").withFragmentShader("core/position_color")
-			.withBlend(BlendFunction.TRANSLUCENT).withVertexFormat(VertexFormats.POSITION_COLOR, DrawMode.LINES)
+			.withVertexShader(Identifier.of("aoba", "shaders/pos_color.vert"))
+			.withFragmentShader(Identifier.of("aoba", "shaders/pos_color.frag")).withBlend(BlendFunction.TRANSLUCENT)
+			.withVertexFormat(VertexFormats.POSITION_COLOR, DrawMode.LINES)
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST).withLocation("pipeline/aoba_lines").build());
 
 	// 2D Pipelines

@@ -79,12 +79,10 @@ public class NavigationBar implements MouseClickListener {
 		// Animate selection box movement
 		currentSelectionX += (targetSelectionX - currentSelectionX) * animationSpeed * partialTicks;
 
-		renderer.drawRoundedBox(drawContext, centerX - ((float) width / 2), 25, width, 25,
-				GuiManager.roundingRadius.getValue(), GuiManager.backgroundColor.getValue());
+		renderer.drawBox(centerX - ((float) width / 2), 25, width, 25, GuiManager.backgroundColor.getValue());
 
 		// Use currentSelectionX for animated position
-		renderer.drawRoundedBox(drawContext, centerX - ((float) width / 2) + currentSelectionX, 25, 100, 25,
-				GuiManager.roundingRadius.getValue() - 1, new Color(150, 150, 150, 100));
+		renderer.drawBox(centerX - ((float) width / 2) + currentSelectionX, 25, 100, 25, new Color(150, 150, 150, 100));
 
 		for (int i = 0; i < options.size(); i++) {
 			Page pane = options.get(i);
@@ -92,12 +90,11 @@ public class NavigationBar implements MouseClickListener {
 				pane.render(renderer, drawContext, partialTicks);
 			}
 			renderer.drawString(drawContext, pane.title,
-					centerX - ((float) width / 2) + 50 + (100 * i) - Render2D.getStringWidth(pane.title), 30,
+					centerX - ((float) width / 2) + 50 + (100 * i) - renderer.getStringWidth(pane.title), 30,
 					GuiManager.foregroundColor.getValue());
 		}
 
-		renderer.drawRoundedBoxOutline(drawContext, centerX - ((float) width / 2), 25, width, 25,
-				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue());
+		renderer.drawBoxOutline(centerX - ((float) width / 2), 25, width, 25, GuiManager.borderColor.getValue());
 	}
 
 	@Override

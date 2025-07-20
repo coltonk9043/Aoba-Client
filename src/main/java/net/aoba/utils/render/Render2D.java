@@ -1,517 +1,295 @@
-/*
- * Aoba Hacked Client
- * Copyright (C) 2019-2024 coltonk9043
- *
- * Licensed under the GNU General Public License, Version 3 or later.
- * See <http://www.gnu.org/licenses/>.
- */
-
 package net.aoba.utils.render;
 
-import org.joml.Matrix4f;
+import java.util.OptionalInt;
+
+import org.joml.Matrix3x2fStack;
+
+import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.buffers.Std140SizeCalculator;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.systems.RenderPass;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
-import net.aoba.utils.render.mesh.MeshRenderer;
+import net.aoba.utils.render.core.BufferManager;
+import net.aoba.utils.render.core.IRenderer;
+import net.aoba.utils.render.mesh.UboData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.DynamicUniformStorage;
+import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.client.render.VertexFormats;
 
-public class Render2D {
+public class Render2D implements IRenderer {
+	private final DynamicUniformStorage<UboData> UNIFORM_STORAGE = new DynamicUniformStorage<>("Aoba 2D UBO",
+			new Std140SizeCalculator().putMat4f().putMat4f().get(), 16);
+	private final UboData UBO_DATA = new UboData();
 
-	public static MinecraftClient mc = MinecraftClient.getInstance();
-
-	private final NewRender2D newRenderer;
-	private final RenderManager renderManager;
+	private final BufferManager triangleBuffer;
+	private final BufferManager lineBuffer;
+	private boolean isBuilding = false;
+	private int currentVertexIndex = 0;
 
 	public Render2D() {
-		this.renderManager = RenderManager.getInstance();
-		this.newRenderer = renderManager.get2D();
+		this.triangleBuffer = new BufferManager(28);
+		this.lineBuffer = new BufferManager(28);
 	}
 
+	@Override
 	public void begin() {
-		renderManager.begin2D();
+		if (isBuilding) {
+			throw new IllegalStateException("Renderer is already building");
+		}
+
+		isBuilding = true;
+		triangleBuffer.resetAfterRender();
+		lineBuffer.resetAfterRender();
+		currentVertexIndex = 0;
 	}
 
+	@Override
 	public void end() {
-		renderManager.end2D();
+		if (!isBuilding) {
+			throw new IllegalStateException("Renderer is not building");
+		}
+		isBuilding = false;
 	}
 
-	public void render(DrawContext context) {
-		newRenderer.render(context);
+	@Override
+	public boolean isBuilding() {
+		return isBuilding;
 	}
 
-	private static void bobView(MatrixStack matrices) {
-		Entity cameraEntity = MinecraftClient.getInstance().getCameraEntity();
+	@Override
+	public void reset() {
+		triangleBuffer.resetAfterRender();
+		lineBuffer.resetAfterRender();
+		currentVertexIndex = 0;
+	}
 
-		if (cameraEntity instanceof AbstractClientPlayerEntity abstractClientPlayerEntity) {
-			float tickDelta = mc.getRenderTickCounter().getTickProgress(true);
-
-			float var7 = abstractClientPlayerEntity.distanceMoved - abstractClientPlayerEntity.lastDistanceMoved;
-			float g = -(abstractClientPlayerEntity.distanceMoved + var7 * tickDelta);
-			float h = MathHelper.lerp(tickDelta, abstractClientPlayerEntity.lastStrideDistance,
-					abstractClientPlayerEntity.strideDistance);
-
-			matrices.translate(MathHelper.sin(g * (float) Math.PI) * h * 0.5F,
-					-Math.abs(MathHelper.cos(g * (float) Math.PI) * h), 0.0F);
-			matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.sin(g * (float) Math.PI) * h * 3f));
-			matrices.multiply(RotationAxis.POSITIVE_X
-					.rotationDegrees(Math.abs(MathHelper.cos(g * (float) Math.PI - 0.2f) * h) * 5f));
+	@Override
+	public void render() {
+		System.out.println("2D Render called - triangles: v=" + triangleBuffer.getVertexCount() + " i="
+				+ triangleBuffer.getIndexCount() + ", lines: v=" + lineBuffer.getVertexCount() + " i="
+				+ lineBuffer.getIndexCount());
+		try {
+			if (!triangleBuffer.isEmpty()) {
+				renderBuffer(triangleBuffer, AobaRenderPipelines.TRIS_GUI);
+			}
+			if (!lineBuffer.isEmpty()) {
+				renderBuffer(lineBuffer, AobaRenderPipelines.LINES_GUI);
+			}
+		} finally {
+			reset();
 		}
 	}
 
-	/**
-	 ** FILLED BOXES
-	 **/
+	private void renderBuffer(BufferManager buffer, RenderPipeline pipeline) {
+		if (buffer.getVertexCount() == 0 || buffer.getIndexCount() == 0) {
+			return;
+		}
 
-	/**
-	 * Draws a textured quad onto the screen.
-	 *
-	 * @param matrix4f Transformation matrix.
-	 * @param texture  Texture identifier to draw.
-	 * @param size     Size and position of the quad to draw.
-	 * @param color    Color to overlay on top of the quad.
-	 */
-	public void drawTexturedQuad(DrawContext drawContext, Identifier texture, Rectangle size, Color color) {
-		drawTexturedQuad(drawContext, texture, size.getX(), size.getY(), size.getWidth(), size.getHeight(), color);
+		Framebuffer framebuffer = MinecraftClient.getInstance().getFramebuffer();
+
+		GpuTextureView colorAttachment = framebuffer.getColorAttachmentView();
+		GpuBuffer vertexBuffer = buffer.createVertexBuffer(VertexFormats.POSITION_COLOR);
+		GpuBuffer indexBuffer = buffer.createIndexBuffer(VertexFormats.POSITION_COLOR);
+
+		UBO_DATA.proj = RenderManager.projection;
+		UBO_DATA.modelView = RenderSystem.getModelViewMatrix();
+
+		GpuBufferSlice matrixData = UNIFORM_STORAGE.write(UBO_DATA);
+
+		RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(() -> "Aoba 2D Renderer",
+				colorAttachment, OptionalInt.empty());
+
+		pass.setPipeline(pipeline);
+		pass.setUniform("Matrices", matrixData);
+		pass.setVertexBuffer(0, vertexBuffer);
+		pass.setIndexBuffer(indexBuffer, VertexFormat.IndexType.INT);
+		pass.drawIndexed(0, 0, buffer.getIndexCount(), 1);
+		pass.close();
 	}
 
-	/**
-	 * Draws a textured quad onto the screen.
-	 *
-	 * @param drawContext Transformation matrix.
-	 * @param texture
-	 * @param x1       X position to draw the quad.
-	 * @param y1       Y position to draw the quad.
-	 * @param width    Width of the quad.
-	 * @param height   Height of the quad.
-	 * @param color    Color to overlay on top of the quad.
-	 */
-	public void drawTexturedQuad(DrawContext drawContext, Identifier texture, float x1, float y1, float width,
-			float height, Color color) {
-//		MatrixStack matrixStack = drawContext.getMatrices();
-//		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-//		int colorInt = color.getColorAsInt();
-//
-//		float x2 = x1 + width;
-//		float y2 = y1 + height;
-//
-//		drawContext.draw
-//		drawContext.draw(vertexConsumerProvider -> {
-//			VertexConsumer bufferBuilder = vertexConsumerProvider
-//					.getBuffer(RenderLayers.TEXTURES_QUADS_GUI.apply(texture));
-//			bufferBuilder.vertex(matrix4f, x1, y1, 0).color(colorInt).texture(0, 0);
-//			bufferBuilder.vertex(matrix4f, x1, y2, 0).color(colorInt).texture(0, 1);
-//			bufferBuilder.vertex(matrix4f, x2, y2, 0).color(colorInt).texture(1, 1);
-//			bufferBuilder.vertex(matrix4f, x2, y1, 0).color(colorInt).texture(1, 0);
-//		});
+	public void drawBox(float x, float y, float width, float height, Color color) {
+		if (!isBuilding) {
+			throw new IllegalStateException("Must call begin() before drawing");
+		}
+
+		int startVertex = currentVertexIndex;
+
+		triangleBuffer.addVertex(x, y, 0);
+		triangleBuffer.addColor(color);
+		triangleBuffer.addVertex(x + width, y, 0);
+		triangleBuffer.addColor(color);
+		triangleBuffer.addVertex(x + width, y + height, 0);
+		triangleBuffer.addColor(color);
+		triangleBuffer.addVertex(x, y + height, 0);
+		triangleBuffer.addColor(color);
+
+		triangleBuffer.addTriangle(startVertex, startVertex + 1, startVertex + 2);
+		triangleBuffer.addTriangle(startVertex, startVertex + 2, startVertex + 3);
+
+		currentVertexIndex += 4;
 	}
 
-	/**
-	 * Draws a box on the screen.
-	 *
-	 * @param drawContext Transformation matrix
-	 * @param size     Size and position of the box to draw.
-	 * @param color    Color of the box.
-	 */
-	public void drawBox(DrawContext drawContext, Rectangle size, Color color) {
-		drawBox(drawContext, size.getX(), size.getY(), size.getWidth(), size.getHeight(), color);
+	public void drawBox(Rectangle rect, Color color) {
+		drawBox(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), color);
 	}
 
-	/**
-	 * Draws a filled box on the screen.
-	 *
-	 * @param matrix4f Transformation matrix
-	 * @param x        X position of the box.
-	 * @param y        Y position of the box.
-	 * @param width    Width of the box.
-	 * @param height   Height of the box.
-	 * @param color    Color of the box.
-	 */
-	public void drawBox(DrawContext drawContext, float x, float y, float width, float height, Color color) {
-		newRenderer.drawBox(x, y, width, height, color);
+	public void drawBoxOutline(float x, float y, float width, float height, Color color) {
+		if (!isBuilding) {
+			throw new IllegalStateException("Must call begin() before drawing");
+		}
+
+		int startVertex = currentVertexIndex;
+
+		lineBuffer.addVertex(x, y, 0);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex(x + width, y, 0);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex(x + width, y + height, 0);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex(x, y + height, 0);
+		lineBuffer.addColor(color);
+
+		lineBuffer.addLine(startVertex, startVertex + 1);
+		lineBuffer.addLine(startVertex + 1, startVertex + 2);
+		lineBuffer.addLine(startVertex + 2, startVertex + 3);
+		lineBuffer.addLine(startVertex + 3, startVertex);
+
+		currentVertexIndex += 4;
 	}
 
-	/**
-	 * Draws a filled rounded box.
-	 *
-	 * @param matrix4f Transformation matrix
-	 * @param size     Size and position of the rounded box.
-	 * @param radius   Radius of the box corners.
-	 * @param color    Color of the box.
-	 */
-	public void drawRoundedBox(DrawContext drawContext, Rectangle size, float radius, Color color) {
-		drawRoundedBox(drawContext, size.getX(), size.getY(), size.getWidth(), size.getHeight(), radius, color);
+	public void drawBoxOutline(Rectangle rect, Color color) {
+		drawBoxOutline(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), color);
 	}
 
-	/**
-	 * Draws a filled rounded box.
-	 *
-	 * @param matrix4f Transformation matrix
-	 * @param x        X position of the box.
-	 * @param y        Y position of the box.
-	 * @param width    Width of the box.
-	 * @param height   Height of the box.
-	 * @param radius   Radius of the box corners.
-	 * @param color    Color of the box.
-	 */
-	public void drawRoundedBox(DrawContext drawContext, float x, float y, float width, float height, float radius,
+	public void drawLine(float x1, float y1, float x2, float y2, Color color) {
+		if (!isBuilding) {
+			throw new IllegalStateException("Must call begin() before drawing");
+		}
+
+		int startVertex = currentVertexIndex;
+
+		lineBuffer.addVertex(x1, y1, 0);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex(x2, y2, 0);
+		lineBuffer.addColor(color);
+
+		lineBuffer.addLine(startVertex, startVertex + 1);
+
+		currentVertexIndex += 2;
+	}
+
+	public void drawRoundedBox(float x, float y, float width, float height, float radius, Color color) {
+		if (radius <= 0) {
+			drawBox(x, y, width, height, color);
+			return;
+		}
+
+		drawBox(x + radius, y, width - 2 * radius, height, color);
+		drawBox(x, y + radius, radius, height - 2 * radius, color);
+		drawBox(x + width - radius, y + radius, radius, height - 2 * radius, color);
+
+		drawFilledArc(x + radius, y + radius, radius, 180, 90, color);
+		drawFilledArc(x + width - radius, y + radius, radius, 270, 90, color);
+		drawFilledArc(x + width - radius, y + height - radius, radius, 0, 90, color);
+		drawFilledArc(x + radius, y + height - radius, radius, 90, 90, color);
+	}
+
+	public void drawRoundedBox(Rectangle rect, float radius, Color color) {
+		drawRoundedBox(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), radius, color);
+	}
+
+	public void drawCircle(float x, float y, float radius, Color color) {
+		drawFilledArc(x, y, radius, 0, 360, color);
+	}
+
+	private void drawFilledArc(float centerX, float centerY, float radius, float startAngle, float arcAngle,
 			Color color) {
-		newRenderer.drawRoundedBox(x, y, width, height, radius, color);
+		if (!isBuilding) {
+			throw new IllegalStateException("Must call begin() before drawing");
+		}
+
+		int segments = Math.max(8, (int) (arcAngle / 15.0f));
+		float angleStep = arcAngle / segments;
+
+		int centerVertex = currentVertexIndex;
+		triangleBuffer.addVertex(centerX, centerY, 0);
+		triangleBuffer.addColor(color);
+		currentVertexIndex++;
+
+		for (int i = 0; i <= segments; i++) {
+			float angle = (float) Math.toRadians(startAngle + i * angleStep);
+			float px = centerX + radius * (float) Math.cos(angle);
+			float py = centerY + radius * (float) Math.sin(angle);
+
+			triangleBuffer.addVertex(px, py, 0);
+			triangleBuffer.addColor(color);
+
+			if (i > 0) {
+				triangleBuffer.addTriangle(centerVertex, currentVertexIndex - 1, currentVertexIndex);
+			}
+			currentVertexIndex++;
+		}
 	}
 
-	/**
-	 * Draws a filled circle.
-	 *
-	 * @param drawContext Transformation matrix
-	 * @param x        X position of the box.
-	 * @param y        Y position of the box.
-	 * @param radius   Radius of the circle.
-	 * @param color    Color of the box.
-	 */
-	public void drawCircle(DrawContext drawContext, float x, float y, float radius, Color color) {
-		newRenderer.drawCircle(x, y, radius, color);
+	public void drawOutlinedBox(float x, float y, float width, float height, Color outlineColor, Color fillColor) {
+		drawBox(x, y, width, height, fillColor);
+		drawBoxOutline(x, y, width, height, outlineColor);
 	}
 
-	/**
-	 * Draws a filled AND outlined box.
-	 *
-	 * @param drawContext        Transformation matrix
-	 * @param size            Size and position to draw the outlined box.
-	 * @param outlineColor    Color of the outline of the box.
-	 * @param backgroundColor Color of the fill.
-	 */
-	public void drawOutlinedBox(DrawContext drawContext, Rectangle size, Color outlineColor, Color backgroundColor) {
-		drawOutlinedBox(drawContext, size.getX(), size.getY(), size.getWidth(), size.getHeight(), outlineColor,
-				backgroundColor);
+	public void drawOutlinedBox(Rectangle rect, Color outlineColor, Color fillColor) {
+		drawOutlinedBox(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), outlineColor, fillColor);
 	}
 
-	/**
-	 * Draws a filled AND outlined box.
-	 *
-	 * @param drawContext        Transformation matrix
-	 * @param x               X position of the box.
-	 * @param y               Y position of the box.
-	 * @param width           Width of the box.
-	 * @param height          Height of the box.
-	 * @param outlineColor    Color of the outline of the box.
-	 * @param backgroundColor Color of the fill.
-	 */
-	public void drawOutlinedBox(DrawContext drawContext, float x, float y, float width, float height,
-			Color outlineColor, Color backgroundColor) {
-		newRenderer.drawOutlinedBox(x, y, width, height, outlineColor, backgroundColor);
+	public void drawTriangle(float x1, float y1, Color color1, float x2, float y2, Color color2, float x3, float y3,
+			Color color3) {
+		if (!isBuilding) {
+			throw new IllegalStateException("Must call begin() before drawing");
+		}
+
+		int startVertex = currentVertexIndex;
+
+		triangleBuffer.addVertex(x1, y1, 0);
+		triangleBuffer.addColor(color1);
+		triangleBuffer.addVertex(x2, y2, 0);
+		triangleBuffer.addColor(color2);
+		triangleBuffer.addVertex(x3, y3, 0);
+		triangleBuffer.addColor(color3);
+
+		triangleBuffer.addTriangle(startVertex, startVertex + 1, startVertex + 2);
+
+		currentVertexIndex += 3;
 	}
 
-	/**
-	 ** OUTLINES
-	 **/
-
-	/**
-	 * Draws the outline of a box.
-	 *
-	 * @param drawContext Transformation matrix
-	 * @param size     Size and position of the box.
-	 * @param color    Color of the box.
-	 */
-	public void drawBoxOutline(DrawContext drawContext, Rectangle size, Color color) {
-		drawBoxOutline(drawContext, size.getX(), size.getY(), size.getWidth(), size.getHeight(), color);
+	public void drawHorizontalGradient(float x, float y, float width, float height, Color startColor, Color endColor) {
+		drawTriangle(x, y, startColor, x + width, y, startColor, x, y + height, endColor);
+		drawTriangle(x + width, y, startColor, x + width, y + height, endColor, x, y + height, endColor);
 	}
 
-	/**
-	 * Draws the outline of a box.
-	 *
-	 * @param drawContext Transformation matrix
-	 * @param x        X position of the box.
-	 * @param y        Y position of the box.
-	 * @param width    Width of the box.
-	 * @param height   Height of the box.
-	 * @param color    Color of the box.
-	 */
-	public void drawBoxOutline(DrawContext drawContext, float x, float y, float width, float height, Color color) {
-		newRenderer.drawBoxOutline(x, y, width, height, color);
+	public void drawVerticalGradient(float x, float y, float width, float height, Color startColor, Color endColor) {
+		drawTriangle(x, y, startColor, x + width, y, endColor, x, y + height, startColor);
+		drawTriangle(x + width, y, endColor, x + width, y + height, endColor, x, y + height, startColor);
 	}
 
-	/**
-	 * Draws the outline of a rounded box.
-	 *
-	 * @param drawContext Transformation matrix
-	 * @param size     Size of the rounded box.
-	 * @param radius   Corner radius of the box outline.
-	 * @param color    Color of the outline of the box.
-	 */
-	public void drawRoundedBoxOutline(DrawContext drawContext, Rectangle size, float radius, Color color) {
-		drawRoundedBoxOutline(drawContext, size.getX(), size.getY(), size.getWidth(), size.getHeight(), radius, color);
-	}
-
-	/**
-	 * Draws the outline of a rounded box.
-	 *
-	 * @param drawContext        Transformation matrix
-	 * @param x               X position of the box.
-	 * @param y               Y position of the box.
-	 * @param width           Width of the box.
-	 * @param height          Height of the box.
-	 * @param radius          Corner radius of the box outline.
-	 * @param outlineColor    Color of the outline of the box.
-	 * @param backgroundColor Color of the background of the box.
-	 */
-	public void drawOutlinedRoundedBox(DrawContext drawContext, float x, float y, float width, float height,
-			float radius, Color outlineColor, Color backgroundColor) {
-		drawOutlinedBox(drawContext, x, y, width, height, outlineColor, backgroundColor);
-
-		//
-//		MatrixStack matrixStack = drawContext.getMatrices();
-//		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-//		int backgroundColorInt = backgroundColor.getColorAsInt();
-//		int outlineColorInt = outlineColor.getColorAsInt();
-//		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-//		drawContext.draw(vertexConsumerProvider -> {
-//			VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(RenderLayers.TRIS_GUI);
-//
-//			//
-//			buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f,
-//					backgroundColor);
-//			buildFilledArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f,
-//					backgroundColor);
-//			buildFilledArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f,
-//					backgroundColor);
-//			buildFilledArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f, backgroundColor);
-//
-//			// |---
-//			bufferBuilder.vertex(matrix4f, x + radius, y, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(backgroundColorInt);
-//
-//			// ---|
-//
-//			bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(backgroundColorInt);
-//
-//			// _||
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(backgroundColorInt);
-//
-//			// |||
-//			bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(backgroundColorInt);
-//
-//			/// __|
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
-//
-//			// |__
-//			bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(backgroundColorInt);
-//
-//			// |||
-//			bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(backgroundColorInt);
-//
-//			/// ||-
-//			bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
-//
-//			/// |-/
-//			bufferBuilder.vertex(matrix4f, x + radius, y + radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
-//
-//			/// /_|
-//			bufferBuilder.vertex(matrix4f, x + radius, y + height - radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + height - radius, 0).color(backgroundColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + radius, 0).color(backgroundColorInt);
-//
-//			bufferBuilder = vertexConsumerProvider.getBuffer(RenderLayers.LINES_GUI);
-//			// Top Left Arc and Top
-//			buildArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f, outlineColor);
-//			bufferBuilder.vertex(matrix4f, x + radius, y, 0).color(outlineColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(outlineColorInt);
-//
-//			// Top Right Arc and Right
-//			buildArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f, outlineColor);
-//			bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(outlineColorInt);
-//			bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).color(outlineColorInt);
-//
-//			// Bottom Right
-//			buildArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f,
-//					outlineColor);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(outlineColorInt);
-//			bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).color(outlineColorInt);
-//
-//			// Bottom Left
-//			buildArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f, outlineColor);
-//			bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).color(outlineColorInt);
-//			bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(outlineColorInt);
-//		});
-//		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-	}
-
-	/**
-	 * Draws the outline of a rounded box.
-	 *
-	 * @param matrix4f Transformation matrix
-	 * @param x        X position of the box.
-	 * @param y        Y position of the box.
-	 * @param width    Width of the box.
-	 * @param height   Height of the box.
-	 * @param radius   Corner radius of the box outline.
-	 * @param color    Color of the outline of the box.
-	 */
-	public void drawRoundedBoxOutline(DrawContext drawContext, float x, float y, float width, float height,
-			float radius, Color color) {
-
-		drawBoxOutline(drawContext, x, y, width, height, color);
-
-//		MatrixStack matrixStack = drawContext.getMatrices();
-//		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-//		int colorInt = color.getColorAsInt();
-//		GL11.glEnable(GL11.GL_LINE_SMOOTH);
-//		drawContext.draw(vertexConsumerProvider -> {
-//			VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(RenderLayers.LINES_GUI);
-//			// Top Left Arc and Top
-//			buildArc(bufferBuilder, matrix4f, x + radius, y + radius, radius, 180.0f, 90.0f, color);
-//			bufferBuilder.vertex(matrix4f, x + radius, y, 0).color(colorInt);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y, 0).color(colorInt);
-//
-//			// Top Right Arc and Right
-//			buildArc(bufferBuilder, matrix4f, x + width - radius, y + radius, radius, 270.0f, 90.0f, color);
-//			bufferBuilder.vertex(matrix4f, x + width, y + radius, 0).color(colorInt);
-//			bufferBuilder.vertex(matrix4f, x + width, y + height - radius, 0).color(colorInt);
-//
-//			// Bottom Right
-//			buildArc(bufferBuilder, matrix4f, x + width - radius, y + height - radius, radius, 0.0f, 90.0f, color);
-//			bufferBuilder.vertex(matrix4f, x + width - radius, y + height, 0).color(colorInt);
-//			bufferBuilder.vertex(matrix4f, x + radius, y + height, 0).color(colorInt);
-//
-//			// Bottom Left
-//			buildArc(bufferBuilder, matrix4f, x + radius, y + height - radius, radius, 90.0f, 90.0f, color);
-//			bufferBuilder.vertex(matrix4f, x, y + height - radius, 0).color(colorInt);
-//			bufferBuilder.vertex(matrix4f, x, y + radius, 0).color(colorInt);
-//		});
-//		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-	}
-
-	/**
-	 * Draws a line from Point A to Point B
-	 *
-	 * @param matrix4f Transformation matrix
-	 * @param x1       X position of the first line.
-	 * @param y1       Y position of the first line.
-	 * @param x1       X position of the second line.
-	 * @param y1       Y position of the second line.
-	 * @param color    Color to draw the line in.
-	 */
-	public void drawLine(DrawContext drawContext, float x1, float y1, float x2, float y2, Color color) {
-		newRenderer.drawLine(x1, y1, x2, y2, color);
-	}
-
-	/**
-	 ** GRADIENTS
-	 **/
-
-	/**
-	 * Draws a horizontal gradient within a box.
-	 *
-	 * @param matrix4f   Transformation matrix.
-	 * @param size       Size and position of the gradient.
-	 * @param startColor The start color of the gradient.
-	 * @param endColor   The end color of the gradient.
-	 */
-	public void drawHorizontalGradient(DrawContext drawContext, Rectangle size, Color startColor, Color endColor) {
-		drawHorizontalGradient(drawContext, size.getX(), size.getY(), size.getWidth(), size.getHeight(), startColor,
-				endColor);
-	}
-
-	/**
-	 * Draws a horizontal gradient within a box.
-	 *
-	 * @param matrix4f   Transformation matrix.
-	 * @param x          X position of the gradient.
-	 * @param y          Y position of the gradient.
-	 * @param width      Width of the gradient.
-	 * @param height     Height of the gradient.
-	 * @param startColor The start color of the gradient.
-	 * @param endColor   The end color of the gradient.
-	 */
-	public void drawHorizontalGradient(DrawContext drawContext, float x, float y, float width, float height,
-			Color startColor, Color endColor) {
-		newRenderer.drawHorizontalGradient(x, y, width, height, startColor, endColor);
-	}
-
-	/**
-	 * Draws a vertical gradient within a box.
-	 *
-	 * @param matrix4f   Transformation matrix.
-	 * @param size       Size and position of the gradient.
-	 * @param startColor The start color of the gradient.
-	 * @param endColor   The end color of the gradient.
-	 */
-	public void drawVerticalGradient(DrawContext drawContext, Rectangle size, Color startColor, Color endColor) {
-		drawVerticalGradient(drawContext, size.getX(), size.getY(), size.getWidth(), size.getHeight(), startColor,
-				endColor);
-	}
-
-	/**
-	 * Draws a vertical gradient within a box.
-	 *
-	 * @param matrix4f   Transformation matrix.
-	 * @param x          X position of the gradient.
-	 * @param y          Y position of the gradient.
-	 * @param width      Width of the gradient.
-	 * @param height     Height of the gradient.
-	 * @param startColor The start color of the gradient.
-	 * @param endColor   The end color of the gradient.
-	 */
-	public void drawVerticalGradient(DrawContext drawContext, float x, float y, float width, float height,
-			Color startColor, Color endColor) {
-		newRenderer.drawVerticalGradient(x, y, width, height, startColor, endColor);
-	}
-
-	/**
-	 * Draws an item in a certain area.
-	 *
-	 * @param drawContext Draw context.
-	 * @param stack       ItemStack to draw.
-	 * @param x           X position to draw the item.
-	 * @param y           Y position to draw the item.
-	 */
-	public void drawItem(DrawContext drawContext, ItemStack stack, float x, float y) {
-		drawContext.drawItem(stack, (int) x, (int) y);
-	}
-
-	/**
-	 * Draws a string at a certain position.
-	 *
-	 * @param drawContext Draw context.
-	 * @param text        Text to draw on the screen.
-	 * @param x           X position to draw the string.
-	 * @param y           Y position to draw the string.
-	 * @param color       Color to draw the string.
-	 */
+	// TODO: Remove for dedicated string renderer
 	public void drawString(DrawContext drawContext, String text, float x, float y, Color color) {
-//		AobaClient aoba = Aoba.getInstance();
-//		Matrix3x2fStack matrixStack = drawContext.getMatrices();
-//		matrixStack.pushMatrix();
-//		matrixStack.scale(2.0f, 2.0f);
-//		matrixStack.translate(-x / 2, -y / 2);
-//		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color.getColorAsInt(), false);
-//		matrixStack.popMatrix();
+		AobaClient aoba = Aoba.getInstance();
+		Matrix3x2fStack matrixStack = drawContext.getMatrices();
+		matrixStack.pushMatrix();
+		matrixStack.scale(2.0f, 2.0f);
+		matrixStack.translate(-x / 2, -y / 2);
+		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color.getColorAsInt(), false);
+		matrixStack.popMatrix();
 	}
 
 	/**
@@ -524,13 +302,13 @@ public class Render2D {
 	 * @param color       Color (as int) to draw the string.
 	 */
 	public void drawString(DrawContext drawContext, String text, float x, float y, int color) {
-//		AobaClient aoba = Aoba.getInstance();
-//		Matrix3x2fStack matrixStack = drawContext.getMatrices();
-//		matrixStack.pushMatrix();
-//		matrixStack.scale(2.0f, 2.0f);
-//		matrixStack.translate(-x / 2, -y / 2);
-//		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color, false);
-//		matrixStack.popMatrix();
+		AobaClient aoba = Aoba.getInstance();
+		Matrix3x2fStack matrixStack = drawContext.getMatrices();
+		matrixStack.pushMatrix();
+		matrixStack.scale(2.0f, 2.0f);
+		matrixStack.translate(-x / 2, -y / 2);
+		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color, false);
+		matrixStack.popMatrix();
 	}
 
 	/**
@@ -544,17 +322,17 @@ public class Render2D {
 	 * @param scale       Scale to draw the string.
 	 */
 	public void drawStringWithScale(DrawContext drawContext, String text, float x, float y, Color color, float scale) {
-//		AobaClient aoba = Aoba.getInstance();
-//		Matrix3x2fStack matrixStack = drawContext.getMatrices();
-//		matrixStack.pushMatrix();
-//		matrixStack.scale(scale, scale);
-//		if (scale > 1.0f) {
-//			matrixStack.translate(-x / scale, -y / scale);
-//		} else {
-//			matrixStack.translate((x / scale) - x, (y * scale) - y);
-//		}
-//		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color.getColorAsInt(), false);
-//		matrixStack.popMatrix();
+		AobaClient aoba = Aoba.getInstance();
+		Matrix3x2fStack matrixStack = drawContext.getMatrices();
+		matrixStack.pushMatrix();
+		matrixStack.scale(scale, scale);
+		if (scale > 1.0f) {
+			matrixStack.translate(-x / scale, -y / scale);
+		} else {
+			matrixStack.translate((x / scale) - x, (y * scale) - y);
+		}
+		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color.getColorAsInt(), false);
+		matrixStack.popMatrix();
 	}
 
 	/**
@@ -568,52 +346,17 @@ public class Render2D {
 	 * @param scale       Scale to draw the string.
 	 */
 	public void drawStringWithScale(DrawContext drawContext, String text, float x, float y, int color, float scale) {
-//		AobaClient aoba = Aoba.getInstance();
-//		Matrix3x2fStack matrixStack = drawContext.getMatrices();
-//		matrixStack.pushMatrix();
-//		matrixStack.scale(scale, scale);
-//		if (scale > 1.0f) {
-//			matrixStack.translate(-x / scale, -y / scale);
-//		} else {
-//			matrixStack.translate((x / scale) - x, (y * scale) - y);
-//		}
-//		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color, false);
-//		matrixStack.popMatrix();
-	}
-
-	/**
-	 * Helper: Adds a filled arc (pie slice) to the triangle mesh.
-	 */
-	private void buildFilledArc(float cx, float cy, float radius, float startAngle, float arcAngle, Color color) {
-		int segments = Math.max(8, (int) (radius * arcAngle / 24));
-		float angleStep = arcAngle / segments;
-		for (int i = 0; i < segments; i++) {
-			float a0 = (float) Math.toRadians(startAngle + i * angleStep);
-			float a1 = (float) Math.toRadians(startAngle + (i + 1) * angleStep);
-			float x0 = cx + (float) Math.cos(a0) * radius;
-			float y0 = cy + (float) Math.sin(a0) * radius;
-			float x1 = cx + (float) Math.cos(a1) * radius;
-			float y1 = cy + (float) Math.sin(a1) * radius;
-			newRenderer.drawTriangle(cx, cy, color, x0, y0, color, x1, y1, color);
+		AobaClient aoba = Aoba.getInstance();
+		Matrix3x2fStack matrixStack = drawContext.getMatrices();
+		matrixStack.pushMatrix();
+		matrixStack.scale(scale, scale);
+		if (scale > 1.0f) {
+			matrixStack.translate(-x / scale, -y / scale);
+		} else {
+			matrixStack.translate((x / scale) - x, (y * scale) - y);
 		}
-	}
-
-	/**
-	 * Helper: Adds an arc outline to the line mesh.
-	 */
-	private void buildArc(float cx, float cy, float radius, float startAngle, float arcAngle, Color color) {
-		int segments = Math.max(8, (int) (radius * arcAngle / 24));
-		float angleStep = arcAngle / segments;
-		float prevX = cx + (float) Math.cos(Math.toRadians(startAngle)) * radius;
-		float prevY = cy + (float) Math.sin(Math.toRadians(startAngle)) * radius;
-		for (int i = 1; i <= segments; i++) {
-			float a = (float) Math.toRadians(startAngle + i * angleStep);
-			float x = cx + (float) Math.cos(a) * radius;
-			float y = cy + (float) Math.sin(a) * radius;
-			newRenderer.drawLine(prevX, prevY, x, y, color);
-			prevX = x;
-			prevY = y;
-		}
+		drawContext.drawText(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color, false);
+		matrixStack.popMatrix();
 	}
 
 	/**
@@ -622,8 +365,12 @@ public class Render2D {
 	 * @param text Text to get width of.
 	 * @return Width of text in pixels.
 	 */
-	public static int getStringWidth(String text) {
+	public int getStringWidth(String text) {
 		TextRenderer textRenderer = Aoba.getInstance().fontManager.GetRenderer();
 		return textRenderer.getWidth(text);
+	}
+
+	public void clearStorageFrame() {
+		UNIFORM_STORAGE.clear();
 	}
 }

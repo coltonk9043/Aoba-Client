@@ -83,7 +83,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 		}
 
 		Color borderColor = isErrorState ? errorBorderColor : GuiManager.borderColor.getValue();
-		renderer.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor,
+		renderer.drawOutlinedBox(actualX, actualY, actualWidth, actualHeight, borderColor,
 				new Color(115, 115, 115, 200));
 
 		if (text != null && !text.isEmpty()) {

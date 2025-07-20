@@ -8,8 +8,6 @@
 
 package net.aoba.gui.components;
 
-import static net.aoba.utils.render.TextureBank.gear;
-
 import org.joml.Matrix3x2fStack;
 
 import net.aoba.Aoba;
@@ -89,12 +87,14 @@ public class ModuleComponent extends Component {
 				// matrixStack.multiply(new Quaternionf().rotateZ((float)
 				// Math.toRadians(spinAngle)));
 				matrixStack.translate(-(actualX + actualWidth - 8), -(actualY + 14));
-				renderer.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16,
-						hudColor);
+				// renderer.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 16),
+				// (actualY + 6), 16, 16,
+				// hudColor);
 				matrixStack.popMatrix();
 			} else {
-				renderer.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16,
-						hudColor);
+				// renderer.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 16),
+				// (actualY + 6), 16, 16,
+				// hudColor);
 			}
 		}
 	}

@@ -363,8 +363,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			Box startBox = new Box(start);
 			Box endBox = new Box(end);
 
-			renderer.draw3DBox(event.GetMatrix(), event.getCamera(), startBox, Colors.Red, 1.0f);
-			renderer.draw3DBox(event.GetMatrix(), event.getCamera(), endBox, Colors.Red, 1.0f);
+			renderer.drawBox(startBox, Colors.Red);
+			renderer.drawBox(endBox, Colors.Red);
 
 			for (int i = 0; i < nodes.size() - 1; i++) {
 				PathNode first = nodes.get(i);
@@ -374,9 +374,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				Vec3d pos2 = first.pos.toCenterPos().add(0.15f, 0.15f, 0.15f);
 				Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
 
-				renderer.draw3DBox(event.GetMatrix(), event.getCamera(), box, Colors.Red, 1);
-				renderer.drawLine3D(event.GetMatrix(), event.getCamera(), first.pos.toCenterPos(),
-						second.pos.toCenterPos(), Colors.Red);
+				renderer.drawBox(box, Colors.Red);
+				renderer.drawLine(first.pos.toCenterPos(), second.pos.toCenterPos(), Colors.Red);
 			}
 		}
 	}

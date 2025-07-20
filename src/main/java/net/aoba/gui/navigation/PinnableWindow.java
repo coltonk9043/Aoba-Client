@@ -9,7 +9,6 @@
 package net.aoba.gui.navigation;
 
 import net.aoba.event.events.MouseClickEvent;
-import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.managers.SettingManager;
@@ -75,15 +74,11 @@ public class PinnableWindow extends Window {
 			float width = pos.getWidth().floatValue();
 
 			if (isPinned.getValue()) {
-				renderer.drawRoundedBox(drawContext, x + width - 23, y + 8, 15, 15,
-						GuiManager.roundingRadius.getValue(), new Color(154, 0, 0, 200));
-				renderer.drawRoundedBoxOutline(drawContext, x + width - 23, y + 8, 15, 15,
-						GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 200));
+				renderer.drawBox(x + width - 23, y + 8, 15, 15, new Color(154, 0, 0, 200));
+				renderer.drawBoxOutline(x + width - 23, y + 8, 15, 15, new Color(0, 0, 0, 200));
 			} else {
-				renderer.drawRoundedBox(drawContext, x + width - 23, y + 8, 15, 15,
-						GuiManager.roundingRadius.getValue(), new Color(128, 128, 128, 50));
-				renderer.drawRoundedBoxOutline(drawContext, x + width - 23, y + 8, 15, 15,
-						GuiManager.roundingRadius.getValue(), new Color(0, 0, 0, 50));
+				renderer.drawBox(x + width - 23, y + 8, 15, 15, new Color(128, 128, 128, 50));
+				renderer.drawBoxOutline(x + width - 23, y + 8, 15, 15, new Color(0, 0, 0, 50));
 			}
 		}
 	}

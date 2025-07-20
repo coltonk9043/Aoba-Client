@@ -56,7 +56,7 @@ public class ArmorHud extends HudWindow {
 
 				for (ItemStack armor : armors) {
 					if (armor.getItem() != Items.AIR) {
-						renderer.drawItem(drawContext, armor, x1, y2 - yOff - 16);
+						// TODO: renderer.drawItem(drawContext, armor, x1, y2 - yOff - 16);
 					}
 					yOff += (16.0f);
 				}

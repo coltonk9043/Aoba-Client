@@ -62,8 +62,7 @@ public class ChestESP extends Module implements Render3DListener {
 			if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity
 					|| blockEntity instanceof BarrelBlockEntity) {
 				Box box = new Box(blockEntity.getPos());
-				renderer.draw3DBox(event.GetMatrix(), event.getCamera(), box, color.getValue(),
-						lineThickness.getValue().floatValue());
+				renderer.drawBox(box, color.getValue());
 			}
 		});
 	}

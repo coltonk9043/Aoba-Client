@@ -143,24 +143,19 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 				Vec3d eyePos = renderEntity.getEyePos();
 
 				if (mode.getValue() == TracerMode.Stem) {
-					renderer.drawLine3D(event.GetMatrix(), event.getCamera(), new Vec3d(x, y, z),
-							new Vec3d(x, renderEntity.getHeight() + y, z), color);
+					renderer.drawLine(new Vec3d(x, y, z), new Vec3d(x, renderEntity.getHeight() + y, z), color);
 				}
 
 				Vec3d start = new Vec3d(rotation.x, rotation.y, rotation.z);
 
 				switch (target.getValue()) {
-				case Head -> renderer.drawLine3D(event.GetMatrix(), event.getCamera(), start,
-						new Vec3d(x, y + entity.getHeight() - 0.18f, z), color);
-				case Body -> renderer.drawLine3D(event.GetMatrix(), event.getCamera(), start,
-						new Vec3d(x, y + entity.getHeight() / 2.0f, z), color);
-				case Feet ->
-					renderer.drawLine3D(event.GetMatrix(), event.getCamera(), start, new Vec3d(x, y, z), color);
+				case Head -> renderer.drawLine(start, new Vec3d(x, y + entity.getHeight() - 0.18f, z), color);
+				case Body -> renderer.drawLine(start, new Vec3d(x, y + entity.getHeight() / 2.0f, z), color);
+				case Feet -> renderer.drawLine(start, new Vec3d(x, y, z), color);
 				}
 
 				if (mode.getValue() == TracerMode.Fill) {
-					renderer.draw3DBox(event.GetMatrix(), event.getCamera(), bb,
-							new Color(color.getRed(), color.getGreen(), color.getBlue(), 78), 1.0f);
+					renderer.drawBox(bb, new Color(color.getRed(), color.getGreen(), color.getBlue(), 78));
 				}
 
 				i++;

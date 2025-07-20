@@ -25,17 +25,12 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
-import com.mojang.blaze3d.systems.ProjectionType;
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.Render2DEvent;
-import net.aoba.mixin.interfaces.IProjectionMatrix2;
 import net.aoba.module.modules.render.NoRender;
-import net.aoba.utils.render.mesh.MeshRenderer;
+import net.aoba.utils.render.Render2D;
 import net.aoba.utils.render.RenderManager;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.ProjectionMatrix2;
@@ -51,33 +46,17 @@ public class IngameHudMixin {
 
 	@Inject(at = @At("TAIL"), method = "render(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V")
 	private void onRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-
-		context.createNewRootLayer();
-
 		Profiler profiler = Profilers.get();
 		profiler.push("aoba-2d");
-
-		float width = MinecraftClient.getInstance().getWindow().getFramebufferWidth();
-		float height = MinecraftClient.getInstance().getWindow().getFramebufferHeight();
-
-		RenderSystem.setProjectionMatrix(matrix.set(width, height), ProjectionType.ORTHOGRAPHIC);
-		MeshRenderer.projection.set(((IProjectionMatrix2) matrix).executeGetMatrix(width, height));
-
-		RenderManager renderManager = RenderManager.getInstance();
-		renderManager.beginFrame();
-		
-		Render2DEvent renderEvent = new Render2DEvent(context, tickCounter);
 		AobaClient client = Aoba.getInstance();
-		client.renderer2D.begin();
+		RenderManager renderManager = RenderManager.getInstance();
+		Render2D render2d = renderManager.get2D();
+		renderManager.beginFrame(render2d);
+		Render2DEvent renderEvent = new Render2DEvent(context, tickCounter);
+		render2d.begin();
 		client.eventManager.Fire(renderEvent);
-		client.renderer2D.end();
-		
-		renderManager.endFrame(context);
-		context.createNewRootLayer();
-
-		RenderSystem.setProjectionMatrix(matrix.set(width, height), ProjectionType.PERSPECTIVE);
-		MeshRenderer.projection.set(((IProjectionMatrix2) matrix).executeGetMatrix(width, height));
-
+		render2d.end();
+		renderManager.endFrame();
 		profiler.pop();
 	}
 

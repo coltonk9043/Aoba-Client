@@ -58,8 +58,8 @@ public class CloseableWindow extends Window {
 			float x = pos.getX().floatValue();
 			float y = pos.getY().floatValue();
 			float width = pos.getWidth().floatValue();
-			renderer.drawLine(drawContext, x + width - 23, y + 8, x + width - 8, y + 23, new Color(255, 0, 0, 255));
-			renderer.drawLine(drawContext, x + pos.getWidth() - 23, pos.getY() + 23, x + width - 8, y + 8,
+			renderer.drawLine(x + width - 23, y + 8, x + width - 8, y + 23, new Color(255, 0, 0, 255));
+			renderer.drawLine(x + pos.getWidth() - 23, pos.getY() + 23, x + width - 8, y + 8,
 					new Color(255, 0, 0, 255));
 		}
 	}

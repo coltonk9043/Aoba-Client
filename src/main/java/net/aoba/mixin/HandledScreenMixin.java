@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.aoba.Aoba;
 import net.aoba.module.modules.render.Tooltips;
+import net.aoba.utils.render.RenderManager;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -96,14 +97,15 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 			int tooltipWidth = 150;
 			int nameHeight = 12;
 
-			Aoba.getInstance().renderer2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 10,
-					offsetY - 10, new Color(255, 255, 255).getRGB(), 1.0f);
+			// Aoba.getInstance().renderer2D.drawStringWithScale(context,
+			// stack.getName().getString(), offsetX + 10,
+			// offsetY - 10, new Color(255, 255, 255).getRGB(), 1.0f);
 
 			draw(context, compoundTag.stream().toList(), offsetX, offsetY + nameHeight, mouseX, mouseY, colors);
 
 			context.fill(offsetX, offsetY - nameHeight, offsetX + tooltipWidth, offsetY,
 					new Color(0, 0, 0, 128).getRGB());
-			Aoba.getInstance().renderer2D.drawStringWithScale(context, stack.getName().getString(), offsetX + 5,
+			RenderManager.getInstance().get2D().drawStringWithScale(context, stack.getName().getString(), offsetX + 5,
 					offsetY - 10, new Color(255, 255, 255).getRGB(), 1.0f);
 
 		} catch (Exception ignore) {

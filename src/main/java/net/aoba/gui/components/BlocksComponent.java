@@ -14,7 +14,6 @@ import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
-import net.aoba.gui.GuiManager;
 import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.Size;
@@ -25,7 +24,6 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 
 public class BlocksComponent extends Component implements MouseScrollListener {
@@ -80,9 +78,10 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 
-		renderer.drawString(drawContext, text, actualX, actualY + 6, 0xFFFFFF);
-		renderer.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6,
-				GuiManager.foregroundColor.getValue().getColorAsInt());
+		// renderer.drawString(text, actualX, actualY + 6, 0xFFFFFF);
+		// renderer.drawString(collapsed ? ">>" : "<<", (actualX + actualWidth - 24),
+		// actualY + 6,
+		// GuiManager.foregroundColor.getValue().getColorAsInt());
 
 		if (!collapsed) {
 			matrixStack.pushMatrix();
@@ -96,13 +95,14 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 					Block block = Registries.BLOCK.get(index);
 
 					if (blocks.getValue().contains(block)) {
-						renderer.drawBox(drawContext, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1),
+						renderer.drawBox((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN)) + 1),
 								((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25)), BLOCK_WIDTH,
 								BLOCK_WIDTH, new Color(0, 255, 0, 55));
 					}
-					renderer.drawItem(drawContext, new ItemStack(block.asItem()),
-							(int) ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN)) + 2) / 2.0f),
-							(int) ((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25) / 2.0f));
+					// renderer.drawItem(new ItemStack(block.asItem()),
+					// (int) ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN)) + 2) / 2.0f),
+					// (int) ((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25) /
+					// 2.0f));
 				}
 			}
 

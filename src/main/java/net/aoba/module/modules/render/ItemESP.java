@@ -83,8 +83,7 @@ public class ItemESP extends Module implements Render3DListener {
 				Vec3d itemPos = entity.getPos();
 				if (playerPos.distanceTo(itemPos) <= range.getValue()) {
 					Color finalColor = colorRarity.getValue() ? getColorBasedOnItemRarity(entity) : color.getValue();
-					renderer.draw3DBox(event.GetMatrix(), event.getCamera(), entity.getBoundingBox(), finalColor,
-							lineThickness.getValue().floatValue());
+					renderer.drawBox(entity.getBoundingBox(), finalColor);
 				}
 			}
 		}

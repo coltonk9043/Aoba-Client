@@ -102,13 +102,13 @@ public class EntityESP extends Module implements Render3DListener {
 			Frustum frustum = event.getFrustum();
 			Camera camera = MC.gameRenderer.getCamera();
 			Vec3d cameraPosition = camera.getPos();
-			
+
 			boolean shouldRender = true;
 			if (frustum != null) {
 				shouldRender = MC.getEntityRenderDispatcher().shouldRender(entity, frustum, cameraPosition.getX(),
 						cameraPosition.getY(), cameraPosition.getZ());
 			}
-			
+
 			if (shouldRender) {
 				if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
 
@@ -122,11 +122,10 @@ public class EntityESP extends Module implements Render3DListener {
 
 							Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(),
 									interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
-							renderer.draw3DBox(matrixStack, event.getCamera(), boundingBox, color,
-									lineThickness.getValue());
+							renderer.drawBox(boundingBox, color);
 							break;
 						case Model:
-							Render3D.drawEntityModel(matrixStack, camera, partialTicks, entity, color);
+							// Render3D.drawEntityModel(matrixStack, camera, partialTicks, entity, color);
 							break;
 						}
 					}

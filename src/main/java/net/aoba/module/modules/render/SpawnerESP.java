@@ -68,8 +68,7 @@ public class SpawnerESP extends Module implements Render3DListener {
 		for (BlockEntity blockEntity : blockEntities) {
 			if (blockEntity instanceof MobSpawnerBlockEntity) {
 				Box box = new Box(blockEntity.getPos());
-				renderer.draw3DBox(event.GetMatrix(), event.getCamera(), box, color.getValue(),
-						lineThickness.getValue().floatValue());
+				renderer.drawBox(box, color.getValue());
 			}
 		}
 	}

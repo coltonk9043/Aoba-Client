@@ -80,11 +80,11 @@ public class StringComponent extends Component implements FontChangedListener {
 				renderer.drawString(drawContext, str, actualX, actualY + i, color.getColorAsInt());
 				break;
 			case Center:
-				float xPosCenter = actualX + (actualWidth / 2.0f) - Render2D.getStringWidth(str);
+				float xPosCenter = actualX + (actualWidth / 2.0f) - renderer.getStringWidth(str);
 				renderer.drawString(drawContext, str, xPosCenter, actualY + i, color.getColorAsInt());
 				break;
 			case Right:
-				float xPosRight = actualX + actualWidth - (Render2D.getStringWidth(str) * 2);
+				float xPosRight = actualX + actualWidth - (renderer.getStringWidth(str) * 2);
 				renderer.drawString(drawContext, str, xPosRight, actualY + i, color.getColorAsInt());
 				break;
 			}

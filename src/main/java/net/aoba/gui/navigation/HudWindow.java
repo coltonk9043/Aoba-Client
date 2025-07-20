@@ -73,11 +73,11 @@ public class HudWindow extends Window {
 
 			if (isMoving) {
 				if (pos.isDrawable()) {
-					renderer.drawBox(drawContext, x, y, width, height, dragColor);
+					renderer.drawBox(x, y, width, height, dragColor);
 				}
 			}
 			if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
-				renderer.drawBoxOutline(drawContext, x, y, width, height, hoverColor);
+				renderer.drawBoxOutline(x, y, width, height, hoverColor);
 			}
 		}
 	}

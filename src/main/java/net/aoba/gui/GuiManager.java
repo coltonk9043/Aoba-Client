@@ -323,39 +323,38 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		Matrix3x2fStack matrixStack = drawContext.getMatrices();
 		matrixStack.pushMatrix();
 
-		// int guiScale =
-		// MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(),
-		// MC.forcesUnicodeFont());
-		// matrixStack.scale(1.0f / guiScale, 1.0f / guiScale);
+		int guiScale = MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(), MC.forcesUnicodeFont());
+		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale);
 
 		// Render ClickGUI and Topbar
 		if (clickGuiOpen) {
-			renderer.drawBox(drawContext, 0, 0, drawContext.getScaledWindowWidth(), drawContext.getScaledWindowWidth(),
+			renderer.drawBox(0, 0, drawContext.getScaledWindowWidth(), drawContext.getScaledWindowWidth(),
 					Colors.White);
-			// clickGuiNavBar.draw(renderer, drawContext, tickDelta);
+			clickGuiNavBar.draw(renderer, drawContext, tickDelta);
 		}
 
 		// Render HUDS
-		// if (!clickGuiOpen) {
-		// for (Window hud : pinnedHuds.values()) {
-		// hud.draw(renderer, drawContext, tickDelta);
-		// }
-		// }
+		if (!clickGuiOpen) {
+			for (Window hud : pinnedHuds.values()) {
+				hud.draw(renderer, drawContext, tickDelta);
+			}
+		}
 
 		// Draw Tooltip on top of all UI elements
-		// if (tooltip != null && enableTooltips.getValue()) {
-		// int mouseX = (int) MC.mouse.getX();
-		// int mouseY = (int) MC.mouse.getY();
-		// int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
-		// int tooltipHeight = 10;
+		if (tooltip != null && enableTooltips.getValue()) {
+			int mouseX = (int) MC.mouse.getX();
+			int mouseY = (int) MC.mouse.getY();
 
-		// renderer.drawRoundedBox(drawContext, mouseX + 12, mouseY + 12, (tooltipWidth
-		// + 4) * 2,
-		// (tooltipHeight + 4) * 2, roundingRadius.getValue(),
-		// backgroundColor.getValue().getAsSolid());
-		// renderer.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18,
-		// foregroundColor.getValue());
-		// }
+			// TODO:
+			// int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
+			// int tooltipHeight = 10;
+
+			// renderer.drawRoundedBox(mouseX + 12, mouseY + 12, (tooltipWidth + 4) * 2,
+			// (tooltipHeight + 4) * 2, roundingRadius.getValue(),
+			// backgroundColor.getValue().getAsSolid());
+			// renderer.drawString(tooltip, mouseX + 18, mouseY + 18,
+			// foregroundColor.getValue());
+		}
 		matrixStack.popMatrix();
 	}
 

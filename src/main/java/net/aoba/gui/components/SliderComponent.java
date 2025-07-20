@@ -122,15 +122,14 @@ public class SliderComponent extends Component {
 
 		if (floatSetting != null) {
 			float defaultLength = actualWidth * ((floatSetting.getDefaultValue() - minValue) / (maxValue - minValue));
-			renderer.drawBox(drawContext, actualX + defaultLength - 2, actualY + 28, 4, 14, Colors.White);
+			renderer.drawBox(actualX + defaultLength - 2, actualY + 28, 4, 14, Colors.White);
 		}
 
-		renderer.drawBox(drawContext, actualX, actualY + 34, filledLength, 2, GuiManager.foregroundColor.getValue());
-		renderer.drawBox(drawContext, actualX + filledLength, actualY + 34, (actualWidth - filledLength), 2,
+		renderer.drawBox(actualX, actualY + 34, filledLength, 2, GuiManager.foregroundColor.getValue());
+		renderer.drawBox(actualX + filledLength, actualY + 34, (actualWidth - filledLength), 2,
 				new Color(255, 255, 255, 255));
 
-		renderer.drawCircle(drawContext, actualX + filledLength, actualY + 35, 6,
-				GuiManager.foregroundColor.getValue());
+		renderer.drawCircle(actualX + filledLength, actualY + 35, 6, GuiManager.foregroundColor.getValue());
 
 		if (header != null) {
 			renderer.drawString(drawContext, header, actualX, actualY + 8, 0xFFFFFF);

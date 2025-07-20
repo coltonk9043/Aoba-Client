@@ -32,11 +32,10 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.module.modules.render.NoRender;
-import net.aoba.utils.render.mesh.MeshRenderer;
+import net.aoba.utils.render.Render3D;
 import net.aoba.utils.render.RenderManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
@@ -78,13 +77,17 @@ public abstract class GameRendererMixin {
 			"ldc=hand" }))
 	private void onRenderWorld(RenderTickCounter tickCounter, CallbackInfo ci, @Local(ordinal = 0) Matrix4f projection,
 			@Local(ordinal = 2) Matrix4f view, @Local(ordinal = 1) float tickDelta, @Local MatrixStack matrixStack) {
-		MeshRenderer.updateRenderProperties(projection, view);
+		RenderManager.updateRenderProperties(projection, view);
 		if (Aoba.getInstance().moduleManager != null) {
 			Render3DEvent renderEvent = new Render3DEvent(matrixStack, null, camera, tickCounter);
 			AobaClient client = Aoba.getInstance();
-			client.renderer3D.begin();
+			RenderManager renderManager = RenderManager.getInstance();
+			Render3D render3d = renderManager.get3D();
+			renderManager.beginFrame(render3d);
+			render3d.begin();
 			client.eventManager.Fire(renderEvent);
-			client.renderer3D.end();
+			render3d.end();
+			renderManager.endFrame();
 		}
 	}
 

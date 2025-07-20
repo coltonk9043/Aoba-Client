@@ -8,8 +8,8 @@
 
 package net.aoba.gui.screens.proxy;
 
-import net.aoba.Aoba;
 import net.aoba.managers.proxymanager.Socks5Proxy;
+import net.aoba.utils.render.RenderManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -75,14 +75,14 @@ public class ProxySelectionList extends AlwaysSelectedEntryListWidget<ProxySelec
 
 			int textColor = owner.isActiveProxy(proxy) ? 0x00FF00 : 16777215;
 
-			Aoba.getInstance().renderer2D.drawStringWithScale(drawContext, "IP: " + proxy.getIp(), x + 32 + 3, textY,
-					textColor, 1.0f);
-			Aoba.getInstance().renderer2D.drawStringWithScale(drawContext, "Port: " + proxy.getPort(), x + 32 + 3,
+			RenderManager.getInstance().get2D().drawStringWithScale(drawContext, "IP: " + proxy.getIp(), x + 32 + 3,
+					textY, textColor, 1.0f);
+			RenderManager.getInstance().get2D().drawStringWithScale(drawContext, "Port: " + proxy.getPort(), x + 32 + 3,
 					textY + lineHeight, textColor, 1.0f);
-			Aoba.getInstance().renderer2D.drawStringWithScale(drawContext, "Username: " + proxy.getUsername(),
+			RenderManager.getInstance().get2D().drawStringWithScale(drawContext, "Username: " + proxy.getUsername(),
 					x + 32 + 3, textY + lineHeight * 2, textColor, 1.0f);
-			Aoba.getInstance().renderer2D.drawStringWithScale(drawContext, "*".repeat(proxy.getPassword().length()),
-					x + 32 + 3, textY + lineHeight * 3, textColor, 1.0f);
+			RenderManager.getInstance().get2D().drawStringWithScale(drawContext,
+					"*".repeat(proxy.getPassword().length()), x + 32 + 3, textY + lineHeight * 3, textColor, 1.0f);
 		}
 
 		@Override

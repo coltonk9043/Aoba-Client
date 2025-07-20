@@ -64,7 +64,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
 		float actualHeight = getActualSize().getHeight();
 
 		renderer.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
-		renderer.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f,
+		renderer.drawOutlinedBox(actualX + actualWidth - 100, actualY, 100, actualHeight,
 				GuiManager.borderColor.getValue(), new Color(115, 115, 115, 200));
 
 		String keyBindText = keyBind.getValue().getLocalizedText().getString();

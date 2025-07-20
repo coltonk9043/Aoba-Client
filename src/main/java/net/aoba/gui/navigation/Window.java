@@ -93,8 +93,7 @@ public class Window extends UIElement {
 		float actualHeight = getActualSize().getHeight();
 
 		// Draws background depending on components width and height
-		renderer.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight,
-				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
+		renderer.drawOutlinedBox(actualX, actualY, actualWidth, actualHeight, GuiManager.borderColor.getValue(),
 				GuiManager.backgroundColor.getValue());
 
 		List<UIElement> children = getChildren();

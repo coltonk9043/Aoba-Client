@@ -45,13 +45,13 @@ public class RadarHud extends HudWindow {
 				float height = pos.getHeight().floatValue();
 
 				// Draws background depending on components width and height
-				renderer.drawOutlinedRoundedBox(drawContext, x, y, width, height, GuiManager.roundingRadius.getValue(),
-						GuiManager.borderColor.getValue(), GuiManager.backgroundColor.getValue());
+				renderer.drawOutlinedBox(x, y, width, height, GuiManager.borderColor.getValue(),
+						GuiManager.backgroundColor.getValue());
 
 				// Draw the 'Radar'
-				renderer.drawBox(drawContext, x, y + (height / 2), width - 1, 1, new Color(128, 128, 128, 255));
-				renderer.drawBox(drawContext, x + (width / 2), y, 1, height, new Color(128, 128, 128, 255));
-				renderer.drawBox(drawContext, x + (width / 2) - 2, y + (height / 2) - 2, 5, 5,
+				renderer.drawBox(x, y + (height / 2), width - 1, 1, new Color(128, 128, 128, 255));
+				renderer.drawBox(x + (width / 2), y, 1, height, new Color(128, 128, 128, 255));
+				renderer.drawBox(x + (width / 2) - 2, y + (height / 2) - 2, 5, 5,
 						GuiManager.foregroundColor.getValue());
 
 				float sin_theta = (float) Math.sin(Math.toRadians(-MC.player.getRotationClient().y));
@@ -84,7 +84,7 @@ public class RadarHud extends HudWindow {
 					float radius_x = ((cos_theta * (fake_x - center_x)) - (sin_theta * (fake_y - center_y))) + center_x;
 					float radius_y = (sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y)) + center_y;
 
-					renderer.drawBox(drawContext, (int) (Math.min(x + width, Math.max(x, radius_x))),
+					renderer.drawBox((int) (Math.min(x + width, Math.max(x, radius_x))),
 							(int) (Math.min(y + height, Math.max(y, radius_y))), 3, 3, c);
 				}
 
@@ -102,7 +102,7 @@ public class RadarHud extends HudWindow {
 						float radius_y = (sin_theta * (fake_x - center_x)) + (cos_theta * (fake_y - center_y))
 								+ center_y;
 
-						renderer.drawBox(drawContext, (int) (Math.min(x + width, Math.max(x, radius_x))),
+						renderer.drawBox((int) (Math.min(x + width, Math.max(x, radius_x))),
 								(int) (Math.min(y + height, Math.max(y, radius_y))), 3, 3,
 								new Color(255, 255, 255, 255));
 						renderer.drawStringWithScale(drawContext, entity.getName().getString(),

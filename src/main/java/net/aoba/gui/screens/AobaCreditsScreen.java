@@ -11,7 +11,7 @@ package net.aoba.gui.screens;
 import java.util.Arrays;
 import java.util.List;
 
-import net.aoba.Aoba;
+import net.aoba.utils.render.RenderManager;
 import net.aoba.utils.render.TextureBank;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.CubeMapRenderer;
@@ -87,7 +87,7 @@ public class AobaCreditsScreen extends Screen {
 	}
 
 	private void drawContributorName(DrawContext context, String contributor, int x, int y, float alpha) {
-		Aoba.getInstance().renderer2D.drawString(context, contributor, (float) x, (float) y, Colors.WHITE);
+		RenderManager.getInstance().get2D().drawString(context, contributor, (float) x, (float) y, Colors.WHITE);
 	}
 
 	@Override

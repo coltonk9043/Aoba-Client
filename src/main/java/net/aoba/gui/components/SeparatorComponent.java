@@ -30,7 +30,7 @@ public class SeparatorComponent extends Component {
 		float actualWidth = getActualSize().getWidth();
 		float actualHeight = getActualSize().getHeight();
 
-		renderer.drawLine(drawContext, actualX, actualY, actualX + actualWidth, actualY + actualHeight,
+		renderer.drawLine(actualX, actualY, actualX + actualWidth, actualY + actualHeight,
 				GuiManager.borderColor.getValue());
 	}
 }

@@ -1,261 +1,284 @@
-/*
- * Aoba Hacked Client
- * Copyright (C) 2019-2024 coltonk9043
- *
- * Licensed under the GNU General Public License, Version 3 or later.
- * See <http://www.gnu.org/licenses/>.
- */
-
 package net.aoba.utils.render;
 
-import net.minecraft.client.gui.DrawContext;
-import org.joml.Matrix4f;
+import java.util.OptionalInt;
+
+import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.buffers.Std140SizeCalculator;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.systems.RenderPass;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 import net.aoba.gui.colors.Color;
-import net.aoba.utils.render.mesh.MeshRenderer;
-import net.aoba.utils.render.mesh.builders.LineMeshBuilder;
-import net.aoba.utils.render.mesh.builders.TriMeshBuilder;
+import net.aoba.utils.render.core.BufferManager;
+import net.aoba.utils.render.core.IRenderer;
+import net.aoba.utils.render.mesh.UboData;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.DynamicUniformStorage;
+import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
-public class Render3D {
-	private final NewRender3D newRenderer;
-	private final RenderManager renderManager;
+public class Render3D implements IRenderer {
+	private final DynamicUniformStorage<UboData> UNIFORM_STORAGE = new DynamicUniformStorage<>("Aoba 3D UBO",
+			new Std140SizeCalculator().putMat4f().putMat4f().get(), 16);
+	private final UboData UBO_DATA = new UboData();
+
+	private final BufferManager triangleBuffer;
+	private final BufferManager lineBuffer;
+	private boolean isBuilding = false;
+	private int currentVertexIndex = 0;
 
 	public Render3D() {
-		this.renderManager = RenderManager.getInstance();
-		this.newRenderer = renderManager.get3D();
+		this.triangleBuffer = new BufferManager(28);
+		this.lineBuffer = new BufferManager(28);
 	}
 
+	@Override
 	public void begin() {
-		renderManager.begin3D();
+		if (isBuilding) {
+			throw new IllegalStateException("Renderer is already building");
+		}
+		isBuilding = true;
+		triangleBuffer.clear();
+		lineBuffer.clear();
+		currentVertexIndex = 0;
 	}
 
+	@Override
 	public void end() {
-		renderManager.end3D();
+		if (!isBuilding) {
+			throw new IllegalStateException("Renderer is not building");
+		}
+		isBuilding = false;
 	}
 
-	public void render(DrawContext context) {
-		newRenderer.render(context);
-	}
-	
-	public void drawBoxOutline(Box box, Color color) {
-		newRenderer.drawBoxOutline(box, color);
-	}
-	
-	public void drawSphere(Vec3d center, float radius, Color color) {
-		newRenderer.drawSphere(center, radius, color);
-	}
-	
-	public void drawSphere(double x, double y, double z, float radius, Color color) {
-		newRenderer.drawSphere(x, y, z, radius, color);
+	@Override
+	public boolean isBuilding() {
+		return isBuilding;
 	}
 
-	public void draw3DBox(MatrixStack matrixStack, Camera camera, Box box, Color color, float lineThickness) {
-		newRenderer.drawBox(box, color);
-
-//
-//		MatrixStack.Entry entry = matrixStack.peek();
-//		Matrix4f matrix4f = entry.getPositionMatrix();
-//
-//		float r = color.getRed();
-//		float g = color.getGreen();
-//		float b = color.getBlue();
-//		float a = color.getAlpha();
-//
-//		// Drawing Logic
-//		VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
-//		//RenderLayer layer = RenderLayers.QUADS;
-//		VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
-//
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-//
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-//
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-//
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-//
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-//
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-//		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-//
-//		vertexConsumerProvider.draw(layer);
-//
-//		layer = RenderLayers.LINES;
-//		bufferBuilder = vertexConsumerProvider.getBuffer(layer);
-//
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.minZ, box.maxX, box.minY, box.minZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.minZ, box.maxX, box.minY, box.maxZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.maxZ, box.minX, box.minY, box.maxZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.maxZ, box.minX, box.minY, box.minZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.minZ, box.minX, box.maxY, box.minZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.minZ, box.maxX, box.maxY, box.minZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.minY, box.maxZ, box.maxX, box.maxY, box.maxZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.minY, box.maxZ, box.minX, box.maxY, box.maxZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.minZ, box.maxX, box.maxY, box.minZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.maxY, box.minZ, box.maxX, box.maxY, box.maxZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.maxX, box.maxY, box.maxZ, box.minX, box.maxY, box.maxZ,
-//				color);
-//		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.maxZ, box.minX, box.maxY, box.minZ,
-//				color);
-//
-//		vertexConsumerProvider.draw(layer);
-
-		// RenderSystem.enableCull();
-		// RenderSystem.lineWidth(1f);
-		// RenderSystem.enableDepthTest();
-		// RenderSystem.disableBlend();
+	@Override
+	public void reset() {
+		triangleBuffer.clear();
+		lineBuffer.clear();
+		currentVertexIndex = 0;
 	}
 
-	public void drawLine3D(MatrixStack matrixStack, Camera camera, Vec3d pos1, Vec3d pos2, Color color) {
-		newRenderer.drawLine(pos1, pos2, color);
+	@Override
+	public void render() {
+		try {
+			if (!triangleBuffer.isEmpty()) {
+				renderBuffer(triangleBuffer, AobaRenderPipelines.TRIS);
+			}
+			if (!lineBuffer.isEmpty()) {
+				renderBuffer(lineBuffer, AobaRenderPipelines.LINES);
+			}
+		} finally {
+			reset();
+		}
 	}
 
-	public void drawLine3D(MatrixStack matrixStack, Camera camera, double x1, double y1, double z1, double x2,
-			double y2, double z2, Color color) {
-		newRenderer.drawLine(x1, y1, z1, x2, y2, z2, color);
+	private void renderBuffer(BufferManager buffer, RenderPipeline pipeline) {
+		Framebuffer framebuffer = MinecraftClient.getInstance().getFramebuffer();
+
+		GpuTextureView colorAttachment = framebuffer.getColorAttachmentView();
+		GpuBuffer vertexBuffer = buffer.createVertexBuffer(VertexFormats.POSITION_COLOR);
+		GpuBuffer indexBuffer = buffer.createIndexBuffer(VertexFormats.POSITION_COLOR);
+
+		UBO_DATA.proj = RenderManager.projection;
+		UBO_DATA.modelView = RenderSystem.getModelViewMatrix();
+
+		GpuBufferSlice matrixData = UNIFORM_STORAGE.write(UBO_DATA);
+
+		RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(() -> "Aoba 3D Renderer",
+				colorAttachment, OptionalInt.empty());
+
+		pass.setPipeline(pipeline);
+		pass.setUniform("Matrices", matrixData);
+		pass.setVertexBuffer(0, vertexBuffer);
+		pass.setIndexBuffer(indexBuffer, VertexFormat.IndexType.INT);
+		pass.drawIndexed(0, 0, buffer.getIndexCount(), 1);
+		pass.close();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void drawEntityModel(MatrixStack matrixStack, Camera camera, float partialTicks, Entity entity,
-			Color color) {
-//		EntityRenderer<?, ?> renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
-//
-//		if (entity instanceof LivingEntity livingEntity) {
-//			matrixStack.push();
-//
-//			LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> leRenderer = (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) renderer;
-//			EntityModel<LivingEntityRenderState> model = leRenderer.getModel();
-//			LivingEntityRenderState renderState = leRenderer.getAndUpdateRenderState(livingEntity, partialTicks);
-//			renderState.baby = livingEntity.isBaby();
-//			model.setAngles(renderState);
-//			Direction sleepDirection = livingEntity.getSleepingDirection();
-//
-//			// Interpolate entity position and body rotations.
-//			Vec3d interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks)
-//					.add(camera.getPos().multiply(-1));
-//			float interpolatedBodyYaw = MathHelper.lerpAngleDegrees(partialTicks, livingEntity.lastBodyYaw,
-//					livingEntity.bodyYaw);
-//			// Translate by the entity's interpolated position.
-//			matrixStack.translate(interpolatedEntityPosition.getX(), interpolatedEntityPosition.getY(),
-//					interpolatedEntityPosition.getZ());
-//
-//			// If entity is sleeping, move their render position by their sleeping offset.
-//			if (livingEntity.isInPose(EntityPose.SLEEPING) && sleepDirection != null) {
-//				float sleepingEyeHeight = livingEntity.getEyeHeight(EntityPose.STANDING) - 0.1f;
-//				matrixStack.translate(-sleepDirection.getOffsetX() * sleepingEyeHeight, 0.0f,
-//						-sleepDirection.getOffsetZ() * sleepingEyeHeight);
-//			}
-//
-//			// Scale by the entity's scale.
-//			float entityScale = livingEntity.getScale();
-//			matrixStack.scale(entityScale, entityScale, entityScale);
-//
-//			// If Entity is frozen (similar to shaking from zombie conversion shakes.
-//			if (entity.isFrozen()) {
-//				interpolatedBodyYaw += (float) (Math.cos((livingEntity.age * 3.25) * Math.PI * 0.4f));
-//			}
-//
-//			// Rotate entity if they are sleeping.
-//			if (!livingEntity.isInPose(EntityPose.SLEEPING)) {
-//				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0f - interpolatedBodyYaw));
-//			}
-//
-//			// Check for rotations based off of the entity's state (dead, alive, sleeping,
-//			// using riptide?, etc...)
-//			if (livingEntity.deathTime > 0) {
-//				float dyingAngle = MathHelper.sqrt((livingEntity.deathTime + partialTicks - 1.0f) / 20.0f * 1.6f);
-//				if (dyingAngle > 1.0f) {
-//					dyingAngle = 1.0f;
-//				}
-//
-//				matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(dyingAngle * 90f));
-//			} else if (livingEntity.isUsingRiptide()) {
-//				matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90.0f - livingEntity.getPitch()));
-//				matrixStack
-//						.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((livingEntity.age + partialTicks) * -75.0f));
-//			} else if (livingEntity.isInPose(EntityPose.SLEEPING)) {
-//				float sleepAngle = sleepDirection != null ? getYaw(sleepDirection) : interpolatedBodyYaw;
-//				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(sleepAngle));
-//				matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(90.0f));
-//				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(270.0f));
-//			}
-//
-//			// Apply offset for correct rendering on screen. (Not sure why though!)
-//			matrixStack.scale(-1.0f, -1.0f, 1.0f);
-//			matrixStack.translate(0.0f, -1.501f, 0.0f);
-//			VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
-//			RenderLayer layer = RenderLayers.QUADS;
-//			VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
-//			model.render(matrixStack, bufferBuilder, 0, 0, color.getColorAsInt());
-//			vertexConsumerProvider.draw(layer);
-//			matrixStack.pop();
-//		}
-	}
+	public void drawBox(Box box, Color color) {
+		if (!isBuilding) {
+			throw new IllegalStateException("Must call begin() before drawing");
+		}
 
-	private static float getYaw(Direction direction) {
-		return switch (direction) {
-		case SOUTH -> 90.0f;
-		case WEST -> 0.0f;
-		case NORTH -> 270.0f;
-		case EAST -> 180.0f;
-		default -> 0.0f;
-		};
-	}
-
-	private static void buildLine3d(MatrixStack matrixStack, Camera camera, VertexConsumer bufferBuilder, double x1,
-			double y1, double z1, double x2, double y2, double z2, Color color) {
-		MatrixStack.Entry entry = matrixStack.peek();
-		Matrix4f matrix4f = entry.getPositionMatrix();
+		Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
 		Vec3d cameraPos = camera.getPos();
-		Vec3d normalized = new Vec3d(x2 - x1, y2 - y1, z2 - z1).normalize();
 
-		float r = color.getRed();
-		float g = color.getGreen();
-		float b = color.getBlue();
+		Box offsetBox = box.offset(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
-		bufferBuilder
-				.vertex(matrix4f, (float) (x1 - cameraPos.x), (float) (y1 - cameraPos.y), (float) (z1 - cameraPos.z))
-				.color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
-		bufferBuilder
-				.vertex(matrix4f, (float) (x2 - cameraPos.x), (float) (y2 - cameraPos.y), (float) (z2 - cameraPos.z))
-				.color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
+		int startVertex = currentVertexIndex;
+
+		triangleBuffer.addVertex((float) offsetBox.minX, (float) offsetBox.minY, (float) offsetBox.minZ);
+		triangleBuffer.addColor(color);
+		triangleBuffer.addVertex((float) offsetBox.maxX, (float) offsetBox.minY, (float) offsetBox.minZ);
+		triangleBuffer.addColor(color);
+		triangleBuffer.addVertex((float) offsetBox.maxX, (float) offsetBox.maxY, (float) offsetBox.minZ);
+		triangleBuffer.addColor(color);
+		triangleBuffer.addVertex((float) offsetBox.minX, (float) offsetBox.maxY, (float) offsetBox.minZ);
+		triangleBuffer.addColor(color);
+
+		triangleBuffer.addVertex((float) offsetBox.minX, (float) offsetBox.minY, (float) offsetBox.maxZ);
+		triangleBuffer.addColor(color);
+		triangleBuffer.addVertex((float) offsetBox.maxX, (float) offsetBox.minY, (float) offsetBox.maxZ);
+		triangleBuffer.addColor(color);
+		triangleBuffer.addVertex((float) offsetBox.maxX, (float) offsetBox.maxY, (float) offsetBox.maxZ);
+		triangleBuffer.addColor(color);
+		triangleBuffer.addVertex((float) offsetBox.minX, (float) offsetBox.maxY, (float) offsetBox.maxZ);
+		triangleBuffer.addColor(color);
+
+		triangleBuffer.addTriangle(startVertex, startVertex + 1, startVertex + 2);
+		triangleBuffer.addTriangle(startVertex, startVertex + 2, startVertex + 3);
+
+		triangleBuffer.addTriangle(startVertex + 4, startVertex + 6, startVertex + 5);
+		triangleBuffer.addTriangle(startVertex + 4, startVertex + 7, startVertex + 6);
+
+		triangleBuffer.addTriangle(startVertex, startVertex + 4, startVertex + 5);
+		triangleBuffer.addTriangle(startVertex, startVertex + 5, startVertex + 1);
+
+		triangleBuffer.addTriangle(startVertex + 2, startVertex + 6, startVertex + 7);
+		triangleBuffer.addTriangle(startVertex + 2, startVertex + 7, startVertex + 3);
+
+		triangleBuffer.addTriangle(startVertex, startVertex + 3, startVertex + 7);
+		triangleBuffer.addTriangle(startVertex, startVertex + 7, startVertex + 4);
+
+		triangleBuffer.addTriangle(startVertex + 1, startVertex + 5, startVertex + 6);
+		triangleBuffer.addTriangle(startVertex + 1, startVertex + 6, startVertex + 2);
+
+		currentVertexIndex += 8;
+	}
+
+	public void drawBoxOutline(Box box, Color color) {
+		if (!isBuilding) {
+			throw new IllegalStateException("Must call begin() before drawing");
+		}
+
+		Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
+		Vec3d cameraPos = camera.getPos();
+
+		Box offsetBox = box.offset(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+
+		int startVertex = currentVertexIndex;
+
+		lineBuffer.addVertex((float) offsetBox.minX, (float) offsetBox.minY, (float) offsetBox.minZ);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex((float) offsetBox.maxX, (float) offsetBox.minY, (float) offsetBox.minZ);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex((float) offsetBox.maxX, (float) offsetBox.maxY, (float) offsetBox.minZ);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex((float) offsetBox.minX, (float) offsetBox.maxY, (float) offsetBox.minZ);
+		lineBuffer.addColor(color);
+
+		lineBuffer.addVertex((float) offsetBox.minX, (float) offsetBox.minY, (float) offsetBox.maxZ);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex((float) offsetBox.maxX, (float) offsetBox.minY, (float) offsetBox.maxZ);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex((float) offsetBox.maxX, (float) offsetBox.maxY, (float) offsetBox.maxZ);
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex((float) offsetBox.minX, (float) offsetBox.maxY, (float) offsetBox.maxZ);
+		lineBuffer.addColor(color);
+
+		lineBuffer.addLine(startVertex, startVertex + 1);
+		lineBuffer.addLine(startVertex + 1, startVertex + 2);
+		lineBuffer.addLine(startVertex + 2, startVertex + 3);
+		lineBuffer.addLine(startVertex + 3, startVertex);
+
+		lineBuffer.addLine(startVertex + 4, startVertex + 5);
+		lineBuffer.addLine(startVertex + 5, startVertex + 6);
+		lineBuffer.addLine(startVertex + 6, startVertex + 7);
+		lineBuffer.addLine(startVertex + 7, startVertex + 4);
+
+		lineBuffer.addLine(startVertex, startVertex + 4);
+		lineBuffer.addLine(startVertex + 1, startVertex + 5);
+		lineBuffer.addLine(startVertex + 2, startVertex + 6);
+		lineBuffer.addLine(startVertex + 3, startVertex + 7);
+
+		currentVertexIndex += 8;
+	}
+
+	public void drawLine(Vec3d start, Vec3d end, Color color) {
+		drawLine(start.x, start.y, start.z, end.x, end.y, end.z, color);
+	}
+
+	public void drawLine(double x1, double y1, double z1, double x2, double y2, double z2, Color color) {
+		if (!isBuilding) {
+			throw new IllegalStateException("Must call begin() before drawing");
+		}
+
+		Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
+		Vec3d cameraPos = camera.getPos();
+
+		int startVertex = currentVertexIndex;
+
+		lineBuffer.addVertex((float) (x1 - cameraPos.x), (float) (y1 - cameraPos.y), (float) (z1 - cameraPos.z));
+		lineBuffer.addColor(color);
+		lineBuffer.addVertex((float) (x2 - cameraPos.x), (float) (y2 - cameraPos.y), (float) (z2 - cameraPos.z));
+		lineBuffer.addColor(color);
+
+		lineBuffer.addLine(startVertex, startVertex + 1);
+
+		currentVertexIndex += 2;
+	}
+
+	public void drawSphere(Vec3d center, float radius, Color color) {
+		drawSphere(center.x, center.y, center.z, radius, color);
+	}
+
+	public void drawSphere(double x, double y, double z, float radius, Color color) {
+		if (!isBuilding) {
+			throw new IllegalStateException("Must call begin() before drawing");
+		}
+
+		Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
+		Vec3d cameraPos = camera.getPos();
+
+		int rings = 16;
+		int sectors = 16;
+
+		float centerX = (float) (x - cameraPos.x);
+		float centerY = (float) (y - cameraPos.y);
+		float centerZ = (float) (z - cameraPos.z);
+
+		int startVertex = currentVertexIndex;
+
+		for (int r = 0; r <= rings; r++) {
+			float lat = (float) (Math.PI * r / rings - Math.PI / 2);
+			float y1 = (float) Math.sin(lat) * radius;
+			float ringRadius = (float) Math.cos(lat) * radius;
+
+			for (int s = 0; s <= sectors; s++) {
+				float lng = (float) (2 * Math.PI * s / sectors);
+				float x1 = (float) Math.cos(lng) * ringRadius;
+				float z1 = (float) Math.sin(lng) * ringRadius;
+
+				triangleBuffer.addVertex(centerX + x1, centerY + y1, centerZ + z1);
+				triangleBuffer.addColor(color);
+				currentVertexIndex++;
+
+				if (r < rings && s < sectors) {
+					int current = startVertex + r * (sectors + 1) + s;
+					int next = current + sectors + 1;
+
+					triangleBuffer.addTriangle(current, next, current + 1);
+					triangleBuffer.addTriangle(current + 1, next, next + 1);
+				}
+			}
+		}
+	}
+
+	public void clearStorageFrame() {
+		UNIFORM_STORAGE.clear();
 	}
 
 	/**

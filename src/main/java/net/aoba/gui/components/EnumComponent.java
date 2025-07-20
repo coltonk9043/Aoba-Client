@@ -64,7 +64,7 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 
 		// Text
 		String enumValue = enumSetting.getValue().toString();
-		float stringWidth = Render2D.getStringWidth(enumValue);
+		float stringWidth = renderer.getStringWidth(enumValue);
 		renderer.drawString(drawContext, enumValue, actualX + (actualWidth / 2.0f) - stringWidth, actualY + 34,
 				0xFFFFFF);
 	}

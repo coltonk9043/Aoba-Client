@@ -119,10 +119,8 @@ public class ModuleSelectorHud extends HudWindow {
 			float height = pos.getHeight().floatValue();
 
 			// Draws background depending on components width and height
-			renderer.drawRoundedBox(drawContext, x, y, width, height, GuiManager.roundingRadius.getValue(),
-					GuiManager.backgroundColor.getValue());
-			renderer.drawRoundedBoxOutline(drawContext, x, y, width, height, GuiManager.roundingRadius.getValue(),
-					GuiManager.borderColor.getValue());
+			renderer.drawBox(x, y, width, height, GuiManager.backgroundColor.getValue());
+			renderer.drawBoxOutline(x, y, width, height, GuiManager.borderColor.getValue());
 
 			// For every category, draw a cell for it.
 			for (int i = 0; i < categories.size(); i++) {
@@ -141,11 +139,9 @@ public class ModuleSelectorHud extends HudWindow {
 			// If any particular category menu is open.
 			if (isCategoryMenuOpen) {
 				// Draw the table underneath
-				renderer.drawRoundedBox(drawContext, x + width, y + (ROW_HEIGHT * index), 165,
-						ROW_HEIGHT * modules.size(), GuiManager.roundingRadius.getValue(),
+				renderer.drawBox(x + width, y + (ROW_HEIGHT * index), 165, ROW_HEIGHT * modules.size(),
 						GuiManager.backgroundColor.getValue());
-				renderer.drawRoundedBoxOutline(drawContext, x + width, y + (ROW_HEIGHT * index), 165,
-						ROW_HEIGHT * modules.size(), GuiManager.roundingRadius.getValue(),
+				renderer.drawBoxOutline(x + width, y + (ROW_HEIGHT * index), 165, ROW_HEIGHT * modules.size(),
 						GuiManager.borderColor.getValue());
 
 				// For every mod, draw a cell for it.

@@ -12,9 +12,9 @@ import static net.aoba.AobaClient.MC;
 
 import java.util.function.Consumer;
 
-import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
+import net.aoba.utils.render.RenderManager;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
@@ -63,8 +63,7 @@ public class AobaButtonWidget extends PressableWidget {
 
 		// RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		Aoba.getInstance().renderer2D.drawOutlinedRoundedBox(context, getX(), getY(), width, height,
-				GuiManager.roundingRadius.getValue(), outlineColor, boxColor);
+		RenderManager.getInstance().get2D().drawOutlinedBox(getX(), getY(), width, height, outlineColor, boxColor);
 		// RenderSystem.enableCull();
 
 		int textWidth = MC.textRenderer.getWidth(getMessage().getString());
@@ -72,7 +71,7 @@ public class AobaButtonWidget extends PressableWidget {
 		int textX = getX() + (width - textWidth) / 2;
 		int textY = getY() + (height - textHeight) / 2 - (int) (2 * hoverProgress) + 2;
 
-		Aoba.getInstance().renderer2D.drawStringWithScale(context, getMessage().getString(), textX, textY,
+		RenderManager.getInstance().get2D().drawStringWithScale(context, getMessage().getString(), textX, textY,
 				GuiManager.foregroundColor.getValue(), 1f);
 	}
 

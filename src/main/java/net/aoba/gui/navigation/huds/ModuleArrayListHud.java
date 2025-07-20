@@ -22,6 +22,7 @@ import net.aoba.managers.SettingManager;
 import net.aoba.module.Module;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.render.Render2D;
+import net.aoba.utils.render.RenderManager;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.DrawContext;
@@ -40,7 +41,7 @@ public class ModuleArrayListHud extends HudWindow {
 		// Calculate max possible width.
 		float newWidth = 0;
 		for (Module mod : AOBA.moduleManager.modules) {
-			float nameWidth = Render2D.getStringWidth(mod.getName());
+			float nameWidth = RenderManager.getInstance().get2D().getStringWidth(mod.getName());
 			if (nameWidth > newWidth)
 				newWidth = nameWidth;
 		}
@@ -97,7 +98,7 @@ public class ModuleArrayListHud extends HudWindow {
 				case Center:
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
-						float centerTextWidth = Render2D.getStringWidth(mod.getName()) / 2.0f;
+						float centerTextWidth = renderer.getStringWidth(mod.getName()) / 2.0f;
 						renderer.drawString(drawContext, mod.getName(),
 								pos.getX() + (pos.getWidth() / 2.0f) - centerTextWidth, yPosition,
 								GuiManager.foregroundColor.getValue().getColorAsInt());
@@ -107,7 +108,7 @@ public class ModuleArrayListHud extends HudWindow {
 				case Right:
 					moduleStream.forEachOrdered(mod -> {
 						float yPosition = pos.getY().floatValue() + 10 + (iteration.get() * 20);
-						float rightTextWidth = Render2D.getStringWidth(mod.getName());
+						float rightTextWidth = renderer.getStringWidth(mod.getName());
 						renderer.drawString(drawContext, mod.getName(), pos.getX() + pos.getWidth() - rightTextWidth,
 								yPosition, GuiManager.foregroundColor.getValue().getColorAsInt());
 						iteration.incrementAndGet();
