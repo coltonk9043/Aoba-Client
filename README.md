@@ -42,7 +42,7 @@ We want to stress that we have **NEVER** used, and will **NEVER** use, platforms
 
 ### 🖥 Default Keybinds  
 
-- `RSHIFT` – Open/close the **ClickGUI**.  
+- `RSHIFT (1.21.5+)` / `TILDE (~) (1.21.4)` – Open/close the **ClickGUI**.
 - `↑` – Move the menu 'cursor' **up**.  
 - `↓` – Move the menu 'cursor' **down**.  
 - `←` – Exit the current 'mod' menu.  
@@ -54,7 +54,6 @@ We want to stress that we have **NEVER** used, and will **NEVER** use, platforms
 
 Check out how Aoba Client looks in action:  
 ![image](https://github.com/coltonk9043/Aoba-MC-Hacked-Client/assets/56643581/546d79e0-01eb-4c63-a1f8-49d40bb48a45)
-
 
 ---
 
