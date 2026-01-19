@@ -10,6 +10,7 @@ package net.aoba.gui.components;
 
 import static net.aoba.utils.render.TextureBank.gear;
 
+import net.aoba.settings.types.*;
 import org.joml.Quaternionf;
 
 import net.aoba.Aoba;
@@ -21,11 +22,6 @@ import net.aoba.gui.colors.Color;
 import net.aoba.gui.navigation.CloseableWindow;
 import net.aoba.module.Module;
 import net.aoba.settings.Setting;
-import net.aoba.settings.types.BlocksSetting;
-import net.aoba.settings.types.BooleanSetting;
-import net.aoba.settings.types.ColorSetting;
-import net.aoba.settings.types.EnumSetting;
-import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -143,6 +139,8 @@ public class ModuleComponent extends Component {
 								c = new BlocksComponent((BlocksSetting) setting);
 							} else if (setting instanceof EnumSetting) {
 								c = new EnumComponent<>((EnumSetting) setting);
+							} else if (setting instanceof HotbarSetting) {
+								c = new HotbarComponent((HotbarSetting) setting);
 							} else {
 								c = null;
 							}
