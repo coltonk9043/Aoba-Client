@@ -2,6 +2,7 @@ package net.aoba.module.modules.misc;
 
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.HotbarSetting;
 
 import java.util.ArrayList;
@@ -15,6 +16,13 @@ public class RandomPlace extends Module {
             .defaultValue(new ArrayList<>(Collections.nCopies(9, false)))
             .build();
 
+    public final BooleanSetting must_hold_block = BooleanSetting.builder()
+            .id("randomplace_must_hold_block")
+            .displayName("Must Hold Block")
+            .description("Activate only when holding a block.")
+            .defaultValue(true)
+            .build();
+
     public RandomPlace() {
         super("RandomPlace");
 
@@ -22,6 +30,7 @@ public class RandomPlace extends Module {
         setDescription("Place a random block from the hotbar.");
 
         addSetting(allowed_slots);
+        addSetting(must_hold_block);
     }
 
     @Override
@@ -37,9 +46,5 @@ public class RandomPlace extends Module {
     @Override
     public void onToggle() {
 
-    }
-
-    public HotbarSetting getAllowedSlots() {
-        return allowed_slots;
     }
 }

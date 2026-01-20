@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.mojang.logging.LogUtils;
 
@@ -348,7 +349,7 @@ public class SettingManager {
 						List<Boolean> result = Arrays.stream(value.split(","))
 								.map(String::trim)
 								.map(Boolean::parseBoolean)
-								.toList();
+								.collect(Collectors.toList());
 						setting.setValue(result);
 					}
 					default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);

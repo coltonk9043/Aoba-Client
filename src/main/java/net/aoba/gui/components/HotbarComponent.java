@@ -49,7 +49,7 @@ public class HotbarComponent extends Component {
 
         float boxSize = 20;
         float spacing = 4;
-        float startY = actualY + 8 + 18 + 4;
+        float startY = actualY + 8 + 18 + 8;
 
         // Determine fill color based on hotbar state
         List<Color> fillColors = hotbar.getValue().stream()
@@ -91,7 +91,7 @@ public class HotbarComponent extends Component {
 
                 float boxSize = 20;
                 float spacing = 4;
-                float boxesStartY = actualY + 8 + 18 + 4;
+                float boxesStartY = actualY + 8 + 18 + 8;
 
                 if (event.mouseY >= boxesStartY && event.mouseY <= boxesStartY + boxSize) {
                     for (int i = 0; i < hotbar.getValue().size(); i++) {
