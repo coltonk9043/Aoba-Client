@@ -39,7 +39,7 @@ public class RandomPlace extends Module {
 
     }
 
-    public HotbarSetting getAllowdSlots() {
+    public HotbarSetting getAllowedSlots() {
         return allowed_slots;
     }
 }

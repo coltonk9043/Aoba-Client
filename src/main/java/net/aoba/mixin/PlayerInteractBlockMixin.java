@@ -26,14 +26,14 @@ public class PlayerInteractBlockMixin {
             RandomPlace module = Aoba.getInstance().moduleManager.randomplace;
             if (module.state.getValue()) {
                 int currentSlot = player.getInventory().getSelectedSlot();
-                long nr_of_as = module.getAllowdSlots().getValue().stream()
+                long nr_of_as = module.getAllowedSlots().getValue().stream()
                         .filter(b -> b)
                         .count();
-                if (module.getAllowdSlots().getValueAt(currentSlot) && player.getMainHandStack().getItem() instanceof BlockItem && nr_of_as > 0) {
+                if (module.getAllowedSlots().getValueAt(currentSlot) && player.getMainHandStack().getItem() instanceof BlockItem && nr_of_as > 0) {
                     int newSlot;
                     do {
                         newSlot = random.nextInt(9);
-                    } while (!module.getAllowdSlots().getValueAt(newSlot) || !(player.getInventory().getStack(newSlot).getItem() instanceof BlockItem));
+                    } while (!module.getAllowedSlots().getValueAt(newSlot) || !(player.getInventory().getStack(newSlot).getItem() instanceof BlockItem));
                     player.getInventory().setSelectedSlot(newSlot);
                 }
             }
