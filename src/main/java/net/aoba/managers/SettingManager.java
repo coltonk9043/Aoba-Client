@@ -13,22 +13,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.InvalidPropertiesFormatException;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import com.mojang.logging.LogUtils;
 
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.Setting;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.*;
 import net.aoba.settings.types.ColorSetting.ColorMode;
-import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.IntegerSetting;
-import net.aoba.settings.types.StringSetting;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
@@ -196,6 +189,22 @@ public class SettingManager {
 				case VEC3D -> {
 					Vec3d vec = (Vec3d) setting.getValue();
 					properties.setProperty(setting.ID, vec.x + "," + vec.y + "," + vec.z);
+				}
+				case HOTBAR -> {
+					@SuppressWarnings("unchecked")
+					List<Boolean> s = (List<Boolean>) setting.getValue();
+					StringBuilder result = new StringBuilder();
+
+					int iteration = 0;
+					for (Boolean value : s) {
+						result.append(value.toString());
+						if (iteration != s.size() - 1) {
+							result.append(",");
+						}
+						iteration++;
+					}
+
+					properties.setProperty(setting.ID, result.toString());
 				}
 				default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
 				}
@@ -416,6 +425,13 @@ public class SettingManager {
 							float z = Float.parseFloat(components[2]);
 							setting.setValue(new Vec3d(x, y, z));
 						}
+					}
+					case HOTBAR -> {
+						List<Boolean> result = Arrays.stream(value.split(","))
+								.map(String::trim)
+								.map(Boolean::parseBoolean)
+								.toList();
+						setting.setValue(result);
 					}
 					default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
 					}
