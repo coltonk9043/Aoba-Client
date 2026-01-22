@@ -13,22 +13,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.InvalidPropertiesFormatException;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.mojang.logging.LogUtils;
 
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.Setting;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.*;
 import net.aoba.settings.types.ColorSetting.ColorMode;
-import net.aoba.settings.types.FloatSetting;
-import net.aoba.settings.types.IntegerSetting;
-import net.aoba.settings.types.StringSetting;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
@@ -197,6 +191,22 @@ public class SettingManager {
 					Vec3d vec = (Vec3d) setting.getValue();
 					properties.setProperty(setting.ID, vec.x + "," + vec.y + "," + vec.z);
 				}
+				case HOTBAR -> {
+					@SuppressWarnings("unchecked")
+					List<Boolean> s = (List<Boolean>) setting.getValue();
+					StringBuilder result = new StringBuilder();
+
+					int iteration = 0;
+					for (Boolean value : s) {
+						result.append(value.toString());
+						if (iteration != s.size() - 1) {
+							result.append(",");
+						}
+						iteration++;
+					}
+
+					properties.setProperty(setting.ID, result.toString());
+				}
 				default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
 				}
 			} catch (Exception e) {
@@ -222,95 +232,7 @@ public class SettingManager {
 			} catch (IOException e) {
 				LogUtils.getLogger().error("IOException while loading properties file: " + e.getMessage());
 			}
-
-			for (Setting setting : globalSettings) {
-				try {
-					String value = config.getProperty(setting.ID, null);
-					if (value == null)
-						break;
-
-					switch (setting.type) {
-					case FLOAT -> {
-						FloatSetting floatSetting = (FloatSetting) setting;
-						floatSetting.setValue(Float.parseFloat(value));
-					}
-					case INTEGER -> {
-						IntegerSetting intSetting = (IntegerSetting) setting;
-						intSetting.setValue(Integer.parseInt(value));
-					}
-					case BOOLEAN -> {
-						setting.setValue(Boolean.parseBoolean(value));
-					}
-					case STRING -> {
-						setting.setValue(value);
-					}
-					case KEYBIND -> {
-						int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
-						setting.setValue(InputUtil.fromKeyCode(keyCode, 0));
-					}
-					case RECTANGLE -> {
-						String[] dimensions = value.split(",");
-						if (dimensions.length == 4) {
-							Float x = dimensions[0].equals("null") ? null : Float.parseFloat(dimensions[0]);
-							Float y = dimensions[1].equals("null") ? null : Float.parseFloat(dimensions[1]);
-							Float width = dimensions[2].equals("null") ? null : Float.parseFloat(dimensions[2]);
-							Float height = dimensions[3].equals("null") ? null : Float.parseFloat(dimensions[3]);
-
-							setting.setValue(new Rectangle(x, y, width, height));
-						}
-					}
-					case COLOR -> {
-						String[] splits = value.split(",");
-						ColorSetting cSetting = (ColorSetting) setting;
-						if (splits.length == 2) {
-							ColorMode enumValue = Enum.valueOf(((ColorSetting) setting).getMode().getDeclaringClass(),
-									splits[0]);
-							long hexValue = Long.parseLong(splits[1].replace("#", ""), 16);
-							int Alpha = (int) ((hexValue) >> 24) & 0xFF;
-							int R = (int) ((hexValue) >> 16) & 0xFF;
-							int G = (int) ((hexValue) >> 8) & 0xFF;
-							int B = (int) (hexValue) & 0xFF;
-
-							cSetting.setMode(enumValue);
-							if (enumValue == ColorMode.Solid) {
-								setting.setValue(new Color(R, G, B, Alpha));
-							}
-						}
-					}
-					case BLOCKS -> {
-						String[] ids = value.split(",");
-						HashSet<Block> result = new HashSet<Block>();
-						for (String str : ids) {
-							Identifier i = Identifier.of(str);
-							result.add(Registries.BLOCK.get(i));
-						}
-						setting.setValue(result);
-					}
-					case INDEXEDSTRINGLIST, STRINGLIST ->
-						throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
-					case ENUM -> {
-						String enumName = config.getProperty(setting.ID, null);
-						if (enumName != null) {
-							Enum<?> enumValue = Enum.valueOf((((Enum<?>) setting.getValue()).getDeclaringClass()),
-									enumName);
-							setting.setValue(enumValue);
-						}
-					}
-					case VEC3D -> {
-						String[] components = value.split(",");
-						if (components.length == 3) {
-							float x = Float.parseFloat(components[0]);
-							float y = Float.parseFloat(components[1]);
-							float z = Float.parseFloat(components[2]);
-							setting.setValue(new Vec3d(x, y, z));
-						}
-					}
-					default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
-					}
-				} catch (Exception e) {
-					LogUtils.getLogger().error(e.getMessage());
-				}
-			}
+			deserializeSettings(config, globalSettings);
 		} catch (Exception e) {
 			LogUtils.getLogger().error(e.getMessage());
 		}
@@ -334,14 +256,20 @@ public class SettingManager {
 			} catch (IOException e) {
 				LogUtils.getLogger().error("IOException while loading properties file: " + e.getMessage());
 			}
+			deserializeSettings(config, settings);
+		} catch (Exception e) {
+			LogUtils.getLogger().error(e.getMessage());
+		}
+	}
 
-			for (Setting setting : settings) {
-				try {
-					String value = config.getProperty(setting.ID, null);
-					if (value == null)
-						break;
+	private	static void deserializeSettings(Properties config, HashSet<Setting<?>> settings) {
+		for (Setting setting : settings) {
+			try {
+				String value = config.getProperty(setting.ID, null);
+				if (value == null)
+					break;
 
-					switch (setting.type) {
+				switch (setting.type) {
 					case FLOAT -> {
 						FloatSetting floatSetting = (FloatSetting) setting;
 						floatSetting.setValue(Float.parseFloat(value));
@@ -399,7 +327,7 @@ public class SettingManager {
 						setting.setValue(result);
 					}
 					case INDEXEDSTRINGLIST, STRINGLIST ->
-						throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
+							throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
 					case ENUM -> {
 						String enumName = config.getProperty(setting.ID, null);
 						if (enumName != null) {
@@ -417,14 +345,18 @@ public class SettingManager {
 							setting.setValue(new Vec3d(x, y, z));
 						}
 					}
-					default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
+					case HOTBAR -> {
+						List<Boolean> result = Arrays.stream(value.split(","))
+								.map(String::trim)
+								.map(Boolean::parseBoolean)
+								.collect(Collectors.toList());
+						setting.setValue(result);
 					}
-				} catch (Exception e) {
-					LogUtils.getLogger().error(e.getMessage());
+					default -> throw new IllegalArgumentException("Unexpected value: " + setting.type);
 				}
+			} catch (Exception e) {
+				LogUtils.getLogger().error(e.getMessage());
 			}
-		} catch (Exception e) {
-			LogUtils.getLogger().error(e.getMessage());
 		}
 	}
 }
