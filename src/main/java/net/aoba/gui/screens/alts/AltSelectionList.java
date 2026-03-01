@@ -13,29 +13,27 @@ import java.util.List;
 import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
-
 import com.mojang.authlib.GameProfile;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.aoba.managers.altmanager.Alt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.Text;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
-import net.minecraft.util.Uuids;
 
-public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelectionList.Entry> {
+public class AltSelectionList extends ObjectSelectionList<AltSelectionList.Entry> {
 	private final AltScreen owner;
 	private final List<NormalEntry> altList = new ArrayList<AltSelectionList.NormalEntry>();
 
-	public AltSelectionList(AltScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l) {
+	public AltSelectionList(AltScreen ownerIn, Minecraft minecraftClient, int i, int j, int k, int l) {
 		super(minecraftClient, i, j, k, l);
 		owner = ownerIn;
 	}
@@ -53,35 +51,37 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 		altList.forEach(this::addEntry);
 	}
 
-	public void setSelected(@Nullable Entry entry) {
+	public void setSelected(@Nullable net.aoba.gui.screens.alts.AltSelectionList.Entry entry) {
 		super.setSelected(entry);
+		if (entry != null) {
+			owner.setEdittable();
+		}
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		Entry AltSelectionList$entry = getSelectedOrNull();
-		return AltSelectionList$entry != null && AltSelectionList$entry.keyPressed(keyCode, scanCode, modifiers)
-				|| super.keyPressed(keyCode, scanCode, modifiers);
+	public boolean keyPressed(net.minecraft.client.input.KeyEvent keyEvent) {
+		Entry entry = getSelected();
+		return entry != null && entry.keyPressed(keyEvent) || super.keyPressed(keyEvent);
 	}
 
 	@Environment(value = EnvType.CLIENT)
-	public static abstract class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> implements AutoCloseable {
+	public static abstract class Entry extends ObjectSelectionList.Entry<net.aoba.gui.screens.alts.AltSelectionList.Entry> implements AutoCloseable {
 		@Override
 		public void close() {
 		}
 	}
 
-	public class NormalEntry extends Entry {
+	public class NormalEntry extends net.aoba.gui.screens.alts.AltSelectionList.Entry {
 		private final AltScreen owner;
-		private final MinecraftClient mc;
+		private final Minecraft mc;
 		private final Alt alt;
 		private long lastClickTime;
-		private PlayerListEntry entry;
+		private PlayerInfo entry;
 
 		protected NormalEntry(AltScreen ownerIn, Alt alt) {
 			owner = ownerIn;
 			this.alt = alt;
-			mc = MinecraftClient.getInstance();
+			mc = Minecraft.getInstance();
 
 			try {
 				String name = alt.getUsername();
@@ -89,8 +89,8 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 					name = "Steve";
 				}
 
-				UUID uuid = Uuids.getOfflinePlayerUuid(name);
-                entry = new PlayerListEntry(new GameProfile(uuid, name), false);
+				UUID uuid = UUIDUtil.createOfflinePlayerUUID(name);
+                entry = new PlayerInfo(new GameProfile(uuid, name), false);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -106,8 +106,9 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 		}
 
 		@Override
-		public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight,
-				int mouseX, int mouseY, boolean hovered, float tickDelta) {
+		public void renderContent(GuiGraphics drawContext, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+			int x = getX();
+			int y = getY();
 
 			String description;
 
@@ -119,65 +120,33 @@ public class AltSelectionList extends AlwaysSelectedEntryListWidget<AltSelection
 			}
 
 			// Draws the strings onto the screen.
-			TextRenderer textRenderer = mc.textRenderer;
-			drawContext.drawTextWithShadow(textRenderer, "Username: " + alt.getEmail(), (x + 32 + 3), (y + 2),
-					16777215);
-			drawContext.drawTextWithShadow(textRenderer, "Username: " + alt.getEmail(), (x + 32 + 3), (y + 2),
-					16777215);
-			drawContext.drawText(textRenderer, description, (x + 32 + 3), (y + 12),
-					alt.isCracked() ? 0xFF0000 : 0x00FF00, true);
+			Font textRenderer = mc.font;
+			drawContext.drawString(textRenderer, "Username: " + alt.getEmail(), (x + 32 + 3), (y + 2),
+					0xFFFFFFFF);
+			drawContext.drawString(textRenderer, description, (x + 32 + 3), (y + 12),
+					alt.isCracked() ? 0xFFFF0000 : 0xFF00FF00, true);
 
 			// Draws the respective player head.
 			drawHead(drawContext, x + 4, y + 4);
 		}
 
-		private void drawHead(DrawContext drawContext, int x, int y) {
-			GL11.glEnable(GL11.GL_BLEND);
-			RenderSystem.setShaderColor(1, 1, 1, 1);
-
-			// Face
-			int fw = 192;
-			int fh = 192;
-			float u = 24;
-			float v = 24;
-
-			drawContext.drawTexture(RenderLayer::getGuiTextured, entry.getSkinTextures().texture(), x, y, u, v, 24, 24,
-					fw, fh);
-
-			// Hat
-			fw = 192;
-			fh = 192;
-			u = 120;
-			v = 24;
-
-			drawContext.drawTexture(RenderLayer::getGuiTextured, entry.getSkinTextures().texture(), x, y, u, v, 24, 24,
-					fw, fh);
-
-			GL11.glDisable(GL11.GL_BLEND);
+		private void drawHead(GuiGraphics drawContext, int x, int y) {
+			PlayerFaceRenderer.draw(drawContext, entry.getSkin(), x, y, 24);
 		}
 
 		@Override
-		public boolean mouseClicked(double mouseX, double mouseY, int button) {
-			double d0 = mouseX - (double) getRowLeft();
-
-			if (d0 <= 32.0D) {
-				if (d0 < 32.0D && d0 > 16.0D) {
-					owner.setSelected(this);
-					owner.loginToSelected();
-					return true;
-				}
-			}
+		public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
 			owner.setSelected(this);
-			if (Util.getMeasuringTimeMs() - lastClickTime < 250L) {
+			if (Util.getMillis() - lastClickTime < 250L) {
 				owner.loginToSelected();
 			}
-			lastClickTime = Util.getMeasuringTimeMs();
-			return false;
+			lastClickTime = Util.getMillis();
+			return true;
 		}
 
 		@Override
-		public Text getNarration() {
-			return Text.of(alt.getUsername());
+		public Component getNarration() {
+			return Component.nullToEmpty(alt.getUsername());
 		}
 	}
 }

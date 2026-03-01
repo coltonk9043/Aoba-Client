@@ -15,11 +15,11 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.utils.FindItemResult;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Hand;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
 
 public class AutoFish extends Module implements ReceivePacketListener {
 	private final BooleanSetting autoSwitch = BooleanSetting.builder().id("autofish_autoswitch").displayName("Auto Switch")
@@ -82,7 +82,7 @@ public class AutoFish extends Module implements ReceivePacketListener {
 		}
 
 		for (int i = 0; i < count; i++) {
-			MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+			MC.gameMode.useItem(MC.player, InteractionHand.MAIN_HAND);
 		}
 	}
 
@@ -90,8 +90,8 @@ public class AutoFish extends Module implements ReceivePacketListener {
 	public void onReceivePacket(ReceivePacketEvent readPacketEvent) {
 		Packet<?> packet = readPacketEvent.GetPacket();
 
-		if (packet instanceof PlaySoundS2CPacket soundPacket) {
-            if (soundPacket.getSound().value().equals(SoundEvents.ENTITY_FISHING_BOBBER_SPLASH)) {
+		if (packet instanceof ClientboundSoundPacket soundPacket) {
+            if (soundPacket.getSound().value().equals(SoundEvents.FISHING_BOBBER_SPLASH)) {
 				castRod(2);
 			}
 		}

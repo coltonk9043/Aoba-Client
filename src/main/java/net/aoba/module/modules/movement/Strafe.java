@@ -15,7 +15,7 @@ import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.world.phys.Vec2;
 
 public class Strafe extends Module implements TickListener {
 
@@ -50,39 +50,39 @@ public class Strafe extends Module implements TickListener {
 
 	@Override
 	public void onTick(TickEvent.Pre event) {
-		Vec2f playerInput = MC.player.input.getMovementInput();
+		Vec2 playerInput = MC.player.input.getMoveVector();
 		if (playerInput.x != 0 || playerInput.y != 0) {
 
-			if (MC.player.isOnGround() && MC.options.jumpKey.isPressed())
-				MC.player.addVelocity(0, MC.player.getVelocity().y, 0);
+			if (MC.player.onGround() && MC.options.keyJump.isDown())
+				MC.player.push(0, MC.player.getDeltaMovement().y, 0);
 
-			if (MC.player.isOnGround())
+			if (MC.player.onGround())
 				return;
 
 			float speed;
-			if (!MC.player.isOnGround())
-				speed = (float) Math.sqrt(MC.player.getVelocity().x * MC.player.getVelocity().x
-						+ MC.player.getVelocity().z * MC.player.getVelocity().z + intensity.getValue());
+			if (!MC.player.onGround())
+				speed = (float) Math.sqrt(MC.player.getDeltaMovement().x * MC.player.getDeltaMovement().x
+						+ MC.player.getDeltaMovement().z * MC.player.getDeltaMovement().z + intensity.getValue());
 			else
-				speed = MC.player.getMovementSpeed();
+				speed = MC.player.getSpeed();
 
-			float yaw = MC.player.getYaw();
+			float yaw = MC.player.getYRot();
 			float forward = 1;
 
-			if (MC.player.forwardSpeed < 0) {
+			if (MC.player.zza < 0) {
 				yaw += 180;
 				forward = -0.5f;
-			} else if (MC.player.forwardSpeed > 0)
+			} else if (MC.player.zza > 0)
 				forward = 0.5f;
 
-			if (MC.player.sidewaysSpeed > 0)
+			if (MC.player.xxa > 0)
 				yaw -= 90 * forward;
-			if (MC.player.sidewaysSpeed < 0)
+			if (MC.player.xxa < 0)
 				yaw += 90 * forward;
 
 			yaw = (float) Math.toRadians(yaw);
 
-			MC.player.setVelocity(-Math.sin(yaw) * speed, MC.player.getVelocity().y, Math.cos(yaw) * speed);
+			MC.player.setDeltaMovement(-Math.sin(yaw) * speed, MC.player.getDeltaMovement().y, Math.cos(yaw) * speed);
 
 		}
 	}

@@ -24,7 +24,7 @@ import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class Window extends UIElement {
 	protected String ID;
@@ -86,7 +86,7 @@ public class Window extends UIElement {
 		return ID;
 	}
 
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();

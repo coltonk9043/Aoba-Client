@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.PlaySoundListener;
-import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 
 public class PlaySoundEvent extends AbstractEvent {
 	private final SoundInstance soundInstance;

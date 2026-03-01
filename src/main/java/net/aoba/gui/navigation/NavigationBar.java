@@ -8,6 +8,7 @@
 
 package net.aoba.gui.navigation;
 
+import com.mojang.blaze3d.platform.Window;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +21,11 @@ import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.Window;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class NavigationBar implements MouseClickListener {
-	MinecraftClient mc = MinecraftClient.getInstance();
+	Minecraft mc = Minecraft.getInstance();
 
 	private final List<Page> options;
 	private int selectedIndex;
@@ -71,9 +71,9 @@ public class NavigationBar implements MouseClickListener {
 		}
 	}
 
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		Window window = mc.getWindow();
-		int centerX = (window.getWidth() / 2);
+		int centerX = (window.getScreenWidth() / 2);
 		int width = 100 * options.size();
 
 		// Animate selection box movement
@@ -109,7 +109,7 @@ public class NavigationBar implements MouseClickListener {
 			double mouseX = event.mouseX;
 			double mouseY = event.mouseY;
 			int width = 100 * options.size();
-			int centerX = (window.getWidth() / 2);
+			int centerX = (window.getScreenWidth() / 2);
 			int x = centerX - (width / 2);
 
 			if (aoba.guiManager.isClickGuiOpen()) {

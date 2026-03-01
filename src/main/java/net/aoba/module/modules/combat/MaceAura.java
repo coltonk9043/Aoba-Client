@@ -18,14 +18,14 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 public class MaceAura extends Module implements TickListener {
 	private final FloatSetting radius = FloatSetting.builder().id("maceaura_radius").displayName("Radius")
@@ -101,7 +101,7 @@ public class MaceAura extends Module implements TickListener {
 	public void onTick(TickEvent.Post event) {
 		// if (MC.player.getMainHandStack().getItem() == Items.MACE &&
 		// MC.player.getAttackCooldownProgress(0) == 1) {
-		if (MC.player.getAttackCooldownProgress(0) == 1) {
+		if (MC.player.getAttackStrengthScale(0) == 1) {
 			if (entityToAttack == null) {
 				ArrayList<Entity> hitList = new ArrayList<Entity>();
 
@@ -110,11 +110,11 @@ public class MaceAura extends Module implements TickListener {
 					for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 						if (entity == MC.player)
 							continue;
-						if (MC.player.squaredDistanceTo(entity) > radius.getValueSqr())
+						if (MC.player.distanceToSqr(entity) > radius.getValueSqr())
 							continue;
 
-						if ((entity instanceof AnimalEntity && targetAnimals.getValue())
-								|| (entity instanceof Monster && targetMonsters.getValue())) {
+						if ((entity instanceof Animal && targetAnimals.getValue())
+								|| (entity instanceof Enemy && targetMonsters.getValue())) {
 							hitList.add(entity);
 						}
 					}
@@ -122,12 +122,12 @@ public class MaceAura extends Module implements TickListener {
 
 				// Add all potential players to the 'hitlist'
 				if (targetPlayers.getValue()) {
-					for (PlayerEntity player : MC.world.getPlayers()) {
+					for (Player player : MC.level.players()) {
 						if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
 							continue;
 
 						if (player == MC.player || MC.player
-								.squaredDistanceTo(player) > (radius.getValue() * radius.getValue())) {
+								.distanceToSqr(player) > (radius.getValue() * radius.getValue())) {
 							continue;
 						}
 						hitList.add(player);
@@ -140,7 +140,7 @@ public class MaceAura extends Module implements TickListener {
 					if (entityToAttack == null) {
 						entityToAttack = le;
 					} else {
-						if (MC.player.squaredDistanceTo(le) <= MC.player.squaredDistanceTo(entityToAttack)) {
+						if (MC.player.distanceToSqr(le) <= MC.player.distanceToSqr(entityToAttack)) {
 							entityToAttack = le;
 						}
 					}
@@ -150,25 +150,25 @@ public class MaceAura extends Module implements TickListener {
 					// If the entity is found, we want to attach it.
 					int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
 					for (int i = 0; i < packetsRequired; i++) {
-						MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false, false));
+						MC.player.connection.send(new ServerboundMovePlayerPacket.StatusOnly(false, false));
 					}
 
-					Vec3d newPos = MC.player.getPos().add(0, height.getValue(), 0);
-					MC.player.networkHandler.sendPacket(
-							new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, false, false));
+					Vec3 newPos = MC.player.position().add(0, height.getValue(), 0);
+					MC.player.connection.send(
+							new ServerboundMovePlayerPacket.Pos(newPos.x, newPos.y, newPos.z, false, false));
 				}
 			} else {
 				int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
 				for (int i = 0; i < packetsRequired; i++) {
-					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(false, false));
+					MC.player.connection.send(new ServerboundMovePlayerPacket.StatusOnly(false, false));
 				}
 
-				Vec3d newPos = MC.player.getPos();
-				MC.player.networkHandler.sendPacket(
-						new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, false, false));
+				Vec3 newPos = MC.player.position();
+				MC.player.connection.send(
+						new ServerboundMovePlayerPacket.Pos(newPos.x, newPos.y, newPos.z, false, false));
 
-				MC.interactionManager.attackEntity(MC.player, entityToAttack);
-				MC.player.swingHand(Hand.MAIN_HAND);
+				MC.gameMode.attack(MC.player, entityToAttack);
+				MC.player.swing(InteractionHand.MAIN_HAND);
 				entityToAttack = null;
 			}
 		}

@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.LinkedList;
 
 import net.aoba.managers.macros.actions.MacroEvent;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 /**
  * Represents a Macro that contains a list of events.
@@ -63,8 +63,8 @@ public class Macro {
 	 */
 	public void setName(String name) {
 		this.name = name;
-		MinecraftClient MC = MinecraftClient.getInstance();
-		filePath = MC.runDirectory + File.separator + "aoba" + File.separator + "macros" + File.separator + name
+		Minecraft MC = Minecraft.getInstance();
+		filePath = MC.gameDirectory + File.separator + "aoba" + File.separator + "macros" + File.separator + name
 				+ ".macro";
 	}
 }

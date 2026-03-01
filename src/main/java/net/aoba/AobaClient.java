@@ -23,13 +23,9 @@ package net.aoba;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
-
 import com.mojang.logging.LogUtils;
-
 import net.aoba.api.IAddon;
-import net.aoba.command.GlobalChat;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.font.FontManager;
 import net.aoba.managers.CombatManager;
@@ -42,18 +38,22 @@ import net.aoba.managers.altmanager.AltManager;
 import net.aoba.managers.macros.MacroManager;
 import net.aoba.managers.proxymanager.ProxyManager;
 import net.aoba.managers.rotation.RotationManager;
-import net.aoba.mixin.interfaces.IMinecraftClient;
+import net.aoba.mixin.interfaces.IMinecraft;
 import net.aoba.module.Module;
 import net.aoba.settings.friends.FriendsList;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 
 public class AobaClient {
 	public static final String AOBA_VERSION = "1.4.5";
+	public static final KeyMapping.Category AOBA_CATEGORY =
+			new KeyMapping.Category(Identifier.fromNamespaceAndPath("aoba", "category"));
 
-	public static MinecraftClient MC;
-	public static IMinecraftClient IMC;
+	public static Minecraft MC;
+	public static IMinecraft IMC;
 
 	// Systems
 	public RotationManager rotationManager;
@@ -66,7 +66,6 @@ public class AobaClient {
 	public CombatManager combatManager;
 	public SettingManager settingManager;
 	public FriendsList friendsList;
-	public GlobalChat globalChat;
 	public EventManager eventManager;
 	public MacroManager macroManager;
 	public EntityManager entityManager;
@@ -79,8 +78,8 @@ public class AobaClient {
 	 */
 	public void Initialize() {
 		// Gets instance of Minecraft
-		MC = MinecraftClient.getInstance();
-		IMC = (IMinecraftClient) MC;
+		MC = Minecraft.getInstance();
+		IMC = (IMinecraft) MC;
 		LOGGER = LogUtils.getLogger();
 	}
 
@@ -159,14 +158,7 @@ public class AobaClient {
 		SettingManager.loadGlobalSettings();
 		SettingManager.loadSettings();
 
-		LOGGER.info("[Aoba] Initializing Global Chat");
-		globalChat = new GlobalChat();
-		globalChat.StartListener();
-
 		LOGGER.info("[Aoba] Aoba-chan initialized and ready to play!");
-
-		// GuiManager.borderColor.setMode(ColorMode.Rainbow);
-		// GuiManager.foregroundColor.setMode(ColorMode.Random);
 	}
 
 	/**

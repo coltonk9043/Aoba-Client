@@ -17,8 +17,8 @@ import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 
 public class TextBoxComponent extends Component implements KeyDownListener {
 	private boolean listeningForKey;
@@ -68,7 +68,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
 		float actualX = getActualSize().getX();
@@ -130,7 +130,9 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 				if (keyName != null && !keyName.isEmpty()) {
 					char keyCode = keyName.charAt(0);
 
-					if (key != GLFW.GLFW_KEY_SPACE && !Screen.hasShiftDown())
+					boolean shiftDown = GLFW.glfwGetKey(net.aoba.AobaClient.MC.getWindow().handle(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS
+							|| GLFW.glfwGetKey(net.aoba.AobaClient.MC.getWindow().handle(), GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS;
+					if (key != GLFW.GLFW_KEY_SPACE && !shiftDown)
 						keyCode = Character.toLowerCase(keyCode);
 
 					text += keyCode;

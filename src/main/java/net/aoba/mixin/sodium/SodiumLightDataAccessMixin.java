@@ -14,9 +14,9 @@ import net.aoba.AobaClient;
 import net.aoba.module.modules.render.Fullbright;
 import net.aoba.module.modules.render.XRay;
 import net.caffeinemc.mods.sodium.client.model.light.data.LightDataAccess;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockRenderView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(value = LightDataAccess.class, remap = false)
 public abstract class SodiumLightDataAccessMixin {
@@ -24,10 +24,10 @@ public abstract class SodiumLightDataAccessMixin {
 	private static final int FULL_LIGHT = 15 | 15 << 4 | 15 << 8;
 
 	@Shadow
-	protected BlockRenderView level;
+	protected BlockAndTintGetter level;
 	@Shadow
 	@Final
-	private BlockPos.Mutable pos;
+	private BlockPos.MutableBlockPos pos;
 
 	@Unique
 	private XRay xray;

@@ -21,9 +21,9 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.MobSpawnerBlockEntity;
-import net.minecraft.util.math.Box;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.phys.AABB;
 
 public class SpawnerESP extends Module implements Render3DListener {
 
@@ -64,8 +64,8 @@ public class SpawnerESP extends Module implements Render3DListener {
 				.collect(Collectors.toCollection(ArrayList::new));
 
 		for (BlockEntity blockEntity : blockEntities) {
-			if (blockEntity instanceof MobSpawnerBlockEntity) {
-				Box box = new Box(blockEntity.getPos());
+			if (blockEntity instanceof SpawnerBlockEntity) {
+				AABB box = new AABB(blockEntity.getBlockPos());
 				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, color.getValue(),
 						lineThickness.getValue().floatValue());
 			}

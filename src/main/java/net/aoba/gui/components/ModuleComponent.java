@@ -11,7 +11,7 @@ package net.aoba.gui.components;
 import static net.aoba.utils.render.TextureBank.gear;
 
 import net.aoba.settings.types.*;
-import org.joml.Quaternionf;
+import org.joml.Matrix3x2fStack;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
@@ -25,9 +25,8 @@ import net.aoba.settings.Setting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Colors;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.CommonColors;
 
 public class ModuleComponent extends Component {
 	private final Module module;
@@ -58,10 +57,10 @@ public class ModuleComponent extends Component {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
-		MatrixStack matrixStack = drawContext.getMatrices();
+		Matrix3x2fStack matrixStack = drawContext.pose();
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
@@ -69,7 +68,7 @@ public class ModuleComponent extends Component {
 
 		if (header != null) {
 			if (module.isDetectable(AOBA.moduleManager.antiCheat.getValue())) {
-				Render2D.drawString(drawContext, header, actualX, actualY + 8, Colors.GRAY);
+				Render2D.drawString(drawContext, header, actualX, actualY + 8, CommonColors.GRAY);
 			} else {
 				Render2D.drawString(drawContext, header, actualX, actualY + 8, module.state.getValue() ? 0x00FF00
 						: hovered ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
@@ -80,13 +79,13 @@ public class ModuleComponent extends Component {
 			Color hudColor = GuiManager.foregroundColor.getValue();
 
 			if (spinning) {
-				matrixStack.push();
-				matrixStack.translate((actualX + actualWidth - 8), (actualY + 14), 0);
-				matrixStack.multiply(new Quaternionf().rotateZ((float) Math.toRadians(spinAngle)));
-				matrixStack.translate(-(actualX + actualWidth - 8), -(actualY + 14), 0);
+				matrixStack.pushMatrix();
+				matrixStack.translate((actualX + actualWidth - 8), (actualY + 14));
+				matrixStack.rotate((float) Math.toRadians(spinAngle));
+				matrixStack.translate(-(actualX + actualWidth - 8), -(actualY + 14));
 				Render2D.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16,
 						hudColor);
-				matrixStack.pop();
+				matrixStack.popMatrix();
 			} else {
 				Render2D.drawTexturedQuad(drawContext, gear, (actualX + actualWidth - 16), (actualY + 6), 16, 16,
 						hudColor);

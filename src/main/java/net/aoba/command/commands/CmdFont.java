@@ -12,8 +12,8 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.command.Command;
 import net.aoba.managers.CommandManager;
+import net.minecraft.client.gui.Font;
 import net.aoba.command.InvalidSyntaxException;
-import net.minecraft.client.font.TextRenderer;
 
 public class CmdFont extends Command {
 
@@ -32,7 +32,7 @@ public class CmdFont extends Command {
             case "set":
                 try {
                     String font = parameters[1];
-                    TextRenderer t = aoba.fontManager.fontRenderers.get(font);
+                    Font t = aoba.fontManager.fontRenderers.get(font);
                     if (t != null) {
                         aoba.fontManager.SetRenderer(t);
                     }

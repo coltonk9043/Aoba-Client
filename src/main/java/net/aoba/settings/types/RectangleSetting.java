@@ -137,11 +137,11 @@ public class RectangleSetting extends Setting<Rectangle> {
 		return true;
 	}
 
-	public static BUILDER builder() {
-		return new BUILDER();
+	public static RectangleSetting.BUILDER builder() {
+		return new RectangleSetting.BUILDER();
 	}
 
-	public static class BUILDER extends Setting.BUILDER<BUILDER, RectangleSetting, Rectangle> {
+	public static class BUILDER extends Setting.BUILDER<RectangleSetting.BUILDER, RectangleSetting, Rectangle> {
 		protected BUILDER() {
         }
 

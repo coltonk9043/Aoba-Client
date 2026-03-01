@@ -27,11 +27,11 @@ public class StringSetting extends Setting<String> {
 		return true;
 	}
 
-	public static BUILDER builder() {
-		return new BUILDER();
+	public static StringSetting.BUILDER builder() {
+		return new StringSetting.BUILDER();
 	}
 
-	public static class BUILDER extends Setting.BUILDER<BUILDER, StringSetting, String> {
+	public static class BUILDER extends Setting.BUILDER<StringSetting.BUILDER, StringSetting, String> {
 		protected BUILDER() {
         }
 

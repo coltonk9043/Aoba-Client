@@ -8,6 +8,7 @@
 
 package net.aoba.module.modules.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.function.Predicate;
 
 import org.joml.Matrix4f;
@@ -22,21 +23,20 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
-import net.minecraft.world.RaycastContext.FluidHandling;
+import net.minecraft.client.Camera;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class Trajectory extends Module implements Render3DListener {
 
@@ -73,55 +73,55 @@ public class Trajectory extends Module implements Render3DListener {
 	@Override
 	public void onRender(Render3DEvent event) {
 		Color renderColor = color.getValue();
-		MatrixStack matrixStack = event.GetMatrix();
-		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
+		PoseStack matrixStack = event.GetMatrix();
+		Matrix4f matrix = matrixStack.last().pose();
 
-		ItemStack itemStack = MC.player.getMainHandStack();
+		ItemStack itemStack = MC.player.getMainHandItem();
 		if (ModuleUtils.isThrowable(itemStack)) {
 
 			// Get Velocity
 			float initialVelocity = (52f);
 			if (itemStack.getItem() == Items.BOW && MC.player.isUsingItem())
-				initialVelocity *= BowItem.getPullProgress(MC.player.getItemUseTime());
+				initialVelocity *= BowItem.getPowerForTime(MC.player.getTicksUsingItem());
 
-			Camera camera = MC.gameRenderer.getCamera();
-			Vec3d offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity,
-					event.getRenderTickCounter().getTickProgress(true));
-			Vec3d eyePos = MC.cameraEntity.getEyePos();
+			Camera camera = MC.gameRenderer.getMainCamera();
+			Vec3 offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity,
+					event.getRenderTickCounter().getGameTimeDeltaPartialTick(true));
+			Vec3 eyePos = MC.cameraEntity.getEyePosition();
 
 			// Calculate look direction.
-			Vec3d right = Vec3d.fromPolar(0, camera.getYaw() + 90).multiply(0.14f);
-			Vec3d lookDirection = Vec3d.fromPolar(camera.getPitch(), camera.getYaw());
-			Vec3d velocity = lookDirection.multiply(initialVelocity).multiply(0.2f);
+			Vec3 right = Vec3.directionFromRotation(0, camera.yRot() + 90).scale(0.14f);
+			Vec3 lookDirection = Vec3.directionFromRotation(camera.xRot(), camera.yRot());
+			Vec3 velocity = lookDirection.scale(initialVelocity).scale(0.2f);
 
 			// Calculate starting point.
-			Vec3d prevPoint = new Vec3d(0, 0, 0).add(eyePos).subtract(offset).add(right);
-			Vec3d landPosition = null;
+			Vec3 prevPoint = new Vec3(0, 0, 0).add(eyePos).subtract(offset).add(right);
+			Vec3 landPosition = null;
 
 			for (int iteration = 0; iteration < 150; iteration++) {
-				Vec3d nextPoint = prevPoint.add(velocity.multiply(0.1));
+				Vec3 nextPoint = prevPoint.add(velocity.scale(0.1));
 
 				// Check to see if we have collided with a block.
-				RaycastContext context = new RaycastContext(prevPoint, nextPoint, RaycastContext.ShapeType.COLLIDER,
-						FluidHandling.NONE, MC.player);
-				BlockHitResult result = MC.world.raycast(context);
+				ClipContext context = new ClipContext(prevPoint, nextPoint, ClipContext.Block.COLLIDER,
+						Fluid.NONE, MC.player);
+				BlockHitResult result = MC.level.clip(context);
 				if (result.getType() != HitResult.Type.MISS) {
 					// Arrow is collided with a block, draw one last vertice and set land position
 					// to the raycast result position.
-					landPosition = result.getPos();
+					landPosition = result.getLocation();
 					Render3D.drawLine3D(matrixStack, camera, prevPoint, landPosition, renderColor);
 					break;
 				} else {
 					// We did NOT find a collision with a block, check entities.
-					Box box = new Box(prevPoint, nextPoint);
-					Predicate<Entity> predicate = e -> !e.isSpectator() && e.canHit();
-					EntityHitResult entityResult = ProjectileUtil.raycast(MC.player, prevPoint, nextPoint, box,
+					AABB box = new AABB(prevPoint, nextPoint);
+					Predicate<Entity> predicate = e -> !e.isSpectator() && e.isPickable();
+					EntityHitResult entityResult = ProjectileUtil.getEntityHitResult(MC.player, prevPoint, nextPoint, box,
 							predicate, 4096);
 
 					if (entityResult != null && entityResult.getType() != HitResult.Type.MISS) {
 						// Arrow is collided with an entity, draw one last vertice and set land position
 						// to the raycast result position.
-						landPosition = entityResult.getPos();
+						landPosition = entityResult.getLocation();
 						Render3D.drawLine3D(matrixStack, camera, prevPoint, landPosition, renderColor);
 						break;
 					} else {
@@ -131,15 +131,15 @@ public class Trajectory extends Module implements Render3DListener {
 				}
 
 				prevPoint = nextPoint;
-				velocity = velocity.multiply(0.99).add(0, throwableGravity(itemStack.getItem()), 0);
+				velocity = velocity.scale(0.99).add(0, throwableGravity(itemStack.getItem()), 0);
 			}
 
 			// Draw Cube if a landing position exists.
 			if (landPosition != null) {
 				float size = blipSize.getValue();
-				Vec3d pos1 = landPosition.add(-size, -size, -size);
-				Vec3d pos2 = landPosition.add(size, size, size);
-				Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
+				Vec3 pos1 = landPosition.add(-size, -size, -size);
+				Vec3 pos2 = landPosition.add(size, size, size);
+				AABB box = new AABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
 				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, renderColor, 1.0f);
 			}
 		}

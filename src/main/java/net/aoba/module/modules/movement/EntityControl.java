@@ -12,11 +12,11 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
-import net.aoba.interfaces.IHorseBaseEntity;
+import net.aoba.interfaces.IAbstractHorse;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.AbstractHorseEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
 
 public class EntityControl extends Module implements TickListener
 {
@@ -32,12 +32,12 @@ public class EntityControl extends Module implements TickListener
     {
         Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 
-        if (MC.world != null)
+        if (MC.level != null)
         {
             for (Entity entity : Aoba.getInstance().entityManager.getEntities())
             {
-                if (entity instanceof AbstractHorseEntity)
-                    ((IHorseBaseEntity) entity).setSaddled(false);
+                if (entity instanceof AbstractHorse)
+                    ((IAbstractHorse) entity).setSaddled(false);
             }
         }
     }
@@ -63,12 +63,12 @@ public class EntityControl extends Module implements TickListener
     @Override
     public void onTick(Post event)
     {
-        if (MC.world != null)
+        if (MC.level != null)
         {
             for (Entity entity : Aoba.getInstance().entityManager.getEntities())
             {
-                if (entity instanceof AbstractHorseEntity)
-                    ((IHorseBaseEntity) entity).setSaddled(true);
+                if (entity instanceof AbstractHorse)
+                    ((IAbstractHorse) entity).setSaddled(true);
             }
         }
     }

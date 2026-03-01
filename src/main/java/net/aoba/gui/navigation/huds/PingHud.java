@@ -13,13 +13,13 @@ import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.PlayerInfo;
 
 public class PingHud extends HudWindow {
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	String pingText = null;
 
 	public PingHud(int x, int y) {
@@ -32,9 +32,9 @@ public class PingHud extends HudWindow {
 
 	@Override
 	public void update() {
-		ClientPlayNetworkHandler networkHandler = MC.getNetworkHandler();
+		ClientPacketListener networkHandler = MC.getConnection();
 		if (networkHandler != null && MC.player != null) {
-			PlayerListEntry entry = networkHandler.getPlayerListEntry(MC.player.getUuid());
+			PlayerInfo entry = networkHandler.getPlayerInfo(MC.player.getUUID());
 			if (entry != null) {
 				int ping = entry.getLatency();
 				pingText = "Ping: " + ping + " ms";
@@ -46,7 +46,7 @@ public class PingHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
 		if (pingText != null && isVisible()) {

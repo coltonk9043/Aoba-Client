@@ -10,13 +10,12 @@ package net.aoba.managers.pathfinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractPathManager {
-	protected static MinecraftClient MC = MinecraftClient.getInstance();
+	protected static Minecraft MC = Minecraft.getInstance();
 	protected BlockPos target;
 
 	protected boolean avoidWater = false;
@@ -190,9 +189,9 @@ public abstract class AbstractPathManager {
 	 * @return Whether or not the player will fit into a space from the feet up.
 	 */
 	protected static boolean checkBodyAndHeadPos(BlockPos feetPos) {
-		BlockPos headPos = feetPos.up();
-		BlockState state = MC.world.getBlockState(feetPos);
-		BlockState stateUp = MC.world.getBlockState(headPos);
+		BlockPos headPos = feetPos.above();
+		BlockState state = MC.level.getBlockState(feetPos);
+		BlockState stateUp = MC.level.getBlockState(headPos);
 		return !state.isSolid() && !stateUp.isSolid();
 	}
 }

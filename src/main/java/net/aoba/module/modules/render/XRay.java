@@ -11,16 +11,15 @@ package net.aoba.module.modules.render;
 import java.util.HashSet;
 
 import net.aoba.settings.types.BooleanSetting;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.lwjgl.glfw.GLFW;
 
 import com.google.common.collect.Lists;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BlocksSetting;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.util.InputUtil;
 
 public class XRay extends Module {
 	private final BlocksSetting blocks = BlocksSetting.builder().id("xray_blocks").displayName("Blocks")
@@ -39,7 +38,7 @@ public class XRay extends Module {
 			.onUpdate(this::ReloadRenderer).build();
 
 	public XRay() {
-		super("XRay", InputUtil.fromKeyCode(GLFW.GLFW_KEY_X, 0));
+		super("XRay", InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_X));
 		setCategory(Category.of("Render"));
 		setDescription("Allows the player to see ores.");
 		addSetting(blocks);
@@ -48,12 +47,12 @@ public class XRay extends Module {
 
 	@Override
 	public void onDisable() {
-		MC.worldRenderer.reload();
+		MC.levelRenderer.allChanged();
 	}
 
 	@Override
 	public void onEnable() {
-		MC.worldRenderer.reload();
+		MC.levelRenderer.allChanged();
 
 	}
 
@@ -68,14 +67,14 @@ public class XRay extends Module {
     }
 
 	public void ReloadRenderer(HashSet<Block> block) {
-		if (MC.worldRenderer != null && state.getValue()) {
-			MC.worldRenderer.reload();
+		if (MC.levelRenderer != null && state.getValue()) {
+			MC.levelRenderer.allChanged();
 		}
 	}
 
 	public void ReloadRenderer(Boolean fluids) {
-		if (MC.worldRenderer != null && state.getValue()) {
-			MC.worldRenderer.reload();
+		if (MC.levelRenderer != null && state.getValue()) {
+			MC.levelRenderer.allChanged();
 		}
 	}
 

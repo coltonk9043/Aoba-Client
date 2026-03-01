@@ -16,9 +16,9 @@ import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 
 public class FastLadder extends Module implements TickListener {
 
@@ -66,23 +66,23 @@ public class FastLadder extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		ClientPlayerEntity player = MC.player;
+		LocalPlayer player = MC.player;
 
-		if (!player.isClimbing() || !player.horizontalCollision)
+		if (!player.onClimbable() || !player.horizontalCollision)
 			return;
 
-		Vec2f playerInput = player.input.getMovementInput();
+		Vec2 playerInput = player.input.getMoveVector();
 		if (playerInput.x == 0 && playerInput.y == 0)
 			return;
 
-		Vec3d velocity = player.getVelocity();
+		Vec3 velocity = player.getDeltaMovement();
 		double yVelocity = ladderSpeed.getValue() + accelerationBoost.getValue();
 
 		if (playerInput.x == 0 && playerInput.y != 0) {
 			yVelocity -= decelerationPenalty.getValue();
 		}
 
-		player.setVelocity(velocity.x, yVelocity, velocity.z);
+		player.setDeltaMovement(velocity.x, yVelocity, velocity.z);
 	}
 
 	@Override

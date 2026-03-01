@@ -13,7 +13,7 @@ import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class WatermarkHud extends HudWindow {
 
@@ -26,7 +26,7 @@ public class WatermarkHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		if (isVisible()) {
 			Rectangle pos = position.getValue();
 			if (pos.isDrawable()) {

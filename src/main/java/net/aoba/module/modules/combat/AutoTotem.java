@@ -17,16 +17,16 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.Hand;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.ContainerScreen;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class AutoTotem extends Module implements PlayerHealthListener, ReceivePacketListener {
 
@@ -72,16 +72,16 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 
 	@Override
 	public void onHealthChanged(PlayerHealthEvent readPacketEvent) {
-		MinecraftClient mc = MinecraftClient.getInstance();
+		Minecraft mc = Minecraft.getInstance();
 
 		// If current screen is a generic container, we want to prevent autototem from
 		// firing.
-		if (mc.currentScreen instanceof GenericContainerScreen)
+		if (mc.screen instanceof ContainerScreen)
 			return;
 
 		// If the current hand stack is a totem, return;
-		PlayerInventory inventory = mc.player.getInventory();
-		ItemStack handItemStack = inventory.getSelectedStack();
+		Inventory inventory = mc.player.getInventory();
+		ItemStack handItemStack = inventory.getSelectedItem();
 
 		if (handItemStack.getItem() == Items.TOTEM_OF_UNDYING)
 			return;
@@ -93,13 +93,13 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 	}
 
 	private void SwitchToTotem() {
-		MinecraftClient mc = MinecraftClient.getInstance();
+		Minecraft mc = Minecraft.getInstance();
 
-		PlayerInventory inventory = mc.player.getInventory();
+		Inventory inventory = mc.player.getInventory();
 
 		int slot = -1;
 		for (int i = 0; i <= 36; i++) {
-			ItemStack itemStackToCheck = inventory.getStack(i);
+			ItemStack itemStackToCheck = inventory.getItem(i);
 			Item itemToCheck = itemStackToCheck.getItem();
 
 			if (itemToCheck == Items.TOTEM_OF_UNDYING) {
@@ -109,9 +109,9 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 		}
 
 		if (slot != -1) {
-			mc.interactionManager.clickSlot(mc.player.currentScreenHandler.syncId, slot, 0, SlotActionType.PICKUP,
+			mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, slot, 0, ClickType.PICKUP,
 					mc.player);
-			mc.player.setStackInHand(Hand.OFF_HAND, inventory.getStack(slot));
+			mc.player.setItemInHand(InteractionHand.OFF_HAND, inventory.getItem(slot));
 		}
 	}
 
@@ -119,16 +119,16 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 	public void onReceivePacket(ReceivePacketEvent readPacketEvent) {
 		// Check to see if the packet is an entity spawn packet, and if the entity is an
 		// end crystal.
-		if (readPacketEvent.GetPacket() instanceof EntitySpawnS2CPacket spawnEntityPacket) {
-			if (spawnEntityPacket.getEntityType() == EntityType.END_CRYSTAL) {
+		if (readPacketEvent.GetPacket() instanceof ClientboundAddEntityPacket spawnEntityPacket) {
+			if (spawnEntityPacket.getType() == EntityType.END_CRYSTAL) {
 				// Check if the entity is within the range of the player, and switch immediately
 				// if so.
-				MinecraftClient mc = MinecraftClient.getInstance();
+				Minecraft mc = Minecraft.getInstance();
 
-				if (mc.player.getInventory().getSelectedStack().getItem() == Items.TOTEM_OF_UNDYING)
+				if (mc.player.getInventory().getSelectedItem().getItem() == Items.TOTEM_OF_UNDYING)
 					return;
 
-				if (mc.player.squaredDistanceTo(spawnEntityPacket.getX(), spawnEntityPacket.getY(),
+				if (mc.player.distanceToSqr(spawnEntityPacket.getX(), spawnEntityPacket.getY(),
 						spawnEntityPacket.getZ()) < Math.pow(crystalRadiusTrigger.getValue(), 2)) {
 					SwitchToTotem();
 				}

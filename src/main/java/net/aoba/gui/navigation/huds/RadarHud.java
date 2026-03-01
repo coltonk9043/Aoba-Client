@@ -15,13 +15,13 @@ import net.aoba.gui.ResizeMode;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
 
 public class RadarHud extends HudWindow {
 	float distance = 50;
@@ -35,7 +35,7 @@ public class RadarHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		if (isVisible()) {
 			Rectangle pos = getActualSize();
 			if (pos.isDrawable()) {
@@ -54,8 +54,8 @@ public class RadarHud extends HudWindow {
 				Render2D.drawBox(drawContext, x + (width / 2) - 2, y + (height / 2) - 2, 5, 5,
 						GuiManager.foregroundColor.getValue());
 
-				float sin_theta = (float) Math.sin(Math.toRadians(-MC.player.getRotationClient().y));
-				float cos_theta = (float) Math.cos(Math.toRadians(-MC.player.getRotationClient().y));
+				float sin_theta = (float) Math.sin(Math.toRadians(-MC.player.getRotationVector().y));
+				float cos_theta = (float) Math.cos(Math.toRadians(-MC.player.getRotationVector().y));
 
 				float center_x = x + (width / 2);
 				float center_y = y - 2 + (height / 2);
@@ -63,10 +63,10 @@ public class RadarHud extends HudWindow {
 				// Render Entities
 				for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 					Color c;
-					if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
-						if (entity instanceof AnimalEntity) {
+					if (entity instanceof LivingEntity && !(entity instanceof Player)) {
+						if (entity instanceof Animal) {
 							c = new Color(0, 255, 0);
-						} else if (entity instanceof Monster) {
+						} else if (entity instanceof Enemy) {
 							c = new Color(255, 0, 0);
 						} else {
 							c = new Color(0, 0, 255);
@@ -89,7 +89,7 @@ public class RadarHud extends HudWindow {
 				}
 
 				// Render Players
-				for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
+				for (AbstractClientPlayer entity : MC.level.players()) {
 					if (entity != MC.player) {
 						float ratio_x = (float) ((entity.getX() - MC.player.getX())) / (distance);
 						float ratio_y = (float) ((entity.getZ() - MC.player.getZ())) / (distance);
@@ -107,7 +107,7 @@ public class RadarHud extends HudWindow {
 								new Color(255, 255, 255, 255));
 						Render2D.drawStringWithScale(drawContext, entity.getName().getString(),
 								(int) (Math.min(x + width - 5, Math.max(x, radius_x)))
-										- (MC.textRenderer.getWidth(entity.getName()) * 0.5f),
+										- (MC.font.width(entity.getName()) * 0.5f),
 								(int) (Math.min(y + 25 + height, Math.max(y, radius_y))) - 10,
 								GuiManager.foregroundColor.getValue(), 1.0f);
 					}

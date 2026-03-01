@@ -16,8 +16,8 @@ import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.phys.Vec3;
 
 public class Spider extends Module implements TickListener {
 
@@ -59,11 +59,11 @@ public class Spider extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		ClientPlayerEntity player = MC.player;
+		LocalPlayer player = MC.player;
 
 		if (player.horizontalCollision) {
-			Vec3d playerVelocity = player.getVelocity();
-			MC.player.setVelocity(new Vec3d(playerVelocity.getX(), speed.getValue(), playerVelocity.getZ()));
+			Vec3 playerVelocity = player.getDeltaMovement();
+			MC.player.setDeltaMovement(new Vec3(playerVelocity.x(), speed.getValue(), playerVelocity.z()));
 		}
 	}
 

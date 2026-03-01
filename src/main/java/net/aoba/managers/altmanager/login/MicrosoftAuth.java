@@ -10,6 +10,7 @@ package net.aoba.managers.altmanager.login;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -18,6 +19,7 @@ import java.util.function.Consumer;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.minecraft.UserApiService;
+import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.logging.LogUtils;
 import com.mojang.util.UndashedUuid;
 import com.sun.net.httpserver.HttpExchange;
@@ -25,14 +27,14 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import net.aoba.managers.altmanager.Alt;
-import net.aoba.mixin.interfaces.IMinecraftClient;
+import net.aoba.mixin.interfaces.IMinecraft;
 import net.aoba.utils.http.HttpUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.SocialInteractionsManager;
-import net.minecraft.client.session.ProfileKeys;
-import net.minecraft.client.session.Session;
-import net.minecraft.client.session.report.AbuseReportContext;
-import net.minecraft.client.session.report.ReporterEnvironment;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.User;
+import net.minecraft.client.gui.screens.social.PlayerSocialManager;
+import net.minecraft.client.multiplayer.ProfileKeyPairManager;
+import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
+import net.minecraft.client.multiplayer.chat.report.ReportingContext;
 import net.minecraft.util.Util;
 
 public class MicrosoftAuth {
@@ -70,22 +72,21 @@ public class MicrosoftAuth {
 
 				alt.setAuthToken(token);
 
-				MinecraftClient MC = MinecraftClient.getInstance();
-				IMinecraftClient IMC = (IMinecraftClient) MC;
-				Session session = new Session(username, UndashedUuid.fromStringLenient(uuid), mcAuthToken.accessToken,
-						Optional.empty(), Optional.empty(), Session.AccountType.MSA);
+				Minecraft MC = Minecraft.getInstance();
+				IMinecraft IMC = (IMinecraft) MC;
+				User session = new User(username, UndashedUuid.fromStringLenient(uuid), mcAuthToken.accessToken,
+						Optional.empty(), Optional.empty());
 				IMC.setSession(session);
 
-				UserApiService apiService;
-				apiService = IMC.getAuthenticationService().createUserApiService(session.getAccessToken());
+				YggdrasilAuthenticationService authService = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
+				UserApiService apiService = authService.createUserApiService(session.getAccessToken());
 				IMC.setUserApiService(apiService);
-				IMC.setSocialInteractionsManager(new SocialInteractionsManager(MC, apiService));
-				IMC.setProfileKeys(ProfileKeys.create(apiService, session, MC.runDirectory.toPath()));
-				IMC.setAbuseReportContext(
-						AbuseReportContext.create(ReporterEnvironment.ofIntegratedServer(), apiService));
+				IMC.setSocialInteractionsManager(new PlayerSocialManager(MC, apiService));
+				IMC.setProfileKeys(ProfileKeyPairManager.create(apiService, session, MC.gameDirectory.toPath()));
+				IMC.setAbuseReportContext(ReportingContext.create(ReportEnvironment.local(), apiService));
 				IMC.setGameProfileFuture(CompletableFuture.supplyAsync(
-						() -> MC.getSessionService().fetchProfile(MC.getSession().getUuidOrNull(), true),
-						Util.getIoWorkerExecutor()));
+						() -> MC.services().sessionService().fetchProfile(MC.getUser().getProfileId(), true),
+						Util.ioPool()));
 
 			} else
 				throw new Exception("User does not have game.");
@@ -182,7 +183,7 @@ public class MicrosoftAuth {
 	public static void requestAuthToken(Consumer<AuthToken> onDataReceived) {
 		boolean success = startServer(onDataReceived);
 		if (success) {
-			Util.getOperatingSystem().open("https://login.live.com/oauth20_authorize.srf?client_id=" + CLIENT_ID
+			Util.getPlatform().openUri("https://login.live.com/oauth20_authorize.srf?client_id=" + CLIENT_ID
 					+ "&response_type=code&redirect_uri=http://127.0.0.1:42069&scope=XboxLive.signin%20offline_access&prompt=select_account");
 		}
 	}

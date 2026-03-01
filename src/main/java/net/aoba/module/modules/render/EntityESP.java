@@ -8,6 +8,7 @@
 
 package net.aoba.module.modules.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
@@ -19,17 +20,16 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.Frustum;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityESP extends Module implements Render3DListener {
 	public enum DrawMode {
@@ -93,27 +93,27 @@ public class EntityESP extends Module implements Render3DListener {
 
 	@Override
 	public void onRender(Render3DEvent event) {
-		MatrixStack matrixStack = event.GetMatrix();
-		float partialTicks = event.getRenderTickCounter().getTickProgress(true);
+		PoseStack matrixStack = event.GetMatrix();
+		float partialTicks = event.getRenderTickCounter().getGameTimeDeltaPartialTick(true);
 
 		for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 
 			Frustum frustum = event.getFrustum();
-			Camera camera = MC.gameRenderer.getCamera();
-			Vec3d cameraPosition = camera.getPos();
-			if (MC.getEntityRenderDispatcher().shouldRender(entity, frustum, cameraPosition.getX(),
-					cameraPosition.getY(), cameraPosition.getZ())) {
-				if (entity instanceof LivingEntity && !(entity instanceof PlayerEntity)) {
+			Camera camera = MC.gameRenderer.getMainCamera();
+			Vec3 cameraPosition = camera.position();
+			if (MC.getEntityRenderDispatcher().shouldRender(entity, frustum, cameraPosition.x(),
+					cameraPosition.y(), cameraPosition.z())) {
+				if (entity instanceof LivingEntity && !(entity instanceof Player)) {
 
 					Color color = getColorForEntity(entity);
 					if (color != null) {
 						switch (drawMode.getValue()) {
 						case BoundingBox:
-							double interpolatedX = MathHelper.lerp(partialTicks, entity.lastX, entity.getX());
-							double interpolatedY = MathHelper.lerp(partialTicks, entity.lastY, entity.getY());
-							double interpolatedZ = MathHelper.lerp(partialTicks, entity.lastZ, entity.getZ());
+							double interpolatedX = Mth.lerp(partialTicks, entity.xo, entity.getX());
+							double interpolatedY = Mth.lerp(partialTicks, entity.yo, entity.getY());
+							double interpolatedZ = Mth.lerp(partialTicks, entity.zo, entity.getZ());
 
-							Box boundingBox = entity.getBoundingBox().offset(interpolatedX - entity.getX(),
+							AABB boundingBox = entity.getBoundingBox().move(interpolatedX - entity.getX(),
 									interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
 							Render3D.draw3DBox(matrixStack, event.getCamera(), boundingBox, color,
 									lineThickness.getValue());
@@ -129,11 +129,11 @@ public class EntityESP extends Module implements Render3DListener {
 	}
 
 	private Color getColorForEntity(Entity entity) {
-		if (entity instanceof AnimalEntity && showPassiveEntities.getValue()) {
+		if (entity instanceof Animal && showPassiveEntities.getValue()) {
 			return color_passive.getValue();
-		} else if (entity instanceof Monster && showEnemies.getValue()) {
+		} else if (entity instanceof Enemy && showEnemies.getValue()) {
 			return color_enemies.getValue();
-		} else if (!(entity instanceof AnimalEntity || entity instanceof Monster) && showMiscEntities.getValue()) {
+		} else if (!(entity instanceof Animal || entity instanceof Enemy) && showMiscEntities.getValue()) {
 			return color_misc.getValue();
 		}
 		return null;

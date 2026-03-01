@@ -14,8 +14,8 @@ import net.aoba.managers.CommandManager;
 import net.aoba.command.InvalidSyntaxException;
 import net.aoba.settings.friends.Friend;
 import net.aoba.settings.friends.FriendsList;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerPlayer;
 
 public class CmdFriends extends Command {
 
@@ -26,14 +26,14 @@ public class CmdFriends extends Command {
     @Override
     public void runCommand(String[] parameters) throws InvalidSyntaxException {
         FriendsList friendsList = Aoba.getInstance().friendsList;
-        MinecraftClient MC = MinecraftClient.getInstance();
+        Minecraft MC = Minecraft.getInstance();
         switch (parameters[0]) {
             case "add": {
                 String playerName = parameters[1];
                 try {
-                    ServerPlayerEntity entity = MC.getServer().getPlayerManager().getPlayer(playerName);
+                    ServerPlayer entity = MC.getSingleplayerServer().getPlayerList().getPlayerByName(playerName);
                     if (entity != null) {
-                        Aoba.getInstance().friendsList.addFriend(entity.getName().getString(), entity.getUuid());
+                        Aoba.getInstance().friendsList.addFriend(entity.getName().getString(), entity.getUUID());
                         CommandManager.sendChatMessage("Player " + playerName + " was added to the friends list.");
                     } else {
                         CommandManager.sendChatMessage("Player " + playerName + " could not be found.");
@@ -46,9 +46,9 @@ public class CmdFriends extends Command {
             break;
             case "remove": {
                 String playerName = parameters[1];
-                ServerPlayerEntity entity = MC.getServer().getPlayerManager().getPlayer(playerName);
+                ServerPlayer entity = MC.getSingleplayerServer().getPlayerList().getPlayerByName(playerName);
                 if (entity != null) {
-                    Aoba.getInstance().friendsList.removeFriend(entity.getUuid());
+                    Aoba.getInstance().friendsList.removeFriend(entity.getUUID());
                     CommandManager.sendChatMessage("Player " + playerName + " was removed from the friends list.");
                 } else {
                     CommandManager.sendChatMessage("Player " + playerName + " could not be found.");
@@ -70,7 +70,7 @@ public class CmdFriends extends Command {
     public String[] getAutocorrect(String previousParameter) {
         switch (previousParameter) {
             case "add":
-                return mc.getServer().getPlayerNames();
+                return mc.getSingleplayerServer().getPlayerNames();
             case "remove":
                 return new String[]{"xray", "delete"};
             default:

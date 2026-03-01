@@ -9,11 +9,9 @@
 package net.aoba.settings.types;
 
 import java.util.function.Consumer;
-
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.Setting;
-import net.aoba.settings.types.BooleanSetting.BUILDER;
 
 public class ColorSetting extends Setting<Color> {
 	public enum ColorMode {
@@ -51,13 +49,13 @@ public class ColorSetting extends Setting<Color> {
                 setValue(GuiManager.randomColor);
                 break;
         }
+    } 
+    
+    public static ColorSetting.BUILDER builder() {
+    	return new ColorSetting.BUILDER();
     }
     
-    public static BUILDER builder() {
-    	return new BUILDER();
-    }
-    
-    public static class BUILDER extends Setting.BUILDER<BUILDER, ColorSetting, Color> {
+    public static class BUILDER extends Setting.BUILDER<ColorSetting.BUILDER, ColorSetting, Color> {
 		protected BUILDER() {
         }
 		

@@ -14,33 +14,33 @@ import java.util.List;
 import net.aoba.api.IAddon;
 import net.aoba.gui.screens.addons.AddonSelectionList.NormalEntry;
 import net.aoba.utils.render.TextureBank;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.CubeMapRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.RotatingCubeMapRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.CubeMap;
+import net.minecraft.client.renderer.PanoramaRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.CommonColors;
 import net.minecraft.util.Util;
 
 public class AddonScreen extends Screen {
-	protected static final CubeMapRenderer AOBA_PANORAMA_RENDERER = new CubeMapRenderer(TextureBank.mainmenu_panorama);
-	protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(
+	protected static final CubeMap AOBA_PANORAMA_RENDERER = new CubeMap(TextureBank.mainmenu_panorama);
+	protected static final PanoramaRenderer AOBA_ROTATING_PANORAMA_RENDERER = new PanoramaRenderer(
 			AOBA_PANORAMA_RENDERER);
 	private final Screen parentScreen;
 
 	// Widget
 	private AddonSelectionList addonListSelector;
-	private TextFieldWidget descriptionWidget;
+	private EditBox descriptionWidget;
 
 	// Selected Mod
 	private IAddon selectedAddon;
 
 	public AddonScreen(Screen parentScreen) {
-		super(Text.of("Addon Manager"));
+		super(Component.nullToEmpty("Addon Manager"));
 		this.parentScreen = parentScreen;
 	}
 
@@ -48,24 +48,24 @@ public class AddonScreen extends Screen {
 		super.init();
 
 		// Left Side
-		Path addonsPath = MinecraftClient.getInstance().getResourcePackDir().getParent().resolve("mods");
-		addDrawableChild(ButtonWidget
-				.builder(Text.of("Open Addons Folder"), button -> Util.getOperatingSystem().open(addonsPath))
-				.dimensions(16, height - 40, 120, 20).build());
+		Path addonsPath = Minecraft.getInstance().getResourcePackDirectory().getParent().resolve("mods");
+		addRenderableWidget(Button
+				.builder(Component.nullToEmpty("Open Addons Folder"), button -> Util.getPlatform().openPath(addonsPath))
+				.bounds(16, height - 40, 120, 20).build());
 
-		addDrawableChild(ButtonWidget.builder(Text.of("Done"), b -> client.setScreen(parentScreen))
-				.dimensions(146, height - 40, 120, 20).build());
+		addRenderableWidget(Button.builder(Component.nullToEmpty("Done"), b -> minecraft.setScreen(parentScreen))
+				.bounds(146, height - 40, 120, 20).build());
 
-		addonListSelector = new AddonSelectionList(this, client, 250, height, 16, 48);
-		addonListSelector.setDimensionsAndPosition(250, height - 80, 16, 32);
-		addDrawableChild(addonListSelector);
+		addonListSelector = new AddonSelectionList(this, minecraft, 250, height, 16, 48);
+		addonListSelector.setRectangle(250, height - 80, 16, 32);
+		addRenderableWidget(addonListSelector);
 
 		// Right Side
-		descriptionWidget = new TextFieldWidget(textRenderer, 282, 112, width - 314, height - 160,
-				Text.of(""));
+		descriptionWidget = new EditBox(font, 282, 112, width - 314, height - 160,
+				Component.nullToEmpty(""));
 		descriptionWidget.setEditable(false);
-		descriptionWidget.setFocusUnlocked(true);
-		addDrawableChild(descriptionWidget);
+		descriptionWidget.setCanLoseFocus(true);
+		addRenderableWidget(descriptionWidget);
 
 		// Set the selected addon if any exist.
 		List<NormalEntry> entries = addonListSelector.getAddons();
@@ -80,26 +80,24 @@ public class AddonScreen extends Screen {
 	}
 
 	@Override
-	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(drawContext, mouseX, mouseY, partialTicks);
-
+	public void render(GuiGraphics drawContext, int mouseX, int mouseY, float partialTicks) {
 		super.render(drawContext, mouseX, mouseY, partialTicks);
-		drawContext.drawCenteredTextWithShadow(textRenderer, "Addons", 145, 16, 16777215);
+		drawContext.drawCenteredString(font, "Addons", 145, 16, 0xFFFFFFFF);
 
 		// Draw Addon Information
 		if (selectedAddon != null) {
-			AddonSelectionList.NormalEntry entry = (AddonSelectionList.NormalEntry) addonListSelector.getSelectedOrNull();
+			AddonSelectionList.NormalEntry entry = (AddonSelectionList.NormalEntry) addonListSelector.getSelected();
 			if (entry != null) {
 				// Draw the border
 				drawContext.fill(281, 59, 331, 109, 0xFFFFFFFF);
 				drawContext.fill(282, 60, 330, 108, 0xFF000000);
 
 				// Draw the texture
-				drawContext.drawTexture(RenderLayer::getGuiTextured, entry.getIcon(), 282, 60, 0, 0, 48, 48, 48, 48);
+				drawContext.blit(entry.getIcon(), 282, 60, 48, 48, 0f, 0f, 1f, 1f);
 			}
-			drawContext.drawTextWithShadow(textRenderer, selectedAddon.getName(), 338, 68, 16777215);
-			drawContext.drawTextWithShadow(textRenderer, selectedAddon.getVersion(), 338, 80, 16777215);
-			drawContext.drawTextWithShadow(textRenderer, "By " + selectedAddon.getAuthor(), 338, 92, 16777215);
+			drawContext.drawString(font, selectedAddon.getName(), 338, 68, 0xFFFFFFFF);
+			drawContext.drawString(font, selectedAddon.getVersion(), 338, 80, 0xFFFFFFFF);
+			drawContext.drawString(font, "By " + selectedAddon.getAuthor(), 338, 92, 0xFFFFFFFF);
 		}
 
 	}
@@ -111,15 +109,15 @@ public class AddonScreen extends Screen {
 		if (descriptionWidget != null) {
 			if (selectedAddon != null) {
 				descriptionWidget.visible = true;
-				descriptionWidget.setUneditableColor(Colors.WHITE);
-				descriptionWidget.setText(selectedAddon.getDescription());
+				descriptionWidget.setTextColorUneditable(CommonColors.WHITE);
+				descriptionWidget.setValue(selectedAddon.getDescription());
 			} else
 				descriptionWidget.visible = false;
 		}
 	}
 
 	@Override
-	protected void renderPanoramaBackground(DrawContext context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
+	protected void renderPanorama(GuiGraphics context, float delta) {
+		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, true);
 	}
 }

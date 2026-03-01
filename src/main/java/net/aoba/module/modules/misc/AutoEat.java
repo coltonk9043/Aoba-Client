@@ -20,11 +20,11 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class AutoEat extends Module implements FoodLevelListener, PlayerHealthListener, ItemUsedListener {
 	private ItemStack lastUsedItemStack = null;
@@ -93,9 +93,9 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
 
 	private boolean shouldEat() {
 		if (isEating && fillToFull.getValue()) {
-			return MC.player.getHungerManager().isNotFull();
+			return MC.player.getFoodData().needsFood();
 		} else {
-			int foodLevel = MC.player.getHungerManager().getFoodLevel();
+			int foodLevel = MC.player.getFoodData().getFoodLevel();
 			return foodLevel <= hungerSetting.getValue();
 		}
 	}
@@ -106,8 +106,8 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
 	}
 
 	private boolean isCurrentlyHandEdible() {
-		Item item = MC.player.getInventory().getSelectedStack().getItem();
-		FoodComponent food = item.getComponents().get(DataComponentTypes.FOOD);
+		Item item = MC.player.getInventory().getSelectedItem().getItem();
+		FoodProperties food = item.components().get(DataComponents.FOOD);
 		return food != null;
 	}
 
@@ -118,16 +118,16 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
 		if (shouldEat() || healthBelowThreshold()) {
 			// Eat what is in the current hand.
 			if (isCurrentlyHandEdible()) {
-				MC.options.useKey.setPressed(true);
+				MC.options.keyUse.setDown(true);
 				isEating = true;
 			} else {
 				// Else find the hand to eat and start eating.
 				int foodSlot = -1;
-				FoodComponent bestFood = null;
+				FoodProperties bestFood = null;
 
 				for (int i = 0; i < 9; i++) {
-					Item item = MC.player.getInventory().getStack(i).getItem();
-					FoodComponent food = item.getComponents().get(DataComponentTypes.FOOD);
+					Item item = MC.player.getInventory().getItem(i).getItem();
+					FoodProperties food = item.components().get(DataComponents.FOOD);
 					if (food == null)
 						continue;
 
@@ -160,11 +160,11 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
 						AobaClient.LOGGER.info("[Aoba] Setting previous slot to: " + previousSlot);
 					}
 
-					lastUsedItemStack = MC.player.getInventory().getStack(foodSlot);
+					lastUsedItemStack = MC.player.getInventory().getItem(foodSlot);
 					isEating = true;
 					AobaClient.LOGGER.info("[Aoba] Eating Slot: " + foodSlot);
 					MC.player.getInventory().setSelectedSlot(foodSlot);
-					MC.options.useKey.setPressed(true);
+					MC.options.keyUse.setDown(true);
 				}
 			}
 		}
@@ -188,11 +188,11 @@ public class AutoEat extends Module implements FoodLevelListener, PlayerHealthLi
 	@Override
 	public void onItemUsed(ItemUsedEvent.Post event) {
 		AobaClient.LOGGER.info("[Aoba] Item POST");
-		if (lastUsedItemStack != null && ItemStack.areItemsEqual(event.getItemStack(), lastUsedItemStack)) {
+		if (lastUsedItemStack != null && ItemStack.isSameItem(event.getItemStack(), lastUsedItemStack)) {
 			AobaClient.LOGGER.info("[Aoba] EATING Item was used");
 			boolean shouldContinueEating = shouldEat();
 			if (!shouldContinueEating) {
-				MC.options.useKey.setPressed(false);
+				MC.options.keyUse.setDown(false);
 				lastUsedItemStack = null;
 				AobaClient.LOGGER.info("[Aoba]No longer eating : " + previousSlot);
 				isEating = false;

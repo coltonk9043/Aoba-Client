@@ -15,10 +15,10 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.utils.entity.FakePlayerEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 public class POV extends Module implements TickListener {
 	private FakePlayerEntity fakePlayer;
@@ -35,10 +35,10 @@ public class POV extends Module implements TickListener {
 
 	@Override
 	public void onDisable() {
-		MinecraftClient.getInstance().setCameraEntity(MC.player);
+		Minecraft.getInstance().setCameraEntity(MC.player);
 		if (fakePlayer != null) {
 			fakePlayer.despawn();
-			MC.world.removeEntity(-3, null);
+			MC.level.removeEntity(-3, null);
 		}
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
@@ -61,9 +61,9 @@ public class POV extends Module implements TickListener {
 		return povEntity;
 	}
 
-	public PlayerEntity getEntityAsPlayer() {
-		if (povEntity instanceof PlayerEntity) {
-			return (PlayerEntity) povEntity;
+	public Player getEntityAsPlayer() {
+		if (povEntity instanceof Player) {
+			return (Player) povEntity;
 		} else {
 			return null;
 		}
@@ -71,32 +71,32 @@ public class POV extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		ClientPlayerEntity player = MC.player;
+		LocalPlayer player = MC.player;
 		povEntity = null;
-		for (Entity entity : MC.world.getPlayers()) {
+		for (Entity entity : MC.level.players()) {
 			if (entity.getName().getString().equals(povString)) {
 				povEntity = entity;
 			}
 		}
-		if (MinecraftClient.getInstance().getCameraEntity() == povEntity) {
+		if (Minecraft.getInstance().getCameraEntity() == povEntity) {
 			if (!fakePlayerSpawned) {
 				fakePlayer = new FakePlayerEntity();
-				fakePlayer.copyFrom(player);
-				fakePlayer.headYaw = player.headYaw;
-				MC.world.addEntity(fakePlayer);
+				fakePlayer.restoreFrom(player);
+				fakePlayer.yHeadRot = player.yHeadRot;
+				MC.level.addEntity(fakePlayer);
 			}
-			fakePlayer.copyFrom(player);
-			fakePlayer.headYaw = player.headYaw;
+			fakePlayer.restoreFrom(player);
+			fakePlayer.yHeadRot = player.yHeadRot;
 		} else {
 			if (fakePlayer != null) {
 				fakePlayer.despawn();
-				MC.world.removeEntity(-3, null);
+				MC.level.removeEntity(-3, null);
 			}
 
 			if (povEntity == null) {
-				MinecraftClient.getInstance().setCameraEntity(MC.player);
+				Minecraft.getInstance().setCameraEntity(MC.player);
 			} else {
-				MinecraftClient.getInstance().setCameraEntity(povEntity);
+				Minecraft.getInstance().setCameraEntity(povEntity);
 			}
 		}
 	}

@@ -18,14 +18,14 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CropBlock;
-import net.minecraft.block.FarmlandBlock;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class AutoFarm extends Module implements TickListener {
 
@@ -71,22 +71,22 @@ public class AutoFarm extends Module implements TickListener {
 	@Override
 	public void onTick(Pre event) {
 		int rad = radius.getValue().intValue();
-		BlockPos.Mutable mutableBlockPos = new BlockPos.Mutable();
+		BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
 
 		for (int x = -rad; x < rad; x++) {
 			for (int y = -1; y <= 1; y++) {
 				for (int z = -rad; z < rad; z++) {
 					mutableBlockPos.set(x, y, z);
-					Block block = MC.world.getBlockState(mutableBlockPos).getBlock();
-					BlockState blockState = MC.world.getBlockState(mutableBlockPos);
+					Block block = MC.level.getBlockState(mutableBlockPos).getBlock();
+					BlockState blockState = MC.level.getBlockState(mutableBlockPos);
 
 					if (block instanceof CropBlock crop) {
-						if (!crop.canGrow(MC.world, null, mutableBlockPos, blockState)) {
+						if (!crop.isBonemealSuccess(MC.level, null, mutableBlockPos, blockState)) {
 							InteractionManager.destroyBlock(mutableBlockPos);
 						} else {
 							fertilizeCrops(mutableBlockPos);
 						}
-					} else if (block instanceof FarmlandBlock) {
+					} else if (block instanceof FarmBlock) {
 						handleFarmland(mutableBlockPos);
 					}
 				}
@@ -94,18 +94,18 @@ public class AutoFarm extends Module implements TickListener {
 		}
 	}
 
-	private void fertilizeCrops(BlockPos.Mutable mutableBlockPos) {
+	private void fertilizeCrops(BlockPos.MutableBlockPos mutableBlockPos) {
 		if (InteractionManager.selectItem(stack -> stack.getItem() == Items.BONE_MEAL)) {
-			InteractionManager.useItemOnBlock(mutableBlockPos, Hand.MAIN_HAND);
+			InteractionManager.useItemOnBlock(mutableBlockPos, InteractionHand.MAIN_HAND);
 		}
 	}
 
-	private void handleFarmland(BlockPos.Mutable mutableBlockPos) {
-		BlockPos blockAbovePos = mutableBlockPos.up();
-		Block blockAbove = MC.world.getBlockState(blockAbovePos).getBlock();
+	private void handleFarmland(BlockPos.MutableBlockPos mutableBlockPos) {
+		BlockPos blockAbovePos = mutableBlockPos.above();
+		Block blockAbove = MC.level.getBlockState(blockAbovePos).getBlock();
 		if (blockAbove == Blocks.AIR) {
 			if (InteractionManager.selectItem(ModuleUtils::isPlantable)) {
-				InteractionManager.useItemOnBlock(mutableBlockPos, Hand.MAIN_HAND);
+				InteractionManager.useItemOnBlock(mutableBlockPos, InteractionHand.MAIN_HAND);
 			}
 		}
 	}

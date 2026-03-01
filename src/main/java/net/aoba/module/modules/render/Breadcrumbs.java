@@ -21,7 +21,7 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public class Breadcrumbs extends Module implements Render3DListener, TickListener {
 
@@ -31,7 +31,7 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 	private final float distanceThreshold = 1.0f; // Minimum distance to record a new position
 	private float currentTick = 0;
 	private final float timer = 10;
-	private final LinkedList<Vec3d> positions = new LinkedList<>();
+	private final LinkedList<Vec3> positions = new LinkedList<>();
 	private final int maxPositions = 1000;
 
 	public Breadcrumbs() {
@@ -61,8 +61,8 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 
 	@Override
 	public void onRender(Render3DEvent event) {
-		Vec3d prevPosition = null;
-		for (Vec3d position : positions) {
+		Vec3 prevPosition = null;
+		for (Vec3 position : positions) {
 			if (prevPosition != null) {
 				Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), prevPosition, position, color.getValue());
 			}
@@ -81,8 +81,8 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 		if (timer == currentTick) {
 			currentTick = 0;
 			if (!Aoba.getInstance().moduleManager.freecam.state.getValue()) {
-				Vec3d currentPosition = MC.player.getPos();
-				if (positions.isEmpty() || positions.getLast().squaredDistanceTo(currentPosition) >= distanceThreshold
+				Vec3 currentPosition = MC.player.position();
+				if (positions.isEmpty() || positions.getLast().distanceToSqr(currentPosition) >= distanceThreshold
 						* distanceThreshold) {
 					if (positions.size() >= maxPositions) {
 						positions.removeFirst();

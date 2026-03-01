@@ -17,14 +17,14 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.render.Camera;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
+import net.minecraft.client.Camera;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class ClickTP extends Module implements MouseClickListener {
 
@@ -69,33 +69,33 @@ public class ClickTP extends Module implements MouseClickListener {
 	public void onMouseClick(MouseClickEvent event) {
 
 		if (event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
-			Camera camera = MC.gameRenderer.getCamera();
+			Camera camera = MC.gameRenderer.getMainCamera();
 
 			if (camera != null) {
-				Vec3d direction = Vec3d.fromPolar(camera.getPitch(), camera.getYaw()).multiply(210);
-				Vec3d targetPos = camera.getPos().add(direction);
+				Vec3 direction = Vec3.directionFromRotation(camera.xRot(), camera.yRot()).scale(210);
+				Vec3 targetPos = camera.position().add(direction);
 
-				RaycastContext context = new RaycastContext(camera.getPos(), targetPos,
-						RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, MC.player);
+				ClipContext context = new ClipContext(camera.position(), targetPos,
+						ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, MC.player);
 
-				HitResult raycast = MC.world.raycast(context);
+				HitResult raycast = MC.level.clip(context);
 
 				if (raycast.getType() == HitResult.Type.BLOCK) {
 					BlockHitResult raycastBlock = (BlockHitResult) raycast;
 					BlockPos pos = raycastBlock.getBlockPos();
-					Direction side = raycastBlock.getSide();
+					Direction side = raycastBlock.getDirection();
 
-					Vec3d newPos = new Vec3d(pos.getX() + 0.5 + side.getOffsetX(), pos.getY() + 1,
-							pos.getZ() + 0.5 + side.getOffsetZ());
-					int packetsRequired = (int) Math.ceil(MC.player.getPos().distanceTo(newPos) / 10) - 1;
+					Vec3 newPos = new Vec3(pos.getX() + 0.5 + side.getStepX(), pos.getY() + 1,
+							pos.getZ() + 0.5 + side.getStepZ());
+					int packetsRequired = (int) Math.ceil(MC.player.position().distanceTo(newPos) / 10) - 1;
 
 					for (int i = 0; i < packetsRequired; i++) {
-						MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true, false));
+						MC.player.connection.send(new ServerboundMovePlayerPacket.StatusOnly(true, false));
 					}
 
-					MC.player.networkHandler.sendPacket(
-							new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, true, false));
-					MC.player.setPosition(newPos);
+					MC.player.connection.send(
+							new ServerboundMovePlayerPacket.Pos(newPos.x, newPos.y, newPos.z, true, false));
+					MC.player.setPos(newPos);
 				}
 			}
 		}

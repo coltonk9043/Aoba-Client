@@ -11,59 +11,58 @@ package net.aoba.utils.entity;
 import static net.aoba.AobaClient.MC;
 
 import java.util.function.BiFunction;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.DamageUtil;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult.Type;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.GameMode;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.damagesource.CombatRules;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult.Type;
+import net.minecraft.world.phys.Vec3;
 
 public class DamageUtils {
 	public static final RaycastFactory HIT_FACTORY = (context, blockPos) -> {
-		BlockState blockState = MC.world.getBlockState(blockPos);
-		if (blockState.getBlock().getBlastResistance() < 600)
+		BlockState blockState = MC.level.getBlockState(blockPos);
+		if (blockState.getBlock().getExplosionResistance() < 600)
 			return null;
 
-		return blockState.getCollisionShape(MC.world, blockPos).raycast(context.start(), context.end(), blockPos);
+		return blockState.getCollisionShape(MC.level, blockPos).clip(context.start(), context.end(), blockPos);
 	};
 
-	public static float crystalDamage(LivingEntity target, Vec3d crystal) {
+	public static float crystalDamage(LivingEntity target, Vec3 crystal) {
 		return explosionDamage(target, crystal, 12f, false);
 	}
 
-	private static float explosionDamage(LivingEntity target, Vec3d explosionPos, float power, boolean predictMovement,
+	private static float explosionDamage(LivingEntity target, Vec3 explosionPos, float power, boolean predictMovement,
 			RaycastFactory raycastFactory) {
 		if (target == null)
 			return 0f;
-		if (target instanceof PlayerEntity player && EntityUtils.getGameMode(player) == GameMode.CREATIVE
+		if (target instanceof Player player && EntityUtils.getGameMode(player) == GameType.CREATIVE
 				&& !(player instanceof FakePlayerEntity))
 			return 0f;
 
-		Vec3d position = predictMovement ? target.getPos().add(target.getVelocity()) : target.getPos();
+		Vec3 position = predictMovement ? target.position().add(target.getDeltaMovement()) : target.position();
 
-		Box box = target.getBoundingBox();
+		AABB box = target.getBoundingBox();
 		if (predictMovement)
-			box = box.offset(target.getVelocity());
+			box = box.move(target.getDeltaMovement());
 
 		return explosionDamage(target, position, box, explosionPos, power, raycastFactory);
 	}
 
-	private static float explosionDamage(LivingEntity target, Vec3d explosionPos, float power,
+	private static float explosionDamage(LivingEntity target, Vec3 explosionPos, float power,
 			boolean predictMovement) {
 		return explosionDamage(target, explosionPos, power, predictMovement, HIT_FACTORY);
 	}
 
-	public static float explosionDamage(LivingEntity target, Vec3d targetPos, Box targetBox, Vec3d explosionPos,
+	public static float explosionDamage(LivingEntity target, Vec3 targetPos, AABB targetBox, Vec3 explosionPos,
 			float power, RaycastFactory raycastFactory) {
 		double modDistance = PlayerUtils.distance(targetPos.x, targetPos.y, targetPos.z, explosionPos.x, explosionPos.y,
 				explosionPos.z);
@@ -74,20 +73,20 @@ public class DamageUtils {
 		double impact = (1 - (modDistance / power)) * exposure;
 		float damage = (int) ((impact * impact + impact) / 2 * 7 * 12 + 1);
 
-		return calculateReductions(damage, target, MC.world.getDamageSources().explosion(null));
+		return calculateReductions(damage, target, MC.level.damageSources().explosion(null));
 	}
 
 	public static float calculateReductions(float damage, LivingEntity entity, DamageSource damageSource) {
-		if (damageSource.isScaledWithDifficulty()) {
-			switch (MC.world.getDifficulty()) {
+		if (damageSource.scalesWithDifficulty()) {
+			switch (MC.level.getDifficulty()) {
 			case EASY -> damage = Math.min(damage / 2 + 1, damage);
 			case HARD -> damage *= 1.5f;
 			}
 		}
 
 		// Armor reduction
-		damage = DamageUtil.getDamageLeft(entity, damage, damageSource, getArmor(entity),
-				(float) entity.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS));
+		damage = CombatRules.getDamageAfterAbsorb(entity, damage, damageSource, getArmor(entity),
+				(float) entity.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
 
 		// Resistance reduction
 		damage = resistanceReduction(entity, damage);
@@ -99,11 +98,11 @@ public class DamageUtils {
 	}
 
 	private static float protectionReduction(LivingEntity player, float damage, DamageSource source) {
-		return DamageUtil.getInflictedDamage(damage, /* protLevel */ 0);
+		return CombatRules.getDamageAfterMagicAbsorb(damage, /* protLevel */ 0);
 	}
 
 	private static float resistanceReduction(LivingEntity player, float damage) {
-		StatusEffectInstance resistance = player.getStatusEffect(StatusEffects.RESISTANCE);
+		MobEffectInstance resistance = player.getEffect(MobEffects.RESISTANCE);
 		if (resistance != null) {
 			int lvl = resistance.getAmplifier() + 1;
 			damage *= (1 - (lvl * 0.2f));
@@ -112,7 +111,7 @@ public class DamageUtils {
 		return Math.max(damage, 0);
 	}
 
-	private static float getExposure(Vec3d source, Box box, RaycastFactory raycastFactory) {
+	private static float getExposure(Vec3 source, AABB box, RaycastFactory raycastFactory) {
 		double xDiff = box.maxX - box.minX;
 		double yDiff = box.maxY - box.minY;
 		double zDiff = box.maxZ - box.minZ;
@@ -142,7 +141,7 @@ public class DamageUtils {
 			for (double x = startX; x <= endX; x += xStep) {
 				for (double y = startY; y <= endY; y += yStep) {
 					for (double z = startZ; z <= endZ; z += zStep) {
-						Vec3d position = new Vec3d(x, y, z);
+						Vec3 position = new Vec3(x, y, z);
 						BlockHitResult raycastResult = raycast(new ExposureRaycastContext(position, source),
 								raycastFactory);
 						if (raycastResult == null || raycastResult.getType() == Type.MISS)
@@ -158,14 +157,14 @@ public class DamageUtils {
 	}
 
 	private static float getArmor(LivingEntity entity) {
-		return (float) Math.floor(entity.getAttributeValue(EntityAttributes.ARMOR));
+		return (float) Math.floor(entity.getAttributeValue(Attributes.ARMOR));
 	}
 
 	private static BlockHitResult raycast(ExposureRaycastContext context, RaycastFactory raycastFactory) {
-		return BlockView.raycast(context.start, context.end, context, raycastFactory, ctx -> null);
+		return BlockGetter.traverseBlocks(context.start, context.end, context, raycastFactory, ctx -> null);
 	}
 
-	public record ExposureRaycastContext(Vec3d start, Vec3d end) {
+	public record ExposureRaycastContext(Vec3 start, Vec3 end) {
 	}
 
 	@FunctionalInterface

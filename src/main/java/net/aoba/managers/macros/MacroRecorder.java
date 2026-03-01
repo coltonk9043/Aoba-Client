@@ -85,7 +85,7 @@ public class MacroRecorder
 
 	@Override
 	public void onKeyUp(KeyUpEvent event) {
-		if (event.GetKey() != Aoba.getInstance().guiManager.clickGuiButton.getValue().getCode()
+		if (event.GetKey() != Aoba.getInstance().guiManager.clickGuiButton.getValue().getValue()
 				&& event.GetKey() != 256
 				&& !Aoba.getInstance().guiManager.isClickGuiOpen()) {
 			long timeStamp = System.nanoTime() - startTime;
@@ -96,7 +96,7 @@ public class MacroRecorder
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
-		if (event.GetKey() != Aoba.getInstance().guiManager.clickGuiButton.getValue().getCode()
+		if (event.GetKey() != Aoba.getInstance().guiManager.clickGuiButton.getValue().getValue()
 				&& event.GetKey() != 256
 				&& !Aoba.getInstance().guiManager.isClickGuiOpen()) {
 			long timeStamp = System.nanoTime() - startTime;

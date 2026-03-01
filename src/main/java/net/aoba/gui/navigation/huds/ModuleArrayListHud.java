@@ -24,7 +24,7 @@ import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class ModuleArrayListHud extends HudWindow {
 	private final EnumSetting<TextAlign> textAlign = EnumSetting.<TextAlign>builder().id("ModuleArrayListHudText_TextAlign")
@@ -75,7 +75,7 @@ public class ModuleArrayListHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		if (isVisible()) {
 			Rectangle pos = position.getValue();
 

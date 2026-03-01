@@ -12,7 +12,7 @@ import net.aoba.Aoba;
 import net.aoba.command.Command;
 import net.aoba.managers.CommandManager;
 import net.aoba.module.Module;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
 import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Map;
@@ -38,12 +38,12 @@ public class CmdHelp extends Command {
             if (module == null) {
                 CommandManager.sendChatMessage("Could not find Module '" + parameters[0] + "'.");
             } else {
-                String title = "------------ " + Formatting.LIGHT_PURPLE + module.getName() + " Help" + Formatting.RESET + " ------------";
+                String title = "------------ " + ChatFormatting.LIGHT_PURPLE + module.getName() + " Help" + ChatFormatting.RESET + " ------------";
                 String unformatted_title = "------------ " + module.getName() + " Help ------------";
                 CommandManager.sendChatMessage(title);
-                CommandManager.sendChatMessage("Name: " + Formatting.LIGHT_PURPLE + module.getName() + Formatting.RESET);
-                CommandManager.sendChatMessage("Description: " + Formatting.LIGHT_PURPLE + module.getDescription() + Formatting.RESET);
-                CommandManager.sendChatMessage("Keybind: " + Formatting.LIGHT_PURPLE + module.getBind().getValue().getTranslationKey() + Formatting.RESET);
+                CommandManager.sendChatMessage("Name: " + ChatFormatting.LIGHT_PURPLE + module.getName() + ChatFormatting.RESET);
+                CommandManager.sendChatMessage("Description: " + ChatFormatting.LIGHT_PURPLE + module.getDescription() + ChatFormatting.RESET);
+                CommandManager.sendChatMessage("Keybind: " + ChatFormatting.LIGHT_PURPLE + module.getBind().getValue().getName() + ChatFormatting.RESET);
                 CommandManager.sendChatMessage("-".repeat(unformatted_title.length() - 2)); // mc font characters are not the same width but eh..
             }
         }
@@ -53,7 +53,7 @@ public class CmdHelp extends Command {
     private void ShowCommands(int page) {
         String title = "------------ Help [Page " + page + " of 5] ------------";  // TODO: remove hardcoded page length
         CommandManager.sendChatMessage(title);
-        CommandManager.sendChatMessage("Use " + Formatting.LIGHT_PURPLE + ".aoba help [n]" + Formatting.RESET + " to get page n of help.");
+        CommandManager.sendChatMessage("Use " + ChatFormatting.LIGHT_PURPLE + ".aoba help [n]" + ChatFormatting.RESET + " to get page n of help.");
 
         // Fetch the commands and dislays their syntax on the screen.
         Map<String, Command> commands = Aoba.getInstance().commandManager.getCommands();

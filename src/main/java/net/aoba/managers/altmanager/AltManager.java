@@ -29,12 +29,11 @@ import com.mojang.logging.LogUtils;
 
 import net.aoba.AobaClient;
 import net.aoba.managers.altmanager.login.MicrosoftAuth;
-import net.aoba.mixin.interfaces.IMinecraftClient;
+import net.aoba.mixin.interfaces.IMinecraft;
 import net.aoba.utils.system.SystemUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.session.Session;
-import net.minecraft.client.session.Session.AccountType;
-import net.minecraft.util.Uuids;
+import net.minecraft.client.User;
+import net.minecraft.client.User;
+import net.minecraft.core.UUIDUtil;
 
 import static net.aoba.AobaClient.MC;
 
@@ -187,13 +186,26 @@ public class AltManager {
 
 	/**
 	 * Logs in to an alt account.
-	 * 
+	 *
 	 * @param alt Alt
-	 * @return login success state
 	 */
 	public void login(Alt alt) {
 		// Log in to the correct service depending on the Alt type.
 		MicrosoftAuth.login(alt);
+	}
+
+	public void loginWithAuth(Alt alt, Runnable onComplete) {
+		MicrosoftAuth.requestAuthToken((authToken) -> {
+			if (authToken != null) {
+				alt.setAuthToken(authToken);
+				MicrosoftAuth.login(alt);
+			} else {
+				LogUtils.getLogger().error("[Aoba] Microsoft authentication failed - no token received.");
+			}
+			if (onComplete != null) {
+				onComplete.run();
+			}
+		});
 	}
 
 	/**
@@ -204,9 +216,9 @@ public class AltManager {
 	 */
 	public void loginCracked(String alt) {
 		try {
-			IMinecraftClient iMC = (IMinecraftClient) MC;
-			UUID offlineAlt = Uuids.getOfflinePlayerUuid(alt);
-			iMC.setSession(new Session(alt, offlineAlt, "", Optional.empty(), Optional.empty(), AccountType.MOJANG));
+			IMinecraft iMC = (IMinecraft) MC;
+			UUID offlineAlt = UUIDUtil.createOfflinePlayerUUID(alt);
+			iMC.setSession(new User(alt, offlineAlt, "", Optional.empty(), Optional.empty()));
 			LogUtils.getLogger().info("Logged in as " + alt);
 		} catch (Exception e) {
 			e.printStackTrace();

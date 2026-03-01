@@ -40,18 +40,18 @@ import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PlantBlock;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.argument.EntityAnchorArgumentType.EntityAnchor;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.commands.arguments.EntityAnchorArgument.Anchor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.VegetationBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class GoToWindow extends Window implements TickListener, Render3DListener {
 
@@ -59,7 +59,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		Walk, Fly, Teleport,
 	}
 
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private final ButtonComponent startButton;
@@ -222,8 +222,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		setPositionRunnable = new Runnable() {
 			@Override
 			public void run() {
-				MinecraftClient MC = MinecraftClient.getInstance();
-				BlockPos pos = MC.player.getBlockPos();
+				Minecraft MC = Minecraft.getInstance();
+				BlockPos pos = MC.player.blockPosition();
 				locationX.setValue(String.valueOf(pos.getX()));
 				locationY.setValue(String.valueOf(pos.getY()));
 				locationZ.setValue(String.valueOf(pos.getZ()));
@@ -267,9 +267,9 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		int z = Integer.parseInt(locationZ.getValue());
 
 		pathManager.setTarget(targetPos);
-		nodes = pathManager.recalculatePath(MC.player.getBlockPos());
+		nodes = pathManager.recalculatePath(MC.player.blockPosition());
 
-		start = MC.player.getBlockPos();
+		start = MC.player.blockPosition();
 		end = targetPos;
 		actualEnd = new BlockPos(x, y, z);
 		currentNodeIndex = 0;
@@ -283,32 +283,32 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		int x = Integer.parseInt(locationX.getValue());
 		int y = Integer.parseInt(locationY.getValue());
 		int z = Integer.parseInt(locationZ.getValue());
-		Vec3d target = new Vec3d(x, y, z);
+		Vec3 target = new Vec3(x, y, z);
 
 		BlockPos targetPos = new BlockPos(x, y, z);
 
-		ChunkPos targetChunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(targetPos.getX()),
-				ChunkSectionPos.getSectionCoord(targetPos.getZ()));
+		ChunkPos targetChunkPos = new ChunkPos(SectionPos.blockToSectionCoord(targetPos.getX()),
+				SectionPos.blockToSectionCoord(targetPos.getZ()));
 
 		// Find the new chunk / position that we want to try to get to, hoping that we
 		// can find one.
-		BlockPos playerPos = MC.player.getBlockPos();
-		Vec3d delta = target.subtract(playerPos.toCenterPos()).normalize();
-		Vec3d offset = new Vec3d(delta.x, delta.y, delta.z);
+		BlockPos playerPos = MC.player.blockPosition();
+		Vec3 delta = target.subtract(playerPos.getCenter()).normalize();
+		Vec3 offset = new Vec3(delta.x, delta.y, delta.z);
 		BlockPos newTarget = playerPos;
 		BlockPos temp = playerPos;
 		boolean foundTargetInLoadedChunks = false;
 
-		ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(temp.getX()),
-				ChunkSectionPos.getSectionCoord(temp.getZ()));
+		ChunkPos chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(temp.getX()),
+				SectionPos.blockToSectionCoord(temp.getZ()));
 
 		// HashSet<Chunk> visittedChunks = new HashSet<Chunk>();
-		while (MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z)) {
+		while (MC.level.getChunkSource().hasChunk(chunkPos.x, chunkPos.z)) {
 			newTarget = temp;
-			temp = playerPos.add((int) Math.ceil(offset.x), (int) Math.ceil(offset.y), (int) Math.ceil(offset.z));
+			temp = playerPos.offset((int) Math.ceil(offset.x), (int) Math.ceil(offset.y), (int) Math.ceil(offset.z));
 			offset = offset.add(delta);
-			chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(temp.getX()),
-					ChunkSectionPos.getSectionCoord(temp.getZ()));
+			chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(temp.getX()),
+					SectionPos.blockToSectionCoord(temp.getZ()));
 
 			// visittedChunks.add(chunk);
 			if (chunkPos.equals(targetChunkPos)) {
@@ -331,11 +331,11 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		boolean isTeleportMode = pathfinderMode.getValue() == Pathfinder.Teleport;
 		BlockPos prevPos = null;
 		for (int i = 320; i >= -64; i--) {
-			BlockPos pos = current.withY(i);
-			BlockState state = MC.world.getBlockState(pos);
+			BlockPos pos = current.atY(i);
+			BlockState state = MC.level.getBlockState(pos);
 
-			if ((isTeleportMode && !state.isAir() && !state.getFluidState().isIn(FluidTags.WATER)
-					&& !state.getFluidState().isIn(FluidTags.LAVA) && !(state.getBlock() instanceof PlantBlock))
+			if ((isTeleportMode && !state.isAir() && !state.getFluidState().is(FluidTags.WATER)
+					&& !state.getFluidState().is(FluidTags.LAVA) && !(state.getBlock() instanceof VegetationBlock))
 					|| (!isTeleportMode && !state.isAir()))
 				break;
 
@@ -359,8 +359,8 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 	@Override
 	public void onRender(Render3DEvent event) {
 		if (nodes != null) {
-			Box startBox = new Box(start);
-			Box endBox = new Box(end);
+			AABB startBox = new AABB(start);
+			AABB endBox = new AABB(end);
 
 			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), startBox, Colors.Red, 1.0f);
 			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), endBox, Colors.Red, 1.0f);
@@ -369,13 +369,13 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				PathNode first = nodes.get(i);
 				PathNode second = nodes.get(i + 1);
 
-				Vec3d pos1 = first.pos.toCenterPos().add(-0.15f, -0.15f, -0.15f);
-				Vec3d pos2 = first.pos.toCenterPos().add(0.15f, 0.15f, 0.15f);
-				Box box = new Box(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
+				Vec3 pos1 = first.pos.getCenter().add(-0.15f, -0.15f, -0.15f);
+				Vec3 pos2 = first.pos.getCenter().add(0.15f, 0.15f, 0.15f);
+				AABB box = new AABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
 
 				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, Colors.Red, 1);
-				Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), first.pos.toCenterPos(),
-						second.pos.toCenterPos(), Colors.Red);
+				Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), first.pos.getCenter(),
+						second.pos.getCenter(), Colors.Red);
 			}
 		}
 	}
@@ -387,7 +387,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 
 	@Override
 	public void onTick(TickEvent.Post event) {
-		MinecraftClient MC = MinecraftClient.getInstance();
+		Minecraft MC = Minecraft.getInstance();
 		if (nodes == null)
 			return;
 
@@ -396,11 +396,11 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			PathNode next = nodes.get(currentNodeIndex + 1);
 			BlockPos playerPos;
 
-			if (MC.player.isRiding()) {
+			if (MC.player.isHandsBusy()) {
 				Entity riding = MC.player.getRootVehicle();
-				playerPos = riding.getBlockPos();
+				playerPos = riding.blockPosition();
 			} else
-				playerPos = MC.player.getBlockPos();
+				playerPos = MC.player.blockPosition();
 
 			if (playerPos.equals(next.pos)) {
 				currentNodeIndex++;
@@ -410,39 +410,39 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 					return;
 			}
 
-			Vec3d nextCenterPos = next.pos.toBottomCenterPos();
+			Vec3 nextCenterPos = next.pos.getBottomCenter();
 
 			switch (pathfinderMode.getValue()) {
 			case Fly:
-				double velocity = Math.min(maxSpeed.getValue(), MC.player.getPos().distanceTo(nextCenterPos));
-				Vec3d direction = nextCenterPos.subtract(MC.player.getPos()).normalize().multiply(velocity);
+				double velocity = Math.min(maxSpeed.getValue(), MC.player.position().distanceTo(nextCenterPos));
+				Vec3 direction = nextCenterPos.subtract(MC.player.position()).normalize().scale(velocity);
 
 				// Check to see if the player is in a vehicle. If they are, we want to apply
 				// velocity to the vehicle (boatfly)
-				if (MC.player.isRiding()) {
+				if (MC.player.isHandsBusy()) {
 					Entity riding = MC.player.getRootVehicle();
-					riding.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
-					riding.setVelocity(direction);
+					riding.lookAt(Anchor.EYES, new Vec3(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
+					riding.setDeltaMovement(direction);
 				} else
-					MC.player.setVelocity(direction);
+					MC.player.setDeltaMovement(direction);
 				break;
 			case Walk:
 				MC.player.getAbilities().flying = false;
-				MC.player.lookAt(EntityAnchor.EYES, new Vec3d(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
-				MC.options.forwardKey.setPressed(true);
-				MC.options.jumpKey.setPressed(next.getIsInWater() || next.getIsInLava() || next.getWasJump()
+				MC.player.lookAt(Anchor.EYES, new Vec3(nextCenterPos.x, MC.player.getEyeY(), nextCenterPos.z));
+				MC.options.keyUp.setDown(true);
+				MC.options.keyJump.setDown(next.getIsInWater() || next.getIsInLava() || next.getWasJump()
 						|| MC.player.horizontalCollision);
 				break;
 			case Teleport:
-				int packetsRequired = (int) Math.ceil(MC.player.getPos().distanceTo(nextCenterPos) / 10) - 1;
+				int packetsRequired = (int) Math.ceil(MC.player.position().distanceTo(nextCenterPos) / 10) - 1;
 
 				for (int i = 0; i < packetsRequired; i++) {
-					MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(true, false));
+					MC.player.connection.send(new ServerboundMovePlayerPacket.StatusOnly(true, false));
 				}
 
-				MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(nextCenterPos.x,
+				MC.player.connection.send(new ServerboundMovePlayerPacket.Pos(nextCenterPos.x,
 						nextCenterPos.y, nextCenterPos.z, true, false));
-				MC.player.setPosition(nextCenterPos);
+				MC.player.setPos(nextCenterPos);
 				break;
 			default:
 				break;

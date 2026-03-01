@@ -18,7 +18,7 @@ public class Input {
 	public static void setCursorStyle(CursorStyle style) {
 
 		if (lastCursorStyle != style) {
-			GLFW.glfwSetCursor(MC.getWindow().getHandle(), style.getGlfwCursor());
+			GLFW.glfwSetCursor(MC.getWindow().handle(), style.getGlfwCursor());
 			lastCursorStyle = style;
 		}
 	}

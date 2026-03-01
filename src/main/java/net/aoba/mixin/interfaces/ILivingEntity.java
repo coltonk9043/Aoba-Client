@@ -18,15 +18,15 @@
 
 package net.aoba.mixin.interfaces;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(LivingEntity.class)
 public interface ILivingEntity {
-    @Accessor("jumpingCooldown")
+    @Accessor("noJumpDelay")
     int getJumpCooldown();
 
-    @Accessor("jumpingCooldown")
+    @Accessor("noJumpDelay")
     void setJumpCooldown(int val);
 }

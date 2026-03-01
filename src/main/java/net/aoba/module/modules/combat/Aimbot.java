@@ -18,10 +18,10 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 
 public class Aimbot extends Module implements TickListener {
 
@@ -115,7 +115,7 @@ public class Aimbot extends Module implements TickListener {
 
 			// Check for players within range of the player.
 			if (targetPlayers.getValue()) {
-				for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
+				for (AbstractClientPlayer entity : MC.level.players()) {
 					// Skip player if targetFriends is false and the FriendsList contains the
 					// entity.
 					if (entity == MC.player)
@@ -127,8 +127,8 @@ public class Aimbot extends Module implements TickListener {
 					if (entityFound == null)
 						entityFound = entity;
 					else {
-						double entityDistanceToPlayer = entity.squaredDistanceTo(MC.player);
-						if (entityDistanceToPlayer < entityFound.squaredDistanceTo(MC.player)
+						double entityDistanceToPlayer = entity.distanceToSqr(MC.player);
+						if (entityDistanceToPlayer < entityFound.distanceToSqr(MC.player)
 								&& entityDistanceToPlayer < radiusSqr) {
 							entityFound = entity;
 						}
@@ -139,16 +139,16 @@ public class Aimbot extends Module implements TickListener {
 			if (targetAnimals.getValue()) {
 				for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 					if (entity instanceof LivingEntity) {
-						if (entity instanceof ClientPlayerEntity)
+						if (entity instanceof LocalPlayer)
 							continue;
 
-						double entityDistanceToPlayer = entity.squaredDistanceTo(MC.player);
+						double entityDistanceToPlayer = entity.distanceToSqr(MC.player);
 						if (entityDistanceToPlayer >= radiusSqr)
 							continue;
 
 						if (entityFound == null)
 							entityFound = (LivingEntity) entity;
-						else if (entityDistanceToPlayer < entityFound.squaredDistanceTo(MC.player)) {
+						else if (entityDistanceToPlayer < entityFound.distanceToSqr(MC.player)) {
 							entityFound = (LivingEntity) entity;
 						}
 					}
@@ -166,7 +166,7 @@ public class Aimbot extends Module implements TickListener {
 
 			currentTick = 0;
 		} else {
-			if (temp != null && temp.squaredDistanceTo(MC.player) >= radiusSqr) {
+			if (temp != null && temp.distanceToSqr(MC.player) >= radiusSqr) {
 				temp = null;
 			}
 		}

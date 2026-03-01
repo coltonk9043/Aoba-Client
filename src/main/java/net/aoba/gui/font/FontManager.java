@@ -22,34 +22,37 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.freetype.FT_Face;
 import org.lwjgl.util.freetype.FreeType;
-
+import com.mojang.blaze3d.font.GlyphProvider;
+import com.mojang.blaze3d.font.TrueTypeGlyphProvider;
 import com.mojang.logging.LogUtils;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.FontChangedEvent;
 import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.StringSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.Font;
-import net.minecraft.client.font.FontFilterType.FilterMap;
-import net.minecraft.client.font.FontStorage;
-import net.minecraft.client.font.FreeTypeUtil;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.font.TrueTypeFont;
-import net.minecraft.client.font.TrueTypeFontLoader;
-import net.minecraft.client.font.TrueTypeFontLoader.Shift;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GlyphSource;
+import net.minecraft.client.gui.font.FontOption.Filter;
+import net.minecraft.client.gui.font.FontSet;
+import net.minecraft.client.gui.font.GlyphStitcher;
+import net.minecraft.client.gui.font.glyphs.EffectGlyph;
+import net.minecraft.client.gui.font.providers.FreeTypeUtil;
+import net.minecraft.client.gui.font.providers.TrueTypeGlyphProviderDefinition;
+import net.minecraft.client.gui.font.providers.TrueTypeGlyphProviderDefinition.Shift;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.resources.Identifier;
 
 public class FontManager {
-	private final MinecraftClient MC;
-	private TextRenderer currentFontRenderer;
+	private final Minecraft MC;
+	private Font currentFontRenderer;
 
-	public ConcurrentHashMap<String, TextRenderer> fontRenderers;
+	public ConcurrentHashMap<String, Font> fontRenderers;
 	public StringSetting fontSetting;
 
 	public FontManager() {
 		fontRenderers = new ConcurrentHashMap<>();
-		MC = MinecraftClient.getInstance();
+		MC = Minecraft.getInstance();
 
 		fontSetting = StringSetting.builder().id("aoba_font").displayName("Font")
 				.description("The font that Aoba will use.").defaultValue("minecraft").build();
@@ -64,9 +67,9 @@ public class FontManager {
 	}
 
 	public void Initialize() {
-		fontRenderers.put("minecraft", MC.textRenderer);
+		fontRenderers.put("minecraft", MC.font);
 
-		File fontDirectory = new File(MC.runDirectory + File.separator + "aoba" + File.separator + "fonts");
+		File fontDirectory = new File(MC.gameDirectory + File.separator + "aoba" + File.separator + "fonts");
 
 		if (fontDirectory.exists() && fontDirectory.isDirectory()) {
 			LogUtils.getLogger().info("Found Font Directory: " + fontDirectory.getAbsolutePath());
@@ -75,17 +78,28 @@ public class FontManager {
 			if (files != null) {
 				for (File file : files) {
 					try {
-						Font font = LoadTTFFont(file, 9f, 2, new TrueTypeFontLoader.Shift(-1, 0), "");
-						List<Font.FontFilterPair> list = new ArrayList<>();
-						list.add(new Font.FontFilterPair(font, FilterMap.NO_FILTER));
+						GlyphProvider font = LoadTTFFont(file, 9f, 2, new TrueTypeGlyphProviderDefinition.Shift(-1, 0), "");
+						List<GlyphProvider.Conditional> list = new ArrayList<>();
+						list.add(new GlyphProvider.Conditional(font, Filter.ALWAYS_PASS));
 						LogUtils.getLogger().info("Loading font " + file.getName());
 
-						try (FontStorage storage = new FontStorage(MC.getTextureManager(),
-								Identifier.of("aoba:fonts/" + file.getName()))) {
-							storage.setFonts(list, Set.of());
-							fontRenderers.put(file.getName().replace(".ttf", ""),
-									new TextRenderer(id -> storage, true));
-						}
+						GlyphStitcher glyphStitcher = new GlyphStitcher(MC.getTextureManager(),
+								Identifier.parse("aoba:fonts/" + file.getName()));
+						FontSet storage = new FontSet(glyphStitcher);
+						storage.reload(list, Set.of());
+
+						fontRenderers.put(file.getName().replace(".ttf", ""),
+								new Font(new Font.Provider() {
+									@Override
+									public GlyphSource glyphs(FontDescription desc) {
+										return storage.source(false);
+									}
+
+									@Override
+									public EffectGlyph effect() {
+										return storage.whiteGlyph();
+									}
+								}));
 					} catch (Exception e) {
 						System.err.println("Failed to load font: " + file.getName());
 						LogUtils.getLogger().error(e.getMessage());
@@ -97,24 +111,24 @@ public class FontManager {
 		currentFontRenderer = fontRenderers.values().iterator().next();
 	}
 
-	public TextRenderer GetRenderer() {
+	public Font GetRenderer() {
 		return currentFontRenderer;
 	}
 
-	public void SetRenderer(TextRenderer renderer) {
+	public void SetRenderer(Font renderer) {
 		currentFontRenderer = renderer;
 		Aoba.getInstance().eventManager.Fire(new FontChangedEvent());
 	}
 
-	private static Font LoadTTFFont(File location, float size, float oversample, Shift shift, String skip)
+	private static GlyphProvider LoadTTFFont(File location, float size, float oversample, Shift shift, String skip)
 			throws IOException {
 		ByteBuffer byteBuffer = MemoryUtil.memAlloc(Files.readAllBytes(location.toPath()).length);
 		byteBuffer.put(Files.readAllBytes(location.toPath())).flip();
 
 		try (MemoryStack memoryStack = MemoryStack.stackPush()) {
 			PointerBuffer pointerBuffer = memoryStack.mallocPointer(1);
-			FreeTypeUtil.checkFatalError(
-					FreeType.FT_New_Memory_Face(FreeTypeUtil.initialize(), byteBuffer, 0L, pointerBuffer),
+			FreeTypeUtil.assertError(
+					FreeType.FT_New_Memory_Face(FreeTypeUtil.getLibrary(), byteBuffer, 0L, pointerBuffer),
 					"Initializing font face");
 			FT_Face fT_Face = FT_Face.create(pointerBuffer.get());
 
@@ -122,10 +136,10 @@ public class FontManager {
 			if (!"TrueType".equals(string)) {
 				throw new IOException("Font is not in TTF format, was " + string);
 			}
-			FreeTypeUtil.checkFatalError(FreeType.FT_Select_Charmap(fT_Face, FreeType.FT_ENCODING_UNICODE),
+			FreeTypeUtil.assertError(FreeType.FT_Select_Charmap(fT_Face, FreeType.FT_ENCODING_UNICODE),
 					"Find unicode charmap");
 
-			return new TrueTypeFont(byteBuffer, fT_Face, size, oversample, shift.x(), shift.y(), skip);
+			return new TrueTypeGlyphProvider(byteBuffer, fT_Face, size, oversample, shift.x(), shift.y(), skip);
 		} finally {
 			MemoryUtil.memFree(byteBuffer);
 		}

@@ -28,9 +28,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.aoba.Aoba;
 import net.aoba.managers.CommandManager;
 import net.aoba.module.modules.world.AutoSign;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.AbstractSignEditScreen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractSignEditScreen;
+import net.minecraft.network.chat.Component;
 
 @Mixin(AbstractSignEditScreen.class)
 public abstract class AbstractSignEditScreenMixin extends Screen {
@@ -38,7 +38,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
 	@Final
 	private String[] messages;
 
-	protected AbstractSignEditScreenMixin(Text title) {
+	protected AbstractSignEditScreenMixin(Component title) {
 		super(title);
 	}
 
@@ -48,11 +48,11 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
 		String[] newText = mod.getText();
 		if (newText != null) {
 			System.arraycopy(newText, 0, messages, 0, 4);
-			finishEditing();
+			onDone();
 		}
 	}
 
-	@Inject(at = { @At("HEAD") }, method = "finishEditing()V")
+	@Inject(at = { @At("HEAD") }, method = "onDone()V")
 	private void onEditorClose(CallbackInfo ci) {
 		AutoSign mod = Aoba.getInstance().moduleManager.autosign;
 		if (mod.state.getValue()) {
@@ -64,7 +64,7 @@ public abstract class AbstractSignEditScreenMixin extends Screen {
 	}
 
 	@Shadow
-	private void finishEditing() {
+	private void onDone() {
 
 	}
 }

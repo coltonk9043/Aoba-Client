@@ -8,8 +8,7 @@
 
 package net.aoba.gui.components;
 
-import org.joml.Matrix4f;
-
+import org.joml.Matrix3x2fStack;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseScrollEvent;
@@ -23,11 +22,10 @@ import net.aoba.settings.types.BlocksSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.block.Block;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 
 public class BlocksComponent extends Component implements MouseScrollListener {
 	private static final float BLOCK_WIDTH = 32f;
@@ -74,9 +72,8 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 	 * @param partialTicks The partial ticks used for interpolation.
 	 */
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
-		MatrixStack matrixStack = drawContext.getMatrices();
-		Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+	public void draw(GuiGraphics drawContext, float partialTicks) {
+		Matrix3x2fStack matrixStack = drawContext.pose();
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
@@ -87,15 +84,15 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 				GuiManager.foregroundColor.getValue().getColorAsInt());
 
 		if (!collapsed) {
-			matrixStack.push();
-			matrixStack.scale(2.0f, 2.0f, 2.0f);
+			matrixStack.pushMatrix();
+			matrixStack.scale(2.0f, 2.0f);
 			for (int i = scroll; i < visibleRows + scroll; i++) {
 				for (int j = 0; j < visibleColumns; j++) {
 					int index = (i * visibleColumns) + j;
-					if (index > Registries.BLOCK.size())
+					if (index > BuiltInRegistries.BLOCK.size())
 						continue;
 
-					Block block = Registries.BLOCK.get(index);
+					Block block = BuiltInRegistries.BLOCK.byId(index);
 
 					if (blocks.getValue().contains(block)) {
 						Render2D.drawBox(drawContext, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1),
@@ -108,7 +105,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 				}
 			}
 
-			matrixStack.pop();
+			matrixStack.popMatrix();
 		}
 	}
 
@@ -117,7 +114,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 		if (Aoba.getInstance().guiManager.isClickGuiOpen() && hovered) {
 			if (event.GetVertical() > 0 && scroll > 0) {
 				scroll--;
-			} else if (event.GetVertical() < 0 && (scroll + visibleRows) < (Registries.BLOCK.size() / visibleColumns)) {
+			} else if (event.GetVertical() < 0 && (scroll + visibleRows) < (BuiltInRegistries.BLOCK.size() / visibleColumns)) {
 				scroll++;
 			}
 			event.cancel();
@@ -159,10 +156,10 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 						int row = (int) ((mouseY - actualY - 24) / (BLOCK_WIDTH + BLOCK_MARGIN)) + scroll;
 
 						int index = (row * visibleColumns) + col;
-						if (index > Registries.BLOCK.size())
+						if (index > BuiltInRegistries.BLOCK.size())
 							return;
 
-						Block block = Registries.BLOCK.get(index);
+						Block block = BuiltInRegistries.BLOCK.byId(index);
 						if (block != null) {
 							if (blocks.getValue().contains(block)) {
 								blocks.getValue().remove(block);

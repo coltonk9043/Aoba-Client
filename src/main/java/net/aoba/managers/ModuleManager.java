@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.logging.LogUtils;
 
 import net.aoba.Aoba;
@@ -82,11 +82,10 @@ import net.aoba.module.modules.world.Surround;
 import net.aoba.module.modules.world.TileBreaker;
 import net.aoba.settings.Setting;
 import net.aoba.settings.types.EnumSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil.Key;
+import net.minecraft.client.Minecraft;
 
 public class ModuleManager implements KeyDownListener {
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 
 	public ArrayList<Module> modules = new ArrayList<Module>();
 
@@ -228,13 +227,13 @@ public class ModuleManager implements KeyDownListener {
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
-		if (MC.currentScreen == null) {
+		if (MC.screen == null) {
 			for (Module module : modules) {
 				if (module.isDetectable(antiCheat.getValue()))
 					continue;
 
 				Key binding = module.getBind().getValue();
-				if (binding.getCode() == event.GetKey()) {
+				if (binding.getValue() == event.GetKey()) {
 					module.toggle();
 				}
 			}

@@ -9,8 +9,7 @@
 package net.aoba.command;
 
 import net.aoba.AobaClient;
-import net.minecraft.client.MinecraftClient;
-
+import net.minecraft.client.Minecraft;
 import java.util.Objects;
 
 public abstract class Command {
@@ -18,7 +17,7 @@ public abstract class Command {
     protected final String description;
     protected final String syntax;
 
-    protected static final MinecraftClient mc = AobaClient.MC;
+    protected static final Minecraft mc = AobaClient.MC;
 
     public Command(String name, String description, String syntax) {
         this.name = Objects.requireNonNull(name);

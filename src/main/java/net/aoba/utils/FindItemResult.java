@@ -10,27 +10,27 @@ package net.aoba.utils;
 
 import static net.aoba.AobaClient.MC;
 
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
 
 public record FindItemResult(int slot, int count) {
 	public boolean found() {
 		return slot != -1;
 	}
 
-	public Hand getHand() {
+	public InteractionHand getHand() {
 		if (slot == 45)
-			return Hand.OFF_HAND;
+			return InteractionHand.OFF_HAND;
 		if (slot == MC.player.getInventory().getSelectedSlot())
-			return Hand.MAIN_HAND;
+			return InteractionHand.MAIN_HAND;
 		return null;
 	}
 
 	public boolean isMainHand() {
-		return getHand() == Hand.MAIN_HAND;
+		return getHand() == InteractionHand.MAIN_HAND;
 	}
 
 	public boolean isOffhand() {
-		return getHand() == Hand.OFF_HAND;
+		return getHand() == InteractionHand.OFF_HAND;
 	}
 
 	public boolean isHotbar() {

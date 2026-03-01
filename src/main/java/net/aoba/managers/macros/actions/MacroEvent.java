@@ -11,14 +11,13 @@ package net.aoba.managers.macros.actions;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 /**
  * Abstract class representing an event in a Macro.
  */
 public abstract class MacroEvent {
-	protected static MinecraftClient MC = MinecraftClient.getInstance();
+	protected static Minecraft MC = Minecraft.getInstance();
 
 	protected long timestamp;
 

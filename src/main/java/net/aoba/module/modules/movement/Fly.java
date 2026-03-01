@@ -17,9 +17,9 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 enum FlyMode {
 	Synthetic, Natural
@@ -56,8 +56,8 @@ public class Fly extends Module implements TickListener {
 	private final BooleanSetting antiKick = BooleanSetting.builder().id("fly_antikick").displayName("AntiKick")
 			.description("Prevents the player from being kicked.").defaultValue(false).build();
 
-	private Vec3d previousVelocity = new Vec3d(0, 0, 0);
-	private Vec3d accelerationVector = new Vec3d(0, 0, 0); // X - horizontal, Y = vertical, Z = depth
+	private Vec3 previousVelocity = new Vec3(0, 0, 0);
+	private Vec3 accelerationVector = new Vec3(0, 0, 0); // X - horizontal, Y = vertical, Z = depth
 
 	public Fly() {
 		super("Fly");
@@ -107,68 +107,68 @@ public class Fly extends Module implements TickListener {
 
 	@Override
 	public void onTick(TickEvent.Post event) {
-		ClientPlayerEntity player = MC.player;
+		LocalPlayer player = MC.player;
 		float speed = flySpeed.getValue().floatValue();
 		float speedSqr = flySpeed.getValueSqr().floatValue();
 
 		switch (flyMode.getValue()) {
 		case FlyMode.Synthetic:
 			// Check if the player is riding.
-			if (MC.player.isRiding()) {
+			if (MC.player.isHandsBusy()) {
 				Entity riding = MC.player.getRootVehicle();
-				Vec3d velocity = riding.getVelocity();
-				double motionY = MC.options.jumpKey.isPressed() ? jumpMotionY.getValue() : 0;
-				riding.setVelocity(velocity.x, motionY, velocity.z);
+				Vec3 velocity = riding.getDeltaMovement();
+				double motionY = MC.options.keyJump.isDown() ? jumpMotionY.getValue() : 0;
+				riding.setDeltaMovement(velocity.x, motionY, velocity.z);
 			} else {
 				float sprintMultiplier = sprintSpeedMultiplier.getValue().floatValue();
 				float momentumValue = momentum.getValue();
 				float accelerationValue = acceleration.getValueSqr();
 
-				if (MC.options.sprintKey.isPressed()) {
+				if (MC.options.keySprint.isDown()) {
 					speed *= sprintMultiplier;
 				}
 
 				// Reset player abilities
 				player.getAbilities().flying = false;
-				MC.player.setVelocity(0, 0, 0);
+				MC.player.setDeltaMovement(0, 0, 0);
 
 				// Calculate vectors
-				double yawRad = Math.toRadians(MC.cameraEntity.getYaw());
-				Vec3d forward = new Vec3d(-Math.sin(yawRad), 0, Math.cos(yawRad)).multiply(speed);
-				Vec3d right = new Vec3d(-Math.cos(yawRad), 0, -Math.sin(yawRad)).multiply(speed);
-				Vec3d momentumVec = previousVelocity.multiply(1.0 - momentumValue, 0, 1.0 - momentumValue);
+				double yawRad = Math.toRadians(MC.cameraEntity.getYRot());
+				Vec3 forward = new Vec3(-Math.sin(yawRad), 0, Math.cos(yawRad)).scale(speed);
+				Vec3 right = new Vec3(-Math.cos(yawRad), 0, -Math.sin(yawRad)).scale(speed);
+				Vec3 momentumVec = new Vec3(previousVelocity.x * (1.0 - momentumValue), 0, previousVelocity.z * (1.0 - momentumValue));
 
 				// Determine how much acceleration to apply based on inputs. (XOR)
-				if (!(MC.options.forwardKey.isPressed() ^ MC.options.backKey.isPressed())) {
-					accelerationVector = new Vec3d(accelerationVector.x, accelerationVector.y, 0);
-				} else if (MC.options.forwardKey.isPressed()) {
-					accelerationVector = new Vec3d(accelerationVector.x, accelerationVector.y,
+				if (!(MC.options.keyUp.isDown() ^ MC.options.keyDown.isDown())) {
+					accelerationVector = new Vec3(accelerationVector.x, accelerationVector.y, 0);
+				} else if (MC.options.keyUp.isDown()) {
+					accelerationVector = new Vec3(accelerationVector.x, accelerationVector.y,
 							Math.max(0, accelerationVector.z + accelerationValue));
-				} else if (MC.options.backKey.isPressed()) {
-					accelerationVector = new Vec3d(accelerationVector.x, accelerationVector.y,
+				} else if (MC.options.keyDown.isDown()) {
+					accelerationVector = new Vec3(accelerationVector.x, accelerationVector.y,
 							Math.min(0, accelerationVector.z - accelerationValue));
 				}
 
-				if (!(MC.options.rightKey.isPressed() ^ MC.options.leftKey.isPressed())) {
-					accelerationVector = new Vec3d(0, accelerationVector.y, accelerationVector.z);
-				} else if (MC.options.rightKey.isPressed()) {
-					accelerationVector = new Vec3d(Math.max(0, accelerationVector.x + accelerationValue),
+				if (!(MC.options.keyRight.isDown() ^ MC.options.keyLeft.isDown())) {
+					accelerationVector = new Vec3(0, accelerationVector.y, accelerationVector.z);
+				} else if (MC.options.keyRight.isDown()) {
+					accelerationVector = new Vec3(Math.max(0, accelerationVector.x + accelerationValue),
 							accelerationVector.y, accelerationVector.z);
-				} else if (MC.options.leftKey.isPressed()) {
-					accelerationVector = new Vec3d(Math.min(0, accelerationVector.x - accelerationValue),
+				} else if (MC.options.keyLeft.isDown()) {
+					accelerationVector = new Vec3(Math.min(0, accelerationVector.x - accelerationValue),
 							accelerationVector.y, accelerationVector.z);
 				}
 
 				// Apply velocity based on acceleration
-				Vec3d vec = new Vec3d(previousVelocity.x, 0, previousVelocity.z).subtract(momentumVec)
-						.add(forward.multiply(accelerationVector.z)).add(right.multiply(accelerationVector.x));
+				Vec3 vec = new Vec3(previousVelocity.x, 0, previousVelocity.z).subtract(momentumVec)
+						.add(forward.scale(accelerationVector.z)).add(right.scale(accelerationVector.x));
 
 				// Apply vertical motion (does not use acceleration or momentum values)
-				if (MC.options.jumpKey.isPressed()) {
+				if (MC.options.keyJump.isDown()) {
 					vec = vec.add(0, jumpMotionY.getValue(), 0);
 				}
 
-				if (MC.options.sneakKey.isPressed()) {
+				if (MC.options.keyShift.isDown()) {
 					vec = vec.add(0, sneakMotionY.getValue(), 0);
 				}
 
@@ -178,22 +178,22 @@ public class Fly extends Module implements TickListener {
 				}
 
 				// We accelerated faster than our limit. Clamp it.
-				if (vec.lengthSquared() > speedSqr) {
-					vec = vec.normalize().multiply(speed);
+				if (vec.lengthSqr() > speedSqr) {
+					vec = vec.normalize().scale(speed);
 				}
 
 				previousVelocity = vec;
-				player.setVelocity(vec);
+				player.setDeltaMovement(vec);
 			}
 			break;
 		case FlyMode.Natural:
 			// TODO: We move hella fast like this... why?
 			if (!player.isSpectator()) {
-				player.getAbilities().setFlySpeed(speed);
+				player.getAbilities().setFlyingSpeed(speed);
 				player.getAbilities().flying = true;
 
-				if (!player.getAbilities().creativeMode) {
-					player.getAbilities().allowFlying = true;
+				if (!player.getAbilities().instabuild) {
+					player.getAbilities().mayfly = true;
 				}
 			}
 			break;

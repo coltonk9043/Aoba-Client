@@ -15,7 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.logging.LogUtils;
 
 import net.aoba.gui.Rectangle;
@@ -23,16 +24,14 @@ import net.aoba.gui.colors.Color;
 import net.aoba.settings.Setting;
 import net.aoba.settings.types.*;
 import net.aoba.settings.types.ColorSetting.ColorMode;
-import net.minecraft.block.Block;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.InputUtil.Key;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
 
 public class SettingManager {
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 
 	private static final StringSetting currentConfig = StringSetting.builder().id("selected_config").defaultValue("default")
 			.onUpdate(s -> {
@@ -77,7 +76,7 @@ public class SettingManager {
 	 * files.
 	 */
 	public static void refreshSettingFiles() {
-		File settingsDirecotry = new File(MC.runDirectory + File.separator + "aoba" + File.separator + "settings");
+		File settingsDirecotry = new File(MC.gameDirectory + File.separator + "aoba" + File.separator + "settings");
 
 		if (settingsDirecotry.exists() && settingsDirecotry.isDirectory()) {
 			LogUtils.getLogger().info("Found Settings Directory: " + settingsDirecotry.getAbsolutePath());
@@ -100,7 +99,7 @@ public class SettingManager {
 	 * @throws IOException
 	 */
 	public static void saveSettings() throws FileNotFoundException, IOException {
-		File settingsFolder = new File(MC.runDirectory + File.separator + "aoba" + File.separator + "settings");
+		File settingsFolder = new File(MC.gameDirectory + File.separator + "aoba" + File.separator + "settings");
 		if (!settingsFolder.exists() && !settingsFolder.mkdirs()) {
 			throw new IOException("Failed to create settings folder: " + settingsFolder.getAbsolutePath());
 		} else {
@@ -133,7 +132,7 @@ public class SettingManager {
 		if (fileName.equals("default") || fileName.equals("globals"))
 			return;
 
-		File settingsFolder = new File(MC.runDirectory + File.separator + "aoba" + File.separator + "settings");
+		File settingsFolder = new File(MC.gameDirectory + File.separator + "aoba" + File.separator + "settings");
 		if (!settingsFolder.exists() && !settingsFolder.mkdirs()) {
 			throw new IOException("Failed to create settings folder: " + settingsFolder.getAbsolutePath());
 		} else {
@@ -154,7 +153,7 @@ public class SettingManager {
 				}
 				case KEYBIND -> {
 					Key key = ((Key) setting.getValue());
-					properties.setProperty(setting.ID, String.valueOf(key.getCode()));
+					properties.setProperty(setting.ID, String.valueOf(key.getValue()));
 				}
 				case RECTANGLE -> {
 					properties.setProperty(setting.ID,
@@ -174,7 +173,7 @@ public class SettingManager {
 
 					int iteration = 0;
 					for (Block block : s) {
-						Identifier id = Registries.BLOCK.getId(block);
+						Identifier id = BuiltInRegistries.BLOCK.getKey(block);
 						result.append(id.getNamespace()).append(":").append(id.getPath());
 						if (iteration != s.size() - 1) {
 							result.append(",");
@@ -188,7 +187,7 @@ public class SettingManager {
 					properties.setProperty(setting.ID, ((Enum<?>) setting.getValue()).name());
 				}
 				case VEC3D -> {
-					Vec3d vec = (Vec3d) setting.getValue();
+					Vec3 vec = (Vec3) setting.getValue();
 					properties.setProperty(setting.ID, vec.x + "," + vec.y + "," + vec.z);
 				}
 				case HOTBAR -> {
@@ -224,7 +223,7 @@ public class SettingManager {
 
 			// Load config from file.
 			Properties config = new Properties();
-			try (FileInputStream fis = new FileInputStream(MC.runDirectory + File.separator + "aoba" + File.separator
+			try (FileInputStream fis = new FileInputStream(MC.gameDirectory + File.separator + "aoba" + File.separator
 					+ "settings" + File.separator + "globals.xml")) {
 				config.loadFromXML(fis);
 			} catch (InvalidPropertiesFormatException e) {
@@ -248,7 +247,7 @@ public class SettingManager {
 
 			// Load config from file.
 			Properties config = new Properties();
-			try (FileInputStream fis = new FileInputStream(MC.runDirectory + File.separator + "aoba" + File.separator
+			try (FileInputStream fis = new FileInputStream(MC.gameDirectory + File.separator + "aoba" + File.separator
 					+ "settings" + File.separator + configName + ".xml")) {
 				config.loadFromXML(fis);
 			} catch (InvalidPropertiesFormatException e) {
@@ -286,7 +285,7 @@ public class SettingManager {
 					}
 					case KEYBIND -> {
 						int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
-						setting.setValue(InputUtil.fromKeyCode(keyCode, 0));
+						setting.setValue(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
 					}
 					case RECTANGLE -> {
 						String[] dimensions = value.split(",");
@@ -321,8 +320,8 @@ public class SettingManager {
 						String[] ids = value.split(",");
 						HashSet<Block> result = new HashSet<Block>();
 						for (String str : ids) {
-							Identifier i = Identifier.of(str);
-							result.add(Registries.BLOCK.get(i));
+							Identifier i = Identifier.parse(str);
+							result.add(BuiltInRegistries.BLOCK.getValue(i));
 						}
 						setting.setValue(result);
 					}
@@ -342,7 +341,7 @@ public class SettingManager {
 							float x = Float.parseFloat(components[0]);
 							float y = Float.parseFloat(components[1]);
 							float z = Float.parseFloat(components[2]);
-							setting.setValue(new Vec3d(x, y, z));
+							setting.setValue(new Vec3(x, y, z));
 						}
 					}
 					case HOTBAR -> {

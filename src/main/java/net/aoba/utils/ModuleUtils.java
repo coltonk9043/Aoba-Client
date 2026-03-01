@@ -9,11 +9,17 @@
 package net.aoba.utils;
 
 import net.aoba.AobaClient;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.*;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.WorldChunk;
-
+import net.minecraft.world.item.EnderEyeItem;
+import net.minecraft.world.item.EnderpearlItem;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.LingeringPotionItem;
+import net.minecraft.world.item.SplashPotionItem;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -21,7 +27,7 @@ public class ModuleUtils {
 
     public static boolean isThrowable(ItemStack stack) {
         Item item = stack.getItem();
-        return item == Items.BOW || item == Items.SNOWBALL || item == Items.EGG || item == Items.FIRE_CHARGE || item == Items.TRIDENT || item instanceof EnderPearlItem || item instanceof SplashPotionItem || item instanceof LingeringPotionItem || item instanceof FishingRodItem || item instanceof EnderEyeItem;
+        return item == Items.BOW || item == Items.SNOWBALL || item == Items.EGG || item == Items.FIRE_CHARGE || item == Items.TRIDENT || item instanceof EnderpearlItem || item instanceof SplashPotionItem || item instanceof LingeringPotionItem || item instanceof FishingRodItem || item instanceof EnderEyeItem;
     }
 
     public static boolean isPlantable(ItemStack stack) {
@@ -35,15 +41,15 @@ public class ModuleUtils {
         return getLoadedChunks().flatMap(chunk -> chunk.getBlockEntities().values().stream());
     }
 
-    public static Stream<WorldChunk> getLoadedChunks() {
-        int radius = Math.max(2, AobaClient.MC.options.getClampedViewDistance()) + 3;
+    public static Stream<LevelChunk> getLoadedChunks() {
+        int radius = Math.max(2, AobaClient.MC.options.getEffectiveRenderDistance()) + 3;
         int diameter = radius * 2 + 1;
 
-        ChunkPos center = AobaClient.MC.player.getChunkPos();
+        ChunkPos center = AobaClient.MC.player.chunkPosition();
         ChunkPos min = new ChunkPos(center.x - radius, center.z - radius);
         ChunkPos max = new ChunkPos(center.x + radius, center.z + radius);
 
-        Stream<WorldChunk> stream = Stream.iterate(min, pos -> {
+        Stream<LevelChunk> stream = Stream.iterate(min, pos -> {
             int x = pos.x;
             int z = pos.z;
             x++;
@@ -55,7 +61,7 @@ public class ModuleUtils {
 
             return new ChunkPos(x, z);
 
-        }).limit((long) diameter * diameter).filter(c -> AobaClient.MC.world.isChunkLoaded(c.x, c.z)).map(c -> AobaClient.MC.world.getChunk(c.x, c.z)).filter(Objects::nonNull);
+        }).limit((long) diameter * diameter).filter(c -> AobaClient.MC.level.hasChunk(c.x, c.z)).map(c -> AobaClient.MC.level.getChunk(c.x, c.z)).filter(Objects::nonNull);
 
         return stream;
     }

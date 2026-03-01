@@ -15,8 +15,10 @@ import java.util.Map;
 import org.lwjgl.glfw.GLFW;
 
 import com.google.common.collect.Lists;
-
+import com.mojang.blaze3d.platform.InputConstants;
+import org.joml.Matrix3x2fStack;
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.Render2DEvent;
 import net.aoba.event.events.TickEvent;
@@ -66,21 +68,19 @@ import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.input.Input;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class GuiManager implements KeyDownListener, TickListener, Render2DListener {
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	private static CursorStyle currentCursor = CursorStyle.Default;
 	private static String tooltip = null;
 
 	public KeybindSetting clickGuiButton = KeybindSetting.builder().id("key.clickgui").displayName("ClickGUI Key")
-			.defaultValue(InputUtil.fromKeyCode(GLFW.GLFW_KEY_RIGHT_SHIFT, 0)).build();
+			.defaultValue(InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_RIGHT_SHIFT)).build();
 
-	private final KeyBinding esc = new KeyBinding("key.esc", GLFW.GLFW_KEY_ESCAPE, "key.categories.aoba");
+	private final KeyMapping esc = new KeyMapping("key.esc", GLFW.GLFW_KEY_ESCAPE, AobaClient.AOBA_CATEGORY);
 
 	private boolean clickGuiOpen = false;
 	private final HashMap<Object, Window> pinnedHuds = new HashMap<Object, Window>();
@@ -137,7 +137,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public GuiManager() {
 		clickGuiNavBar = new NavigationBar();
 
-		net.minecraft.client.util.Window window = MC.getWindow();
+		com.mojang.blaze3d.platform.Window window = MC.getWindow();
 
 		SettingManager.registerGlobalSetting(borderColor);
 		SettingManager.registerGlobalSetting(backgroundColor);
@@ -268,7 +268,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
-		if (clickGuiButton.getValue().getCode() == event.GetKey() && MC.currentScreen == null) {
+		if (clickGuiButton.getValue().getValue() == event.GetKey() && MC.screen == null) {
 			setClickGuiOpen(!clickGuiOpen);
 			toggleMouse();
 		}
@@ -307,7 +307,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			hud.update();
 		}
 
-		if (esc.isPressed() && clickGuiOpen) {
+		if (esc.isDown() && clickGuiOpen) {
 			clickGuiOpen = false;
 			toggleMouse();
 		}
@@ -315,20 +315,20 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 	@Override
 	public void onRender(Render2DEvent event) {
-		DrawContext drawContext = event.getDrawContext();
-		float tickDelta = event.getRenderTickCounter().getTickProgress(false);
+		GuiGraphics drawContext = event.getDrawContext();
+		float tickDelta = event.getRenderTickCounter().getGameTimeDeltaPartialTick(false);
 
-		MatrixStack matrixStack = drawContext.getMatrices();
-		matrixStack.push();
+		Matrix3x2fStack matrixStack = drawContext.pose();
+		matrixStack.pushMatrix();
 
-		int guiScale = MC.getWindow().calculateScaleFactor(MC.options.getGuiScale().getValue(), MC.forcesUnicodeFont());
-		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale, 1.0f);
+		int guiScale = MC.getWindow().calculateScale(MC.options.guiScale().get(), MC.isEnforceUnicode());
+		matrixStack.scale(1.0f / guiScale, 1.0f / guiScale);
 
-		net.minecraft.client.util.Window window = MC.getWindow();
+		com.mojang.blaze3d.platform.Window window = MC.getWindow();
 
 		// Render ClickGUI and Topbar
 		if (clickGuiOpen) {
-			Render2D.drawBox(drawContext, 0, 0, window.getWidth(), window.getHeight(), new Color(26, 26, 26, 100));
+			Render2D.drawBox(drawContext, 0, 0, window.getScreenWidth(), window.getScreenHeight(), new Color(26, 26, 26, 100));
 			clickGuiNavBar.draw(drawContext, tickDelta);
 		}
 
@@ -341,8 +341,8 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 		// Draw Tooltip on top of all UI elements
 		if (tooltip != null && enableTooltips.getValue()) {
-			int mouseX = (int) MC.mouse.getX();
-			int mouseY = (int) MC.mouse.getY();
+			int mouseX = (int) MC.mouseHandler.xpos();
+			int mouseY = (int) MC.mouseHandler.ypos();
 			int tooltipWidth = Render2D.getStringWidth(tooltip) + 2;
 			int tooltipHeight = 10;
 
@@ -350,7 +350,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 					(tooltipHeight + 4) * 2, roundingRadius.getValue(), backgroundColor.getValue().getAsSolid());
 			Render2D.drawString(drawContext, tooltip, mouseX + 18, mouseY + 18, foregroundColor.getValue());
 		}
-		matrixStack.pop();
+		matrixStack.popMatrix();
 	}
 
 	/**
@@ -371,10 +371,10 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	 * Locks and unlocks the Mouse.
 	 */
 	public void toggleMouse() {
-		if (MC.mouse.isCursorLocked()) {
-			MC.mouse.unlockCursor();
+		if (MC.mouseHandler.isMouseGrabbed()) {
+			MC.mouseHandler.releaseMouse();
 		} else {
-			MC.mouse.lockCursor();
+			MC.mouseHandler.grabMouse();
 		}
 	}
 }

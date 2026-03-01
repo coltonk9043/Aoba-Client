@@ -13,7 +13,7 @@ import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class TimeHud extends HudWindow {
 	private String timeText = null;
@@ -29,7 +29,7 @@ public class TimeHud extends HudWindow {
 	@Override
 	public void update() {
 		super.update();
-		int time = ((int) MC.world.getTime() + 6000) % 24000;
+		int time = ((int) MC.level.getGameTime() + 6000) % 24000;
 		String suffix = time >= 12000 ? "PM" : "AM";
 		StringBuilder timeString = new StringBuilder((time / 10) % 1200 + "");
 		for (int n = timeString.length(); n < 4; ++n) {
@@ -51,7 +51,7 @@ public class TimeHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		if (timeText != null && isVisible()) {
 			Rectangle pos = position.getValue();
 			if (pos.isDrawable()) {

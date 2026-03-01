@@ -30,7 +30,7 @@ public class CmdSpam extends Command {
 
         // Prints out that message X number of times.
         for (int i = 0; i < Integer.parseInt(parameters[0]); i++) {
-            mc.player.networkHandler.sendChatMessage(message.toString());
+            mc.player.connection.sendChat(message.toString());
         }
 
     }

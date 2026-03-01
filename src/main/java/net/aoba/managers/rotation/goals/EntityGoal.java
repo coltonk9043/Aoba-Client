@@ -10,7 +10,7 @@ package net.aoba.managers.rotation.goals;
 
 import net.aoba.managers.rotation.Rotation;
 import net.aoba.managers.rotation.RotationMode;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 public class EntityGoal extends Goal<Entity> {
 

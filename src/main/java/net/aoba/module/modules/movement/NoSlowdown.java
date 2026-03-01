@@ -17,7 +17,7 @@ import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public class NoSlowdown extends Module implements TickListener {
 
@@ -61,12 +61,12 @@ public class NoSlowdown extends Module implements TickListener {
 	public void onTick(Pre event) {
 		IEntity playerEntity = (IEntity) MC.player;
 
-		if (!playerEntity.getMovementMultiplier().equals(Vec3d.ZERO)) {
+		if (!playerEntity.getMovementMultiplier().equals(Vec3.ZERO)) {
 			float multiplier = slowdownMultiplier.getValue();
 			if (multiplier == 0.0f) {
-				playerEntity.setMovementMultiplier(Vec3d.ZERO);
+				playerEntity.setMovementMultiplier(Vec3.ZERO);
 			} else {
-				playerEntity.setMovementMultiplier(Vec3d.ZERO.add(1, 1, 1).multiply(1 / multiplier));
+				playerEntity.setMovementMultiplier(Vec3.ZERO.add(1, 1, 1).scale(1 / multiplier));
 			}
 		}
 	}

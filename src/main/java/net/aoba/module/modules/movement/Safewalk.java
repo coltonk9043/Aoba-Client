@@ -14,7 +14,7 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public class Safewalk extends Module implements TickListener {
 
@@ -41,10 +41,10 @@ public class Safewalk extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		double x = MC.player.getVelocity().x;
-		double y = MC.player.getVelocity().y;
-		double z = MC.player.getVelocity().z;
-		if (MC.player.isOnGround()) {
+		double x = MC.player.getDeltaMovement().x;
+		double y = MC.player.getDeltaMovement().y;
+		double z = MC.player.getDeltaMovement().z;
+		if (MC.player.onGround()) {
 			double increment;
 			for (increment = 0.05D; x != 0.0D;) {
 				if (x < increment && x >= -increment) {
@@ -83,7 +83,7 @@ public class Safewalk extends Module implements TickListener {
                 }
             }
         }
-		MC.player.setVelocity(new Vec3d(x, y, z));
+		MC.player.setDeltaMovement(new Vec3(x, y, z));
 	}
 
 	@Override

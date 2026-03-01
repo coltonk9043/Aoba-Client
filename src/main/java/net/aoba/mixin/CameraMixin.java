@@ -11,42 +11,48 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.module.modules.movement.Freecam;
 import net.aoba.module.modules.render.NoRender;
-import net.minecraft.block.enums.CameraSubmersionType;
-import net.minecraft.client.render.Camera;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.BlockView;
+import net.minecraft.client.Camera;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.FogType;
 
 @Mixin(Camera.class)
 public class CameraMixin {
 	@Shadow
-	private boolean ready;
+	private boolean initialized;
 
 	@Shadow
-	private BlockView area;
+	private Entity entity;
 
 	@Shadow
-	private boolean thirdPerson;
+	private Level level;
 
 	@Shadow
-	private float lastTickProgress;
+	private boolean detached;
+
+	@Shadow
+	private float partialTickTime;
 
 	@Inject(at = {
-			@At("HEAD") }, method = "update(Lnet/minecraft/world/BlockView;Lnet/minecraft/entity/Entity;ZZF)V", cancellable = true)
-	private void onCameraUdate(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView,
+			@At("HEAD") }, method = "setup(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;ZZF)V", cancellable = true)
+	private void onCameraSetup(Level level, Entity focusedEntity, boolean thirdPerson, boolean inverseView,
 			float tickDelta, CallbackInfo ci) {
 		AobaClient aoba = Aoba.getInstance();
-		if (aoba != null && aoba.moduleManager.freecam.state.getValue()) {
-			ready = true;
-			this.area = area;
-			lastTickProgress = tickDelta;
-			this.thirdPerson = thirdPerson;
+		
+		// Only cancel setup if freecam is active AND the camera entity has been
+		// initialized at least once (otherwise extractCamera will NPE on null entity)
+		if (aoba != null && aoba.moduleManager.freecam.state.getValue() && this.entity != null) {
+			initialized = true;
+			this.level = level;
+			partialTickTime = tickDelta;
+			this.detached = thirdPerson;
 			ci.cancel();
 		}
 	}
 
 	@Inject(at = {
-			@At("HEAD") }, method = "getSubmersionType()Lnet/minecraft/block/enums/CameraSubmersionType;", cancellable = true)
-	private void onGetSubmersionType(CallbackInfoReturnable<CameraSubmersionType> cir) {
+			@At("HEAD") }, method = "getFluidInCamera()Lnet/minecraft/world/level/material/FogType;", cancellable = true)
+	private void onGetSubmersionType(CallbackInfoReturnable<FogType> cir) {
 		AobaClient aoba = Aoba.getInstance();
 		if (aoba == null)
 			return;
@@ -55,7 +61,7 @@ public class CameraMixin {
 		NoRender norender = aoba.moduleManager.norender;
 
 		if (freecam.state.getValue() || (norender.state.getValue() && norender.getNoLiquidOverlay())) {
-			cir.setReturnValue(CameraSubmersionType.NONE);
+			cir.setReturnValue(FogType.NONE);
 		}
 	}
 }

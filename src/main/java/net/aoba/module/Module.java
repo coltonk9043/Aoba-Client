@@ -8,6 +8,8 @@
 
 package net.aoba.module;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -19,23 +21,21 @@ import org.lwjgl.glfw.GLFW;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
-import net.aoba.interfaces.IClientPlayerInteractionManager;
+import net.aoba.interfaces.IMultiPlayerGameMode;
 import net.aoba.managers.SettingManager;
-import net.aoba.mixin.interfaces.IMinecraftClient;
+import net.aoba.mixin.interfaces.IMinecraft;
 import net.aoba.settings.Setting;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.FindItemResult;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.InputUtil.Key;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class Module {
 	private String name;
@@ -48,8 +48,8 @@ public abstract class Module {
 
 	private final HashSet<AntiCheat> knownDetectable = new HashSet<AntiCheat>();
 
-	protected static final MinecraftClient MC = AobaClient.MC;
-	protected final IMinecraftClient IMC = AobaClient.IMC;
+	protected static final Minecraft MC = AobaClient.MC;
+	protected final IMinecraft IMC = AobaClient.IMC;
 	protected static final AobaClient AOBA_CLIENT = Aoba.getInstance();
 
 	/**
@@ -58,7 +58,7 @@ public abstract class Module {
 	 * @param name The name to use for this module.
 	 */
 	public Module(String name) {
-		this(name, InputUtil.fromKeyCode(GLFW.GLFW_KEY_UNKNOWN, 0));
+		this(name, InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_UNKNOWN));
 	}
 
 	public Module(String name, Key keybind) {
@@ -232,7 +232,8 @@ public abstract class Module {
 		if (button < 10) // check
 			return false;
 
-		return InputUtil.isKeyPressed(MC.getWindow().getHandle(), button);
+		// Updated for 1.21.11 - isKeyDown now takes Window instead of long handle
+		return InputConstants.isKeyDown(MC.getWindow(), button);
 	}
 
 	/**
@@ -358,12 +359,12 @@ public abstract class Module {
 
 	public static FindItemResult findInHotbar(Predicate<ItemStack> isGood) {
 		if (testInOffHand(isGood)) {
-			return new FindItemResult(45, MC.player.getOffHandStack().getCount());
+			return new FindItemResult(45, MC.player.getOffhandItem().getCount());
 		}
 
 		if (testInMainHand(isGood)) {
 			return new FindItemResult(MC.player.getInventory().getSelectedSlot(),
-					MC.player.getMainHandStack().getCount());
+					MC.player.getMainHandItem().getCount());
 		}
 
 		return find(isGood, 0, 8);
@@ -374,7 +375,7 @@ public abstract class Module {
 			return new FindItemResult(0, 0);
 		}
 
-		return find(isGood, 0, MC.player.getInventory().size());
+		return find(isGood, 0, MC.player.getInventory().getContainerSize());
 	}
 
 	public static FindItemResult find(Predicate<ItemStack> isGood, int start, int end) {
@@ -386,7 +387,7 @@ public abstract class Module {
 		int count = 0;
 
 		for (int i = start; i <= end; i++) {
-			ItemStack stack = MC.player.getInventory().getStack(i);
+			ItemStack stack = MC.player.getInventory().getItem(i);
 
 			if (isGood.test(stack)) {
 				if (slot == -1) {
@@ -404,10 +405,10 @@ public abstract class Module {
 		int slot = -1;
 
 		for (int i = 0; i < 9; i++) {
-			ItemStack stack = MC.player.getInventory().getStack(i);
+			ItemStack stack = MC.player.getInventory().getItem(i);
 
-			if (stack.isSuitableFor(state)) {
-				float score = stack.getMiningSpeedMultiplier(state);
+			if (stack.isCorrectToolForDrops(state)) {
+				float score = stack.getDestroySpeed(state);
 
 				if (score > bestScore) {
 					bestScore = score;
@@ -420,11 +421,11 @@ public abstract class Module {
 	}
 
 	public static boolean testInMainHand(Predicate<ItemStack> predicate) {
-		return predicate.test(MC.player.getMainHandStack());
+		return predicate.test(MC.player.getMainHandItem());
 	}
 
 	public static boolean testInOffHand(Predicate<ItemStack> predicate) {
-		return predicate.test(MC.player.getOffHandStack());
+		return predicate.test(MC.player.getOffhandItem());
 	}
 
 	public static boolean swap(int slot, boolean swapBack) {
@@ -445,7 +446,7 @@ public abstract class Module {
 		}
 
 		MC.player.getInventory().setSelectedSlot(slot);
-		((IClientPlayerInteractionManager) MC.interactionManager).aoba$syncSelected();
+		((IMultiPlayerGameMode) MC.gameMode).aoba$syncSelected();
 		return true;
 	}
 
@@ -470,27 +471,27 @@ public abstract class Module {
 	}
 
 	public static void rotatePitch(float degrees) {
-		MinecraftClient client = MinecraftClient.getInstance();
-		PlayerEntity player = client.player;
+		Minecraft client = Minecraft.getInstance();
+		Player player = client.player;
 
 		if (player != null) {
-			float currentPitch = player.getPitch();
+			float currentPitch = player.getXRot();
 			float newPitch = currentPitch + degrees;
 
 			newPitch = Math.max(-90.0F, Math.min(90.0F, newPitch));
 
-			player.setPitch(newPitch);
+			player.setXRot(newPitch);
 
-			client.getNetworkHandler().sendPacket(
-					new PlayerMoveC2SPacket.LookAndOnGround(player.getYaw(), newPitch, player.isOnGround(), false));
+			client.getConnection().send(
+					new ServerboundMovePlayerPacket.Rot(player.getYRot(), newPitch, player.onGround(), false));
 		}
 	}
 
 	public static void sendChatMessage(String message) {
-		MinecraftClient mc = MinecraftClient.getInstance();
-		if (mc.inGameHud != null) {
-			mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "Aoba"
-					+ Formatting.DARK_PURPLE + "] " + Formatting.RESET + message));
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.gui != null) {
+			mc.gui.getChat().addMessage(Component.nullToEmpty(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "Aoba"
+					+ ChatFormatting.DARK_PURPLE + "] " + ChatFormatting.RESET + message));
 		}
 	}
 }

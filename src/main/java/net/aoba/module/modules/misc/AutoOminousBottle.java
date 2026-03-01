@@ -12,15 +12,15 @@ import net.aoba.event.events.ItemUsedEvent;
 import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.ItemUsedListener;
 import net.aoba.event.listeners.ReceivePacketListener;
-import net.aoba.mixin.interfaces.IBossBarS2CPacket;
+import net.aoba.mixin.interfaces.IClientboundBossEventPacket;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.utils.FindItemResult;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundBossEventPacket;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class AutoOminousBottle extends Module implements ReceivePacketListener, ItemUsedListener {
 	private ItemStack lastUsedItemStack = null;
@@ -64,10 +64,10 @@ public class AutoOminousBottle extends Module implements ReceivePacketListener, 
 		// Figure out a way to make it only occur on Raids
 
 		Packet<?> packet = e.GetPacket();
-		if (packet instanceof BossBarS2CPacket bossPacket) {
-			IBossBarS2CPacket iPacket = (IBossBarS2CPacket) bossPacket;
-			BossBarS2CPacket.Action action = iPacket.getAction();
-			if (action.getType() == BossBarS2CPacket.Type.REMOVE) {
+		if (packet instanceof ClientboundBossEventPacket bossPacket) {
+			IClientboundBossEventPacket iPacket = (IClientboundBossEventPacket) bossPacket;
+			ClientboundBossEventPacket.Operation action = iPacket.getAction();
+			if (action.getType() == ClientboundBossEventPacket.OperationType.REMOVE) {
 				FindItemResult result = findInHotbar(Items.OMINOUS_BOTTLE);
 				if (result.found()) {
 					if (swapBack.getValue()) {
@@ -76,8 +76,8 @@ public class AutoOminousBottle extends Module implements ReceivePacketListener, 
 
 					int slot = result.slot();
 					MC.player.getInventory().setSelectedSlot(slot);
-					lastUsedItemStack = MC.player.getInventory().getStack(slot);
-					MC.options.useKey.setPressed(true);
+					lastUsedItemStack = MC.player.getInventory().getItem(slot);
+					MC.options.keyUse.setDown(true);
 				}
 			}
 		}
@@ -92,7 +92,7 @@ public class AutoOminousBottle extends Module implements ReceivePacketListener, 
 	public void onItemUsed(ItemUsedEvent.Post event) {
 		if (lastUsedItemStack != null) {
 			if (lastUsedItemStack == event.getItemStack()) {
-				MC.options.useKey.setPressed(false);
+				MC.options.keyUse.setDown(false);
 				lastUsedItemStack = null;
 
 				if (swapBack.getValue() && previousSlot != -1) {

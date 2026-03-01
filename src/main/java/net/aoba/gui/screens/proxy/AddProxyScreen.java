@@ -11,62 +11,62 @@ package net.aoba.gui.screens.proxy;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.managers.proxymanager.Socks5Proxy;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class AddProxyScreen extends Screen {
 	private final ProxyScreen parent;
 
-	private ButtonWidget buttonAddProxy;
-	private TextFieldWidget textFieldProxyIp;
-	private TextFieldWidget textFieldProxyPort;
-	private TextFieldWidget textFieldProxyUsername;
-	private TextFieldWidget textFieldProxyPassword;
+	private Button buttonAddProxy;
+	private EditBox textFieldProxyIp;
+	private EditBox textFieldProxyPort;
+	private EditBox textFieldProxyUsername;
+	private EditBox textFieldProxyPassword;
 
 	public AddProxyScreen(ProxyScreen parentScreen) {
-		super(Text.of("Proxy Manager"));
+		super(Component.nullToEmpty("Proxy Manager"));
 		parent = parentScreen;
 	}
 
 	protected void init() {
 		super.init();
 
-		textFieldProxyIp = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 76, 200, 20,
-				Text.of("Enter IP"));
-		textFieldProxyIp.setText("");
-		addDrawableChild(textFieldProxyIp);
+		textFieldProxyIp = new EditBox(font, width / 2 - 100, height / 2 - 76, 200, 20,
+				Component.nullToEmpty("Enter IP"));
+		textFieldProxyIp.setValue("");
+		addRenderableWidget(textFieldProxyIp);
 
-		textFieldProxyPort = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 36, 200, 20,
-				Text.of("Enter Port"));
-		textFieldProxyPort.setText("");
-		addDrawableChild(textFieldProxyPort);
+		textFieldProxyPort = new EditBox(font, width / 2 - 100, height / 2 - 36, 200, 20,
+				Component.nullToEmpty("Enter Port"));
+		textFieldProxyPort.setValue("");
+		addRenderableWidget(textFieldProxyPort);
 
-		textFieldProxyUsername = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 + 4, 200, 20,
-				Text.of("Enter Username"));
-		textFieldProxyUsername.setText("");
-		addDrawableChild(textFieldProxyUsername);
+		textFieldProxyUsername = new EditBox(font, width / 2 - 100, height / 2 + 4, 200, 20,
+				Component.nullToEmpty("Enter Username"));
+		textFieldProxyUsername.setValue("");
+		addRenderableWidget(textFieldProxyUsername);
 
-		textFieldProxyPassword = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 + 44, 200, 20,
-				Text.of("Enter Password"));
-		textFieldProxyPassword.setText("");
-		addDrawableChild(textFieldProxyPassword);
+		textFieldProxyPassword = new EditBox(font, width / 2 - 100, height / 2 + 44, 200, 20,
+				Component.nullToEmpty("Enter Password"));
+		textFieldProxyPassword.setValue("");
+		addRenderableWidget(textFieldProxyPassword);
 
-		buttonAddProxy = ButtonWidget.builder(Text.of("Add Proxy"), b -> onAddProxyButtonPressed())
-				.dimensions(width / 2 - 100, height / 2 + 74, 200, 20).build();
-		addDrawableChild(buttonAddProxy);
+		buttonAddProxy = Button.builder(Component.nullToEmpty("Add Proxy"), b -> onAddProxyButtonPressed())
+				.bounds(width / 2 - 100, height / 2 + 74, 200, 20).build();
+		addRenderableWidget(buttonAddProxy);
 
-		addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> onButtonCancelPressed())
-				.dimensions(width / 2 - 100, height / 2 + 98, 200, 20).build());
+		addRenderableWidget(Button.builder(Component.nullToEmpty("Cancel"), b -> onButtonCancelPressed())
+				.bounds(width / 2 - 100, height / 2 + 98, 200, 20).build());
 	}
 
 	private void onAddProxyButtonPressed() {
-		String ip = textFieldProxyIp.getText();
-		String portText = textFieldProxyPort.getText();
-		String username = textFieldProxyUsername.getText();
-		String password = textFieldProxyPassword.getText();
+		String ip = textFieldProxyIp.getValue();
+		String portText = textFieldProxyPort.getValue();
+		String username = textFieldProxyUsername.getValue();
+		String password = textFieldProxyPassword.getValue();
 
 		if (ip.isEmpty() || portText.isEmpty() || username.isEmpty() || password.isEmpty())
 			return;
@@ -82,17 +82,17 @@ public class AddProxyScreen extends Screen {
 	}
 
 	public void onButtonCancelPressed() {
-		client.setScreen(parent);
+		minecraft.setScreen(parent);
 	}
 
 	@Override
-	public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+	public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
 		super.render(drawContext, mouseX, mouseY, delta);
-		drawContext.drawCenteredTextWithShadow(textRenderer, "Add Proxy", width / 2, 20, 16777215);
+		drawContext.drawCenteredString(font, "Add Proxy", width / 2, 20, 0xFFFFFFFF);
 
-		drawContext.drawTextWithShadow(textRenderer, "IP Address:", width / 2 - 100, height / 2 - 90, 16777215);
-		drawContext.drawTextWithShadow(textRenderer, "Port:", width / 2 - 100, height / 2 - 50, 16777215);
-		drawContext.drawTextWithShadow(textRenderer, "Username:", width / 2 - 100, height / 2 - 10, 16777215);
-		drawContext.drawTextWithShadow(textRenderer, "Password:", width / 2 - 100, height / 2 + 30, 16777215);
+		drawContext.drawString(font, "IP Address:", width / 2 - 100, height / 2 - 90, 0xFFFFFFFF);
+		drawContext.drawString(font, "Port:", width / 2 - 100, height / 2 - 50, 0xFFFFFFFF);
+		drawContext.drawString(font, "Username:", width / 2 - 100, height / 2 - 10, 0xFFFFFFFF);
+		drawContext.drawString(font, "Password:", width / 2 - 100, height / 2 + 30, 0xFFFFFFFF);
 	}
 }

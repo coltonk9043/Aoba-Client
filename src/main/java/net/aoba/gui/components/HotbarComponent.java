@@ -9,10 +9,7 @@ import net.aoba.settings.types.HotbarSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
-import org.joml.Matrix4f;
-
+import net.minecraft.client.gui.GuiGraphics;
 import java.util.List;
 
 public class HotbarComponent extends Component {
@@ -39,11 +36,9 @@ public class HotbarComponent extends Component {
      * @param partialTicks The partial ticks used for interpolation.
      */
     @Override
-    public void draw(DrawContext drawContext, float partialTicks) {
+    public void draw(GuiGraphics drawContext, float partialTicks) {
         super.draw(drawContext, partialTicks);
 
-        MatrixStack matrixStack = drawContext.getMatrices();
-        Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
         float actualX = getActualSize().getX();
         float actualY = getActualSize().getY();
 

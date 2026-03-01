@@ -20,14 +20,14 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.player.InteractionUtils;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 
 public class Scaffold extends Module implements TickListener {
 
@@ -101,20 +101,20 @@ public class Scaffold extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		PlayerInventory inventory = MC.player.getInventory();
-		ItemStack currentHand = inventory.getSelectedStack();
+		Inventory inventory = MC.player.getInventory();
+		ItemStack currentHand = inventory.getSelectedItem();
 		if (currentHand.getItem() instanceof BlockItem) {
 			ScaffoldPlaceResult placementPos = findBlockPosToPlace();
 
 			if (curDelay >= placeDelay.getValue() && placementPos != null) {
-				Vec3d placementPosVec = placementPos.pos.toCenterPos();
+				Vec3 placementPosVec = placementPos.pos.getCenter();
 
 				Vec3dGoal rotation = Vec3dGoal.builder().goal(placementPosVec).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
 						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
 
-				InteractionUtils.placeBlock(placementPos.pos, Hand.MAIN_HAND, true);
+				InteractionUtils.placeBlock(placementPos.pos, InteractionHand.MAIN_HAND, true);
 				curDelay = 0;
 			} else {
 				Aoba.getInstance().rotationManager.setGoal(null);
@@ -126,19 +126,19 @@ public class Scaffold extends Module implements TickListener {
 	@Override
 	public void onTick(Post event) {
 		// Determine the height at which the player will build.
-		if (MC.player.isOnGround()) {
-			if (MC.options.jumpKey.isPressed()) {
-				yPosition = MC.player.getBlockPos().getY();
+		if (MC.player.onGround()) {
+			if (MC.options.keyJump.isDown()) {
+				yPosition = MC.player.blockPosition().getY();
 			} else
-				yPosition = MC.player.getBlockPos().getY() - 1;
+				yPosition = MC.player.blockPosition().getY() - 1;
 		}
 	}
 
 	private ScaffoldPlaceResult findBlockPosToPlace() {
-		BlockPos playerPos = MC.player.getBlockPos();
+		BlockPos playerPos = MC.player.blockPosition();
 		BlockPos underneathPosition = new BlockPos(playerPos.getX(), yPosition, playerPos.getZ());
 
-		if (!MC.world.isAir(underneathPosition))
+		if (!MC.level.isEmptyBlock(underneathPosition))
 			return null;
 
 		BlockPos result = null;
@@ -148,11 +148,11 @@ public class Scaffold extends Module implements TickListener {
 		int radiusInt = radius.getValue().intValue();
 		for (int x = -radiusInt; x < radiusInt; x++) {
 			for (int z = -radiusInt; z < radiusInt; z++) {
-				BlockPos checkPos = underneathPosition.add(x, 0, z);
+				BlockPos checkPos = underneathPosition.offset(x, 0, z);
 				Direction directionToPlace = findAdjacentBlockFace(checkPos);
 
 				if (directionToPlace != null) {
-					double distanceToBlock = MC.player.squaredDistanceTo(checkPos.toCenterPos());
+					double distanceToBlock = MC.player.distanceToSqr(checkPos.getCenter());
 
 					if (result == null || distanceToBlock < lastDistanceTo) {
 						result = checkPos;
@@ -163,7 +163,7 @@ public class Scaffold extends Module implements TickListener {
 			}
 		}
 		if (result == null || resultDirection == null
-				|| result.getSquaredDistance(MC.player.getPos()) > radius.getValueSqr())
+				|| result.distSqr(MC.player.blockPosition()) > radius.getValueSqr())
 			return null;
 		else
 			return new ScaffoldPlaceResult(result, resultDirection);
@@ -174,26 +174,26 @@ public class Scaffold extends Module implements TickListener {
 		BlockPos south = pos.south();
 		BlockPos west = pos.west();
 		BlockPos east = pos.east();
-		BlockPos up = pos.up();
-		BlockPos down = pos.down();
+		BlockPos up = pos.above();
+		BlockPos down = pos.below();
 
-		if (!MC.world.isAir(north) && !MC.world.getFluidState(north).isOf(Fluids.LAVA)
-				&& !MC.world.getFluidState(north).isOf(Fluids.WATER)) {
+		if (!MC.level.isEmptyBlock(north) && !MC.level.getFluidState(north).is(Fluids.LAVA)
+				&& !MC.level.getFluidState(north).is(Fluids.WATER)) {
 			return Direction.SOUTH;
-		} else if (!MC.world.isAir(east) && !MC.world.getFluidState(east).isOf(Fluids.LAVA)
-				&& !MC.world.getFluidState(east).isOf(Fluids.WATER)) {
+		} else if (!MC.level.isEmptyBlock(east) && !MC.level.getFluidState(east).is(Fluids.LAVA)
+				&& !MC.level.getFluidState(east).is(Fluids.WATER)) {
 			return Direction.WEST;
-		} else if (!MC.world.isAir(south) && !MC.world.getFluidState(south).isOf(Fluids.LAVA)
-				&& !MC.world.getFluidState(south).isOf(Fluids.WATER)) {
+		} else if (!MC.level.isEmptyBlock(south) && !MC.level.getFluidState(south).is(Fluids.LAVA)
+				&& !MC.level.getFluidState(south).is(Fluids.WATER)) {
 			return Direction.NORTH;
-		} else if (!MC.world.isAir(west) && !MC.world.getFluidState(west).isOf(Fluids.LAVA)
-				&& !MC.world.getFluidState(west).isOf(Fluids.WATER)) {
+		} else if (!MC.level.isEmptyBlock(west) && !MC.level.getFluidState(west).is(Fluids.LAVA)
+				&& !MC.level.getFluidState(west).is(Fluids.WATER)) {
 			return Direction.EAST;
-		} else if (!MC.world.isAir(up) && !MC.world.getFluidState(up).isOf(Fluids.LAVA)
-				&& !MC.world.getFluidState(up).isOf(Fluids.WATER)) {
+		} else if (!MC.level.isEmptyBlock(up) && !MC.level.getFluidState(up).is(Fluids.LAVA)
+				&& !MC.level.getFluidState(up).is(Fluids.WATER)) {
 			return Direction.UP;
-		} else if (!MC.world.isAir(down) && !MC.world.getFluidState(down).isOf(Fluids.LAVA)
-				&& !MC.world.getFluidState(down).isOf(Fluids.WATER)) {
+		} else if (!MC.level.isEmptyBlock(down) && !MC.level.getFluidState(down).is(Fluids.LAVA)
+				&& !MC.level.getFluidState(down).is(Fluids.WATER)) {
 			return Direction.NORTH;
 		} else
 			return null;

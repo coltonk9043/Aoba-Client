@@ -25,9 +25,9 @@ import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.Interpolation;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class Tracer extends Module implements Render3DListener, TickListener {
 	private final ColorSetting color_player = ColorSetting.builder().id("tracer_color_player")
@@ -90,9 +90,9 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 
 	@Override
 	public void onRender(Render3DEvent event) {
-		boolean viewBobbing = MC.options.getBobView().getValue();
+		boolean viewBobbing = MC.options.bobView().get();
 
-		MC.options.getBobView().setValue(false);
+		MC.options.bobView().set(false);
 
 		Entity renderEntity = MC.getCameraEntity() == null ? MC.player : MC.getCameraEntity();
 
@@ -105,19 +105,19 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 
 			if (entity != null && entity != MC.getCameraEntity()
 					&& (MC.getCameraEntity() == null || !entity.equals(MC.getCameraEntity().getRootVehicle()))) {
-				Vec3d interpolation = Interpolation.interpolateEntity(entity);
-				double x = interpolation.getX();
-				double y = interpolation.getY();
-				double z = interpolation.getZ();
+				Vec3 interpolation = Interpolation.interpolateEntity(entity);
+				double x = interpolation.x();
+				double y = interpolation.y();
+				double z = interpolation.z();
 
-				Box bb;
+				AABB bb;
 
 				// used in the future for an outline mode.
 				if (target.getValue() == TracerTarget.Head) {
-					bb = new Box(x - 0.25, y + entity.getHeight() - 0.45, z - 0.25, x + 0.25,
-							y + entity.getHeight() + 0.055, z + 0.25);
+					bb = new AABB(x - 0.25, y + entity.getBbHeight() - 0.45, z - 0.25, x + 0.25,
+							y + entity.getBbHeight() + 0.055, z + 0.25);
 				} else {
-					bb = new Box(x - 0.4, y, z - 0.4, x + 0.4, y + entity.getHeight() + 0.18, z + 0.4);
+					bb = new AABB(x - 0.4, y, z - 0.4, x + 0.4, y + entity.getBbHeight() + 0.18, z + 0.4);
 				}
 
 				float distance = renderEntity.distanceTo(entity);
@@ -136,25 +136,25 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 				color = new Color(Math.min((int) red, 255), baseColor.getGreen(), baseColor.getBlue(),
 						baseColor.getAlpha());
 
-				Vec3d rotation = new Vec3d(0, 0, 75).rotateX(-(float) Math.toRadians(renderEntity.getPitch()))
-						.rotateY(-(float) Math.toRadians(renderEntity.getYaw())).add(renderEntity.getEyePos());
+				Vec3 rotation = new Vec3(0, 0, 75).xRot(-(float) Math.toRadians(renderEntity.getXRot()))
+						.yRot(-(float) Math.toRadians(renderEntity.getYRot())).add(renderEntity.getEyePosition());
 
-				Vec3d eyePos = renderEntity.getEyePos();
+				Vec3 eyePos = renderEntity.getEyePosition();
 
 				if (mode.getValue() == TracerMode.Stem) {
-					Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), new Vec3d(x, y, z),
-							new Vec3d(x, renderEntity.getHeight() + y, z), color);
+					Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), new Vec3(x, y, z),
+							new Vec3(x, renderEntity.getBbHeight() + y, z), color);
 				}
 
-				Vec3d start = new Vec3d(rotation.x, rotation.y, rotation.z);
+				Vec3 start = new Vec3(rotation.x, rotation.y, rotation.z);
 
 				switch (target.getValue()) {
 				case Head -> Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start,
-						new Vec3d(x, y + entity.getHeight() - 0.18f, z), color);
+						new Vec3(x, y + entity.getBbHeight() - 0.18f, z), color);
 				case Body -> Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start,
-						new Vec3d(x, y + entity.getHeight() / 2.0f, z), color);
+						new Vec3(x, y + entity.getBbHeight() / 2.0f, z), color);
 				case Feet ->
-					Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start, new Vec3d(x, y, z), color);
+					Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start, new Vec3(x, y, z), color);
 				}
 
 				if (mode.getValue() == TracerMode.Fill) {
@@ -166,7 +166,7 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 			}
 		}
 
-		MC.options.getBobView().setValue(viewBobbing);
+		MC.options.bobView().set(viewBobbing);
 	}
 
 	@Override
@@ -174,7 +174,7 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 		sorted = Aoba.getInstance().entityManager.getEntities();
 
 		try {
-			sorted.sort(Comparator.comparingDouble(entity -> MC.player.squaredDistanceTo(entity)));
+			sorted.sort(Comparator.comparingDouble(entity -> MC.player.distanceToSqr(entity)));
 		} catch (IllegalStateException ignored) {
 			// no way to fix.
 		}

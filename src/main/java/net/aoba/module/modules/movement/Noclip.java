@@ -17,9 +17,9 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.phys.Vec3;
 
 public class Noclip extends Module implements TickListener {
 	private final FloatSetting flySpeed = FloatSetting.builder().id("noclip_fly_speed").displayName("Speed")
@@ -85,7 +85,7 @@ public class Noclip extends Module implements TickListener {
 	@Override
 	public void onDisable() {
 		if (MC.player != null) {
-			MC.player.noClip = false;
+			MC.player.noPhysics = false;
 		}
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
@@ -102,45 +102,45 @@ public class Noclip extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		ClientPlayerEntity player = MC.player;
+		LocalPlayer player = MC.player;
 
 		float speed = flySpeed.getDefaultValue();
 
-		if (MC.options.sprintKey.isPressed()) {
+		if (MC.options.keySprint.isDown()) {
 			speed *= speedMultiplier.getValue();
 		}
 
-		player.setVelocity(new Vec3d(0, 0, 0));
+		player.setDeltaMovement(new Vec3(0, 0, 0));
 
-		Vec3d forward = Vec3d.fromPolar(0, player.getYaw());
-		Vec3d right = Vec3d.fromPolar(0, player.getYaw() + yawOffset.getValue());
+		Vec3 forward = Vec3.directionFromRotation(0, player.getYRot());
+		Vec3 right = Vec3.directionFromRotation(0, player.getYRot() + yawOffset.getValue());
 
-		Vec3d vec = new Vec3d(0, 0, 0);
+		Vec3 vec = new Vec3(0, 0, 0);
 
-		if (MC.options.forwardKey.isPressed()) {
-			vec = vec.add(forward.multiply(speed));
-		} else if (MC.options.backKey.isPressed()) {
-			vec = vec.subtract(forward.multiply(speed));
+		if (MC.options.keyUp.isDown()) {
+			vec = vec.add(forward.scale(speed));
+		} else if (MC.options.keyDown.isDown()) {
+			vec = vec.subtract(forward.scale(speed));
 		}
 
-		if (MC.options.rightKey.isPressed()) {
-			vec = vec.add(right.multiply(speed));
-		} else if (MC.options.leftKey.isPressed()) {
-			vec = vec.subtract(right.multiply(speed));
+		if (MC.options.keyRight.isDown()) {
+			vec = vec.add(right.scale(speed));
+		} else if (MC.options.keyLeft.isDown()) {
+			vec = vec.subtract(right.scale(speed));
 		}
 
-		Vec3d newPos = player.getPos().add(vec);
+		Vec3 newPos = player.position().add(vec);
 		int packetsRequired = (int) ((int) Math
-				.ceil(MC.player.getPos().distanceTo(newPos) / packetDistanceThreshold.getValue())
+				.ceil(MC.player.position().distanceTo(newPos) / packetDistanceThreshold.getValue())
 				- packetCountOffset.getValue());
 		packetsRequired = Math.min(packetsRequired, maxPackets.getValue().intValue());
 
 		for (int i = 0; i < packetsRequired; i++) {
-			MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.OnGroundOnly(onGround.getValue(), false));
+			MC.player.connection.send(new ServerboundMovePlayerPacket.StatusOnly(onGround.getValue(), false));
 		}
 
-		MC.player.networkHandler.sendPacket(
-				new PlayerMoveC2SPacket.PositionAndOnGround(newPos.x, newPos.y, newPos.z, onGround.getValue(), false));
+		MC.player.connection.send(
+				new ServerboundMovePlayerPacket.Pos(newPos.x, newPos.y, newPos.z, onGround.getValue(), false));
 	}
 
 	@Override

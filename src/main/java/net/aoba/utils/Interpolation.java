@@ -3,73 +3,72 @@ package net.aoba.utils;
 import static net.aoba.AobaClient.MC;
 
 import java.awt.Color;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class Interpolation {
-	public static Vec3d interpolatedEyePos() {
-		return MC.player.getCameraPosVec(MC.getRenderTickCounter().getTickProgress(false));
+	public static Vec3 interpolatedEyePos() {
+		return MC.player.getEyePosition(MC.getDeltaTracker().getGameTimeDeltaPartialTick(false));
 	}
 
-	public static Vec3d interpolatedEyeVec() {
-		return MC.player.getClientCameraPosVec(MC.getRenderTickCounter().getTickProgress(false));
+	public static Vec3 interpolatedEyeVec() {
+		return MC.player.getLightProbePosition(MC.getDeltaTracker().getGameTimeDeltaPartialTick(false));
 	}
 
-	public static Vec3d interpolateEntity(Entity entity) {
-		double x = interpolateLastTickPos(entity.getX(), entity.lastX);
-		double y = interpolateLastTickPos(entity.getY(), entity.lastY);
-		double z = interpolateLastTickPos(entity.getZ(), entity.lastZ);
-		return new Vec3d(x, y, z);
+	public static Vec3 interpolateEntity(Entity entity) {
+		double x = interpolateLastTickPos(entity.getX(), entity.xo);
+		double y = interpolateLastTickPos(entity.getY(), entity.yo);
+		double z = interpolateLastTickPos(entity.getZ(), entity.zo);
+		return new Vec3(x, y, z);
 	}
 
 	public static double interpolateLastTickPos(double pos, double lastPos) {
-		return lastPos + (pos - lastPos) * MC.getRenderTickCounter().getTickProgress(false);
+		return lastPos + (pos - lastPos) * MC.getDeltaTracker().getGameTimeDeltaPartialTick(false);
 	}
 
-	public static Vec3d interpolatedEyeVec(PlayerEntity player) {
-		return player.getClientCameraPosVec(MC.getRenderTickCounter().getTickProgress(false));
+	public static Vec3 interpolatedEyeVec(Player player) {
+		return player.getLightProbePosition(MC.getDeltaTracker().getGameTimeDeltaPartialTick(false));
 	}
 
-	public static Vec3d interpolateVectors(Vec3d vec) {
+	public static Vec3 interpolateVectors(Vec3 vec) {
 		double x = vec.x - getRenderPosX();
 		double y = vec.y - getRenderPosY();
 		double z = vec.z - getRenderPosZ();
-		return new Vec3d(x, y, z);
+		return new Vec3(x, y, z);
 	}
 
 	/**
-	 * Gets the interpolated {@link Vec3d} position of an entity (i.e. position
+	 * Gets the interpolated {@link Vec3} position of an entity (i.e. position
 	 * based on render ticks)
 	 *
 	 * @param entity    The entity to get the position for
 	 * @param tickDelta The render time
 	 * @return The interpolated vector of an entity
 	 */
-	public static Vec3d getRenderPosition(Entity entity, float tickDelta) {
-		return new Vec3d(entity.getX() - MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX()),
-				entity.getY() - MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY()),
-				entity.getZ() - MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ()));
+	public static Vec3 getRenderPosition(Entity entity, float tickDelta) {
+		return new Vec3(entity.getX() - Mth.lerp(tickDelta, entity.xOld, entity.getX()),
+				entity.getY() - Mth.lerp(tickDelta, entity.yOld, entity.getY()),
+				entity.getZ() - Mth.lerp(tickDelta, entity.zOld, entity.getZ()));
 	}
 
-	public static Box interpolatePos(BlockPos pos) {
+	public static AABB interpolatePos(BlockPos pos) {
 		return interpolatePos(pos, 1.0f);
 	}
 
-	public static Box interpolatePos(BlockPos pos, float height) {
-		return new Box(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + height, pos.getZ() + 1);
+	public static AABB interpolatePos(BlockPos pos, float height) {
+		return new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + height, pos.getZ() + 1);
 	}
 
-	public static Box getLerpedBox(Entity e, float partialTicks) {
+	public static AABB getLerpedBox(Entity e, float partialTicks) {
 		if (e.isRemoved())
 			return e.getBoundingBox();
 
-		Vec3d offset = getRenderPosition(e, partialTicks).subtract(e.getPos());
-		return e.getBoundingBox().offset(offset);
+		Vec3 offset = getRenderPosition(e, partialTicks).subtract(e.position());
+		return e.getBoundingBox().move(offset);
 	}
 
 	public static Color interpolateColorC(Color color1, Color color2, float amount) {
@@ -93,15 +92,15 @@ public class Interpolation {
 	}
 
 	public static double getRenderPosX() {
-		return MC.gameRenderer.getCamera().getPos().x;
+		return MC.gameRenderer.getMainCamera().position().x;
 	}
 
 	public static double getRenderPosY() {
-		return MC.gameRenderer.getCamera().getPos().y;
+		return MC.gameRenderer.getMainCamera().position().y;
 	}
 
 	public static double getRenderPosZ() {
-		return MC.gameRenderer.getCamera().getPos().z;
+		return MC.gameRenderer.getMainCamera().position().z;
 	}
 
 }

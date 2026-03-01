@@ -13,10 +13,10 @@ import net.aoba.command.Command;
 import net.aoba.managers.CommandManager;
 import net.aoba.command.InvalidSyntaxException;
 import net.aoba.module.modules.render.XRay;
-import net.minecraft.block.Block;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
+import net.minecraft.IdentifierException;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
 
 public class CmdXRay extends Command {
 
@@ -53,27 +53,27 @@ public class CmdXRay extends Command {
 				String block1 = parameters[2].toLowerCase();
 				Block tempBlock1;
 				try {
-					tempBlock1 = Registries.BLOCK.get(Identifier.of(block1));
-				} catch (InvalidIdentifierException e) {
+					tempBlock1 = BuiltInRegistries.BLOCK.getValue(Identifier.parse(block1));
+				} catch (IdentifierException e) {
 					CommandManager.sendChatMessage("Block " + parameters[2] + " could not be found.");
 					return;
 				}
 
 				module.getBlocks().add(tempBlock1);
-				mc.worldRenderer.reload();
+				mc.levelRenderer.allChanged();
 				break;
 			case "remove":
 				String block2 = parameters[2].toLowerCase();
 				Block tempBlock2;
 				try {
-					tempBlock2 = Registries.BLOCK.get(Identifier.of(block2));
-				} catch (InvalidIdentifierException e) {
+					tempBlock2 = BuiltInRegistries.BLOCK.getValue(Identifier.parse(block2));
+				} catch (IdentifierException e) {
 					CommandManager.sendChatMessage("Block " + parameters[2] + " could not be found.");
 					return;
 				}
 
 				module.getBlocks().remove(tempBlock2);
-				mc.worldRenderer.reload();
+				mc.levelRenderer.allChanged();
 				break;
 			case "list":
 				StringBuilder blockList = new StringBuilder();
@@ -98,9 +98,9 @@ public class CmdXRay extends Command {
 		case "block":
 			return new String[] { "add", "remove" };
 		case "add":
-			String[] blockNames = new String[Registries.BLOCK.size()];
-			for (int i = 0; i < Registries.BLOCK.size(); i++) {
-				blockNames[i] = Registries.BLOCK.get(i).getTranslationKey();
+			String[] blockNames = new String[BuiltInRegistries.BLOCK.size()];
+			for (int i = 0; i < BuiltInRegistries.BLOCK.size(); i++) {
+				blockNames[i] = BuiltInRegistries.BLOCK.byId(i).getDescriptionId();
 			}
 			return blockNames;
 		case "remove":

@@ -13,22 +13,23 @@ import java.util.Optional;
 import net.aoba.Aoba;
 import net.aoba.event.events.ReceivePacketEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
-import net.aoba.mixin.interfaces.IEntityVelocityUpdateS2CPacket;
-import net.aoba.mixin.interfaces.IExplosionS2CPacket;
+import net.aoba.mixin.interfaces.IClientboundSetEntityMotionPacket;
+import net.aoba.mixin.interfaces.IClientboundExplodePacket;
 import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityStatuses;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
-import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
+import net.minecraft.network.protocol.game.ClientboundExplodePacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityEvent;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.Vec3;
 
 public class AntiKnockback extends Module implements ReceivePacketListener {
 
@@ -103,39 +104,38 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 
 	@Override
 	public void onReceivePacket(ReceivePacketEvent readPacketEvent) {
-		MinecraftClient mc = MinecraftClient.getInstance();
+		Minecraft mc = Minecraft.getInstance();
 		Packet<?> packet = readPacketEvent.GetPacket();
 
-		if (packet instanceof EntityVelocityUpdateS2CPacket velocityUpdatePacket) {
+		if (packet instanceof ClientboundSetEntityMotionPacket velocityUpdatePacket) {
 			if (mc.player != null) {
-				if (velocityUpdatePacket.getEntityId() == mc.player.getId()) {
-					((IEntityVelocityUpdateS2CPacket) packet)
-							.setVelocityX((int) (velocityUpdatePacket.getVelocityX() * 8000d * horizontal.getValue()));
-					((IEntityVelocityUpdateS2CPacket) packet)
-							.setVelocityY((int) (velocityUpdatePacket.getVelocityY() * 8000d * vertical.getValue()));
-					((IEntityVelocityUpdateS2CPacket) packet)
-							.setVelocityZ((int) (velocityUpdatePacket.getVelocityZ() * 8000d * horizontal.getValue()));
+				if (velocityUpdatePacket.getId() == mc.player.getId()) {
+					Vec3 movement = ((IClientboundSetEntityMotionPacket) packet).getMovement();
+					((IClientboundSetEntityMotionPacket) packet).setMovement(new Vec3(
+							movement.x * horizontal.getValue(),
+							movement.y * vertical.getValue(),
+							movement.z * horizontal.getValue()));
 				}
 			}
 		}
 
 		// Cancel any explosions.
-		if (packet instanceof ExplosionS2CPacket explosionS2CPacket) {
-			Optional<Vec3d> knockbackOptional = explosionS2CPacket.playerKnockback();
+		if (packet instanceof ClientboundExplodePacket explosionS2CPacket) {
+			Optional<Vec3> knockbackOptional = explosionS2CPacket.playerKnockback();
 			if (!knockbackOptional.isEmpty()) {
-				Vec3d knockback = knockbackOptional.get();
-				((IExplosionS2CPacket) packet)
-						.setPlayerKnockback(Optional.of(knockback.multiply(horizontal.getValue())));
+				Vec3 knockback = knockbackOptional.get();
+				((IClientboundExplodePacket) packet)
+						.setPlayerKnockback(Optional.of(knockback.scale(horizontal.getValue())));
 			}
 		}
 
 		// Cancel being launched with a fishing rod.
-		if (packet instanceof EntityStatusS2CPacket entityStatusS2CPacket) {
-			if (entityStatusS2CPacket.getStatus() == EntityStatuses.PULL_HOOKED_ENTITY && noPushFishhook.getValue()) {
-				Entity entity = entityStatusS2CPacket.getEntity(mc.world);
+		if (packet instanceof ClientboundEntityEventPacket entityStatusS2CPacket) {
+			if (entityStatusS2CPacket.getEventId() == EntityEvent.FISHING_ROD_REEL_IN && noPushFishhook.getValue()) {
+				Entity entity = entityStatusS2CPacket.getEntity(mc.level);
 
-				if (entity instanceof FishingBobberEntity fishingBobberEntity
-						&& fishingBobberEntity.getHookedEntity() == mc.player) {
+				if (entity instanceof FishingHook fishingBobberEntity
+						&& fishingBobberEntity.getHookedIn() == mc.player) {
 					readPacketEvent.cancel();
 				}
 			}

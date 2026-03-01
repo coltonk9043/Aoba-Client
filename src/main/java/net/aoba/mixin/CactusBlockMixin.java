@@ -24,29 +24,29 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CactusBlock;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CactusBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 @Mixin(CactusBlock.class)
 public abstract class CactusBlockMixin extends Block {
 
-	public CactusBlockMixin(Settings settings) {
+	public CactusBlockMixin(Properties settings) {
 		super(settings);
 	}
 
 	@Inject(at = { @At("HEAD") }, method = {
-			"getCollisionShape(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;" }, cancellable = true)
-	private void onGetCollisionShape(BlockState blockState_1, BlockView blockView_1, BlockPos blockPos_1,
-			ShapeContext entityContext_1, CallbackInfoReturnable<VoxelShape> cir) {
+			"getCollisionShape(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/shapes/CollisionContext;)Lnet/minecraft/world/phys/shapes/VoxelShape;" }, cancellable = true)
+	private void onGetCollisionShape(BlockState blockState_1, BlockGetter blockView_1, BlockPos blockPos_1,
+			CollisionContext entityContext_1, CallbackInfoReturnable<VoxelShape> cir) {
 		if (Aoba.getInstance() != null && Aoba.getInstance().moduleManager != null) {
 			if (Aoba.getInstance().moduleManager.anticactus.state.getValue()) {
-				cir.setReturnValue(VoxelShapes.fullCube());
+				cir.setReturnValue(Shapes.block());
 			}
 		}
 	}

@@ -10,22 +10,22 @@ import net.aoba.AobaClient;
 import net.aoba.event.events.ItemUsedEvent;
 import net.aoba.event.events.ItemUsedEvent.Post;
 import net.aoba.event.events.ItemUsedEvent.Pre;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
-	@Inject(method = "finishUsing", at = @At("HEAD"))
-	private void onFinishUsingPre(World world, LivingEntity entity, CallbackInfoReturnable<ItemStack> cir) {
+	@Inject(method = "finishUsingItem", at = @At("HEAD"))
+	private void onFinishUsingPre(Level world, LivingEntity entity, CallbackInfoReturnable<ItemStack> cir) {
 		if (entity == AobaClient.MC.player) {
 			Pre event = new ItemUsedEvent.Pre((ItemStack) (Object) this);
 			Aoba.getInstance().eventManager.Fire(event);
 		}
 	}
 
-	@Inject(method = "finishUsing", at = @At("TAIL"))
-	private void onFinishUsingPost(World world, LivingEntity entity, CallbackInfoReturnable<ItemStack> cir) {
+	@Inject(method = "finishUsingItem", at = @At("TAIL"))
+	private void onFinishUsingPost(Level world, LivingEntity entity, CallbackInfoReturnable<ItemStack> cir) {
 		if (entity == AobaClient.MC.player) {
 			Post event = new ItemUsedEvent.Post((ItemStack) (Object) this);
 			Aoba.getInstance().eventManager.Fire(event);

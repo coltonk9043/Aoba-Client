@@ -9,7 +9,7 @@
 package net.aoba.settings.types;
 
 import net.aoba.settings.Setting;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import java.util.HashSet;
 import java.util.function.Consumer;
 
@@ -24,11 +24,11 @@ public class BlocksSetting extends Setting<HashSet<Block>> {
         return true;
     }
     
-    public static BUILDER builder() {
-    	return new BUILDER();
+    public static BlocksSetting.BUILDER builder() {
+    	return new BlocksSetting.BUILDER();
     }
     
-    public static class BUILDER extends Setting.BUILDER<BUILDER, BlocksSetting, HashSet<Block>> {
+    public static class BUILDER extends Setting.BUILDER<BlocksSetting.BUILDER, BlocksSetting, HashSet<Block>> {
 		protected BUILDER() {
         }
 
