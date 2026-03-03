@@ -32,11 +32,11 @@ public class IntegerSetting extends Setting<Integer> {
         return value >= min_value && value <= max_value;
     }
     
-    public static BUILDER builder() {
-    	return new BUILDER();
+    public static IntegerSetting.BUILDER builder() {
+    	return new IntegerSetting.BUILDER();
     }
     
-    public static class BUILDER extends Setting.BUILDER<BUILDER, IntegerSetting, Integer> {
+    public static class BUILDER extends Setting.BUILDER<IntegerSetting.BUILDER, IntegerSetting, Integer> {
 		protected Integer minValue = 1;
 		protected Integer maxValue = 10;
 		protected Integer step = 1;
@@ -44,17 +44,17 @@ public class IntegerSetting extends Setting<Integer> {
 		protected BUILDER() {
         }
 		
-		public BUILDER minValue(Integer value) {
+		public IntegerSetting.BUILDER minValue(Integer value) {
 			minValue = value;
 			return this;
 		}
 		
-		public BUILDER maxValue(Integer value) {
+		public IntegerSetting.BUILDER maxValue(Integer value) {
 			maxValue = value;
 			return this;
 		}
 		
-		public BUILDER step(Integer value) {
+		public IntegerSetting.BUILDER step(Integer value) {
 			step = value;
 			return this;
 		}

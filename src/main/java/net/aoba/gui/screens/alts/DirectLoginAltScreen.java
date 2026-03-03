@@ -10,71 +10,70 @@ package net.aoba.gui.screens.alts;
 
 import net.aoba.Aoba;
 import net.aoba.managers.altmanager.Alt;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.CheckboxWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class DirectLoginAltScreen extends Screen {
 
 	private final Screen parent;
-	private ButtonWidget buttonLoginAlt;
+	private Button buttonLoginAlt;
 
-	private TextFieldWidget textFieldAltUsername;
-	private CheckboxWidget isCracked;
+	private EditBox textFieldAltUsername;
+	private Checkbox isCracked;
 	private final boolean didLoginError = false;
 
 	protected DirectLoginAltScreen(Screen parent) {
-		super(Text.of("Direct Login"));
+		super(Component.nullToEmpty("Direct Login"));
 		this.parent = parent;
 	}
 
 	public void init() {
 		super.init();
 
-		textFieldAltUsername = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 50, 200, 20,
-				Text.of("Enter Name"));
-		addDrawableChild(textFieldAltUsername);
+		textFieldAltUsername = new EditBox(font, width / 2 - 100, height / 2 - 50, 200, 20,
+				Component.nullToEmpty("Enter Name"));
+		addRenderableWidget(textFieldAltUsername);
 
-		isCracked = CheckboxWidget.builder(Text.of("Cracked?"), textRenderer)
+		isCracked = Checkbox.builder(Component.nullToEmpty("Cracked?"), font)
 				.pos(width / 2 - 100, height / 2 - 20).maxWidth(200).build();
-		addDrawableChild(isCracked);
+		addRenderableWidget(isCracked);
 
-		buttonLoginAlt = ButtonWidget.builder(Text.of("Login"), b -> onButtonLoginPressed())
-				.dimensions(width / 2 - 100, height / 2 + 24, 200, 20).build();
-		addDrawableChild(buttonLoginAlt);
+		buttonLoginAlt = Button.builder(Component.nullToEmpty("Login"), b -> onButtonLoginPressed())
+				.bounds(width / 2 - 100, height / 2 + 24, 200, 20).build();
+		addRenderableWidget(buttonLoginAlt);
 
-		addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(parent))
-				.dimensions(width / 2 - 100, height / 2 + 46, 200, 20).build());
+		addRenderableWidget(Button.builder(Component.nullToEmpty("Cancel"), b -> minecraft.setScreen(parent))
+				.bounds(width / 2 - 100, height / 2 + 46, 200, 20).build());
 	}
 
 	private void onButtonLoginPressed() {
-		if (isCracked.isChecked()) {
-			Aoba.getInstance().altManager.loginCracked(textFieldAltUsername.getText());
-			client.setScreen(parent);
+		if (isCracked.selected()) {
+			Aoba.getInstance().altManager.loginCracked(textFieldAltUsername.getValue());
+			minecraft.setScreen(parent);
 			return;
 		} else {
-			Alt alt = new Alt(textFieldAltUsername.getText(), false);
-			alt.auth();
-			Aoba.getInstance().altManager.login(alt);
+			buttonLoginAlt.active = false;
+			Alt alt = new Alt(textFieldAltUsername.getValue(), false);
+			Aoba.getInstance().altManager.loginWithAuth(alt, () -> {
+				minecraft.execute(() -> minecraft.setScreen(parent));
+			});
 		}
-		client.setScreen(parent);
 	}
 
 	@Override
-	public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+	public void render(GuiGraphics drawContext, int mouseX, int mouseY, float partialTicks) {
 		super.render(drawContext, mouseX, mouseY, partialTicks);
-		drawContext.drawCenteredTextWithShadow(textRenderer, title.getString(), width / 2, 20, 16777215);
-		drawContext.drawTextWithShadow(textRenderer, "Enter Username/Email", width / 2 - 100, height / 2 - 60,
-				16777215);
-		// drawStringWithShadow(matrixStack,textRenderer, "Microsoft: ", this.width / 2
-		// - 100, height / 2 - 10, 16777215);
+		drawContext.drawCenteredString(font, title.getString(), width / 2, 20, 0xFFFFFFFF);
+		drawContext.drawString(font, "Enter Username/Email", width / 2 - 100, height / 2 - 60,
+				0xFFFFFFFF);
 		textFieldAltUsername.render(drawContext, mouseX, mouseY, partialTicks);
 		if (didLoginError) {
-			drawContext.drawTextWithShadow(textRenderer, "Incorrect Login (Try using Email rather than Username)",
-					width / 2 - 140, 116, 0xFF0000);
+			drawContext.drawString(font, "Incorrect Login (Try using Email rather than Username)",
+					width / 2 - 140, 116, 0xFFFF0000);
 		}
 
 	}

@@ -20,12 +20,12 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.FindItemResult;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public class AutoShear extends Module implements TickListener {
 
@@ -89,17 +89,17 @@ public class AutoShear extends Module implements TickListener {
 
 	@Override
 	public void onTick(Post event) {
-		SheepEntity foundEntity = null;
+		Sheep foundEntity = null;
 		for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
-			if (!(entity instanceof SheepEntity sheep))
+			if (!(entity instanceof Sheep sheep))
 				continue;
 
 			// Ensure that the sheap is within a range.
-			if (MC.player.squaredDistanceTo(entity) > radius.getValueSqr())
+			if (MC.player.distanceToSqr(entity) > radius.getValueSqr())
 				continue;
 
 			// Get if the sheep is shearable.
-            if (!sheep.isShearable() || sheep.isSheared() || sheep.isBaby())
+            if (!sheep.readyForShearing() || sheep.isSheared() || sheep.isBaby())
 				continue;
 
 			foundEntity = sheep;
@@ -117,23 +117,23 @@ public class AutoShear extends Module implements TickListener {
 			FindItemResult shearItemSlot = findInHotbar(Items.SHEARS);
 			if (shearItemSlot.found()) {
 				swap(shearItemSlot.slot(), false);
-				Hand hand = shearItemSlot.getHand();
+				InteractionHand hand = shearItemSlot.getHand();
 
 				if (legit.getValue()) {
-					HitResult ray = MC.crosshairTarget;
+					HitResult ray = MC.hitResult;
 
 					if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
 						EntityHitResult entityResult = (EntityHitResult) ray;
 						Entity ent = entityResult.getEntity();
 
 						if (ent == foundEntity) {
-							MC.player.swingHand(Hand.MAIN_HAND);
-							MC.interactionManager.interactEntity(MC.player, foundEntity, hand);
+							MC.player.swing(InteractionHand.MAIN_HAND);
+							MC.gameMode.interact(MC.player, foundEntity, hand);
                         }
 					}
 				} else {
-					MC.player.swingHand(Hand.MAIN_HAND);
-					MC.interactionManager.interactEntity(MC.player, foundEntity, hand);
+					MC.player.swing(InteractionHand.MAIN_HAND);
+					MC.gameMode.interact(MC.player, foundEntity, hand);
                 }
 			}
 		} else

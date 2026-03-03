@@ -12,18 +12,18 @@ import java.util.ArrayList;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.TotemPopListener;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class TotemPopEvent extends AbstractEvent {
-	private final PlayerEntity entity;
+	private final Player entity;
 	private final int pops;
 
-	public TotemPopEvent(PlayerEntity entity, int pops) {
+	public TotemPopEvent(Player entity, int pops) {
 		this.entity = entity;
 		this.pops = pops;
 	}
 
-	public PlayerEntity getEntity() {
+	public Player getEntity() {
 		return entity;
 	}
 

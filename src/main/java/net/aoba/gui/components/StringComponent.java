@@ -19,9 +19,9 @@ import net.aoba.gui.TextAlign;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class StringComponent extends Component implements FontChangedListener {
 	private TextAlign textAlign = TextAlign.Left;
@@ -64,7 +64,7 @@ public class StringComponent extends Component implements FontChangedListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
@@ -73,7 +73,7 @@ public class StringComponent extends Component implements FontChangedListener {
 
 		for (String str : text) {
 			if (bold)
-				str = Formatting.BOLD + str;
+				str = ChatFormatting.BOLD + str;
 
 			switch (textAlign) {
 			case Left:
@@ -109,10 +109,10 @@ public class StringComponent extends Component implements FontChangedListener {
 		text.clear();
 
 		if (originalText != null) {
-			TextRenderer textRenderer = Aoba.getInstance().fontManager.GetRenderer();
+			Font textRenderer = Aoba.getInstance().fontManager.GetRenderer();
 
 			float width = availableSize.getWidth().floatValue();
-			float textWidth = textRenderer.getWidth(originalText) * 2.0f;
+			float textWidth = textRenderer.width(originalText) * 2.0f;
 			if (textWidth < width) {
 				text.add(originalText);
 			} else {
@@ -125,7 +125,7 @@ public class StringComponent extends Component implements FontChangedListener {
 					char c = originalText.charAt(i);
 					buffer.append(c);
 
-					float wordBufferWidth = textRenderer.getWidth(buffer.toString()) * 2.0f;
+					float wordBufferWidth = textRenderer.width(buffer.toString()) * 2.0f;
 					if (wordBufferWidth >= width) {
 						if (lastSplit == -1)
 							break;

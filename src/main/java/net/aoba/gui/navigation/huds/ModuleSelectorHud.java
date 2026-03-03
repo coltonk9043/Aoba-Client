@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.aoba.AobaClient;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
@@ -20,17 +21,17 @@ import net.aoba.gui.navigation.HudWindow;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class ModuleSelectorHud extends HudWindow {
 
 	private static final float ROW_HEIGHT = 30.0f;
 
-	private final KeyBinding keybindUp;
-	private final KeyBinding keybindDown;
-	private final KeyBinding keybindLeft;
-	private final KeyBinding keybindRight;
+	private final KeyMapping keybindUp;
+	private final KeyMapping keybindDown;
+	private final KeyMapping keybindLeft;
+	private final KeyMapping keybindRight;
 
 	private int index = 0;
 	private int indexMods = 0;
@@ -51,15 +52,15 @@ public class ModuleSelectorHud extends HudWindow {
 
 		resizeMode = ResizeMode.Width;
 
-		keybindUp = new KeyBinding("key.tabup", GLFW.GLFW_KEY_UP, "key.categories.aoba");
-		keybindDown = new KeyBinding("key.tabdown", GLFW.GLFW_KEY_DOWN, "key.categories.aoba");
-		keybindLeft = new KeyBinding("key.tableft", GLFW.GLFW_KEY_LEFT, "key.categories.aoba");
-		keybindRight = new KeyBinding("key.tabright", GLFW.GLFW_KEY_RIGHT, "key.categories.aoba");
+		keybindUp = new KeyMapping("key.tabup", GLFW.GLFW_KEY_UP, AobaClient.AOBA_CATEGORY);
+		keybindDown = new KeyMapping("key.tabdown", GLFW.GLFW_KEY_DOWN, AobaClient.AOBA_CATEGORY);
+		keybindLeft = new KeyMapping("key.tableft", GLFW.GLFW_KEY_LEFT, AobaClient.AOBA_CATEGORY);
+		keybindRight = new KeyMapping("key.tabright", GLFW.GLFW_KEY_RIGHT, AobaClient.AOBA_CATEGORY);
 	}
 
 	@Override
 	public void update() {
-		if (keybindUp.isPressed()) {
+		if (keybindUp.isDown()) {
 			if (!isCategoryMenuOpen) {
 				if (index == 0) {
 					index = categories.size() - 1;
@@ -73,15 +74,15 @@ public class ModuleSelectorHud extends HudWindow {
 					indexMods -= 1;
 				}
 			}
-			keybindUp.setPressed(false);
-		} else if (keybindDown.isPressed()) {
+			keybindUp.setDown(false);
+		} else if (keybindDown.isDown()) {
 			if (!isCategoryMenuOpen) {
 				index = (index + 1) % categories.size();
 			} else {
 				indexMods = (indexMods + 1) % modules.size();
 			}
-			keybindDown.setPressed(false);
-		} else if (keybindRight.isPressed()) {
+			keybindDown.setDown(false);
+		} else if (keybindRight.isDown()) {
 			if (!isCategoryMenuOpen) {
 				isCategoryMenuOpen = true;
 				if (modules.isEmpty()) {
@@ -94,19 +95,19 @@ public class ModuleSelectorHud extends HudWindow {
 			} else {
 				modules.get(indexMods).toggle();
 			}
-			keybindRight.setPressed(false);
-		} else if (keybindLeft.isPressed()) {
+			keybindRight.setDown(false);
+		} else if (keybindLeft.isDown()) {
 			if (isCategoryMenuOpen) {
 				indexMods = 0;
 				modules.clear();
 				isCategoryMenuOpen = false;
 			}
-			keybindLeft.setPressed(false);
+			keybindLeft.setDown(false);
 		}
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
 		// Gets the client and window.

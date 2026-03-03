@@ -26,16 +26,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.module.modules.render.XRay;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(Block.class)
-public abstract class BlockMixin implements ItemConvertible {
+public abstract class BlockMixin implements ItemLike {
 
 	@Inject(at = { @At("RETURN") }, method = {
-			"shouldDrawSide" }, cancellable = true)
+			"shouldRenderFace" }, cancellable = true)
 	private static void onShouldDrawSide(BlockState state, BlockState otherState, Direction side,
 										 CallbackInfoReturnable<Boolean> cir) {
 		AobaClient aoba = Aoba.getInstance();
@@ -45,7 +45,7 @@ public abstract class BlockMixin implements ItemConvertible {
 		}
 	}
 
-	@Inject(at = { @At("HEAD") }, method = { "getVelocityMultiplier()F" }, cancellable = true)
+	@Inject(at = { @At("HEAD") }, method = { "getSpeedFactor()F" }, cancellable = true)
 	private void onGetVelocityMultiplier(CallbackInfoReturnable<Float> cir) {
 		if (!Aoba.getInstance().moduleManager.noslowdown.state.getValue())
 			return;

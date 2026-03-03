@@ -13,51 +13,67 @@ import java.util.ArrayList;
 import net.aoba.Aoba;
 import net.aoba.managers.proxymanager.Socks5Proxy;
 import net.aoba.utils.render.TextureBank;
-import net.minecraft.client.gui.CubeMapRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.RotatingCubeMapRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.CubeMap;
+import net.minecraft.client.renderer.PanoramaRenderer;
+import net.minecraft.network.chat.Component;
 
 public class ProxyScreen extends Screen {
-	protected static final CubeMapRenderer AOBA_PANORAMA_RENDERER = new CubeMapRenderer(TextureBank.mainmenu_panorama);
-	protected static final RotatingCubeMapRenderer AOBA_ROTATING_PANORAMA_RENDERER = new RotatingCubeMapRenderer(
+	protected static final CubeMap AOBA_PANORAMA_RENDERER = new CubeMap(TextureBank.mainmenu_panorama);
+	protected static final PanoramaRenderer AOBA_ROTATING_PANORAMA_RENDERER = new PanoramaRenderer(
 			AOBA_PANORAMA_RENDERER);
 
+	private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
 	private final Screen parentScreen;
 	private ProxySelectionList proxyListSelector;
-	private ButtonWidget editButton;
-	private ButtonWidget deleteButton;
+	private Button editButton;
+	private Button deleteButton;
 
 	public ProxyScreen(Screen parentScreen) {
-		super(Text.of("Alt Manager"));
+		super(Component.nullToEmpty("Proxy Manager"));
 		this.parentScreen = parentScreen;
 	}
 
 	public void init() {
 		super.init();
 
-		proxyListSelector = new ProxySelectionList(this, client, width, height, 32, 64);
+		proxyListSelector = new ProxySelectionList(this, minecraft, width, height, 32, 64);
 		proxyListSelector.updateProxies();
-		proxyListSelector.setDimensionsAndPosition(width, height - 70, 0, 32);
-		addDrawableChild(proxyListSelector);
+		layout.addToContents(proxyListSelector);
 
-		addDrawableChild(ButtonWidget.builder(Text.of("Add Proxy"), b -> client.setScreen(new AddProxyScreen(this)))
-				.dimensions(width / 2 - 205, height - 28, 100, 20).build());
+		LinearLayout buttonRow = LinearLayout.horizontal().spacing(4);
+		buttonRow.addChild(Button.builder(Component.nullToEmpty("Add Proxy"), b -> minecraft.setScreen(new AddProxyScreen(this)))
+				.width(100).build());
 
-		editButton = ButtonWidget.builder(Text.of("Edit Alt"), b -> editSelected())
-				.dimensions(width / 2 - 100, height - 28, 100, 20).build();
+		editButton = Button.builder(Component.nullToEmpty("Edit Proxy"), b -> editSelected())
+				.width(100).build();
 		editButton.active = false;
-		addDrawableChild(editButton);
+		buttonRow.addChild(editButton);
 
-		deleteButton = ButtonWidget.builder(Text.of("Delete Proxy"), b -> deleteSelected())
-				.dimensions(width / 2 + 5, height - 28, 100, 20).build();
+		deleteButton = Button.builder(Component.nullToEmpty("Delete Proxy"), b -> deleteSelected())
+				.width(100).build();
 		deleteButton.active = false;
-		addDrawableChild(deleteButton);
+		buttonRow.addChild(deleteButton);
 
-		addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> client.setScreen(parentScreen))
-				.dimensions(width / 2 + 110, height - 28, 100, 20).build());
+		buttonRow.addChild(Button.builder(Component.nullToEmpty("Cancel"), b -> minecraft.setScreen(parentScreen))
+				.width(100).build());
+
+		layout.addToFooter(buttonRow);
+		layout.arrangeElements();
+		layout.visitWidgets(this::addRenderableWidget);
+		proxyListSelector.updateSize(width, layout);
+	}
+
+	@Override
+	protected void repositionElements() {
+		layout.arrangeElements();
+		if (proxyListSelector != null) {
+			proxyListSelector.updateSize(width, layout);
+		}
 	}
 
 	public ArrayList<Socks5Proxy> getProxyList() {
@@ -65,7 +81,7 @@ public class ProxyScreen extends Screen {
 	}
 
 	public void refreshProxyList() {
-		client.setScreen(new ProxyScreen(parentScreen));
+		minecraft.setScreen(new ProxyScreen(parentScreen));
 	}
 
 	public void setSelected(ProxySelectionList.Entry selected) {
@@ -74,15 +90,15 @@ public class ProxyScreen extends Screen {
 	}
 
 	public void editSelected() {
-		Socks5Proxy proxy = ((ProxySelectionList.NormalEntry) proxyListSelector.getSelectedOrNull()).getProxyData();
+		Socks5Proxy proxy = ((ProxySelectionList.NormalEntry) proxyListSelector.getSelected()).getProxyData();
 		if (proxy == null) {
 			return;
 		}
-		client.setScreen(new EditProxyScreen(this, proxy));
+		minecraft.setScreen(new EditProxyScreen(this, proxy));
 	}
 
 	public void deleteSelected() {
-		Socks5Proxy proxy = ((ProxySelectionList.NormalEntry) proxyListSelector.getSelectedOrNull()).getProxyData();
+		Socks5Proxy proxy = ((ProxySelectionList.NormalEntry) proxyListSelector.getSelected()).getProxyData();
 		if (proxy == null) {
 			return;
 		}
@@ -100,7 +116,7 @@ public class ProxyScreen extends Screen {
 	}
 
 	public void setActive() {
-		ProxySelectionList.Entry proxyListSelectorSelectedOrNull = proxyListSelector.getSelectedOrNull();
+		ProxySelectionList.Entry proxyListSelectorSelectedOrNull = proxyListSelector.getSelected();
 
 		if (proxyListSelectorSelectedOrNull == null) {
 			return;
@@ -115,7 +131,7 @@ public class ProxyScreen extends Screen {
 	}
 
 	@Override
-	protected void renderPanoramaBackground(DrawContext context, float delta) {
-		// AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, 1.0f, delta);
+	protected void renderPanorama(GuiGraphics context, float delta) {
+		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, true);
 	}
 }

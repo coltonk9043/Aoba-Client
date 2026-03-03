@@ -18,10 +18,10 @@ import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.block.entity.BarrelBlockEntity;
-import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.block.entity.TrappedChestBlockEntity;
-import net.minecraft.util.math.Box;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
+import net.minecraft.world.phys.AABB;
 
 public class ChestESP extends Module implements Render3DListener {
 
@@ -60,7 +60,7 @@ public class ChestESP extends Module implements Render3DListener {
 		ModuleUtils.getTileEntities().forEach(blockEntity -> {
 			if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity
 					|| blockEntity instanceof BarrelBlockEntity) {
-				Box box = new Box(blockEntity.getPos());
+				AABB box = new AABB(blockEntity.getBlockPos());
 				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, color.getValue(),
 						lineThickness.getValue().floatValue());
 			}

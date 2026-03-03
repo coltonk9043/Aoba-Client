@@ -14,11 +14,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
-
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.ChunkPos;
 
 /**
  * The WalkingPathManager class is responsible for managing and calculating
@@ -35,7 +34,7 @@ public class WalkingPathManager extends AbstractPathManager {
      */
     public ArrayList<PathNode> recalculatePath(BlockPos pos) {
         if (target != null) {
-            if (MC.player == null || MC.player.isDead()) {
+            if (MC.player == null || MC.player.isDeadOrDying()) {
                 return null;
             }
             // Priority queue to store nodes to be explored, ordered by their cost
@@ -90,7 +89,7 @@ public class WalkingPathManager extends AbstractPathManager {
 	protected ArrayList<PathNode> getNeighbouringBlocks(PathNode node) {
         ArrayList<PathNode> result = new ArrayList<>();
 
-        BlockPos bottom = node.pos.down();
+        BlockPos bottom = node.pos.below();
 
         boolean canPassBottom = !node.getWasJump() && isPlayerPassable(bottom) && !node.getIsInWater();
         boolean needsToJump = false;
@@ -101,7 +100,7 @@ public class WalkingPathManager extends AbstractPathManager {
             if(avoidWater && bottomNode.getIsInWater())
             	return new ArrayList<PathNode>();
             
-            boolean isInLava = MC.world.getFluidState(bottom).isIn(FluidTags.LAVA);
+            boolean isInLava = MC.level.getFluidState(bottom).is(FluidTags.LAVA);
             if(avoidLava && isInLava)
             	return new ArrayList<PathNode>();
             
@@ -121,9 +120,9 @@ public class WalkingPathManager extends AbstractPathManager {
             List<BlockPos> diagonalBlocks = List.of(northEast, southEast, southWest, northWest);
 
             for (BlockPos currentBlock : adjacentBlocks) {
-                ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
+                ChunkPos chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(currentBlock.getX()), SectionPos.blockToSectionCoord(currentBlock.getZ()));
 
-                if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z))
+                if (!MC.level.getChunkSource().hasChunk(chunkPos.x, chunkPos.z))
                     continue;
 
                 PathNode newNode = new PathNode(currentBlock); 
@@ -138,7 +137,7 @@ public class WalkingPathManager extends AbstractPathManager {
                     result.add(newNode);
                 else {
                     // Check to see if the player can jump
-                    BlockPos above = currentBlock.up();
+                    BlockPos above = currentBlock.above();
                     if (isPlayerPassable(above)) {
                         needsToJump = true;
                     }
@@ -146,9 +145,9 @@ public class WalkingPathManager extends AbstractPathManager {
             }
 
             for (BlockPos currentBlock : diagonalBlocks) {
-                ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
+                ChunkPos chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(currentBlock.getX()), SectionPos.blockToSectionCoord(currentBlock.getZ()));
 
-                if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z))
+                if (!MC.level.getChunkSource().hasChunk(chunkPos.x, chunkPos.z))
                     continue;
 
                 PathNode newNode = new PathNode(currentBlock); 
@@ -166,7 +165,7 @@ public class WalkingPathManager extends AbstractPathManager {
         }
 
         if (needsToJump && !node.getWasJump()) {
-            BlockPos top = node.pos.up();
+            BlockPos top = node.pos.above();
             if (isPlayerPassable(top)) {
                 PathNode topNode = new PathNode(top);
                 topNode.setWasJump(true);
@@ -195,7 +194,7 @@ public class WalkingPathManager extends AbstractPathManager {
         float dy = (float) Math.abs(position.pos.getY() - target.getY());
         float dz = (float) Math.abs(position.pos.getZ() - target.getZ());
 
-        if(avoidWater && MC.world.isWater(target)) {
+        if(avoidWater && MC.level.isWaterAt(target)) {
         	dy += 65536;
         }
         

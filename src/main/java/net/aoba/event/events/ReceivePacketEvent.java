@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.ReceivePacketListener;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.protocol.Packet;
 
 public class ReceivePacketEvent extends AbstractEvent {
 

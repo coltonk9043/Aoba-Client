@@ -1,15 +1,15 @@
 package net.aoba.mixin.interfaces;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(Entity.class)
 public interface IEntity {
-    @Accessor("movementMultiplier")
-    Vec3d getMovementMultiplier();
+    @Accessor("stuckSpeedMultiplier")
+    Vec3 getMovementMultiplier();
 
-    @Accessor("movementMultiplier")
-    void setMovementMultiplier(Vec3d val);
+    @Accessor("stuckSpeedMultiplier")
+    void setMovementMultiplier(Vec3 val);
 }

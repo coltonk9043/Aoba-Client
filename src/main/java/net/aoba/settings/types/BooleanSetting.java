@@ -32,11 +32,11 @@ public class BooleanSetting extends Setting<Boolean> {
         return true;
     }
     
-    public static BUILDER builder() {
-    	return new BUILDER();
+    public static BooleanSetting.BUILDER builder() {
+    	return new BooleanSetting.BUILDER();
     }
     
-    public static class BUILDER extends Setting.BUILDER<BUILDER, BooleanSetting, Boolean> {
+    public static class BUILDER extends Setting.BUILDER<BooleanSetting.BUILDER, BooleanSetting, Boolean> {
 		protected BUILDER() {
         }
 		

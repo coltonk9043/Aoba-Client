@@ -14,7 +14,7 @@ import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class CloseableWindow extends Window {
 
@@ -51,7 +51,7 @@ public class CloseableWindow extends Window {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 		Rectangle pos = getActualSize();
 		if (pos.isDrawable()) {

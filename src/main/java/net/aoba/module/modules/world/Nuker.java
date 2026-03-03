@@ -27,15 +27,15 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 public class Nuker extends Module implements Render3DListener, TickListener, BlockStateListener {
 
@@ -100,7 +100,7 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 	@Override
 	public void onRender(Render3DEvent event) {
 		if (currentBlockToBreak != null) {
-			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(currentBlockToBreak), color.getValue(),
+			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new AABB(currentBlockToBreak), color.getValue(),
 					1.0f);
 		}
 	}
@@ -124,7 +124,7 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 				for (int z = -rad; z < rad; z++) {
 					BlockPos blockpos = new BlockPos(MC.player.getBlockX() + x, MC.player.getBlockY() + y,
 							MC.player.getBlockZ() + z);
-					Block block = MC.world.getBlockState(blockpos).getBlock();
+					Block block = MC.level.getBlockState(blockpos).getBlock();
 					if (block == Blocks.AIR || blacklist.getValue().contains(block))
 						continue;
 
@@ -140,17 +140,17 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 		if (creative.getValue()) {
 			int range = (int) (Math.floor(radius.getValue()) + 1);
 			Iterable<BlockPos> blocks = BlockPos
-					.iterateOutwards(new BlockPos(BlockPos.ofFloored(MC.player.getPos()).up()), range, range, range);
+					.withinManhattan(BlockPos.containing(MC.player.position()).above(), range, range, range);
 			for (BlockPos blockPos : blocks) {
-				Block block = MC.world.getBlockState(blockPos).getBlock();
+				Block block = MC.level.getBlockState(blockPos).getBlock();
 				if (block == Blocks.AIR || blacklist.getValue().contains(block))
 					continue;
 
-				MC.player.networkHandler
-						.sendPacket(new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, blockPos, Direction.NORTH));
-				MC.player.networkHandler
-						.sendPacket(new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockPos, Direction.NORTH));
-				MC.player.swingHand(Hand.MAIN_HAND);
+				MC.player.connection
+						.send(new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, blockPos, Direction.NORTH));
+				MC.player.connection
+						.send(new ServerboundPlayerActionPacket(Action.STOP_DESTROY_BLOCK, blockPos, Direction.NORTH));
+				MC.player.swing(InteractionHand.MAIN_HAND);
 			}
 		} else {
 			if (currentBlockToBreak == null) {
@@ -162,14 +162,14 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 				// Check to ensure that the block is not further than we can reach.
 				int range = (int) (Math.floor(radius.getValue()) + 1);
 				int rangeSqr = range ^ 2;
-				if (MC.player.getBlockPos().toCenterPos().distanceTo(currentBlockToBreak.toCenterPos()) > rangeSqr) {
+				if (MC.player.blockPosition().getCenter().distanceTo(currentBlockToBreak.getCenter()) > rangeSqr) {
 					currentBlockToBreak = null;
 				} else {
-					MC.player.networkHandler.sendPacket(new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK,
+					MC.player.connection.send(new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK,
 							currentBlockToBreak, Direction.NORTH));
-					MC.player.networkHandler.sendPacket(
-							new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, currentBlockToBreak, Direction.NORTH));
-					MC.player.swingHand(Hand.MAIN_HAND);
+					MC.player.connection.send(
+							new ServerboundPlayerActionPacket(Action.STOP_DESTROY_BLOCK, currentBlockToBreak, Direction.NORTH));
+					MC.player.swing(InteractionHand.MAIN_HAND);
 				}
 			}
 		}

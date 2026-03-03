@@ -22,14 +22,14 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public class KillAura extends Module implements TickListener {
 	private enum Priority {
@@ -131,10 +131,10 @@ public class KillAura extends Module implements TickListener {
 		// Add all potential entities to the 'hitlist'
 		if (targetAnimals.getValue() || targetMonsters.getValue()) {
 			for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
-				if (MC.player.squaredDistanceTo(entity) > radius.getValueSqr())
+				if (MC.player.distanceToSqr(entity) > radius.getValueSqr())
 					continue;
-				if ((entity instanceof AnimalEntity && targetAnimals.getValue())
-						|| (entity instanceof Monster && targetMonsters.getValue())) {
+				if ((entity instanceof Animal && targetAnimals.getValue())
+						|| (entity instanceof Enemy && targetMonsters.getValue())) {
 					hitList.add(entity);
 				}
 			}
@@ -142,11 +142,11 @@ public class KillAura extends Module implements TickListener {
 
 		// Add all potential players to the 'hitlist'
 		if (targetPlayers.getValue()) {
-			for (PlayerEntity player : Aoba.getInstance().entityManager.getPlayers()) {
+			for (Player player : Aoba.getInstance().entityManager.getPlayers()) {
 				if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
 					continue;
 
-				if (player == MC.player || MC.player.squaredDistanceTo(player) > (radius.getValueSqr())) {
+				if (player == MC.player || MC.player.distanceToSqr(player) > (radius.getValueSqr())) {
 					continue;
 				}
 				hitList.add(player);
@@ -166,7 +166,7 @@ public class KillAura extends Module implements TickListener {
 						found = true;
 					}
 				} else if (priority == Priority.CLOSEST) {
-					if (MC.player.squaredDistanceTo(le) <= MC.player.squaredDistanceTo(entityToAttack)) {
+					if (MC.player.distanceToSqr(le) <= MC.player.distanceToSqr(entityToAttack)) {
 						entityToAttack = le;
 						found = true;
 					}
@@ -181,24 +181,24 @@ public class KillAura extends Module implements TickListener {
 					.yawRandomness(yawRandomness.getValue()).build();
 			Aoba.getInstance().rotationManager.setGoal(rotation);
 
-			if (MC.player.getAttackCooldownProgress(0) == 1) {
+			if (MC.player.getAttackStrengthScale(0) == 1) {
 
 				if (state) {
 					if (legit.getValue()) {
-						HitResult ray = MC.crosshairTarget;
+						HitResult ray = MC.hitResult;
 
 						if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
 							EntityHitResult entityResult = (EntityHitResult) ray;
 							Entity ent = entityResult.getEntity();
 
 							if (ent == entityToAttack) {
-								MC.player.swingHand(Hand.MAIN_HAND);
-								MC.interactionManager.attackEntity(MC.player, entityToAttack);
+								MC.player.swing(InteractionHand.MAIN_HAND);
+								MC.gameMode.attack(MC.player, entityToAttack);
 							}
 						}
 					} else {
-						MC.player.swingHand(Hand.MAIN_HAND);
-						MC.interactionManager.attackEntity(MC.player, entityToAttack);
+						MC.player.swing(InteractionHand.MAIN_HAND);
+						MC.gameMode.attack(MC.player, entityToAttack);
 					}
 				}
 			}

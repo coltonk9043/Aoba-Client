@@ -51,11 +51,11 @@ public class EnumSetting<T extends Enum<?>> extends Setting<T> {
 		return false;
 	}
 
-	public static <E extends Enum<E>> BUILDER<E> builder() {
-		return new BUILDER<E>();
+	public static <E extends Enum<E>> EnumSetting.BUILDER<E> builder() {
+		return new EnumSetting.BUILDER<E>();
 	}
 
-	public static class BUILDER<E extends Enum<?>> extends Setting.BUILDER<BUILDER<E>, EnumSetting<E>, E> {
+	public static class BUILDER<E extends Enum<?>> extends Setting.BUILDER<EnumSetting.BUILDER<E>, EnumSetting<E>, E> {
 		protected BUILDER() {
         }
 

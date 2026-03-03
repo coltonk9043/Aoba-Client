@@ -15,18 +15,16 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.UUID;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 import com.mojang.logging.LogUtils;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
 
 public class FriendsList {
 	private final File friendsFile;
 	private final HashSet<Friend> friendsList = new HashSet<>();
 
 	public FriendsList() {
-		File configFolder = new File(MinecraftClient.getInstance().runDirectory, "aoba");
+		File configFolder = new File(Minecraft.getInstance().gameDirectory, "aoba");
 		friendsFile = new File(configFolder, "friends.xml");
 		load();
 	}
@@ -63,24 +61,24 @@ public class FriendsList {
 		}
 	}
 
-	public void addFriend(PlayerEntity entity) {
-		addFriend(entity.getName().getString(), entity.getUuid());
+	public void addFriend(Player entity) {
+		addFriend(entity.getName().getString(), entity.getUUID());
 	}
 
 	public void addFriend(String username, UUID uuid) {
 		friendsList.add(new Friend(username, uuid));
 	}
 
-	public void removeFriend(PlayerEntity entity) {
-		removeFriend(entity.getUuid());
+	public void removeFriend(Player entity) {
+		removeFriend(entity.getUUID());
 	}
 
 	public void removeFriend(UUID uuid) {
 		friendsList.removeIf(friend -> friend.getUUID().equals(uuid));
 	}
 
-	public boolean contains(PlayerEntity entity) {
-		return contains(entity.getUuid());
+	public boolean contains(Player entity) {
+		return contains(entity.getUUID());
 	}
 
 	public boolean contains(UUID uuid) {

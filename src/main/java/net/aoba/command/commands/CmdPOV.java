@@ -15,7 +15,7 @@ import net.aoba.command.Command;
 import net.aoba.managers.CommandManager;
 import net.aoba.command.InvalidSyntaxException;
 import net.aoba.module.modules.render.POV;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.player.AbstractClientPlayer;
 
 public class CmdPOV extends Command {
 
@@ -63,12 +63,12 @@ public class CmdPOV extends Command {
 		case "toggle":
 			return new String[] { "on", "off" };
 		case "set":
-			List<AbstractClientPlayerEntity> players = mc.world.getPlayers();
+			List<AbstractClientPlayer> players = mc.level.players();
 			int numPlayers = players.size();
 			String[] suggestions = new String[numPlayers];
 
 			int i = 0;
-			for (AbstractClientPlayerEntity x : players)
+			for (AbstractClientPlayer x : players)
 				suggestions[i++] = x.getName().getString();
 
 			return suggestions;

@@ -12,8 +12,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.aoba.mixin.interfaces.IMouse;
-import net.minecraft.client.Mouse;
+import net.aoba.mixin.interfaces.IMouseHandler;
+import net.minecraft.client.MouseHandler;
 
 public class MouseMoveMacroEvent extends MacroEvent {
 	private double x = 0;
@@ -45,10 +45,10 @@ public class MouseMoveMacroEvent extends MacroEvent {
 
 	@Override
 	public void execute() {
-		Mouse mouse = MC.mouse;
-		IMouse iMouse = (IMouse)mouse;
+		MouseHandler mouse = MC.mouseHandler;
+		IMouseHandler iMouse = (IMouseHandler)mouse;
 		if(iMouse != null) {
-			iMouse.executeonCursorPos(MC.getWindow().getHandle(), x, y);
+			iMouse.executeOnCursorPos(MC.getWindow().handle(), x, y);
 		}
 	}
 }

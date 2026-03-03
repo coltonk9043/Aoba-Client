@@ -17,14 +17,14 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.Monster;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public class TriggerBot extends Module implements TickListener {
 	private final FloatSetting radius = FloatSetting.builder().id("triggerbot_radius").displayName("Radius")
@@ -93,8 +93,8 @@ public class TriggerBot extends Module implements TickListener {
 		boolean state = randomnessValue == 0
 				|| (Math.round(Math.random() * Math.round(randomness.max_value))) % randomnessValue == 0;
 
-		if (MC.player.getAttackCooldownProgress(0) == 1 && state) {
-			HitResult ray = MC.crosshairTarget;
+		if (MC.player.getAttackStrengthScale(0) == 1 && state) {
+			HitResult ray = MC.hitResult;
 
 			if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
 				EntityHitResult entityResult = (EntityHitResult) ray;
@@ -104,16 +104,16 @@ public class TriggerBot extends Module implements TickListener {
 					return;
 				}
 
-				if (ent instanceof AnimalEntity && !targetAnimals.getValue())
+				if (ent instanceof Animal && !targetAnimals.getValue())
 					return;
-				if (ent instanceof PlayerEntity && !targetPlayers.getValue())
+				if (ent instanceof Player && !targetPlayers.getValue())
 					return;
-				if (ent instanceof Monster && !targetMonsters.getValue())
+				if (ent instanceof Enemy && !targetMonsters.getValue())
 					return;
 
 				if (System.currentTimeMillis() - lastAttackTime >= attackDelay.getValue()) {
-					MC.interactionManager.attackEntity(MC.player, entityResult.getEntity());
-					MC.player.swingHand(Hand.MAIN_HAND);
+					MC.gameMode.attack(MC.player, entityResult.getEntity());
+					MC.player.swing(InteractionHand.MAIN_HAND);
 					lastAttackTime = System.currentTimeMillis();
 				}
 			}

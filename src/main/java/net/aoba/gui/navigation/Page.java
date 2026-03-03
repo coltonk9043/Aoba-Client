@@ -20,7 +20,7 @@ import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.event.listeners.MouseMoveListener;
 import net.aoba.event.listeners.MouseScrollListener;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 // TODO: Turn Page into a UI element.
 public class Page implements MouseMoveListener, MouseClickListener, MouseScrollListener {
@@ -86,7 +86,7 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 		}
 	}
 
-	public void render(DrawContext drawContext, float partialTicks) {
+	public void render(GuiGraphics drawContext, float partialTicks) {
 		if (isVisible) {
 			Iterator<Window> tabIterator = tabs.iterator();
 			while (tabIterator.hasNext()) {

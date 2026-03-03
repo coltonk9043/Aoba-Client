@@ -20,13 +20,13 @@ import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 public abstract class UIElement {
 	public static boolean DEBUG = false;
 
-	protected static MinecraftClient MC = MinecraftClient.getInstance();
+	protected static Minecraft MC = Minecraft.getInstance();
 	protected static AobaClient AOBA = Aoba.getInstance();
 
 	private final ArrayList<UIElement> children = new ArrayList<UIElement>();
@@ -95,7 +95,7 @@ public abstract class UIElement {
 	 * @param drawContext  DrawContext of the game.
 	 * @param partialTicks Partial Ticks of the game.
 	 */
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		if (DEBUG) {
 			Render2D.drawBoxOutline(drawContext, actualSize, Colors.Red);
 		}

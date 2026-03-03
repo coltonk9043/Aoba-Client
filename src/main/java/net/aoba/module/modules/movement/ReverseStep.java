@@ -49,9 +49,9 @@ public class ReverseStep extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		if (MC.player.isOnGround()) {
-			MC.player.setVelocity(MC.player.getVelocity().x, MC.player.getVelocity().y - 1.0,
-					MC.player.getVelocity().z);
+		if (MC.player.onGround()) {
+			MC.player.setDeltaMovement(MC.player.getDeltaMovement().x, MC.player.getDeltaMovement().y - 1.0,
+					MC.player.getDeltaMovement().z);
 		}
 	}
 

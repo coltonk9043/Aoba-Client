@@ -13,8 +13,8 @@ import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.entity.player.Player;
 
 public class SpeedHud extends HudWindow {
 	private String speedText = null;
@@ -31,11 +31,11 @@ public class SpeedHud extends HudWindow {
 	public void update() {
 		super.update();
 
-		PlayerEntity player = MC.player;
+		Player player = MC.player;
 		if (player != null) {
-			double dx = player.getX() - player.lastX;
-			double dz = player.getZ() - player.lastZ;
-			double dy = player.getY() - player.lastY;
+			double dx = player.getX() - player.xo;
+			double dz = player.getZ() - player.zo;
+			double dy = player.getY() - player.yo;
 
 			double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -47,7 +47,7 @@ public class SpeedHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		if (speedText != null && isVisible()) {
 			Rectangle pos = position.getValue();
 			if (pos.isDrawable()) {

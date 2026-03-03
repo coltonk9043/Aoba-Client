@@ -22,7 +22,7 @@ public class CmdTP extends Command {
         if (parameters.length != 3)
             throw new InvalidSyntaxException(this);
 
-        mc.player.setPosition(Double.parseDouble(parameters[0]), Double.parseDouble(parameters[1]), Double.parseDouble(parameters[2]));
+        mc.player.setPos(Double.parseDouble(parameters[0]), Double.parseDouble(parameters[1]), Double.parseDouble(parameters[2]));
     }
 
     @Override

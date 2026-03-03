@@ -14,15 +14,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
-
-import net.minecraft.block.AbstractTorchBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PlantBlock;
-import net.minecraft.block.SnowBlock;
-import net.minecraft.block.VineBlock;
-import net.minecraft.entity.ai.pathing.NavigationType;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.block.BaseTorchBlock;
+import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.VegetationBlock;
+import net.minecraft.world.level.block.VineBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 
 /**
  * The WalkingPathManager class is responsible for managing and calculating
@@ -110,18 +109,18 @@ public class TeleportPathManager extends AbstractPathManager {
 	 * @return Whether or not the position can be teleported to.
 	 */
 	private boolean isTeleportable(BlockPos pos) {
-		BlockPos down = pos.down();
-		BlockState state = MC.world.getBlockState(pos);
-		BlockState stateBelow = MC.world.getBlockState(down);
+		BlockPos down = pos.below();
+		BlockState state = MC.level.getBlockState(pos);
+		BlockState stateBelow = MC.level.getBlockState(down);
 
-		boolean isPlant = state.getBlock() instanceof PlantBlock;
-		boolean isSnow = state.getBlock() instanceof SnowBlock;
-		boolean isTorch = state.getBlock() instanceof AbstractTorchBlock;
+		boolean isPlant = state.getBlock() instanceof VegetationBlock;
+		boolean isSnow = state.getBlock() instanceof SnowLayerBlock;
+		boolean isTorch = state.getBlock() instanceof BaseTorchBlock;
 		boolean isVine = state.getBlock() instanceof VineBlock;
 
-		return isPlayerPassable(pos) && state.canPathfindThrough(NavigationType.LAND)
-				&& !state.getFluidState().isIn(FluidTags.WATER) && !state.getFluidState().isIn(FluidTags.LAVA)
-				&& !stateBelow.canPathfindThrough(NavigationType.LAND) && !stateBelow.isAir()
+		return isPlayerPassable(pos) && state.isPathfindable(PathComputationType.LAND)
+				&& !state.getFluidState().is(FluidTags.WATER) && !state.getFluidState().is(FluidTags.LAVA)
+				&& !stateBelow.isPathfindable(PathComputationType.LAND) && !stateBelow.isAir()
 				&& stateBelow.getFluidState().isEmpty() && !isPlant && !isSnow && !isTorch && !isVine;
 	}
 
@@ -129,7 +128,7 @@ public class TeleportPathManager extends AbstractPathManager {
 	protected ArrayList<PathNode> getNeighbouringBlocks(PathNode node) {
 		ArrayList<PathNode> potentialBlocks = new ArrayList<PathNode>(
 				List.of(new PathNode(node.pos.north()), new PathNode(node.pos.east()), new PathNode(node.pos.south()),
-						new PathNode(node.pos.west()), new PathNode(node.pos.up()), new PathNode(node.pos.down())));
+						new PathNode(node.pos.west()), new PathNode(node.pos.above()), new PathNode(node.pos.below())));
 		return potentialBlocks;
 	}
 
@@ -152,7 +151,7 @@ public class TeleportPathManager extends AbstractPathManager {
 		PathNode current = parentMap.get(prev);
 		while (current != null && !current.equals(start)) {
 			if (isTeleportable(current.pos)
-					&& radiusSqr <= prev.pos.toCenterPos().squaredDistanceTo(current.pos.toCenterPos())) {
+					&& radiusSqr <= prev.pos.getCenter().distanceToSqr(current.pos.getCenter())) {
 				prev = current;
 				path.addFirst(current);
 			}

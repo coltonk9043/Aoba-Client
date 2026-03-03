@@ -10,54 +10,54 @@ package net.aoba.gui.screens.alts;
 
 import net.aoba.Aoba;
 import net.aoba.managers.altmanager.Alt;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.CheckboxWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class AddAltScreen extends Screen {
 
     private final AltScreen parent;
 
-    private ButtonWidget buttonAddAlt;
-    private CheckboxWidget toggleCracked;
-    private TextFieldWidget textFieldAltUsername;
+    private Button buttonAddAlt;
+    private Checkbox toggleCracked;
+    private EditBox textFieldAltUsername;
     
     public AddAltScreen(AltScreen parentScreen) {
-        super(Text.of("Alt Manager"));
+        super(Component.nullToEmpty("Alt Manager"));
         parent = parentScreen;
     }
 
     public void init() {
         super.init();
 
-        textFieldAltUsername = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2 - 36, 200, 20,
-                Text.of("Enter Name"));
-        textFieldAltUsername.setText("");
-        addDrawableChild(textFieldAltUsername);
+        textFieldAltUsername = new EditBox(font, width / 2 - 100, height / 2 - 36, 200, 20,
+                Component.nullToEmpty("Enter Name"));
+        textFieldAltUsername.setValue("");
+        addRenderableWidget(textFieldAltUsername);
 
-        toggleCracked = CheckboxWidget.builder(Text.of("Cracked Account?"), textRenderer).pos(width / 2 - 100, height / 2 - 12).build();
-        addDrawableChild(toggleCracked);
+        toggleCracked = Checkbox.builder(Component.nullToEmpty("Cracked Account?"), font).pos(width / 2 - 100, height / 2 - 12).build();
+        addRenderableWidget(toggleCracked);
 
-        buttonAddAlt = ButtonWidget.builder(Text.of("Add Alt"), b -> onButtonAltAddPressed())
-                .dimensions(width / 2 - 100, height / 2 + 24, 200, 20).build();
-        addDrawableChild(buttonAddAlt);
+        buttonAddAlt = Button.builder(Component.nullToEmpty("Add Alt"), b -> onButtonAltAddPressed())
+                .bounds(width / 2 - 100, height / 2 + 24, 200, 20).build();
+        addRenderableWidget(buttonAddAlt);
 
-        addDrawableChild(ButtonWidget.builder(Text.of("Cancel"), b -> onButtonCancelPressed())
-                .dimensions(width / 2 - 100, height / 2 + 46, 200, 20).build());
+        addRenderableWidget(Button.builder(Component.nullToEmpty("Cancel"), b -> onButtonCancelPressed())
+                .bounds(width / 2 - 100, height / 2 + 46, 200, 20).build());
     }
 
     @Override
-    public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
         super.render(drawContext, mouseX, mouseY, delta);
-        drawContext.drawCenteredTextWithShadow(textRenderer, "Add Alternate Account", width / 2, 20, 16777215);
-        drawContext.drawCenteredTextWithShadow(textRenderer, "Username:", width / 2 - 75, height / 2 - 50, 16777215);
+        drawContext.drawCenteredString(font, "Add Alternate Account", width / 2, 20, 0xFFFFFFFF);
+        drawContext.drawCenteredString(font, "Username:", width / 2 - 75, height / 2 - 50, 0xFFFFFFFF);
     }
 
     private void onButtonAltAddPressed() {
-        Alt alt = new Alt(textFieldAltUsername.getText(), toggleCracked.isChecked());
+        Alt alt = new Alt(textFieldAltUsername.getValue(), toggleCracked.selected());
         Aoba.getInstance().altManager.addAlt(alt);
         
         if(!alt.isCracked())
@@ -67,6 +67,6 @@ public class AddAltScreen extends Screen {
     }
 
     public void onButtonCancelPressed() {
-        client.setScreen(parent);
+        minecraft.setScreen(parent);
     }
 }

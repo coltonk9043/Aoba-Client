@@ -17,13 +17,13 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.StringSetting;
-import net.minecraft.client.network.OtherClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 
 public class FakePlayer extends Module {
-	public static OtherClientPlayerEntity fakePlayer;
+	public static RemotePlayer fakePlayer;
 
 	private final StringSetting playerName = StringSetting.builder().id("fakeplayer_name").displayName("Player Name")
 			.description("Name of the fake player.").defaultValue("cvs0").build();
@@ -84,28 +84,28 @@ public class FakePlayer extends Module {
 		if (fakePlayer == null)
 			return;
 		fakePlayer.setRemoved(Entity.RemovalReason.KILLED);
-		fakePlayer.onRemoved();
+		fakePlayer.onClientRemoval();
 		fakePlayer = null;
 	}
 
 	@Override
 	public void onEnable() {
-		fakePlayer = new OtherClientPlayerEntity(MC.world,
+		fakePlayer = new RemotePlayer(MC.level,
 				new GameProfile(UUID.fromString("66123666-6666-6666-6666-666666666600"), playerName.getValue()));
-		fakePlayer.copyPositionAndRotation(MC.player);
+		fakePlayer.copyPosition(MC.player);
 
-		MC.world.addEntity(fakePlayer);
+		MC.level.addEntity(fakePlayer);
 
 		if (enableRegen.getValue()) {
-			fakePlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION,
+			fakePlayer.addEffect(new MobEffectInstance(MobEffects.REGENERATION,
 					(int) (regenDuration.getValue() * 20), regenAmplifier.getValue().intValue()));
 		}
 		if (enableAbsorption.getValue()) {
-			fakePlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION,
+			fakePlayer.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,
 					(int) (absorptionDuration.getValue() * 20), absorptionAmplifier.getValue().intValue()));
 		}
 		if (enableResistance.getValue()) {
-			fakePlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE,
+			fakePlayer.addEffect(new MobEffectInstance(MobEffects.RESISTANCE,
 					(int) (resistanceDuration.getValue() * 20), resistanceAmplifier.getValue().intValue()));
 		}
 	}

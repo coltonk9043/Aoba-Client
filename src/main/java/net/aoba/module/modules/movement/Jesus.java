@@ -64,8 +64,8 @@ public class Jesus extends Module implements TickListener {
 	public void onTick(Pre event) {
 		// If Legit is enabled, simply swim.
 		if (legit.getValue()) {
-			if (MC.player.isInLava() || MC.player.isTouchingWater()) {
-				MC.options.jumpKey.setPressed(true);
+			if (MC.player.isInLava() || MC.player.isInWater()) {
+				MC.options.keyJump.setDown(true);
 			}
 		}
 	}

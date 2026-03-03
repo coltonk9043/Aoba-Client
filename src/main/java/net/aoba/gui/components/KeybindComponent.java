@@ -9,7 +9,7 @@
 package net.aoba.gui.components;
 
 import org.lwjgl.glfw.GLFW;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.MouseClickEvent;
@@ -22,8 +22,7 @@ import net.aoba.settings.types.KeybindSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class KeybindComponent extends Component implements KeyDownListener {
 	private boolean listeningForKey;
@@ -55,7 +54,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
 		float actualX = getActualSize().getX();
@@ -67,7 +66,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
 		Render2D.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f,
 				GuiManager.borderColor.getValue(), new Color(115, 115, 115, 200));
 
-		String keyBindText = keyBind.getValue().getLocalizedText().getString();
+		String keyBindText = keyBind.getValue().getDisplayName().getString();
 		if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
 			keyBindText = "N/A";
 
@@ -94,9 +93,9 @@ public class KeybindComponent extends Component implements KeyDownListener {
 			int scanCode = event.GetScanCode();
 
 			if (key == GLFW.GLFW_KEY_ESCAPE) {
-				keyBind.setValue(InputUtil.UNKNOWN_KEY);
+				keyBind.setValue(InputConstants.UNKNOWN);
 			} else {
-				keyBind.setValue(InputUtil.fromKeyCode(key, scanCode));
+				keyBind.setValue(InputConstants.Type.KEYSYM.getOrCreate(key));
 			}
 
 			listeningForKey = false;

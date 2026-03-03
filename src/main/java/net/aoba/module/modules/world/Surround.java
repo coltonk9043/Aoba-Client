@@ -24,15 +24,15 @@ import net.aoba.settings.types.BlocksSetting;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.player.InteractionUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
+import net.minecraft.network.protocol.game.ServerboundSwingPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 public class Surround extends Module implements TickListener {
 	private final FloatSetting placeHeight = FloatSetting.builder().id("surround_height").displayName("Height")
@@ -85,10 +85,10 @@ public class Surround extends Module implements TickListener {
 	public void onEnable() {
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 		if (alignCharacter.getValue()) {
-			BlockPos blockPos = MC.player.getBlockPos();
-			MC.player.updatePosition(blockPos.getX() + 0.5f, MC.player.getY(), blockPos.getZ() + 0.5f);
-			MC.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(blockPos.getX() + 0.5f,
-					MC.player.getY(), blockPos.getZ() + 0.5f, MC.player.isOnGround(), false));
+			BlockPos blockPos = MC.player.blockPosition();
+			MC.player.absSnapTo(blockPos.getX() + 0.5f, MC.player.getY(), blockPos.getZ() + 0.5f);
+			MC.player.connection.send(new ServerboundMovePlayerPacket.Pos(blockPos.getX() + 0.5f,
+					MC.player.getY(), blockPos.getZ() + 0.5f, MC.player.onGround(), false));
 		}
 	}
 
@@ -100,20 +100,20 @@ public class Surround extends Module implements TickListener {
 	private int getBlockInventorySlot() {
 		HashSet<Block> availableBlocks = blocks.getValue();
 		for (int i = 0; i < 36; i++) {
-			ItemStack stack = MC.player.getInventory().getStack(i);
-			if (stack != null && availableBlocks.contains(Block.getBlockFromItem(stack.getItem()))) {
+			ItemStack stack = MC.player.getInventory().getItem(i);
+			if (stack != null && availableBlocks.contains(Block.byItem(stack.getItem()))) {
 				return i;
 			}
 		}
 		return -1;
 	}
 
-	private void breakBlock(BlockPos pos, Hand hand) {
-		MC.interactionManager.attackBlock(pos, Direction.UP);
+	private void breakBlock(BlockPos pos, InteractionHand hand) {
+		MC.gameMode.startDestroyBlock(pos, Direction.UP);
 		if (legit.getValue()) {
-			MC.player.swingHand(hand);
+			MC.player.swing(hand);
 		} else {
-			MC.player.networkHandler.sendPacket(new HandSwingC2SPacket(hand));
+			MC.player.connection.send(new ServerboundSwingPacket(hand));
 		}
 	}
 
@@ -130,21 +130,21 @@ public class Surround extends Module implements TickListener {
 
 		// Change the selected slot and determine which hand it is in.
 		MC.player.getInventory().setSelectedSlot(foundBlockSlot);
-		MC.player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(foundBlockSlot));
-		Hand hand = foundBlockSlot == 40 ? Hand.OFF_HAND : Hand.MAIN_HAND;
+		MC.player.connection.send(new ServerboundSetCarriedItemPacket(foundBlockSlot));
+		InteractionHand hand = foundBlockSlot == 40 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
 
 		// Get the block positions around the player and place the blocks.
-		BlockPos playerPosition = MC.player.getBlockPos();
+		BlockPos playerPosition = MC.player.blockPosition();
 		int height = placeHeight.getValue().intValue();
 
 		for (int i = 0; i < height; i++) {
-			BlockPos newPos = playerPosition.add(0, i, 0);
+			BlockPos newPos = playerPosition.offset(0, i, 0);
 			List<BlockPos> placePositions = Lists.newArrayList(newPos.north(), newPos.east(), newPos.south(),
 					newPos.west());
 			for (BlockPos pos : placePositions) {
-				if (MC.world.getBlockState(pos).isReplaceable()) {
+				if (MC.level.getBlockState(pos).canBeReplaced()) {
 					InteractionUtils.placeBlock(pos, hand, true);
-				} else if (BREAKABLE_BLOCKS.contains(MC.world.getBlockState(pos).getBlock())) {
+				} else if (BREAKABLE_BLOCKS.contains(MC.level.getBlockState(pos).getBlock())) {
 					breakBlock(pos, hand);
 					InteractionUtils.placeBlock(pos, hand, true);
 				}
@@ -153,7 +153,7 @@ public class Surround extends Module implements TickListener {
 
 		// Return Selected Slot back to original slot.
 		MC.player.getInventory().setSelectedSlot(oldSlot);
-		MC.player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(oldSlot));
+		MC.player.connection.send(new ServerboundSetCarriedItemPacket(oldSlot));
 
 		// Disable state if auto-disable is enabled.
 		if (autoDisable.getValue()) {

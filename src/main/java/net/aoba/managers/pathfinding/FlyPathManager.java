@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
+import net.minecraft.world.level.ChunkPos;
 
 /**
  * The FlyPathManager class is responsible for managing and calculating
@@ -79,7 +79,7 @@ public class FlyPathManager extends AbstractPathManager {
             dy *= 1024f;
         }
 
-        if(avoidWater && MC.world.isWater(target)) {
+        if(avoidWater && MC.level.isWaterAt(target)) {
         	dy += 200;
         }
         
@@ -94,7 +94,7 @@ public class FlyPathManager extends AbstractPathManager {
         ArrayList<PathNode> result = new ArrayList<>();
 
         // Check if the player is in the air and adjust movement accordingly
-        BlockPos bottom = node.pos.down();
+        BlockPos bottom = node.pos.below();
         boolean canPassBottom = !node.getWasJump() && isPlayerPassable(bottom);
         boolean needsToJump = false;
 
@@ -117,8 +117,8 @@ public class FlyPathManager extends AbstractPathManager {
 
         // Check adjacent blocks for passability
         for (BlockPos currentBlock : adjacentBlocks) {
-            ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
-            if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z))
+            ChunkPos chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(currentBlock.getX()), SectionPos.blockToSectionCoord(currentBlock.getZ()));
+            if (!MC.level.getChunkSource().hasChunk(chunkPos.x, chunkPos.z))
                 continue;
             
             PathNode nextNode = new PathNode(currentBlock);
@@ -132,15 +132,15 @@ public class FlyPathManager extends AbstractPathManager {
                 result.add(nextNode);
             else {
                 // Check if the player can jump
-                BlockPos above = currentBlock.up();
+                BlockPos above = currentBlock.above();
                 needsToJump |= isPlayerPassable(above);
             }
         }
 
         // Check diagonal blocks for passability
         for (BlockPos currentBlock : diagonalBlocks) {
-            ChunkPos chunkPos = new ChunkPos(ChunkSectionPos.getSectionCoord(currentBlock.getX()), ChunkSectionPos.getSectionCoord(currentBlock.getZ()));
-            if (!MC.world.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z))
+            ChunkPos chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(currentBlock.getX()), SectionPos.blockToSectionCoord(currentBlock.getZ()));
+            if (!MC.level.getChunkSource().hasChunk(chunkPos.x, chunkPos.z))
                 continue;
             
             PathNode nextNode = new PathNode(currentBlock);
@@ -156,7 +156,7 @@ public class FlyPathManager extends AbstractPathManager {
         }
 
         // Check if the player can move upward
-        BlockPos top = node.pos.up();
+        BlockPos top = node.pos.above();
         if (isPlayerPassable(top)) {
             PathNode topNode = new PathNode(top);
             topNode.setWasJump(needsToJump);

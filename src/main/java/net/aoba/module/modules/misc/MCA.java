@@ -17,10 +17,10 @@ import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.FindItemResult;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public class MCA extends Module implements MouseClickListener {
 	public enum Mode {
@@ -77,7 +77,7 @@ public class MCA extends Module implements MouseClickListener {
 	}
 
 	private void handleFriend(MouseClickEvent event) {
-		if (!(MC.targetedEntity instanceof PlayerEntity player)) return;
+		if (!(MC.crosshairPickEntity instanceof Player player)) return;
 
 		String playerName = player.getName().getString();
 
@@ -100,7 +100,7 @@ public class MCA extends Module implements MouseClickListener {
 
 		if (!itemResult.isMainHand()) {
 			swap(itemResult.slot(), false);
-			MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+			MC.gameMode.useItem(MC.player, InteractionHand.MAIN_HAND);
 			event.cancel();
 		}
 	}

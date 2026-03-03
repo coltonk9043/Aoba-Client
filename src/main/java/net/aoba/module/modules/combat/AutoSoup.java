@@ -16,12 +16,12 @@ import net.aoba.event.listeners.PlayerHealthListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class AutoSoup extends Module implements PlayerHealthListener {
 
@@ -56,13 +56,13 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 	}
 
 	public void sortInventory() {
-		for (int i = 0; i < PlayerInventory.getHotbarSize(); i++) {
-			ItemStack stack = MC.player.getInventory().getStack(i);
+		for (int i = 0; i < Inventory.getSelectionSize(); i++) {
+			ItemStack stack = MC.player.getInventory().getItem(i);
 			if (stack == null || stack.getItem() == Items.BOWL) {
 				int nextSoup = findSoup();
 				if (nextSoup >= 0) {
-					MC.interactionManager.clickSlot(0, nextSoup, 0, SlotActionType.PICKUP, MC.player);
-					MC.interactionManager.clickSlot(0, i, 0, SlotActionType.PICKUP, MC.player);
+					MC.gameMode.handleInventoryMouseClick(0, nextSoup, 0, ClickType.PICKUP, MC.player);
+					MC.gameMode.handleInventoryMouseClick(0, i, 0, ClickType.PICKUP, MC.player);
 				}
 			}
 		}
@@ -70,7 +70,7 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 
 	public int findSoup() {
 		for (int i = 0; i < 36; i++) {
-			ItemStack stack = MC.player.getInventory().getStack(i);
+			ItemStack stack = MC.player.getInventory().getItem(i);
 			if (stack != null && stack.getItem() == Items.MUSHROOM_STEW) {
 				return i;
 			}
@@ -92,8 +92,8 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 			LogUtils.getLogger().info("autosoup enabled");
 			// Find the first item in the hotbar that is a Stew item.
 			int foodSlot = -1;
-			for (int i = 0; i < PlayerInventory.getHotbarSize(); i++) {
-				Item item = MC.player.getInventory().getStack(i).getItem();
+			for (int i = 0; i < Inventory.getSelectionSize(); i++) {
+				Item item = MC.player.getInventory().getItem(i).getItem();
 
 				// Check if it is Mushroom Soup. TODO: Add component check...
 				if (item == Items.MUSHROOM_STEM) {
@@ -107,12 +107,12 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 				previousSlot = MC.player.getInventory().getSelectedSlot();
 
 				MC.player.getInventory().setSelectedSlot(foodSlot);
-				MC.options.useKey.setPressed(true);
-				MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+				MC.options.keyUse.setDown(true);
+				MC.gameMode.useItem(MC.player, InteractionHand.MAIN_HAND);
 
 				// Return the player's selected slot back to the previous slot.
 				if (previousSlot != -1) {
-					MC.options.useKey.setPressed(false);
+					MC.options.keyUse.setDown(false);
 					MC.player.getInventory().setSelectedSlot(previousSlot);
 					previousSlot = -1;
 				}

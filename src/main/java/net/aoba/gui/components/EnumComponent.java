@@ -19,7 +19,7 @@ import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class EnumComponent<T extends Enum<T>> extends Component {
 	private final EnumSetting<T> enumSetting;
@@ -44,7 +44,7 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
 		float actualX = actualSize.getX();

@@ -16,8 +16,8 @@ import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 public class Speed extends Module implements TickListener {
 
@@ -31,7 +31,7 @@ public class Speed extends Module implements TickListener {
 
 		speedSetting.addOnUpdate((i) -> {
 			if (state.getValue()) {
-				EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+				AttributeInstance attribute = MC.player.getAttribute(Attributes.MOVEMENT_SPEED);
 				attribute.setBaseValue(speedSetting.getValue());
 			}
 		});
@@ -52,9 +52,9 @@ public class Speed extends Module implements TickListener {
 
 	@Override
 	public void onDisable() {
-		MC.options.getFovEffectScale().setValue(Math.min(1.0, Math.max(0.0, 1.0)));
+		MC.options.fovEffectScale().set(Math.min(1.0, Math.max(0.0, 1.0)));
 		if (MC.player != null) {
-			EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+			AttributeInstance attribute = MC.player.getAttribute(Attributes.MOVEMENT_SPEED);
 			attribute.setBaseValue(0.1);
 		}
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
@@ -62,8 +62,8 @@ public class Speed extends Module implements TickListener {
 
 	@Override
 	public void onEnable() {
-		MC.options.getFovEffectScale().setValue(Math.min(1.0, Math.max(0.0, 0.0)));
-		EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+		MC.options.fovEffectScale().set(Math.min(1.0, Math.max(0.0, 0.0)));
+		AttributeInstance attribute = MC.player.getAttribute(Attributes.MOVEMENT_SPEED);
 		attribute.setBaseValue(speedSetting.getValue());
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
@@ -75,7 +75,7 @@ public class Speed extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		EntityAttributeInstance attribute = MC.player.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+		AttributeInstance attribute = MC.player.getAttribute(Attributes.MOVEMENT_SPEED);
 		attribute.setBaseValue(speedSetting.getValue());
 	}
 

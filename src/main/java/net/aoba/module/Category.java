@@ -10,8 +10,7 @@ package net.aoba.module;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class Category {
 	private static final Map<String, Category> CATEGORIES = new HashMap<>();
@@ -21,7 +20,7 @@ public class Category {
 
 	private Category(String name) {
 		this.name = name;
-		icon = Identifier.of("aoba", "textures/" + name.toLowerCase() + ".png");
+		icon = Identifier.fromNamespaceAndPath("aoba", "textures/" + name.toLowerCase() + ".png");
 	}
 
 	public Category(String name, Identifier icon) {

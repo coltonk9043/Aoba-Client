@@ -24,7 +24,7 @@ import net.aoba.gui.components.StackPanelComponent;
 import net.aoba.gui.components.StringComponent;
 import net.aoba.gui.navigation.Window;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 public class AuthCrackerWindow extends Window {
 	private final ButtonComponent start;
@@ -89,7 +89,7 @@ class AuthCracker {
 
 	private Thread curThread;
 	private boolean shouldContinue = true;
-	private final MinecraftClient mc = MinecraftClient.getInstance();
+	private final Minecraft mc = Minecraft.getInstance();
 	private final FloatSetting delay;
 
 	public AuthCracker(FloatSetting delay) {
@@ -123,8 +123,8 @@ class AuthCracker {
 							e.printStackTrace();
 						}
 					}
-					if (mc.player.networkHandler != null) {
-						mc.player.networkHandler.sendChatCommand("login " + str);
+					if (mc.player.connection != null) {
+						mc.player.connection.sendCommand("login " + str);
 						time = System.currentTimeMillis();
 					} else {
 						LogUtils.getLogger().error("Network Handler is null");

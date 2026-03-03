@@ -15,23 +15,23 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.managers.rotation.Rotation;
-import net.aoba.mixin.interfaces.IPlayerMoveC2SPacket;
+import net.aoba.mixin.interfaces.IServerboundMovePlayerPacket;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.RaycastContext;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public class NoFall extends Module implements TickListener, SendPacketListener {
 	public enum Mode {
@@ -83,21 +83,21 @@ public class NoFall extends Module implements TickListener, SendPacketListener {
 			return;
 
 		Packet<?> packet = event.GetPacket();
-		if (packet instanceof PlayerMoveC2SPacket) {
+		if (packet instanceof ServerboundMovePlayerPacket) {
 			// Ignore creative mode
-			if (MC.player.getAbilities().creativeMode)
+			if (MC.player.getAbilities().instabuild)
 				return;
 
 			// Ignore Mace
-			if (ignoreMace.getValue() && MC.player.getMainHandStack().isOf(Items.MACE))
+			if (ignoreMace.getValue() && MC.player.getMainHandItem().is(Items.MACE))
 				return;
 
 			// Ignore Elytras
-			if (ignoreElytra.getValue() && MC.player.isGliding())
+			if (ignoreElytra.getValue() && MC.player.isFallFlying())
 				return;
 
 			// Set packet to onGround
-			IPlayerMoveC2SPacket iPacket = (IPlayerMoveC2SPacket) packet;
+			IServerboundMovePlayerPacket iPacket = (IServerboundMovePlayerPacket) packet;
 			iPacket.setOnGround(true);
 		}
 	}
@@ -107,36 +107,36 @@ public class NoFall extends Module implements TickListener, SendPacketListener {
 		if (mode.getValue() != Mode.Bucket)
 			return;
 
-		if (MC.player.isOnGround())
+		if (MC.player.onGround())
 			return;
 
 		if (!willPlayerLandInWater()) {
 
-			RaycastContext context = new RaycastContext(MC.player.getPos(), MC.player.getPos().subtract(0, 5, 0),
-					RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, MC.player);
-			BlockHitResult result = MC.world.raycast(context);
+			ClipContext context = new ClipContext(MC.player.position(), MC.player.position().subtract(0, 5, 0),
+					ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, MC.player);
+			BlockHitResult result = MC.level.clip(context);
 
 			if (result != null && result.getType() == HitResult.Type.BLOCK) {
-				BlockPos targetPos = result.getBlockPos().up();
+				BlockPos targetPos = result.getBlockPos().above();
 
 				float rotationDegreesPerTick = 30f;
-				Rotation rotation = Rotation.getPlayerRotationDeltaFromPosition(targetPos.toCenterPos());
+				Rotation rotation = Rotation.getPlayerRotationDeltaFromPosition(targetPos.getCenter());
 
 				float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
 						rotationDegreesPerTick);
 				float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
 						rotationDegreesPerTick);
 
-				Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
-						MC.player.getPitch() + maxPitchRotation);
-				MC.player.setYaw((float) newRotation.yaw());
-				MC.player.setPitch((float) newRotation.pitch());
+				Rotation newRotation = new Rotation(MC.player.getYRot() + maxYawRotationDelta,
+						MC.player.getXRot() + maxPitchRotation);
+				MC.player.setYRot((float) newRotation.yaw());
+				MC.player.setXRot((float) newRotation.pitch());
 
-				ActionResult actionResult = MC.interactionManager.interactBlock(MC.player, Hand.MAIN_HAND, result);
+				InteractionResult actionResult = MC.gameMode.useItemOn(MC.player, InteractionHand.MAIN_HAND, result);
 
-				if (actionResult.isAccepted()) {
-					MC.player.swingHand(Hand.MAIN_HAND);
-					MC.interactionManager.interactItem(MC.player, Hand.MAIN_HAND);
+				if (actionResult.consumesAction()) {
+					MC.player.swing(InteractionHand.MAIN_HAND);
+					MC.gameMode.useItem(MC.player, InteractionHand.MAIN_HAND);
 				}
 			}
 		}
@@ -149,13 +149,13 @@ public class NoFall extends Module implements TickListener, SendPacketListener {
 
 	private boolean willPlayerLandInWater() {
 		for (int i = 0; i < 64; i++) {
-			BlockPos blockPos = MC.player.getBlockPos().add(0, -i, 0);
-			BlockState state = MC.world.getBlockState(blockPos);
+			BlockPos blockPos = MC.player.blockPosition().offset(0, -i, 0);
+			BlockState state = MC.level.getBlockState(blockPos);
 
-			if (state.blocksMovement())
+			if (state.blocksMotion())
 				break;
 
-			Fluid fluid = state.getFluidState().getFluid();
+			Fluid fluid = state.getFluidState().getType();
 			if (fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER) {
 				return true;
 			}

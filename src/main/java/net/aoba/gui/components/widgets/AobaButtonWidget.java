@@ -15,17 +15,18 @@ import java.util.function.Consumer;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.network.chat.Component;
 
-public class AobaButtonWidget extends PressableWidget {
+public class AobaButtonWidget extends AbstractButton {
 	private Consumer<AobaButtonWidget> pressAction;
 	private long hoverStartTime = 0;
 	private static final long HOVER_ANIMATION_DURATION = 200000000;
 
-	public AobaButtonWidget(int x, int y, int width, int height, Text message) {
+	public AobaButtonWidget(int x, int y, int width, int height, Component message) {
 		super(x, y, width, height, message);
 	}
 
@@ -34,14 +35,14 @@ public class AobaButtonWidget extends PressableWidget {
 	}
 
 	@Override
-	public void onPress() {
+	public void onPress(InputWithModifiers input) {
 		if (pressAction != null) {
 			pressAction.accept(this);
 		}
 	}
 
 	@Override
-	protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+	protected void renderContents(GuiGraphics context, int mouseX, int mouseY, float delta) {
 		if (isHovered() && hoverStartTime == 0) {
 			hoverStartTime = System.nanoTime();
 		} else if (!isHovered()) {
@@ -59,16 +60,16 @@ public class AobaButtonWidget extends PressableWidget {
 		Color outlineColor = Color.interpolate(GuiManager.borderColor.getValue(), Color.convertHextoRGB("C0C0C0"),
 				hoverProgress);
 
-		// RenderSystem.disableCull();
+		Render2D.setup();
+		try {
+			Render2D.drawOutlinedRoundedBox(context, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(),
+					outlineColor, boxColor);
+		} finally {
+			Render2D.end();
+		}
 
-		// RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-		Render2D.drawOutlinedRoundedBox(context, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(),
-				outlineColor, boxColor);
-		// RenderSystem.enableCull();
-
-		int textWidth = MC.textRenderer.getWidth(getMessage().getString());
-		int textHeight = MC.textRenderer.fontHeight;
+		int textWidth = MC.font.width(getMessage().getString());
+		int textHeight = MC.font.lineHeight;
 		int textX = getX() + (width - textWidth) / 2;
 		int textY = getY() + (height - textHeight) / 2 - (int) (2 * hoverProgress) + 2;
 
@@ -77,8 +78,6 @@ public class AobaButtonWidget extends PressableWidget {
 	}
 
 	@Override
-	protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-		// For brevity, we'll just skip this for now - if you want to add narration to
-		// your widget, you can do so here.
+	protected void updateWidgetNarration(NarrationElementOutput builder) {
 	}
 }

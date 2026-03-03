@@ -27,15 +27,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.screens.MainMenuScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.network.chat.Component;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
 
-	protected TitleScreenMixin(Text title) {
+	protected TitleScreenMixin(Component title) {
 		super(title);
+	}
+
+	@Inject(method = "registerTextures", at = @At("TAIL"))
+	private static void onRegisterTextures(TextureManager textureManager, CallbackInfo ci) {
+		MainMenuScreen.registerPanoramaTextures(textureManager);
 	}
 
 	@Inject(method = "init", at = @At("RETURN"))

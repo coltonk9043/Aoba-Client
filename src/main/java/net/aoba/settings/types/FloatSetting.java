@@ -59,11 +59,11 @@ public class FloatSetting extends Setting<Float> {
     	return valueSqr;
     }
     
-    public static BUILDER builder() {
-    	return new BUILDER();
+    public static FloatSetting.BUILDER builder() {
+    	return new FloatSetting.BUILDER();
     }
     
-    public static class BUILDER extends Setting.BUILDER<BUILDER, FloatSetting, Float> {
+    public static class BUILDER extends Setting.BUILDER<FloatSetting.BUILDER, FloatSetting, Float> {
 		protected Float minValue = 1f;
 		protected Float maxValue = 10f;
 		protected Float step = 1f;
@@ -71,17 +71,17 @@ public class FloatSetting extends Setting<Float> {
 		protected BUILDER() {
         }
 		
-		public BUILDER minValue(Float value) {
+		public FloatSetting.BUILDER minValue(Float value) {
 			minValue = value;
 			return this;
 		}
 		
-		public BUILDER maxValue(Float value) {
+		public FloatSetting.BUILDER maxValue(Float value) {
 			maxValue = value;
 			return this;
 		}
 		
-		public BUILDER step(Float value) {
+		public FloatSetting.BUILDER step(Float value) {
 			step = value;
 			return this;
 		}

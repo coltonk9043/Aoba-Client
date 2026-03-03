@@ -18,10 +18,10 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.util.Rarity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.phys.Vec3;
 
 public class ItemESP extends Module implements Render3DListener {
 
@@ -75,10 +75,10 @@ public class ItemESP extends Module implements Render3DListener {
 		if (!visibilityToggle.getValue())
 			return;
 
-		Vec3d playerPos = MC.player.getPos();
+		Vec3 playerPos = MC.player.position();
 		for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 			if (entity instanceof ItemEntity) {
-				Vec3d itemPos = entity.getPos();
+				Vec3 itemPos = entity.position();
 				if (playerPos.distanceTo(itemPos) <= range.getValue()) {
 					Color finalColor = colorRarity.getValue() ? getColorBasedOnItemRarity(entity) : color.getValue();
 					Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), entity.getBoundingBox(), finalColor,
@@ -92,7 +92,7 @@ public class ItemESP extends Module implements Render3DListener {
 		boolean isRare = false;
 
 		if (entity instanceof ItemEntity itemEntity) {
-            isRare = itemEntity.getStack().getRarity() == Rarity.RARE;
+            isRare = itemEntity.getItem().getRarity() == Rarity.RARE;
 		}
 
 		return isRare ? rareItemColor.getValue() : color.getValue();

@@ -12,19 +12,20 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.aoba.mixin.interfaces.IMouse;
-import net.minecraft.client.Mouse;
+import net.aoba.mixin.interfaces.IMouseHandler;
+import net.minecraft.client.MouseHandler;
+import net.minecraft.client.input.MouseButtonInfo;
 
 public class MouseClickMacroEvent extends MacroEvent {
 
 	private int button = 0;
 	private int action= 0;
 	private int mods = 0;
-	
+
 	public MouseClickMacroEvent() {
-		
+
 	}
-	
+
 	public MouseClickMacroEvent(long timestamp, int button, int action, int mods) {
 		super(timestamp);
 		this.button = button;
@@ -50,10 +51,11 @@ public class MouseClickMacroEvent extends MacroEvent {
 
 	@Override
 	public void execute() {
-		Mouse mouse = MC.mouse;
-		IMouse iMouse = (IMouse)mouse;
+		MouseHandler mouse = MC.mouseHandler;
+		IMouseHandler iMouse = (IMouseHandler)mouse;
 		if(iMouse != null) {
-			iMouse.executeOnMouseButton(MC.getWindow().getHandle(), button, action, mods);
+			MouseButtonInfo buttonInfo = new MouseButtonInfo(button, mods);
+			iMouse.executeOnMouseButton(MC.getWindow().handle(), buttonInfo, action);
 		}
 	}
 }

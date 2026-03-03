@@ -17,7 +17,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.FindItemResult;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.Items;
 
 public class EXPThrower extends Module implements TickListener {
 	private final FloatSetting pitchSetting = FloatSetting.builder().id("expthrower_pitch").displayName("Pitch")
@@ -94,7 +94,7 @@ public class EXPThrower extends Module implements TickListener {
 		rotatePitch(pitchSetting.getValue());
 
 		if (exp.getHand() != null) {
-			MC.interactionManager.interactItem(MC.player, exp.getHand());
+			MC.gameMode.useItem(MC.player, exp.getHand());
 		}
 		// TODO: Fix this.
 		// else if (autoSwapSetting.getValue()) {

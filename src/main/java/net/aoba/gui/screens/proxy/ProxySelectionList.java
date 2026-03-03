@@ -12,25 +12,32 @@ import net.aoba.managers.proxymanager.Socks5Proxy;
 import net.aoba.utils.render.Render2D;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.util.Util;
 
-public class ProxySelectionList extends AlwaysSelectedEntryListWidget<ProxySelectionList.Entry> {
+public class ProxySelectionList extends ObjectSelectionList<ProxySelectionList.Entry> {
 	private final ProxyScreen owner;
 
-	public ProxySelectionList(ProxyScreen ownerIn, MinecraftClient minecraftClient, int i, int j, int k, int l) {
+	public ProxySelectionList(ProxyScreen ownerIn, Minecraft minecraftClient, int i, int j, int k, int l) {
 		super(minecraftClient, i, j, k, l);
 		owner = ownerIn;
 	}
 
+	public void setSelected(@org.jetbrains.annotations.Nullable ProxySelectionList.Entry entry) {
+		super.setSelected(entry);
+		if (entry != null) {
+			owner.setEdittable();
+		}
+	}
+
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		ProxySelectionList.Entry ProxySelectionList$entry = getSelectedOrNull();
-		return ProxySelectionList$entry != null && ProxySelectionList$entry.keyPressed(keyCode, scanCode, modifiers)
-				|| super.keyPressed(keyCode, scanCode, modifiers);
+	public boolean keyPressed(net.minecraft.client.input.KeyEvent keyEvent) {
+		Entry entry = getSelected();
+		return entry != null && entry.keyPressed(keyEvent) || super.keyPressed(keyEvent);
 	}
 
 	public void updateProxies() {
@@ -43,7 +50,7 @@ public class ProxySelectionList extends AlwaysSelectedEntryListWidget<ProxySelec
 	}
 
 	@Environment(value = EnvType.CLIENT)
-	public static abstract class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> implements AutoCloseable {
+	public static abstract class Entry extends ObjectSelectionList.Entry<net.aoba.gui.screens.proxy.ProxySelectionList.Entry> implements AutoCloseable {
 		@Override
 		public void close() {
 		}
@@ -68,34 +75,26 @@ public class ProxySelectionList extends AlwaysSelectedEntryListWidget<ProxySelec
 		}
 
 		@Override
-		public void render(DrawContext drawContext, int index, int y, int x, int entryWidth, int entryHeight,
-				int mouseX, int mouseY, boolean hovered, float tickDelta) {
+		public void renderContent(GuiGraphics drawContext, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+			int x = getX();
+			int y = getY();
 			int lineHeight = 12;
-			int textY = y + (entryHeight - lineHeight * 4) / 2;
 
-			int textColor = owner.isActiveProxy(proxy) ? 0x00FF00 : 16777215;
+			int textColor = owner.isActiveProxy(proxy) ? 0xFF00FF00 : 0xFFFFFFFF;
 
-			Render2D.drawStringWithScale(drawContext, "IP: " + proxy.getIp(), x + 32 + 3, textY, textColor, 1.0f);
-			Render2D.drawStringWithScale(drawContext, "Port: " + proxy.getPort(), x + 32 + 3, textY + lineHeight,
+			Render2D.drawStringWithScale(drawContext, "IP: " + proxy.getIp(), x + 32 + 3, y, textColor, 1.0f);
+			Render2D.drawStringWithScale(drawContext, "Port: " + proxy.getPort(), x + 32 + 3, y + lineHeight,
 					textColor, 1.0f);
 			Render2D.drawStringWithScale(drawContext, "Username: " + proxy.getUsername(), x + 32 + 3,
-					textY + lineHeight * 2, textColor, 1.0f);
+					y + lineHeight * 2, textColor, 1.0f);
 			Render2D.drawStringWithScale(drawContext, "*".repeat(proxy.getPassword().length()), x + 32 + 3,
-					textY + lineHeight * 3, textColor, 1.0f);
+					y + lineHeight * 3, textColor, 1.0f);
 		}
 
 		@Override
-		public boolean mouseClicked(double mouseX, double mouseY, int button) {
-			double d0 = mouseX - (double) getRowLeft();
-
-			if (d0 <= 32.0D) {
-				if (d0 < 32.0D && d0 > 16.0D) {
-					owner.setSelected(this);
-					return true;
-				}
-			}
+		public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
 			owner.setSelected(this);
-			if (Util.getMeasuringTimeMs() - lastClickTime < 250L) {
+			if (Util.getMillis() - lastClickTime < 250L) {
 				Socks5Proxy proxy = getProxyData();
 				if (owner.isActiveProxy(proxy)) {
 					owner.resetActive();
@@ -103,13 +102,13 @@ public class ProxySelectionList extends AlwaysSelectedEntryListWidget<ProxySelec
 					owner.setActive();
 				}
 			}
-			lastClickTime = Util.getMeasuringTimeMs();
-			return false;
+			lastClickTime = Util.getMillis();
+			return true;
 		}
 
 		@Override
-		public Text getNarration() {
-			return Text.of(proxy.getIp());
+		public Component getNarration() {
+			return Component.nullToEmpty(proxy.getIp());
 		}
 	}
 }

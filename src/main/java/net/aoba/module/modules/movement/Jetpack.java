@@ -16,11 +16,11 @@ import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket.OnGroundOnly;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket.StatusOnly;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 public class Jetpack extends Module implements TickListener {
 
@@ -78,24 +78,24 @@ public class Jetpack extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		ClientPlayerEntity player = MC.player;
+		LocalPlayer player = MC.player;
 		float speed = jetpackSpeed.getValue().floatValue();
 
 		if (MC.player.fallDistance > 2f) {
-			MC.player.networkHandler.sendPacket(new OnGroundOnly(true, false));
+			MC.player.connection.send(new StatusOnly(true, false));
 		}
 
-		if (MC.player.isRiding()) {
+		if (MC.player.isHandsBusy()) {
 			Entity riding = MC.player.getRootVehicle();
-			Vec3d velocity = riding.getVelocity();
-			double motionY = MC.options.jumpKey.isPressed() ? jumpMotionY.getValue() : 0;
-			riding.setVelocity(velocity.x, motionY, velocity.z);
+			Vec3 velocity = riding.getDeltaMovement();
+			double motionY = MC.options.keyJump.isDown() ? jumpMotionY.getValue() : 0;
+			riding.setDeltaMovement(velocity.x, motionY, velocity.z);
 		} else {
 			player.getAbilities().flying = false;
 
-			Vec3d playerSpeed = player.getVelocity();
-			if (MC.options.jumpKey.isPressed()) {
-				double angle = -player.bodyYaw;
+			Vec3 playerSpeed = player.getDeltaMovement();
+			if (MC.options.keyJump.isDown()) {
+				double angle = -player.yBodyRot;
 				float spread = thrusterSpread.getValue();
 				float leftThrusterX = (float) Math.sin(Math.toRadians(angle + 90)) * spread;
 				float leftThrusterZ = (float) Math.cos(Math.toRadians(angle + 90)) * spread;
@@ -104,15 +104,15 @@ public class Jetpack extends Module implements TickListener {
 
 				int particleAmount = thrusterParticleAmount.getValue().intValue();
 				for (int i = 0; i < particleAmount; i++) {
-					MC.world.addParticleClient(ParticleTypes.FLAME, player.getX() + leftThrusterX, player.getY() + 0.5f,
+					MC.level.addParticle(ParticleTypes.FLAME, player.getX() + leftThrusterX, player.getY() + 0.5f,
 							player.getZ() + leftThrusterZ, leftThrusterX, -0.5f, leftThrusterZ);
-					MC.world.addParticleClient(ParticleTypes.FLAME, player.getX() + rightThrusterX,
+					MC.level.addParticle(ParticleTypes.FLAME, player.getX() + rightThrusterX,
 							player.getY() + 0.5f, player.getZ() + rightThrusterZ, rightThrusterX, -0.5f,
 							rightThrusterZ);
 				}
 				playerSpeed = playerSpeed.add(0, speed / 20.0f, 0);
 			}
-			player.setVelocity(playerSpeed);
+			player.setDeltaMovement(playerSpeed);
 		}
 	}
 

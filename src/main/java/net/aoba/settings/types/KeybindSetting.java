@@ -9,7 +9,7 @@
 package net.aoba.settings.types;
 
 import net.aoba.settings.Setting;
-import net.minecraft.client.util.InputUtil.Key;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 import java.util.function.Consumer;
 
 public class KeybindSetting extends Setting<Key> {
@@ -26,11 +26,11 @@ public class KeybindSetting extends Setting<Key> {
         return true;
     }
     
-    public static BUILDER builder() {
-    	return new BUILDER();
+    public static KeybindSetting.BUILDER builder() {
+    	return new KeybindSetting.BUILDER();
     }
     
-    public static class BUILDER extends Setting.BUILDER<BUILDER, KeybindSetting, Key> {
+    public static class BUILDER extends Setting.BUILDER<KeybindSetting.BUILDER, KeybindSetting, Key> {
 		protected BUILDER() {
         }
 

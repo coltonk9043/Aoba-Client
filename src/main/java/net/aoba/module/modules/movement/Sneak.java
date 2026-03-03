@@ -14,8 +14,7 @@ import net.aoba.event.events.TickEvent.Pre;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.player.LocalPlayer;
 
 public class Sneak extends Module implements TickListener {
 	public Sneak() {
@@ -26,9 +25,9 @@ public class Sneak extends Module implements TickListener {
 
 	@Override
 	public void onDisable() {
-		ClientPlayerEntity player = MC.player;
+		LocalPlayer player = MC.player;
 		if (player != null) {
-			MC.options.sneakKey.setPressed(false);
+			MC.options.keyShift.setDown(false);
 		}
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
@@ -45,9 +44,9 @@ public class Sneak extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		ClientPlayerEntity player = MC.player;
+		LocalPlayer player = MC.player;
 		if (player != null) {
-			MC.options.sneakKey.setPressed(true);
+			MC.options.keyShift.setDown(true);
 		}
 	}
 

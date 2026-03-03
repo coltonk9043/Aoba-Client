@@ -22,9 +22,9 @@ import net.aoba.command.Command;
 import net.aoba.command.InvalidSyntaxException;
 import net.aoba.command.commands.*;
 import net.aoba.settings.types.StringSetting;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 public class CommandManager {
 	private final Map<String, Command> commands = new HashMap<>();
@@ -117,14 +117,14 @@ public class CommandManager {
 
 			Command command = commands.get(commandIn[1]);
 			if (command == null) {
-				sendChatMessage("Invalid Command! Type " + Formatting.LIGHT_PURPLE + ".aoba help" + Formatting.RESET
+				sendChatMessage("Invalid Command! Type " + ChatFormatting.LIGHT_PURPLE + ".aoba help" + ChatFormatting.RESET
 						+ " for a list of commands.");
 			} else {
 				String[] parameterList = Arrays.copyOfRange(commandIn, 2, commandIn.length);
 				command.runCommand(parameterList);
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
-			sendChatMessage("Invalid Command! Type " + Formatting.LIGHT_PURPLE + ".aoba help" + Formatting.RESET
+			sendChatMessage("Invalid Command! Type " + ChatFormatting.LIGHT_PURPLE + ".aoba help" + ChatFormatting.RESET
 					+ " for a list of commands.");
 		} catch (InvalidSyntaxException e) {
 			e.PrintToChat();
@@ -138,10 +138,10 @@ public class CommandManager {
 
 	/** Prints a message into the Minecraft Chat. */
 	public static void sendChatMessage(String message) {
-		MinecraftClient mc = MinecraftClient.getInstance();
-		if (mc.inGameHud != null) {
-			mc.inGameHud.getChatHud().addMessage(Text.of(Formatting.DARK_PURPLE + "[" + Formatting.LIGHT_PURPLE + "Aoba"
-					+ Formatting.DARK_PURPLE + "] " + Formatting.RESET + message));
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.gui != null) {
+			mc.gui.getChat().addMessage(Component.nullToEmpty(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "Aoba"
+					+ ChatFormatting.DARK_PURPLE + "] " + ChatFormatting.RESET + message));
 		}
 	}
 }

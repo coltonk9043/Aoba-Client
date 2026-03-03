@@ -20,13 +20,13 @@ import net.aoba.event.listeners.SendMovementPacketListener;
 import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.managers.rotation.goals.Goal;
-import net.aoba.mixin.interfaces.IClientPlayerEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.math.MathHelper;
+import net.aoba.mixin.interfaces.ILocalPlayer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.util.Mth;
 
 public class RotationManager implements TickListener, Render3DListener, SendPacketListener, SendMovementPacketListener {
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	private static final AobaClient AOBA = Aoba.getInstance();
 
 	private Goal<?> currentGoal = null;
@@ -44,7 +44,7 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 	}
 
 	public static double getGCD() {
-		double f = MC.options.getMouseSensitivity().getValue() * 0.6 + 0.2;
+		double f = MC.options.sensitivity().get() * 0.6 + 0.2;
 		return f * f * f * 1.2;
 	}
 
@@ -72,16 +72,16 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 			return;
 
 		if (serverPitch == null)
-			serverPitch = MC.player.getPitch();
+			serverPitch = MC.player.getXRot();
 
 		if (serverYaw == null)
-			serverYaw = MC.player.getYaw();
+			serverYaw = MC.player.getYRot();
 
 		lastServerYaw = serverYaw;
 		lastServerPitch = serverPitch;
 
 		if (currentGoal != null) {
-			float tickDelta = event.getRenderTickCounter().getTickProgress(true);
+			float tickDelta = event.getRenderTickCounter().getGameTimeDeltaPartialTick(true);
 			Rotation currentGoalRotation;
 			if (currentGoal.isFakeRotation()) {
 				currentGoalRotation = getRotationFromGoal(serverYaw, serverPitch, tickDelta);
@@ -90,10 +90,10 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 					serverPitch = (float) currentGoalRotation.pitch();
 				}
 			} else {
-				currentGoalRotation = getRotationFromGoal(MC.player.getYaw(), MC.player.getPitch(), tickDelta);
+				currentGoalRotation = getRotationFromGoal(MC.player.getYRot(), MC.player.getXRot(), tickDelta);
 				if (currentGoalRotation != null) {
-					MC.player.setYaw((float) currentGoalRotation.yaw());
-					MC.player.setPitch((float) currentGoalRotation.pitch());
+					MC.player.setYRot((float) currentGoalRotation.yaw());
+					MC.player.setXRot((float) currentGoalRotation.pitch());
 				}
 			}
 		}
@@ -148,38 +148,38 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 			return;
 
 		// Fabricate our own packet.
-		IClientPlayerEntity iPlayer = (IClientPlayerEntity) MC.player;
+		ILocalPlayer iPlayer = (ILocalPlayer) MC.player;
 
-		double d = MC.player.getX() - MC.player.lastX;
-		double e = MC.player.getY() - MC.player.lastY;
-		double f = MC.player.getZ() - MC.player.lastZ;
+		double d = MC.player.getX() - MC.player.xo;
+		double e = MC.player.getY() - MC.player.yo;
+		double f = MC.player.getZ() - MC.player.zo;
 		double g = serverYaw - lastServerYaw;
 		double h = serverPitch - lastServerPitch;
 
-		boolean bl = MathHelper.squaredMagnitude(d, e, f) > MathHelper.square(2.0E-4);
+		boolean bl = Mth.lengthSquared(d, e, f) > Mth.square(2.0E-4);
 		boolean bl2 = g != 0.0 || h != 0.0;
 
 		if (bl && bl2) {
 			event.cancel();
-			MC.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.Full(MC.player.getX(), MC.player.getY(),
-					MC.player.getZ(), serverYaw, serverPitch, MC.player.isOnGround(), MC.player.horizontalCollision));
+			MC.getConnection().send(new ServerboundMovePlayerPacket.PosRot(MC.player.getX(), MC.player.getY(),
+					MC.player.getZ(), serverYaw, serverPitch, MC.player.onGround(), MC.player.horizontalCollision));
 		} else if (bl2) {
 			event.cancel();
-			MC.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(serverYaw, serverPitch,
-					MC.player.isOnGround(), MC.player.horizontalCollision));
+			MC.getConnection().send(new ServerboundMovePlayerPacket.Rot(serverYaw, serverPitch,
+					MC.player.onGround(), MC.player.horizontalCollision));
 		} else
 			return; // View was not affected, return.
 
 		if (bl) {
-			MC.player.lastX = MC.player.getX();
-			MC.player.lastY = MC.player.getY();
-			MC.player.lastZ = MC.player.getZ();
+			MC.player.xo = MC.player.getX();
+			MC.player.yo = MC.player.getY();
+			MC.player.zo = MC.player.getZ();
 			iPlayer.setTicksSinceLastPositionPacketSent(0);
 		}
 
-		iPlayer.setLastOnGround(MC.player.isOnGround());
+		iPlayer.setLastOnGround(MC.player.onGround());
 		iPlayer.setLastHorizontalCollision(MC.player.horizontalCollision);
-		iPlayer.setAutoJumpEnabled(MC.options.getAutoJump().getValue());
+		iPlayer.setAutoJumpEnabled(MC.options.autoJump().get());
 	}
 
 	@Override

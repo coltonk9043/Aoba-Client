@@ -32,7 +32,7 @@ public class AutoWalk extends Module implements TickListener {
 
 	@Override
 	public void onDisable() {
-		MC.options.forwardKey.setPressed(false);
+		MC.options.keyUp.setDown(false);
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 
@@ -48,9 +48,9 @@ public class AutoWalk extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		MC.options.forwardKey.setPressed(true);
-		if (MC.player.horizontalCollision && MC.player.isOnGround())
-			MC.player.jump();
+		MC.options.keyUp.setDown(true);
+		if (MC.player.horizontalCollision && MC.player.onGround())
+			MC.player.jumpFromGround();
 	}
 
 	@Override

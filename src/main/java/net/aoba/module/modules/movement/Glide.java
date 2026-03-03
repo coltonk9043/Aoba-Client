@@ -16,7 +16,7 @@ import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.player.LocalPlayer;
 
 public class Glide extends Module implements TickListener {
 
@@ -58,11 +58,11 @@ public class Glide extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
-		ClientPlayerEntity player = MC.player;
-		if (player.getVelocity().y < 0 && (!player.isOnGround() || !player.isInLava() || !player.isSubmergedInWater()
-				|| !player.isHoldingOntoLadder())) {
-			player.setVelocity(player.getVelocity().x, Math.max(player.getVelocity().y, -fallSpeed.getValue()),
-					player.getVelocity().z);
+		LocalPlayer player = MC.player;
+		if (player.getDeltaMovement().y < 0 && (!player.onGround() || !player.isInLava() || !player.isUnderWater()
+				|| !player.isSuppressingSlidingDownLadder())) {
+			player.setDeltaMovement(player.getDeltaMovement().x, Math.max(player.getDeltaMovement().y, -fallSpeed.getValue()),
+					player.getDeltaMovement().z);
 		}
 	}
 

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.PlayerHealthListener;
-import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 
 public class PlayerHealthEvent extends AbstractEvent {
 	private final float health;

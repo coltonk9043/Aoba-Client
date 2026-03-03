@@ -23,13 +23,13 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 
 public class TileBreaker extends Module implements TickListener, Render3DListener {
 	private final ArrayList<Block> blocks = new ArrayList<Block>();
@@ -133,9 +133,9 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 				for (int z = -rad; z < rad; z++) {
 					BlockPos blockpos = new BlockPos(MC.player.getBlockX() + x, MC.player.getBlockY() + y,
 							MC.player.getBlockZ() + z);
-					Block block = MC.world.getBlockState(blockpos).getBlock();
+					Block block = MC.level.getBlockState(blockpos).getBlock();
 					if (isTileBreakerBlock(block)) {
-						Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(blockpos), color.getValue(),
+						Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new AABB(blockpos), color.getValue(),
 								1.0f);
 					}
 				}
@@ -151,12 +151,12 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 				for (int z = -rad; z < rad; z++) {
 					BlockPos blockpos = new BlockPos(MC.player.getBlockX() + x, MC.player.getBlockY() + y,
 							MC.player.getBlockZ() + z);
-					Block block = MC.world.getBlockState(blockpos).getBlock();
+					Block block = MC.level.getBlockState(blockpos).getBlock();
 					if (isTileBreakerBlock(block)) {
-						MC.player.networkHandler.sendPacket(
-								new PlayerActionC2SPacket(Action.START_DESTROY_BLOCK, blockpos, Direction.NORTH));
-						MC.player.networkHandler.sendPacket(
-								new PlayerActionC2SPacket(Action.STOP_DESTROY_BLOCK, blockpos, Direction.NORTH));
+						MC.player.connection.send(
+								new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK, blockpos, Direction.NORTH));
+						MC.player.connection.send(
+								new ServerboundPlayerActionPacket(Action.STOP_DESTROY_BLOCK, blockpos, Direction.NORTH));
 					}
 				}
 			}

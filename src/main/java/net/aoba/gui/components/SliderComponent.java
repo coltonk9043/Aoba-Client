@@ -20,7 +20,7 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class SliderComponent extends Component {
 	private float currentSliderPosition = 0.4f;
@@ -109,7 +109,7 @@ public class SliderComponent extends Component {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		if (floatSetting == null) {
 			return;
 		}
@@ -137,7 +137,7 @@ public class SliderComponent extends Component {
 		}
 
 		String valueText = String.format("%.02f", value);
-		int textSize = MC.textRenderer.getWidth(valueText) * 2;
+		int textSize = MC.font.width(valueText) * 2;
 		Render2D.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
 
 		super.draw(drawContext, partialTicks);

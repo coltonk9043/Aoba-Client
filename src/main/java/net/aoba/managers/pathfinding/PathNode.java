@@ -8,10 +8,10 @@
 
 package net.aoba.managers.pathfinding;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.material.FluidState;
 
 /**
  * The PathNode class represents a node in a pathfinding algorithm. It holds a position
@@ -36,11 +36,11 @@ public class PathNode {
      * @param z The z-coordinate of the node.
      */
     public PathNode(int x, int y, int z) {
-    	MinecraftClient MC = MinecraftClient.getInstance();
+    	Minecraft MC = Minecraft.getInstance();
         pos = new BlockPos(x, y, z);
-        FluidState fluidState = MC.world.getFluidState(pos);
-        isInWater = fluidState.isIn(FluidTags.WATER);
-        isInLava = fluidState.isIn(FluidTags.LAVA);
+        FluidState fluidState = MC.level.getFluidState(pos);
+        isInWater = fluidState.is(FluidTags.WATER);
+        isInLava = fluidState.is(FluidTags.LAVA);
     }
 
     /**
@@ -49,11 +49,11 @@ public class PathNode {
      * @param pos The BlockPos representing the node's position.
      */
     public PathNode(BlockPos pos) {
-    	MinecraftClient MC = MinecraftClient.getInstance();
+    	Minecraft MC = Minecraft.getInstance();
         this.pos = pos;
-        FluidState fluidState = MC.world.getFluidState(pos);
-        isInWater = fluidState.isIn(FluidTags.WATER);
-        isInLava = fluidState.isIn(FluidTags.LAVA);
+        FluidState fluidState = MC.level.getFluidState(pos);
+        isInWater = fluidState.is(FluidTags.WATER);
+        isInLava = fluidState.is(FluidTags.LAVA);
     }
 
     /**

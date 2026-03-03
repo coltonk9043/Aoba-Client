@@ -12,22 +12,22 @@ import java.util.ArrayList;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.Render2DListener;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class Render2DEvent extends AbstractEvent {
-	private final DrawContext matrices;
-	private final RenderTickCounter renderTickCounter;
+	private final GuiGraphics matrices;
+	private final DeltaTracker renderTickCounter;
 
-	public DrawContext getDrawContext() {
+	public GuiGraphics getDrawContext() {
 		return matrices;
 	}
 
-	public RenderTickCounter getRenderTickCounter() {
+	public DeltaTracker getRenderTickCounter() {
 		return renderTickCounter;
 	}
 
-	public Render2DEvent(DrawContext context, RenderTickCounter renderTickCounter) {
+	public Render2DEvent(GuiGraphics context, DeltaTracker renderTickCounter) {
 		matrices = context;
 		this.renderTickCounter = renderTickCounter;
 	}

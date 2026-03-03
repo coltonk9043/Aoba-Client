@@ -20,7 +20,7 @@ import net.aoba.gui.Size;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class ListComponent extends Component implements MouseClickListener {
 	private StringSetting listSetting;
@@ -74,18 +74,18 @@ public class ListComponent extends Component implements MouseClickListener {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 
 		if (listSetting != null) {
-			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(listSetting.getValue());
+			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().width(listSetting.getValue());
 			Render2D.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
 					actualY + 8, 0xFFFFFF);
 		} else if (itemsSource.size() > 0) {
-			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().getWidth(itemsSource.get(selectedIndex));
+			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().width(itemsSource.get(selectedIndex));
 			Render2D.drawString(drawContext, itemsSource.get(selectedIndex),
 					actualX + (actualWidth / 2.0f) - stringWidth, actualY + 8, 0xFFFFFF);
 		}

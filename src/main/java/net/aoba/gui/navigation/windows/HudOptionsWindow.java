@@ -24,7 +24,7 @@ import net.aoba.gui.components.SliderComponent;
 import net.aoba.gui.components.StackPanelComponent;
 import net.aoba.gui.components.StringComponent;
 import net.aoba.gui.navigation.Window;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class HudOptionsWindow extends Window {
 	public HudOptionsWindow() {
@@ -72,7 +72,7 @@ public class HudOptionsWindow extends Window {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 	}
 }

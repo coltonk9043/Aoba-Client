@@ -14,8 +14,8 @@ import net.aoba.event.listeners.SendPacketListener;
 import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 
 public class XCarry extends Module implements SendPacketListener {
 	public XCarry() {
@@ -44,8 +44,8 @@ public class XCarry extends Module implements SendPacketListener {
 	@Override
 	public void onSendPacket(SendPacketEvent event) {
 		Packet<?> packet = event.GetPacket();
-		if (packet instanceof CloseHandledScreenC2SPacket closeScreenPacket) {
-            if (closeScreenPacket.getSyncId() == MC.player.playerScreenHandler.syncId)
+		if (packet instanceof ServerboundContainerClosePacket closeScreenPacket) {
+            if (closeScreenPacket.getContainerId() == MC.player.inventoryMenu.containerId)
 				event.cancel();
 		}
 	}

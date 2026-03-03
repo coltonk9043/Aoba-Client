@@ -8,6 +8,7 @@
 
 package net.aoba.module.modules.movement;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
@@ -15,9 +16,8 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.gui.screens.ChatScreen;
 
 public class GuiMove extends Module implements TickListener {
 	public GuiMove() {
@@ -50,10 +50,10 @@ public class GuiMove extends Module implements TickListener {
 
 	@Override
 	public void onTick(Post event) {
-		if (MC.currentScreen != null && !(MC.currentScreen instanceof ChatScreen)) {
-			for (KeyBinding k : new KeyBinding[] { MC.options.forwardKey, MC.options.backKey, MC.options.leftKey,
-					MC.options.rightKey, MC.options.jumpKey, MC.options.sprintKey })
-				k.setPressed(isKeyPressed(InputUtil.fromTranslationKey(k.getBoundKeyTranslationKey()).getCode()));
+		if (MC.screen != null && !(MC.screen instanceof ChatScreen)) {
+			for (KeyMapping k : new KeyMapping[] { MC.options.keyUp, MC.options.keyDown, MC.options.keyLeft,
+					MC.options.keyRight, MC.options.keyJump, MC.options.keySprint })
+				k.setDown(isKeyPressed(InputConstants.getKey(k.saveString()).getValue()));
 
 			float deltaX = 0;
 			float deltaY = 0;
@@ -71,7 +71,7 @@ public class GuiMove extends Module implements TickListener {
 				deltaX -= 10f;
 
 			if (deltaX != 0 || deltaY != 0)
-				MC.player.changeLookDirection(deltaX, deltaY);
+				MC.player.turn(deltaX, deltaY);
 		}
 	}
 

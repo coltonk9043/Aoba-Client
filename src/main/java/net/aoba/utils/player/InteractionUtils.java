@@ -1,72 +1,72 @@
 package net.aoba.utils.player;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Direction.AxisDirection;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.network.protocol.game.ServerboundSwingPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class InteractionUtils {
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 	public static final int OFFHAND = 45;
 
-	public static boolean placeBlock(BlockPos blockPos, Hand hand, boolean swingHand) {
-		PlayerInventory inventory = MC.player.getInventory();
+	public static boolean placeBlock(BlockPos blockPos, InteractionHand hand, boolean swingHand) {
+		Inventory inventory = MC.player.getInventory();
 		ItemStack itemInHand;
-		if (hand == Hand.MAIN_HAND)
-			itemInHand = inventory.getSelectedStack();
+		if (hand == InteractionHand.MAIN_HAND)
+			itemInHand = inventory.getSelectedItem();
 		else
-			itemInHand = inventory.getStack(OFFHAND);
+			itemInHand = inventory.getItem(OFFHAND);
 
 		if (itemInHand.getItem() instanceof BlockItem) {
 			Direction side = getPlaceSide(blockPos);
 			if (side == null)
 				return false;
 
-			BlockPos neighbour = blockPos.offset(side);
-			Vec3d placePos = Vec3d.ofCenter(blockPos).add(side.getOffsetX() * 0.5, side.getOffsetY() * 0.5,
-					side.getOffsetZ() * 0.5);
+			BlockPos neighbour = blockPos.relative(side);
+			Vec3 placePos = Vec3.atCenterOf(blockPos).add(side.getStepX() * 0.5, side.getStepY() * 0.5,
+					side.getStepZ() * 0.5);
 			BlockHitResult raytraceResult = new BlockHitResult(placePos, side.getOpposite(), neighbour, false);
 			return interactBlock(raytraceResult, hand, swingHand);
 		} else
 			return false;
 	}
 
-	public static boolean interactBlock(BlockHitResult blockHitResult, Hand hand, boolean swingHand) {
-		ActionResult result = MC.interactionManager.interactBlock(MC.player, hand, blockHitResult);
-		if (result.isAccepted()) {
+	public static boolean interactBlock(BlockHitResult blockHitResult, InteractionHand hand, boolean swingHand) {
+		InteractionResult result = MC.gameMode.useItemOn(MC.player, hand, blockHitResult);
+		if (result.consumesAction()) {
 			if (swingHand)
-				MC.player.swingHand(hand);
+				MC.player.swing(hand);
 			else
-				MC.getNetworkHandler().sendPacket(new HandSwingC2SPacket(hand));
+				MC.getConnection().send(new ServerboundSwingPacket(hand));
 			return true;
 		} else
 			return false;
 	}
 
 	public static Direction getPlaceSide(BlockPos blockPos) {
-		Vec3d lookVec = blockPos.toCenterPos().subtract(MC.player.getEyePos());
+		Vec3 lookVec = blockPos.getCenter().subtract(MC.player.getEyePosition());
 		double bestRelevancy = -Double.MAX_VALUE;
 		Direction bestSide = null;
 
 		for (Direction side : Direction.values()) {
-			BlockPos neighborPos = blockPos.offset(side);
-			BlockState blockState = MC.world.getBlockState(neighborPos);
+			BlockPos neighborPos = blockPos.relative(side);
+			BlockState blockState = MC.level.getBlockState(neighborPos);
 
 			if (blockState.isAir() || !blockState.getFluidState().isEmpty())
 				continue;
 
-			AxisDirection direction = side.getDirection();
-			double relevancy = side.getAxis().choose(lookVec.getX(), lookVec.getY(), lookVec.getZ())
-					* direction.offset();
+			AxisDirection direction = side.getAxisDirection();
+			double relevancy = side.getAxis().choose(lookVec.x(), lookVec.y(), lookVec.z())
+					* direction.getStep();
 			if (relevancy > bestRelevancy) {
 				bestRelevancy = relevancy;
 				bestSide = side;

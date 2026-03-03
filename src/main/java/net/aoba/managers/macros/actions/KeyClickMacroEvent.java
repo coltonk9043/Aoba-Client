@@ -12,6 +12,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.aoba.mixin.interfaces.IKeyboardHandler;
+import net.minecraft.client.input.KeyEvent;
+
 public class KeyClickMacroEvent extends MacroEvent {
 
 	private int button = 0;
@@ -51,6 +54,7 @@ public class KeyClickMacroEvent extends MacroEvent {
 
 	@Override
 	public void execute() {
-		MC.keyboard.onKey(MC.getWindow().getHandle(), button, scancode, action, mods);
+		KeyEvent keyEvent = new KeyEvent(button, scancode, mods);
+		((IKeyboardHandler) MC.keyboardHandler).invokeKeyPress(MC.getWindow().handle(), action, keyEvent);
 	}
 }

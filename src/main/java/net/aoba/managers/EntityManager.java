@@ -3,11 +3,10 @@ package net.aoba.managers;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.chunk.WorldChunk;
-
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +16,7 @@ import static net.aoba.AobaClient.MC;
 
 public class EntityManager implements TickListener
 {
-    private volatile List<PlayerEntity> players;
+    private volatile List<Player> players;
     private volatile List<Entity> entities;
     private volatile List<BlockEntity> blockEntities;
 
@@ -42,7 +41,7 @@ public class EntityManager implements TickListener
     }
 
     private void update() {
-        if (MC.world != null)
+        if (MC.level != null)
         {
             setLists(
                     new ArrayList<>(getEntities(false)),
@@ -58,7 +57,7 @@ public class EntityManager implements TickListener
     }
 
     private void setLists(List<Entity> loadedEntities,
-                          List<PlayerEntity> playerEntities,
+                          List<Player> playerEntities,
                           List<BlockEntity> loadedBlockEntities)
     {
         entities = loadedEntities;
@@ -71,7 +70,7 @@ public class EntityManager implements TickListener
         return entities;
     }
 
-    public List<PlayerEntity> getPlayers()
+    public List<Player> getPlayers()
     {
         return players;
     }
@@ -83,17 +82,17 @@ public class EntityManager implements TickListener
 
     public List<Entity> getEntitiesAsync()
     {
-        return getEntities(!MC.isOnThread());
+        return getEntities(!MC.isSameThread());
     }
 
-    public List<PlayerEntity> getPlayersAsync()
+    public List<Player> getPlayersAsync()
     {
-        return getPlayers(!MC.isOnThread());
+        return getPlayers(!MC.isSameThread());
     }
 
     public List<BlockEntity> getBlockEntitiesAsync()
     {
-        return getBlockEntities(!MC.isOnThread());
+        return getBlockEntities(!MC.isSameThread());
     }
 
     public List<Entity> getEntities(boolean async)
@@ -103,13 +102,13 @@ public class EntityManager implements TickListener
             return entities;
         }
         List<Entity> entityList = new ArrayList<>();
-        MC.world.getEntities().forEach(entityList::add);
+        MC.level.entitiesForRendering().forEach(entityList::add);
         return entityList;
     }
 
-    public List<PlayerEntity> getPlayers(boolean async)
+    public List<Player> getPlayers(boolean async)
     {
-        return async ? players : new ArrayList<>(MC.world.getPlayers());
+        return async ? players : new ArrayList<>(MC.level.players());
     }
 
     public List<BlockEntity> getBlockEntities(boolean async)
@@ -120,13 +119,13 @@ public class EntityManager implements TickListener
         }
 
         List<BlockEntity> list = new ArrayList<>();
-        int chunkDistance = Math.min(MC.options.getViewDistance().getValue(), 4);
+        int chunkDistance = Math.min(MC.options.renderDistance().get(), 4);
 
         for (int x = -chunkDistance; x <= chunkDistance; x++)
         {
             for (int z = -chunkDistance; z <= chunkDistance; z++)
             {
-                WorldChunk chunk = MC.world.getChunkManager().getWorldChunk((int) MC.player.getX() / 16 + x, (int) MC.player.getZ() / 16 + z);
+                LevelChunk chunk = MC.level.getChunkSource().getChunkNow((int) MC.player.getX() / 16 + x, (int) MC.player.getZ() / 16 + z);
 
                 if (chunk != null)
                 {

@@ -17,7 +17,7 @@ import net.aoba.gui.components.StackPanelComponent;
 import net.aoba.gui.components.StringComponent;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.gui.navigation.Window;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class ToggleHudsTab extends Window {
 	public ToggleHudsTab(ArrayList<HudWindow> huds) {
@@ -39,7 +39,7 @@ public class ToggleHudsTab extends Window {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 	}
 }

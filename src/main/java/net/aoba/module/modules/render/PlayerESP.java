@@ -17,7 +17,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.ColorSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.player.AbstractClientPlayer;
 
 public class PlayerESP extends Module implements Render3DListener {
 	private final ColorSetting color_default = ColorSetting.builder().id("playeresp_color_default")
@@ -61,7 +61,7 @@ public class PlayerESP extends Module implements Render3DListener {
 
 	@Override
 	public void onRender(Render3DEvent event) {
-		for (AbstractClientPlayerEntity entity : MC.world.getPlayers()) {
+		for (AbstractClientPlayer entity : MC.level.players()) {
 			if (entity != MC.player) {
 				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), entity.getBoundingBox(),
 						color_default.getValue(), lineThickness.getValue().floatValue());

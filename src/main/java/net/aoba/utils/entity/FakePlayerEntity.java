@@ -8,19 +8,19 @@
 
 package net.aoba.utils.entity;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 
-public class FakePlayerEntity extends AbstractClientPlayerEntity {
+public class FakePlayerEntity extends AbstractClientPlayer {
 
 	public FakePlayerEntity() {
-		super(MinecraftClient.getInstance().world, MinecraftClient.getInstance().player.getGameProfile());
-		ClientPlayerEntity player = MinecraftClient.getInstance().player;
+		super(Minecraft.getInstance().level, Minecraft.getInstance().player.getGameProfile());
+		LocalPlayer player = Minecraft.getInstance().player;
 
-		float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
-		setPos(player.getPos().x, player.getPos().y, player.getPos().z);
-		setRotation(player.getYaw(tickDelta), player.getPitch(tickDelta));
+		float tickDelta = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+		setPosRaw(player.position().x, player.position().y, player.position().z);
+		setRot(player.getViewYRot(tickDelta), player.getViewXRot(tickDelta));
 		// this.inventory = player.getInventory();
 	}
 

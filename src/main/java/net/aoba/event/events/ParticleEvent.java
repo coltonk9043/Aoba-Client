@@ -12,16 +12,16 @@ import java.util.ArrayList;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.ParticleListener;
-import net.minecraft.particle.ParticleEffect;
+import net.minecraft.core.particles.ParticleOptions;
 
 public class ParticleEvent extends AbstractEvent {
-	private final ParticleEffect particleEffect;
+	private final ParticleOptions particleEffect;
 
-	public ParticleEvent(ParticleEffect particleEffect) {
+	public ParticleEvent(ParticleOptions particleEffect) {
 		this.particleEffect = particleEffect;
 	}
 
-	public ParticleEffect getParticleEffect() {
+	public ParticleOptions getParticleEffect() {
 		return particleEffect;
 	}
 

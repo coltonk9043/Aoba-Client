@@ -8,10 +8,10 @@
 
 package net.aoba.command.commands;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.aoba.Aoba;
 import net.aoba.command.Command;
 import net.aoba.command.InvalidSyntaxException;
-import net.minecraft.client.util.InputUtil;
 
 public class CmdClickgui extends Command {
 
@@ -26,7 +26,7 @@ public class CmdClickgui extends Command {
                 if (parameters.length != 2)
                     throw new InvalidSyntaxException(this);
                 char keybind = Character.toUpperCase(parameters[1].charAt(0));
-                Aoba.getInstance().guiManager.clickGuiButton.setValue(InputUtil.fromKeyCode(keybind, 0));
+                Aoba.getInstance().guiManager.clickGuiButton.setValue(InputConstants.Type.KEYSYM.getOrCreate((int) keybind));
                 break;
             case "open":
                 Aoba.getInstance().guiManager.setClickGuiOpen(true);

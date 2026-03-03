@@ -10,33 +10,33 @@ package net.aoba.utils.render;
 
 import static net.aoba.AobaClient.MC;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import org.joml.Matrix4f;
 
 import net.aoba.gui.colors.Color;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Camera;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class Render3D {
-	public static void draw3DBox(MatrixStack matrixStack, Camera camera, Box box, Color color, float lineThickness) {
-		Box newBox = box.offset(camera.getPos().multiply(-1));
+	public static void draw3DBox(PoseStack matrixStack, Camera camera, AABB box, Color color, float lineThickness) {
+		AABB newBox = box.move(camera.position().scale(-1));
 
-		MatrixStack.Entry entry = matrixStack.peek();
-		Matrix4f matrix4f = entry.getPositionMatrix();
+		PoseStack.Pose entry = matrixStack.last();
+		Matrix4f matrix4f = entry.pose();
 
 		float r = color.getRed();
 		float g = color.getGreen();
@@ -44,41 +44,41 @@ public class Render3D {
 		float a = color.getAlpha();
 
 		// Drawing Logic
-		VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
-		RenderLayer layer = RenderLayers.QUADS;
+		MultiBufferSource.BufferSource vertexConsumerProvider = MC.renderBuffers().bufferSource();
+		RenderType layer = RenderLayers.QUADS;
 		VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
 
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).setColor(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).setColor(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).setColor(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.minZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.minZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).setColor(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.minY, (float) newBox.maxZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.maxX, (float) newBox.maxY, (float) newBox.maxZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).setColor(r, g, b, a);
 
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).color(r, g, b, a);
-		bufferBuilder.vertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).color(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.minZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.minY, (float) newBox.maxZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.maxZ).setColor(r, g, b, a);
+		bufferBuilder.addVertex(matrix4f, (float) newBox.minX, (float) newBox.maxY, (float) newBox.minZ).setColor(r, g, b, a);
 
-		vertexConsumerProvider.draw(layer);
+		vertexConsumerProvider.endBatch(layer);
 
 		layer = RenderLayers.LINES;
 		bufferBuilder = vertexConsumerProvider.getBuffer(layer);
@@ -108,7 +108,7 @@ public class Render3D {
 		buildLine3d(matrixStack, camera, bufferBuilder, box.minX, box.maxY, box.maxZ, box.minX, box.maxY, box.minZ,
 				color);
 
-		vertexConsumerProvider.draw(layer);
+		vertexConsumerProvider.endBatch(layer);
 
 		// RenderSystem.enableCull();
 		// RenderSystem.lineWidth(1f);
@@ -116,48 +116,48 @@ public class Render3D {
 		// RenderSystem.disableBlend();
 	}
 
-	public static void drawLine3D(MatrixStack matrixStack, Camera camera, Vec3d pos1, Vec3d pos2, Color color) {
+	public static void drawLine3D(PoseStack matrixStack, Camera camera, Vec3 pos1, Vec3 pos2, Color color) {
 		drawLine3D(matrixStack, camera, pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, color);
 	}
 
-	public static void drawLine3D(MatrixStack matrixStack, Camera camera, double x1, double y1, double z1, double x2,
+	public static void drawLine3D(PoseStack matrixStack, Camera camera, double x1, double y1, double z1, double x2,
 			double y2, double z2, Color color) {
-		VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
-		RenderLayer layer = RenderLayers.LINES;
+		MultiBufferSource.BufferSource vertexConsumerProvider = MC.renderBuffers().bufferSource();
+		RenderType layer = RenderLayers.LINES;
 		VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
 		buildLine3d(matrixStack, camera, bufferBuilder, x1, y1, z1, x2, y2, z2, color);
-		vertexConsumerProvider.draw(layer);
+		vertexConsumerProvider.endBatch(layer);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void drawEntityModel(MatrixStack matrixStack, Camera camera, float partialTicks, Entity entity,
+	public static void drawEntityModel(PoseStack matrixStack, Camera camera, float partialTicks, Entity entity,
 			Color color) {
 		EntityRenderer<?, ?> renderer = MC.getEntityRenderDispatcher().getRenderer(entity);
 
 		if (entity instanceof LivingEntity livingEntity) {
-			matrixStack.push();
+			matrixStack.pushPose();
 
 			LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>> leRenderer = (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) renderer;
 			EntityModel<LivingEntityRenderState> model = leRenderer.getModel();
-			LivingEntityRenderState renderState = leRenderer.getAndUpdateRenderState(livingEntity, partialTicks);
-			renderState.baby = livingEntity.isBaby();
-			model.setAngles(renderState);
-			Direction sleepDirection = livingEntity.getSleepingDirection();
+			LivingEntityRenderState renderState = leRenderer.createRenderState(livingEntity, partialTicks);
+			renderState.isBaby = livingEntity.isBaby();
+			model.setupAnim(renderState);
+			Direction sleepDirection = livingEntity.getBedOrientation();
 
 			// Interpolate entity position and body rotations.
-			Vec3d interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks)
-					.add(camera.getPos().multiply(-1));
-			float interpolatedBodyYaw = MathHelper.lerpAngleDegrees(partialTicks, livingEntity.lastBodyYaw,
-					livingEntity.bodyYaw);
+			Vec3 interpolatedEntityPosition = getEntityPositionInterpolated(entity, partialTicks)
+					.add(camera.position().scale(-1));
+			float interpolatedBodyYaw = Mth.rotLerp(partialTicks, livingEntity.yBodyRotO,
+					livingEntity.yBodyRot);
 			// Translate by the entity's interpolated position.
-			matrixStack.translate(interpolatedEntityPosition.getX(), interpolatedEntityPosition.getY(),
-					interpolatedEntityPosition.getZ());
+			matrixStack.translate(interpolatedEntityPosition.x(), interpolatedEntityPosition.y(),
+					interpolatedEntityPosition.z());
 
 			// If entity is sleeping, move their render position by their sleeping offset.
-			if (livingEntity.isInPose(EntityPose.SLEEPING) && sleepDirection != null) {
-				float sleepingEyeHeight = livingEntity.getEyeHeight(EntityPose.STANDING) - 0.1f;
-				matrixStack.translate(-sleepDirection.getOffsetX() * sleepingEyeHeight, 0.0f,
-						-sleepDirection.getOffsetZ() * sleepingEyeHeight);
+			if (livingEntity.hasPose(Pose.SLEEPING) && sleepDirection != null) {
+				float sleepingEyeHeight = livingEntity.getEyeHeight(Pose.STANDING) - 0.1f;
+				matrixStack.translate(-sleepDirection.getStepX() * sleepingEyeHeight, 0.0f,
+						-sleepDirection.getStepZ() * sleepingEyeHeight);
 			}
 
 			// Scale by the entity's scale.
@@ -165,44 +165,44 @@ public class Render3D {
 			matrixStack.scale(entityScale, entityScale, entityScale);
 
 			// If Entity is frozen (similar to shaking from zombie conversion shakes.
-			if (entity.isFrozen()) {
-				interpolatedBodyYaw += (float) (Math.cos((livingEntity.age * 3.25) * Math.PI * 0.4f));
+			if (entity.isFullyFrozen()) {
+				interpolatedBodyYaw += (float) (Math.cos((livingEntity.tickCount * 3.25) * Math.PI * 0.4f));
 			}
 
 			// Rotate entity if they are sleeping.
-			if (!livingEntity.isInPose(EntityPose.SLEEPING)) {
-				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0f - interpolatedBodyYaw));
+			if (!livingEntity.hasPose(Pose.SLEEPING)) {
+				matrixStack.mulPose(Axis.YP.rotationDegrees(180.0f - interpolatedBodyYaw));
 			}
 
 			// Check for rotations based off of the entity's state (dead, alive, sleeping,
 			// using riptide?, etc...)
 			if (livingEntity.deathTime > 0) {
-				float dyingAngle = MathHelper.sqrt((livingEntity.deathTime + partialTicks - 1.0f) / 20.0f * 1.6f);
+				float dyingAngle = Mth.sqrt((livingEntity.deathTime + partialTicks - 1.0f) / 20.0f * 1.6f);
 				if (dyingAngle > 1.0f) {
 					dyingAngle = 1.0f;
 				}
 
-				matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(dyingAngle * 90f));
-			} else if (livingEntity.isUsingRiptide()) {
-				matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90.0f - livingEntity.getPitch()));
+				matrixStack.mulPose(Axis.ZP.rotationDegrees(dyingAngle * 90f));
+			} else if (livingEntity.isAutoSpinAttack()) {
+				matrixStack.mulPose(Axis.XP.rotationDegrees(-90.0f - livingEntity.getXRot()));
 				matrixStack
-						.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((livingEntity.age + partialTicks) * -75.0f));
-			} else if (livingEntity.isInPose(EntityPose.SLEEPING)) {
+						.mulPose(Axis.YP.rotationDegrees((livingEntity.tickCount + partialTicks) * -75.0f));
+			} else if (livingEntity.hasPose(Pose.SLEEPING)) {
 				float sleepAngle = sleepDirection != null ? getYaw(sleepDirection) : interpolatedBodyYaw;
-				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(sleepAngle));
-				matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(90.0f));
-				matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(270.0f));
+				matrixStack.mulPose(Axis.YP.rotationDegrees(sleepAngle));
+				matrixStack.mulPose(Axis.ZP.rotationDegrees(90.0f));
+				matrixStack.mulPose(Axis.YP.rotationDegrees(270.0f));
 			}
 
 			// Apply offset for correct rendering on screen. (Not sure why though!)
 			matrixStack.scale(-1.0f, -1.0f, 1.0f);
 			matrixStack.translate(0.0f, -1.501f, 0.0f);
-			VertexConsumerProvider.Immediate vertexConsumerProvider = MC.getBufferBuilders().getEntityVertexConsumers();
-			RenderLayer layer = RenderLayers.QUADS;
+			MultiBufferSource.BufferSource vertexConsumerProvider = MC.renderBuffers().bufferSource();
+			RenderType layer = RenderLayers.QUADS;
 			VertexConsumer bufferBuilder = vertexConsumerProvider.getBuffer(layer);
-			model.render(matrixStack, bufferBuilder, 0, 0, color.getColorAsInt());
-			vertexConsumerProvider.draw(layer);
-			matrixStack.pop();
+			model.renderToBuffer(matrixStack, bufferBuilder, 0, 0, color.getColorAsInt());
+			vertexConsumerProvider.endBatch(layer);
+			matrixStack.popPose();
 		}
 	}
 
@@ -216,23 +216,22 @@ public class Render3D {
 		};
 	}
 
-	private static void buildLine3d(MatrixStack matrixStack, Camera camera, VertexConsumer bufferBuilder, double x1,
+	private static void buildLine3d(PoseStack matrixStack, Camera camera, VertexConsumer bufferBuilder, double x1,
 			double y1, double z1, double x2, double y2, double z2, Color color) {
-		MatrixStack.Entry entry = matrixStack.peek();
-		Matrix4f matrix4f = entry.getPositionMatrix();
-		Vec3d cameraPos = camera.getPos();
-		Vec3d normalized = new Vec3d(x2 - x1, y2 - y1, z2 - z1).normalize();
+		PoseStack.Pose entry = matrixStack.last();
+		Matrix4f matrix4f = entry.pose();
+		Vec3 cameraPos = camera.position();
 
 		float r = color.getRed();
 		float g = color.getGreen();
 		float b = color.getBlue();
 
 		bufferBuilder
-				.vertex(matrix4f, (float) (x1 - cameraPos.x), (float) (y1 - cameraPos.y), (float) (z1 - cameraPos.z))
-				.color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
+				.addVertex(matrix4f, (float) (x1 - cameraPos.x), (float) (y1 - cameraPos.y), (float) (z1 - cameraPos.z))
+				.setColor(r, g, b, 1.0f);
 		bufferBuilder
-				.vertex(matrix4f, (float) (x2 - cameraPos.x), (float) (y2 - cameraPos.y), (float) (z2 - cameraPos.z))
-				.color(r, g, b, 1.0f).normal(entry, (float) normalized.x, (float) normalized.y, (float) normalized.z);
+				.addVertex(matrix4f, (float) (x2 - cameraPos.x), (float) (y2 - cameraPos.y), (float) (z2 - cameraPos.z))
+				.setColor(r, g, b, 1.0f);
 	}
 
 	/**
@@ -242,10 +241,10 @@ public class Render3D {
 	 * @param delta  Tick delta.
 	 * @return Vec3d representing the interpolated position of the entity.
 	 */
-	public static Vec3d getEntityPositionInterpolated(Entity entity, float delta) {
-		return new Vec3d(MathHelper.lerp(delta, entity.lastX, entity.getX()),
-				MathHelper.lerp(delta, entity.lastY, entity.getY()),
-				MathHelper.lerp(delta, entity.lastZ, entity.getZ()));
+	public static Vec3 getEntityPositionInterpolated(Entity entity, float delta) {
+		return new Vec3(Mth.lerp(delta, entity.xo, entity.getX()),
+				Mth.lerp(delta, entity.yo, entity.getY()),
+				Mth.lerp(delta, entity.zo, entity.getZ()));
 	}
 
 	/**
@@ -255,8 +254,8 @@ public class Render3D {
 	 * @param delta  Tick delta.
 	 * @return Vec3d representing the interpolated position of the entity.
 	 */
-	public static Vec3d getEntityPositionOffsetInterpolated(Entity entity, float delta) {
-		Vec3d interpolated = getEntityPositionInterpolated(entity, delta);
-		return entity.getPos().subtract(interpolated);
+	public static Vec3 getEntityPositionOffsetInterpolated(Entity entity, float delta) {
+		Vec3 interpolated = getEntityPositionInterpolated(entity, delta);
+		return entity.position().subtract(interpolated);
 	}
 }

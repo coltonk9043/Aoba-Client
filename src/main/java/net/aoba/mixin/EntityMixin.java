@@ -26,41 +26,41 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.Fluid;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
 
 	@Shadow
-	protected DataTracker dataTracker;
+	protected SynchedEntityData entityData;
 
 	@Shadow
-	public abstract boolean isSubmergedIn(TagKey<Fluid> fluidTag);
+	public abstract boolean isEyeInFluid(TagKey<Fluid> fluidTag);
 
 	@Shadow
-	public abstract boolean isOnGround();
+	public abstract boolean onGround();
 
 	@Inject(at = {
-			@At("HEAD") }, method = "isInvisibleTo(Lnet/minecraft/entity/player/PlayerEntity;)Z", cancellable = true)
-	private void onIsInvisibleCheck(PlayerEntity message, CallbackInfoReturnable<Boolean> cir) {
+			@At("HEAD") }, method = "isInvisibleTo(Lnet/minecraft/world/entity/player/Player;)Z", cancellable = true)
+	private void onIsInvisibleCheck(Player message, CallbackInfoReturnable<Boolean> cir) {
 		if (Aoba.getInstance().moduleManager.antiinvis.state.getValue()) {
 			cir.setReturnValue(false);
 		}
 	}
 
-	@Inject(at = { @At("HEAD") }, method = "getStepHeight()F", cancellable = true)
+	@Inject(at = { @At("HEAD") }, method = "maxUpStep()F", cancellable = true)
 	public void onGetStepHeight(CallbackInfoReturnable<Float> cir) {
     }
 
-	@Inject(at = { @At("HEAD") }, method = "getJumpVelocityMultiplier()F", cancellable = true)
+	@Inject(at = { @At("HEAD") }, method = "getBlockJumpFactor()F", cancellable = true)
 	public void onGetJumpVelocityMultiplier(CallbackInfoReturnable<Float> cir) {
     }
 
-	@Inject(at = { @At("HEAD") }, method = "changeLookDirection(DD)V", cancellable = true)
+	@Inject(at = { @At("HEAD") }, method = "turn(DD)V", cancellable = true)
 	public void onChangeLookDirection(double cursorDeltaX, double cursorDeltaY, CallbackInfo ci) {
 
 	}

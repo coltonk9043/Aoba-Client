@@ -14,10 +14,10 @@ import net.aoba.event.events.TickEvent;
 import net.aoba.event.events.TotemPopEvent;
 import net.aoba.event.listeners.ReceivePacketListener;
 import net.aoba.event.listeners.TickListener;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityStatuses;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
+import net.minecraft.network.protocol.game.ClientboundEntityEventPacket;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityEvent;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -34,11 +34,11 @@ public class CombatManager implements TickListener, ReceivePacketListener {
 
     @Override
     public void onReceivePacket(ReceivePacketEvent event) {
-        if (event.GetPacket() instanceof EntityStatusS2CPacket entityStatusS2CPacket) {
-            if (entityStatusS2CPacket.getStatus() == EntityStatuses.USE_TOTEM_OF_UNDYING) {
-                Entity entity = entityStatusS2CPacket.getEntity(MC.world);
+        if (event.GetPacket() instanceof ClientboundEntityEventPacket entityStatusS2CPacket) {
+            if (entityStatusS2CPacket.getEventId() == EntityEvent.PROTECTED_FROM_DEATH) {
+                Entity entity = entityStatusS2CPacket.getEntity(MC.level);
 
-                if (!(entity instanceof PlayerEntity)) return;
+                if (!(entity instanceof Player)) return;
 
                 if (popList == null) {
                     popList = new HashMap<>();
@@ -50,7 +50,7 @@ public class CombatManager implements TickListener, ReceivePacketListener {
                     popList.put(entity.getName().getString(), popList.get(entity.getName().getString()) + 1);
                 }
 
-                Aoba.getInstance().eventManager.Fire(new TotemPopEvent((PlayerEntity) entity, popList.get(entity.getName().getString())));
+                Aoba.getInstance().eventManager.Fire(new TotemPopEvent((Player) entity, popList.get(entity.getName().getString())));
             }
         }
     }
@@ -62,13 +62,13 @@ public class CombatManager implements TickListener, ReceivePacketListener {
     
     @Override
     public void onTick(TickEvent.Post event) {
-        for (PlayerEntity player : MC.world.getPlayers()) {
+        for (Player player : MC.level.players()) {
             if (player.getHealth() <= 0 && popList.containsKey(player.getName().getString()))
                 popList.remove(player.getName().getString(), popList.get(player.getName().getString()));
         }
     }
 
-    public int getPops(@NotNull PlayerEntity entity) {
+    public int getPops(@NotNull Player entity) {
         if (popList.get(entity.getName().getString()) == null) return 0;
         return popList.get(entity.getName().getString());
     }

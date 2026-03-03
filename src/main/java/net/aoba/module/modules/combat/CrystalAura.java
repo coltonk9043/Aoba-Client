@@ -30,25 +30,25 @@ import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.FindItemResult;
 import net.aoba.utils.entity.DamageUtils;
 import net.aoba.utils.render.Render3D;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.command.argument.EntityAnchorArgumentType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.EndCrystalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CrystalAura extends Module implements TickListener, Render3DListener {
 	public enum TargetMode {
@@ -208,15 +208,15 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 	}
 
 	private void placeCrystal() {
-		Hand hand = handSetting.getValue() == HandSetting.MAIN_HAND ? Hand.MAIN_HAND : Hand.OFF_HAND;
+		InteractionHand hand = handSetting.getValue() == HandSetting.MAIN_HAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 
 		FindItemResult result = find(Items.END_CRYSTAL);
 
 		if (!result.found() && !result.isHotbar())
 			return;
 
-		for (PlayerEntity player : Aoba.getInstance().entityManager.getPlayers()) {
-			if (player == MC.player || MC.player.squaredDistanceTo(player) > radius.getValueSqr())
+		for (Player player : Aoba.getInstance().entityManager.getPlayers()) {
+			if (player == MC.player || MC.player.distanceToSqr(player) > radius.getValueSqr())
 				continue;
 			if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
 				continue;
@@ -225,7 +225,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 			if (bestPos.isPresent()) {
 				placePos = bestPos.get();
 
-				double damage = DamageUtils.crystalDamage(player, Vec3d.of(placePos.add(0, 1, 0)));
+				double damage = DamageUtils.crystalDamage(player, Vec3.atLowerCornerOf(placePos.offset(0, 1, 0)));
 				if (damage < minDamage.getValue())
 					continue;
 
@@ -236,11 +236,11 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 				if (multiPlace.getValue()) {
 					performMultiPlace(placePos);
 				} else {
-					BlockHitResult hitResult = new BlockHitResult(placePos.toCenterPos(), Direction.UP, placePos,
+					BlockHitResult hitResult = new BlockHitResult(placePos.getCenter(), Direction.UP, placePos,
 							false);
-					MC.interactionManager.interactBlock(MC.player, hand, hitResult);
-					MC.player.networkHandler.sendPacket(
-							new PlayerInteractItemC2SPacket(hand, 0, MC.player.getYaw(), MC.player.getPitch()));
+					MC.gameMode.useItemOn(MC.player, hand, hitResult);
+					MC.player.connection.send(
+							new ServerboundUseItemPacket(hand, 0, MC.player.getYRot(), MC.player.getXRot()));
 				}
 
 				displayedBoxes.put(placePos, System.currentTimeMillis()); // Store rendering time
@@ -251,21 +251,21 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 	}
 
 	private void performMultiPlace(BlockPos initialPos) {
-		Hand hand = handSetting.getValue() == HandSetting.MAIN_HAND ? Hand.MAIN_HAND : Hand.OFF_HAND;
+		InteractionHand hand = handSetting.getValue() == HandSetting.MAIN_HAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 
-		BlockPos[] positions = { initialPos, initialPos.up(), initialPos.east(), initialPos.west(), initialPos.north(),
+		BlockPos[] positions = { initialPos, initialPos.above(), initialPos.east(), initialPos.west(), initialPos.north(),
 				initialPos.south() };
 
 		for (BlockPos pos : positions) {
-			BlockHitResult hitResult = new BlockHitResult(pos.toCenterPos(), Direction.UP, pos, false);
-			MC.interactionManager.interactBlock(MC.player, hand, hitResult);
-			MC.player.networkHandler
-					.sendPacket(new PlayerInteractItemC2SPacket(hand, 0, MC.player.getYaw(), MC.player.getPitch()));
+			BlockHitResult hitResult = new BlockHitResult(pos.getCenter(), Direction.UP, pos, false);
+			MC.gameMode.useItemOn(MC.player, hand, hitResult);
+			MC.player.connection
+					.send(new ServerboundUseItemPacket(hand, 0, MC.player.getYRot(), MC.player.getXRot()));
 		}
 	}
 
-	private Optional<BlockPos> findBestCrystalPlacement(PlayerEntity player) {
-		BlockPos playerPos = player.getBlockPos();
+	private Optional<BlockPos> findBestCrystalPlacement(Player player) {
+		BlockPos playerPos = player.blockPosition();
 		double maxDamage = 0;
 		double minDistance = Double.MAX_VALUE;
 		BlockPos bestPos = null;
@@ -274,29 +274,29 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 		for (int x = -radius; x <= radius; x++) {
 			for (int y = -radius; y <= radius; y++) {
 				for (int z = -radius; z <= radius; z++) {
-					BlockPos pos = playerPos.add(x, y, z);
-					BlockState blockState = MC.world.getBlockState(pos);
+					BlockPos pos = playerPos.offset(x, y, z);
+					BlockState blockState = MC.level.getBlockState(pos);
 					Block block = blockState.getBlock();
 					if (block != Blocks.OBSIDIAN && block != Blocks.BEDROCK)
 						continue;
 
 					// Ensure the block above is air
-					BlockPos abovePos = pos.up();
-					BlockState aboveBlockState = MC.world.getBlockState(abovePos);
+					BlockPos abovePos = pos.above();
+					BlockState aboveBlockState = MC.level.getBlockState(abovePos);
 					if (!aboveBlockState.isAir())
 						continue;
 
 					// Ensure there is air two blocks above the potential placement
-					BlockPos abovePos2 = pos.up(2);
-					BlockState aboveBlockState2 = MC.world.getBlockState(abovePos2);
+					BlockPos abovePos2 = pos.above(2);
+					BlockState aboveBlockState2 = MC.level.getBlockState(abovePos2);
 					if (!aboveBlockState2.isAir())
 						continue;
 
 					if (pos.getY() > playerPos.getY() + 1)
 						continue;
 
-					double damage = DamageUtils.crystalDamage(player, Vec3d.of(pos));
-					double distance = playerPos.getSquaredDistance(pos);
+					double damage = DamageUtils.crystalDamage(player, Vec3.atLowerCornerOf(pos));
+					double distance = playerPos.distSqr(pos);
 
 					if (pos.getY() == playerPos.getY()) {
 						damage *= 1.5;
@@ -314,15 +314,15 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 		return Optional.ofNullable(bestPos);
 	}
 
-	private PlayerEntity getTargetPlayer() {
-		List<AbstractClientPlayerEntity> players = MC.world.getPlayers();
-		PlayerEntity targetPlayer = null;
+	private Player getTargetPlayer() {
+		List<AbstractClientPlayer> players = MC.level.players();
+		Player targetPlayer = null;
 		double targetValue = (targetMode.getValue() == TargetMode.NEAREST) ? Double.MAX_VALUE : 0;
 
-		for (PlayerEntity player : players) {
+		for (Player player : players) {
 			if (player == MC.player || !targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
 				continue;
-			double distance = MC.player.squaredDistanceTo(player);
+			double distance = MC.player.distanceToSqr(player);
 			double health = player.getHealth();
 
 			if (targetMode.getValue() == TargetMode.NEAREST && distance < targetValue) {
@@ -338,14 +338,14 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 	}
 
 	private void attackCrystal() {
-		PlayerEntity targetPlayer = getTargetPlayer();
+		Player targetPlayer = getTargetPlayer();
 
-		Hand hand = handSetting.getValue() == HandSetting.MAIN_HAND ? Hand.MAIN_HAND : Hand.OFF_HAND;
+		InteractionHand hand = handSetting.getValue() == HandSetting.MAIN_HAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 
 		if (targetPlayer == null)
 			return;
 
-		EndCrystalEntity bestCrystal = null;
+		EndCrystal bestCrystal = null;
 		double maxDamage = 0;
 
 		double maxSelfDamageAllowed = maxSelfDamage.getValue();
@@ -354,11 +354,11 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
 		Iterable<Entity> entities = Aoba.getInstance().entityManager.getEntities();
 		for (Entity entity : entities) {
-			if (entity instanceof EndCrystalEntity) {
-				double distanceSquared = MC.player.squaredDistanceTo(entity);
+			if (entity instanceof EndCrystal) {
+				double distanceSquared = MC.player.distanceToSqr(entity);
 				if (distanceSquared < enemyRangeSquared) {
-					double damage = DamageUtils.crystalDamage(targetPlayer, entity.getPos());
-					double selfDamage = DamageUtils.crystalDamage(MC.player, entity.getPos());
+					double damage = DamageUtils.crystalDamage(targetPlayer, entity.position());
+					double selfDamage = DamageUtils.crystalDamage(MC.player, entity.position());
 
 					if (damage < minDamage.getValue()
 							|| (antiSuicide.getValue() && selfDamage > maxSelfDamageAllowed)) {
@@ -373,21 +373,21 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
 					switch (crystalPriority.getValue()) {
 					case CLOSEST:
-						if (bestCrystal == null || distanceSquared < MC.player.squaredDistanceTo(bestCrystal)) {
-							bestCrystal = (EndCrystalEntity) entity;
+						if (bestCrystal == null || distanceSquared < MC.player.distanceToSqr(bestCrystal)) {
+							bestCrystal = (EndCrystal) entity;
 							maxDamage = damage;
 						}
 						break;
 					case HIGHEST_DAMAGE:
 						if (damage > maxDamage) {
-							bestCrystal = (EndCrystalEntity) entity;
+							bestCrystal = (EndCrystal) entity;
 							maxDamage = damage;
 						}
 						break;
 					case LOWEST_HEALTH:
 						double targetHealth = targetPlayer.getHealth();
 						if (targetHealth > 0 && targetHealth < MC.player.getHealth()) {
-							bestCrystal = (EndCrystalEntity) entity;
+							bestCrystal = (EndCrystal) entity;
 							maxDamage = damage;
 						}
 						break;
@@ -399,19 +399,19 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 		}
 
 		if (bestCrystal != null) {
-			Vec3d targetPos = bestCrystal.getPos().add(0, bestCrystal.getBoundingBox().getLengthY() / 2.0, 0);
+			Vec3 targetPos = bestCrystal.position().add(0, bestCrystal.getBoundingBox().getYsize() / 2.0, 0);
 
 			switch (rotationMode.getValue()) {
 			case NONE:
-				MC.player.networkHandler
-						.sendPacket(PlayerInteractEntityC2SPacket.attack(bestCrystal, MC.player.isSneaking()));
+				MC.player.connection
+						.send(ServerboundInteractPacket.createAttackPacket(bestCrystal, MC.player.isShiftKeyDown()));
 				if (swingHand.getValue())
-					MC.player.swingHand(hand);
+					MC.player.swing(hand);
 				break;
 			case INSTANT:
-				MC.player.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, targetPos);
-				MC.player.networkHandler
-						.sendPacket(PlayerInteractEntityC2SPacket.attack(bestCrystal, MC.player.isSneaking()));
+				MC.player.lookAt(EntityAnchorArgument.Anchor.EYES, targetPos);
+				MC.player.connection
+						.send(ServerboundInteractPacket.createAttackPacket(bestCrystal, MC.player.isShiftKeyDown()));
 				break;
 			case SMOOTH:
 				// Instant rotation for now because im too dumb to figure out smooth rotation
@@ -423,15 +423,15 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 				float maxPitchRotation = Math.clamp((float) -rotation.pitch(), -rotationDegreesPerTick,
 						rotationDegreesPerTick);
 
-				Rotation newRotation = new Rotation(MC.player.getYaw() + maxYawRotationDelta,
-						MC.player.getPitch() + maxPitchRotation);
-				MC.player.setYaw((float) newRotation.yaw());
-				MC.player.setPitch((float) newRotation.pitch());
+				Rotation newRotation = new Rotation(MC.player.getYRot() + maxYawRotationDelta,
+						MC.player.getXRot() + maxPitchRotation);
+				MC.player.setYRot((float) newRotation.yaw());
+				MC.player.setXRot((float) newRotation.pitch());
 
-				MC.player.networkHandler
-						.sendPacket(PlayerInteractEntityC2SPacket.attack(bestCrystal, MC.player.isSneaking()));
+				MC.player.connection
+						.send(ServerboundInteractPacket.createAttackPacket(bestCrystal, MC.player.isShiftKeyDown()));
 				if (swingHand.getValue())
-					MC.player.swingHand(hand);
+					MC.player.swing(hand);
 
 				break;
 			default:
@@ -441,23 +441,23 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 	}
 
 	private boolean isCrystalBehindWall(Entity crystal) {
-		BlockPos crystalPos = crystal.getBlockPos();
-		Vec3d playerEyePos = MC.player.getCameraPosVec(1.0f);
+		BlockPos crystalPos = crystal.blockPosition();
+		Vec3 playerEyePos = MC.player.getEyePosition(1.0f);
 
-		Vec3d toCrystalVec = crystal.getPos().subtract(playerEyePos);
+		Vec3 toCrystalVec = crystal.position().subtract(playerEyePos);
 
-		Vec3d extendedVec = playerEyePos.add(toCrystalVec.multiply(1.1));
-		VoxelShape crystalShape = VoxelShapes.cuboid(crystal.getBoundingBox());
+		Vec3 extendedVec = playerEyePos.add(toCrystalVec.scale(1.1));
+		VoxelShape crystalShape = Shapes.create(crystal.getBoundingBox());
 
-		BlockHitResult result = MC.world.raycastBlock(playerEyePos, extendedVec, crystalPos, crystalShape,
-				crystal.getBlockStateAtPos());
+		BlockHitResult result = MC.level.clipWithInteractionOverride(playerEyePos, extendedVec, crystalPos, crystalShape,
+				crystal.getInBlockState());
 
 		if (result != null && result.getType() == BlockHitResult.Type.BLOCK) {
 			BlockPos blockPos = result.getBlockPos();
-			BlockState blockState = MC.world.getBlockState(blockPos);
+			BlockState blockState = MC.level.getBlockState(blockPos);
 			Block block = blockState.getBlock();
 
-			return block != Blocks.AIR && blockState.isSolidBlock(MC.world, blockPos);
+			return block != Blocks.AIR && blockState.isRedstoneConductor(MC.level, blockPos);
 		}
 
 		return false;
@@ -474,7 +474,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
 		for (Map.Entry<BlockPos, Long> entry : displayedBoxes.entrySet()) {
 			BlockPos pos = entry.getKey();
-			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new Box(pos), color.getValue(), 1.0f);
+			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new AABB(pos), color.getValue(), 1.0f);
 		}
 	}
 }

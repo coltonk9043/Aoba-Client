@@ -9,8 +9,7 @@
 package net.aoba.command;
 
 import net.aoba.managers.CommandManager;
-import net.minecraft.util.Formatting;
-
+import net.minecraft.ChatFormatting;
 import java.io.Serial;
 
 public class InvalidSyntaxException extends CommandException {
@@ -23,6 +22,6 @@ public class InvalidSyntaxException extends CommandException {
 
     @Override
     public void PrintToChat() {
-        CommandManager.sendChatMessage("Invalid syntax! Correct usage: " + Formatting.LIGHT_PURPLE + ".aoba " + cmd.getName() + " " + cmd.getSyntax() + Formatting.RESET);
+        CommandManager.sendChatMessage("Invalid syntax! Correct usage: " + ChatFormatting.LIGHT_PURPLE + ".aoba " + cmd.getName() + " " + cmd.getSyntax() + ChatFormatting.RESET);
     }
 }

@@ -13,12 +13,12 @@ import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
 import net.aoba.gui.navigation.HudWindow;
 import net.aoba.utils.render.Render2D;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class FPSHud extends HudWindow {
 
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 
 	public FPSHud(int x, int y) {
 		super("FPSHud", x, y, 50, 24);
@@ -29,11 +29,11 @@ public class FPSHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(DrawContext drawContext, float partialTicks) {
+	public void draw(GuiGraphics drawContext, float partialTicks) {
 		if (isVisible()) {
 			Rectangle pos = position.getValue();
 			if (pos.isDrawable()) {
-				int fps = MC.getCurrentFps();
+				int fps = MC.getFps();
 				String fpsText = "FPS: " + fps;
 				Render2D.drawString(drawContext, fpsText, pos.getX(), pos.getY(),
 						GuiManager.foregroundColor.getValue().getColorAsInt());

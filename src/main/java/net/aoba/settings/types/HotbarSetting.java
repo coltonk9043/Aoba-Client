@@ -1,9 +1,6 @@
 package net.aoba.settings.types;
 
 import net.aoba.settings.Setting;
-import net.minecraft.block.Block;
-
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 

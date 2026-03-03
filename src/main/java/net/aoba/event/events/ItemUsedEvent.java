@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.ItemUsedListener;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class ItemUsedEvent {
 	public static class Pre extends AbstractEvent {

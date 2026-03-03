@@ -29,14 +29,14 @@ import net.aoba.managers.macros.actions.MacroEvent;
 import net.aoba.managers.macros.actions.MouseClickMacroEvent;
 import net.aoba.managers.macros.actions.MouseMoveMacroEvent;
 import net.aoba.managers.macros.actions.MouseScrollMacroEvent;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 /**
  * Represents the Manager responsible for maintaining, creating, saving, and
  * loading Macros.
  */
 public class MacroManager {
-	private static final MinecraftClient MC = MinecraftClient.getInstance();
+	private static final Minecraft MC = Minecraft.getInstance();
 
 	private final HashMap<Class<?>, String> MACRO_CLASS_TO_NAME = new HashMap<Class<?>, String>();
 	private final HashMap<String, Class<?>> MACRO_NAME_TO_CLASS = new HashMap<String, Class<?>>();
@@ -76,7 +76,7 @@ public class MacroManager {
 	 * Loads all of the macros found in the runDirectory/aoba/macros
 	 */
 	private void load() {
-		File macroDirectory = new File(MC.runDirectory + File.separator + "aoba" + File.separator + "macros");
+		File macroDirectory = new File(MC.gameDirectory + File.separator + "aoba" + File.separator + "macros");
 		if (macroDirectory.exists() && macroDirectory.isDirectory()) {
 			LogUtils.getLogger().info("Found Macro Directory: " + macroDirectory.getAbsolutePath());
 			File[] files = macroDirectory.listFiles((dir, name) -> name.endsWith(".macro"));
@@ -148,7 +148,7 @@ public class MacroManager {
 	public void save() {
 		try {
 			// Try and find the Macro folder. If none exists, then throw an exception.
-			File macrosFolder = new File(MC.runDirectory + File.separator + "aoba" + File.separator + "macros");
+			File macrosFolder = new File(MC.gameDirectory + File.separator + "aoba" + File.separator + "macros");
 			if (!macrosFolder.exists() && !macrosFolder.mkdirs()) {
 				throw new IOException("Failed to create macro folder: " + macrosFolder.getAbsolutePath());
 			}

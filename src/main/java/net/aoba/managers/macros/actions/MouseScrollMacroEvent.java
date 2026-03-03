@@ -12,8 +12,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.aoba.mixin.interfaces.IMouse;
-import net.minecraft.client.Mouse;
+import net.aoba.mixin.interfaces.IMouseHandler;
+import net.minecraft.client.MouseHandler;
 
 public class MouseScrollMacroEvent extends MacroEvent {
 
@@ -46,8 +46,8 @@ public class MouseScrollMacroEvent extends MacroEvent {
 
 	@Override
 	public void execute() {
-		Mouse mouse = MC.mouse;
-		IMouse iMouse = (IMouse)mouse;
+		MouseHandler mouse = MC.mouseHandler;
+		IMouseHandler iMouse = (IMouseHandler)mouse;
 		if(iMouse != null) {
 			iMouse.executeOnMouseScroll(timestamp, deltaX, deltaY);
 		}
