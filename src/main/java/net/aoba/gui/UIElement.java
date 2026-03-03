@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
@@ -32,7 +33,9 @@ public abstract class UIElement {
 	private final ArrayList<UIElement> children = new ArrayList<UIElement>();
 	protected UIElement parent;
 
-	// Constraints (Dimensions will always adhere to these if it is not null)
+	private boolean measureDirty = true;
+	private Float lastMeasureWidth = null;
+	private Float lastMeasureHeight = null;
 	protected Float width = null;
 	protected Float height = null;
 	protected Float maxWidth = null;
@@ -57,6 +60,9 @@ public abstract class UIElement {
 		actualSize = new Rectangle(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
+	/**
+	 * Initializes the UI element.
+	 */
 	public void initialize() {
 		boolean wasInitialized = initialized;
 		if (!wasInitialized) {
@@ -75,14 +81,24 @@ public abstract class UIElement {
 		}
 	}
 
+	/**
+	 * Returns whether the UI element is initialized.
+	 * @return True when initialized, false otherwise.
+	 */
 	public boolean isInitialized() {
 		return initialized;
 	}
 
+	/**
+	 * Fires when the UI element is initialized.
+	 */
 	protected void onInitialized() {
 
 	}
 
+	/**
+	 * Updates the UI element per tick.
+	 */
 	public void update() {
 		for (UIElement child : children) {
 			child.update();
@@ -90,8 +106,7 @@ public abstract class UIElement {
 	}
 
 	/**
-	 * Abstract method for drawing components onto the screen.
-	 *
+	 * Draws the UI element on the screen.
 	 * @param drawContext  DrawContext of the game.
 	 * @param partialTicks Partial Ticks of the game.
 	 */
@@ -109,33 +124,69 @@ public abstract class UIElement {
 		}
 	}
 
+	/**
+	 * Gets the preferred size of the UI element.
+	 * @return Preferred size of the UI element.
+	 */
 	public Size getPreferredSize() {
 		return preferredSize;
 	}
 
+	/**
+	 * Gets the actual size of the UI element.
+	 * @return Actual size of the UI element.
+	 */
 	public Rectangle getActualSize() {
 		return actualSize;
 	}
 
+	/**
+	 * Sets the actual size of the UI element.
+	 * @param actualSize Size to set the UI element to.
+	 */
 	protected void setActualSize(Rectangle actualSize) {
 		this.actualSize = actualSize;
 	}
 
+	/**
+	 * Gets the margin of the UI element.
+	 * @return Margin of the UI element.
+	 */
 	public Margin getMargin() {
 		return margin;
 	}
 
-	public void setMargin(Margin margin) {
-		if (!this.margin.equals(margin)) {
-			this.margin = margin;
+	/**
+	 * Sets the margin of the UI element.
+	 * @param val Margin to set to.
+	 */
+	public void setMargin(Margin val) {
+		if (margin == null || !margin.equals(val)) {
+			this.margin = val;
 			invalidateMeasure();
 		}
 	}
 
+	/**
+	 * Gets the static width of the UI element.
+	 * @return Width of the UI element.
+	 */
 	public Float getWidth() {
 		return width;
 	}
+	
+	/**
+	 * Gets the static height of the UI element.
+	 * @return Height of the UI element.
+	 */
+	public Float getHeight() {
+		return height;
+	}
 
+	/**
+	 * Sets the static size of the UI element.
+	 * @param size New size of the UI element.
+	 */
 	public void setSize(Size size) {
 		Float newWidth = size.getWidth();
 		Float newHeight = size.getHeight();
@@ -147,6 +198,11 @@ public abstract class UIElement {
 		}
 	}
 
+	/**
+	 * Sets the static size of the UI element.
+	 * @param width New width of the UI element.
+	 * @param height New height of the UI element.
+	 */
 	public void setSize(Float width, Float height) {
 		if (this.width != width || this.height != height) {
 			this.width = width;
@@ -155,6 +211,10 @@ public abstract class UIElement {
 		}
 	}
 
+	/**
+	 * Sets the static width of the UI element.
+	 * @param width New width of the UI element.
+	 */
 	public void setWidth(Float width) {
 		if (this.width != width) {
 			this.width = width;
@@ -162,10 +222,10 @@ public abstract class UIElement {
 		}
 	}
 
-	public Float getHeight() {
-		return height;
-	}
-
+	/**
+	 * Sets the static height of the UI element.
+	 * @param height New height of the UI element.
+	 */
 	public void setHeight(Float height) {
 		if (this.height != height) {
 			this.height = height;
@@ -173,41 +233,72 @@ public abstract class UIElement {
 		}
 	}
 
+	/**
+	 * Gets the minimum allowable width that a UI element can have.
+	 * @return Minimum allowable width of the UI element.
+	 */
 	public Float getMinWidth() {
 		return minWidth;
 	}
 
+	/**
+	 * Sets the minimum allowable width that a UI element can have.
+	 * @param minWidth Minimum allowable width to set.
+	 */
 	public void setMinWidth(Float minWidth) {
 		this.minWidth = minWidth;
 	}
 
+	/**
+	 * Gets the minimum allowable height that a UI element can have.
+	 * @return Minimum allowable height of the UI element.
+	 */
 	public Float getMinHeight() {
 		return minHeight;
 	}
 
+	/**
+	 * Sets the minimum allowable height that a UI element can have.
+	 * @param minWidth Minimum allowable height to set.
+	 */
 	public void setMinHeight(Float minHeight) {
 		this.minHeight = minHeight;
 	}
 
+	/**
+	 * Gets the maximum allowable width that a UI element can have.
+	 * @return Maximum allowable width of the UI element.
+	 */
 	public Float getMaxWidth() {
 		return maxWidth;
 	}
 
+	/**
+	 * Sets the maximum allowable width that a UI element can have.
+	 * @param minWidth Maximum allowable width to set.
+	 */
 	public void setMaxWidth(Float maxWidth) {
 		this.maxWidth = maxWidth;
 	}
 
+	/**
+	 * Gets the maximum allowable height that a UI element can have.
+	 * @return Maximum allowable height of the UI element.
+	 */
 	public Float getMaxHeight() {
 		return maxHeight;
 	}
 
+	/**
+	 * Sets the maximum allowable height that a UI element can have.
+	 * @param minWidth Maximum allowable height to set.
+	 */
 	public void setMaxHeight(Float maxHeight) {
 		this.maxHeight = maxHeight;
 	}
 
 	/**
 	 * Whether or not the component is currently visible.
-	 *
 	 * @return Visibility state as a boolean.
 	 */
 	public boolean isVisible() {
@@ -216,7 +307,6 @@ public abstract class UIElement {
 
 	/**
 	 * Sets whether the component is visible or not
-	 *
 	 * @param bool State to set visibility to.
 	 */
 	public void setVisible(boolean bool) {
@@ -234,40 +324,42 @@ public abstract class UIElement {
 		onVisibilityChanged();
 	}
 
+	/**
+	 * Gets whether a UI element is hit test visible.
+	 * @return True if the UI element is hit test visible, false otherwise.
+	 */
 	public boolean isHitTestVisible() {
 		return isHitTestVisible;
 	}
 
+	/**
+	 * Set whether a UI element should be visible or not.
+	 * @param state Whether the UI element should be hit test visible.
+	 */
 	public void setIsHitTestVisible(boolean state) {
 		isHitTestVisible = state;
 	}
 
 	/**
-	 * Returns the parent of the Component.
-	 *
+	 * Returns the parent of the element.
 	 * @return Parent of the component as a ClickGuiTab.
 	 */
 	public UIElement getParent() {
 		return parent;
 	}
 
-	public void setParent(UIElement parent) {
-		this.parent = parent;
-		invalidateMeasure();
-	}
-
+	/**
+	 * Invalidates the measurements (preferredSize) of the UI element.
+	 */
 	public void invalidateMeasure() {
 		if (initialized) {
+			measureDirty = true;
+
 			if (parent != null) {
 				parent.invalidateMeasure();
 			} else {
-				// Construct new bounds based off of width/height constraints.
-				Size size;
-				if (parent == null)
-					size = new Size(0f, 0f);
-				else
-					size = parent.getPreferredSize();
-
+				// Root element — construct bounds and run layout pass.
+				Size size = new Size(0f, 0f);
 				if (width != null)
 					size.setWidth(width);
 
@@ -286,13 +378,16 @@ public abstract class UIElement {
 				if (maxHeight != null && size.getHeight() > maxHeight)
 					size.setHeight(maxHeight);
 
-				measure(size);
+				measureCore(size);
 				Rectangle rect = new Rectangle(0f, 0f, preferredSize.getWidth(), preferredSize.getHeight());
 				arrange(rect);
 			}
 		}
 	}
 
+	/**
+	 * Invalidates the layout and actualSize of the UI element.
+	 */
 	public void invalidateArrange() {
 		if (initialized) {
 			Rectangle rect = new Rectangle(0f, 0f, preferredSize.getWidth(), preferredSize.getHeight());
@@ -300,76 +395,104 @@ public abstract class UIElement {
 		}
 	}
 
+	/**
+	 * Gets the default size of an element given available space.
+	 * @param availableSize Space available to the UI element.
+	 * @return Default size of the element.
+	 */
 	protected Size getStartingSize(Size availableSize) {
 		return new Size(0f, 0f);
 	}
 
 	/**
-	 * Measures the UI element accounting for all of the children. This method spans
-	 * all of the children, starting from the bottom up.
-	 * 
-	 * @param availableSize The total amount of space that the UI element has to fit
-	 *                      in.
-	 * @return The new preferred size of the UI Element.
+	 * Measures the UI element accounting for all of the children.
+	 * @param availableSize The total amount of space that the UI element has to fit in.
 	 */
-	public void measure(Size availableSize) {
+	public final void measureCore(Size availableSize) {
 		if (!isVisible()) {
 			return;
 		}
 
-		if (initialized) {
-			Size finalSize = getStartingSize(availableSize);
-
-			for (UIElement element : children) {
-				if (!element.visible)
-					continue;
-
-				element.measure(availableSize);
-				Size resultingSize = element.getPreferredSize();
-
-				if (resultingSize.getWidth() > finalSize.getWidth())
-					finalSize.setWidth(resultingSize.getWidth());
-
-				if (resultingSize.getHeight() > finalSize.getHeight())
-					finalSize.setHeight(resultingSize.getHeight());
-			}
-
-			if (margin != null) {
-
-				Float marginLeft = margin.getLeft();
-				Float marginTop = margin.getTop();
-				Float marginRight = margin.getRight();
-				Float marginBottom = margin.getBottom();
-
-				if (marginLeft != null)
-					finalSize.setWidth(finalSize.getWidth() + marginLeft);
-
-				if (marginRight != null)
-					finalSize.setWidth(finalSize.getWidth() + marginRight);
-
-				if (marginTop != null)
-					finalSize.setHeight(finalSize.getHeight() + marginTop);
-
-				if (marginBottom != null)
-					finalSize.setHeight(finalSize.getHeight() + marginBottom);
-			}
-
-			if (minWidth != null && finalSize.getWidth() < minWidth) {
-				finalSize.setWidth(minWidth);
-			} else if (maxWidth != null && finalSize.getWidth() > maxWidth) {
-				finalSize.setWidth(maxWidth);
-			}
-
-			if (minHeight != null && finalSize.getHeight() < minHeight) {
-				finalSize.setHeight(minHeight);
-			} else if (maxHeight != null && finalSize.getHeight() > maxHeight) {
-				finalSize.setHeight(maxHeight);
-			}
-
-			preferredSize = finalSize;
+		// Do not measure if the UI element is not initialized.
+		if (!initialized) {
+			return;
 		}
+
+		// Skip if not dirty and available size hasn't changed.
+		if (!measureDirty
+				&& lastMeasureWidth.equals(availableSize.getWidth())
+				&& lastMeasureHeight.equals(availableSize.getHeight())) {
+			return;
+		}
+
+		preferredSize = measure(availableSize);
+
+		lastMeasureWidth = availableSize.getWidth();
+		lastMeasureHeight = availableSize.getHeight();
+		measureDirty = false;
 	}
 
+	/**
+	 * Measures the UI element accounting for all of the children.
+	 * @param availableSize The total amount of space that the UI element has to fit in.
+	 * @return The computed preferred size.
+	 */
+	public Size measure(Size availableSize) {
+		Size finalSize = getStartingSize(availableSize);
+
+		for (UIElement element : children) {
+			if (!element.visible)
+				continue;
+
+			element.measureCore(availableSize);
+			Size resultingSize = element.getPreferredSize();
+
+			if (resultingSize.getWidth() > finalSize.getWidth())
+				finalSize.setWidth(resultingSize.getWidth());
+
+			if (resultingSize.getHeight() > finalSize.getHeight())
+				finalSize.setHeight(resultingSize.getHeight());
+		}
+
+		if (margin != null) {
+
+			Float marginLeft = margin.getLeft();
+			Float marginTop = margin.getTop();
+			Float marginRight = margin.getRight();
+			Float marginBottom = margin.getBottom();
+
+			if (marginLeft != null)
+				finalSize.setWidth(finalSize.getWidth() + marginLeft);
+
+			if (marginRight != null)
+				finalSize.setWidth(finalSize.getWidth() + marginRight);
+
+			if (marginTop != null)
+				finalSize.setHeight(finalSize.getHeight() + marginTop);
+
+			if (marginBottom != null)
+				finalSize.setHeight(finalSize.getHeight() + marginBottom);
+		}
+
+		if (minWidth != null && finalSize.getWidth() < minWidth) {
+			finalSize.setWidth(minWidth);
+		} else if (maxWidth != null && finalSize.getWidth() > maxWidth) {
+			finalSize.setWidth(maxWidth);
+		}
+
+		if (minHeight != null && finalSize.getHeight() < minHeight) {
+			finalSize.setHeight(minHeight);
+		} else if (maxHeight != null && finalSize.getHeight() > maxHeight) {
+			finalSize.setHeight(maxHeight);
+		}
+
+		return finalSize;
+	}
+
+	/**
+	 * Arranges the UI element onto the screen.
+	 * @param finalSize The final size available to the UI element as deemed by the parent.
+	 */
 	public void arrange(Rectangle finalSize) {
 		if (initialized) {
 			Rectangle newFinalSize;
@@ -415,48 +538,82 @@ public abstract class UIElement {
 		}
 	}
 
+	/**
+	 * Gets a list of all child UI elements.
+	 * @return List of children.
+	 */
 	public List<UIElement> getChildren() {
 		return Collections.unmodifiableList(children);
 	}
 
+	/**
+	 * Adds a child to the UI element.
+	 * @param child Child to add.
+	 */
 	public void addChild(UIElement child) {
 		if (child == null)
 			return;
 
+		// Initialize the child if it has not been already.
 		if (initialized && !child.initialized)
 			child.initialize();
 
-		child.setParent(this);
+		// Remove the child from the previous parent if one exists.
+		if(child.parent != null) {
+			child.parent.removeChild(child);
+		}
+		
+		child.parent = this;
 		children.add(child);
 		onChildAdded(child);
+		invalidateMeasure();
 	}
 
+	/**
+	 * Removes a child from the UI element.
+	 * @param child Child to remove.
+	 */
 	public void removeChild(UIElement child) {
 		if (child == null)
 			return;
 
+		child.parent = null;
 		children.remove(child);
 		onChildRemoved(child);
+		invalidateMeasure();
 	}
 
+	/**
+	 * Clears all children from this UI element.
+	 */
 	public void clearChildren() {
 		children.clear();
-		// TODO: Implement children cleared as list.
 	}
 
-	public void onChildAdded(UIElement child) {
+	/**
+	 * Fired when a child is added to the UI element.
+	 * @param child Child that was added.
+	 */
+	protected void onChildAdded(UIElement child) { }
+	
+	/**
+	 * Fired when a child is removed from the UI element.
+	 * @param child Child that was removed.
+	 */
+	protected void onChildRemoved(UIElement child) { }
+
+	/**
+	 * Fired when a child changes size.
+	 * @param child Child that was modified.
+	 */
+	protected void onChildChanged(UIElement child) {
 		invalidateMeasure();
 	}
 
-	public void onChildChanged(UIElement child) {
-		invalidateMeasure();
-	}
-
-	public void onChildRemoved(UIElement child) {
-		invalidateMeasure();
-	}
-
-	public void onVisibilityChanged() {
+	/**
+	 * Fired when the visibility of the UI element changes.
+	 */
+	protected void onVisibilityChanged() {
 		invalidateMeasure();
 	}
 

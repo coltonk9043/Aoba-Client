@@ -25,7 +25,7 @@ public class StackPanelComponent extends Component {
     }
 
 	@Override
-	public void measure(Size availableSize) {
+	public Size measure(Size availableSize) {
 		Size newSize = new Size(availableSize.getWidth(), 0.0f);
 		List<UIElement> children = getChildren();
 		if (children.size() > 0) {
@@ -33,12 +33,12 @@ public class StackPanelComponent extends Component {
 				if (element == null || !element.isVisible())
 					continue;
 
-				element.measure(availableSize);
+				element.measureCore(availableSize);
 				Size resultingSize = element.getPreferredSize();
 				newSize.setHeight(newSize.getHeight() + resultingSize.getHeight());
 			}
 		}
-		preferredSize = newSize;
+		return newSize;
 	}
 
 	@Override

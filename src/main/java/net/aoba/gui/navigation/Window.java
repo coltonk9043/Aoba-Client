@@ -52,8 +52,10 @@ public class Window extends UIElement {
 		visible = false;
 		position = RectangleSetting.builder().id(ID + "_position").displayName(ID + "Position")
 				.defaultValue(new Rectangle(x, y, width, height)).onUpdate((Rectangle vec) -> {
+					actualSize.setX(vec.getX());
+					actualSize.setY(vec.getY());
 					setSize(vec.getWidth(), vec.getHeight());
-					invalidateArrange();
+					invalidateMeasure();
 				}).build();
 
 		setSize(getWidth(), getHeight());
@@ -62,7 +64,7 @@ public class Window extends UIElement {
 
 	@Override
 	public Rectangle getActualSize() {
-		Rectangle newSize = actualSize;
+		Rectangle newSize = new Rectangle(actualSize);
 		if (position.getX() != null)
 			newSize.setX(position.getX());
 

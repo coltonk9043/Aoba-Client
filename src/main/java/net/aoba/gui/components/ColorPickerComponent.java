@@ -52,11 +52,11 @@ public class ColorPickerComponent extends Component {
 	}
 
 	@Override
-	public void measure(Size availableSize) {
+	public Size measure(Size availableSize) {
 		if (collapsed) {
-			preferredSize = new Size(availableSize.getWidth(), 30.0f);
+			return new Size(availableSize.getWidth(), 30.0f);
 		} else {
-			preferredSize = new Size(availableSize.getWidth(), 175.0f);
+			return new Size(availableSize.getWidth(), 175.0f);
 		}
 	}
 

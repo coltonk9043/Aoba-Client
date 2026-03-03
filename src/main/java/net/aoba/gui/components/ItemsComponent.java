@@ -50,7 +50,7 @@ public class ItemsComponent<T> extends Component {
 		if (itemsSource != null) {
 			if (itemGenerator == null) {
 				itemsSource.stream().map(s -> new StringComponent(s.toString())).forEach(s -> {
-					parentComponent.addChild(parentComponent);
+					parentComponent.addChild(s);
 				});
 			} else {
 				itemsSource.stream().map(s -> itemGenerator.apply(s)).forEach(s -> {

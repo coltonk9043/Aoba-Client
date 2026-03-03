@@ -27,8 +27,8 @@ public class ImageComponent extends Component {
 	}
 
 	@Override
-	public void measure(Size availableSize) {
-		preferredSize = new Size(0f, 0f);
+	public Size measure(Size availableSize) {
+		return new Size(0f, 0f);
 	}
 
 	@Override

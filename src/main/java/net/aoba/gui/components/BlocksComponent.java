@@ -55,14 +55,16 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 	}
 
 	@Override
-	public void measure(Size availableSize) {
+	public Size measure(Size availableSize) {
+		Size size;
 		if (collapsed)
-			preferredSize = new Size(availableSize.getWidth(), COLLAPSED_HEIGHT);
+			size = new Size(availableSize.getWidth(), COLLAPSED_HEIGHT);
 		else
-			preferredSize = new Size(availableSize.getWidth(), EXPANDED_HEIGHT);
+			size = new Size(availableSize.getWidth(), EXPANDED_HEIGHT);
 
-		visibleColumns = (int) Math.floor((preferredSize.getWidth()) / (BLOCK_WIDTH + BLOCK_MARGIN));
-		visibleRows = (int) Math.floor((preferredSize.getHeight() - 25) / (BLOCK_WIDTH + BLOCK_MARGIN));
+		visibleColumns = (int) Math.floor((size.getWidth()) / (BLOCK_WIDTH + BLOCK_MARGIN));
+		visibleRows = (int) Math.floor((size.getHeight() - 25) / (BLOCK_WIDTH + BLOCK_MARGIN));
+		return size;
 	}
 
 	/**

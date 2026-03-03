@@ -34,8 +34,8 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 	}
 
 	@Override
-	public void measure(Size availableSize) {
-		preferredSize = new Size(availableSize.getWidth(), 55.0f);
+	public Size measure(Size availableSize) {
+		return new Size(availableSize.getWidth(), 55.0f);
 	}
 
 	@Override

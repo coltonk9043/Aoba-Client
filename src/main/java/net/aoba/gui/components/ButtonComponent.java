@@ -38,65 +38,58 @@ public class ButtonComponent extends Component {
 	}
 
 	@Override
-	public void measure(Size availableSize) {
-		if (!isVisible()) {
-			preferredSize = Size.ZERO;
-			return;
+	public Size measure(Size availableSize) {
+		float finalWidth = 0;
+		float finalHeight = 0;
+
+		List<UIElement> children = getChildren();
+		for (UIElement element : children) {
+			if (!element.isVisible())
+				continue;
+
+			element.measureCore(availableSize);
+			Size resultingSize = element.getPreferredSize();
+
+			if (resultingSize.getWidth() > finalWidth)
+				finalWidth = resultingSize.getWidth();
+
+			if (resultingSize.getHeight() > finalHeight)
+				finalHeight = resultingSize.getHeight();
 		}
 
-		if (initialized) {
-			float finalWidth = 0;
-			float finalHeight = 0;
+		if (margin != null) {
 
-			List<UIElement> children = getChildren();
-			for (UIElement element : children) {
-				if (!element.isVisible())
-					continue;
+			Float marginLeft = margin.getLeft();
+			Float marginTop = margin.getTop();
+			Float marginRight = margin.getRight();
+			Float marginBottom = margin.getBottom();
 
-				element.measure(availableSize);
-				Size resultingSize = element.getPreferredSize();
+			if (marginLeft != null)
+				finalWidth += marginLeft;
 
-				if (resultingSize.getWidth() > finalWidth)
-					finalWidth = resultingSize.getWidth();
+			if (marginRight != null)
+				finalWidth += marginRight;
 
-				if (resultingSize.getHeight() > finalHeight)
-					finalHeight = resultingSize.getHeight();
-			}
+			if (marginTop != null)
+				finalHeight += marginTop;
 
-			if (margin != null) {
-
-				Float marginLeft = margin.getLeft();
-				Float marginTop = margin.getTop();
-				Float marginRight = margin.getRight();
-				Float marginBottom = margin.getBottom();
-
-				if (marginLeft != null)
-					finalWidth += marginLeft;
-
-				if (marginRight != null)
-					finalWidth += marginRight;
-
-				if (marginTop != null)
-					finalHeight += marginTop;
-
-				if (marginBottom != null)
-					finalHeight += marginBottom;
-			}
-
-			if (minWidth != null && finalWidth < minWidth) {
-				finalWidth = minWidth;
-			} else if (maxWidth != null && finalWidth > maxWidth) {
-				finalWidth = maxWidth;
-			}
-
-			if (minHeight != null && finalHeight < minHeight) {
-				finalHeight = minHeight;
-			} else if (maxHeight != null && finalHeight > maxHeight) {
-				finalHeight = maxHeight;
-			}
-
-			preferredSize = new Size(finalWidth, finalHeight);
+			if (marginBottom != null)
+				finalHeight += marginBottom;
 		}
+
+		if (minWidth != null && finalWidth < minWidth) {
+			finalWidth = minWidth;
+		} else if (maxWidth != null && finalWidth > maxWidth) {
+			finalWidth = maxWidth;
+		}
+
+		if (minHeight != null && finalHeight < minHeight) {
+			finalHeight = minHeight;
+		} else if (maxHeight != null && finalHeight > maxHeight) {
+			finalHeight = maxHeight;
+		}
+
+		return new Size(finalWidth, finalHeight);
 	}
 
 	/**

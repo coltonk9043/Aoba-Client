@@ -58,9 +58,9 @@ public class StringComponent extends Component implements FontChangedListener {
 	}
 
 	@Override
-	public void measure(Size availableSize) {
+	public Size measure(Size availableSize) {
 		recalculateLines(availableSize);
-		preferredSize = new Size(availableSize.getWidth(), text.size() * 28f);
+		return new Size(availableSize.getWidth(), text.size() * 28f);
 	}
 
 	@Override

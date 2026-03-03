@@ -41,7 +41,7 @@ public class GridComponent extends Component {
 	}
 
 	@Override
-	public void measure(Size availableSize) {
+	public Size measure(Size availableSize) {
 		List<UIElement> children = getChildren();
 
 		int numChildren = children.size();
@@ -58,7 +58,7 @@ public class GridComponent extends Component {
 		if (numChildren > 0) {
 			// Force measure all children to get their heights.
 			for (UIElement element : children) {
-				element.measure(availableSize);
+				element.measureCore(availableSize);
 				sumHeight = Math.max(sumHeight, element.getPreferredSize().getHeight());
 			}
 
@@ -132,14 +132,13 @@ public class GridComponent extends Component {
 					rowHeight = availableSize.getHeight();
 
 				Size newSize = new Size(columnWidth, rowHeight);
-				element.measure(newSize);
+				element.measureCore(newSize);
 				iteration++;
 			}
 		}
 
 		// Add up the size after the fact.
-		Size newSize = new Size(sumWidth, sumHeight);
-		preferredSize = newSize;
+		return new Size(sumWidth, sumHeight);
 	}
 
 	@Override
