@@ -68,7 +68,7 @@ import net.aoba.module.modules.render.ItemESP;
 import net.aoba.module.modules.render.NoRender;
 import net.aoba.module.modules.render.POV;
 import net.aoba.module.modules.render.PlayerESP;
-import net.aoba.module.modules.render.SpawnerESP;
+import net.aoba.module.modules.render.BlockESP;
 import net.aoba.module.modules.render.Tooltips;
 import net.aoba.module.modules.render.Tracer;
 import net.aoba.module.modules.render.Trajectory;
@@ -106,6 +106,7 @@ public class ModuleManager implements KeyDownListener {
 	public AutoRespawn autorespawn = new AutoRespawn();
 	public AutoWalk autowalk = new AutoWalk();
 	public BedAura bedAura = new BedAura();
+	public BlockESP blockesp = new BlockESP();
 	public BowAimbot bowaimbot = new BowAimbot();
 	public Breadcrumbs breadcrumbs = new Breadcrumbs();
 	public ChestESP chestesp = new ChestESP();
@@ -148,7 +149,6 @@ public class ModuleManager implements KeyDownListener {
 	public Safewalk safewalk = new Safewalk();
 	public Scaffold scaffold = new Scaffold();
 	public Sneak sneak = new Sneak();
-	public SpawnerESP spawneresp = new SpawnerESP();
 	public Speed speed = new Speed();
 	public Spider spider = new Spider();
 	public Sprint sprint = new Sprint();

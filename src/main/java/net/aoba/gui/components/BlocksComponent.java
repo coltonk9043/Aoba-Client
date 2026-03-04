@@ -97,9 +97,9 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 					Block block = BuiltInRegistries.BLOCK.byId(index);
 
 					if (blocks.getValue().contains(block)) {
-						Render2D.drawBox(drawContext, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1),
-								((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25)), BLOCK_WIDTH,
-								BLOCK_WIDTH, new Color(0, 255, 0, 55));
+						Render2D.drawBox(drawContext, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1) / 2.0f,
+								((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25)) / 2.0f, BLOCK_WIDTH / 2.0f,
+								BLOCK_WIDTH / 2.0f, new Color(0, 255, 0, 55));
 					}
 					Render2D.drawItem(drawContext, new ItemStack(block.asItem()),
 							(int) ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN)) + 2) / 2.0f),
