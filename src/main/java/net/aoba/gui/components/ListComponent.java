@@ -14,12 +14,14 @@ import java.util.function.Consumer;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
+import net.aoba.gui.GridDefinition;
+import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
+import net.aoba.gui.TextAlign;
+import net.aoba.gui.colors.Colors;
 import net.aoba.settings.types.StringSetting;
-import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.GuiGraphics;
 
 public class ListComponent extends Component implements MouseClickListener {
 	private StringSetting listSetting;
@@ -28,30 +30,68 @@ public class ListComponent extends Component implements MouseClickListener {
 	private int selectedIndex;
 	private Consumer<String> onChanged;
 
+	private final StringComponent leftArrow;
+	private final StringComponent selectedLabel;
+	private final StringComponent rightArrow;
+
 	public ListComponent(List<String> itemsSource) {
-		this.itemsSource = itemsSource;
-		setHeight(30.0f);
+		this(itemsSource, (StringSetting) null);
 	}
 
 	public ListComponent(List<String> itemsSource, Consumer<String> onChanged) {
-		this.itemsSource = itemsSource;
+		this(itemsSource, (StringSetting) null);
 		this.onChanged = onChanged;
-		setHeight(30.0f);
 	}
 
 	public ListComponent(List<String> itemsSource, StringSetting listSetting) {
-        this.listSetting = listSetting;
 		this.itemsSource = itemsSource;
-		int idx = itemsSource.indexOf(listSetting.getValue());
-		if (idx >= 0) this.selectedIndex = idx;
-		this.listSetting.addOnUpdate(this::onSettingValueChanged);
-		setHeight(30.0f);
+		this.listSetting = listSetting;
+
+		if (listSetting != null) {
+			int idx = itemsSource.indexOf(listSetting.getValue());
+			if (idx >= 0) this.selectedIndex = idx;
+			this.listSetting.addOnUpdate(this::onSettingValueChanged);
+		}
+
+		GridComponent grid = new GridComponent();
+		grid.addColumnDefinition(new GridDefinition(30, RelativeUnit.Absolute));
+		grid.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative));
+		grid.addColumnDefinition(new GridDefinition(30, RelativeUnit.Absolute));
+
+		leftArrow = new StringComponent("<<", GuiManager.foregroundColor.getValue(), false);
+		leftArrow.setTextAlign(TextAlign.Center);
+		leftArrow.setHeight(30.0f);
+
+		selectedLabel = new StringComponent("", Colors.White, false);
+		selectedLabel.setTextAlign(TextAlign.Center);
+		selectedLabel.setHeight(30.0f);
+
+		rightArrow = new StringComponent(">>", GuiManager.foregroundColor.getValue(), false);
+		rightArrow.setTextAlign(TextAlign.Center);
+		rightArrow.setHeight(30.0f);
+
+		grid.addChild(leftArrow);
+		grid.addChild(selectedLabel);
+		grid.addChild(rightArrow);
+
+		addChild(grid);
+		updateSelectedLabel();
 	}
 
 	private void onSettingValueChanged(String s) {
 		int i = this.itemsSource.indexOf(s);
-		if (i >= 0 && i != this.selectedIndex)
+		if (i >= 0 && i != this.selectedIndex) {
 			this.selectedIndex = i;
+			updateSelectedLabel();
+		}
+	}
+
+	private void updateSelectedLabel() {
+		if (itemsSource != null && !itemsSource.isEmpty() && selectedIndex < itemsSource.size()) {
+			selectedLabel.setText(itemsSource.get(selectedIndex));
+		} else {
+			selectedLabel.setText("");
+		}
 	}
 
 	public int getSelectedIndex() {
@@ -83,27 +123,9 @@ public class ListComponent extends Component implements MouseClickListener {
 			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
 	}
 
-	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-
-		if (itemsSource.size() > 0) {
-			String selected = itemsSource.get(selectedIndex);
-			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().width(selected);
-			Render2D.drawString(drawContext, selected,
-					actualX + (actualWidth / 2.0f) - stringWidth, actualY + 8, 0xFFFFFF);
-		}
-
-		Render2D.drawString(drawContext, "<<", actualX + 8, actualY + 4, GuiManager.foregroundColor.getValue());
-		Render2D.drawString(drawContext, ">>", actualX + 8 + (actualWidth - 34), actualY + 4,
-				GuiManager.foregroundColor.getValue());
-	}
-
 	public void setSelectedIndex(int index) {
 		selectedIndex = index;
+		updateSelectedLabel();
 
 		if (listSetting != null)
 			listSetting.setValue(itemsSource.get(selectedIndex));
@@ -118,12 +140,12 @@ public class ListComponent extends Component implements MouseClickListener {
 		Rectangle actualSize = getActualSize();
 		if (actualSize != null && actualSize.isDrawable()) {
 			if (event.button == MouseButton.LEFT) {
-				if (getActualSize().getY() < event.mouseY
-						&& event.mouseY < getActualSize().getY() + getActualSize().getHeight()) {
+				if (actualSize.getY() < event.mouseY
+						&& event.mouseY < actualSize.getY() + actualSize.getHeight()) {
 
 					float mouseX = (float) event.mouseX;
-					float actualX = getActualSize().getX();
-					float actualWidth = getActualSize().getWidth();
+					float actualX = actualSize.getX();
+					float actualWidth = actualSize.getWidth();
 
 					if (mouseX > actualX && mouseX < (actualX + 32)) {
 						setSelectedIndex(Math.max(selectedIndex - 1, 0));

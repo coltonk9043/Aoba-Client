@@ -55,7 +55,7 @@ public class ButtonComponent extends Component {
 
 		Color color = GuiManager.foregroundColor.getValue();
 		if (hovered) {
-			color = color.add(45, 45, 45);
+			color = color.add(55, 55, 55);
 		}
 
 		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, GuiManager.roundingRadius.getValue(),

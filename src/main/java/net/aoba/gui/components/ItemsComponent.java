@@ -11,19 +11,21 @@ package net.aoba.gui.components;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
 import net.aoba.gui.UIElement;
 import net.aoba.utils.types.IObservableList;
 
 public class ItemsComponent<T> extends Component {
 	private List<T> itemsSource;
 	private Function<T, UIElement> itemGenerator;
+
 	private final Consumer<IObservableList<T>> observableListener = this::onItemsSourceChanged;
 
-	private final Component parentComponent;
+	private final PanelComponent parentComponent;
 
 	public ItemsComponent(List<T> itemsSource) {
 		this.itemsSource = itemsSource;
-		
 		StackPanelComponent newParent = new StackPanelComponent();
 		newParent.setSpacing(4f);
 		parentComponent = newParent;
@@ -34,9 +36,21 @@ public class ItemsComponent<T> extends Component {
 	public ItemsComponent(List<T> itemsSource, Function<T, UIElement> itemGenerator) {
 		this.itemGenerator = itemGenerator;
 		this.itemsSource = itemsSource;
+		
+		// By default use a StackPanel
 		StackPanelComponent newParent = new StackPanelComponent();
 		newParent.setSpacing(4f);
 		parentComponent = newParent;
+
+		addChild(parentComponent);
+		subscribeToItemsSource();
+	}
+	
+	public ItemsComponent(List<T> itemsSource, Supplier<PanelComponent> parentGenerator, Function<T, UIElement> itemGenerator) {
+		this.itemGenerator = itemGenerator;
+		this.itemsSource = itemsSource;
+		
+		parentComponent = parentGenerator.get();
 
 		addChild(parentComponent);
 		subscribeToItemsSource();

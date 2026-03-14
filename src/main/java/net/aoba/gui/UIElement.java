@@ -18,14 +18,10 @@ import net.aoba.AobaClient;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.events.MouseScrollEvent;
-import net.aoba.gui.colors.Colors;
-import net.aoba.utils.render.Render2D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 public abstract class UIElement {
-	public static boolean DEBUG = false;
-
 	protected static Minecraft MC = Minecraft.getInstance();
 	protected static AobaClient AOBA = Aoba.getInstance();
 
@@ -118,10 +114,6 @@ public abstract class UIElement {
 	 * @param partialTicks Partial Ticks of the game.
 	 */
 	public void draw(GuiGraphics drawContext, float partialTicks) {
-		if (DEBUG) {
-			Render2D.drawBoxOutline(drawContext, actualSize, Colors.Red);
-		}
-
 		if (isVisible()) {
 			for (UIElement child : children) {
 				if (child.visible) {
@@ -486,7 +478,9 @@ public abstract class UIElement {
 			Float h = getHeight();
 			float rw = Math.max(w != null ? w : 0f, preferredSize.getWidth());
 			float rh = Math.max(h != null ? h : 0f, preferredSize.getHeight());
-			Rectangle rect = new Rectangle(0f, 0f, rw, rh);
+			float x = actualSize.getX() != null ? actualSize.getX() : 0f;
+			float y = actualSize.getY() != null ? actualSize.getY() : 0f;
+			Rectangle rect = new Rectangle(x, y, rw, rh);
 			arrange(rect);
 		}
 	}

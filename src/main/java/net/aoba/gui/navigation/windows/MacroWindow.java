@@ -8,17 +8,16 @@
 
 package net.aoba.gui.navigation.windows;
 
-import java.awt.RenderingHints.Key;
 import java.util.function.Function;
-
+import java.util.function.Supplier;
 import com.mojang.blaze3d.platform.InputConstants;
-
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.GridDefinition;
 import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.HorizontalAlignment;
 import net.aoba.gui.TextAlign;
+import net.aoba.gui.Thickness;
 import net.aoba.gui.UIElement;
 import net.aoba.gui.VerticalAlignment;
 import net.aoba.gui.components.ButtonComponent;
@@ -26,6 +25,8 @@ import net.aoba.gui.components.CheckboxComponent;
 import net.aoba.gui.components.GridComponent;
 import net.aoba.gui.components.ItemsComponent;
 import net.aoba.gui.components.KeybindComponent;
+import net.aoba.gui.components.PanelComponent;
+import net.aoba.gui.components.ScrollComponent;
 import net.aoba.gui.components.SeparatorComponent;
 import net.aoba.gui.components.StackPanelComponent;
 import net.aoba.gui.components.StringComponent;
@@ -238,7 +239,15 @@ public class MacroWindow extends Window {
 			return grid;
 		});
 
-		macrosList = new ItemsComponent<Macro>(Aoba.getInstance().macroManager.getMacros(), macroItemFactory);
+		Supplier<PanelComponent> macroListParentSupplier = () -> {
+			ScrollComponent scroll =  new ScrollComponent();
+			scroll.setMaxHeight(300f);
+			scroll.setMargin(new Thickness(4f));
+			scroll.setSpacing(4f);
+			return scroll;
+		};
+		
+		macrosList = new ItemsComponent<Macro>(Aoba.getInstance().macroManager.getMacros(), macroListParentSupplier, macroItemFactory);
 		stackPanel.addChild(macrosList);
 
 		addChild(stackPanel);

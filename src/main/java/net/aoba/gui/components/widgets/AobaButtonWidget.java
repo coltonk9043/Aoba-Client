@@ -73,8 +73,8 @@ public class AobaButtonWidget extends AbstractButton {
 		int textX = getX() + (width - textWidth) / 2;
 		int textY = getY() + (height - textHeight) / 2 - (int) (2 * hoverProgress) + 2;
 
-		Render2D.drawStringWithScale(context, getMessage().getString(), textX, textY,
-				GuiManager.foregroundColor.getValue(), 1f);
+		context.drawString(MC.font, getMessage().getString(), textX, textY,
+				GuiManager.foregroundColor.getValue().getColorAsInt(), false);
 	}
 
 	@Override

@@ -25,6 +25,7 @@ public class AntiCheatWindow extends Window {
 	public AntiCheatWindow() {
 		super("AntiCheat", 50, 895);
 		StackPanelComponent stackPanel = new StackPanelComponent();
+		stackPanel.setSpacing(4f);
 		stackPanel.addChild(new StringComponent("AntiCheat Settings"));
 		stackPanel.addChild(new SeparatorComponent());
 		stackPanel.addChild(new EnumComponent<AntiCheat>(Aoba.getInstance().moduleManager.antiCheat));

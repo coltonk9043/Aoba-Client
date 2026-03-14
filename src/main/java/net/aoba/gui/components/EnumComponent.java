@@ -12,14 +12,16 @@ import java.util.function.Consumer;
 
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
+import net.aoba.gui.GridDefinition;
+import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.Rectangle;
+import net.aoba.gui.TextAlign;
+import net.aoba.gui.colors.Colors;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.input.CursorStyle;
-import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.GuiGraphics;
 
 public class EnumComponent<T extends Enum<T>> extends Component {
 	private T value;
@@ -30,11 +32,38 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 	private boolean hoveringLeftButton;
 	private boolean hoveringRightButton;
 
+	private StringComponent headerLabel;
+	private StringComponent leftArrow;
+	private StringComponent selectedLabel;
+	private StringComponent rightArrow;
+
 	public EnumComponent(T value, Consumer<T> onChanged) {
 		this.value = value;
 		this.enumConstants = value.getDeclaringClass().getEnumConstants();
 		this.onChanged = onChanged;
-		setHeight(55.0f);
+
+		GridComponent grid = new GridComponent();
+		grid.addColumnDefinition(new GridDefinition(16, RelativeUnit.Absolute));
+		grid.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative));
+		grid.addColumnDefinition(new GridDefinition(16, RelativeUnit.Absolute));
+
+		leftArrow = new StringComponent("<", Colors.White, false);
+		leftArrow.setTextAlign(TextAlign.Center);
+		leftArrow.setHeight(25.0f);
+
+		selectedLabel = new StringComponent(value.toString(), Colors.White, false);
+		selectedLabel.setTextAlign(TextAlign.Center);
+		selectedLabel.setHeight(25.0f);
+
+		rightArrow = new StringComponent(">", Colors.White, false);
+		rightArrow.setTextAlign(TextAlign.Center);
+		rightArrow.setHeight(25.0f);
+
+		grid.addChild(leftArrow);
+		grid.addChild(selectedLabel);
+		grid.addChild(rightArrow);
+
+		addChild(grid);
 	}
 
 	public EnumComponent(EnumSetting<T> setting) {
@@ -43,12 +72,46 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 		this.setting = setting;
 		this.setting.addOnUpdate(this::onSettingValueChanged);
 		header = setting.displayName;
-		setHeight(55.0f);
+
+		StackPanelComponent stack = new StackPanelComponent();
+		stack.setSpacing(4f);
+		headerLabel = new StringComponent(header, Colors.White, false);
+		stack.addChild(headerLabel);
+
+		GridComponent grid = new GridComponent();
+		grid.addColumnDefinition(new GridDefinition(16, RelativeUnit.Absolute));
+		grid.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative));
+		grid.addColumnDefinition(new GridDefinition(16, RelativeUnit.Absolute));
+
+		leftArrow = new StringComponent("<", Colors.White, false);
+		leftArrow.setTextAlign(TextAlign.Center);
+		leftArrow.setHeight(25.0f);
+
+		selectedLabel = new StringComponent(value.toString(), Colors.White, false);
+		selectedLabel.setTextAlign(TextAlign.Center);
+		selectedLabel.setHeight(25.0f);
+
+		rightArrow = new StringComponent(">", Colors.White, false);
+		rightArrow.setTextAlign(TextAlign.Center);
+		rightArrow.setHeight(25.0f);
+
+		grid.addChild(leftArrow);
+		grid.addChild(selectedLabel);
+		grid.addChild(rightArrow);
+		stack.addChild(grid);
+
+		addChild(stack);
 	}
 
 	private void onSettingValueChanged(T v) {
-		if (v != this.value)
+		if (v != this.value) {
 			this.value = v;
+			updateSelectedLabel();
+		}
+	}
+
+	private void updateSelectedLabel() {
+		selectedLabel.setText(value.toString());
 	}
 
 	public T getValue() {
@@ -57,39 +120,9 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 
 	public void setValue(T value) {
 		this.value = value;
+		updateSelectedLabel();
 		if (setting != null)
 			setting.setValue(value);
-	}
-
-	@Override
-	public void update() {
-		super.update();
-	}
-
-	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
-
-		float actualX = actualSize.getX();
-		float actualY = actualSize.getY();
-		float actualWidth = actualSize.getWidth();
-
-		// Draw Header
-		if (header != null) {
-			Render2D.drawString(drawContext, header, actualX, actualY + 8, 0xFFFFFF);
-		}
-
-		// Left Arrow and Right Arrow
-		Render2D.drawString(drawContext, "<", actualX, actualY + 34,
-				hoveringLeftButton ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
-		Render2D.drawString(drawContext, ">", actualX + actualWidth - 8.0f, actualY + 34,
-				hoveringRightButton ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
-
-		// Text
-		String enumValue = value.toString();
-		float stringWidth = Render2D.getStringWidth(enumValue);
-		Render2D.drawString(drawContext, enumValue, actualX + (actualWidth / 2.0f) - stringWidth, actualY + 34,
-				0xFFFFFF);
 	}
 
 	@Override
@@ -114,6 +147,7 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 					currentIndex = (currentIndex + 1) % enumCount;
 
 				value = enumConstants[currentIndex];
+				updateSelectedLabel();
 				if (setting != null)
 					setting.setValue(value);
 				if (onChanged != null)
@@ -133,12 +167,15 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 		float actualHeight = actualSize.getHeight();
 
 		Rectangle leftArrowHitbox = new Rectangle(actualX, actualY, 16.0f, actualHeight);
-		Rectangle rightArrowHitbox = new Rectangle(actualX + actualWidth - 12.0f, actualY, 16.0f, actualHeight);
+		Rectangle rightArrowHitbox = new Rectangle(actualX + actualWidth - 16.0f, actualY, 16.0f, actualHeight);
 
 		boolean wasHoveringLeftButton = hoveringLeftButton;
 		boolean wasHoveringRightButton = hoveringRightButton;
 		hoveringLeftButton = leftArrowHitbox.intersects((float) event.getX(), (float) event.getY());
 		hoveringRightButton = rightArrowHitbox.intersects((float) event.getX(), (float) event.getY());
+
+		leftArrow.setColor(hoveringLeftButton ? GuiManager.foregroundColor.getValue() : Colors.White);
+		rightArrow.setColor(hoveringRightButton ? GuiManager.foregroundColor.getValue() : Colors.White);
 
 		if (hoveringLeftButton || hoveringRightButton)
 			GuiManager.setCursor(CursorStyle.Click);

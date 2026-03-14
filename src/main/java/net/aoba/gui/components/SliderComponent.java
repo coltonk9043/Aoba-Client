@@ -50,8 +50,6 @@ public class SliderComponent extends Component {
 		this.value = value;
 		currentSliderPosition = (value - minValue) / (maxValue - minValue);
 
-		setHeight(45.0f);
-
 		GridComponent grid = new GridComponent();
 		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
 		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));

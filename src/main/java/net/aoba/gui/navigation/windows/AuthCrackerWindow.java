@@ -43,7 +43,7 @@ public class AuthCrackerWindow extends Window {
 
 		minWidth = 350f;
 		StackPanelComponent stackPanel = new StackPanelComponent();
-
+		stackPanel.setSpacing(4f);
 		stackPanel.addChild(new StringComponent("AuthCracker"));
 		stackPanel.addChild(new SeparatorComponent());
 

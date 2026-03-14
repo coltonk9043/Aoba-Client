@@ -713,13 +713,7 @@ public class Render2D {
 	 * @param color       Color to draw the string.
 	 */
 	public static void drawString(GuiGraphics drawContext, String text, float x, float y, Color color) {
-		AobaClient aoba = Aoba.getInstance();
-		Matrix3x2fStack matrixStack = drawContext.pose();
-		matrixStack.pushMatrix();
-		matrixStack.scale(2.0f, 2.0f);
-		matrixStack.translate(-x / 2, -y / 2);
-		drawContext.drawString(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color.getColorAsInt(), false);
-		matrixStack.popMatrix();
+		drawStringWithScale(drawContext, text, x, y, color.getColorAsInt(), 2.0f);
 	}
 
 	/**
@@ -732,16 +726,7 @@ public class Render2D {
 	 * @param color       Color (as int) to draw the string.
 	 */
 	public static void drawString(GuiGraphics drawContext, String text, float x, float y, int color) {
-		if ((color & 0xFF000000) == 0) {
-			color |= 0xFF000000;
-		}
-		AobaClient aoba = Aoba.getInstance();
-		Matrix3x2fStack matrixStack = drawContext.pose();
-		matrixStack.pushMatrix();
-		matrixStack.scale(2.0f, 2.0f);
-		matrixStack.translate(-x / 2, -y / 2);
-		drawContext.drawString(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color, false);
-		matrixStack.popMatrix();
+		drawStringWithScale(drawContext, text, x, y, color, 2.0f);
 	}
 
 	/**
@@ -756,21 +741,12 @@ public class Render2D {
 	 */
 	public static void drawStringWithScale(GuiGraphics drawContext, String text, float x, float y, Color color,
 			float scale) {
-		AobaClient aoba = Aoba.getInstance();
-		Matrix3x2fStack matrixStack = drawContext.pose();
-		matrixStack.pushMatrix();
-		matrixStack.scale(scale, scale);
-		if (scale > 1.0f) {
-			matrixStack.translate(-x / scale, -y / scale);
-		} else {
-			matrixStack.translate((x / scale) - x, (y * scale) - y);
-		}
-		drawContext.drawString(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color.getColorAsInt(), false);
-		matrixStack.popMatrix();
+		drawStringWithScale(drawContext, text, x, y, color.getColorAsInt(), scale);
 	}
 
 	/**
 	 * Draws a string at a certain position with a scale.
+	 * Uses immediate-mode rendering to avoid deferred text batching issues.
 	 *
 	 * @param drawContext Draw context.
 	 * @param text        Text to draw on the screen.
@@ -784,17 +760,17 @@ public class Render2D {
 		if ((color & 0xFF000000) == 0) {
 			color |= 0xFF000000;
 		}
-		AobaClient aoba = Aoba.getInstance();
-		Matrix3x2fStack matrixStack = drawContext.pose();
-		matrixStack.pushMatrix();
-		matrixStack.scale(scale, scale);
-		if (scale > 1.0f) {
-			matrixStack.translate(-x / scale, -y / scale);
-		} else {
-			matrixStack.translate((x / scale) - x, (y * scale) - y);
+
+		Font font = Aoba.getInstance().fontManager.GetRenderer();
+		MultiBufferSource.BufferSource bufferSource = MC.renderBuffers().bufferSource();
+
+		Matrix4f matrix = getAsMatrix(drawContext);
+		if (scale != 1.0f) {
+			matrix.scale(scale, scale, 1.0f);
+			matrix.translate(-x + (x / scale), -y + (y / scale), 0.0f);
 		}
-		drawContext.drawString(aoba.fontManager.GetRenderer(), text, (int) x, (int) y, color, false);
-		matrixStack.popMatrix();
+		font.drawInBatch(text, x, y, color, false, matrix, bufferSource, Font.DisplayMode.NORMAL, 0, 0xF000F0);
+		bufferSource.endBatch();
 	}
 
 	/**
@@ -838,6 +814,29 @@ public class Render2D {
 
 			bufferBuilder.addVertex(matrix, x + radiusX1, y + radiusY1, 0).setColor(colorInt);
 		}
+	}
+
+	/**
+	 * Enables scissor clipping to the given rectangle.
+	 * Must be paired with a call to {@link #endClip()}.
+	 *
+	 * @param clip Rectangle defining the clipping region in GUI-scaled coordinates.
+	 */
+	public static void beginClip(Rectangle clip) {
+		int x = (int) clip.getX().floatValue();
+		int y = MC.getWindow().getHeight() - (int) (clip.getY() + clip.getHeight());
+		int w = (int) clip.getWidth().floatValue();
+		int h = (int) clip.getHeight().floatValue();
+
+		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		GL11.glScissor(x, y, w, h);
+	}
+
+	/**
+	 * Disables scissor clipping previously enabled by {@link #beginClip(Rectangle)}.
+	 */
+	public static void endClip() {
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 
 	/**

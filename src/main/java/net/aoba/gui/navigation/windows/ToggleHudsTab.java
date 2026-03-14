@@ -24,8 +24,7 @@ public class ToggleHudsTab extends Window {
 		super("Toggle HUDs", 0, 0);
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
-		stackPanel.setMargin(new Thickness(null, 30f, null, null));
-
+		stackPanel.setSpacing(4f);
 		stackPanel.addChild(new StringComponent("Toggle HUDs"));
 		stackPanel.addChild(new SeparatorComponent());
 

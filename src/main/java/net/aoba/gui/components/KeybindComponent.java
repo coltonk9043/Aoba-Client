@@ -48,7 +48,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
 				new Color(115, 115, 115, 200),
 				GuiManager.borderColor.getValue(),
 				3f);
-		keyButton.setPadding(new Thickness(4f));
+		keyButton.setPadding(new Thickness(10f, 4f, 10f, 4f));
 		keyButton.setVerticalAlignment(VerticalAlignment.Center);
 
 		keyTextComponent = new StringComponent("N/A");

@@ -33,8 +33,7 @@ public class HudOptionsWindow extends Window {
 		minWidth = 340.0f;
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
-		stackPanel.setMargin(new Thickness(null, 30f, null, null));
-
+		stackPanel.setSpacing(4f);
 		List<String> fontNames = Aoba.getInstance().fontManager.fontRenderers.keySet().stream().toList();
 		LogUtils.getLogger().info(Arrays.toString(fontNames.toArray()));
 
