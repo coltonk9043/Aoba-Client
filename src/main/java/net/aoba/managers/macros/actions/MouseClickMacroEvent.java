@@ -49,6 +49,14 @@ public class MouseClickMacroEvent extends MacroEvent {
 		mods = in.readInt();
 	}
 
+	public int getButton() {
+		return button;
+	}
+
+	public int getAction() {
+		return action;
+	}
+
 	@Override
 	public void execute() {
 		MouseHandler mouse = MC.mouseHandler;

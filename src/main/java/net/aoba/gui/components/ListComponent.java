@@ -9,14 +9,13 @@
 package net.aoba.gui.components;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.MouseClickListener;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
-import net.aoba.gui.Size;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseButton;
@@ -27,21 +26,32 @@ public class ListComponent extends Component implements MouseClickListener {
 
 	private List<String> itemsSource;
 	private int selectedIndex;
+	private Consumer<String> onChanged;
 
 	public ListComponent(List<String> itemsSource) {
-        setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.itemsSource = itemsSource;
+		setHeight(30.0f);
+	}
+
+	public ListComponent(List<String> itemsSource, Consumer<String> onChanged) {
+		this.itemsSource = itemsSource;
+		this.onChanged = onChanged;
+		setHeight(30.0f);
 	}
 
 	public ListComponent(List<String> itemsSource, StringSetting listSetting) {
         this.listSetting = listSetting;
-		setMargin(new Margin(8f, 2f, 8f, 2f));
 		this.itemsSource = itemsSource;
+		int idx = itemsSource.indexOf(listSetting.getValue());
+		if (idx >= 0) this.selectedIndex = idx;
+		this.listSetting.addOnUpdate(this::onSettingValueChanged);
+		setHeight(30.0f);
 	}
 
-	@Override
-	public Size measure(Size availableSize) {
-		return new Size(availableSize.getWidth(), 30.0f);
+	private void onSettingValueChanged(String s) {
+		int i = this.itemsSource.indexOf(s);
+		if (i >= 0 && i != this.selectedIndex)
+			this.selectedIndex = i;
 	}
 
 	public int getSelectedIndex() {
@@ -80,13 +90,10 @@ public class ListComponent extends Component implements MouseClickListener {
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
 
-		if (listSetting != null) {
-			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().width(listSetting.getValue());
-			Render2D.drawString(drawContext, listSetting.getValue(), actualX + (actualWidth / 2.0f) - stringWidth,
-					actualY + 8, 0xFFFFFF);
-		} else if (itemsSource.size() > 0) {
-			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().width(itemsSource.get(selectedIndex));
-			Render2D.drawString(drawContext, itemsSource.get(selectedIndex),
+		if (itemsSource.size() > 0) {
+			String selected = itemsSource.get(selectedIndex);
+			float stringWidth = Aoba.getInstance().fontManager.GetRenderer().width(selected);
+			Render2D.drawString(drawContext, selected,
 					actualX + (actualWidth / 2.0f) - stringWidth, actualY + 8, 0xFFFFFF);
 		}
 
@@ -98,9 +105,10 @@ public class ListComponent extends Component implements MouseClickListener {
 	public void setSelectedIndex(int index) {
 		selectedIndex = index;
 
-		if (listSetting != null) {
+		if (listSetting != null)
 			listSetting.setValue(itemsSource.get(selectedIndex));
-		}
+		if (onChanged != null)
+			onChanged.accept(itemsSource.get(selectedIndex));
 	}
 
 	@Override

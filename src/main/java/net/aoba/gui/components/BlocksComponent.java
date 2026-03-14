@@ -8,13 +8,15 @@
 
 package net.aoba.gui.components;
 
+import java.util.HashSet;
+import java.util.function.Consumer;
+
 import org.joml.Matrix3x2fStack;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseScrollEvent;
 import net.aoba.event.listeners.MouseScrollListener;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.Size;
 import net.aoba.gui.colors.Color;
@@ -33,7 +35,9 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 	private static final float COLLAPSED_HEIGHT = 30f;
 	private static final float EXPANDED_HEIGHT = 135f;
 
-	private final BlocksSetting blocks;
+	private HashSet<Block> blocks;
+	private BlocksSetting blocksSetting;
+	private Consumer<HashSet<Block>> onChanged;
 	private final String text;
 	private int visibleRows;
 	private int visibleColumns;
@@ -41,17 +45,32 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 
 	private boolean collapsed = true;
 
-	/**
-	 * Constructor for button component.
-	 *
-	 * @param setting The {@link BlocksSetting} BlockSetting that this component
-	 *                will use.
-	 */
+	public BlocksComponent(String text, HashSet<Block> blocks, Consumer<HashSet<Block>> onChanged) {
+		this.text = text;
+		this.blocks = blocks;
+		this.onChanged = onChanged;
+	}
+
 	public BlocksComponent(BlocksSetting setting) {
 		text = setting.displayName;
-		blocks = setting;
+		this.blocksSetting = setting;
+		this.blocks = setting.getValue();
+		this.blocksSetting.addOnUpdate(this::onSettingValueChanged);
+	}
 
-		setMargin(new Margin(8f, 2f, 8f, 2f));
+	private void onSettingValueChanged(HashSet<Block> b) {
+		if (b != this.blocks)
+			this.blocks = b;
+	}
+
+	public HashSet<Block> getBlocks() {
+		return blocks;
+	}
+
+	public void setBlocks(HashSet<Block> blocks) {
+		this.blocks = blocks;
+		if (blocksSetting != null)
+			blocksSetting.setValue(blocks);
 	}
 
 	@Override
@@ -96,7 +115,7 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 
 					Block block = BuiltInRegistries.BLOCK.byId(index);
 
-					if (blocks.getValue().contains(block)) {
+					if (blocks.contains(block)) {
 						Render2D.drawBox(drawContext, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1) / 2.0f,
 								((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25)) / 2.0f, BLOCK_WIDTH / 2.0f,
 								BLOCK_WIDTH / 2.0f, new Color(0, 255, 0, 55));
@@ -163,13 +182,15 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 
 						Block block = BuiltInRegistries.BLOCK.byId(index);
 						if (block != null) {
-							if (blocks.getValue().contains(block)) {
-								blocks.getValue().remove(block);
-								blocks.update();
-							} else {
-								blocks.getValue().add(block);
-								blocks.update();
-							}
+							if (blocks.contains(block))
+								blocks.remove(block);
+							else
+								blocks.add(block);
+
+							if (blocksSetting != null)
+								blocksSetting.setValue(blocks);
+							if (onChanged != null)
+								onChanged.accept(blocks);
 
 							event.cancel();
 						}

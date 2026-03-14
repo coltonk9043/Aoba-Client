@@ -8,82 +8,96 @@
 
 package net.aoba.gui.components;
 
-import net.aoba.event.events.MouseClickEvent;
+import java.util.function.Consumer;
+
+import net.aoba.gui.GridDefinition;
+import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Margin;
-import net.aoba.gui.Size;
+import net.aoba.gui.VerticalAlignment;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.types.BooleanSetting;
-import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.GuiGraphics;
 
 public class CheckboxComponent extends Component {
-	private final String text;
-	private final BooleanSetting checkbox;
+	private static final Color COLOR_ON = new Color(0, 154, 0, 200);
+	private static final Color COLOR_OFF = new Color(154, 0, 0, 200);
+
+	private boolean checked;
+	private BooleanSetting setting;
+	private Consumer<Boolean> onChanged;
 	private Runnable onClick;
+	private final RectangleComponent checkBox;
 
-	public CheckboxComponent(BooleanSetting checkbox) {
-		text = checkbox.displayName;
-		this.checkbox = checkbox;
+	private CheckboxComponent(String text) {
+		GridComponent grid = new GridComponent();
+		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
+		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));
 
-		setMargin(new Margin(8f, 2f, 8f, 2f));
-	}
+		StringComponent label = new StringComponent(text);
+		label.setVerticalAlignment(VerticalAlignment.Center);
+		grid.addChild(label);
 
-	@Override
-	public Size measure(Size availableSize) {
-		return new Size(availableSize.getWidth(), 30.0f);
-	}
+		checkBox = new RectangleComponent(
+				checked ? COLOR_ON : COLOR_OFF,
+				GuiManager.borderColor.getValue(),
+				3f);
+		checkBox.setWidth(20f);
+		checkBox.setHeight(20f);
+		checkBox.setVerticalAlignment(VerticalAlignment.Center);
+		grid.addChild(checkBox);
 
-	/**
-	 * Draws the checkbox to the screen.
-	 *
-	 * @param drawContext  The current draw context of the game.
-	 * @param partialTicks The partial ticks used for interpolation.
-	 */
-	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
+		addChild(grid);
 
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-
-		// Determine fill color based on checkbox state
-		Color fillColor = checkbox.getValue() ? new Color(0, 154, 0, 200) : new Color(154, 0, 0, 200);
-
-		Render2D.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 24, actualY + 5, 20, 20, 3,
-				GuiManager.borderColor.getValue(), fillColor);
-	}
-
-	/**
-	 * Handles updating the Checkbox component.
-	 */
-	@Override
-	public void update() {
-		super.update();
-	}
-
-	@Override
-	public void onMouseClick(MouseClickEvent event) {
-		super.onMouseClick(event);
-		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-			if (hovered) {
-				checkbox.toggle();
-				if (onClick != null)
-					onClick.run();
-				event.cancel();
+		setOnClicked(e -> {
+			if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
+				toggle();
+				e.cancel();
 			}
+		});
+	}
+	
+	public CheckboxComponent(String text, boolean checked, Consumer<Boolean> onChanged) {
+		this(text);
+		this.checked = checked;
+		this.onChanged = onChanged;
+		checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
+	}
+
+	public CheckboxComponent(BooleanSetting setting) {
+		this(setting.displayName);
+		this.checked = setting.getValue();
+		this.setting = setting;
+		this.setting.addOnUpdate(this::onSettingValueChanged);
+		checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
+	}
+
+	private void toggle() {
+		checked = !checked;
+		checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
+		if (setting != null)
+			setting.setValue(checked);
+		if (onChanged != null)
+			onChanged.accept(checked);
+		if (onClick != null)
+			onClick.run();
+	}
+
+	private void onSettingValueChanged(Boolean v) {
+		if (v != this.checked) {
+			this.checked = v;
+			checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
 		}
 	}
 
 	public void setChecked(boolean checked) {
-		checkbox.setValue(checked);
+		this.checked = checked;
+		checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
+		if (setting != null)
+			setting.setValue(checked);
 	}
 
 	public boolean isChecked() {
-		return checkbox.getValue();
+		return checked;
 	}
 }

@@ -13,7 +13,8 @@ import java.io.IOException;
 
 import net.aoba.gui.GridDefinition;
 import net.aoba.gui.GridDefinition.RelativeUnit;
-import net.aoba.gui.Margin;
+import net.aoba.gui.Thickness;
+import net.aoba.gui.VerticalAlignment;
 import net.aoba.gui.TextAlign;
 import net.aoba.gui.components.ButtonComponent;
 import net.aoba.gui.components.GridComponent;
@@ -37,6 +38,7 @@ public class SettingsWindow extends Window {
 		super("Settings", 50, 770);
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
+		stackPanel.setSpacing(4f);		
 
 		// Title Bar
 		stackPanel.addChild(new StringComponent("Settings Manager"));
@@ -49,7 +51,6 @@ public class SettingsWindow extends Window {
 		loadConfigGrid.addColumnDefinition(new GridDefinition(100, RelativeUnit.Absolute));
 
 		configNames = new ListComponent(SettingManager.configNames);
-		configNames.setMargin(new Margin(2f, 4f, 2f, 4f));
 		loadConfigGrid.addChild(configNames);
 
 		// Load Config Button
@@ -62,6 +63,7 @@ public class SettingsWindow extends Window {
 
 		StringComponent buttonLoadString = new StringComponent("Load");
 		buttonLoadString.setTextAlign(TextAlign.Center);
+		buttonLoadString.setVerticalAlignment(VerticalAlignment.Center);
 		btnLoadConfig.addChild(buttonLoadString);
 
 		loadConfigGrid.addChild(btnLoadConfig);
@@ -69,12 +71,13 @@ public class SettingsWindow extends Window {
 
 		// Grid containing config name textbox and save button.
 		GridComponent fileSaveGrid = new GridComponent();
+		fileSaveGrid.setHorizontalSpacing(4f);
+		fileSaveGrid.setVerticalSpacing(4f);
 		fileSaveGrid.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative));
 		fileSaveGrid.addColumnDefinition(new GridDefinition(100, RelativeUnit.Absolute));
 
 		// Config Name TextBox
 		fileName = new TextBoxComponent();
-		fileName.setMargin(new Margin(8f, 4f, 0f, 4f));
 		fileSaveGrid.addChild(fileName);
 
 		// Save Button
@@ -101,6 +104,7 @@ public class SettingsWindow extends Window {
 		// Text inside of save button.
 		StringComponent buttonStr = new StringComponent("Save");
 		buttonStr.setTextAlign(TextAlign.Center);
+		buttonStr.setVerticalAlignment(VerticalAlignment.Center);
 		btnSaveACopy.addChild(buttonStr);
 		fileSaveGrid.addChild(btnSaveACopy);
 		stackPanel.addChild(fileSaveGrid);

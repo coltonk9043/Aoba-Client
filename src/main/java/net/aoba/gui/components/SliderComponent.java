@@ -8,12 +8,19 @@
 
 package net.aoba.gui.components;
 
+import java.util.function.Consumer;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
+import net.aoba.gui.Rectangle;
+import net.aoba.gui.GridDefinition;
+import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Margin;
-import net.aoba.gui.Size;
+import net.aoba.gui.HorizontalAlignment;
+import net.aoba.gui.TextWrapping;
+import net.aoba.gui.Thickness;
+import net.aoba.gui.VerticalAlignment;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.settings.types.FloatSetting;
@@ -31,32 +38,78 @@ public class SliderComponent extends Component {
 
 	private boolean isSliding = false;
 
-	FloatSetting floatSetting;
+	private FloatSetting floatSetting;
+	private Consumer<Float> onChanged;
 
-	public SliderComponent() {
-		floatSetting = null;
-		setMargin(new Margin(8f, 2f, 8f, 2f));
+	private final StringComponent valueComponent;
+	private final EllipseComponent thumbEllipse;
+
+	private SliderComponent(String headerText, float minValue, float maxValue, float value) {
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		this.value = value;
+		currentSliderPosition = (value - minValue) / (maxValue - minValue);
+
+		setHeight(45.0f);
+
+		GridComponent grid = new GridComponent();
+		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
+		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));
+
+		if (headerText != null) {
+			StringComponent headerComponent = new StringComponent(headerText);
+			headerComponent.setVerticalAlignment(VerticalAlignment.Center);
+			grid.addChild(headerComponent);
+		} else {
+			grid.addChild(new Component() {});
+		}
+
+		valueComponent = new StringComponent(String.format("%.02f", value));
+		valueComponent.setVerticalAlignment(VerticalAlignment.Center);
+		valueComponent.setTextWrapping(TextWrapping.NoWrap);
+		grid.addChild(valueComponent);
+
+		addChild(grid);
+
+		thumbEllipse = new EllipseComponent(GuiManager.foregroundColor.getValue());
+		thumbEllipse.setWidth(12f);
+		thumbEllipse.setHeight(12f);
+		thumbEllipse.setHorizontalAlignment(HorizontalAlignment.Left);
+		thumbEllipse.setMargin(new Thickness(0f, 29f, null, null));
+		addChild(thumbEllipse);
+	}
+
+	public SliderComponent(float minValue, float maxValue, float value, Consumer<Float> onChanged) {
+		this(null, minValue, maxValue, value);
+		this.onChanged = onChanged;
 	}
 
 	public SliderComponent(FloatSetting floatSetting) {
+		this(floatSetting.displayName, floatSetting.min_value, floatSetting.max_value, floatSetting.getValue());
 		this.floatSetting = floatSetting;
-		minValue = floatSetting.min_value;
-		maxValue = floatSetting.max_value;
-		header = floatSetting.displayName;
-		value = floatSetting.getValue();
-		currentSliderPosition = (value - minValue) / (maxValue - minValue);
+		floatSetting.addOnUpdate(this::onSettingValueChanged);
+	}
 
-		floatSetting.addOnUpdate(f -> {
+	private void onSettingValueChanged(Float f) {
+		if (f != value) {
 			value = f;
 			currentSliderPosition = Math.min(Math.max((value - minValue) / (maxValue - minValue), 0f), 1f);
-		});
+			valueComponent.setText(String.format("%.02f", value));
+			updateThumbPosition();
+		}
+	}
 
-		setMargin(new Margin(8f, 2f, 8f, 2f));
+	private void updateThumbPosition() {
+		float actualWidth = getActualSize().getWidth();
+		float leftOffset = actualWidth * currentSliderPosition - 6f;
+		thumbEllipse.setMargin(new Thickness(leftOffset, 29f, null, null));
+		thumbEllipse.setColor(GuiManager.foregroundColor.getValue());
 	}
 
 	@Override
-	public Size measure(Size availableSize) {
-		return new Size(availableSize.getWidth(), 45.0f);
+	public void arrange(Rectangle finalSize) {
+		super.arrange(finalSize);
+		updateThumbPosition();
 	}
 
 	public float getSliderPosition() {
@@ -65,6 +118,19 @@ public class SliderComponent extends Component {
 
 	public void setSliderPosition(float pos) {
 		currentSliderPosition = pos;
+	}
+
+	public float getValue() {
+		return value;
+	}
+
+	public void setValue(float value) {
+		this.value = value;
+		currentSliderPosition = Math.min(Math.max((value - minValue) / (maxValue - minValue), 0f), 1f);
+		valueComponent.setText(String.format("%.02f", this.value));
+		updateThumbPosition();
+		if (floatSetting != null)
+			floatSetting.setValue(value);
 	}
 
 	@Override
@@ -97,23 +163,18 @@ public class SliderComponent extends Component {
 
 			currentSliderPosition = targetPosition;
 			value = (currentSliderPosition * (maxValue - minValue)) + minValue;
+			valueComponent.setText(String.format("%.02f", value));
+			updateThumbPosition();
 
 			if (floatSetting != null)
 				floatSetting.setValue(value);
+			if (onChanged != null)
+				onChanged.accept(value);
 		}
-	}
-
-	@Override
-	public void update() {
-		super.update();
 	}
 
 	@Override
 	public void draw(GuiGraphics drawContext, float partialTicks) {
-		if (floatSetting == null) {
-			return;
-		}
-
 		float actualX = getActualSize().getX();
 		float actualY = getActualSize().getY();
 		float actualWidth = getActualSize().getWidth();
@@ -128,17 +189,6 @@ public class SliderComponent extends Component {
 		Render2D.drawBox(drawContext, actualX, actualY + 34, filledLength, 2, GuiManager.foregroundColor.getValue());
 		Render2D.drawBox(drawContext, actualX + filledLength, actualY + 34, (actualWidth - filledLength), 2,
 				new Color(255, 255, 255, 255));
-
-		Render2D.drawCircle(drawContext, actualX + filledLength, actualY + 35, 6,
-				GuiManager.foregroundColor.getValue());
-
-		if (header != null) {
-			Render2D.drawString(drawContext, header, actualX, actualY + 8, 0xFFFFFF);
-		}
-
-		String valueText = String.format("%.02f", value);
-		int textSize = MC.font.width(valueText) * 2;
-		Render2D.drawString(drawContext, valueText, actualX + actualWidth - 6 - textSize, actualY + 8, 0xFFFFFF);
 
 		super.draw(drawContext, partialTicks);
 	}

@@ -8,29 +8,105 @@
 
 package net.aoba.gui.components;
 
+import java.util.function.Consumer;
+
 import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
-import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
+import net.aoba.gui.GridDefinition;
+import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Margin;
-import net.aoba.gui.Size;
+import net.aoba.gui.HorizontalAlignment;
+import net.aoba.gui.TextWrapping;
+import net.aoba.gui.Thickness;
+import net.aoba.gui.VerticalAlignment;
 import net.aoba.gui.colors.Color;
 import net.aoba.settings.types.KeybindSetting;
-import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.GuiGraphics;
 
 public class KeybindComponent extends Component implements KeyDownListener {
 	private boolean listeningForKey;
-	private final KeybindSetting keyBind;
+	private Key key;
+	private KeybindSetting keyBind;
+	private Consumer<Key> onChanged;
+	private final StringComponent keyTextComponent;
 
+	public KeybindComponent() {
+		GridComponent grid = new GridComponent();
+		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
+		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));
+
+		StringComponent label = new StringComponent("Keybind");
+		label.setVerticalAlignment(VerticalAlignment.Center);
+		grid.addChild(label);
+
+		RectangleComponent keyButton = new RectangleComponent(
+				new Color(115, 115, 115, 200),
+				GuiManager.borderColor.getValue(),
+				3f);
+		keyButton.setPadding(new Thickness(4f));
+		keyButton.setVerticalAlignment(VerticalAlignment.Center);
+
+		keyTextComponent = new StringComponent("N/A");
+		keyTextComponent.setVerticalAlignment(VerticalAlignment.Center);
+		keyTextComponent.setHorizontalAlignment(HorizontalAlignment.Center);
+		keyTextComponent.setTextWrapping(TextWrapping.NoWrap);
+		keyTextComponent.setIsHitTestVisible(false);
+		keyButton.addChild(keyTextComponent);
+
+		keyButton.setOnClicked(e -> {
+			if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
+				setListeningForKey(true);
+				e.cancel();
+			}
+		});
+
+		grid.addChild(keyButton);
+		addChild(grid);
+	}
+	
 	public KeybindComponent(KeybindSetting keyBind) {
-		setMargin(new Margin(8f, 2f, 8f, 2f));
+		this();
+		this.key = keyBind.getValue();
 		this.keyBind = keyBind;
+		this.keyBind.addOnUpdate(this::onSettingValueChanged);
+		keyTextComponent.setText(getKeyDisplayText());
+	}
+
+	public KeybindComponent(Key key, Consumer<Key> onChanged) {
+		this();
+		this.key = key;
+		this.onChanged = onChanged;
+		keyTextComponent.setText(getKeyDisplayText());
+	}
+
+	private String getKeyDisplayText() {
+		String text = getKey().getDisplayName().getString();
+		if (text.equals("scancode.0") || text.equals("key.keyboard.0"))
+			return "N/A";
+		return text;
+	}
+
+	private void onSettingValueChanged(Key newKey) {
+		if (newKey != this.key) {
+			this.key = newKey;
+			keyTextComponent.setText(getKeyDisplayText());
+		}
+	}
+
+	public Key getKey() {
+		return key;
+	}
+
+	public void setKeyBind(Key key) {
+		this.key = key;
+		if (keyBind != null)
+			keyBind.setValue(key);
+		keyTextComponent.setText(getKeyDisplayText());
 	}
 
 	@Override
@@ -44,68 +120,26 @@ public class KeybindComponent extends Component implements KeyDownListener {
 	}
 
 	@Override
-	public Size measure(Size availableSize) {
-		return new Size(availableSize.getWidth(), 30.0f);
-	}
-
-	@Override
-	public void update() {
-		super.update();
-	}
-
-	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
-
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-		float actualHeight = getActualSize().getHeight();
-
-		Render2D.drawString(drawContext, "Keybind", actualX, actualY + 8, 0xFFFFFF);
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX + actualWidth - 100, actualY, 100, actualHeight, 3.0f,
-				GuiManager.borderColor.getValue(), new Color(115, 115, 115, 200));
-
-		String keyBindText = keyBind.getValue().getDisplayName().getString();
-		if (keyBindText.equals("scancode.0") || keyBindText.equals("key.keyboard.0"))
-			keyBindText = "N/A";
-
-		Render2D.drawString(drawContext, keyBindText, actualX + actualWidth - 90, actualY + 6, 0xFFFFFF);
-	}
-
-	@Override
-	public void onMouseClick(MouseClickEvent event) {
-		super.onMouseClick(event);
-		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-			if (hovered) {
-				setListeningForKey(true);
-				event.cancel();
-			} else {
-				setListeningForKey(false);
-			}
-		}
-	}
-
-	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		if (listeningForKey) {
-			int key = event.GetKey();
-			int scanCode = event.GetScanCode();
+			this.key = event.GetKey() == GLFW.GLFW_KEY_ESCAPE
+					? InputConstants.UNKNOWN
+					: InputConstants.Type.KEYSYM.getOrCreate(event.GetKey());
 
-			if (key == GLFW.GLFW_KEY_ESCAPE) {
-				keyBind.setValue(InputConstants.UNKNOWN);
-			} else {
-				keyBind.setValue(InputConstants.Type.KEYSYM.getOrCreate(key));
-			}
+			if (keyBind != null)
+				keyBind.setValue(this.key);
+			if (onChanged != null)
+				onChanged.accept(this.key);
 
+			keyTextComponent.setText(getKeyDisplayText());
 			listeningForKey = false;
-
 			event.cancel();
 		}
 	}
 
 	private void setListeningForKey(boolean state) {
 		listeningForKey = state;
+		GuiManager.setKeyboardInputActive(state);
 		if (listeningForKey) {
 			Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 		} else {

@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-
+import java.util.function.Consumer;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.MouseClickEvent;
@@ -45,7 +44,12 @@ public abstract class UIElement {
 	protected boolean initialized = false;
 
 	// Spacing
-	protected Margin margin;
+	protected Thickness margin;
+	protected Thickness padding;
+
+	// Alignment
+	protected HorizontalAlignment horizontalAlignment = HorizontalAlignment.Stretch;
+	protected VerticalAlignment verticalAlignment = VerticalAlignment.Stretch;
 
 	// Actual physical size on the screen.
 	protected Size preferredSize;
@@ -54,6 +58,9 @@ public abstract class UIElement {
 	protected boolean visible = true;
 	protected boolean hovered = false;
 	protected boolean isHitTestVisible = true;
+
+	// Events
+	private Consumer<MouseClickEvent> onClicked;
 
 	public UIElement() {
 		preferredSize = new Size(0.0f, 0.0f);
@@ -141,6 +148,32 @@ public abstract class UIElement {
 	}
 
 	/**
+	 * Gets the content area of the UI element (actualSize inset by padding).
+	 * This is the area available to children.
+	 * @return Content area as a Rectangle.
+	 */
+	public Rectangle getContentArea() {
+		Rectangle area = new Rectangle(getActualSize());
+		if (padding != null) {
+			if (padding.left() != null) {
+				area.setX(area.getX() + padding.left());
+				area.setWidth(area.getWidth() - padding.left());
+			}
+			if (padding.top() != null) {
+				area.setY(area.getY() + padding.top());
+				area.setHeight(area.getHeight() - padding.top());
+			}
+			if (padding.right() != null) {
+				area.setWidth(area.getWidth() - padding.right());
+			}
+			if (padding.bottom() != null) {
+				area.setHeight(area.getHeight() - padding.bottom());
+			}
+		}
+		return area;
+	}
+
+	/**
 	 * Sets the actual size of the UI element.
 	 * @param actualSize Size to set the UI element to.
 	 */
@@ -152,7 +185,7 @@ public abstract class UIElement {
 	 * Gets the margin of the UI element.
 	 * @return Margin of the UI element.
 	 */
-	public Margin getMargin() {
+	public Thickness getMargin() {
 		return margin;
 	}
 
@@ -160,9 +193,66 @@ public abstract class UIElement {
 	 * Sets the margin of the UI element.
 	 * @param val Margin to set to.
 	 */
-	public void setMargin(Margin val) {
+	public void setMargin(Thickness val) {
 		if (margin == null || !margin.equals(val)) {
 			this.margin = val;
+			invalidateMeasure();
+		}
+	}
+
+	/**
+	 * Gets the padding of the UI element.
+	 * @return Padding of the UI element.
+	 */
+	public Thickness getPadding() {
+		return padding;
+	}
+
+	/**
+	 * Sets the padding of the UI element.
+	 * @param val Padding to set to.
+	 */
+	public void setPadding(Thickness val) {
+		if (padding == null || !padding.equals(val)) {
+			this.padding = val;
+			invalidateMeasure();
+		}
+	}
+
+	/**
+	 * Gets the horizontal alignment of the UI element.
+	 * @return Horizontal alignment of the UI element.
+	 */
+	public HorizontalAlignment getHorizontalAlignment() {
+		return horizontalAlignment;
+	}
+
+	/**
+	 * Sets the horizontal alignment of the UI element.
+	 * @param alignment Horizontal alignment to set.
+	 */
+	public void setHorizontalAlignment(HorizontalAlignment alignment) {
+		if (this.horizontalAlignment != alignment) {
+			this.horizontalAlignment = alignment;
+			invalidateMeasure();
+		}
+	}
+
+	/**
+	 * Gets the vertical alignment of the UI element.
+	 * @return Vertical alignment of the UI element.
+	 */
+	public VerticalAlignment getVerticalAlignment() {
+		return verticalAlignment;
+	}
+
+	/**
+	 * Sets the vertical alignment of the UI element.
+	 * @param alignment Vertical alignment to set.
+	 */
+	public void setVerticalAlignment(VerticalAlignment alignment) {
+		if (this.verticalAlignment != alignment) {
+			this.verticalAlignment = alignment;
 			invalidateMeasure();
 		}
 	}
@@ -259,7 +349,7 @@ public abstract class UIElement {
 
 	/**
 	 * Sets the minimum allowable height that a UI element can have.
-	 * @param minWidth Minimum allowable height to set.
+	 * @param minHeight Minimum allowable height to set.
 	 */
 	public void setMinHeight(Float minHeight) {
 		this.minHeight = minHeight;
@@ -275,7 +365,7 @@ public abstract class UIElement {
 
 	/**
 	 * Sets the maximum allowable width that a UI element can have.
-	 * @param minWidth Maximum allowable width to set.
+	 * @param maxWidth Maximum allowable width to set.
 	 */
 	public void setMaxWidth(Float maxWidth) {
 		this.maxWidth = maxWidth;
@@ -291,7 +381,7 @@ public abstract class UIElement {
 
 	/**
 	 * Sets the maximum allowable height that a UI element can have.
-	 * @param minWidth Maximum allowable height to set.
+	 * @param maxHeight Maximum allowable height to set.
 	 */
 	public void setMaxHeight(Float maxHeight) {
 		this.maxHeight = maxHeight;
@@ -358,13 +448,13 @@ public abstract class UIElement {
 			if (parent != null) {
 				parent.invalidateMeasure();
 			} else {
-				// Root element — construct bounds and run layout pass.
-				Size size = new Size(0f, 0f);
-				if (width != null)
-					size.setWidth(width);
+				// Root element
+				Float w = getWidth();
+				Float h = getHeight();
 
-				if (height != null)
-					size.setHeight(height);
+				Size size = new Size(
+						w != null ? w : 0f,
+						h != null ? h : 0f);
 
 				if (minWidth != null && size.getWidth() < minWidth)
 					size.setWidth(minWidth);
@@ -379,7 +469,9 @@ public abstract class UIElement {
 					size.setHeight(maxHeight);
 
 				measureCore(size);
-				Rectangle rect = new Rectangle(0f, 0f, preferredSize.getWidth(), preferredSize.getHeight());
+				float rw = Math.max(size.getWidth(), preferredSize.getWidth());
+				float rh = Math.max(size.getHeight(), preferredSize.getHeight());
+				Rectangle rect = new Rectangle(0f, 0f, rw, rh);
 				arrange(rect);
 			}
 		}
@@ -390,7 +482,11 @@ public abstract class UIElement {
 	 */
 	public void invalidateArrange() {
 		if (initialized) {
-			Rectangle rect = new Rectangle(0f, 0f, preferredSize.getWidth(), preferredSize.getHeight());
+			Float w = getWidth();
+			Float h = getHeight();
+			float rw = Math.max(w != null ? w : 0f, preferredSize.getWidth());
+			float rh = Math.max(h != null ? h : 0f, preferredSize.getHeight());
+			Rectangle rect = new Rectangle(0f, 0f, rw, rh);
 			arrange(rect);
 		}
 	}
@@ -419,13 +515,44 @@ public abstract class UIElement {
 		}
 
 		// Skip if not dirty and available size hasn't changed.
-		if (!measureDirty
-				&& lastMeasureWidth.equals(availableSize.getWidth())
-				&& lastMeasureHeight.equals(availableSize.getHeight())) {
+		if (!measureDirty &&
+			lastMeasureWidth != null && lastMeasureHeight != null &&
+			lastMeasureWidth.equals(availableSize.getWidth()) &&
+			lastMeasureHeight.equals(availableSize.getHeight())) {
 			return;
 		}
 
 		preferredSize = measure(availableSize);
+
+		// Apply explicit width/height
+		if (width != null) {
+			float w = width;
+			if (margin != null) {
+				if (margin.left() != null) w += margin.left();
+				if (margin.right() != null) w += margin.right();
+			}
+			preferredSize.setWidth(w);
+		}
+
+		if (height != null) {
+			float h = height;
+			if (margin != null) {
+				if (margin.top() != null) h += margin.top();
+				if (margin.bottom() != null) h += margin.bottom();
+			}
+			preferredSize.setHeight(h);
+		}
+
+		// Apply min/max constraints.
+		if (minWidth != null && preferredSize.getWidth() < minWidth)
+			preferredSize.setWidth(minWidth);
+		else if (maxWidth != null && preferredSize.getWidth() > maxWidth)
+			preferredSize.setWidth(maxWidth);
+
+		if (minHeight != null && preferredSize.getHeight() < minHeight)
+			preferredSize.setHeight(minHeight);
+		else if (maxHeight != null && preferredSize.getHeight() > maxHeight)
+			preferredSize.setHeight(maxHeight);
 
 		lastMeasureWidth = availableSize.getWidth();
 		lastMeasureHeight = availableSize.getHeight();
@@ -440,11 +567,25 @@ public abstract class UIElement {
 	public Size measure(Size availableSize) {
 		Size finalSize = getStartingSize(availableSize);
 
+		// Reduce available space by padding for children.
+		Size childAvailableSize = availableSize;
+		if (padding != null) {
+			float padW = 0f;
+			float padH = 0f;
+			if (padding.left() != null) padW += padding.left();
+			if (padding.right() != null) padW += padding.right();
+			if (padding.top() != null) padH += padding.top();
+			if (padding.bottom() != null) padH += padding.bottom();
+			childAvailableSize = new Size(
+					availableSize.getWidth() - padW,
+					availableSize.getHeight() - padH);
+		}
+
 		for (UIElement element : children) {
 			if (!element.visible)
 				continue;
 
-			element.measureCore(availableSize);
+			element.measureCore(childAvailableSize);
 			Size resultingSize = element.getPreferredSize();
 
 			if (resultingSize.getWidth() > finalSize.getWidth())
@@ -454,12 +595,23 @@ public abstract class UIElement {
 				finalSize.setHeight(resultingSize.getHeight());
 		}
 
-		if (margin != null) {
+		// Add padding to the result.
+		if (padding != null) {
+			if (padding.left() != null)
+				finalSize.setWidth(finalSize.getWidth() + padding.left());
+			if (padding.right() != null)
+				finalSize.setWidth(finalSize.getWidth() + padding.right());
+			if (padding.top() != null)
+				finalSize.setHeight(finalSize.getHeight() + padding.top());
+			if (padding.bottom() != null)
+				finalSize.setHeight(finalSize.getHeight() + padding.bottom());
+		}
 
-			Float marginLeft = margin.getLeft();
-			Float marginTop = margin.getTop();
-			Float marginRight = margin.getRight();
-			Float marginBottom = margin.getBottom();
+		if (margin != null) {
+			Float marginLeft = margin.left();
+			Float marginTop = margin.top();
+			Float marginRight = margin.right();
+			Float marginBottom = margin.bottom();
 
 			if (marginLeft != null)
 				finalSize.setWidth(finalSize.getWidth() + marginLeft);
@@ -499,10 +651,10 @@ public abstract class UIElement {
 			if (margin != null) {
 				newFinalSize = new Rectangle(finalSize);
 
-				Float marginLeft = margin.getLeft();
-				Float marginTop = margin.getTop();
-				Float marginRight = margin.getRight();
-				Float marginBottom = margin.getBottom();
+				Float marginLeft = margin.left();
+				Float marginTop = margin.top();
+				Float marginRight = margin.right();
+				Float marginBottom = margin.bottom();
 
 				// Left Margin
 				if (marginLeft != null) {
@@ -527,13 +679,84 @@ public abstract class UIElement {
 				newFinalSize = finalSize;
 			}
 
-			Rectangle oldActualSize = actualSize;
+
+			// Strictly enforce the specified width and heigth.
+			if (width != null)
+				newFinalSize.setWidth(width);
+
+			if (height != null)
+				newFinalSize.setHeight(height);
+
+
+			if (horizontalAlignment != HorizontalAlignment.Stretch || width != null) {
+				// Calculate the total horizontal margin.
+				float totalHorizontalMargin= 0f;
+				if (margin != null) {
+					if (margin.left() != null) totalHorizontalMargin += margin.left();
+					if (margin.right() != null) totalHorizontalMargin += margin.right();
+				}
+				
+				// Calculate the desired width.
+				float desiredWidth = width != null ? width
+						: preferredSize.getWidth() - totalHorizontalMargin;
+				desiredWidth = Math.min(desiredWidth, finalSize.getWidth() - totalHorizontalMargin);
+
+				float available = finalSize.getWidth() - totalHorizontalMargin;
+
+				switch (horizontalAlignment) {
+				case Left:
+				case Stretch:
+					newFinalSize.setWidth(desiredWidth);
+					break;
+				case Center:
+					float offsetX = (available - desiredWidth) / 2f;
+					newFinalSize.setX(newFinalSize.getX() + offsetX);
+					newFinalSize.setWidth(desiredWidth);
+					break;
+				case Right:
+					newFinalSize.setX(newFinalSize.getX() + available - desiredWidth);
+					newFinalSize.setWidth(desiredWidth);
+					break;
+				}
+			}
+
+			if (verticalAlignment != VerticalAlignment.Stretch || height != null) {
+				// Calculate total amount of vertical margin.
+				float totalVerticalMargin = 0f;
+				if (margin != null) {
+					if (margin.top() != null) totalVerticalMargin += margin.top();
+					if (margin.bottom() != null) totalVerticalMargin += margin.bottom();
+				}
+				
+				// Calculate the desired height.
+				float desiredHeight = height != null ? height
+						: preferredSize.getHeight() - totalVerticalMargin;
+				desiredHeight = Math.min(desiredHeight, finalSize.getHeight() - totalVerticalMargin);
+
+				float available = finalSize.getHeight() - totalVerticalMargin;
+
+				switch (verticalAlignment) {
+				case Top:
+				case Stretch:
+					newFinalSize.setHeight(desiredHeight);
+					break;
+				case Center:
+					float offsetY = (available - desiredHeight) / 2f;
+					newFinalSize.setY(newFinalSize.getY() + offsetY);
+					newFinalSize.setHeight(desiredHeight);
+					break;
+				case Bottom:
+					newFinalSize.setY(newFinalSize.getY() + available - desiredHeight);
+					newFinalSize.setHeight(desiredHeight);
+					break;
+				}
+			}
+
 			setActualSize(newFinalSize);
 
-			if (!oldActualSize.equals(actualSize)) {
-				for (UIElement element : children) {
-					element.arrange(getActualSize());
-				}
+			Rectangle contentArea = getContentArea();
+			for (UIElement element : children) {
+				element.arrange(contentArea);
 			}
 		}
 	}
@@ -587,7 +810,10 @@ public abstract class UIElement {
 	 * Clears all children from this UI element.
 	 */
 	public void clearChildren() {
+		for (UIElement child : children)
+			child.parent = null;
 		children.clear();
+		invalidateMeasure();
 	}
 
 	/**
@@ -632,30 +858,23 @@ public abstract class UIElement {
 	public void onMouseMove(MouseMoveEvent event) {
 		boolean wasHovered = hovered;
 		if (isHitTestVisible() && isVisible()) {
+			float mouseX = (float) event.getX();
+			float mouseY = (float) event.getY();
+
+			hovered = actualSize.intersects(mouseX, mouseY);
+
 			// Propagate to children.
 			Iterator<UIElement> tabIterator = getChildren().iterator();
 			while (tabIterator.hasNext()) {
 				tabIterator.next().onMouseMove(event);
 			}
 
-			if (event.isCancelled()) {
-				hovered = false;
-				if (wasHovered) {
-					GuiManager.setTooltip(null);
-				}
-			} else {
-				float mouseX = (float) event.getX();
-				float mouseY = (float) event.getY();
-
-				hovered = actualSize.intersects(mouseX, mouseY);
-
-				if (!event.isCancelled() && hovered) {
-					event.cancel();
-					String tooltip = getTooltip();
-					GuiManager.setTooltip(tooltip);
-				} else if (wasHovered) {
-					GuiManager.setTooltip(null);
-				}
+			if (!event.isCancelled() && hovered) {
+				event.cancel();
+				String tooltip = getTooltip();
+				GuiManager.setTooltip(tooltip);
+			} else if (wasHovered && !hovered) {
+				GuiManager.setTooltip(null);
 			}
 		} else {
 			hovered = false;
@@ -672,6 +891,12 @@ public abstract class UIElement {
 			tabIterator.next().onMouseClick(event);
 			if (event.isCancelled())
 				break;
+		}
+
+		if (!event.isCancelled() && onClicked != null && isHitTestVisible && isVisible()) {
+			if (actualSize.intersects((float) event.mouseX, (float) event.mouseY)) {
+				onClicked.accept(event);
+			}
 		}
 	}
 
@@ -692,5 +917,13 @@ public abstract class UIElement {
 
 	public void setTooltip(String tooltip) {
 		this.tooltip = tooltip;
+	}
+
+	public Consumer<MouseClickEvent> getOnClicked() {
+		return onClicked;
+	}
+
+	public void setOnClicked(Consumer<MouseClickEvent> onClicked) {
+		this.onClicked = onClicked;
 	}
 }

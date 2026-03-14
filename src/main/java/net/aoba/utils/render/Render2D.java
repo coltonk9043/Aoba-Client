@@ -304,15 +304,16 @@ public class Render2D {
 	}
 
 	/**
-	 * Draws a filled circle.
+	 * Draws a filled ellipse.
 	 *
-	 * @param matrix4f Transformation matrix
-	 * @param x        X position of the box.
-	 * @param y        Y position of the box.
-	 * @param radius   Radius of the circle.
-	 * @param color    Color of the box.
+	 * @param drawContext Draw context.
+	 * @param x           X position of the center.
+	 * @param y           Y position of the center.
+	 * @param radiusX     Horizontal radius.
+	 * @param radiusY     Vertical radius.
+	 * @param color       Color of the ellipse.
 	 */
-	public static void drawCircle(GuiGraphics drawContext, float x, float y, float radius, Color color) {
+	public static void drawEllipse(GuiGraphics drawContext, float x, float y, float radiusX, float radiusY, Color color) {
 		int colorInt = color.getColorAsInt();
 		Matrix4f matrix = getAsMatrix(drawContext);
 
@@ -324,17 +325,30 @@ public class Render2D {
 		for (int i = 0; i < 30; i++) {
 			double angle = Math.toRadians(i * roundedInterval);
 			double angle2 = Math.toRadians((i + 1) * roundedInterval);
-			float radiusX1 = (float) (Math.cos(angle) * radius);
-			float radiusY1 = (float) (Math.sin(angle) * radius);
-			float radiusX2 = (float) (Math.cos(angle2) * radius);
-			float radiusY2 = (float) (Math.sin(angle2) * radius);
+			float rx1 = (float) (Math.cos(angle) * radiusX);
+			float ry1 = (float) (Math.sin(angle) * radiusY);
+			float rx2 = (float) (Math.cos(angle2) * radiusX);
+			float ry2 = (float) (Math.sin(angle2) * radiusY);
 
 			bufferBuilder.addVertex(matrix, x, y, 0).setColor(colorInt);
-			bufferBuilder.addVertex(matrix, x + radiusX1, y + radiusY1, 0).setColor(colorInt);
-			bufferBuilder.addVertex(matrix, x + radiusX2, y + radiusY2, 0).setColor(colorInt);
+			bufferBuilder.addVertex(matrix, x + rx1, y + ry1, 0).setColor(colorInt);
+			bufferBuilder.addVertex(matrix, x + rx2, y + ry2, 0).setColor(colorInt);
 		}
 
 		bufferSource.endBatch(layer);
+	}
+
+	/**
+	 * Draws a filled circle (equal radii ellipse).
+	 *
+	 * @param drawContext Draw context.
+	 * @param x           X position of the center.
+	 * @param y           Y position of the center.
+	 * @param radius      Radius of the circle.
+	 * @param color       Color of the circle.
+	 */
+	public static void drawEllipse(GuiGraphics drawContext, float x, float y, float radius, Color color) {
+		drawEllipse(drawContext, x, y, radius, radius, color);
 	}
 
 	/**

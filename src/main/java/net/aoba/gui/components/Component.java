@@ -8,14 +8,14 @@
 
 package net.aoba.gui.components;
 
-import net.aoba.gui.Margin;
 import net.aoba.gui.UIElement;
 
 public abstract class Component extends UIElement {
 	public String header = null;
 
 	public Component() {
-        margin = new Margin();
+
+
 	}
 
 	@Override

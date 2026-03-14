@@ -10,17 +10,21 @@ import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Margin;
-import net.aoba.gui.Size;
+import net.aoba.gui.TextWrapping;
+import net.aoba.gui.Thickness;
+import net.aoba.gui.VerticalAlignment;
 import net.aoba.gui.colors.Color;
+import net.aoba.gui.colors.Colors;
 import net.aoba.settings.types.StringSetting;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 
 public class TextBoxComponent extends Component implements KeyDownListener {
+	private static final Color BACKGROUND_COLOR = new Color(115, 115, 115, 200);
+	private static final Color ERROR_BORDER_COLOR = new Color(255, 0, 0);
+
 	private boolean listeningForKey;
 
 	@Nullable
@@ -28,100 +32,125 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 	private StringSetting stringSetting;
 
 	private boolean isFocused = false;
-	private float focusAnimationProgress = 0.0f;
-	private final Color errorBorderColor = new Color(255, 0, 0);
 	private boolean isErrorState = false;
+	private int caretTick = 0;
+	private boolean caretVisible = true;
 
-	// Events
 	private Consumer<String> onTextChanged;
 
-	public TextBoxComponent() {
-		setMargin(new Margin(8f, 2f, 8f, 2f));
-		text = "";
+	private final RectangleComponent box;
+	private final StringComponent textComponent;
+
+	private TextBoxComponent(String text) {
+		this.text = text != null ? text : "";
+
+		setHeight(30.0f);
+
+		box = new RectangleComponent(
+				BACKGROUND_COLOR,
+				GuiManager.borderColor.getValue(),
+				3f);
+		box.setPadding(new Thickness(4f));
+
+		textComponent = new StringComponent(this.text);
+		textComponent.setVerticalAlignment(VerticalAlignment.Center);
+		textComponent.setTextWrapping(TextWrapping.NoWrap);
+		textComponent.setIsHitTestVisible(false);
+		box.addChild(textComponent);
+
+		addChild(box);
+
+		setOnClicked(e -> {
+			if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
+				if (!listeningForKey) {
+					setListeningForKey(true);
+				}
+				e.cancel();
+			}
+		});
 	}
 
-	public TextBoxComponent(String text) {
-		setMargin(new Margin(8f, 2f, 8f, 2f));
-		this.text = text;
+	public TextBoxComponent() {
+		this("");
 	}
 
 	public TextBoxComponent(StringSetting stringSetting) {
-		setMargin(new Margin(8f, 2f, 8f, 2f));
-
+		this(stringSetting.getValue());
 		this.stringSetting = stringSetting;
-		this.stringSetting.addOnUpdate(s -> {
-			text = s;
-		});
-
+		this.stringSetting.addOnUpdate(this::onSettingValueChanged);
 		header = stringSetting.displayName;
-		text = stringSetting.getValue();
-	}
-
-	@Override
-	public Size measure(Size availableSize) {
-		return new Size(availableSize.getWidth(), 30.0f);
 	}
 
 	@Override
 	public void update() {
 		super.update();
+		if (isFocused) {
+			caretTick++;
+			if (caretTick >= 10) {
+				caretVisible = !caretVisible;
+				caretTick = 0;
+			}
+		} else {
+			caretVisible = false;
+			caretTick = 0;
+		}
 	}
 
 	@Override
 	public void draw(GuiGraphics drawContext, float partialTicks) {
 		super.draw(drawContext, partialTicks);
 
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-		float actualHeight = getActualSize().getHeight();
+		if (isFocused && caretVisible) {
+			float textX = textComponent.getActualSize().getX();
+			float textY = textComponent.getActualSize().getY();
+			float textWidth = textComponent.getPreferredSize().getWidth();
+			float textHeight = textComponent.getPreferredSize().getHeight();
 
-		if (isFocused) {
-			focusAnimationProgress = Math.min(1.0f, focusAnimationProgress + partialTicks * 0.1f);
-		} else {
-			focusAnimationProgress = Math.max(0.0f, focusAnimationProgress - partialTicks * 0.1f);
+			float caretX = textX + textWidth;
+			Render2D.drawBox(drawContext, caretX, textY, 2, textHeight, Colors.White);
 		}
+	}
 
-		Color borderColor = isErrorState ? errorBorderColor : GuiManager.borderColor.getValue();
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f, borderColor,
-				new Color(115, 115, 115, 200));
+	private void onSettingValueChanged(String s) {
+		if (!s.equals(text)) {
+			text = s;
+			textComponent.setText(text);
+		}
+	}
 
-		if (text != null && !text.isEmpty()) {
-			int visibleStringLength = (int) (actualWidth - 16 / 10);
-
-			int visibleStringIndex = Math.min(Math.max(0, text.length() - visibleStringLength - 1), text.length() - 1);
-			String visibleString = text.substring(visibleStringIndex);
-			Render2D.drawString(drawContext, visibleString, actualX + 8, actualY + 8, 0xFFFFFF);
+	private void updateBorderColor() {
+		if (isErrorState) {
+			box.setBorderColor(ERROR_BORDER_COLOR);
+		} else {
+			box.setBorderColor(GuiManager.borderColor.getValue());
 		}
 	}
 
 	@Override
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
+
 		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-			if (hovered) {
-				if (!listeningForKey) {
-					setListeningForKey(true);
-				}
-				event.cancel();
-			} else {
+			if (!hovered && listeningForKey) {
 				setListeningForKey(false);
 			}
 		}
-
-		isFocused = listeningForKey;
 	}
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		if (listeningForKey) {
+			caretVisible = true;
+			caretTick = 0;
+
 			int key = event.GetKey();
 
 			if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_ESCAPE) {
 				setListeningForKey(false);
 			} else if (key == GLFW.GLFW_KEY_BACKSPACE) {
-				if (!text.isEmpty()) {
+				if (text != null && !text.isEmpty()) {
 					text = text.substring(0, text.length() - 1);
+					textComponent.setText(text);
 					if (stringSetting != null)
 						stringSetting.setValue(text);
 				}
@@ -136,6 +165,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 						keyCode = Character.toLowerCase(keyCode);
 
 					text += keyCode;
+					textComponent.setText(text);
 					if (stringSetting != null)
 						stringSetting.setValue(text);
 				}
@@ -155,17 +185,23 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 
 	public void setText(String newText) {
 		text = newText;
+		textComponent.setText(text);
 		if (stringSetting != null)
 			stringSetting.setValue(newText);
 	}
 
 	public void setErrorState(boolean isError) {
 		isErrorState = isError;
+		updateBorderColor();
 	}
 
 	private void setListeningForKey(boolean state) {
 		listeningForKey = state;
+		isFocused = state;
+		GuiManager.setKeyboardInputActive(state);
 		if (listeningForKey) {
+			caretVisible = true;
+			caretTick = 0;
 			Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 		} else {
 			Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);

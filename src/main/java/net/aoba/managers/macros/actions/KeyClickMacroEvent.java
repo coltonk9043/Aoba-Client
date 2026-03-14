@@ -38,8 +38,8 @@ public class KeyClickMacroEvent extends MacroEvent {
 	public void write(DataOutputStream fs) throws IOException {
 		super.write(fs);
 		fs.writeInt(button);
-		fs.writeInt(action);
 		fs.writeInt(scancode);
+		fs.writeInt(action);
 		fs.writeInt(mods);
 	}
 
@@ -50,6 +50,14 @@ public class KeyClickMacroEvent extends MacroEvent {
 		scancode = in.readInt();
 		action = in.readInt();
 		mods = in.readInt();
+	}
+
+	public int getButton() {
+		return button;
+	}
+
+	public int getAction() {
+		return action;
 	}
 
 	@Override

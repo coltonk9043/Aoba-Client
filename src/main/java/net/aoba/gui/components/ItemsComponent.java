@@ -9,40 +9,61 @@
 package net.aoba.gui.components;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
-
-import net.aoba.gui.Margin;
 import net.aoba.gui.UIElement;
+import net.aoba.utils.types.IObservableList;
 
-// TODO: This works OKAY if we have a reference to this specific component when the items source is modified externally,
-// but how do we notify ItemsComponent when the object modifying items source does NOT have a reference to ItemsComponent?
-// .NET has ObservableCollection, but that'd be a pain to implement client-wide.
 public class ItemsComponent<T> extends Component {
 	private List<T> itemsSource;
 	private Function<T, UIElement> itemGenerator;
+	private final Consumer<IObservableList<T>> observableListener = this::onItemsSourceChanged;
 
 	private final Component parentComponent;
 
 	public ItemsComponent(List<T> itemsSource) {
-        setMargin(new Margin(2f, null, 2f, null));
 		this.itemsSource = itemsSource;
-		parentComponent = new StackPanelComponent();
-
+		
+		StackPanelComponent newParent = new StackPanelComponent();
+		newParent.setSpacing(4f);
+		parentComponent = newParent;
 		addChild(parentComponent);
+		subscribeToItemsSource();
 	}
 
 	public ItemsComponent(List<T> itemsSource, Function<T, UIElement> itemGenerator) {
-        this.itemGenerator = itemGenerator;
-		setMargin(new Margin(2f, null, 2f, null));
+		this.itemGenerator = itemGenerator;
 		this.itemsSource = itemsSource;
-		parentComponent = new StackPanelComponent();
+		StackPanelComponent newParent = new StackPanelComponent();
+		newParent.setSpacing(4f);
+		parentComponent = newParent;
 
 		addChild(parentComponent);
+		subscribeToItemsSource();
 	}
 
 	@Override
 	protected void onInitialized() {
 		generateItems();
+	}
+
+	@SuppressWarnings("unchecked")
+	private void subscribeToItemsSource() {
+		if (itemsSource instanceof IObservableList) {
+			((IObservableList<T>) itemsSource).addListener(observableListener);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void unsubscribeFromItemsSource() {
+		if (itemsSource instanceof IObservableList) {
+			((IObservableList<T>) itemsSource).removeListener(observableListener);
+		}
+	}
+
+	private void onItemsSourceChanged(IObservableList<T> list) {
+		generateItems();
+		invalidateMeasure();
 	}
 
 	private void generateItems() {
@@ -53,6 +74,7 @@ public class ItemsComponent<T> extends Component {
 					parentComponent.addChild(s);
 				});
 			} else {
+				System.out.println("Generating " + itemsSource.size() + " items");
 				itemsSource.stream().map(s -> itemGenerator.apply(s)).forEach(s -> {
 					parentComponent.addChild(s);
 				});
@@ -66,8 +88,10 @@ public class ItemsComponent<T> extends Component {
 	}
 
 	public void setItemsSource(List<T> itemsSource) {
+		unsubscribeFromItemsSource();
 		this.itemsSource = itemsSource;
-		parentComponent.clearChildren();
+		subscribeToItemsSource();
 		generateItems();
+		invalidateMeasure();
 	}
 }

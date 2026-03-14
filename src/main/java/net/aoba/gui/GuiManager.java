@@ -83,6 +83,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	private final KeyMapping esc = new KeyMapping("key.esc", GLFW.GLFW_KEY_ESCAPE, AobaClient.AOBA_CATEGORY);
 
 	private boolean clickGuiOpen = false;
+	private static boolean isKeyboardInputActive = false;
 	private final HashMap<Object, Window> pinnedHuds = new HashMap<Object, Window>();
 
 	// Navigation Bar and Pages
@@ -137,8 +138,6 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public GuiManager() {
 		clickGuiNavBar = new NavigationBar();
 
-		com.mojang.blaze3d.platform.Window window = MC.getWindow();
-
 		SettingManager.registerGlobalSetting(borderColor);
 		SettingManager.registerGlobalSetting(backgroundColor);
 		SettingManager.registerGlobalSetting(foregroundColor);
@@ -179,17 +178,22 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		for (Category category : categories.values()) {
 			Window tab = new Window(category.getName(), xOffset, 75.0f);
 			StackPanelComponent stackPanel = new StackPanelComponent();
-			stackPanel.setMargin(new Margin(null, 30f, null, null));
+			stackPanel.setSpacing(6f);
 
 			GridComponent gridComponent = new GridComponent();
-			gridComponent.addColumnDefinition(new GridDefinition(30, RelativeUnit.Absolute)); // Fill 30px
+			gridComponent.setHorizontalSpacing(4f);
+			gridComponent.setIsHitTestVisible(false);
+			gridComponent.addColumnDefinition(new GridDefinition(RelativeUnit.Auto)); 
 			gridComponent.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative)); // Fill all remaining space
 
 			ImageComponent img = new ImageComponent(category.getIcon());
-			img.setMargin(new Margin(4f, 0f, 4f, 0f));
+			img.setIsHitTestVisible(false);
+			img.setWidth(16f);
+			img.setHeight(16f);
 			gridComponent.addChild(img);
 
 			StringComponent title = new StringComponent(category.getName());
+			title.setVerticalAlignment(VerticalAlignment.Center);
 			title.setIsHitTestVisible(false);
 			gridComponent.addChild(title);
 
@@ -246,6 +250,14 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			tooltip = tt;
 	}
 
+	public static boolean isKeyboardInputActive() {
+		return isKeyboardInputActive;
+	}
+
+	public static void setKeyboardInputActive(boolean state) {
+		isKeyboardInputActive = state;
+	}
+
 	public void addWindow(Window hud, String pageName) {
 		for (Page page : clickGuiNavBar.getPanes()) {
 			if (page.getTitle().equals(pageName)) {
@@ -268,7 +280,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
-		if (clickGuiButton.getValue().getValue() == event.GetKey() && MC.screen == null) {
+		if (clickGuiButton.getValue().getValue() == event.GetKey() && MC.screen == null && !isKeyboardInputActive) {
 			setClickGuiOpen(!clickGuiOpen);
 			toggleMouse();
 		}

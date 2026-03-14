@@ -9,18 +9,13 @@
 package net.aoba.gui.components;
 
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Size;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class SeparatorComponent extends Component {
 
 	public SeparatorComponent() {
-	}
-
-	@Override
-	public Size measure(Size availableSize) {
-		return new Size(availableSize.getWidth(), 1.0f);
+		setHeight(1.0f);
 	}
 
 	@Override

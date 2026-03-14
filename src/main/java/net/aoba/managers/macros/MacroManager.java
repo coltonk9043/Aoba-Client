@@ -16,60 +16,51 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.logging.LogUtils;
 
+import net.aoba.Aoba;
+import net.aoba.event.events.KeyDownEvent;
+import net.aoba.event.listeners.KeyDownListener;
 import net.aoba.managers.macros.actions.KeyClickMacroEvent;
 import net.aoba.managers.macros.actions.MacroEvent;
 import net.aoba.managers.macros.actions.MouseClickMacroEvent;
 import net.aoba.managers.macros.actions.MouseMoveMacroEvent;
 import net.aoba.managers.macros.actions.MouseScrollMacroEvent;
+import net.aoba.utils.types.ObservableList;
 import net.minecraft.client.Minecraft;
 
 /**
  * Represents the Manager responsible for maintaining, creating, saving, and
  * loading Macros.
  */
-public class MacroManager {
+public class MacroManager implements KeyDownListener {
 	private static final Minecraft MC = Minecraft.getInstance();
 
-	private final HashMap<Class<?>, String> MACRO_CLASS_TO_NAME = new HashMap<Class<?>, String>();
-	private final HashMap<String, Class<?>> MACRO_NAME_TO_CLASS = new HashMap<String, Class<?>>();
+	// Byte IDs — 0x00 is reserved as the flags terminator.
+	private static final byte FLAG_TERMINATOR = 0x00;
+	private static final byte FLAG_LOOPING = 0x01;
+	private static final byte FLAG_KEYBIND = 0x02;
 
-	private final HashMap<String, Macro> macros = new HashMap<String, Macro>();
+	private static final byte EVENT_KEY = 0x01;
+	private static final byte EVENT_CLICK = 0x02;
+	private static final byte EVENT_MOVE = 0x03;
+	private static final byte EVENT_SCROLL = 0x04;
 
-	private Macro currentSelected = null;
+	private final ObservableList<Macro> macros = new ObservableList<>();
 
 	private final MacroRecorder recorder;
 	private final MacroPlayer player;
 
 	public MacroManager() {
-		// Register default macro types (I don't like this but reduces file size
-		// significantly... redo later)
-		register("key", KeyClickMacroEvent.class);
-		register("click", MouseClickMacroEvent.class);
-		register("move", MouseMoveMacroEvent.class);
-		register("scroll", MouseScrollMacroEvent.class);
-
 		recorder = new MacroRecorder();
 		player = new MacroPlayer();
 		load();
-	}
-
-	/**
-	 * Registers a type of Macro (with a key) to the MacroManager.
-	 * 
-	 * @param name Key used to fetch the Macro class type.
-	 * @param type Type to associate with the key.
-	 */
-	public void register(String name, Class<?> type) {
-		MACRO_NAME_TO_CLASS.put(name, type);
-		MACRO_CLASS_TO_NAME.put(type, name);
+		Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
 	}
 
 	/**
@@ -84,7 +75,7 @@ public class MacroManager {
 				for (File file : files) {
 					try {
 						Macro macro = loadMacroFromFile(file);
-						macros.put(macro.getName(), macro);
+						macros.add(macro);
 					} catch (Exception e) {
 
 					}
@@ -100,76 +91,92 @@ public class MacroManager {
 	 * @return Loaded Macro from the file.
 	 */
 	private Macro loadMacroFromFile(File file) {
-		// Get information about Macro including name and file path.
 		String name = file.getName();
 		name = name.substring(0, name.length() - 6);
 		String filePath = file.getPath();
 		LinkedList<MacroEvent> events = new LinkedList<MacroEvent>();
+		boolean looping = false;
+		Key keybind = InputConstants.UNKNOWN;
 
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream(filePath));
 
-			// Read until it cannot be read anymore.
-			String className = null;
-			while ((className = in.readUTF()) != null) {
-				// Read Macros
-				MacroEvent event;
-				if (MACRO_NAME_TO_CLASS.containsKey(className)) {
-					try {
-						// Instantiate the class from the type found in the 'MACRO_NAME_TO_CLASS'
-						// HashMap.
-						Class<?> macroClass = MACRO_NAME_TO_CLASS.get(className);
-						event = (MacroEvent) macroClass.getDeclaredConstructor().newInstance((Object[]) null);
-
-						// If the Macro exists, read its content.
-						if (event != null) {
-							event.read(in);
-							events.add(event);
-						}
-					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-						break;
-					}
+			// Read flags until we hit the terminator (0x00).
+			byte flag;
+			while ((flag = in.readByte()) != FLAG_TERMINATOR) {
+				switch (flag) {
+					case FLAG_LOOPING -> looping = true;
+					case FLAG_KEYBIND -> keybind = InputConstants.Type.KEYSYM.getOrCreate(in.readInt());
+					default -> {}
 				}
 			}
-			in.close();
+
+			// Read events — each is a single byte ID followed by its data.
+			byte eventId;
+			while (true) {
+				eventId = in.readByte();
+				MacroEvent event = switch (eventId) {
+					case EVENT_KEY -> new KeyClickMacroEvent();
+					case EVENT_CLICK -> new MouseClickMacroEvent();
+					case EVENT_MOVE -> new MouseMoveMacroEvent();
+					case EVENT_SCROLL -> new MouseScrollMacroEvent();
+					default -> null;
+				};
+				if (event != null) {
+					event.read(in);
+					events.add(event);
+				}
+			}
 		} catch (EOFException eof) {
-		} // Do nothing... file is OEF
-		catch (IOException e1) {
+		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 
-		// Create and add macros.
-		Macro newMacro = new Macro(events);
+		Macro newMacro = new Macro(events, looping, keybind);
 		newMacro.setName(name);
 		return newMacro;
 	}
 
 	public void save() {
 		try {
-			// Try and find the Macro folder. If none exists, then throw an exception.
 			File macrosFolder = new File(MC.gameDirectory + File.separator + "aoba" + File.separator + "macros");
 			if (!macrosFolder.exists() && !macrosFolder.mkdirs()) {
 				throw new IOException("Failed to create macro folder: " + macrosFolder.getAbsolutePath());
 			}
 
-			// Save each macro.
-			for (Macro macro : macros.values()) {
-				// Attempt to create the Macro File. Throws an exception if it fails.
+			for (Macro macro : macros) {
 				File macroFile = new File(macro.getFilePath());
 				if (!macroFile.exists() && !macroFile.createNewFile()) {
-					throw new IOException("Failed to create config file: " + macroFile.getAbsolutePath());
+					throw new IOException("Failed to create macro file: " + macroFile.getAbsolutePath());
 				}
 
-				// Read all of the events.
-				LinkedList<MacroEvent> events = macro.getEvents();
 				DataOutputStream out = new DataOutputStream(new FileOutputStream(macroFile));
-				MacroEvent event = events.poll();
-				while (event != null) {
-					out.writeUTF(MACRO_CLASS_TO_NAME.get(event.getClass()));
-					event.write(out);
-					event = events.poll();
+
+				// Write flags.
+				if (macro.isLooping())
+					out.writeByte(FLAG_LOOPING);
+				if (macro.getKeybind() != InputConstants.UNKNOWN) {
+					out.writeByte(FLAG_KEYBIND);
+					out.writeInt(macro.getKeybind().getValue());
 				}
+				out.writeByte(FLAG_TERMINATOR);
+
+				// Write events.
+				for (MacroEvent event : macro.getEvents()) {
+					byte id =  switch (event) {
+						case KeyClickMacroEvent e -> EVENT_KEY;
+						case MouseClickMacroEvent e -> EVENT_CLICK;
+						case MouseMoveMacroEvent e -> EVENT_MOVE;
+						case MouseScrollMacroEvent e -> EVENT_SCROLL;
+						default -> -1;
+					};
+				
+					if (id != -1) {
+						out.writeByte(id);
+						event.write(out);
+					}
+				}
+
 				out.close();
 			}
 		} catch (FileNotFoundException e) {
@@ -185,16 +192,16 @@ public class MacroManager {
 	 * @param macro Macro to add.
 	 */
 	public void addMacro(Macro macro) {
-		macros.put(macro.getName(), macro);
+		macros.add(macro);
 	}
 
 	/**
 	 * Removes a Macro from the Macro Manager.
-	 * 
+	 *
 	 * @param macro Macro to remove.
 	 */
 	public void removeMacro(Macro macro) {
-		macros.remove(macro.getName(), macro);
+		macros.remove(macro);
 	}
 
 	/**
@@ -216,30 +223,30 @@ public class MacroManager {
 	}
 
 	/**
-	 * Returns the currently selected Macro in the MacroManager. The selected Macro
-	 * is the one that has been most recently recorded.
-	 * 
-	 * @return Currently 'selected' Macro
-	 */
-	public Macro getCurrentlySelected() {
-		return currentSelected;
-	}
-
-	/**
-	 * Sets the currently selected Macro.
-	 * 
-	 * @param macro
-	 */
-	public void setCurrentlySelected(Macro macro) {
-		currentSelected = macro;
-	}
-
-	/**
 	 * Returns a list of all of the Macros
-	 * 
+	 *
 	 * @return List of all Macros.
 	 */
 	public List<Macro> getMacros() {
-		return new ArrayList<Macro>(macros.values());
+		return macros;
+	}
+
+	@Override
+	public void onKeyDown(KeyDownEvent event) {
+		if (MC.screen != null)
+			return;
+
+		int key = event.GetKey();
+		for (Macro macro : macros) {
+			Key bind = macro.getKeybind();
+			if (bind != InputConstants.UNKNOWN && bind.getValue() == key) {
+				if (player.isPlaying()) {
+					player.stop();
+				} else {
+					player.play(macro);
+				}
+				break;
+			}
+		}
 	}
 }

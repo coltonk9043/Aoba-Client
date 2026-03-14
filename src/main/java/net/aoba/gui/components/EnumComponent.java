@@ -8,12 +8,12 @@
 
 package net.aoba.gui.components;
 
+import java.util.function.Consumer;
+
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Margin;
 import net.aoba.gui.Rectangle;
-import net.aoba.gui.Size;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.render.Render2D;
@@ -22,20 +22,43 @@ import net.aoba.utils.types.MouseButton;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class EnumComponent<T extends Enum<T>> extends Component {
-	private final EnumSetting<T> enumSetting;
+	private T value;
+	private final T[] enumConstants;
+	private EnumSetting<T> setting;
+	private Consumer<T> onChanged;
 
 	private boolean hoveringLeftButton;
 	private boolean hoveringRightButton;
 
-	public EnumComponent(EnumSetting<T> enumSetting) {
-        this.enumSetting = enumSetting;
-		header = enumSetting.displayName;
-		setMargin(new Margin(8f, 2f, 8f, 2f));
+	public EnumComponent(T value, Consumer<T> onChanged) {
+		this.value = value;
+		this.enumConstants = value.getDeclaringClass().getEnumConstants();
+		this.onChanged = onChanged;
+		setHeight(55.0f);
 	}
 
-	@Override
-	public Size measure(Size availableSize) {
-		return new Size(availableSize.getWidth(), 55.0f);
+	public EnumComponent(EnumSetting<T> setting) {
+		this.value = setting.getValue();
+		this.enumConstants = value.getDeclaringClass().getEnumConstants();
+		this.setting = setting;
+		this.setting.addOnUpdate(this::onSettingValueChanged);
+		header = setting.displayName;
+		setHeight(55.0f);
+	}
+
+	private void onSettingValueChanged(T v) {
+		if (v != this.value)
+			this.value = v;
+	}
+
+	public T getValue() {
+		return value;
+	}
+
+	public void setValue(T value) {
+		this.value = value;
+		if (setting != null)
+			setting.setValue(value);
 	}
 
 	@Override
@@ -63,7 +86,7 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 				hoveringRightButton ? GuiManager.foregroundColor.getValue().getColorAsInt() : 0xFFFFFF);
 
 		// Text
-		String enumValue = enumSetting.getValue().toString();
+		String enumValue = value.toString();
 		float stringWidth = Render2D.getStringWidth(enumValue);
 		Render2D.drawString(drawContext, enumValue, actualX + (actualWidth / 2.0f) - stringWidth, actualY + 34,
 				0xFFFFFF);
@@ -75,9 +98,7 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 
 		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
 			if (hovered) {
-				T currentValue = enumSetting.getValue();
-				T[] enumConstants = currentValue.getDeclaringClass().getEnumConstants();
-				int currentIndex = java.util.Arrays.asList(enumConstants).indexOf(currentValue);
+				int currentIndex = java.util.Arrays.asList(enumConstants).indexOf(value);
 				int enumCount = enumConstants.length;
 
 				float actualX = actualSize.getX();
@@ -92,7 +113,11 @@ public class EnumComponent<T extends Enum<T>> extends Component {
 				else if (rightArrowHitbox.intersects((float) event.mouseX, (float) event.mouseY))
 					currentIndex = (currentIndex + 1) % enumCount;
 
-				enumSetting.setValue(enumConstants[currentIndex]);
+				value = enumConstants[currentIndex];
+				if (setting != null)
+					setting.setValue(value);
+				if (onChanged != null)
+					onChanged.accept(value);
 				event.cancel();
 			}
 		}

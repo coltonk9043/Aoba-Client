@@ -9,7 +9,6 @@
 package net.aoba.gui.components;
 
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Size;
 import net.aoba.utils.render.Render2D;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.Identifier;
@@ -24,11 +23,6 @@ public class ImageComponent extends Component {
 	public ImageComponent(Identifier image) {
 		this();
 		this.image = image;
-	}
-
-	@Override
-	public Size measure(Size availableSize) {
-		return new Size(0f, 0f);
 	}
 
 	@Override

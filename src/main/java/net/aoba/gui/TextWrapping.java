@@ -8,6 +8,6 @@
 
 package net.aoba.gui;
 
-public enum HorizontalAlignment {
-	Stretch, Left, Center, Right
+public enum TextWrapping {
+	Wrap, NoWrap
 }

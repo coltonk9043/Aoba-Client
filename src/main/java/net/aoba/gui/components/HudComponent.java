@@ -9,62 +9,55 @@
 package net.aoba.gui.components;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.MouseClickEvent;
-import net.aoba.gui.Margin;
-import net.aoba.gui.Size;
+import net.aoba.gui.GridDefinition;
+import net.aoba.gui.GridDefinition.RelativeUnit;
+import net.aoba.gui.VerticalAlignment;
+import net.aoba.gui.colors.Color;
+import net.aoba.gui.colors.Colors;
 import net.aoba.gui.navigation.HudWindow;
-import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.GuiGraphics;
 
 public class HudComponent extends Component {
-	private final String text;
 	private final HudWindow hud;
+	private final StringComponent statusComponent;
 
 	public HudComponent(String text, HudWindow hud) {
-        this.text = text;
 		this.hud = hud;
+		GridComponent grid = new GridComponent();
+		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
+		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));
 
-		setMargin(new Margin(8f, 2f, 8f, 2f));
-	}
+		StringComponent nameComponent = new StringComponent(text);
+		nameComponent.setVerticalAlignment(VerticalAlignment.Center);
+		grid.addChild(nameComponent);
 
-	@Override
-	public Size measure(Size availableSize) {
-		return new Size(availableSize.getWidth(), 30.0f);
+		statusComponent = new StringComponent(hud.activated.getValue() ? "-" : "+");
+		statusComponent.setColor(hud.activated.getValue() ? new Color(255, 0, 0) : new Color(0, 255, 0));
+		statusComponent.setVerticalAlignment(VerticalAlignment.Center);
+		grid.addChild(statusComponent);
+
+		addChild(grid);
+
+		setOnClicked(e -> {
+			if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
+				boolean visibility = hud.activated.getValue();
+				Aoba.getInstance().guiManager.setHudActive(hud, !visibility);
+				e.cancel();
+			}
+		});
 	}
 
 	@Override
 	public void update() {
 		super.update();
-	}
-
-	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
-
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-
-		Render2D.drawString(drawContext, text, actualX, actualY + 8, 0xFFFFFF);
 
 		if (hud.activated.getValue()) {
-			Render2D.drawString(drawContext, "-", actualX + actualWidth - 12, actualY + 8, 0xFF0000);
+			statusComponent.setText("-");
+			statusComponent.setColor(Colors.Red);
 		} else {
-			Render2D.drawString(drawContext, "+", actualX + actualWidth - 12, actualY + 8, 0x00FF00);
-		}
-	}
-
-	@Override
-	public void onMouseClick(MouseClickEvent event) {
-		super.onMouseClick(event);
-
-		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-			if (hovered) {
-				boolean visibility = hud.activated.getValue();
-				Aoba.getInstance().guiManager.setHudActive(hud, !visibility);
-			}
+			statusComponent.setText("+");
+			statusComponent.setColor(Colors.Green);
 		}
 	}
 }

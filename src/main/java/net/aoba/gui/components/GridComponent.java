@@ -17,15 +17,40 @@ import net.aoba.gui.Rectangle;
 import net.aoba.gui.Size;
 import net.aoba.gui.UIElement;
 
-public class GridComponent extends Component {
+public class GridComponent extends PanelComponent {
 	private ArrayList<GridDefinition> columnDefinitions = null;
 	private ArrayList<GridDefinition> rowDefinitions = null;
 
 	private Float[] columnWidths;
 	private Float[] rowHeights;
 
+	private float horizontalSpacing = 0f;
+	private float verticalSpacing = 0f;
+
 	public GridComponent() {
     }
+
+	public float getHorizontalSpacing() {
+		return horizontalSpacing;
+	}
+
+	public void setHorizontalSpacing(float horizontalSpacing) {
+		if (this.horizontalSpacing != horizontalSpacing) {
+			this.horizontalSpacing = horizontalSpacing;
+			invalidateMeasure();
+		}
+	}
+
+	public float getVerticalSpacing() {
+		return verticalSpacing;
+	}
+
+	public void setVerticalSpacing(float verticalSpacing) {
+		if (this.verticalSpacing != verticalSpacing) {
+			this.verticalSpacing = verticalSpacing;
+			invalidateMeasure();
+		}
+	}
 
 	public void addColumnDefinition(GridDefinition def) {
 		if (columnDefinitions == null)
@@ -46,98 +71,175 @@ public class GridComponent extends Component {
 
 		int numChildren = children.size();
 		int numColumnDefinitions = 0;
-		int numRowDefinitions = 0;
 		float sumWidth = 0;
 		float sumHeight = 0;
 
-		/**
-		 * During this measure pass, we want to do several passes to ensure that we are
-		 * properly depleting remaining space according to the size of the column
-		 * definitions.
-		 */
 		if (numChildren > 0) {
-			// Force measure all children to get their heights.
+			// Force measure all children with full available size to get preferred sizes.
 			for (UIElement element : children) {
 				element.measureCore(availableSize);
-				sumHeight = Math.max(sumHeight, element.getPreferredSize().getHeight());
 			}
 
-			// Generate column width array either from the number of column definitions.
-			// Otherwise, use only one column.
+			// === Columns ===
 			if (columnDefinitions != null) {
 				numColumnDefinitions = columnDefinitions.size();
 				columnWidths = new Float[numColumnDefinitions];
 				float availableSpaceX = availableSize.getWidth();
 				float totalRelativePartitions = 0;
 
-				// TODO: Somehow simplify this?
-				// Measure Absolute values first and get the total number of relative space
-				// partitions.
-				for (int i = 0; i < columnWidths.length; i++) {
+				// Subtract horizontal spacing between columns from available space.
+				if (numColumnDefinitions > 1)
+					availableSpaceX -= horizontalSpacing * (numColumnDefinitions - 1);
 
-					GridDefinition colDef = columnDefinitions.get(i % numColumnDefinitions);
+				// Pass 1: Resolve Auto columns from children's preferred sizes.
+				for (int i = 0; i < numColumnDefinitions; i++) {
+					GridDefinition colDef = columnDefinitions.get(i);
+					if (colDef.unit == RelativeUnit.Auto) {
+						float maxChildWidth = 0;
+						int iteration = 0;
+						for (UIElement element : children) {
+							if (!element.isVisible()) continue;
+							int col = iteration % numColumnDefinitions;
+							if (col == i) {
+								maxChildWidth = Math.max(maxChildWidth, element.getPreferredSize().getWidth());
+							}
+							iteration++;
+						}
+						columnWidths[i] = maxChildWidth;
+						availableSpaceX -= maxChildWidth;
+						sumWidth += maxChildWidth;
+					}
+				}
+
+				// Pass 2: Resolve Absolute columns.
+				for (int i = 0; i < numColumnDefinitions; i++) {
+					GridDefinition colDef = columnDefinitions.get(i);
 					if (colDef.unit == RelativeUnit.Absolute) {
 						columnWidths[i] = colDef.value;
 						availableSpaceX -= colDef.value;
-						sumWidth += columnWidths[i];
-					} else {
+						sumWidth += colDef.value;
+					} else if (colDef.unit == RelativeUnit.Relative) {
 						totalRelativePartitions += colDef.value;
 					}
 				}
 
-				// Measure relative values using the space partitions
-				for (int j = 0; j < columnWidths.length; j++) {
-					GridDefinition colDef = columnDefinitions.get(j);
+				// Pass 3: Resolve Relative columns with remaining space.
+				for (int i = 0; i < numColumnDefinitions; i++) {
+					GridDefinition colDef = columnDefinitions.get(i);
 					if (colDef.unit == RelativeUnit.Relative) {
-						columnWidths[j] = (colDef.value / totalRelativePartitions) * availableSpaceX;
+						columnWidths[i] = (colDef.value / totalRelativePartitions) * availableSpaceX;
 					}
 				}
+
+				// Add horizontal spacing to total width.
+				if (numColumnDefinitions > 1)
+					sumWidth += horizontalSpacing * (numColumnDefinitions - 1);
 			} else {
+				numColumnDefinitions = 1;
 				columnWidths = new Float[1];
 				columnWidths[0] = availableSize.getWidth();
 				sumWidth = columnWidths[0];
 			}
 
-			// Generate row heights array either from the number of row definitions.
-			// Otherwise, calculate the number of rows based off of the number of columns.
-			// Otherwise, use only one row.
+			// === Rows ===
+			int numRows;
 			if (rowDefinitions != null) {
-				numRowDefinitions = rowDefinitions.size();
-				rowHeights = new Float[numRowDefinitions];
-			} else if (columnDefinitions != null) {
-				if (numColumnDefinitions == 0) {
-					rowHeights = new Float[1];
-				} else {
-					int rows = (numChildren / numColumnDefinitions);
-					rowHeights = new Float[rows];
-				}
+				numRows = rowDefinitions.size();
+			} else if (numColumnDefinitions > 0) {
+				numRows = Math.max(1, (int) Math.ceil((double) numChildren / numColumnDefinitions));
 			} else {
-				rowHeights = new Float[1];
+				numRows = 1;
+			}
+			rowHeights = new Float[numRows];
+
+			if (rowDefinitions != null) {
+				float availableSpaceY = availableSize.getHeight();
+				float totalRelativePartitions = 0;
+
+				// Subtract vertical spacing between rows from available space.
+				if (numRows > 1)
+					availableSpaceY -= verticalSpacing * (numRows - 1);
+
+				// Pass 1: Resolve Auto rows from children's preferred sizes.
+				for (int i = 0; i < numRows; i++) {
+					GridDefinition rowDef = rowDefinitions.get(i);
+					if (rowDef.unit == RelativeUnit.Auto) {
+						float maxChildHeight = 0;
+						int iteration = 0;
+						for (UIElement element : children) {
+							if (!element.isVisible()) continue;
+							int row = iteration / numColumnDefinitions;
+							if (row == i) {
+								maxChildHeight = Math.max(maxChildHeight, element.getPreferredSize().getHeight());
+							}
+							iteration++;
+						}
+						rowHeights[i] = maxChildHeight;
+						availableSpaceY -= maxChildHeight;
+						sumHeight += maxChildHeight;
+					}
+				}
+
+				// Pass 2: Resolve Absolute rows.
+				for (int i = 0; i < numRows; i++) {
+					GridDefinition rowDef = rowDefinitions.get(i);
+					if (rowDef.unit == RelativeUnit.Absolute) {
+						rowHeights[i] = rowDef.value;
+						availableSpaceY -= rowDef.value;
+						sumHeight += rowDef.value;
+					} else if (rowDef.unit == RelativeUnit.Relative) {
+						totalRelativePartitions += rowDef.value;
+					}
+				}
+
+				// Pass 3: Resolve Relative rows with remaining space.
+				for (int i = 0; i < numRows; i++) {
+					GridDefinition rowDef = rowDefinitions.get(i);
+					if (rowDef.unit == RelativeUnit.Relative) {
+						rowHeights[i] = (rowDef.value / totalRelativePartitions) * availableSpaceY;
+					}
+				}
+
+				// Add vertical spacing to total height.
+				if (numRows > 1)
+					sumHeight += verticalSpacing * (numRows - 1);
+			} else {
+				// No row definitions — compute row heights from children's preferred sizes.
+				for (int i = 0; i < numRows; i++) {
+					float maxChildHeight = 0;
+					int iteration = 0;
+					for (UIElement element : children) {
+						if (!element.isVisible()) continue;
+						int row = iteration / numColumnDefinitions;
+						if (row == i) {
+							maxChildHeight = Math.max(maxChildHeight, element.getPreferredSize().getHeight());
+						}
+						iteration++;
+					}
+					rowHeights[i] = maxChildHeight;
+					sumHeight += maxChildHeight;
+				}
+
+				if (numRows > 1)
+					sumHeight += verticalSpacing * (numRows - 1);
 			}
 
-			// Measure all of the children.
+			// Re-measure children with their actual column/row sizes.
 			int iteration = 0;
 			for (UIElement element : children) {
+				if (!element.isVisible()) continue;
 				int row = iteration / columnWidths.length;
 				int column = iteration % columnWidths.length;
 
-				if (!element.isVisible())
-					continue;
-
 				Float columnWidth = columnWidths[column];
 				Float rowHeight = rowHeights[row];
+				if (rowHeight == null) rowHeight = availableSize.getHeight();
 
-				// TODO: Find Row Heights
-				if (rowHeight == null)
-					rowHeight = availableSize.getHeight();
-
-				Size newSize = new Size(columnWidth, rowHeight);
-				element.measureCore(newSize);
+				element.measureCore(new Size(columnWidth, rowHeight));
 				iteration++;
 			}
 		}
 
-		// Add up the size after the fact.
 		return new Size(sumWidth, sumHeight);
 	}
 
@@ -171,11 +273,11 @@ public class GridComponent extends Component {
 				element.arrange(newSize);
 
 				iteration++;
-				currentX += columnWidth;
+				currentX += columnWidth + horizontalSpacing;
 
 				// Increment the currentY if the row is about to change.
 				if (column == columnWidths.length - 1) {
-					currentY += rowHeight;
+					currentY += rowHeight + verticalSpacing;
 				}
 			}
 		}

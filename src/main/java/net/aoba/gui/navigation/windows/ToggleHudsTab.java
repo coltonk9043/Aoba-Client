@@ -10,7 +10,7 @@ package net.aoba.gui.navigation.windows;
 
 import java.util.ArrayList;
 
-import net.aoba.gui.Margin;
+import net.aoba.gui.Thickness;
 import net.aoba.gui.components.HudComponent;
 import net.aoba.gui.components.SeparatorComponent;
 import net.aoba.gui.components.StackPanelComponent;
@@ -24,7 +24,7 @@ public class ToggleHudsTab extends Window {
 		super("Toggle HUDs", 0, 0);
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
-		stackPanel.setMargin(new Margin(null, 30f, null, null));
+		stackPanel.setMargin(new Thickness(null, 30f, null, null));
 
 		stackPanel.addChild(new StringComponent("Toggle HUDs"));
 		stackPanel.addChild(new SeparatorComponent());

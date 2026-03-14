@@ -163,7 +163,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 		SettingManager.registerSetting(maxSpeed);
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
-
+		stackPanel.setSpacing(4f);
 		stackPanel.addChild(new StringComponent("PathFinding"));
 		stackPanel.addChild(new SeparatorComponent());
 

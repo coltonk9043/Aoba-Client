@@ -20,6 +20,10 @@ public class GridDefinition {
 	public final float value;
 	public final RelativeUnit unit;
 
+	public GridDefinition(RelativeUnit unit) {
+		this(0, unit);
+	}
+	
 	public GridDefinition(float value) {
 		this(value, RelativeUnit.Absolute);
 	}

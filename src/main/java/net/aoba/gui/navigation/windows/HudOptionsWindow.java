@@ -15,7 +15,7 @@ import com.mojang.logging.LogUtils;
 
 import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Margin;
+import net.aoba.gui.Thickness;
 import net.aoba.gui.components.CheckboxComponent;
 import net.aoba.gui.components.ColorPickerComponent;
 import net.aoba.gui.components.KeybindComponent;
@@ -33,7 +33,7 @@ public class HudOptionsWindow extends Window {
 		minWidth = 340.0f;
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
-		stackPanel.setMargin(new Margin(null, 30f, null, null));
+		stackPanel.setMargin(new Thickness(null, 30f, null, null));
 
 		List<String> fontNames = Aoba.getInstance().fontManager.fontRenderers.keySet().stream().toList();
 		LogUtils.getLogger().info(Arrays.toString(fontNames.toArray()));

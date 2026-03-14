@@ -13,9 +13,10 @@ import java.util.ArrayList;
 import net.aoba.Aoba;
 import net.aoba.event.events.FontChangedEvent;
 import net.aoba.event.listeners.FontChangedListener;
-import net.aoba.gui.Margin;
+import net.aoba.gui.Rectangle;
 import net.aoba.gui.Size;
 import net.aoba.gui.TextAlign;
+import net.aoba.gui.TextWrapping;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.utils.render.Render2D;
@@ -25,71 +26,85 @@ import net.minecraft.client.gui.GuiGraphics;
 
 public class StringComponent extends Component implements FontChangedListener {
 	private TextAlign textAlign = TextAlign.Left;
+	private TextWrapping textWrapping = TextWrapping.Wrap;
 	private String originalText;
 	private final ArrayList<String> text = new ArrayList<String>();
 	private final boolean bold;
-	private final Color color;
+	private Color color;
 
 	public StringComponent(String text) {
-        setText(text);
-		color = Colors.White;
-		bold = false;
-		setMargin(new Margin(8f, 2f, 8f, 2f));
-		setIsHitTestVisible(false);
-		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
+		this(text, Colors.White, false);
 	}
 
 	public StringComponent(String text, boolean bold) {
-        setText(text);
-		color = Colors.White;
+		this(text, Colors.White, bold);
+	}
+
+	public StringComponent(String text, Color color, boolean bold) {
+		setText(text);
+		this.color = color;
 		this.bold = bold;
-		setMargin(new Margin(8f, 2f, 8f, 2f));
 		setIsHitTestVisible(false);
 		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
 	}
 
-	public StringComponent(String text, Color color, boolean bold) {
-        setText(text);
-		this.color = color;
-		this.bold = bold;
-		setMargin(new Margin(8f, 2f, 8f, 2f));
-		setIsHitTestVisible(false);
-		Aoba.getInstance().eventManager.AddListener(FontChangedListener.class, this);
+	private float getLineHeight() {
+		Font textRenderer = Aoba.getInstance().fontManager.GetRenderer();
+		return textRenderer.lineHeight * 2.0f;
 	}
 
 	@Override
 	public Size measure(Size availableSize) {
 		recalculateLines(availableSize);
-		return new Size(availableSize.getWidth(), text.size() * 28f);
+
+		Font textRenderer = Aoba.getInstance().fontManager.GetRenderer();
+		float lineHeight = getLineHeight();
+
+		if (textWrapping == TextWrapping.NoWrap) {
+			float fullWidth = originalText != null ? textRenderer.width(originalText) * 2.0f : 0f;
+			return new Size(fullWidth, lineHeight);
+		}
+
+		float maxLineWidth = 0;
+		for (String line : text) {
+			float lineWidth = textRenderer.width(line) * 2.0f;
+			if (lineWidth > maxLineWidth)
+				maxLineWidth = lineWidth;
+		}
+
+		float width = Math.min(maxLineWidth, availableSize.getWidth());
+		float height = text.size() * lineHeight;
+		return new Size(width, height);
 	}
 
 	@Override
 	public void draw(GuiGraphics drawContext, float partialTicks) {
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
+		Rectangle actualRect = getActualSize();
+		float actualX = actualRect.getX();
+		float actualY = actualRect.getY();
+		float actualWidth = actualRect.getWidth();
+		float lineHeight = getLineHeight();
 
-		int i = 5;
-
+		float y = 0;
 		for (String str : text) {
 			if (bold)
 				str = ChatFormatting.BOLD + str;
 
 			switch (textAlign) {
 			case Left:
-				Render2D.drawString(drawContext, str, actualX, actualY + i, color.getColorAsInt());
+				Render2D.drawString(drawContext, str, actualX, actualY + y, color.getColorAsInt());
 				break;
 			case Center:
 				float xPosCenter = actualX + (actualWidth / 2.0f) - Render2D.getStringWidth(str);
-				Render2D.drawString(drawContext, str, xPosCenter, actualY + i, color.getColorAsInt());
+				Render2D.drawString(drawContext, str, xPosCenter, actualY + y, color.getColorAsInt());
 				break;
 			case Right:
 				float xPosRight = actualX + actualWidth - (Render2D.getStringWidth(str) * 2);
-				Render2D.drawString(drawContext, str, xPosRight, actualY + i, color.getColorAsInt());
+				Render2D.drawString(drawContext, str, xPosRight, actualY + y, color.getColorAsInt());
 				break;
 			}
 
-			i += 25;
+			y += lineHeight;
 		}
 	}
 
@@ -113,10 +128,32 @@ public class StringComponent extends Component implements FontChangedListener {
 
 			float width = availableSize.getWidth().floatValue();
 			float textWidth = textRenderer.width(originalText) * 2.0f;
+
+			if (textWrapping == TextWrapping.NoWrap) {
+				if (textWidth <= width) {
+					text.add(originalText);
+				} else {
+					String ellipsis = "...";
+					float ellipsisWidth = textRenderer.width(ellipsis) * 2.0f;
+					StringBuilder buffer = new StringBuilder();
+					for (int i = 0; i < originalText.length(); i++) {
+						buffer.append(originalText.charAt(i));
+						float bufferWidth = textRenderer.width(buffer.toString()) * 2.0f;
+						if (bufferWidth + ellipsisWidth >= width) {
+							buffer.setLength(buffer.length() - 1);
+							buffer.append(ellipsis);
+							break;
+						}
+					}
+					text.add(buffer.toString());
+				}
+				return;
+			}
+
 			if (textWidth < width) {
 				text.add(originalText);
 			} else {
-				// Single there are multiple lines, we will want to split them in a spot that
+				// Since there are multiple lines, we will want to split them in a spot that
 				// makes the most sense.
 				StringBuilder buffer = new StringBuilder();
 				int lastSplit = 0;
@@ -153,6 +190,25 @@ public class StringComponent extends Component implements FontChangedListener {
 				if (lastSplit != -1 && lastSplit < originalText.length())
 					text.add(originalText.substring(lastSplit));
 			}
+		}
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public TextWrapping getTextWrapping() {
+		return textWrapping;
+	}
+
+	public void setTextWrapping(TextWrapping textWrapping) {
+		if (this.textWrapping != textWrapping) {
+			this.textWrapping = textWrapping;
+			invalidateMeasure();
 		}
 	}
 

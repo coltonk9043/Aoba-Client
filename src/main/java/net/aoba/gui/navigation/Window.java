@@ -14,6 +14,7 @@ import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.gui.Direction;
 import net.aoba.gui.GuiManager;
+import net.aoba.gui.Thickness;
 import net.aoba.gui.Rectangle;
 import net.aoba.gui.ResizeMode;
 import net.aoba.gui.Size;
@@ -48,17 +49,16 @@ public class Window extends UIElement {
 		this.ID = ID;
 		minWidth = 180.0f;
 		minHeight = 50.0f;
+		setPadding(new Thickness(8f));
 
 		visible = false;
 		position = RectangleSetting.builder().id(ID + "_position").displayName(ID + "Position")
 				.defaultValue(new Rectangle(x, y, width, height)).onUpdate((Rectangle vec) -> {
 					actualSize.setX(vec.getX());
 					actualSize.setY(vec.getY());
-					setSize(vec.getWidth(), vec.getHeight());
 					invalidateMeasure();
 				}).build();
 
-		setSize(getWidth(), getHeight());
 		SettingManager.registerGlobalSetting(position);
 	}
 
@@ -75,6 +75,16 @@ public class Window extends UIElement {
 	}
 
 	@Override
+	public Float getWidth() {
+		return position.getWidth();
+	}
+
+	@Override
+	public Float getHeight() {
+		return position.getHeight();
+	}
+
+	@Override
 	public void setWidth(Float width) {
 		position.setWidth(width);
 	}
@@ -84,15 +94,17 @@ public class Window extends UIElement {
 		position.setHeight(height);
 	}
 
+
 	public String getID() {
 		return ID;
 	}
 
 	public void draw(GuiGraphics drawContext, float partialTicks) {
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-		float actualHeight = getActualSize().getHeight();
+		Rectangle size = getActualSize();
+		float actualX = size.getX();
+		float actualY = size.getY();
+		float actualWidth = size.getWidth();
+		float actualHeight = size.getHeight();
 
 		// Draws background depending on components width and height
 		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight,
@@ -106,9 +118,19 @@ public class Window extends UIElement {
 
 	@Override
 	protected Size getStartingSize(Size availableSize) {
-		// Account for minimum size.
+		float w = availableSize.getWidth();
+		float h = availableSize.getHeight();
 
-		return availableSize;
+		// Subtract padding so that when measure() adds it back,
+		// the result matches the window's actual size.
+		if (padding != null) {
+			if (padding.left() != null) w -= padding.left();
+			if (padding.right() != null) w -= padding.right();
+			if (padding.top() != null) h -= padding.top();
+			if (padding.bottom() != null) h -= padding.bottom();
+		}
+
+		return new Size(w, h);
 	}
 
 	protected void setResizing(boolean state, MouseClickEvent event, Direction direction) {
@@ -162,9 +184,11 @@ public class Window extends UIElement {
 				position.setX(interpolatedX);
 				position.setY(interpolatedY);
 			} else if (isResizing) {
+				float posHeight = pos.getHeight();
+				float posWidth = pos.getWidth();
 				switch (grabDirection) {
 				case Top:
-					float newHeightTop = getActualSize().getHeight() - (float) mouseDeltaY;
+					float newHeightTop = posHeight - (float) mouseDeltaY;
 
 					if (minHeight != null && newHeightTop < minHeight.floatValue())
 						break;
@@ -172,11 +196,11 @@ public class Window extends UIElement {
 					if (maxHeight != null && newHeightTop > maxHeight.floatValue())
 						break;
 
-					position.setY(getActualSize().getY() + (float) mouseDeltaY);
+					position.setY(pos.getY() + (float) mouseDeltaY);
 					position.setHeight(newHeightTop);
 					break;
 				case Bottom:
-					float newHeightBottom = getActualSize().getHeight() + (float) mouseDeltaY;
+					float newHeightBottom = posHeight + (float) mouseDeltaY;
 
 					if (minHeight != null && newHeightBottom < minHeight.floatValue())
 						break;
@@ -187,18 +211,18 @@ public class Window extends UIElement {
 					position.setHeight(newHeightBottom);
 					break;
 				case Left:
-					float newWidthLeft = getActualSize().getWidth() - (float) mouseDeltaX;
+					float newWidthLeft = posWidth - (float) mouseDeltaX;
 					if (minWidth != null && newWidthLeft < minWidth.floatValue())
 						break;
 
 					if (maxWidth != null && newWidthLeft > maxWidth.floatValue())
 						break;
 
-					position.setX(getActualSize().getX() + (float) mouseDeltaX);
+					position.setX(pos.getX() + (float) mouseDeltaX);
 					position.setWidth(newWidthLeft);
 					break;
 				case Right:
-					float newWidthRight = getActualSize().getWidth() + (float) mouseDeltaX;
+					float newWidthRight = posWidth + (float) mouseDeltaX;
 					if (minWidth != null && newWidthRight < minWidth.floatValue())
 						break;
 

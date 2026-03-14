@@ -8,13 +8,9 @@
 
 package net.aoba.gui.components;
 
-import java.util.List;
-
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Margin;
-import net.aoba.gui.Size;
-import net.aoba.gui.UIElement;
+import net.aoba.gui.Thickness;
 import net.aoba.gui.colors.Color;
 import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
@@ -31,65 +27,8 @@ public class ButtonComponent extends Component {
 	 * @param onClick OnClick delegate that will run when the button is pressed.
 	 */
 	public ButtonComponent(Runnable onClick) {
-
-		setMargin(new Margin(8f, 2f, 8f, 2f));
-
 		this.onClick = onClick;
-	}
-
-	@Override
-	public Size measure(Size availableSize) {
-		float finalWidth = 0;
-		float finalHeight = 0;
-
-		List<UIElement> children = getChildren();
-		for (UIElement element : children) {
-			if (!element.isVisible())
-				continue;
-
-			element.measureCore(availableSize);
-			Size resultingSize = element.getPreferredSize();
-
-			if (resultingSize.getWidth() > finalWidth)
-				finalWidth = resultingSize.getWidth();
-
-			if (resultingSize.getHeight() > finalHeight)
-				finalHeight = resultingSize.getHeight();
-		}
-
-		if (margin != null) {
-
-			Float marginLeft = margin.getLeft();
-			Float marginTop = margin.getTop();
-			Float marginRight = margin.getRight();
-			Float marginBottom = margin.getBottom();
-
-			if (marginLeft != null)
-				finalWidth += marginLeft;
-
-			if (marginRight != null)
-				finalWidth += marginRight;
-
-			if (marginTop != null)
-				finalHeight += marginTop;
-
-			if (marginBottom != null)
-				finalHeight += marginBottom;
-		}
-
-		if (minWidth != null && finalWidth < minWidth) {
-			finalWidth = minWidth;
-		} else if (maxWidth != null && finalWidth > maxWidth) {
-			finalWidth = maxWidth;
-		}
-
-		if (minHeight != null && finalHeight < minHeight) {
-			finalHeight = minHeight;
-		} else if (maxHeight != null && finalHeight > maxHeight) {
-			finalHeight = maxHeight;
-		}
-
-		return new Size(finalWidth, finalHeight);
+		this.setPadding(new Thickness(4f));
 	}
 
 	/**
@@ -119,7 +58,7 @@ public class ButtonComponent extends Component {
 			color = color.add(45, 45, 45);
 		}
 
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, 3.0f,
+		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, GuiManager.roundingRadius.getValue(),
 				GuiManager.borderColor.getValue(), color);
 
 		super.draw(drawContext, partialTicks);
