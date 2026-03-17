@@ -62,11 +62,9 @@ jobs:
         if: steps.commit_check.outputs.has_new_commits == 'true' || github.event.inputs.force_build == 'true'
         id: version
         run: |
-          SHORT_SHA=$(git rev-parse --short HEAD)
-          BUILD_DATE=$(date +%Y-%m-%d)
-          echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          BUILD_DATE=$(date +%m%d%Y)
           echo "build_date=${BUILD_DATE}" >> $GITHUB_OUTPUT
-          echo "tag=build-${{ env.GAME_VERSION }}-+${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "tag=build-${{ env.GAME_VERSION }}-${BUILD_DATE}" >> $GITHUB_OUTPUT
 
       - name: Set up JDK 21
         if: steps.commit_check.outputs.has_new_commits == 'true' || github.event.inputs.force_build == 'true'
@@ -91,21 +89,21 @@ jobs:
         if: steps.commit_check.outputs.has_new_commits == 'true' || github.event.inputs.force_build == 'true'
         run: |
           JAR=$(ls ./build/libs/*.jar | head -n 1)
-          mv "$JAR" "./build/libs/Aoba-${{ env.GAME_VERSION }}-build-${{ steps.version.outputs.short_sha }}.jar"
+          mv "$JAR" "./build/libs/Aoba-${{ env.GAME_VERSION }}-${{ steps.version.outputs.build_date }}.jar"
 
       - name: Create Release
         if: steps.commit_check.outputs.has_new_commits == 'true' || github.event.inputs.force_build == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
-          name: "Weekly Build ${{ env.GAME_VERSION }}-${{ steps.version.outputs.short_sha }} (${{ steps.version.outputs.build_date }})"
+          name: "Weekly Build ${{ env.GAME_VERSION }}-${{ steps.version.outputs.build_date }}"
           prerelease: false
           make_latest: true
           generate_release_notes: true
           previous_tag: ${{ steps.commit_check.outputs.last_tag }}
           body: |
             **Game Version:** ${{ env.GAME_VERSION }}
-            **Commit:** [`${{ steps.version.outputs.short_sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            **Date:** ${{ steps.version.outputs.build_date }}
 
             *This is an automated weekly build. If you encounter any bugs, please open an issue or visit the Discord to file a bug report.*
           files: |
