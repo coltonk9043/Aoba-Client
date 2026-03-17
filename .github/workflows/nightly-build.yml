@@ -63,7 +63,9 @@ jobs:
         id: version
         run: |
           BUILD_DATE=$(date +%m%d%Y)
+          DISPLAY_DATE=$(date +"%B %d, %Y")
           echo "build_date=${BUILD_DATE}" >> $GITHUB_OUTPUT
+          echo "display_date=${DISPLAY_DATE}" >> $GITHUB_OUTPUT
           echo "tag=build-${{ env.GAME_VERSION }}-${BUILD_DATE}" >> $GITHUB_OUTPUT
 
       - name: Set up JDK 21
@@ -103,7 +105,7 @@ jobs:
           previous_tag: ${{ steps.commit_check.outputs.last_tag }}
           body: |
             **Game Version:** ${{ env.GAME_VERSION }}
-            **Date:** ${{ steps.version.outputs.build_date }}
+            **Date:** ${{ steps.version.outputs.display_date }}
 
             *This is an automated weekly build. If you encounter any bugs, please open an issue or visit the Discord to file a bug report.*
           files: |
