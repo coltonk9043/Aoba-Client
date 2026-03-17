@@ -105,7 +105,6 @@ jobs:
           previous_tag: ${{ steps.commit_check.outputs.last_tag }}
           body: |
             **Game Version:** ${{ env.GAME_VERSION }}
-            **Date:** ${{ steps.version.outputs.display_date }}
 
             *This is an automated weekly build. If you encounter any bugs, please open an issue or visit the Discord to file a bug report.*
           files: |
