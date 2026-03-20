@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 public class KeybindSetting extends Setting<Key> {
     protected KeybindSetting(String ID, String displayName, String description, Key default_value, Consumer<Key> onUpdate) {
-        super(ID, description, default_value, onUpdate);
+        super(ID, displayName, description, default_value, onUpdate);
         type = TYPE.KEYBIND;
     }
 

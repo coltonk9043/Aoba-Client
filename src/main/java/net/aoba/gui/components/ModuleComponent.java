@@ -94,9 +94,6 @@ public class ModuleComponent extends Component {
 
 				stackPanel.addChild(new SeparatorComponent());
 
-				KeybindComponent keybindComponent = new KeybindComponent(module.getBind());
-				stackPanel.addChild(keybindComponent);
-
 				for (Setting<?> setting : module.getSettings()) {
 					if (setting == module.state)
 						continue;
@@ -114,6 +111,8 @@ public class ModuleComponent extends Component {
 						c = new EnumComponent<>((EnumSetting) setting);
 					} else if (setting instanceof HotbarSetting) {
 						c = new HotbarComponent((HotbarSetting) setting);
+					} else if(setting instanceof KeybindSetting) {
+						c = new KeybindComponent((KeybindSetting) setting);
 					} else {
 						c = null;
 					}
@@ -125,7 +124,7 @@ public class ModuleComponent extends Component {
 
 				lastSettingsTab.addChild(stackPanel);
 
-				lastSettingsTab.setMinWidth(250.0f);
+				lastSettingsTab.setMinWidth(300.0f);
 				lastSettingsTab.setMaxWidth(600f);
 				Aoba.getInstance().guiManager.addWindow(lastSettingsTab, "Modules");
 				lastSettingsTab.initialize();

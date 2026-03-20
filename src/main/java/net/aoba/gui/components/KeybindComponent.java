@@ -33,6 +33,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
 	private Key key;
 	private KeybindSetting keyBind;
 	private Consumer<Key> onChanged;
+	private final StringComponent label;
 	private final StringComponent keyTextComponent;
 
 	public KeybindComponent() {
@@ -40,7 +41,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
 		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
 		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));
 
-		StringComponent label = new StringComponent("Keybind");
+		label = new StringComponent(getDisplayText());
 		label.setVerticalAlignment(VerticalAlignment.Center);
 		grid.addChild(label);
 
@@ -74,6 +75,7 @@ public class KeybindComponent extends Component implements KeyDownListener {
 		this.key = keyBind.getValue();
 		this.keyBind = keyBind;
 		this.keyBind.addOnUpdate(this::onSettingValueChanged);
+		label.setText(getDisplayText());
 		keyTextComponent.setText(getKeyDisplayText());
 	}
 
@@ -84,6 +86,13 @@ public class KeybindComponent extends Component implements KeyDownListener {
 		keyTextComponent.setText(getKeyDisplayText());
 	}
 
+	private String getDisplayText() {
+		if(this.keyBind == null)
+			return "Keybind";
+		else 
+			return keyBind.displayName;
+	}
+	
 	private String getKeyDisplayText() {
 		String text = getKey().getDisplayName().getString();
 		if (text.equals("scancode.0") || text.equals("key.keyboard.0"))
