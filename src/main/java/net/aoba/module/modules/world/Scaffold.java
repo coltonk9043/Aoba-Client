@@ -19,6 +19,10 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.settings.types.KeybindSetting;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.InputConstants.Key;
+import org.lwjgl.glfw.GLFW;
 import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,21 +30,27 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class Scaffold extends Module implements TickListener {
-
-	private record ScaffoldPlaceResult(BlockPos pos, Direction direction) {
-	}
-
 	private final FloatSetting radius = FloatSetting.builder().id("scaffold_radius").displayName("Radius")
 			.description("How far Scaffold will place a block below the player.").defaultValue(4f).minValue(1f)
 			.maxValue(10f).step(0.5f).build();
 
+	private final KeybindSetting descendScaffoldKey = KeybindSetting.builder().id("scaffold_descend_key")
+			.displayName("Descend Key")
+			.description("Hold this key to descend down.")
+			.defaultValue(InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_LEFT_SHIFT)).build();
+
 	private final FloatSetting placeDelay = FloatSetting.builder().id("scaffold_place_delay").displayName("Place Delay")
 			.description("How long (in ticks) until Scaffold will place the next block below the player.")
 			.defaultValue(0f).minValue(0f).maxValue(20f).step(1f).build();
+
+	private final FloatSetting maxBlocksPerTick = FloatSetting.builder().id("scaffold_max_blocks_per_tick")
+			.displayName("Max Blocks Per Tick")
+			.description("The maximum number of blocks that can be placed in a single tick.")
+			.defaultValue(4f).minValue(1f).maxValue(10f).step(1f).build();
 
 	private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
 			.id("scaffold_rotation_mode").displayName("Rotation Mode")
@@ -66,6 +76,14 @@ public class Scaffold extends Module implements TickListener {
 	private final BooleanSetting swingHand = BooleanSetting.builder().id("scaffold_swing_hand")
 			.displayName("Swing Hand").description("Swing hand when placing blocks.").defaultValue(true).build();
 
+	private final BooleanSetting disableSprint = BooleanSetting.builder().id("scaffold_disable_sprint")
+			.displayName("Disable Sprint").description("Prevents the player from sprinting while scaffolding.")
+			.defaultValue(false).build();
+
+	private final BooleanSetting disableSneak = BooleanSetting.builder().id("scaffold_disable_sneak")
+			.displayName("Disable Sneak").description("Prevents sneaking while down scaffolding.")
+			.defaultValue(true).build();
+
 	private int yPosition = 0;
 	private int curDelay = 0;
 
@@ -75,13 +93,17 @@ public class Scaffold extends Module implements TickListener {
 		setDescription("Automatically places blocks below the player.");
 
 		addSetting(radius);
+		addSetting(descendScaffoldKey);
 		addSetting(placeDelay);
+		addSetting(maxBlocksPerTick);
 		addSetting(rotationMode);
 		addSetting(maxRotation);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
 		addSetting(swingHand);
+		addSetting(disableSprint);
+		addSetting(disableSneak);
 	}
 
 	@Override
@@ -101,32 +123,56 @@ public class Scaffold extends Module implements TickListener {
 
 	@Override
 	public void onTick(Pre event) {
+		if (disableSprint.getValue())
+			MC.options.keySprint.setDown(false);
+
 		Inventory inventory = MC.player.getInventory();
 		ItemStack currentHand = inventory.getSelectedItem();
 		if (currentHand.getItem() instanceof BlockItem) {
-			ScaffoldPlaceResult placementPos = findBlockPosToPlace();
+			if (curDelay < placeDelay.getValue()) {
+				Aoba.getInstance().rotationManager.setGoal(null);
+				curDelay++;
+				return;
+			}
 
-			if (curDelay >= placeDelay.getValue() && placementPos != null) {
-				Vec3 placementPosVec = placementPos.pos.getCenter();
+			int blocksPlaced = 0;
+			int maxBlocks = maxBlocksPerTick.getValue().intValue();
 
+			while (blocksPlaced < maxBlocks) {
+				BlockPos placementPos = findBlockPosToPlace();
+				if (placementPos == null)
+					break;
+
+				Vec3 placementPosVec = placementPos.getCenter();
 				Vec3dGoal rotation = Vec3dGoal.builder().goal(placementPosVec).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
 						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
 
-				InteractionUtils.placeBlock(placementPos.pos, InteractionHand.MAIN_HAND, true);
+				if (!InteractionUtils.placeBlock(placementPos, InteractionHand.MAIN_HAND, true))
+					break;
+
+				blocksPlaced++;
+			}
+
+			if (blocksPlaced > 0) {
 				curDelay = 0;
 			} else {
 				Aoba.getInstance().rotationManager.setGoal(null);
-				curDelay++;
 			}
 		}
 	}
 
 	@Override
 	public void onTick(Post event) {
+		if (disableSneak.getValue())
+			MC.options.keyShift.setDown(false);
+
 		// Determine the height at which the player will build.
-		if (MC.player.onGround()) {
+		Key descendKey = descendScaffoldKey.getValue();
+		if (descendKey.getValue() != -1 && InputConstants.isKeyDown(MC.getWindow(), descendKey.getValue())) {
+			yPosition = MC.player.blockPosition().getY() - 2;
+		} else if (MC.player.onGround()) {
 			if (MC.options.keyJump.isDown()) {
 				yPosition = MC.player.blockPosition().getY();
 			} else
@@ -134,68 +180,71 @@ public class Scaffold extends Module implements TickListener {
 		}
 	}
 
-	private ScaffoldPlaceResult findBlockPosToPlace() {
+	/**
+	 * Finds the next BlockPos to place at to build the bridge to
+	 * underneath the player.
+	 * @return BlockPos to place at, if any.
+	 */
+	private BlockPos findBlockPosToPlace() {
 		BlockPos playerPos = MC.player.blockPosition();
-		BlockPos underneathPosition = new BlockPos(playerPos.getX(), yPosition, playerPos.getZ());
+		int ux = playerPos.getX();
+		int uz = playerPos.getZ();
+		BlockPos underneathPos = new BlockPos(ux, yPosition, uz);
 
-		if (!MC.level.isEmptyBlock(underneathPosition))
+		// Block already filled.
+		if (!MC.level.isEmptyBlock(underneathPos))
 			return null;
 
-		BlockPos result = null;
-		Direction resultDirection = null;
-		double lastDistanceTo = Float.MAX_VALUE;
+		// Check underneath and return if it is empty and has an adjacent solid block.
+		if (hasAdjacentSolid(underneathPos))
+			return underneathPos;
 
+		// Search outward for closest empty block with an adjacent solid block.
+		BlockPos result = null;
+		double lastDistanceSqr = Double.MAX_VALUE;
 		int radiusInt = radius.getValue().intValue();
+		double radiusSqr = radius.getValueSqr();
+
 		for (int x = -radiusInt; x < radiusInt; x++) {
 			for (int z = -radiusInt; z < radiusInt; z++) {
-				BlockPos checkPos = underneathPosition.offset(x, 0, z);
-				Direction directionToPlace = findAdjacentBlockFace(checkPos);
+				
+				// Ignore because was already checked earlier.
+				if (x == 0 && z == 0)
+					continue;
 
-				if (directionToPlace != null) {
-					double distanceToBlock = MC.player.distanceToSqr(checkPos.getCenter());
+				// Get the sqr distance and compare it to the previous sqr distance.
+				double distSqr = x * x + z * z;
+				if (distSqr >= lastDistanceSqr || distSqr > radiusSqr)
+					continue;
 
-					if (result == null || distanceToBlock < lastDistanceTo) {
-						result = checkPos;
-						resultDirection = directionToPlace;
-						lastDistanceTo = distanceToBlock;
-					}
+				// Check the block to ensure a block can be placed there.
+				BlockPos checkPos = new BlockPos(ux + x, yPosition, uz + z);
+				if (!MC.level.isEmptyBlock(checkPos))
+					continue;
+
+				if (hasAdjacentSolid(checkPos)) {
+					result = checkPos;
+					lastDistanceSqr = distSqr;
 				}
 			}
 		}
-		if (result == null || resultDirection == null
-				|| result.distSqr(MC.player.blockPosition()) > radius.getValueSqr())
-			return null;
-		else
-			return new ScaffoldPlaceResult(result, resultDirection);
+
+		return result;
 	}
+	
+	/**
+	 * Returns whether a block has an adjacent solid block.
+	 * @param pos Position to check
+	 * @return True if there is, otherwise false.
+	 */
+	private boolean hasAdjacentSolid(BlockPos pos) {
+		for (Direction dir : Direction.values()) {
+			BlockState state = MC.level.getBlockState(pos.relative(dir));
 
-	private Direction findAdjacentBlockFace(BlockPos pos) {
-		BlockPos north = pos.north();
-		BlockPos south = pos.south();
-		BlockPos west = pos.west();
-		BlockPos east = pos.east();
-		BlockPos up = pos.above();
-		BlockPos down = pos.below();
+			if (!state.isAir() && state.getFluidState().isEmpty())
+				return true;
+		}
 
-		if (!MC.level.isEmptyBlock(north) && !MC.level.getFluidState(north).is(Fluids.LAVA)
-				&& !MC.level.getFluidState(north).is(Fluids.WATER)) {
-			return Direction.SOUTH;
-		} else if (!MC.level.isEmptyBlock(east) && !MC.level.getFluidState(east).is(Fluids.LAVA)
-				&& !MC.level.getFluidState(east).is(Fluids.WATER)) {
-			return Direction.WEST;
-		} else if (!MC.level.isEmptyBlock(south) && !MC.level.getFluidState(south).is(Fluids.LAVA)
-				&& !MC.level.getFluidState(south).is(Fluids.WATER)) {
-			return Direction.NORTH;
-		} else if (!MC.level.isEmptyBlock(west) && !MC.level.getFluidState(west).is(Fluids.LAVA)
-				&& !MC.level.getFluidState(west).is(Fluids.WATER)) {
-			return Direction.EAST;
-		} else if (!MC.level.isEmptyBlock(up) && !MC.level.getFluidState(up).is(Fluids.LAVA)
-				&& !MC.level.getFluidState(up).is(Fluids.WATER)) {
-			return Direction.UP;
-		} else if (!MC.level.isEmptyBlock(down) && !MC.level.getFluidState(down).is(Fluids.LAVA)
-				&& !MC.level.getFluidState(down).is(Fluids.WATER)) {
-			return Direction.NORTH;
-		} else
-			return null;
+		return false;
 	}
 }
