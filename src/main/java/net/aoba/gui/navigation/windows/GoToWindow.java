@@ -39,6 +39,7 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.StringSetting;
+import net.aoba.utils.player.MovementUtils;
 import net.aoba.utils.render.Render3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.arguments.EntityAnchorArgument.Anchor;
@@ -214,6 +215,7 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 			public void run() {
 				unregisterEvents();
 				clear();
+				MovementUtils.stopMoving();
 				startButtonText.setText("Calculate");
 				startButton.setOnClick(startRunnable);
 			}
@@ -406,8 +408,10 @@ public class GoToWindow extends Window implements TickListener, Render3DListener
 				currentNodeIndex++;
 				if (currentNodeIndex < nodes.size() - 1)
 					next = nodes.get(currentNodeIndex + 1);
-				else
+				else {
+					MovementUtils.stopMoving();
 					return;
+				}
 			}
 
 			Vec3 nextCenterPos = next.pos.getBottomCenter();
