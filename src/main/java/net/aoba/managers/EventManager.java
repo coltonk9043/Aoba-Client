@@ -60,7 +60,7 @@ public class EventManager {
 		}
 
 		event.setCancelled(false);
-		event.Fire(listOfListeners);
+		event.Fire(new ArrayList<>(listOfListeners));
 	}
 
 	/**
