@@ -34,6 +34,7 @@ import net.aoba.module.modules.combat.CrystalAura;
 import net.aoba.module.modules.combat.KillAura;
 import net.aoba.module.modules.combat.MaceAura;
 import net.aoba.module.modules.combat.Nametags;
+import net.aoba.module.modules.combat.NoMissDelay;
 import net.aoba.module.modules.combat.Reach;
 import net.aoba.module.modules.combat.TriggerBot;
 import net.aoba.module.modules.misc.*;
@@ -139,6 +140,7 @@ public class ModuleManager implements KeyDownListener {
 	public Noclip noclip = new Noclip();
 	public NoFall nofall = new NoFall();
 	public NoJumpDelay nojumpdelay = new NoJumpDelay();
+	public NoMissDelay nomissdelay = new NoMissDelay();
 	public NoSlowdown noslowdown = new NoSlowdown();
 	public Nuker nuker = new Nuker();
 	public PlayerESP playeresp = new PlayerESP();

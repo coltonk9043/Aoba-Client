@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
+import net.aoba.event.events.StartAttackEvent;
 import net.aoba.event.events.TickEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -37,6 +38,7 @@ import net.minecraft.client.Options;
 import net.minecraft.client.User;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.phys.HitResult;
 
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
@@ -119,6 +121,16 @@ public abstract class MinecraftMixin {
 			Aoba.getInstance().guiManager.setClickGuiOpen(false);
 		}
 	}
+
+    @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
+    private void startAttack(CallbackInfoReturnable<Boolean> cir) {
+    	StartAttackEvent event = new StartAttackEvent();
+    	Aoba.getInstance().eventManager.Fire(event);
+    	
+    	if(event.isCancelled()) {
+            cir.setReturnValue(false);
+    	}
+    }
 
 	// TODO: InactivityFrameLimiter class... i guess.. :/
 	/*
