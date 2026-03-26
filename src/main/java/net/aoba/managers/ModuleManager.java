@@ -36,6 +36,7 @@ import net.aoba.module.modules.combat.MaceAura;
 import net.aoba.module.modules.combat.Nametags;
 import net.aoba.module.modules.combat.NoMissDelay;
 import net.aoba.module.modules.combat.Reach;
+import net.aoba.module.modules.combat.ShieldBreaker;
 import net.aoba.module.modules.combat.TriggerBot;
 import net.aoba.module.modules.misc.*;
 import net.aoba.module.modules.movement.ClickTP;
@@ -150,6 +151,7 @@ public class ModuleManager implements KeyDownListener {
 	public ReverseStep reverseStep = new ReverseStep();
 	public Safewalk safewalk = new Safewalk();
 	public Scaffold scaffold = new Scaffold();
+	public ShieldBreaker shieldBreaker = new ShieldBreaker();
 	public Sneak sneak = new Sneak();
 	public Speed speed = new Speed();
 	public Spider spider = new Spider();

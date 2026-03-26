@@ -9,7 +9,6 @@
 package net.aoba.module.modules.combat;
 
 import java.util.ArrayList;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.events.TickEvent.Post;
@@ -22,7 +21,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.world.InteractionHand;
+import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
@@ -192,13 +191,11 @@ public class KillAura extends Module implements TickListener {
 							Entity ent = entityResult.getEntity();
 
 							if (ent == entityToAttack) {
-								MC.player.swing(InteractionHand.MAIN_HAND);
-								MC.gameMode.attack(MC.player, entityToAttack);
+								InteractionUtils.attack(ent);
 							}
 						}
 					} else {
-						MC.player.swing(InteractionHand.MAIN_HAND);
-						MC.gameMode.attack(MC.player, entityToAttack);
+						InteractionUtils.attack(entityToAttack);
 					}
 				}
 			}
