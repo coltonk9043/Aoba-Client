@@ -61,6 +61,11 @@ public class Vec3dGoal extends Goal<Vec3> {
 			return this;
 		}
 
+		public BUILDER moveFix(boolean state) {
+			goal.moveFix = state;
+			return this;
+		}
+
 		public Vec3dGoal build() {
 			return goal;
 		}

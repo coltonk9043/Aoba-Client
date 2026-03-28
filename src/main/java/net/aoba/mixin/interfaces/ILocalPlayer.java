@@ -18,6 +18,21 @@ public interface ILocalPlayer {
 	@Accessor("autoJumpEnabled")
 	boolean getAutoJumpEnabled();
 
+	@Accessor("xLast")
+	double getXLast();
+
+	@Accessor("yLast")
+	double getYLast();
+
+	@Accessor("zLast")
+	double getZLast();
+
+	@Accessor("yRotLast")
+	float getYRotLast();
+
+	@Accessor("xRotLast")
+	float getXRotLast();
+
 	@Accessor("positionReminder")
 	void setTicksSinceLastPositionPacketSent(int value);
 
@@ -29,4 +44,19 @@ public interface ILocalPlayer {
 
 	@Accessor("autoJumpEnabled")
 	void setAutoJumpEnabled(boolean value);
+
+	@Accessor("xLast")
+	void setXLast(double value);
+
+	@Accessor("yLast")
+	void setYLast(double value);
+
+	@Accessor("zLast")
+	void setZLast(double value);
+
+	@Accessor("yRotLast")
+	void setYRotLast(float value);
+
+	@Accessor("xRotLast")
+	void setXRotLast(float value);
 }

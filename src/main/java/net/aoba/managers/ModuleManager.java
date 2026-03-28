@@ -31,6 +31,7 @@ import net.aoba.module.modules.combat.BedAura;
 import net.aoba.module.modules.combat.BowAimbot;
 import net.aoba.module.modules.combat.Criticals;
 import net.aoba.module.modules.combat.CrystalAura;
+import net.aoba.module.modules.combat.ElytraTarget;
 import net.aoba.module.modules.combat.KillAura;
 import net.aoba.module.modules.combat.MaceAura;
 import net.aoba.module.modules.combat.Nametags;
@@ -116,6 +117,7 @@ public class ModuleManager implements KeyDownListener {
 	public CrystalAura crystalaura = new CrystalAura();
 	public ClickTP clickTP = new ClickTP();
 	public DiscordRPCModule discordRPC = new DiscordRPCModule();
+	public ElytraTarget elytraTarget = new ElytraTarget();
 	public EntityControl entityControl = new EntityControl();
 	public EntityESP entityesp = new EntityESP();
 	public EXPThrower expthrower = new EXPThrower();
