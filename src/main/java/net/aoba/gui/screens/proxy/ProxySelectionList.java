@@ -9,10 +9,10 @@
 package net.aoba.gui.screens.proxy;
 
 import net.aoba.managers.proxymanager.Socks5Proxy;
-import net.aoba.utils.render.Render2D;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
@@ -82,13 +82,11 @@ public class ProxySelectionList extends ObjectSelectionList<ProxySelectionList.E
 
 			int textColor = owner.isActiveProxy(proxy) ? 0xFF00FF00 : 0xFFFFFFFF;
 
-			Render2D.drawStringWithScale(drawContext, "IP: " + proxy.getIp(), x + 32 + 3, y, textColor, 1.0f);
-			Render2D.drawStringWithScale(drawContext, "Port: " + proxy.getPort(), x + 32 + 3, y + lineHeight,
-					textColor, 1.0f);
-			Render2D.drawStringWithScale(drawContext, "Username: " + proxy.getUsername(), x + 32 + 3,
-					y + lineHeight * 2, textColor, 1.0f);
-			Render2D.drawStringWithScale(drawContext, "*".repeat(proxy.getPassword().length()), x + 32 + 3,
-					y + lineHeight * 3, textColor, 1.0f);
+			Font font = Minecraft.getInstance().font;
+			drawContext.drawString(font, "IP: " + proxy.getIp(), x + 5, y + 4, textColor);
+			drawContext.drawString(font, "Port: " + proxy.getPort(), x + 5, y + 4 + lineHeight, textColor);
+			drawContext.drawString(font, "Username: " + (proxy.hasUsername() ? proxy.getUsername() : "N/A"), x + 5, y + 4 + lineHeight * 2, textColor);
+			drawContext.drawString(font, "Password: " + (proxy.hasPassword() ? "*".repeat(proxy.getPassword().length()) : "N/A"), x + 5, y + 4 + lineHeight * 3, textColor);
 		}
 
 		@Override

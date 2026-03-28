@@ -8,6 +8,7 @@
 
 package net.aoba.gui.screens.proxy;
 
+import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.managers.proxymanager.Socks5Proxy;
 import net.minecraft.client.gui.GuiGraphics;
@@ -42,21 +43,23 @@ public class EditProxyScreen extends Screen {
 		textFieldProxyIp = new EditBox(font, width / 2 - 100, height / 2 - 76, 200, 20,
 				Component.nullToEmpty("Enter IP"));
 		textFieldProxyIp.setValue(proxy == null ? "" : proxy.getIp());
+		textFieldProxyIp.setResponder(s -> updateSaveButtonState());
 		addRenderableWidget(textFieldProxyIp);
 
 		textFieldProxyPort = new EditBox(font, width / 2 - 100, height / 2 - 36, 200, 20,
 				Component.nullToEmpty("Enter Port"));
 		textFieldProxyPort.setValue(proxy == null ? "" : String.valueOf(proxy.getPort()));
+		textFieldProxyPort.setResponder(s -> updateSaveButtonState());
 		addRenderableWidget(textFieldProxyPort);
 
 		textFieldProxyUsername = new EditBox(font, width / 2 - 100, height / 2 + 4, 200, 20,
 				Component.nullToEmpty("Enter Username"));
-		textFieldProxyUsername.setValue(proxy == null ? "" : proxy.getUsername());
+		textFieldProxyUsername.setValue(proxy == null || !proxy.hasUsername() ? "" : proxy.getUsername());
 		addRenderableWidget(textFieldProxyUsername);
 
 		textFieldProxyPassword = new EditBox(font, width / 2 - 100, height / 2 + 44, 200, 20,
 				Component.nullToEmpty("Enter Password"));
-		textFieldProxyPassword.setValue(proxy == null ? "" : proxy.getPassword());
+		textFieldProxyPassword.setValue(proxy == null || !proxy.hasPassword() ? "" : proxy.getPassword());
 		textFieldProxyPassword.addFormatter((text, offset) -> {
 			return FormattedCharSequence.forward("*".repeat(text.length()), Style.EMPTY);
 		});
@@ -79,26 +82,26 @@ public class EditProxyScreen extends Screen {
 		drawContext.drawString(font, "Password:", width / 2 - 100, height / 2 + 30, 0xFFFFFFFF);
 	}
 
-	private void onButtonProxyEditPressed() {
+	private void updateSaveButtonState() {
+		buttonSaveProxy.active = !textFieldProxyIp.getValue().isEmpty() && !textFieldProxyPort.getValue().isEmpty();
+	}
 
+	private void onButtonProxyEditPressed() {
 		String ip = textFieldProxyIp.getValue();
 		String portText = textFieldProxyPort.getValue();
 		String username = textFieldProxyUsername.getValue();
 		String password = textFieldProxyPassword.getValue();
 
-		if (ip.isEmpty() || portText.isEmpty() || username.isEmpty() || password.isEmpty())
-			return;
-
 		try {
 			proxy.setIp(ip);
 			proxy.setPort(Integer.parseInt(portText));
-			proxy.setUsername(username);
-			proxy.setPassword(password);
-			parent.refreshProxyList();
+			proxy.setUsername(username.isEmpty() ? null : username);
+			proxy.setPassword(password.isEmpty() ? null : password);
+			Aoba.getInstance().proxyManager.saveProxies();
+			minecraft.setScreen(parent);
 		} catch (NumberFormatException e) {
 			AobaClient.LOGGER.error(e.getMessage());
 		}
-
 	}
 
 	private void onButtonCancelPressed() {

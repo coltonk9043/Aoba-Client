@@ -37,11 +37,13 @@ public class AddProxyScreen extends Screen {
 		textFieldProxyIp = new EditBox(font, width / 2 - 100, height / 2 - 76, 200, 20,
 				Component.nullToEmpty("Enter IP"));
 		textFieldProxyIp.setValue("");
+		textFieldProxyIp.setResponder(s -> updateAddButtonState());
 		addRenderableWidget(textFieldProxyIp);
 
 		textFieldProxyPort = new EditBox(font, width / 2 - 100, height / 2 - 36, 200, 20,
 				Component.nullToEmpty("Enter Port"));
 		textFieldProxyPort.setValue("");
+		textFieldProxyPort.setResponder(s -> updateAddButtonState());
 		addRenderableWidget(textFieldProxyPort);
 
 		textFieldProxyUsername = new EditBox(font, width / 2 - 100, height / 2 + 4, 200, 20,
@@ -56,10 +58,15 @@ public class AddProxyScreen extends Screen {
 
 		buttonAddProxy = Button.builder(Component.nullToEmpty("Add Proxy"), b -> onAddProxyButtonPressed())
 				.bounds(width / 2 - 100, height / 2 + 74, 200, 20).build();
+		buttonAddProxy.active = false;
 		addRenderableWidget(buttonAddProxy);
 
 		addRenderableWidget(Button.builder(Component.nullToEmpty("Cancel"), b -> onButtonCancelPressed())
 				.bounds(width / 2 - 100, height / 2 + 98, 200, 20).build());
+	}
+
+	private void updateAddButtonState() {
+		buttonAddProxy.active = !textFieldProxyIp.getValue().isEmpty() && !textFieldProxyPort.getValue().isEmpty();
 	}
 
 	private void onAddProxyButtonPressed() {
@@ -68,14 +75,16 @@ public class AddProxyScreen extends Screen {
 		String username = textFieldProxyUsername.getValue();
 		String password = textFieldProxyPassword.getValue();
 
-		if (ip.isEmpty() || portText.isEmpty() || username.isEmpty() || password.isEmpty())
-			return;
-
 		try {
 			int port = Integer.parseInt(portText);
-			Socks5Proxy newProxy = new Socks5Proxy(ip, port, username, password);
+			Socks5Proxy newProxy;
+			if (username.isEmpty() && password.isEmpty()) {
+				newProxy = new Socks5Proxy(ip, port);
+			} else {
+				newProxy = new Socks5Proxy(ip, port, username, password);
+			}
 			Aoba.getInstance().proxyManager.addProxy(newProxy);
-			parent.refreshProxyList();
+			minecraft.setScreen(parent);
 		} catch (NumberFormatException e) {
 			AobaClient.LOGGER.error(e.getMessage());
 		}
