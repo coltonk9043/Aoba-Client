@@ -22,10 +22,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.aoba.Aoba;
+import net.aoba.managers.rotation.goals.Goal;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -63,5 +66,19 @@ public abstract class EntityMixin {
 	@Inject(at = { @At("HEAD") }, method = "turn(DD)V", cancellable = true)
 	public void onChangeLookDirection(double cursorDeltaX, double cursorDeltaY, CallbackInfo ci) {
 
+	}
+
+	@Redirect(method = "moveRelative", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getYRot()F"))
+	private float onMoveRelative(Entity instance) {
+		if (instance == Minecraft.getInstance().player) {
+			Goal<?> goal = Aoba.getInstance().rotationManager.getGoal();
+			if (goal != null && goal.isMoveFix()) {
+				Float serverYaw = Aoba.getInstance().rotationManager.getServerYaw();
+				if (serverYaw != null) {
+					return serverYaw;
+				}
+			}
+		}
+		return instance.getYRot();
 	}
 }

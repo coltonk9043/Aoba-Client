@@ -59,6 +59,11 @@ public class RotationGoal extends Goal<Rotation> {
 			return this;
 		}
 
+		public BUILDER moveFix(boolean state) {
+			goal.moveFix = state;
+			return this;
+		}
+
 		public RotationGoal build() {
 			return goal;
 		}
