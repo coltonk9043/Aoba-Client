@@ -46,6 +46,18 @@ public class Socks5Proxy {
         this.password = password;
     }
 
+    public boolean hasUsername() {
+        return username != null;
+    }
+
+    public boolean hasPassword() {
+        return password != null;
+    }
+
+    public boolean isAnonymous() {
+        return !hasUsername() && !hasPassword();
+    }
+
     public Socks5Proxy(String ip, int port, String username, String password) {
         this.ip = ip;
         this.port = port;

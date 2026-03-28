@@ -61,8 +61,12 @@ public class ConnectionMixin {
 		Socks5Proxy proxy = Aoba.getInstance().proxyManager.getActiveProxy();
 
 		if (proxy != null && side == PacketFlow.CLIENTBOUND && !local) {
-			pipeline.addFirst(new Socks5ProxyHandler(new InetSocketAddress(proxy.getIp(), proxy.getPort()),
-					proxy.getUsername(), proxy.getPassword()));
+			InetSocketAddress proxyAddress = new InetSocketAddress(proxy.getIp(), proxy.getPort());
+			if (proxy.isAnonymous()) {
+				pipeline.addFirst(new Socks5ProxyHandler(proxyAddress));
+			} else {
+				pipeline.addFirst(new Socks5ProxyHandler(proxyAddress, proxy.getUsername(), proxy.getPassword()));
+			}
 		}
 	}
 }
