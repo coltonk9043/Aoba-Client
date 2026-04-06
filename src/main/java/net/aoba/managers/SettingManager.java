@@ -266,7 +266,7 @@ public class SettingManager {
 			try {
 				String value = config.getProperty(setting.ID, null);
 				if (value == null)
-					break;
+					continue;
 
 				switch (setting.type) {
 					case FLOAT -> {
@@ -284,7 +284,7 @@ public class SettingManager {
 						setting.setValue(value);
 					}
 					case KEYBIND -> {
-						int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
+						int keyCode = Integer.parseInt(value);
 						setting.setValue(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
 					}
 					case RECTANGLE -> {
@@ -328,12 +328,9 @@ public class SettingManager {
 					case INDEXEDSTRINGLIST, STRINGLIST ->
 							throw new UnsupportedOperationException("Unimplemented case: " + setting.type);
 					case ENUM -> {
-						String enumName = config.getProperty(setting.ID, null);
-						if (enumName != null) {
-							Enum<?> enumValue = Enum.valueOf((((Enum<?>) setting.getValue()).getDeclaringClass()),
-									enumName);
-							setting.setValue(enumValue);
-						}
+						Enum<?> enumValue = Enum.valueOf((((Enum<?>) setting.getValue()).getDeclaringClass()),
+								value);
+						setting.setValue(enumValue);
 					}
 					case VEC3D -> {
 						String[] components = value.split(",");

@@ -9,7 +9,6 @@
 package net.aoba.module.modules.combat;
 
 import java.util.ArrayList;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.events.TickEvent.Post;
@@ -22,7 +21,7 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.minecraft.world.InteractionHand;
+import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
@@ -79,6 +78,16 @@ public class KillAura extends Module implements TickListener {
 			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
+	private final BooleanSetting fakeRotation = BooleanSetting.builder().id("killaura_fake_rotation")
+			.displayName("Fake Rotation")
+			.description("Spoofs the client's rotation so that the player appears rotated on the server")
+			.defaultValue(false).build();
+
+	private final BooleanSetting moveFix = BooleanSetting.builder().id("killaura_move_fix")
+			.displayName("Move Fix")
+			.description("Corrects movement to match spoofed rotation by using the server yaw for velocity.")
+			.defaultValue(false).build();
+
 	private LivingEntity entityToAttack;
 
 	public KillAura() {
@@ -98,6 +107,8 @@ public class KillAura extends Module implements TickListener {
 		addSetting(maxRotation);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
+		addSetting(fakeRotation);
+		addSetting(moveFix);
 
 		setDetectable(AntiCheat.Matrix); // NPC
 
@@ -178,7 +189,8 @@ public class KillAura extends Module implements TickListener {
 		if (found) {
 			EntityGoal rotation = EntityGoal.builder().goal(entityToAttack).mode(rotationMode.getValue())
 					.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
-					.yawRandomness(yawRandomness.getValue()).build();
+					.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
+					.moveFix(moveFix.getValue()).build();
 			Aoba.getInstance().rotationManager.setGoal(rotation);
 
 			if (MC.player.getAttackStrengthScale(0) == 1) {
@@ -192,13 +204,11 @@ public class KillAura extends Module implements TickListener {
 							Entity ent = entityResult.getEntity();
 
 							if (ent == entityToAttack) {
-								MC.player.swing(InteractionHand.MAIN_HAND);
-								MC.gameMode.attack(MC.player, entityToAttack);
+								InteractionUtils.attack(ent);
 							}
 						}
 					} else {
-						MC.player.swing(InteractionHand.MAIN_HAND);
-						MC.gameMode.attack(MC.player, entityToAttack);
+						InteractionUtils.attack(entityToAttack);
 					}
 				}
 			}

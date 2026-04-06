@@ -41,7 +41,7 @@ public class ProxyScreen extends Screen {
 	public void init() {
 		super.init();
 
-		proxyListSelector = new ProxySelectionList(this, minecraft, width, height, 32, 64);
+		proxyListSelector = new ProxySelectionList(this, minecraft, width, height, 32, 52);
 		proxyListSelector.updateProxies();
 		layout.addToContents(proxyListSelector);
 

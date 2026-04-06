@@ -18,8 +18,8 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
@@ -167,8 +167,7 @@ public class MaceAura extends Module implements TickListener {
 				MC.player.connection.send(
 						new ServerboundMovePlayerPacket.Pos(newPos.x, newPos.y, newPos.z, false, false));
 
-				MC.gameMode.attack(MC.player, entityToAttack);
-				MC.player.swing(InteractionHand.MAIN_HAND);
+				InteractionUtils.attack(entityToAttack);
 				entityToAttack = null;
 			}
 		}

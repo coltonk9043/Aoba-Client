@@ -18,6 +18,7 @@
 
 package net.aoba.mixin;
 
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,6 +39,8 @@ import net.minecraft.client.Options;
 import net.minecraft.client.User;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 @Mixin(Minecraft.class)
@@ -64,6 +67,10 @@ public abstract class MinecraftMixin {
 	@Shadow
 	public abstract boolean isWindowActive();
 
+	@Shadow
+	@Nullable
+	public HitResult hitResult;
+	
 	@Shadow
 	@Final
 	public Options options;
@@ -124,7 +131,12 @@ public abstract class MinecraftMixin {
 
     @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
     private void startAttack(CallbackInfoReturnable<Boolean> cir) {
-    	StartAttackEvent event = new StartAttackEvent();
+    	Entity target = null;
+    	if(hitResult.getType() == HitResult.Type.ENTITY) {
+    		target = ((EntityHitResult)hitResult).getEntity();
+    	}
+    	
+    	StartAttackEvent event = new StartAttackEvent(target);
     	Aoba.getInstance().eventManager.Fire(event);
     	
     	if(event.isCancelled()) {
