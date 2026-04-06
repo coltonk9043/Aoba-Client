@@ -33,6 +33,7 @@ import net.aoba.module.modules.combat.Criticals;
 import net.aoba.module.modules.combat.CrystalAura;
 import net.aoba.module.modules.combat.ElytraTarget;
 import net.aoba.module.modules.combat.KillAura;
+import net.aoba.module.modules.combat.KnockbackDisplacer;
 import net.aoba.module.modules.combat.MaceAura;
 import net.aoba.module.modules.combat.Nametags;
 import net.aoba.module.modules.combat.NoMissDelay;
@@ -136,6 +137,7 @@ public class ModuleManager implements KeyDownListener {
 	public HighJump higherjump = new HighJump();
 	public Jesus jesus = new Jesus();
 	public Jetpack jetpack = new Jetpack();
+	public KnockbackDisplacer knockbackDisplacer = new KnockbackDisplacer();
 	public KillAura killaura = new KillAura();
 	public MaceAura maceaura = new MaceAura();
 	public MCA mcf = new MCA();

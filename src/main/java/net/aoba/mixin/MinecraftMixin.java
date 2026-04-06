@@ -33,6 +33,8 @@ import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.StartAttackEvent;
 import net.aoba.event.events.TickEvent;
+import net.aoba.gui.components.ModuleComponent;
+import net.aoba.mixin.interfaces.ILocalPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.Options;
