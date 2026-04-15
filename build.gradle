@@ -40,12 +40,9 @@ dependencies {
     modCompileOnly("maven.modrinth:sodium:${project.sodium_version}") { transitive = false }
     modCompileOnly("maven.modrinth:lithium:${project.lithium_version}") { transitive = false }
     modCompileOnly("maven.modrinth:iris:${project.iris_version}") { transitive = false }
-
+    
+    modImplementation("maven.modrinth:modmenu:${project.modmenu_version}")
     modImplementation("maven.modrinth:sodium:${project.sodium_version}")
-    //modImpl("meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT")
-
-    // Custom Implementations
-    //implementation "dev.babbaj:nether-pathfinder:${project.nether_pathfinder_version}"
 
     // Library Dependencies
     libImpl("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }
