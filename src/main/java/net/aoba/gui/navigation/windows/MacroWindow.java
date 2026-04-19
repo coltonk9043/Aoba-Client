@@ -12,36 +12,42 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
-import net.aoba.gui.GridDefinition;
-import net.aoba.gui.GridDefinition.RelativeUnit;
-import net.aoba.gui.HorizontalAlignment;
-import net.aoba.gui.TextAlign;
-import net.aoba.gui.Thickness;
+import net.aoba.gui.GuiManager;
 import net.aoba.gui.UIElement;
-import net.aoba.gui.VerticalAlignment;
 import net.aoba.gui.components.ButtonComponent;
 import net.aoba.gui.components.CheckboxComponent;
+import net.aoba.gui.components.EllipseComponent;
 import net.aoba.gui.components.GridComponent;
 import net.aoba.gui.components.ItemsComponent;
 import net.aoba.gui.components.KeybindComponent;
 import net.aoba.gui.components.PanelComponent;
+import net.aoba.gui.components.PolygonComponent;
 import net.aoba.gui.components.ScrollComponent;
 import net.aoba.gui.components.SeparatorComponent;
 import net.aoba.gui.components.StackPanelComponent;
 import net.aoba.gui.components.StringComponent;
 import net.aoba.gui.components.TextBoxComponent;
 import net.aoba.gui.components.StackPanelComponent.StackType;
+import net.aoba.gui.font.FontManager;
 import net.aoba.gui.navigation.Window;
+import net.aoba.gui.types.GridDefinition;
+import net.aoba.gui.types.HorizontalAlignment;
+import net.aoba.gui.types.SizeToContent;
+import net.aoba.gui.types.TextAlign;
+import net.aoba.gui.types.Thickness;
+import net.aoba.gui.types.VerticalAlignment;
+import net.aoba.gui.types.GridDefinition.RelativeUnit;
 import net.aoba.managers.macros.Macro;
-
+import net.aoba.rendering.shaders.Shader;
+import net.aoba.rendering.utils.PolygonBank;
+import net.aoba.gui.colors.Color;
 public class MacroWindow extends Window {
 	private ButtonComponent recordButton;
-	private StringComponent recordButtonText;
+	private EllipseComponent recordIcon;
+	private PolygonComponent recordStopIcon;
 	private ButtonComponent playPausePlaybackButton;
-	private StringComponent playPausePlaybackButtonText;
+	private PolygonComponent playPauseIcon;
 	private ButtonComponent stopPlaybackButton;
-	private StringComponent stopPlaybackButtonText;
 	private TextBoxComponent filenameText;
 	private ItemsComponent<Macro> macrosList;
 	private ButtonComponent saveButton;
@@ -56,23 +62,46 @@ public class MacroWindow extends Window {
 	private Runnable stopMacroRunnable;
 	public MacroWindow() {
 		super("Macro", 895, 150);
-
-		minWidth = 350f;
+		sizeToContent = SizeToContent.Both;
+		setProperty(UIElement.MinWidthProperty, 350f);
 
 		StackPanelComponent stackPanel = new StackPanelComponent();
-		stackPanel.setSpacing(4f);
-		stackPanel.addChild(new StringComponent("Macros"));
+		stackPanel.setSpacing(8f);
+		
+		StringComponent header = new StringComponent("Macros");
+		header.setProperty(UIElement.FontWeightProperty, FontManager.WEIGHT_BOLD);
+		header.bindProperty(UIElement.ForegroundProperty, GuiManager.foregroundHeaderColor);
+		stackPanel.addChild(header);
+
 		stackPanel.addChild(new SeparatorComponent());
 
 		StringComponent label = new StringComponent("Records your inputs and plays them back.");
 		stackPanel.addChild(label);
 
-		// Record / Stop Recording Button
+		// Record button uses a red circle (idle) / red square (recording).
+		Shader recordRed = Shader.solid(new Color(220, 40, 40));
+
+		recordIcon = new EllipseComponent();
+		recordIcon.setProperty(UIElement.WidthProperty, 10f);
+		recordIcon.setProperty(UIElement.HeightProperty, 10f);
+		recordIcon.setProperty(UIElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+		recordIcon.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		recordIcon.setProperty(UIElement.BackgroundProperty, recordRed);
+		recordIcon.setProperty(UIElement.IsHitTestVisibleProperty, false);
+
+		recordStopIcon = new PolygonComponent(PolygonBank.STOP);
+		recordStopIcon.setProperty(UIElement.WidthProperty, 14f);
+		recordStopIcon.setProperty(UIElement.HeightProperty, 14f);
+		recordStopIcon.setProperty(UIElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+		recordStopIcon.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		recordStopIcon.setProperty(UIElement.ForegroundProperty, recordRed);
+		recordStopIcon.setProperty(UIElement.IsHitTestVisibleProperty, false);
+
 		startRecordingRunnable = () -> {
 			Aoba.getInstance().guiManager.setClickGuiOpen(false);
 			Aoba.getInstance().macroManager.getRecorder().reset();
 			Aoba.getInstance().macroManager.getRecorder().startRecording();
-			recordButtonText.setText("⏹");
+			recordButton.setContent(recordStopIcon);
 			recordButton.setOnClick(stopRecordingRunnable);
 		};
 
@@ -80,58 +109,59 @@ public class MacroWindow extends Window {
 			Aoba.getInstance().macroManager.getRecorder().stopRecording();
 			Macro macro = AOBA.macroManager.getRecorder().constructMacro();
 			this.currentMacro = macro;
-			recordButtonText.setText("⏺");
+			recordButton.setContent(recordIcon);
 			recordButton.setOnClick(startRecordingRunnable);
 		};
 
 		recordButton = new ButtonComponent(startRecordingRunnable);
-		recordButton.setWidth(26f);
-		recordButton.setHeight(26f);
-		recordButtonText = new StringComponent("⏺");
-		recordButtonText.setIsHitTestVisible(false);
-		recordButtonText.setHorizontalAlignment(HorizontalAlignment.Center);
-		recordButtonText.setVerticalAlignment(VerticalAlignment.Center);
-		recordButton.addChild(recordButtonText);
+		recordButton.setProperty(UIElement.WidthProperty, 26f);
+		recordButton.setProperty(UIElement.HeightProperty, 26f);
+		recordButton.setContent(recordIcon);
 
-		// Play / Pause Button
+		// Play / Pause Button — toggles the PolygonProperty between PLAY and PAUSE.
+		playPauseIcon = new PolygonComponent(PolygonBank.PLAY);
+		playPauseIcon.setProperty(UIElement.WidthProperty, 14f);
+		playPauseIcon.setProperty(UIElement.HeightProperty, 14f);
+		playPauseIcon.setProperty(UIElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+		playPauseIcon.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		playPauseIcon.setProperty(UIElement.IsHitTestVisibleProperty, false);
+
 		playMacroRunnable = () -> {
-			playPausePlaybackButtonText.setText("⏸");
+			playPauseIcon.setProperty(PolygonComponent.PolygonProperty, PolygonBank.PAUSE);
 			AOBA.macroManager.getPlayer().play(currentMacro, () -> {
-				playPausePlaybackButtonText.setText("▶");
+				playPauseIcon.setProperty(PolygonComponent.PolygonProperty, PolygonBank.PLAY);
 				playPausePlaybackButton.setOnClick(playMacroRunnable);
 			});
 			playPausePlaybackButton.setOnClick(pauseMacroRunnable);
 		};
-		
+
 		pauseMacroRunnable = () -> {
-			playPausePlaybackButtonText.setText("▶");
+			playPauseIcon.setProperty(PolygonComponent.PolygonProperty, PolygonBank.PLAY);
 			AOBA.macroManager.getPlayer().stop();
 			playPausePlaybackButton.setOnClick(playMacroRunnable);
 		};
-		
+
 		playPausePlaybackButton = new ButtonComponent(playMacroRunnable);
-		playPausePlaybackButton.setWidth(26f);
-		playPausePlaybackButton.setHeight(26f);
-		playPausePlaybackButtonText = new StringComponent("▶");
-		playPausePlaybackButtonText.setIsHitTestVisible(false);
-		playPausePlaybackButtonText.setHorizontalAlignment(HorizontalAlignment.Center);
-		playPausePlaybackButtonText.setVerticalAlignment(VerticalAlignment.Center);
-		playPausePlaybackButton.addChild(playPausePlaybackButtonText);
-		
+		playPausePlaybackButton.setProperty(UIElement.WidthProperty, 26f);
+		playPausePlaybackButton.setProperty(UIElement.HeightProperty, 26f);
+		playPausePlaybackButton.setContent(playPauseIcon);
+
 		// Stop Button
 		stopMacroRunnable = () -> {
 			AOBA.macroManager.getPlayer().stop();
-			playPausePlaybackButtonText.setText("▶");
+			playPauseIcon.setProperty(PolygonComponent.PolygonProperty, PolygonBank.PLAY);
 			playPausePlaybackButton.setOnClick(playMacroRunnable);
 		};
 		stopPlaybackButton = new ButtonComponent(stopMacroRunnable);
-		stopPlaybackButton.setWidth(26f);
-		stopPlaybackButton.setHeight(26f);
-		stopPlaybackButtonText = new StringComponent("⏹");
-		stopPlaybackButtonText.setIsHitTestVisible(false);
-		stopPlaybackButtonText.setHorizontalAlignment(HorizontalAlignment.Center);
-		stopPlaybackButtonText.setVerticalAlignment(VerticalAlignment.Center);
-		stopPlaybackButton.addChild(stopPlaybackButtonText);
+		stopPlaybackButton.setProperty(UIElement.WidthProperty, 26f);
+		stopPlaybackButton.setProperty(UIElement.HeightProperty, 26f);
+		PolygonComponent stopIcon = new PolygonComponent(PolygonBank.STOP);
+		stopIcon.setProperty(UIElement.WidthProperty, 14f);
+		stopIcon.setProperty(UIElement.HeightProperty, 14f);
+		stopIcon.setProperty(UIElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+		stopIcon.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		stopIcon.setProperty(UIElement.IsHitTestVisibleProperty, false);
+		stopPlaybackButton.setContent(stopIcon);
 		
 		StackPanelComponent controlsPanel = new StackPanelComponent();
 		controlsPanel.setDirection(StackType.Horizontal);
@@ -143,14 +173,19 @@ public class MacroWindow extends Window {
 		stackPanel.addChild(controlsPanel);
 
 		// Loop Checkbox
-		loopCheckbox = new CheckboxComponent("Loop", false, (looping) -> {
+		loopCheckbox = new CheckboxComponent();
+		loopCheckbox.setProperty(CheckboxComponent.HeaderProperty, "Loop");
+		loopCheckbox.setOnChanged((looping) -> {
 			if (currentMacro != null)
 				currentMacro.setLooping(looping);
 		});
 		stackPanel.addChild(loopCheckbox);
 
 		// Keybind Text
-		keybindComponent = new KeybindComponent(InputConstants.UNKNOWN, (key) -> {
+		keybindComponent = new KeybindComponent();
+		keybindComponent.setProperty(KeybindComponent.SelectedKeyProperty, InputConstants.UNKNOWN);
+		keybindComponent.setProperty(KeybindComponent.HeaderProperty, "Macro Keybind");
+		keybindComponent.setOnChanged((key) -> {
 			if(currentMacro != null) 
 				currentMacro.setKeybind(key);
 		});
@@ -160,7 +195,7 @@ public class MacroWindow extends Window {
 		stackPanel.addChild(new StringComponent("Filename:"));
 
 		GridComponent fileNameGrid = new GridComponent();
-		fileNameGrid.setHorizontalSpacing(4f);
+		fileNameGrid.setProperty(GridComponent.HorizontalSpacingProperty, 8f);
 		fileNameGrid.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative));
 		fileNameGrid.addColumnDefinition(new GridDefinition(75, RelativeUnit.Absolute));
 		
@@ -168,30 +203,19 @@ public class MacroWindow extends Window {
 		fileNameGrid.addChild(filenameText);
 
 		saveButton = new ButtonComponent(() -> {
-			String filename = filenameText.getText();
-			if (filename == null || filename.trim().isEmpty()) {
-				filenameText.setErrorState(true);
-				return;
-			}
-
-			AobaClient aoba = Aoba.getInstance();
-			if (currentMacro == null) {
-				filenameText.setErrorState(true);
-				return;
-			}
-
+			String filename = filenameText.getProperty(TextBoxComponent.TextProperty);
 			Macro clone = new Macro(currentMacro);
 			clone.setName(filename);
-			aoba.macroManager.addMacro(clone);
+			AOBA.macroManager.addMacro(clone);
 			currentMacro = clone;
-			filenameText.setText("");
-			loopCheckbox.setChecked(false);
+			filenameText.setProperty(TextBoxComponent.TextProperty, "");
+			loopCheckbox.setProperty(CheckboxComponent.IsCheckedProperty, false);
 		});
 
 		StringComponent saveText = new StringComponent("Save");
-		saveText.setTextAlign(TextAlign.Center);
-		saveText.setVerticalAlignment(VerticalAlignment.Center);
-		saveButton.addChild(saveText);
+		saveText.setProperty(StringComponent.TextAlignmentProperty, TextAlign.Center);
+		saveText.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		saveButton.setContent(saveText);
 		fileNameGrid.addChild(saveButton);
 		stackPanel.addChild(fileNameGrid);
 
@@ -204,7 +228,7 @@ public class MacroWindow extends Window {
 			GridComponent grid = new GridComponent();
 			grid.addColumnDefinition(new GridDefinition(1, RelativeUnit.Relative));
 			grid.addColumnDefinition(new GridDefinition(1, RelativeUnit.Auto));
-			grid.setHorizontalSpacing(4f);
+			grid.setProperty(GridComponent.HorizontalSpacingProperty, 8f);
 			
 			// Macro Name
 			String macroNameText = macro.getName();
@@ -215,12 +239,12 @@ public class MacroWindow extends Window {
 				macroNameText += " [" + macro.getKeybind().getDisplayName().getString() + "]";
 			
 			StringComponent text = new StringComponent(macroNameText);
-			text.setIsHitTestVisible(true);
-			text.setOnClicked((e) -> {
+			text.setProperty(UIElement.IsHitTestVisibleProperty, true);
+			text.setOnClicked((_) -> {
 				this.currentMacro = new Macro(macro);
-				this.filenameText.setText(macro.getName());
-				this.keybindComponent.setKeyBind(macro.getKeybind());
-				this.loopCheckbox.setChecked(macro.isLooping());
+				this.filenameText.setProperty(TextBoxComponent.TextProperty, macro.getName());
+				this.keybindComponent.setProperty(KeybindComponent.SelectedKeyProperty, macro.getKeybind());
+				this.loopCheckbox.setProperty(CheckboxComponent.IsCheckedProperty, macro.isLooping());
 			});
 			grid.addChild(text);
 			
@@ -232,24 +256,27 @@ public class MacroWindow extends Window {
 			});
 			
 			StringComponent deleteString = new StringComponent("🗑");
-			deleteString.setTextAlign(TextAlign.Center);
-			deleteString.setVerticalAlignment(VerticalAlignment.Center);
-			deleteButton.addChild(deleteString);
+			deleteString.setProperty(StringComponent.TextAlignmentProperty, TextAlign.Center);
+			deleteString.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+			deleteButton.setContent(deleteString);
 			grid.addChild(deleteButton);
 			return grid;
 		});
 
 		Supplier<PanelComponent> macroListParentSupplier = () -> {
-			ScrollComponent scroll =  new ScrollComponent();
-			scroll.setMaxHeight(300f);
-			scroll.setMargin(new Thickness(4f));
-			scroll.setSpacing(4f);
-			return scroll;
+			StackPanelComponent panel = new StackPanelComponent();
+			panel.setSpacing(4f);
+			return panel;
 		};
-		
-		macrosList = new ItemsComponent<Macro>(Aoba.getInstance().macroManager.getMacros(), macroListParentSupplier, macroItemFactory);
-		stackPanel.addChild(macrosList);
 
-		addChild(stackPanel);
+		macrosList = new ItemsComponent<Macro>(Aoba.getInstance().macroManager.getMacros(), macroListParentSupplier, macroItemFactory);
+
+		ScrollComponent macroScroll = new ScrollComponent();
+		macroScroll.setProperty(UIElement.MaxHeightProperty, 300f);
+		macroScroll.setProperty(UIElement.MarginProperty, new Thickness(4f));
+		macroScroll.setContent(macrosList);
+		stackPanel.addChild(macroScroll);
+
+		setContent(stackPanel);
 	}
 }

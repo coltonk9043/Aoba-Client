@@ -11,7 +11,7 @@ package net.aoba.gui.screens.proxy;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.managers.proxymanager.Socks5Proxy;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -85,14 +85,14 @@ public class AddProxyScreen extends Screen {
 		minecraft.setScreen(parent);
 	}
 
-	@Override
-	public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-		super.render(drawContext, mouseX, mouseY, delta);
-		drawContext.drawCenteredString(font, "Add Proxy", width / 2, 20, 0xFFFFFFFF);
+    @Override
+	public void extractRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+		super.extractRenderState(graphics, mouseX, mouseY, a);
+		graphics.centeredText(font, "Add Proxy", width / 2, 20, 0xFFFFFFFF);
 
-		drawContext.drawString(font, "IP Address:", width / 2 - 100, height / 2 - 90, 0xFFFFFFFF);
-		drawContext.drawString(font, "Port:", width / 2 - 100, height / 2 - 50, 0xFFFFFFFF);
-		drawContext.drawString(font, "Username:", width / 2 - 100, height / 2 - 10, 0xFFFFFFFF);
-		drawContext.drawString(font, "Password:", width / 2 - 100, height / 2 + 30, 0xFFFFFFFF);
+		graphics.text(font, "IP Address:", width / 2 - 100, height / 2 - 90, 0xFFFFFFFF);
+		graphics.text(font, "Port:", width / 2 - 100, height / 2 - 50, 0xFFFFFFFF);
+		graphics.text(font, "Username:", width / 2 - 100, height / 2 - 10, 0xFFFFFFFF);
+		graphics.text(font, "Password:", width / 2 - 100, height / 2 + 30, 0xFFFFFFFF);
 	}
 }

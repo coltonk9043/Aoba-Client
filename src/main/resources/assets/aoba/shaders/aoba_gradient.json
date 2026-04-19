@@ -1,0 +1,10 @@
+{
+    "backend": "opengl",
+    "name": "Gradient",
+    "description": "Two-color gradient with adjustable direction",
+    "params": [
+        { "name": "Start Color", "type": "color", "default": [0.2, 0.2, 0.8, 1.0] },
+        { "name": "End Color", "type": "color", "default": [0.8, 0.2, 0.2, 1.0] },
+        { "name": "Angle", "type": "float", "default": 0.0, "min": 0.0, "max": 360.0, "step": 15.0 }
+    ]
+}

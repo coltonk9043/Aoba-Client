@@ -9,52 +9,24 @@
 package net.aoba.gui.screens;
 
 import static net.aoba.AobaClient.MC;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpClient.Redirect;
-import java.net.http.HttpClient.Version;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mojang.realmsclient.RealmsMainScreen;
 import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
 import net.aoba.gui.components.widgets.AobaButtonWidget;
 import net.aoba.gui.components.widgets.AobaImageButtonWidget;
 import net.aoba.gui.screens.addons.AddonScreen;
-import net.aoba.utils.render.TextureBank;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.rendering.utils.TextureBank;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
-import net.minecraft.client.renderer.CubeMap;
-import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 
 public class MainMenuScreen extends Screen {
-	protected static final CubeMap AOBA_PANORAMA_RENDERER = new CubeMap(TextureBank.mainmenu_panorama);
-	protected static final PanoramaRenderer AOBA_ROTATING_PANORAMA_RENDERER = new PanoramaRenderer(
-			AOBA_PANORAMA_RENDERER);
-	private static boolean panoramaRegistered = false;
-
-	public static void registerPanoramaTextures(net.minecraft.client.renderer.texture.TextureManager textureManager) {
-		if (!panoramaRegistered) {
-			AOBA_PANORAMA_RENDERER.registerTextures(textureManager);
-			panoramaRegistered = true;
-		}
-	}
+	protected static final AobaPanorama AOBA_ROTATING_PANORAMA_RENDERER = new AobaPanorama();
 
 	final int LOGO_HEIGHT = Math.max(58, height / 12);
 	final int BUTTON_WIDTH = Math.max(150, width / 6);
@@ -63,59 +35,8 @@ public class MainMenuScreen extends Screen {
 
 	int smallScreenHeightOffset = 0;
 
-	private static final ExecutorService executor = Executors.newSingleThreadExecutor();
-	private String fetchedVersion = null;
-
 	public MainMenuScreen() {
 		super(Component.nullToEmpty("Aoba Client Main Menu"));
-
-		// Async fetch latest release from GitHub
-		executor.execute(new Runnable() {
-			@Override
-			public void run() {
-				fetchLatestVersion();
-			}
-		});
-	}
-
-	private static URI createURI(String url) {
-		try {
-			URI uri = new URI(url);
-			return uri;
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
-
-	private void fetchLatestVersion() {
-		try {
-			HttpClient client = HttpClient.newBuilder().version(Version.HTTP_2).followRedirects(Redirect.NORMAL)
-					.build();
-
-			HttpRequest request = HttpRequest
-					.newBuilder(
-							createURI("https://api.github.com/repos/coltonk9043/Aoba-MC-Hacked-Client/releases/latest"))
-					.header("User-Agent",
-							"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
-					.header("Accept", "application/json").header("Content-Type", "application/x-www-form-urlencoded")
-					.GET().build();
-
-			HttpResponse<String> response;
-			response = client.send(request, BodyHandlers.ofString());
-			String responseString = response.body();
-
-			int status = response.statusCode();
-			if (status != HttpURLConnection.HTTP_OK) {
-				throw new IllegalArgumentException("Device token could not be fetched. Invalid status code " + status);
-			}
-
-			JsonObject json = new Gson().fromJson(responseString, JsonObject.class);
-			String tagName = json.get("tag_name").getAsString();
-			if (tagName != null)
-				fetchedVersion = tagName;
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void init() {
@@ -149,7 +70,7 @@ public class MainMenuScreen extends Screen {
 
 		AobaButtonWidget settingsButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING,
 				startY + BUTTON_HEIGHT + SPACING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.nullToEmpty("Settings"));
-		settingsButton.setPressAction(b -> minecraft.setScreen(new OptionsScreen(this, MC.options)));
+		settingsButton.setPressAction(b -> minecraft.setScreen(new OptionsScreen(this, MC.options, false)));
 		addRenderableWidget(settingsButton);
 
 		AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 2),
@@ -175,8 +96,8 @@ public class MainMenuScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics drawContext, int mouseX, int mouseY, float delta) {
-		super.render(drawContext, mouseX, mouseY, delta);
+	public void extractRenderState(GuiGraphicsExtractor drawContext, int mouseX, int mouseY, float delta) {
+		super.extractRenderState(drawContext, mouseX, mouseY, delta);
 
 		float widgetHeight = (BUTTON_HEIGHT + SPACING) * 5;
 		int startX = (width - BUTTON_WIDTH) / 2;
@@ -184,23 +105,16 @@ public class MainMenuScreen extends Screen {
 
 		int logoWidth = (int) (LOGO_HEIGHT * (719.0 / 270.0));
 		int logoX = (width - logoWidth) / 2;
-		int logoY = startY - LOGO_HEIGHT - 10;
+		int logoY = startY - LOGO_HEIGHT;
 		drawContext.blit(RenderPipelines.GUI_TEXTURED, TextureBank.mainmenu_logo, logoX, logoY, 0, 0, logoWidth,
 				LOGO_HEIGHT, 719, 270, 719, 270);
 
-		drawContext.drawString(font, "Aoba " + AobaClient.AOBA_VERSION, 2, height - 10, 0xFFFF00FF);
-
-		// Draw out of date if out of date.
-		// TODO: Add option to hide if on previous versions.
-		if (fetchedVersion != null && !fetchedVersion.equals(AobaClient.AOBA_VERSION)) {
-			drawContext.drawString(font, "New version available: " + fetchedVersion, 2, height - 20,
-					0xFFFF00FF);
-		}
+		drawContext.text(font, "Aoba " + AobaClient.AOBA_VERSION, 2, height - 10, 0xFFFF00FF);
 
 		if (AobaClient.addons.isEmpty()) {
 			String noAddonsText = "No addons loaded";
 			int textWidth = font.width(noAddonsText);
-			drawContext.drawString(font, noAddonsText, width - textWidth - 15, 10, 0xFFFFFFFF);
+			drawContext.text(font, noAddonsText, width - textWidth - 15, 10, 0xFFFFFFFF);
 		} else {
 			int yOffset = 10;
 			for (IAddon addon : AobaClient.addons) {
@@ -212,42 +126,28 @@ public class MainMenuScreen extends Screen {
 				int byTextWidth = font.width(byText);
 				int authorWidth = font.width(author);
 
-				drawContext.drawString(font, addonName,
+				drawContext.text(font, addonName,
 						width - addonNameWidth - byTextWidth - authorWidth - 20, yOffset, 0xFF50C878);
 
-				drawContext.drawString(font, byText, width - byTextWidth - authorWidth - 15, yOffset,
+				drawContext.text(font, byText, width - byTextWidth - authorWidth - 15, yOffset,
 						0xFFFFFFFF);
 
-				drawContext.drawString(font, author, width - authorWidth - 10, yOffset, 0xFFFF0000);
+				drawContext.text(font, author, width - authorWidth - 10, yOffset, 0xFFFF0000);
 
 				yOffset += 10;
 			}
 		}
-
-		/**
-		 * int newsTextHeight = textRenderer.fontHeight; int newsBoxHeight =
-		 * newsTextHeight + 20; int newsTextWidth = textRenderer.getWidth("Aoba " +
-		 * fetchedVersion + " released!") + 10;
-		 * Render2D.drawOutlinedRoundedBox(drawContext, width - newsTextWidth - 10, 30,
-		 * newsTextWidth, newsBoxHeight, GuiManager.roundingRadius.getValue(),
-		 * GuiManager.borderColor.getValue(), GuiManager.backgroundColor.getValue());
-		 * drawContext.drawTextWithShadow(textRenderer, "Aoba " + fetchedVersion + "
-		 * released!", width - newsTextWidth - 5, 40, Colors.WHITE);
-		 **/
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics context, int mouseX, int mouseY, float delta) {
-		renderPanorama(context, delta);
+	public void extractBackground(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+		extractPanorama(graphics, a);
 	}
 
 	@Override
-	protected void renderPanorama(GuiGraphics context, float delta) {
-		if (!panoramaRegistered)
-			return;
-
+	protected void extractPanorama(final GuiGraphicsExtractor graphics, final float a){
 		try {
-			AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, true);
+			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, this.panoramaShouldSpin());
 		} catch (IllegalStateException e) {
 		}
 	}

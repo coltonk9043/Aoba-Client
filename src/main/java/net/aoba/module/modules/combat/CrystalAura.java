@@ -23,13 +23,13 @@ import net.aoba.managers.rotation.Rotation;
 import net.aoba.managers.rotation.RotationMode;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.types.BooleanSetting;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.ShaderSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.FindItemResult;
 import net.aoba.utils.entity.DamageUtils;
-import net.aoba.utils.render.Render3D;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
@@ -131,8 +131,8 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 			.description("Distance an enemy must be to a wall for crystals to be placed or attacked through it.")
 			.defaultValue(3f).minValue(0f).maxValue(8f).step(0.5f).build();
 
-	private final ColorSetting color = ColorSetting.builder().id("crystalaura_color").displayName("Color")
-			.description("Color").defaultValue(new Color(0, 1f, 1f)).build();
+	private final ShaderSetting color = ShaderSetting.builder().id("crystalaura_color").displayName("Color")
+			.description("Color").defaultValue(Shader.solid(new Color(0, 1f, 1f))).build();
 
 	private long lastAttackTime;
 	private long lastPlaceTime;
@@ -401,17 +401,18 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 		if (bestCrystal != null) {
 			Vec3 targetPos = bestCrystal.position().add(0, bestCrystal.getBoundingBox().getYsize() / 2.0, 0);
 
+			// TODO: No more factory for creating ServerboundInteractPacket...
+			// Ensure that this works properly.
 			switch (rotationMode.getValue()) {
 			case NONE:
 				MC.player.connection
-						.send(ServerboundInteractPacket.createAttackPacket(bestCrystal, MC.player.isShiftKeyDown()));
-				if (swingHand.getValue())
+						.send(new ServerboundInteractPacket(bestCrystal.getId(), InteractionHand.MAIN_HAND, bestCrystal.position(), MC.player.isShiftKeyDown()));
 					MC.player.swing(hand);
 				break;
 			case INSTANT:
 				MC.player.lookAt(EntityAnchorArgument.Anchor.EYES, targetPos);
 				MC.player.connection
-						.send(ServerboundInteractPacket.createAttackPacket(bestCrystal, MC.player.isShiftKeyDown()));
+						.send(new ServerboundInteractPacket(bestCrystal.getId(), InteractionHand.MAIN_HAND, bestCrystal.position(), MC.player.isShiftKeyDown()));
 				break;
 			case SMOOTH:
 				// Instant rotation for now because im too dumb to figure out smooth rotation
@@ -429,7 +430,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 				MC.player.setXRot((float) newRotation.pitch());
 
 				MC.player.connection
-						.send(ServerboundInteractPacket.createAttackPacket(bestCrystal, MC.player.isShiftKeyDown()));
+						.send(new ServerboundInteractPacket(bestCrystal.getId(), InteractionHand.MAIN_HAND, bestCrystal.position(), MC.player.isShiftKeyDown()));
 				if (swingHand.getValue())
 					MC.player.swing(hand);
 
@@ -474,7 +475,7 @@ public class CrystalAura extends Module implements TickListener, Render3DListene
 
 		for (Map.Entry<BlockPos, Long> entry : displayedBoxes.entrySet()) {
 			BlockPos pos = entry.getKey();
-			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new AABB(pos), color.getValue(), 1.0f);
+			event.getRenderer().drawBox(new AABB(pos), color.getValue(), 1.0f);
 		}
 	}
 }

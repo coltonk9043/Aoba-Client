@@ -10,15 +10,15 @@ package net.aoba.gui.components;
 
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Thickness;
-import net.aoba.gui.colors.Color;
-import net.aoba.utils.render.Render2D;
+import net.aoba.gui.UIElement;
+import net.aoba.gui.types.Thickness;
+import net.aoba.utils.input.CursorStyle;
+import net.aoba.rendering.Renderer2D;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.GuiGraphics;
 
 public class ButtonComponent extends Component {
-
 	private Runnable onClick;
 
 	/**
@@ -28,7 +28,40 @@ public class ButtonComponent extends Component {
 	 */
 	public ButtonComponent(Runnable onClick) {
 		this.onClick = onClick;
-		this.setPadding(new Thickness(4f));
+		this.setProperty(UIElement.CursorProperty, CursorStyle.Click);
+		this.setProperty(UIElement.PaddingProperty, new Thickness(4f));
+		this.bindProperty(UIElement.BackgroundProperty, GuiManager.buttonBackgroundColor);
+		this.bindProperty(UIElement.BorderProperty, GuiManager.buttonBorderColor);
+	}
+
+	@Override
+	public void draw(Renderer2D renderer, float partialTicks) {
+		boolean hovered = getProperty(UIElement.IsHoveredProperty);
+		Shader bgEffect = hovered ? GuiManager.buttonHoverBackgroundColor.getValue()
+				: getProperty(BackgroundProperty);
+		Shader bdEffect = getProperty(BorderProperty);
+		Float cornerRadius = getProperty(CornerRadiusProperty);
+		Float borderThickness = getProperty(BorderThicknessProperty);
+		float radius = cornerRadius != null ? cornerRadius : 0f;
+		float thickness = borderThickness != null ? borderThickness : 0f;
+
+		if (bgEffect != null || bdEffect != null) {
+			float actualX = getActualSize().x();
+			float actualY = getActualSize().y();
+			float actualWidth = getActualSize().width();
+			float actualHeight = getActualSize().height();
+
+			if (bgEffect != null) {
+				renderer.drawRoundedBox(actualX, actualY, actualWidth, actualHeight, radius, bgEffect);
+			}
+
+			if (bdEffect != null) {
+				renderer.drawRoundedBoxOutline(actualX, actualY, actualWidth, actualHeight, radius, thickness,
+						bdEffect);
+			}
+		}
+
+		super.draw(renderer, partialTicks);
 	}
 
 	/**
@@ -40,34 +73,11 @@ public class ButtonComponent extends Component {
 		this.onClick = onClick;
 	}
 
-	/**
-	 * Draws the button to the screen.
-	 *
-	 * @param drawContext  The current draw context of the game.
-	 * @param partialTicks The partial ticks used for interpolation.
-	 */
-	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-		float actualHeight = getActualSize().getHeight();
-
-		Color color = GuiManager.foregroundColor.getValue();
-		if (hovered) {
-			color = color.add(55, 55, 55);
-		}
-
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight, GuiManager.roundingRadius.getValue(),
-				GuiManager.borderColor.getValue(), color);
-
-		super.draw(drawContext, partialTicks);
-	}
-
 	@Override
 	public void onMouseClick(MouseClickEvent event) {
 		super.onMouseClick(event);
 		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
+			boolean hovered = getProperty(UIElement.IsHoveredProperty);
 			if (hovered) {
 				if (onClick != null)
 					onClick.run();

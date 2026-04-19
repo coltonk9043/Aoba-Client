@@ -19,11 +19,11 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.logging.LogUtils;
 
-import net.aoba.gui.Rectangle;
 import net.aoba.gui.colors.Color;
+import net.aoba.gui.types.Rectangle;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.Setting;
 import net.aoba.settings.types.*;
-import net.aoba.settings.types.ColorSetting.ColorMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -107,16 +107,18 @@ public class SettingManager {
 			LogUtils.getLogger().info("Saving global config.");
 			Properties globalConfig = new Properties();
 			fillProperties(globalConfig, globalSettings);
-			globalConfig.storeToXML(new FileOutputStream(settingsFolder.getPath() + File.separator + "globals.xml"),
-					null);
+			try (FileOutputStream out = new FileOutputStream(settingsFolder.getPath() + File.separator + "globals.xml")) {
+				globalConfig.storeToXML(out, null);
+			}
 
 			// Save selectable config.
 			String configName = currentConfig.getValue();
 			LogUtils.getLogger().info("Saving config " + configName + ".");
 			Properties config = new Properties();
 			fillProperties(config, settings);
-			config.storeToXML(new FileOutputStream(settingsFolder.getPath() + File.separator + configName + ".xml"),
-					null);
+			try (FileOutputStream out = new FileOutputStream(settingsFolder.getPath() + File.separator + configName + ".xml")) {
+				config.storeToXML(out, null);
+			}
 		}
 	}
 
@@ -139,8 +141,9 @@ public class SettingManager {
 			LogUtils.getLogger().info("Saving config " + fileName + ".");
 			Properties config = new Properties();
 			fillProperties(config, settings);
-			config.storeToXML(new FileOutputStream(settingsFolder.getPath() + File.separator + fileName + ".xml"),
-					null);
+			try (FileOutputStream out = new FileOutputStream(settingsFolder.getPath() + File.separator + fileName + ".xml")) {
+				config.storeToXML(out, null);
+			}
 		}
 	}
 
@@ -151,20 +154,33 @@ public class SettingManager {
 				case FLOAT, INTEGER, BOOLEAN, STRING -> {
 					properties.setProperty(setting.ID, String.valueOf(setting.getValue()));
 				}
+				case FONT -> {
+					FontSetting fontSetting = (FontSetting) setting;
+					properties.setProperty(setting.ID, fontSetting.getFontName());
+				}
 				case KEYBIND -> {
 					Key key = ((Key) setting.getValue());
 					properties.setProperty(setting.ID, String.valueOf(key.getValue()));
 				}
 				case RECTANGLE -> {
+					Rectangle rect = (Rectangle) setting.getValue();
 					properties.setProperty(setting.ID,
-							((Rectangle) setting.getValue()).getX() + "," + ((Rectangle) setting.getValue()).getY()
-									+ "," + ((Rectangle) setting.getValue()).getWidth() + ","
-									+ ((Rectangle) setting.getValue()).getHeight());
+							rect.x() + "," + rect.y() + "," + rect.width() + "," + rect.height());
 				}
 				case COLOR -> {
-					ColorSetting cSetting = (ColorSetting) setting;
-					String s = cSetting.getMode().name() + "," + ((Color) setting.getValue()).getColorAsHex();
-					properties.setProperty(setting.ID, s);
+					Color c = (Color) setting.getValue();
+					properties.setProperty(setting.ID, c.getColorAsHex());
+				}
+				case SHADER -> {
+					ShaderSetting sSetting = (ShaderSetting) setting;
+					StringBuilder s = new StringBuilder();
+					s.append(sSetting.getShaderId());
+					Shader shader = sSetting.getValue();
+					if (shader != null && shader.uniformValues().length > 0) {
+						for (float v : shader.uniformValues())
+							s.append(",").append(v);
+					}
+					properties.setProperty(setting.ID, s.toString());
 				}
 				case BLOCKS -> {
 					@SuppressWarnings("unchecked")
@@ -266,7 +282,7 @@ public class SettingManager {
 			try {
 				String value = config.getProperty(setting.ID, null);
 				if (value == null)
-					break;
+					continue;
 
 				switch (setting.type) {
 					case FLOAT -> {
@@ -283,6 +299,10 @@ public class SettingManager {
 					case STRING -> {
 						setting.setValue(value);
 					}
+					case FONT -> {
+						FontSetting fontSetting = (FontSetting) setting;
+						fontSetting.setFontName(value);
+					}
 					case KEYBIND -> {
 						int keyCode = Integer.parseInt(config.getProperty(setting.ID, null));
 						setting.setValue(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
@@ -290,29 +310,32 @@ public class SettingManager {
 					case RECTANGLE -> {
 						String[] dimensions = value.split(",");
 						if (dimensions.length == 4) {
-							Float x = dimensions[0].equals("null") ? null : Float.parseFloat(dimensions[0]);
-							Float y = dimensions[1].equals("null") ? null : Float.parseFloat(dimensions[1]);
-							Float width = dimensions[2].equals("null") ? null : Float.parseFloat(dimensions[2]);
-							Float height = dimensions[3].equals("null") ? null : Float.parseFloat(dimensions[3]);
+							float x = dimensions[0].equals("null") ? 0f : Float.parseFloat(dimensions[0]);
+							float y = dimensions[1].equals("null") ? 0f : Float.parseFloat(dimensions[1]);
+							float width = dimensions[2].equals("null") ? 0f : Float.parseFloat(dimensions[2]);
+							float height = dimensions[3].equals("null") ? 0f : Float.parseFloat(dimensions[3]);
 
 							setting.setValue(new Rectangle(x, y, width, height));
 						}
 					}
 					case COLOR -> {
+						String hex = value.replace("#", "");
+						Color c = Color.convertHextoRGB(hex);
+						setting.setValue(c);
+					}
+					case SHADER -> {
 						String[] splits = value.split(",");
-						ColorSetting cSetting = (ColorSetting) setting;
-						if (splits.length == 2) {
-							ColorMode enumValue = Enum.valueOf(((ColorSetting) setting).getMode().getDeclaringClass(),
-									splits[0]);
-							long hexValue = Long.parseLong(splits[1].replace("#", ""), 16);
-							int Alpha = (int) ((hexValue) >> 24) & 0xFF;
-							int R = (int) ((hexValue) >> 16) & 0xFF;
-							int G = (int) ((hexValue) >> 8) & 0xFF;
-							int B = (int) (hexValue) & 0xFF;
-
-							cSetting.setMode(enumValue);
-							if (enumValue == ColorMode.Solid) {
-								setting.setValue(new Color(R, G, B, Alpha));
+						ShaderSetting sSetting = (ShaderSetting) setting;
+						if (splits.length >= 1) {
+							sSetting.setShaderId(splits[0]);
+							Shader shader = sSetting.getValue();
+							if (shader != null && splits.length > 1) {
+								float[] vals = shader.uniformValues();
+								for (int idx = 0; idx < Math.min(splits.length - 1, vals.length); idx++) {
+									try {
+										vals[idx] = Float.parseFloat(splits[idx + 1]);
+									} catch (NumberFormatException ignored) {}
+								}
 							}
 						}
 					}

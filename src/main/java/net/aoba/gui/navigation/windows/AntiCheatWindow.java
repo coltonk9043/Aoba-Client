@@ -8,14 +8,19 @@
 
 package net.aoba.gui.navigation.windows;
 
+import java.util.Arrays;
 import net.aoba.Aoba;
-import net.aoba.gui.colors.Colors;
-import net.aoba.gui.components.EnumComponent;
+import net.aoba.gui.components.ComboBoxComponent;
 import net.aoba.gui.components.SeparatorComponent;
 import net.aoba.gui.components.StackPanelComponent;
 import net.aoba.gui.components.StringComponent;
+import net.aoba.gui.font.FontManager;
 import net.aoba.gui.navigation.Window;
+import net.aoba.gui.types.BindingMode;
+import net.aoba.gui.types.SizeToContent;
 import net.aoba.module.AntiCheat;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.UIElement;
 
 /**
  * Represents the AntiCheat Window that allows the user to select their
@@ -23,15 +28,28 @@ import net.aoba.module.AntiCheat;
  */
 public class AntiCheatWindow extends Window {
 	public AntiCheatWindow() {
-		super("AntiCheat", 50, 895);
+		super("AntiCheat", 50, 990);
+		sizeToContent = SizeToContent.Both;
 		StackPanelComponent stackPanel = new StackPanelComponent();
-		stackPanel.setSpacing(4f);
-		stackPanel.addChild(new StringComponent("AntiCheat Settings"));
+		stackPanel.setSpacing(8f);
+		
+		StringComponent headerText = new StringComponent("AntiCheat Settings");
+		headerText.setProperty(UIElement.FontWeightProperty, FontManager.WEIGHT_BOLD);
+		headerText.bindProperty(ForegroundProperty, GuiManager.foregroundHeaderColor);
+		stackPanel.addChild(headerText);
+	
 		stackPanel.addChild(new SeparatorComponent());
-		stackPanel.addChild(new EnumComponent<AntiCheat>(Aoba.getInstance().moduleManager.antiCheat));
-		stackPanel.addChild(new StringComponent(
-				"The selected AC will disable any features that are KNOWN detectable by that AC.", Colors.Gray, false));
-		addChild(stackPanel);
-		setMinWidth(300.0f);
+		
+		ComboBoxComponent comboBox = new ComboBoxComponent();
+		comboBox.setProperty(ComboBoxComponent.ItemsSourceProperty, Arrays.asList(AntiCheat.values()));
+		comboBox.bindProperty(ComboBoxComponent.SelectedItemProperty, Aoba.getInstance().moduleManager.antiCheat, BindingMode.TwoWay);
+		stackPanel.addChild(comboBox);
+		
+		StringComponent detailText = new StringComponent("The selected AC will disable any features that are KNOWN detectable by that AC.");
+		detailText.bindProperty(UIElement.ForegroundProperty, GuiManager.foregroundAccentColor);
+		stackPanel.addChild(detailText);
+		setContent(stackPanel);
+		
+		setProperty(UIElement.MinWidthProperty, 300f);
 	}
 }

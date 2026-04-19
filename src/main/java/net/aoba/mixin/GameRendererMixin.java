@@ -28,11 +28,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.module.modules.render.NoRender;
-import net.aoba.utils.render.Render2D;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -46,8 +45,8 @@ public abstract class GameRendererMixin {
 	private Minecraft minecraft;
 
 	@Inject(at = { @At("HEAD") }, method = {
-			"bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V" }, cancellable = true)
-	private void onBobViewWhenHurt(PoseStack matrixStack, float f, CallbackInfo ci) {
+			"bobView(Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;)V" }, cancellable = true)
+	private void onBobViewWhenHurt(CameraRenderState cameraState, PoseStack matrixStack, CallbackInfo ci) {
 		AobaClient aoba = Aoba.getInstance();
 		if (aoba != null && aoba.moduleManager.norender.state.getValue()) {
 			ci.cancel();
@@ -62,16 +61,6 @@ public abstract class GameRendererMixin {
 			return 0;
 
 		return Mth.lerp(delta, first, second);
-	}
-
-	@Inject(method = "renderLevel(Lnet/minecraft/client/DeltaTracker;)V", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", args = {
-			"ldc=hand" }))
-	private void onRenderWorld(DeltaTracker tickCounter, CallbackInfo ci) {
-		if (minecraft == null || minecraft.level == null || minecraft.player == null) {
-			return;
-		}
-
-		Render2D.updateScreenCenter();
 	}
 
 	@Inject(method = "displayItemActivation", at = @At("HEAD"), cancellable = true)

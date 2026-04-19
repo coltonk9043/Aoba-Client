@@ -8,26 +8,26 @@
 
 package net.aoba.gui.navigation;
 
-import java.util.List;
-
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
-import net.aoba.gui.Direction;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Thickness;
-import net.aoba.gui.Rectangle;
-import net.aoba.gui.ResizeMode;
-import net.aoba.gui.Size;
 import net.aoba.gui.UIElement;
+import net.aoba.gui.components.Component;
+import net.aoba.gui.types.Direction;
+import net.aoba.gui.types.Rectangle;
+import net.aoba.gui.types.ResizeMode;
+import net.aoba.gui.types.Size;
+import net.aoba.gui.types.SizeToContent;
+import net.aoba.gui.types.Thickness;
 import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.RectangleSetting;
 import net.aoba.utils.input.CursorStyle;
-import net.aoba.utils.render.Render2D;
+import net.aoba.rendering.Renderer2D;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.GuiGraphics;
 
-public class Window extends UIElement {
+public class Window extends Component {
 	protected String ID;
 	protected Page parentPage;
 
@@ -36,8 +36,9 @@ public class Window extends UIElement {
 	public boolean isMoving = false;
 	public boolean isResizing = false;
 
-	public boolean moveable = true;
-	public ResizeMode resizeMode = ResizeMode.WidthAndHeight;
+	protected boolean moveable = true;
+	protected SizeToContent sizeToContent = SizeToContent.None;
+	protected ResizeMode resizeMode = ResizeMode.WidthAndHeight;
 
 	public Direction grabDirection = Direction.None;
 
@@ -46,16 +47,22 @@ public class Window extends UIElement {
 	}
 
 	public Window(String ID, float x, float y, float width, float height) {
+		super();
 		this.ID = ID;
-		minWidth = 180.0f;
-		minHeight = 50.0f;
-		setPadding(new Thickness(8f));
+		setProperty(UIElement.MinWidthProperty, 180.0f);
+		setProperty(UIElement.MinHeightProperty, 50.0f);
+		setProperty(UIElement.PaddingProperty, new Thickness(12f));
+		setProperty(UIElement.IsVisibleProperty, false);
 
-		visible = false;
+		bindProperty(ForegroundProperty, GuiManager.foregroundColor);
+		bindProperty(BackgroundProperty, GuiManager.windowBackgroundColor);
+		bindProperty(BorderProperty, GuiManager.windowBorderColor);
+		bindProperty(CornerRadiusProperty, GuiManager.roundingRadius);
+		bindProperty(BorderThicknessProperty, GuiManager.lineThickness);
+		bindProperty(FontProperty, GuiManager.fontSetting);
+
 		position = RectangleSetting.builder().id(ID + "_position").displayName(ID + "Position")
-				.defaultValue(new Rectangle(x, y, width, height)).onUpdate((Rectangle vec) -> {
-					actualSize.setX(vec.getX());
-					actualSize.setY(vec.getY());
+				.defaultValue(new Rectangle(x, y, width, height)).onUpdate((Rectangle _) -> {
 					invalidateMeasure();
 				}).build();
 
@@ -63,129 +70,194 @@ public class Window extends UIElement {
 	}
 
 	@Override
+	protected void onInitialized() {
+		Float minWidth = getProperty(UIElement.MinWidthProperty);
+		Float maxWidth = getProperty(UIElement.MaxWidthProperty);
+		Float minHeight = getProperty(UIElement.MinHeightProperty);
+		Float maxHeight = getProperty(UIElement.MaxHeightProperty);
+		Thickness padding = getProperty(UIElement.PaddingProperty);
+
+		boolean autoWidth = sizeToContent == SizeToContent.Width || sizeToContent == SizeToContent.Both;
+		boolean autoHeight = sizeToContent == SizeToContent.Height || sizeToContent == SizeToContent.Both;
+
+		float w = position.getWidth();
+		if (w == 0f)
+			w = 180f;
+		if (minWidth != null && w < minWidth)
+			w = minWidth;
+		if (maxWidth != null && w > maxWidth)
+			w = maxWidth;
+
+		float h = position.getHeight();
+		if (h == 0f)
+			h = 50f;
+
+		if (autoWidth || autoHeight) {
+			UIElement content = getContent();
+			if (content != null) {
+				float contentW = w;
+				if (padding != null)
+					contentW -= padding.horizontalSum();
+				content.measureCore(new Size(contentW, Float.MAX_VALUE));
+				Size ps = content.getPreferredSize();
+				if (autoWidth) {
+					w = ps.width();
+					if (padding != null)
+						w += padding.horizontalSum();
+				}
+				if (autoHeight) {
+					h = ps.height();
+					if (padding != null)
+						h += padding.verticalSum();
+				}
+			}
+		}
+
+		if (minWidth != null && w < minWidth)
+			w = minWidth;
+		if (maxWidth != null && w > maxWidth)
+			w = maxWidth;
+		if (minHeight != null && h < minHeight)
+			h = minHeight;
+		if (maxHeight != null && h > maxHeight)
+			h = maxHeight;
+
+		position.setWidth(w);
+		position.setHeight(h);
+	}
+
+	@Override
 	public Rectangle getActualSize() {
-		Rectangle newSize = new Rectangle(actualSize);
-		if (position.getX() != null)
-			newSize.setX(position.getX());
+		return new Rectangle(position.getX(), position.getY(), actualSize.width(), actualSize.height());
+	}
 
-		if (position.getY() != null)
-			newSize.setY(position.getY());
+	public SizeToContent getSizeToContent() {
+		return sizeToContent;
+	}
 
-		return newSize;
+	public void setSizeToContent(SizeToContent sizeToContent) {
+		if (this.sizeToContent != sizeToContent) {
+			this.sizeToContent = sizeToContent;
+			invalidateMeasure();
+		}
 	}
 
 	@Override
-	public Float getWidth() {
-		return position.getWidth();
-	}
+	public void invalidateMeasure() {
+		if (!initialized)
+			return;
 
-	@Override
-	public Float getHeight() {
-		return position.getHeight();
-	}
+		measureDirty = true;
+		Float minWidth = getProperty(UIElement.MinWidthProperty);
+		Float maxWidth = getProperty(UIElement.MaxWidthProperty);
+		Float minHeight = getProperty(UIElement.MinHeightProperty);
+		Float maxHeight = getProperty(UIElement.MaxHeightProperty);
 
-	@Override
-	public void setWidth(Float width) {
-		position.setWidth(width);
-	}
+		float w = position.getWidth();
+		float h = position.getHeight();
 
-	@Override
-	public void setHeight(Float height) {
-		position.setHeight(height);
-	}
+		// Apply min/max constraints.
+		if (minWidth != null && w < minWidth)
+			w = minWidth;
+		if (maxWidth != null && w > maxWidth)
+			w = maxWidth;
+		if (minHeight != null && h < minHeight)
+			h = minHeight;
+		if (maxHeight != null && h > maxHeight)
+			h = maxHeight;
 
+		measureCore(new Size(w, h));
+
+		// Fit to content size if enabled.
+		if (sizeToContent != SizeToContent.None) {
+			Size ps = getPreferredSize();
+			boolean sizeWidth = sizeToContent == SizeToContent.Width || sizeToContent == SizeToContent.Both;
+			boolean sizeHeight = sizeToContent == SizeToContent.Height || sizeToContent == SizeToContent.Both;
+
+			if (sizeWidth) {
+				w = ps.width();
+				if (minWidth != null && w < minWidth)
+					w = minWidth;
+				if (maxWidth != null && w > maxWidth)
+					w = maxWidth;
+				position.setWidth(w);
+			}
+
+			if (sizeHeight) {
+				h = ps.height();
+				if (minHeight != null && h < minHeight)
+					h = minHeight;
+				if (maxHeight != null && h > maxHeight)
+					h = maxHeight;
+				position.setHeight(h);
+			}
+		}
+
+		float x = position.getX();
+		float y = position.getY();
+		arrange(new Rectangle(x, y, w, h));
+	}
 
 	public String getID() {
 		return ID;
 	}
 
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		Rectangle size = getActualSize();
-		float actualX = size.getX();
-		float actualY = size.getY();
-		float actualWidth = size.getWidth();
-		float actualHeight = size.getHeight();
-
-		// Draws background depending on components width and height
-		Render2D.drawOutlinedRoundedBox(drawContext, actualX, actualY, actualWidth, actualHeight,
-				GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
-				GuiManager.backgroundColor.getValue());
-		List<UIElement> children = getChildren();
-		for (UIElement child : children) {
-			child.draw(drawContext, partialTicks);
-		}
-	}
-
 	@Override
-	protected Size getStartingSize(Size availableSize) {
-		float w = availableSize.getWidth();
-		float h = availableSize.getHeight();
+	public void draw(Renderer2D renderer, float partialTicks) {
+		Rectangle size = getActualSize();
+		float actualX = size.x();
+		float actualY = size.y();
+		float actualWidth = size.width();
+		float actualHeight = size.height();
 
-		// Subtract padding so that when measure() adds it back,
-		// the result matches the window's actual size.
-		if (padding != null) {
-			if (padding.left() != null) w -= padding.left();
-			if (padding.right() != null) w -= padding.right();
-			if (padding.top() != null) h -= padding.top();
-			if (padding.bottom() != null) h -= padding.bottom();
+		Float radius = getProperty(CornerRadiusProperty);
+		Float borderThickness = getProperty(BorderThicknessProperty);
+		float r = radius != null ? radius : 0f;
+		float t = borderThickness != null ? borderThickness : 0f;
+
+		Shader bgEffect = getProperty(BackgroundProperty);
+		Shader bdEffect = getProperty(BorderProperty);
+
+		if (bgEffect != null) {
+			renderer.drawRoundedBox(actualX, actualY, actualWidth, actualHeight, r, bgEffect);
+		}
+		if (bdEffect != null) {
+			renderer.drawRoundedBoxOutline(actualX, actualY, actualWidth, actualHeight, r, t, bdEffect);
 		}
 
-		return new Size(w, h);
-	}
-
-	protected void setResizing(boolean state, MouseClickEvent event, Direction direction) {
-		if (state) {
-			parentPage.moveToFront(this);
-			switch (direction) {
-			case Left:
-			case Right:
-				GuiManager.setCursor(CursorStyle.HorizonalResize);
-				break;
-			case Top:
-			case Bottom:
-				GuiManager.setCursor(CursorStyle.VerticalResize);
-				break;
-			case None:
-			default:
-				break;
-			}
-			event.cancel();
-		}
-		isMoving = false;
-		isResizing = state;
-		grabDirection = direction;
+		super.draw(renderer, partialTicks);
 	}
 
 	@Override
 	public void onMouseMove(MouseMoveEvent event) {
-		// Propagate to children ONLY if the user is not moving or resizing the window.
 		if (!isMoving && !isResizing) {
 			super.onMouseMove(event);
 		}
 
-		if (!event.isCancelled() && isVisible()) {
+		if (!event.isCancelled() && getProperty(UIElement.IsVisibleProperty)) {
 			double mouseX = event.getX();
 			double mouseY = event.getY();
 			double mouseDeltaX = event.getDeltaX();
 			double mouseDeltaY = event.getDeltaY();
 
+			Float minWidth = getProperty(UIElement.MinWidthProperty);
+			Float maxWidth = getProperty(UIElement.MaxWidthProperty);
+			Float minHeight = getProperty(UIElement.MinHeightProperty);
+			Float maxHeight = getProperty(UIElement.MaxHeightProperty);
+
 			Rectangle pos = getActualSize();
 
+			setProperty(UIElement.IsHoveredProperty, pos.intersects((float) mouseX, (float) mouseY));
+
 			if (isMoving) {
-				float targetX = pos.getX() + (float) mouseDeltaX;
-				float targetY = pos.getY() + (float) mouseDeltaY;
+				float targetX = pos.x() + (float) mouseDeltaX;
+				float targetY = pos.y() + (float) mouseDeltaY;
 
-				float currentX = position.getX();
-				float currentY = position.getY();
-
-				float interpolatedX = lerp(currentX, targetX, GuiManager.dragSmoothening.getValue());
-				float interpolatedY = lerp(currentY, targetY, GuiManager.dragSmoothening.getValue());
-
-				position.setX(interpolatedX);
-				position.setY(interpolatedY);
+				position.setX(targetX);
+				position.setY(targetY);
 			} else if (isResizing) {
-				float posHeight = pos.getHeight();
-				float posWidth = pos.getWidth();
+				float posHeight = pos.height();
+				float posWidth = pos.width();
 				switch (grabDirection) {
 				case Top:
 					float newHeightTop = posHeight - (float) mouseDeltaY;
@@ -196,7 +268,7 @@ public class Window extends UIElement {
 					if (maxHeight != null && newHeightTop > maxHeight.floatValue())
 						break;
 
-					position.setY(pos.getY() + (float) mouseDeltaY);
+					position.setY(pos.y() + (float) mouseDeltaY);
 					position.setHeight(newHeightTop);
 					break;
 				case Bottom:
@@ -218,7 +290,7 @@ public class Window extends UIElement {
 					if (maxWidth != null && newWidthLeft > maxWidth.floatValue())
 						break;
 
-					position.setX(pos.getX() + (float) mouseDeltaX);
+					position.setX(pos.x() + (float) mouseDeltaX);
 					position.setWidth(newWidthLeft);
 					break;
 				case Right:
@@ -237,11 +309,10 @@ public class Window extends UIElement {
 		}
 	}
 
+	@Override
 	public void onMouseClick(MouseClickEvent event) {
-		// Propagate to children.
 		super.onMouseClick(event);
 
-		// Check to see if the event is cancelled. If not, execute branch.
 		if (!event.isCancelled()) {
 			if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
 				float mouseX = (float) event.mouseX;
@@ -250,12 +321,10 @@ public class Window extends UIElement {
 				Rectangle pos = getActualSize();
 
 				if (resizeMode != ResizeMode.None) {
-					Rectangle topHitbox = new Rectangle(pos.getX(), pos.getY() - 8, pos.getWidth(), 8.0f);
-					Rectangle leftHitbox = new Rectangle(pos.getX() - 8, pos.getY(), 8.0f, pos.getHeight());
-					Rectangle rightHitbox = new Rectangle(pos.getX() + pos.getWidth(), pos.getY(), 8.0f,
-							pos.getHeight());
-					Rectangle bottomHitbox = new Rectangle(pos.getX(), pos.getY() + pos.getHeight(), pos.getWidth(),
-							8.0f);
+					Rectangle topHitbox = new Rectangle(pos.x(), pos.y() - 8, pos.width(), 8.0f);
+					Rectangle leftHitbox = new Rectangle(pos.x() - 8, pos.y(), 8.0f, pos.height());
+					Rectangle rightHitbox = new Rectangle(pos.x() + pos.width(), pos.y(), 8.0f, pos.height());
+					Rectangle bottomHitbox = new Rectangle(pos.x(), pos.y() + pos.height(), pos.width(), 8.0f);
 
 					boolean resizableWidth = resizeMode == ResizeMode.Width || resizeMode == ResizeMode.WidthAndHeight;
 					boolean resizableHeight = resizeMode == ResizeMode.Height
@@ -289,6 +358,29 @@ public class Window extends UIElement {
 				}
 			}
 		}
+	}
+
+	protected void setResizing(boolean state, MouseClickEvent event, Direction direction) {
+		if (state) {
+			parentPage.moveToFront(this);
+			switch (direction) {
+			case Left:
+			case Right:
+				GuiManager.setCursor(CursorStyle.HorizonalResize);
+				break;
+			case Top:
+			case Bottom:
+				GuiManager.setCursor(CursorStyle.VerticalResize);
+				break;
+			case None:
+			default:
+				break;
+			}
+			event.cancel();
+		}
+		isMoving = false;
+		isResizing = state;
+		grabDirection = direction;
 	}
 
 	public float lerp(float start, float end, float alpha) {

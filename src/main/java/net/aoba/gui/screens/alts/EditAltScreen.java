@@ -10,7 +10,7 @@ package net.aoba.gui.screens.alts;
 
 import net.aoba.Aoba;
 import net.aoba.managers.altmanager.Alt;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
@@ -52,12 +52,12 @@ public class EditAltScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics drawContext, int mouseX, int mouseY, float partialTicks) {
-        super.render(drawContext, mouseX, mouseY, partialTicks);
-        drawContext.drawCenteredString(font, "Edit Alternate Account", width / 2, 20, 0xFFFFFFFF);
-        drawContext.drawString(font, "Username:", width / 2 - 100, height / 2 - 50, 0xFFFFFFFF);
-        
-    }
+	public void extractRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+		super.extractRenderState(graphics, mouseX, mouseY, a);
+		graphics.centeredText(font, "Edit Alternate Account", width / 2, 20, 0xFFFFFFFF);
+		graphics.text(font, "Username:", width / 2 - 100, height / 2 - 50, 0xFFFFFFFF);
+	}
+    
 
     private void onButtonAltEditPressed() {
         alt.setEmail(textFieldAltUsername.getValue());

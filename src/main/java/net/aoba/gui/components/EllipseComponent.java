@@ -8,52 +8,40 @@
 
 package net.aoba.gui.components;
 
-import net.aoba.gui.Size;
-import net.aoba.gui.colors.Color;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.gui.UIElement;
+import net.aoba.gui.types.Size;
+import net.aoba.rendering.Renderer2D;
+import net.aoba.rendering.shaders.Shader;
 
 public class EllipseComponent extends Component {
-	private Color color;
-
 	public EllipseComponent() {
-	}
-
-	public EllipseComponent(Color color) {
-		this.color = color;
-	}
-
-	public Color getColor() {
-		return color;
-	}
-
-	public void setColor(Color color) {
-		this.color = color;
 	}
 
 	@Override
 	public Size measure(Size availableSize) {
-		float w = getWidth() != null ? getWidth() : availableSize.getWidth();
-		float h = getHeight() != null ? getHeight() : availableSize.getHeight();
+		Float width = getProperty(UIElement.WidthProperty);
+		Float height = getProperty(UIElement.HeightProperty);
+		float w = width != null ? width : availableSize.width();
+		float h = height != null ? height : availableSize.height();
 		return new Size(w, h);
 	}
+	
+	public void draw(Renderer2D renderer, float partialTicks) {
+		float actualX = getActualSize().x();
+		float actualY = getActualSize().y();
+		float actualWidth = getActualSize().width();
+		float actualHeight = getActualSize().height();
 
-	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		if (color != null) {
-			float actualX = getActualSize().getX();
-			float actualY = getActualSize().getY();
-			float actualWidth = getActualSize().getWidth();
-			float actualHeight = getActualSize().getHeight();
+		float radiusX = actualWidth / 2f;
+		float radiusY = actualHeight / 2f;
+		float centerX = actualX + radiusX;
+		float centerY = actualY + radiusY;
 
-			float radiusX = actualWidth / 2f;
-			float radiusY = actualHeight / 2f;
-			float centerX = actualX + radiusX;
-			float centerY = actualY + radiusY;
-
-			Render2D.drawEllipse(drawContext, centerX, centerY, radiusX, radiusY, color);
+		Shader bgEffect = getProperty(UIElement.BackgroundProperty);
+		if (bgEffect != null) {
+			renderer.drawEllipse(centerX, centerY, radiusX, radiusY, bgEffect);
 		}
 
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, partialTicks);
 	}
 }

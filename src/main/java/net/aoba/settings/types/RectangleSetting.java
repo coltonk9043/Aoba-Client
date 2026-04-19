@@ -10,7 +10,7 @@ package net.aoba.settings.types;
 
 import java.util.function.Consumer;
 
-import net.aoba.gui.Rectangle;
+import net.aoba.gui.types.Rectangle;
 import net.aoba.settings.Setting;
 
 public class RectangleSetting extends Setting<Rectangle> {
@@ -37,10 +37,9 @@ public class RectangleSetting extends Setting<Rectangle> {
 	 *
 	 * @param x X Coordinate.
 	 */
-	public void setX(Float x) {
-		if (!value.getX().equals(x)) {
-			Rectangle oldRect = value;
-			value = new Rectangle(x, oldRect.getY(), oldRect.getWidth(), oldRect.getHeight());
+	public void setX(float x) {
+		if (value.x() != x) {
+			value = new Rectangle(x, value.y(), value.width(), value.height());
 			update();
 		}
 	}
@@ -50,10 +49,9 @@ public class RectangleSetting extends Setting<Rectangle> {
 	 *
 	 * @param y Y Coordinate.
 	 */
-	public void setY(Float y) {
-		if (!value.getY().equals(y)) {
-			Rectangle oldRect = value;
-			value = new Rectangle(oldRect.getX(), y, oldRect.getWidth(), oldRect.getHeight());
+	public void setY(float y) {
+		if (value.y() != y) {
+			value = new Rectangle(value.x(), y, value.width(), value.height());
 			update();
 		}
 	}
@@ -63,8 +61,8 @@ public class RectangleSetting extends Setting<Rectangle> {
 	 *
 	 * @return X Coordinate.
 	 */
-	public Float getX() {
-		return value.getX();
+	public float getX() {
+		return value.x();
 	}
 
 	/**
@@ -72,8 +70,8 @@ public class RectangleSetting extends Setting<Rectangle> {
 	 *
 	 * @return Y Coordinate.
 	 */
-	public Float getY() {
-		return value.getY();
+	public float getY() {
+		return value.y();
 	}
 
 	/**
@@ -81,8 +79,8 @@ public class RectangleSetting extends Setting<Rectangle> {
 	 *
 	 * @return Width Coordinate.
 	 */
-	public Float getWidth() {
-		return value.getWidth();
+	public float getWidth() {
+		return value.width();
 	}
 
 	/**
@@ -90,8 +88,8 @@ public class RectangleSetting extends Setting<Rectangle> {
 	 *
 	 * @return Height Coordinate.
 	 */
-	public Float getHeight() {
-		return value.getHeight();
+	public float getHeight() {
+		return value.height();
 	}
 
 	/**
@@ -99,10 +97,9 @@ public class RectangleSetting extends Setting<Rectangle> {
 	 *
 	 * @param width Width Coordinate.
 	 */
-	public void setWidth(Float width) {
-		Float currentWidth = value.getWidth();
-		if (currentWidth == null || !currentWidth.equals(width)) {
-			value.setWidth(width);
+	public void setWidth(float width) {
+		if (value.width() != width) {
+			value = new Rectangle(value.x(), value.y(), width, value.height());
 			update();
 		}
 	}
@@ -112,10 +109,9 @@ public class RectangleSetting extends Setting<Rectangle> {
 	 *
 	 * @param height Height Coordinate.
 	 */
-	public void setHeight(Float height) {
-		Float currentHeight = value.getHeight();
-		if (currentHeight == null || !currentHeight.equals(height)) {
-			value.setHeight(height);
+	public void setHeight(float height) {
+		if (value.height() != height) {
+			value = new Rectangle(value.x(), value.y(), value.width(), height);
 			update();
 		}
 	}

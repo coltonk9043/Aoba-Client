@@ -11,8 +11,9 @@ package net.aoba.command.commands;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.command.Command;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.font.UIFont;
 import net.aoba.managers.CommandManager;
-import net.minecraft.client.gui.Font;
 import net.aoba.command.InvalidSyntaxException;
 
 public class CmdFont extends Command {
@@ -32,9 +33,9 @@ public class CmdFont extends Command {
             case "set":
                 try {
                     String font = parameters[1];
-                    Font t = aoba.fontManager.fontRenderers.get(font);
+                    UIFont t = aoba.fontManager.fonts.get(font);
                     if (t != null) {
-                        aoba.fontManager.SetRenderer(t);
+                    	GuiManager.fontSetting.setFontName(font);
                     }
                 } catch (Exception e) {
                     CommandManager.sendChatMessage("Invalid value.");
@@ -51,10 +52,10 @@ public class CmdFont extends Command {
             case "set":
                 AobaClient aoba = Aoba.getInstance();
 
-                String[] suggestions = new String[aoba.fontManager.fontRenderers.size()];
+                String[] suggestions = new String[aoba.fontManager.fonts.size()];
 
                 int i = 0;
-                for (String fontName : aoba.fontManager.fontRenderers.keySet())
+                for (String fontName : aoba.fontManager.fonts.keySet())
                     suggestions[i++] = fontName;
 
                 return suggestions;

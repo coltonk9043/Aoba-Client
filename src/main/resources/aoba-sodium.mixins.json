@@ -3,8 +3,8 @@
   "package": "net.aoba.mixin.sodium",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "SodiumAbstractBlockRenderContextMixin",
     "SodiumBlockRendererMixin",
-    "SodiumBlockOcclusionCacheMixin",
     "SodiumFluidRendererImplMixin",
     "SodiumLightDataAccessMixin"
   ],

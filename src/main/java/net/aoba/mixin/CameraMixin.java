@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.module.modules.movement.Freecam;
@@ -27,25 +26,21 @@ public class CameraMixin {
 	@Shadow
 	private Level level;
 
-	@Shadow
-	private boolean detached;
-
-	@Shadow
-	private float partialTickTime;
-
 	@Inject(at = {
-			@At("HEAD") }, method = "setup(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;ZZF)V", cancellable = true)
-	private void onCameraSetup(Level level, Entity focusedEntity, boolean thirdPerson, boolean inverseView,
-			float tickDelta, CallbackInfo ci) {
+			@At("HEAD") }, method = "setEntity(Lnet/minecraft/world/entity/Entity;)V", cancellable = true)
+	private void onSetEntity(Entity entity, CallbackInfo ci) {
 		AobaClient aoba = Aoba.getInstance();
-		
-		// Only cancel setup if freecam is active AND the camera entity has been
-		// initialized at least once (otherwise extractCamera will NPE on null entity)
+
 		if (aoba != null && aoba.moduleManager.freecam.state.getValue() && this.entity != null) {
-			initialized = true;
-			this.level = level;
-			partialTickTime = tickDelta;
-			this.detached = thirdPerson;
+			ci.cancel();
+		}
+	}
+
+	@Inject(at = { @At("HEAD") }, method = "alignWithEntity(F)V", cancellable = true)
+	private void onAlignWithEntity(float partialTicks, CallbackInfo ci) {
+		AobaClient aoba = Aoba.getInstance();
+
+		if (aoba != null && aoba.moduleManager.freecam.state.getValue() && this.entity != null) {
 			ci.cancel();
 		}
 	}

@@ -1,11 +1,8 @@
-accessWidener	v2	named
+accessWidener	v2	official
 
 # BossBar packet inner classes
 accessible	class	net/minecraft/network/protocol/game/ClientboundBossEventPacket$Operation
 accessible	class	net/minecraft/network/protocol/game/ClientboundBossEventPacket$OperationType
-
-# Minecraft private fields
-accessible	field	net/minecraft/client/Minecraft	cameraEntity	Lnet/minecraft/world/entity/Entity;
 
 # OptionInstance inner classes for fullbright
 accessible	class	net/minecraft/client/OptionInstance$SliderableValueSet

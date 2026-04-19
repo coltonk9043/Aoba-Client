@@ -81,7 +81,7 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 		lastServerPitch = serverPitch;
 
 		if (currentGoal != null) {
-			float tickDelta = event.getRenderTickCounter().getGameTimeDeltaPartialTick(true);
+			float tickDelta = event.getRenderer().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 			Rotation currentGoalRotation;
 			if (currentGoal.isFakeRotation()) {
 				currentGoalRotation = getRotationFromGoal(serverYaw, serverPitch, tickDelta);

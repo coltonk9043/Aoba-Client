@@ -8,24 +8,27 @@
 
 package net.aoba.gui.components.widgets;
 
+import static net.aoba.AobaClient.MC;
+
 import java.util.function.Consumer;
 
+import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.gui.colors.Colors;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.aoba.rendering.Renderer2D;
+import net.aoba.rendering.shaders.Shader;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 public class AobaImageButtonWidget extends AbstractButton {
 	private Consumer<AobaImageButtonWidget> pressAction;
 	private final Identifier image;
-	private int u = 0;
-	private int v = 0;
 	private boolean background = true;
+	private static final Shader IMAGE_SHADER = Shader.solid(Colors.White);
 
 	public AobaImageButtonWidget(int x, int y, int width, int height, Identifier image) {
 		super(x, y, width, height, Component.empty());
@@ -33,21 +36,11 @@ public class AobaImageButtonWidget extends AbstractButton {
 		this.image = image;
 	}
 
-	public AobaImageButtonWidget(int x, int y, int u, int v, int width, int height, Identifier image) {
-		super(x, y, width, height, Component.empty());
-
-		this.image = image;
-		this.u = u;
-		this.v = v;
-	}
-
-	public AobaImageButtonWidget(int x, int y, int u, int v, int width, int height, Identifier image,
+	public AobaImageButtonWidget(int x, int y, int width, int height, Identifier image,
 			boolean background) {
 		super(x, y, width, height, Component.empty());
 
 		this.image = image;
-		this.u = u;
-		this.v = v;
 		this.background = background;
 	}
 
@@ -63,22 +56,22 @@ public class AobaImageButtonWidget extends AbstractButton {
 	}
 
 	@Override
-	protected void renderContents(GuiGraphics context, int mouseX, int mouseY, float delta) {
+	protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 		if (background) {
-			Render2D.setup();
-			try {
-				Render2D.drawOutlinedRoundedBox(context, getX(), getY(), width, height,
-						GuiManager.roundingRadius.getValue(), GuiManager.borderColor.getValue(),
-						GuiManager.backgroundColor.getValue());
-			} finally {
-				Render2D.end();
-			}
-		}
+			Shader bgEffect = isHovered() ? GuiManager.buttonHoverBackgroundColor.getValue()
+					: GuiManager.buttonBackgroundColor.getValue();
+			Shader bdEffect = GuiManager.buttonBorderColor.getValue();
 
-		context.blit(RenderPipelines.GUI_TEXTURED, image, getX(), getY(), (float) u, (float) v, width, height, width, height);
+			Renderer2D renderer = Aoba.getInstance().render2D;
+			renderer.beginFrame(graphics, MC.getDeltaTracker());
+			renderer.drawOutlinedRoundedBox(getX(), getY(), width, height,
+					GuiManager.roundingRadius.getValue(), bdEffect, bgEffect);
+			renderer.drawTexturedQuad(image, getX(), getY(), width, height, IMAGE_SHADER);
+		}
 	}
 
 	@Override
-	protected void updateWidgetNarration(NarrationElementOutput builder) {
+	protected void updateWidgetNarration(NarrationElementOutput output) {
+		
 	}
 }

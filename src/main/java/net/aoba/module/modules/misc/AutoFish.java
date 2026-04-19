@@ -48,6 +48,9 @@ public class AutoFish extends Module implements ReceivePacketListener {
 	public void onEnable() {
 		Aoba.getInstance().eventManager.AddListener(ReceivePacketListener.class, this);
 
+		if(MC.player == null) 
+			return;
+		
 		FindItemResult rod = find(Items.FISHING_ROD);
 
 		if (autoSwitch.getValue()) {

@@ -56,7 +56,7 @@ public class KeyboardHandlerMixin {
             }
 
             if (MC.screen == null && MC.getOverlay() == null && !aoba.guiManager.isClickGuiOpen()) {
-                if (key == java.awt.event.KeyEvent.VK_PERIOD) {
+                if (key == GLFW.GLFW_KEY_PERIOD) {
                     MC.setScreen(new ChatScreen("", false));
                 }
             }

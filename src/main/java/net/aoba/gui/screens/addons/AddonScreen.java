@@ -10,26 +10,21 @@ package net.aoba.gui.screens.addons;
 
 import java.nio.file.Path;
 import java.util.List;
-
 import net.aoba.api.IAddon;
+import net.aoba.gui.screens.AobaPanorama;
 import net.aoba.gui.screens.addons.AddonSelectionList.NormalEntry;
-import net.aoba.utils.render.TextureBank;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.CubeMap;
-import net.minecraft.client.renderer.PanoramaRenderer;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.Util;
 
 public class AddonScreen extends Screen {
-	protected static final CubeMap AOBA_PANORAMA_RENDERER = new CubeMap(TextureBank.mainmenu_panorama);
-	protected static final PanoramaRenderer AOBA_ROTATING_PANORAMA_RENDERER = new PanoramaRenderer(
-			AOBA_PANORAMA_RENDERER);
+	protected static final AobaPanorama AOBA_ROTATING_PANORAMA_RENDERER = new AobaPanorama();
+
 	private final Screen parentScreen;
 
 	// Widget
@@ -80,24 +75,24 @@ public class AddonScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics drawContext, int mouseX, int mouseY, float partialTicks) {
-		super.render(drawContext, mouseX, mouseY, partialTicks);
-		drawContext.drawCenteredString(font, "Addons", 145, 16, 0xFFFFFFFF);
+	public void extractRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+		super.extractRenderState(graphics, mouseX, mouseY, a);
+		graphics.centeredText(font, "Addons", 145, 16, 0xFFFFFFFF);
 
 		// Draw Addon Information
 		if (selectedAddon != null) {
 			AddonSelectionList.NormalEntry entry = (AddonSelectionList.NormalEntry) addonListSelector.getSelected();
 			if (entry != null) {
 				// Draw the border
-				drawContext.fill(281, 59, 331, 109, 0xFFFFFFFF);
-				drawContext.fill(282, 60, 330, 108, 0xFF000000);
+				graphics.fill(281, 59, 331, 109, 0xFFFFFFFF);
+				graphics.fill(282, 60, 330, 108, 0xFF000000);
 
 				// Draw the texture
-				drawContext.blit(entry.getIcon(), 282, 60, 48, 48, 0f, 0f, 1f, 1f);
+				graphics.blit(entry.getIcon(), 282, 60, 48, 48, 0f, 0f, 1f, 1f);
 			}
-			drawContext.drawString(font, selectedAddon.getName(), 338, 68, 0xFFFFFFFF);
-			drawContext.drawString(font, selectedAddon.getVersion(), 338, 80, 0xFFFFFFFF);
-			drawContext.drawString(font, "By " + selectedAddon.getAuthor(), 338, 92, 0xFFFFFFFF);
+			graphics.text(font, selectedAddon.getName(), 338, 68, 0xFFFFFFFF);
+			graphics.text(font, selectedAddon.getVersion(), 338, 80, 0xFFFFFFFF);
+			graphics.text(font, "By " + selectedAddon.getAuthor(), 338, 92, 0xFFFFFFFF);
 		}
 
 	}
@@ -117,7 +112,10 @@ public class AddonScreen extends Screen {
 	}
 
 	@Override
-	protected void renderPanorama(GuiGraphics context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, true);
+	protected void extractPanorama(final GuiGraphicsExtractor graphics, final float a){
+		try {
+			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, this.panoramaShouldSpin());
+		} catch (IllegalStateException e) {
+		}
 	}
 }

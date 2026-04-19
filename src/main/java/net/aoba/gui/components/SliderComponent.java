@@ -9,126 +9,127 @@
 package net.aoba.gui.components;
 
 import java.util.function.Consumer;
-
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
-import net.aoba.gui.Rectangle;
-import net.aoba.gui.GridDefinition;
-import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.HorizontalAlignment;
-import net.aoba.gui.TextWrapping;
-import net.aoba.gui.Thickness;
-import net.aoba.gui.VerticalAlignment;
+import net.aoba.gui.UIElement;
+import net.aoba.gui.UIProperty;
 import net.aoba.gui.colors.Color;
-import net.aoba.gui.colors.Colors;
-import net.aoba.settings.types.FloatSetting;
-import net.aoba.utils.render.Render2D;
+import net.aoba.gui.types.GridDefinition;
+import net.aoba.gui.types.HorizontalAlignment;
+import net.aoba.gui.types.Rectangle;
+import net.aoba.gui.types.TextWrapping;
+import net.aoba.gui.types.VerticalAlignment;
+import net.aoba.gui.types.GridDefinition.RelativeUnit;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.GuiGraphics;
 
 public class SliderComponent extends Component {
+	private boolean isSliding = false;
 	private float currentSliderPosition = 0.4f;
 
-	private float minValue;
-	private float maxValue;
-	private float value;
+	public static UIProperty<String> HeaderProperty = new UIProperty<>("Header", "", false, true, SliderComponent::onHeaderPropertyChanged);
+	public static UIProperty<Float> ValueProperty = new UIProperty<>("Value", 0f, false, true,
+			SliderComponent::onValuePropertyChanged, SliderComponent::coerceValue);
+	public static UIProperty<Float> MinimumProperty = new UIProperty<>("Minimum", 0f, false, true);
+	public static UIProperty<Float> MaximumProperty = new UIProperty<>("Maximum", 10f, false, true);
+	public static UIProperty<Float> StepProperty = new UIProperty<>("Step", 0f, false, true);
 
-	private boolean isSliding = false;
-
-	private FloatSetting floatSetting;
-	private Consumer<Float> onChanged;
-
+	private final StringComponent headerComponent;
 	private final StringComponent valueComponent;
-	private final EllipseComponent thumbEllipse;
+	private final RectangleComponent fillBar;
+	private final RectangleComponent trackBar;
 
-	private SliderComponent(String headerText, float minValue, float maxValue, float value) {
-		this.minValue = minValue;
-		this.maxValue = maxValue;
-		this.value = value;
-		currentSliderPosition = (value - minValue) / (maxValue - minValue);
+	private Consumer<Float> onValueChanged;
 
+	private static void onHeaderPropertyChanged(UIElement sender, String oldValue, String newValue) {
+		if(sender instanceof SliderComponent slider) {
+			slider.headerComponent.setProperty(StringComponent.TextProperty, newValue);
+		}
+	}
+	
+	private static Float coerceValue(UIElement sender, Float value) {
+		if (!(sender instanceof SliderComponent slider) || value == null)
+			return value;
+
+		float min = slider.getProperty(MinimumProperty);
+		float max = slider.getProperty(MaximumProperty);
+		float coerced = Math.max(min, Math.min(max, value));
+		float step = slider.getProperty(StepProperty);
+		if (step > 0f)
+			coerced = min + Math.round((coerced - min) / step) * step;
+		return coerced;
+	}
+	
+	private static void onValuePropertyChanged(UIElement sender, Float oldValue, Float newValue) {
+		if(sender instanceof SliderComponent slider) {
+			
+			Float minValue = slider.getProperty(MinimumProperty);
+			Float maxValue = slider.getProperty(MaximumProperty);
+			float range = maxValue - minValue;
+			slider.currentSliderPosition = range > 0f
+					? Math.min(Math.max((newValue - minValue) / range, 0f), 1f)
+					: 0f;
+			slider.valueComponent.setProperty(StringComponent.TextProperty, String.format("%.02f", newValue));
+			slider.updateFillWidth();
+			
+			if (slider.onValueChanged != null)
+				slider.onValueChanged.accept(newValue);
+		}
+	}
+	
+	public SliderComponent() {
+		currentSliderPosition = 0f;
+
+		setProperty(UIElement.IsHitTestVisibleProperty, true);
+		StackPanelComponent stack = new StackPanelComponent();
+		stack.setSpacing(4f);
+		
 		GridComponent grid = new GridComponent();
 		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
 		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));
 
-		if (headerText != null) {
-			StringComponent headerComponent = new StringComponent(headerText);
-			headerComponent.setVerticalAlignment(VerticalAlignment.Center);
-			grid.addChild(headerComponent);
-		} else {
-			grid.addChild(new Component() {});
-		}
+		headerComponent = new StringComponent("");
+		headerComponent.setProperty(StringComponent.TextProperty, getProperty(HeaderProperty));
+		headerComponent.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		grid.addChild(headerComponent);
 
-		valueComponent = new StringComponent(String.format("%.02f", value));
-		valueComponent.setVerticalAlignment(VerticalAlignment.Center);
-		valueComponent.setTextWrapping(TextWrapping.NoWrap);
+		valueComponent = new StringComponent(String.format("%.02f", getProperty(ValueProperty)));
+		valueComponent.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		valueComponent.setProperty(StringComponent.TextWrappingProperty, TextWrapping.NoWrap);
 		grid.addChild(valueComponent);
+		stack.addChild(grid);
 
-		addChild(grid);
+		PanelComponent barContainer = new PanelComponent();
+		barContainer.setProperty(UIElement.HeightProperty, 14f);
 
-		thumbEllipse = new EllipseComponent(GuiManager.foregroundColor.getValue());
-		thumbEllipse.setWidth(12f);
-		thumbEllipse.setHeight(12f);
-		thumbEllipse.setHorizontalAlignment(HorizontalAlignment.Left);
-		thumbEllipse.setMargin(new Thickness(0f, 29f, null, null));
-		addChild(thumbEllipse);
+		trackBar = new RectangleComponent();
+		trackBar.setProperty(BackgroundProperty, Shader.solid(new Color(255, 255, 255, 100)));
+		barContainer.addChild(trackBar);
+
+		fillBar = new RectangleComponent();
+		fillBar.bindProperty(BackgroundProperty, GuiManager.foregroundColor);
+		fillBar.setProperty(UIElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+		barContainer.addChild(fillBar);
+
+		stack.addChild(barContainer);
+
+		setContent(stack);
 	}
 
-	public SliderComponent(float minValue, float maxValue, float value, Consumer<Float> onChanged) {
-		this(null, minValue, maxValue, value);
-		this.onChanged = onChanged;
-	}
-
-	public SliderComponent(FloatSetting floatSetting) {
-		this(floatSetting.displayName, floatSetting.min_value, floatSetting.max_value, floatSetting.getValue());
-		this.floatSetting = floatSetting;
-		floatSetting.addOnUpdate(this::onSettingValueChanged);
-	}
-
-	private void onSettingValueChanged(Float f) {
-		if (f != value) {
-			value = f;
-			currentSliderPosition = Math.min(Math.max((value - minValue) / (maxValue - minValue), 0f), 1f);
-			valueComponent.setText(String.format("%.02f", value));
-			updateThumbPosition();
-		}
-	}
-
-	private void updateThumbPosition() {
-		float actualWidth = getActualSize().getWidth();
-		float leftOffset = actualWidth * currentSliderPosition - 6f;
-		thumbEllipse.setMargin(new Thickness(leftOffset, 29f, null, null));
-		thumbEllipse.setColor(GuiManager.foregroundColor.getValue());
+	private void updateFillWidth() {
+		if (getActualSize() == null)
+			return;
+		float totalWidth = getActualSize().width();
+		fillBar.setProperty(UIElement.WidthProperty, totalWidth * currentSliderPosition);
 	}
 
 	@Override
 	public void arrange(Rectangle finalSize) {
 		super.arrange(finalSize);
-		updateThumbPosition();
-	}
-
-	public float getSliderPosition() {
-		return currentSliderPosition;
-	}
-
-	public void setSliderPosition(float pos) {
-		currentSliderPosition = pos;
-	}
-
-	public float getValue() {
-		return value;
-	}
-
-	public void setValue(float value) {
-		this.value = value;
-		currentSliderPosition = Math.min(Math.max((value - minValue) / (maxValue - minValue), 0f), 1f);
-		valueComponent.setText(String.format("%.02f", this.value));
-		updateThumbPosition();
-		if (floatSetting != null)
-			floatSetting.setValue(value);
+		updateFillWidth();
 	}
 
 	@Override
@@ -136,7 +137,7 @@ public class SliderComponent extends Component {
 		super.onMouseClick(event);
 		if (event.button == MouseButton.LEFT) {
 			if (event.action == MouseAction.DOWN) {
-				if (hovered) {
+				if (getProperty(UIElement.IsHoveredProperty)) {
 					isSliding = true;
 					event.cancel();
 				}
@@ -153,41 +154,18 @@ public class SliderComponent extends Component {
 		if (Aoba.getInstance().guiManager.isClickGuiOpen() && isSliding) {
 			double mouseX = event.getX();
 
-			float actualX = getActualSize().getX();
-			float actualWidth = getActualSize().getWidth();
+			float actualX = getActualSize().x();
+			float actualWidth = getActualSize().width();
 
-			float targetPosition = (float) Math.min(((mouseX - actualX) / actualWidth), 1f);
-			targetPosition = Math.max(0f, targetPosition);
+			float targetPosition = (float)  Math.max(0f,Math.min(((mouseX - actualX) / actualWidth), 1f));
 
-			currentSliderPosition = targetPosition;
-			value = (currentSliderPosition * (maxValue - minValue)) + minValue;
-			valueComponent.setText(String.format("%.02f", value));
-			updateThumbPosition();
-
-			if (floatSetting != null)
-				floatSetting.setValue(value);
-			if (onChanged != null)
-				onChanged.accept(value);
+			float minValue = getProperty(MinimumProperty);
+			float maxValue = getProperty(MaximumProperty);
+			setProperty(ValueProperty, (targetPosition * (maxValue - minValue)) + minValue);
 		}
 	}
 
-	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-
-		float filledLength = actualWidth * currentSliderPosition;
-
-		if (floatSetting != null) {
-			float defaultLength = actualWidth * ((floatSetting.getDefaultValue() - minValue) / (maxValue - minValue));
-			Render2D.drawBox(drawContext, actualX + defaultLength - 2, actualY + 28, 4, 14, Colors.White);
-		}
-
-		Render2D.drawBox(drawContext, actualX, actualY + 34, filledLength, 2, GuiManager.foregroundColor.getValue());
-		Render2D.drawBox(drawContext, actualX + filledLength, actualY + 34, (actualWidth - filledLength), 2,
-				new Color(255, 255, 255, 255));
-
-		super.draw(drawContext, partialTicks);
+	public void setOnValueChanged(Consumer<Float> onValueChanged) {
+		this.onValueChanged = onValueChanged;
 	}
 }

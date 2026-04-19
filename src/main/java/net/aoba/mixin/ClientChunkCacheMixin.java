@@ -42,7 +42,7 @@ public abstract class ClientChunkCacheMixin {
 
 	@Inject(method = "drop", at = @At("HEAD"))
 	private void onChunkUnloaded(ChunkPos pos, CallbackInfo ci) {
-		LevelChunk chunk = getChunk(pos.x, pos.z, ChunkStatus.FULL, false);
+		LevelChunk chunk = getChunk(pos.x(), pos.z(), ChunkStatus.FULL, false);
 		if (chunk != null) {
 			Aoba.getInstance().eventManager.Fire(new ChunkEvent.Unloaded(chunk));
 		}

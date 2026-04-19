@@ -22,11 +22,11 @@ import net.aoba.managers.rotation.RotationMode;
 import net.aoba.managers.rotation.goals.RotationGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.types.BooleanSetting;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.ShaderSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.utils.render.Render3D;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -40,8 +40,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class BedAura extends Module implements Render3DListener, TickListener, BlockStateListener {
-	private final ColorSetting color = ColorSetting.builder().id("nuker_color").displayName("Color")
-			.description("Color").defaultValue(new Color(0f, 1f, 1f)).build();
+	private final ShaderSetting color = ShaderSetting.builder().id("nuker_color").displayName("Color")
+			.description("Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
 
 	private final FloatSetting radius = FloatSetting.builder().id("nuker_radius").displayName("Radius")
 			.description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
@@ -109,7 +109,7 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 	@Override
 	public void onRender(Render3DEvent event) {
 		if (currentBlockToBreak != null) {
-			Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new AABB(currentBlockToBreak), color.getValue(),
+			event.getRenderer().drawBox(new AABB(currentBlockToBreak), color.getValue(),
 					1.0f);
 		}
 	}

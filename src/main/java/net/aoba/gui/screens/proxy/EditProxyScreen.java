@@ -10,7 +10,7 @@ package net.aoba.gui.screens.proxy;
 
 import net.aoba.AobaClient;
 import net.aoba.managers.proxymanager.Socks5Proxy;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -69,14 +69,18 @@ public class EditProxyScreen extends Screen {
 				.bounds(width / 2 - 100, height / 2 + 106, 200, 20).build());
 	}
 
-	@Override
-	public void render(GuiGraphics drawContext, int mouseX, int mouseY, float partialTicks) {
-		super.render(drawContext, mouseX, mouseY, partialTicks);
-		drawContext.drawCenteredString(font, "Edit Proxy", width / 2, 20, 0xFFFFFFFF);
-		drawContext.drawString(font, "IP:", width / 2 - 100, height / 2 - 90, 0xFFFFFFFF);
-		drawContext.drawString(font, "Port:", width / 2 - 100, height / 2 - 50, 0xFFFFFFFF);
-		drawContext.drawString(font, "Username:", width / 2 - 100, height / 2 - 10, 0xFFFFFFFF);
-		drawContext.drawString(font, "Password:", width / 2 - 100, height / 2 + 30, 0xFFFFFFFF);
+    @Override
+	public void extractRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+		super.extractRenderState(graphics, mouseX, mouseY, a);
+		graphics.centeredText(font, "Edit Proxy", width / 2, 20, 0xFFFFFFFF);
+		graphics.text(font, "IP:", width / 2 - 100, height / 2 - 90, 0xFFFFFFFF);
+		graphics.text(font, "Port:", width / 2 - 100, height / 2 - 50, 0xFFFFFFFF);
+		graphics.text(font, "Username:", width / 2 - 100, height / 2 - 10, 0xFFFFFFFF);
+		graphics.text(font, "Password:", width / 2 - 100, height / 2 + 30, 0xFFFFFFFF);
+	}
+
+	private void updateSaveButtonState() {
+		buttonSaveProxy.active = !textFieldProxyIp.getValue().isEmpty() && !textFieldProxyPort.getValue().isEmpty();
 	}
 
 	private void onButtonProxyEditPressed() {
