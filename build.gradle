@@ -29,11 +29,11 @@ configurations {
 
 dependencies {
     // Minecraft and Mappings
-	  minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	
     // Fabric API and Loader
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-	  implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Rendering Mods
     compileOnly("maven.modrinth:sodium:${project.sodium_version}") { transitive = false }
@@ -42,20 +42,20 @@ dependencies {
     
     implementation("maven.modrinth:modmenu:${project.modmenu_version}")
     implementation("maven.modrinth:sodium:${project.sodium_version}")
-	  include("maven.modrinth:modmenu:${project.modmenu_version}")
-	  include("maven.modrinth:sodium:${project.sodium_version}")
+	include("maven.modrinth:modmenu:${project.modmenu_version}")
+	include("maven.modrinth:sodium:${project.sodium_version}")
 	
     // Library Dependencies
     implementation("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }
     implementation("io.netty:netty-codec-socks:${project.netty_version}") { transitive = false }
 
     // Test Dependencies
-    testImplementation platform('org.junit:junit-bom:5.11.3')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation 'org.mockito:mockito-core:5.14.2'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.14.2'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation platform('org.junit:junit-bom:5.14.3')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testImplementation 'org.assertj:assertj-core:3.27.7'
+	testImplementation 'org.mockito:mockito-core:5.23.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.23.0'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
