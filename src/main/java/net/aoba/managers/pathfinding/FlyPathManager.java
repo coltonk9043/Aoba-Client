@@ -118,7 +118,7 @@ public class FlyPathManager extends AbstractPathManager {
         // Check adjacent blocks for passability
         for (BlockPos currentBlock : adjacentBlocks) {
             ChunkPos chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(currentBlock.getX()), SectionPos.blockToSectionCoord(currentBlock.getZ()));
-            if (!MC.level.getChunkSource().hasChunk(chunkPos.x, chunkPos.z))
+            if (!MC.level.getChunkSource().hasChunk(chunkPos.x(), chunkPos.z()))
                 continue;
             
             PathNode nextNode = new PathNode(currentBlock);
@@ -140,7 +140,7 @@ public class FlyPathManager extends AbstractPathManager {
         // Check diagonal blocks for passability
         for (BlockPos currentBlock : diagonalBlocks) {
             ChunkPos chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(currentBlock.getX()), SectionPos.blockToSectionCoord(currentBlock.getZ()));
-            if (!MC.level.getChunkSource().hasChunk(chunkPos.x, chunkPos.z))
+            if (!MC.level.getChunkSource().hasChunk(chunkPos.x(), chunkPos.z()))
                 continue;
             
             PathNode nextNode = new PathNode(currentBlock);

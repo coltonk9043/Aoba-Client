@@ -9,37 +9,32 @@
 package net.aoba.gui.navigation.huds;
 
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Rectangle;
-import net.aoba.gui.ResizeMode;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.navigation.HudWindow;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.gui.types.Rectangle;
+import net.aoba.gui.types.ResizeMode;
+import net.aoba.rendering.Renderer2D;
 
 public class NetherCoordsHud extends HudWindow {
-
-	private static final Minecraft MC = Minecraft.getInstance();
-
 	public NetherCoordsHud(int x, int y) {
 		super("NetherCoordsHud", x, y, 50, 24);
-		minWidth = 50f;
-		minHeight = 20f;
-		maxHeight = 20f;
+		setProperty(UIElement.MinWidthProperty, 50f);
+		setProperty(UIElement.MinHeightProperty, 20f);
+		setProperty(UIElement.MaxHeightProperty, 20f);
 		resizeMode = ResizeMode.None;
 	}
 
 	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		if (isVisible()) {
+	public void draw(Renderer2D renderer, float partialTicks) {
+		boolean isVisible = getProperty(UIElement.IsVisibleProperty);
+		if (isVisible) {
 			Rectangle pos = position.getValue();
-			if (pos.isDrawable()) {
-				String coordsText = String.format("X: %.1f, Y: %.1f, Z: %.1f", MC.player.getX() * 8, MC.player.getY(),
-						MC.player.getZ() * 8);
-				Render2D.drawString(drawContext, coordsText, pos.getX(), pos.getY(),
-						GuiManager.foregroundColor.getValue().getColorAsInt());
-			}
+			String coordsText = String.format("X: %.1f, Y: %.1f, Z: %.1f", MC.player.getX() * 8, MC.player.getY(),
+					MC.player.getZ() * 8);
+			renderer.drawString(coordsText, pos.x(), pos.y(),
+					GuiManager.foregroundColor.getValue(), GuiManager.fontSetting.getValue().getRenderer());
 		}
 
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, partialTicks);
 	}
 }

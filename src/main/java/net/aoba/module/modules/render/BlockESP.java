@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.aoba.Aoba;
 import net.aoba.event.events.ChunkEvent;
 import net.aoba.event.events.Render3DEvent;
@@ -25,12 +24,11 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.types.BlocksSetting;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.ShaderSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
-import net.aoba.utils.render.Render3D;
-import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
@@ -46,8 +44,8 @@ public class BlockESP extends Module implements TickListener, Render3DListener, 
 			.onUpdate(s -> onBlocksChanged(s))
 			.build();
 	
-	private final ColorSetting color = ColorSetting.builder().id("blockesp_color").displayName("Color")
-			.description("Color").defaultValue(new Color(0f, 1f, 1f, 0.3f)).build();
+	private final ShaderSetting color = ShaderSetting.builder().id("blockesp_color").displayName("Color")
+			.description("Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f, 0.3f))).build();
 
 	private final FloatSetting lineThickness = FloatSetting.builder().id("blockesp_linethickness")
 			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
@@ -92,15 +90,13 @@ public class BlockESP extends Module implements TickListener, Render3DListener, 
 
 	@Override
 	public void onRender(Render3DEvent event) {
-		PoseStack matrixStack = event.GetMatrix();
-		Camera camera = event.getCamera();
-		Color boxColor = color.getValue();
+		Shader boxColor = color.getValue();
 		float lnThickness = lineThickness.getValue().floatValue();
-		
+
 		blockPositions.forEach((s, v) -> {
 			for (BlockPos blockPos : v) {
 				AABB box = new AABB(blockPos);
-				Render3D.draw3DBox(matrixStack, camera, box, boxColor, lnThickness);
+				event.getRenderer().drawBox(box, boxColor, lnThickness);
 			}
 		});
 	}
@@ -125,7 +121,7 @@ public class BlockESP extends Module implements TickListener, Render3DListener, 
 			ChunkPos pos = chunkQueue.getFirst();
 			chunkQueue.removeFirst();
 
-			LevelChunk chunk = MC.level.getChunk(pos.x, pos.z);
+			LevelChunk chunk = MC.level.getChunk(pos.x(), pos.z());
 			if (chunk == null || chunk.isEmpty())
 				return;
 

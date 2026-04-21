@@ -11,21 +11,17 @@ package net.aoba.gui.screens.proxy;
 import java.util.ArrayList;
 
 import net.aoba.Aoba;
+import net.aoba.gui.screens.AobaPanorama;
 import net.aoba.managers.proxymanager.Socks5Proxy;
-import net.aoba.utils.render.TextureBank;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.CubeMap;
-import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.network.chat.Component;
 
 public class ProxyScreen extends Screen {
-	protected static final CubeMap AOBA_PANORAMA_RENDERER = new CubeMap(TextureBank.mainmenu_panorama);
-	protected static final PanoramaRenderer AOBA_ROTATING_PANORAMA_RENDERER = new PanoramaRenderer(
-			AOBA_PANORAMA_RENDERER);
+	protected static final AobaPanorama AOBA_ROTATING_PANORAMA_RENDERER = new AobaPanorama();
 
 	private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
 	private final Screen parentScreen;
@@ -131,7 +127,10 @@ public class ProxyScreen extends Screen {
 	}
 
 	@Override
-	protected void renderPanorama(GuiGraphics context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, true);
+	protected void extractPanorama(final GuiGraphicsExtractor graphics, final float a){
+		try {
+			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, this.panoramaShouldSpin());
+		} catch (IllegalStateException e) {
+		}
 	}
 }

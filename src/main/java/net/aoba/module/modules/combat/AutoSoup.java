@@ -18,7 +18,6 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.FloatSetting;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -61,8 +60,8 @@ public class AutoSoup extends Module implements PlayerHealthListener {
 			if (stack == null || stack.getItem() == Items.BOWL) {
 				int nextSoup = findSoup();
 				if (nextSoup >= 0) {
-					MC.gameMode.handleInventoryMouseClick(0, nextSoup, 0, ClickType.PICKUP, MC.player);
-					MC.gameMode.handleInventoryMouseClick(0, i, 0, ClickType.PICKUP, MC.player);
+					MC.gameMode.handleInventoryButtonClick(0, nextSoup);
+					MC.gameMode.handleInventoryButtonClick(0, i);
 				}
 			}
 		}

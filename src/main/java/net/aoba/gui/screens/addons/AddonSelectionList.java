@@ -11,19 +11,17 @@ package net.aoba.gui.screens.addons;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.jetbrains.annotations.Nullable;
-
 import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -60,19 +58,19 @@ public class AddonSelectionList extends ObjectSelectionList<AddonSelectionList.E
 	}
 
 	@Override
-	public boolean keyPressed(net.minecraft.client.input.KeyEvent keyEvent) {
+	public boolean keyPressed(KeyEvent keyEvent) {
 		Entry entry = getSelected();
 		return entry != null && entry.keyPressed(keyEvent) || super.keyPressed(keyEvent);
 	}
 
 	@Environment(value = EnvType.CLIENT)
-	public static abstract class Entry extends ObjectSelectionList.Entry<net.aoba.gui.screens.addons.AddonSelectionList.Entry> implements AutoCloseable {
+	public static abstract class Entry extends ObjectSelectionList.Entry<AddonSelectionList.Entry> implements AutoCloseable {
 		@Override
 		public void close() {
 		}
 	}
 
-	public class NormalEntry extends net.aoba.gui.screens.addons.AddonSelectionList.Entry {
+	public class NormalEntry extends AddonSelectionList.Entry {
 		private final AddonSelectionList owner;
 		private final Minecraft mc;
 		private final Identifier iconIdentifier;
@@ -95,22 +93,6 @@ public class AddonSelectionList extends ObjectSelectionList<AddonSelectionList.E
 		}
 
 		@Override
-		public void renderContent(GuiGraphics drawContext, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-			int x = getX();
-			int y = getY();
-
-			// Draws the strings onto the screen.
-			Font textRenderer = mc.font;
-
-			drawContext.fill(x + 7, y + 7, x + 41, y + 41, 0xFFFFFFFF);
-			drawContext.fill(x + 8, y + 8, x + 40, y + 40, 0xFF000000);
-
-			drawContext.blit(iconIdentifier, x + 8, y + 8, 32, 32, 0f, 0f, 1f, 1f);
-			drawContext.drawString(textRenderer, addon.getName(), (x + 54), y + 10, 0xFFFFFFFF);
-			drawContext.drawString(textRenderer, addon.getDescription(), (x + 54), y + 22, 0xFFFFFFFF);
-		}
-
-		@Override
 		public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
 			owner.onClickEntry(this);
 			return true;
@@ -127,6 +109,22 @@ public class AddonSelectionList extends ObjectSelectionList<AddonSelectionList.E
 
 		public Identifier getIcon() {
 			return iconIdentifier;
+		}
+
+		@Override
+		public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+			int x = getX();
+			int y = getY();
+
+			// Draws the strings onto the screen.
+			Font textRenderer = mc.font;
+
+			graphics.fill(x + 7, y + 7, x + 41, y + 41, 0xFFFFFFFF);
+			graphics.fill(x + 8, y + 8, x + 40, y + 40, 0xFF000000);
+
+			graphics.blit(iconIdentifier, x + 8, y + 8, 32, 32, 0f, 0f, 1f, 1f);
+			graphics.text(textRenderer, addon.getName(), (x + 54), y + 10, 0xFFFFFFFF);
+			graphics.text(textRenderer, addon.getDescription(), (x + 54), y + 22, 0xFFFFFFFF);
 		}
 	}
 }

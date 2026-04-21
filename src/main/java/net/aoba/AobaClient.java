@@ -40,6 +40,11 @@ import net.aoba.managers.proxymanager.ProxyManager;
 import net.aoba.managers.rotation.RotationManager;
 import net.aoba.mixin.interfaces.IMinecraft;
 import net.aoba.module.Module;
+import net.aoba.rendering.AbstractRenderer;
+import net.aoba.rendering.Compositor;
+import net.aoba.rendering.Renderer2D;
+import net.aoba.rendering.Renderer3D;
+import net.aoba.rendering.shaders.ShaderManager;
 import net.aoba.settings.friends.FriendsList;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
@@ -69,6 +74,10 @@ public class AobaClient {
 	public EventManager eventManager;
 	public MacroManager macroManager;
 	public EntityManager entityManager;
+	public ShaderManager shaderManager;
+	public Renderer2D render2D;
+	public Renderer3D render3D;
+	public Compositor compositor;
 
 	public static List<IAddon> addons = new ArrayList<>();
 	public static Logger LOGGER;
@@ -113,12 +122,6 @@ public class AobaClient {
 		LOGGER.info("[Aoba] Reading Friends List");
 		friendsList = new FriendsList();
 
-		LOGGER.info("[Aoba] Initializing Rotation Manager");
-		rotationManager = new RotationManager();
-
-		LOGGER.info("[Aoba] Initializing Modules");
-		moduleManager = new ModuleManager(addons);
-
 		LOGGER.info("[Aoba] Initializing Commands");
 		commandManager = new CommandManager(addons);
 
@@ -135,9 +138,27 @@ public class AobaClient {
 		LOGGER.info("[Aoba] Initializing Macro Manager");
 		macroManager = new MacroManager();
 
+		LOGGER.info("[Aoba] Initializing Shader Effects");
+		shaderManager = new ShaderManager();
+		
+		LOGGER.info("[Aoba] Initializing Renderers");
+		compositor = new Compositor();
+		render2D = new Renderer2D();
+		render3D = new Renderer3D();
+
+		LOGGER.info("[Aoba] Initializing Rotation Manager");
+		rotationManager = new RotationManager();
+		
+		LOGGER.info("[Aoba] Initializing Modules");
+		moduleManager = new ModuleManager(addons);
+		
 		LOGGER.info("[Aoba] Initializing GUI");
 		guiManager = new GuiManager();
 		guiManager.Initialize();
+
+		LOGGER.info("[Aoba] Loading Settings");
+		SettingManager.loadGlobalSettings();
+		SettingManager.loadSettings();
 
 		LOGGER.info("[Aoba] Initializing Alt Manager");
 		altManager = new AltManager();
@@ -153,10 +174,6 @@ public class AobaClient {
 				LOGGER.error("[Aoba] Error during shutdown: ", e);
 			}
 		}));
-
-		LOGGER.info("[Aoba] Loading Settings");
-		SettingManager.loadGlobalSettings();
-		SettingManager.loadSettings();
 
 		LOGGER.info("[Aoba] Aoba-chan initialized and ready to play!");
 	}
@@ -174,6 +191,15 @@ public class AobaClient {
 			moduleManager.modules.forEach(Module::onDisable);
 		} catch (Exception e) {
 			LOGGER.error("[Aoba] Error saving data", e);
+		}
+
+		try {
+			if (render2D != null) render2D.close();
+			if (render3D != null) render3D.close();
+			if (compositor != null) compositor.close();
+			AbstractRenderer.closeSharedResources();
+		} catch (Exception e) {
+			LOGGER.error("[Aoba] Error releasing renderer resources", e);
 		}
 	}
 }

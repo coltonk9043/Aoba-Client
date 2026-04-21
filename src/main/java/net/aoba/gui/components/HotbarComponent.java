@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.VerticalAlignment;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.components.StackPanelComponent.StackType;
+import net.aoba.gui.types.VerticalAlignment;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.types.HotbarSetting;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -24,10 +26,10 @@ public class HotbarComponent extends Component {
     private HotbarComponent(String text, List<Boolean> items) {
         this.values = new ArrayList<>(items);
     	StackPanelComponent verticalStack = new StackPanelComponent();
-        verticalStack.setSpacing(4f);
+        verticalStack.setSpacing(8f);
 
         StringComponent label = new StringComponent(text);
-        label.setIsHitTestVisible(false);
+        label.setProperty(UIElement.IsHitTestVisibleProperty, false);
         verticalStack.addChild(label);
 
         StackPanelComponent slotsRow = new StackPanelComponent();
@@ -37,13 +39,13 @@ public class HotbarComponent extends Component {
         slotComponents = new RectangleComponent[values.size()];
         for (int i = 0; i < values.size(); i++) {
             final int slotIndex = i;
-            RectangleComponent slot = new RectangleComponent(
-                    values.get(i) ? COLOR_ON : COLOR_OFF,
-                    GuiManager.borderColor.getValue(),
-                    3f);
-            slot.setWidth(20f);
-            slot.setHeight(20f);
-            slot.setVerticalAlignment(VerticalAlignment.Center);
+            RectangleComponent slot = new RectangleComponent();
+            slot.setProperty(UIElement.BackgroundProperty, Shader.solid(values.get(i) ? COLOR_ON : COLOR_OFF));
+            slot.bindProperty(UIElement.BorderProperty, GuiManager.componentBorderColor);
+    		slot.bindProperty(UIElement.CornerRadiusProperty, GuiManager.roundingRadius);
+    		slot.setProperty(UIElement.WidthProperty, 20f);
+    		slot.setProperty(UIElement.HeightProperty, 20f);
+    		slot.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
             slot.setOnClicked(e -> {
                 if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
                     toggleSlot(slotIndex);
@@ -55,7 +57,7 @@ public class HotbarComponent extends Component {
         }
 
         verticalStack.addChild(slotsRow);
-        addChild(verticalStack);
+        setContent(verticalStack);
     }
     
     public HotbarComponent(String text, List<Boolean> values, Consumer<List<Boolean>> onChanged) {
@@ -63,10 +65,19 @@ public class HotbarComponent extends Component {
         this.onChanged = onChanged;
     }
 
+    private final Consumer<List<Boolean>> settingListener = this::onSettingValueChanged;
+
     public HotbarComponent(HotbarSetting hotbar) {
     	this(hotbar.displayName, hotbar.getValue());
         this.hotbar = hotbar;
-        this.hotbar.addOnUpdate(this::onSettingValueChanged);
+        this.hotbar.addOnUpdate(settingListener);
+    }
+
+    @Override
+    public void dispose() {
+        if (hotbar != null)
+            hotbar.removeOnUpdate(settingListener);
+        super.dispose();
     }
 
     private void toggleSlot(int index) {
@@ -87,7 +98,7 @@ public class HotbarComponent extends Component {
 
     private void updateSlotColors() {
         for (int i = 0; i < slotComponents.length; i++) {
-            slotComponents[i].setBackgroundColor(values.get(i) ? COLOR_ON : COLOR_OFF);
+            slotComponents[i].setProperty(BackgroundProperty, Shader.solid(values.get(i) ? COLOR_ON : COLOR_OFF));
         }
     }
 }

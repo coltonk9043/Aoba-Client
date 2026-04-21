@@ -24,7 +24,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class AutoFarm extends Module implements TickListener {
@@ -86,7 +86,7 @@ public class AutoFarm extends Module implements TickListener {
 						} else {
 							fertilizeCrops(mutableBlockPos);
 						}
-					} else if (block instanceof FarmBlock) {
+					} else if (block instanceof FarmlandBlock) {
 						handleFarmland(mutableBlockPos);
 					}
 				}

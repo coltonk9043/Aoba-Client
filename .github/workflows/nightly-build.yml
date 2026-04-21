@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       game_version:
-        description: "Minecraft game version (e.g. 1.21.11)"
+        description: "Minecraft game version (e.g. 26.1.1)"
         required: false
         default: ""
       force_build:
@@ -16,7 +16,7 @@ on:
         default: false
 
 env:
-  GAME_VERSION: "1.21.11"
+  GAME_VERSION: "26.1.1"
 
 concurrency:
   group: "weekly"
@@ -68,11 +68,11 @@ jobs:
           echo "display_date=${DISPLAY_DATE}" >> $GITHUB_OUTPUT
           echo "tag=build-${{ env.GAME_VERSION }}-${BUILD_DATE}" >> $GITHUB_OUTPUT
 
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         if: steps.commit_check.outputs.has_new_commits == 'true' || github.event.inputs.force_build == 'true'
         uses: actions/setup-java@v4
         with:
-          java-version: "21"
+          java-version: "25"
           distribution: "zulu"
 
       - name: Grant execute permission for gradlew

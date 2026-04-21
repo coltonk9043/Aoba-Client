@@ -13,51 +13,70 @@ import java.util.function.Consumer;
 import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
-import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.listeners.KeyDownListener;
-import net.aoba.gui.GridDefinition;
-import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.HorizontalAlignment;
-import net.aoba.gui.TextWrapping;
-import net.aoba.gui.Thickness;
-import net.aoba.gui.VerticalAlignment;
-import net.aoba.gui.colors.Color;
-import net.aoba.settings.types.KeybindSetting;
+import net.aoba.gui.UIElement;
+import net.aoba.gui.UIProperty;
+import net.aoba.gui.types.GridDefinition;
+import net.aoba.gui.types.HorizontalAlignment;
+import net.aoba.gui.types.TextWrapping;
+import net.aoba.gui.types.Thickness;
+import net.aoba.gui.types.VerticalAlignment;
+import net.aoba.gui.types.GridDefinition.RelativeUnit;
+import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 
 public class KeybindComponent extends Component implements KeyDownListener {
 	private boolean listeningForKey;
-	private Key key;
-	private KeybindSetting keyBind;
-	private Consumer<Key> onChanged;
 	private final StringComponent label;
 	private final StringComponent keyTextComponent;
 
+	public static UIProperty<Key> SelectedKeyProperty = new UIProperty<>("SelectedKey", InputConstants.UNKNOWN, false, true, KeybindComponent::OnSelectedKeyPropertyChanged);
+	public static UIProperty<String> HeaderProperty = new UIProperty<>("Header", "", false, true, KeybindComponent::OnHeaderPropertyChanged);
+	
+	private Consumer<Key> onChanged = null;
+	private static void OnSelectedKeyPropertyChanged(UIElement sender, Key oldValue, Key newValue) {
+		if(sender instanceof KeybindComponent keybind) {
+			keybind.keyTextComponent.setProperty(StringComponent.TextProperty, keybind.getKeyDisplayText());
+			
+			if(keybind.onChanged != null)
+				keybind.onChanged.accept(newValue);
+		}
+	}
+	
+	private static void OnHeaderPropertyChanged(UIElement sender, String oldValue, String newValue) {
+		if(sender instanceof KeybindComponent keybind) {
+			keybind.label.setProperty(StringComponent.TextProperty, newValue);
+		}
+	}
+	
 	public KeybindComponent() {
+		setProperty(UIElement.CursorProperty, CursorStyle.Type);
+		
 		GridComponent grid = new GridComponent();
 		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
 		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));
 
-		label = new StringComponent(getDisplayText());
-		label.setVerticalAlignment(VerticalAlignment.Center);
+		label = new StringComponent();
+		label.setProperty(StringComponent.TextProperty, getProperty(KeybindComponent.HeaderProperty));
+		label.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
 		grid.addChild(label);
 
-		RectangleComponent keyButton = new RectangleComponent(
-				new Color(115, 115, 115, 200),
-				GuiManager.borderColor.getValue(),
-				3f);
-		keyButton.setPadding(new Thickness(10f, 4f, 10f, 4f));
-		keyButton.setVerticalAlignment(VerticalAlignment.Center);
+		RectangleComponent keyButton = new RectangleComponent();
+		keyButton.bindProperty(UIElement.BackgroundProperty, GuiManager.componentBackgroundColor);
+		keyButton.bindProperty(UIElement.BorderProperty, GuiManager.componentBorderColor);
+		keyButton.bindProperty(UIElement.CornerRadiusProperty, GuiManager.roundingRadius);
+		keyButton.setProperty(UIElement.PaddingProperty, new Thickness(10f, 4f, 10f, 4f));
+		keyButton.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
 
 		keyTextComponent = new StringComponent("N/A");
-		keyTextComponent.setVerticalAlignment(VerticalAlignment.Center);
-		keyTextComponent.setHorizontalAlignment(HorizontalAlignment.Center);
-		keyTextComponent.setTextWrapping(TextWrapping.NoWrap);
-		keyTextComponent.setIsHitTestVisible(false);
-		keyButton.addChild(keyTextComponent);
+		keyTextComponent.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		keyTextComponent.setProperty(UIElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+		keyTextComponent.setProperty(UIElement.IsHitTestVisibleProperty, false);
+		keyTextComponent.setProperty(StringComponent.TextWrappingProperty, TextWrapping.NoWrap);
+		keyButton.setContent(keyTextComponent);
 
 		keyButton.setOnClicked(e -> {
 			if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
@@ -67,92 +86,54 @@ public class KeybindComponent extends Component implements KeyDownListener {
 		});
 
 		grid.addChild(keyButton);
-		addChild(grid);
-	}
-	
-	public KeybindComponent(KeybindSetting keyBind) {
-		this();
-		this.key = keyBind.getValue();
-		this.keyBind = keyBind;
-		this.keyBind.addOnUpdate(this::onSettingValueChanged);
-		label.setText(getDisplayText());
-		keyTextComponent.setText(getKeyDisplayText());
-	}
-
-	public KeybindComponent(Key key, Consumer<Key> onChanged) {
-		this();
-		this.key = key;
-		this.onChanged = onChanged;
-		keyTextComponent.setText(getKeyDisplayText());
-	}
-
-	private String getDisplayText() {
-		if(this.keyBind == null)
-			return "Keybind";
-		else 
-			return keyBind.displayName;
+		setContent(grid);
 	}
 	
 	private String getKeyDisplayText() {
-		String text = getKey().getDisplayName().getString();
+		Key keybind = getProperty(SelectedKeyProperty);
+		String text = keybind.getDisplayName().getString();
 		if (text.equals("scancode.0") || text.equals("key.keyboard.0"))
 			return "N/A";
 		return text;
 	}
 
-	private void onSettingValueChanged(Key newKey) {
-		if (newKey != this.key) {
-			this.key = newKey;
-			keyTextComponent.setText(getKeyDisplayText());
-		}
-	}
-
-	public Key getKey() {
-		return key;
-	}
-
-	public void setKeyBind(Key key) {
-		this.key = key;
-		if (keyBind != null)
-			keyBind.setValue(key);
-		keyTextComponent.setText(getKeyDisplayText());
-	}
-
-	@Override
-	public void onVisibilityChanged() {
-		super.onVisibilityChanged();
-		if (isVisible()) {
-			Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
-		} else {
-			Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
-		}
-	}
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		if (listeningForKey) {
-			this.key = event.GetKey() == GLFW.GLFW_KEY_ESCAPE
+			Key key = event.GetKey() == GLFW.GLFW_KEY_ESCAPE
 					? InputConstants.UNKNOWN
 					: InputConstants.Type.KEYSYM.getOrCreate(event.GetKey());
 
-			if (keyBind != null)
-				keyBind.setValue(this.key);
-			if (onChanged != null)
-				onChanged.accept(this.key);
-
-			keyTextComponent.setText(getKeyDisplayText());
-			listeningForKey = false;
+			setProperty(SelectedKeyProperty, key);
+			setListeningForKey(false);
 			event.cancel();
 		}
 	}
 
 	private void setListeningForKey(boolean state) {
+		if (listeningForKey == state)
+			return;
+
 		listeningForKey = state;
-		GuiManager.setKeyboardInputActive(state);
 		if (listeningForKey) {
-			Aoba.getInstance().eventManager.AddListener(KeyDownListener.class, this);
+			GuiManager.requestFocus(this);
+			AOBA.eventManager.AddListener(KeyDownListener.class, this);
 		} else {
-			Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
+			GuiManager.clearFocus(this);
+			AOBA.eventManager.RemoveListener(KeyDownListener.class, this);
 		}
+	}
+
+	@Override
+	protected void onLostFocus() {
+		if (listeningForKey) {
+			setListeningForKey(false);
+			keyTextComponent.setProperty(StringComponent.TextProperty, getKeyDisplayText());
+		}
+	}
+	
+	public void setOnChanged(Consumer<Key> consumer) {
+		this.onChanged = consumer;
 	}
 }

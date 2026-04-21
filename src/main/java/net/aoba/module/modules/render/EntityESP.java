@@ -8,19 +8,17 @@
 
 package net.aoba.module.modules.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
 import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.types.BooleanSetting;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.ShaderSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.utils.render.Render3D;
-import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -39,15 +37,15 @@ public class EntityESP extends Module implements Render3DListener {
 	private final EnumSetting<DrawMode> drawMode = EnumSetting.<DrawMode>builder().id("entityesp_draw_mode")
 			.displayName("Draw Mode").description("Draw Mode").defaultValue(DrawMode.Model).build();
 
-	private final ColorSetting color_passive = ColorSetting.builder().id("entityesp_color_passive")
-			.displayName("Passive Color").description("Passive Color").defaultValue(new Color(0f, 1f, 0f, 0.3f))
+	private final ShaderSetting color_passive = ShaderSetting.builder().id("entityesp_color_passive")
+			.displayName("Passive Color").description("Passive Color").defaultValue(Shader.solid(new Color(0f, 1f, 0f, 0.3f)))
 			.build();
 
-	private final ColorSetting color_enemies = ColorSetting.builder().id("entityesp_color_enemy")
-			.displayName("Enemy Color").description("Enemy Color").defaultValue(new Color(1, 0f, 0f, 0.3f)).build();
+	private final ShaderSetting color_enemies = ShaderSetting.builder().id("entityesp_color_enemy")
+			.displayName("Enemy Color").description("Enemy Color").defaultValue(Shader.solid(new Color(1, 0f, 0f, 0.3f))).build();
 
-	private final ColorSetting color_misc = ColorSetting.builder().id("entityesp_color_misc").displayName("Misc. Color")
-			.description("Misc. Color").defaultValue(new Color(0, 0f, 1f, 0.3f)).build();
+	private final ShaderSetting color_misc = ShaderSetting.builder().id("entityesp_color_misc").displayName("Misc. Color")
+			.description("Misc. Color").defaultValue(Shader.solid(new Color(0, 0f, 1f, 0.3f))).build();
 
 	private final BooleanSetting showPassiveEntities = BooleanSetting.builder().id("entityesp_show_passive")
 			.displayName("Show Passive Entities").description("Show Passive Entities.").defaultValue(true).build();
@@ -93,20 +91,18 @@ public class EntityESP extends Module implements Render3DListener {
 
 	@Override
 	public void onRender(Render3DEvent event) {
-		PoseStack matrixStack = event.GetMatrix();
-		float partialTicks = event.getRenderTickCounter().getGameTimeDeltaPartialTick(true);
+		float partialTicks = event.getRenderer().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
 		for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 
-			Frustum frustum = event.getFrustum();
-			Camera camera = MC.gameRenderer.getMainCamera();
-			Vec3 cameraPosition = camera.position();
+			Frustum frustum = event.getRenderer().getFrustum();
+			Vec3 cameraPosition = event.getRenderer().getCamera().position();
 			if (MC.getEntityRenderDispatcher().shouldRender(entity, frustum, cameraPosition.x(),
 					cameraPosition.y(), cameraPosition.z())) {
 				if (entity instanceof LivingEntity && !(entity instanceof Player)) {
 
-					Color color = getColorForEntity(entity);
-					if (color != null) {
+					Shader effect = getColorForEntity(entity);
+					if (effect != null) {
 						switch (drawMode.getValue()) {
 						case BoundingBox:
 							double interpolatedX = Mth.lerp(partialTicks, entity.xo, entity.getX());
@@ -115,11 +111,11 @@ public class EntityESP extends Module implements Render3DListener {
 
 							AABB boundingBox = entity.getBoundingBox().move(interpolatedX - entity.getX(),
 									interpolatedY - entity.getY(), interpolatedZ - entity.getZ());
-							Render3D.draw3DBox(matrixStack, event.getCamera(), boundingBox, color,
+							event.getRenderer().drawBox(boundingBox, effect,
 									lineThickness.getValue());
 							break;
 						case Model:
-							Render3D.drawEntityModel(matrixStack, camera, partialTicks, entity, color);
+							event.getRenderer().drawEntityModel(entity, effect);
 							break;
 						}
 					}
@@ -128,7 +124,7 @@ public class EntityESP extends Module implements Render3DListener {
 		}
 	}
 
-	private Color getColorForEntity(Entity entity) {
+	private Shader getColorForEntity(Entity entity) {
 		if (entity instanceof Animal && showPassiveEntities.getValue()) {
 			return color_passive.getValue();
 		} else if (entity instanceof Enemy && showEnemies.getValue()) {

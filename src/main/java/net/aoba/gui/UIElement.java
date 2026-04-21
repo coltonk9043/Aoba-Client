@@ -9,53 +9,69 @@
 package net.aoba.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
+import net.aoba.gui.UIProperty.CoerseCallback;
+import net.aoba.gui.font.FontManager;
+import net.aoba.gui.font.UIFont;
+import net.aoba.gui.types.BindingMode;
+import net.aoba.gui.types.HorizontalAlignment;
+import net.aoba.gui.types.Rectangle;
+import net.aoba.gui.types.Size;
+import net.aoba.gui.types.Thickness;
+import net.aoba.gui.types.VerticalAlignment;
+import net.aoba.settings.Setting;
+import net.aoba.utils.input.CursorStyle;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.events.MouseScrollEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.rendering.Renderer2D;
+import net.aoba.rendering.shaders.Shader;
 
 public abstract class UIElement {
 	protected static Minecraft MC = Minecraft.getInstance();
 	protected static AobaClient AOBA = Aoba.getInstance();
 
-	private final ArrayList<UIElement> children = new ArrayList<UIElement>();
+	private HashMap<UIProperty<?>, Object> localProperties;
+	private List<PropertyBinding<?>> propertyBindings;
+	
 	protected UIElement parent;
-
-	private boolean measureDirty = true;
+	protected boolean measureDirty = true;
 	private Float lastMeasureWidth = null;
 	private Float lastMeasureHeight = null;
-	protected Float width = null;
-	protected Float height = null;
-	protected Float maxWidth = null;
-	protected Float maxHeight = null;
-	protected Float minWidth = null;
-	protected Float minHeight = null;
 	protected boolean initialized = false;
-
-	// Spacing
-	protected Thickness margin;
-	protected Thickness padding;
-
-	// Alignment
-	protected HorizontalAlignment horizontalAlignment = HorizontalAlignment.Stretch;
-	protected VerticalAlignment verticalAlignment = VerticalAlignment.Stretch;
-
-	// Actual physical size on the screen.
 	protected Size preferredSize;
 	protected Rectangle actualSize;
-	protected String tooltip = null;
-	protected boolean visible = true;
-	protected boolean hovered = false;
-	protected boolean isHitTestVisible = true;
 
-	// Events
+	public static final UIProperty<Float> BorderThicknessProperty = new UIProperty<>("BorderThickness", 0f);
+	public static final UIProperty<Float> CornerRadiusProperty = new UIProperty<>("CornerRadius", 6f);
+	public static final UIProperty<Shader> BackgroundProperty = new UIProperty<>("Background", null, false);
+	public static final UIProperty<Shader> BorderProperty = new UIProperty<>("Border", null, false);
+	public static final UIProperty<Shader> ForegroundProperty = new UIProperty<>("Foreground", null, true);
+	public static final UIProperty<CursorStyle> CursorProperty = new UIProperty<>("Cursor", null, true, false);
+	public static final UIProperty<Boolean> IsHoveredProperty = new UIProperty<>("IsHovered", false);
+	public static final UIProperty<Boolean> IsVisibleProperty = new UIProperty<>("IsVisible", true, true, true, UIElement::onVisibilityPropertyChanged);
+	public static final UIProperty<Boolean> ClipToBoundsProperty = new UIProperty<>("ClipToBounds", false);
+	public static final UIProperty<Boolean> IsHitTestVisibleProperty = new UIProperty<>("IsHitTestVisible", true);
+	public static final UIProperty<String> ToolTipProperty = new UIProperty<>("ToolTip", null);
+	public static final UIProperty<Thickness> MarginProperty = new UIProperty<>("Margin", new Thickness(0,0,0,0));
+	public static final UIProperty<Thickness> PaddingProperty = new UIProperty<>("Padding", new Thickness(0,0,0,0));
+	public static final UIProperty<HorizontalAlignment> HorizontalAlignmentProperty = new UIProperty<>("HorizontalAlignment", HorizontalAlignment.Stretch);
+	public static final UIProperty<VerticalAlignment> VerticalAlignmentProperty = new UIProperty<>("VerticalAlignment", VerticalAlignment.Stretch);
+	public static final UIProperty<Float> WidthProperty = new UIProperty<>("Width", null, false, true);
+	public static final UIProperty<Float> HeightProperty = new UIProperty<>("Height", null, false, true);
+	public static final UIProperty<Float> MaxWidthProperty = new UIProperty<>("MaxWidth", null, false, true);
+	public static final UIProperty<Float> MaxHeightProperty = new UIProperty<>("MaxHeight", null, false, true);
+	public static final UIProperty<Float> MinWidthProperty = new UIProperty<>("MinWidth", null, false, true);
+	public static final UIProperty<Float> MinHeightProperty = new UIProperty<>("MinHeight", null, false, true);
+	public static final UIProperty<UIFont> FontProperty = new UIProperty<>("Font", Aoba.getInstance().fontManager.getDefaultFont(), true, true);
+	public static final UIProperty<Integer> FontWeightProperty = new UIProperty<>("FontWeight", FontManager.WEIGHT_NORMAL, true, true);
+	
 	private Consumer<MouseClickEvent> onClicked;
 
 	public UIElement() {
@@ -63,6 +79,14 @@ public abstract class UIElement {
 		actualSize = new Rectangle(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
+	private static void onVisibilityPropertyChanged(UIElement sender, Boolean oldValue, Boolean newValue) {
+		sender.onVisibilityChanged(oldValue, newValue);
+	}
+	
+	protected void onVisibilityChanged(Boolean oldValue, Boolean newValue) {
+		
+	}
+	
 	/**
 	 * Initializes the UI element.
 	 */
@@ -70,12 +94,6 @@ public abstract class UIElement {
 		boolean wasInitialized = initialized;
 		if (!wasInitialized) {
 			initialized = true;
-		}
-
-		for (UIElement child : children) {
-			if (child == null)
-				continue;
-			child.initialize();
 		}
 
 		if (!wasInitialized) {
@@ -96,30 +114,28 @@ public abstract class UIElement {
 	 * Fires when the UI element is initialized.
 	 */
 	protected void onInitialized() {
-
 	}
 
 	/**
 	 * Updates the UI element per tick.
 	 */
 	public void update() {
-		for (UIElement child : children) {
-			child.update();
-		}
 	}
 
 	/**
 	 * Draws the UI element on the screen.
-	 * @param drawContext  DrawContext of the game.
+	 * @param renderer     The 2D renderer for this frame.
 	 * @param partialTicks Partial Ticks of the game.
 	 */
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		if (isVisible()) {
-			for (UIElement child : children) {
-				if (child.visible) {
-					child.draw(drawContext, partialTicks);
-				}
-			}
+	public void draw(Renderer2D renderer, float partialTicks) {
+		
+	}
+
+	public void dispose() {
+		if (propertyBindings != null) {
+			for (PropertyBinding<?> binding : propertyBindings)
+				binding.unbind();
+			propertyBindings = null;
 		}
 	}
 
@@ -145,22 +161,15 @@ public abstract class UIElement {
 	 * @return Content area as a Rectangle.
 	 */
 	public Rectangle getContentArea() {
-		Rectangle area = new Rectangle(getActualSize());
+		Rectangle area = getActualSize();
+		Thickness padding = getProperty(UIElement.PaddingProperty);
 		if (padding != null) {
-			if (padding.left() != null) {
-				area.setX(area.getX() + padding.left());
-				area.setWidth(area.getWidth() - padding.left());
-			}
-			if (padding.top() != null) {
-				area.setY(area.getY() + padding.top());
-				area.setHeight(area.getHeight() - padding.top());
-			}
-			if (padding.right() != null) {
-				area.setWidth(area.getWidth() - padding.right());
-			}
-			if (padding.bottom() != null) {
-				area.setHeight(area.getHeight() - padding.bottom());
-			}
+			area = new Rectangle(
+				area.x() + padding.left(),
+				area.y() + padding.top(),
+				area.width() - padding.horizontalSum(),
+				area.height() - padding.verticalSum()
+			);
 		}
 		return area;
 	}
@@ -174,110 +183,12 @@ public abstract class UIElement {
 	}
 
 	/**
-	 * Gets the margin of the UI element.
-	 * @return Margin of the UI element.
-	 */
-	public Thickness getMargin() {
-		return margin;
-	}
-
-	/**
-	 * Sets the margin of the UI element.
-	 * @param val Margin to set to.
-	 */
-	public void setMargin(Thickness val) {
-		if (margin == null || !margin.equals(val)) {
-			this.margin = val;
-			invalidateMeasure();
-		}
-	}
-
-	/**
-	 * Gets the padding of the UI element.
-	 * @return Padding of the UI element.
-	 */
-	public Thickness getPadding() {
-		return padding;
-	}
-
-	/**
-	 * Sets the padding of the UI element.
-	 * @param val Padding to set to.
-	 */
-	public void setPadding(Thickness val) {
-		if (padding == null || !padding.equals(val)) {
-			this.padding = val;
-			invalidateMeasure();
-		}
-	}
-
-	/**
-	 * Gets the horizontal alignment of the UI element.
-	 * @return Horizontal alignment of the UI element.
-	 */
-	public HorizontalAlignment getHorizontalAlignment() {
-		return horizontalAlignment;
-	}
-
-	/**
-	 * Sets the horizontal alignment of the UI element.
-	 * @param alignment Horizontal alignment to set.
-	 */
-	public void setHorizontalAlignment(HorizontalAlignment alignment) {
-		if (this.horizontalAlignment != alignment) {
-			this.horizontalAlignment = alignment;
-			invalidateMeasure();
-		}
-	}
-
-	/**
-	 * Gets the vertical alignment of the UI element.
-	 * @return Vertical alignment of the UI element.
-	 */
-	public VerticalAlignment getVerticalAlignment() {
-		return verticalAlignment;
-	}
-
-	/**
-	 * Sets the vertical alignment of the UI element.
-	 * @param alignment Vertical alignment to set.
-	 */
-	public void setVerticalAlignment(VerticalAlignment alignment) {
-		if (this.verticalAlignment != alignment) {
-			this.verticalAlignment = alignment;
-			invalidateMeasure();
-		}
-	}
-
-	/**
-	 * Gets the static width of the UI element.
-	 * @return Width of the UI element.
-	 */
-	public Float getWidth() {
-		return width;
-	}
-	
-	/**
-	 * Gets the static height of the UI element.
-	 * @return Height of the UI element.
-	 */
-	public Float getHeight() {
-		return height;
-	}
-
-	/**
 	 * Sets the static size of the UI element.
 	 * @param size New size of the UI element.
 	 */
 	public void setSize(Size size) {
-		Float newWidth = size.getWidth();
-		Float newHeight = size.getHeight();
-
-		if (width != newWidth || height != newHeight) {
-			width = size.getWidth();
-			height = size.getHeight();
-			invalidateMeasure();
-		}
+		setProperty(UIElement.WidthProperty, size.width());
+		setProperty(UIElement.HeightProperty, size.height());
 	}
 
 	/**
@@ -286,140 +197,101 @@ public abstract class UIElement {
 	 * @param height New height of the UI element.
 	 */
 	public void setSize(Float width, Float height) {
-		if (this.width != width || this.height != height) {
-			this.width = width;
-			this.height = height;
-			invalidateMeasure();
-		}
+		setProperty(UIElement.WidthProperty, width);
+		setProperty(UIElement.HeightProperty, height);
 	}
 
-	/**
-	 * Sets the static width of the UI element.
-	 * @param width New width of the UI element.
-	 */
-	public void setWidth(Float width) {
-		if (this.width != width) {
-			this.width = width;
-			invalidateMeasure();
-		}
+	@SuppressWarnings("unchecked")
+	public <T> T getProperty(UIProperty<T> property) {
+		if (localProperties != null && localProperties.containsKey(property))
+			return (T) localProperties.get(property);
+		if (property.inherits() && parent != null)
+			return parent.getProperty(property);
+		return property.getDefaultValue();
 	}
 
-	/**
-	 * Sets the static height of the UI element.
-	 * @param height New height of the UI element.
-	 */
-	public void setHeight(Float height) {
-		if (this.height != height) {
-			this.height = height;
-			invalidateMeasure();
-		}
+	public boolean hasLocalProperty(UIProperty<?> property) {
+		return localProperties != null && localProperties.containsKey(property);
 	}
 
-	/**
-	 * Gets the minimum allowable width that a UI element can have.
-	 * @return Minimum allowable width of the UI element.
-	 */
-	public Float getMinWidth() {
-		return minWidth;
-	}
+	@SuppressWarnings("unchecked")
+	public <T> void setProperty(UIProperty<T> property, T value) {
+		if (localProperties == null)
+			localProperties = new HashMap<>();
 
-	/**
-	 * Sets the minimum allowable width that a UI element can have.
-	 * @param minWidth Minimum allowable width to set.
-	 */
-	public void setMinWidth(Float minWidth) {
-		this.minWidth = minWidth;
-	}
+		CoerseCallback<T> coerce = property.getCoerceCallback();
+		if (coerce != null)
+			value = coerce.coerce(this, value);
 
-	/**
-	 * Gets the minimum allowable height that a UI element can have.
-	 * @return Minimum allowable height of the UI element.
-	 */
-	public Float getMinHeight() {
-		return minHeight;
-	}
+		T oldValue = (T) localProperties.get(property);
+		if (oldValue == null && !localProperties.containsKey(property))
+			oldValue = property.getDefaultValue();
 
-	/**
-	 * Sets the minimum allowable height that a UI element can have.
-	 * @param minHeight Minimum allowable height to set.
-	 */
-	public void setMinHeight(Float minHeight) {
-		this.minHeight = minHeight;
-	}
-
-	/**
-	 * Gets the maximum allowable width that a UI element can have.
-	 * @return Maximum allowable width of the UI element.
-	 */
-	public Float getMaxWidth() {
-		return maxWidth;
-	}
-
-	/**
-	 * Sets the maximum allowable width that a UI element can have.
-	 * @param maxWidth Maximum allowable width to set.
-	 */
-	public void setMaxWidth(Float maxWidth) {
-		this.maxWidth = maxWidth;
-	}
-
-	/**
-	 * Gets the maximum allowable height that a UI element can have.
-	 * @return Maximum allowable height of the UI element.
-	 */
-	public Float getMaxHeight() {
-		return maxHeight;
-	}
-
-	/**
-	 * Sets the maximum allowable height that a UI element can have.
-	 * @param maxHeight Maximum allowable height to set.
-	 */
-	public void setMaxHeight(Float maxHeight) {
-		this.maxHeight = maxHeight;
-	}
-
-	/**
-	 * Whether or not the component is currently visible.
-	 * @return Visibility state as a boolean.
-	 */
-	public boolean isVisible() {
-		return visible;
-	}
-
-	/**
-	 * Sets whether the component is visible or not
-	 * @param bool State to set visibility to.
-	 */
-	public void setVisible(boolean bool) {
-		if (visible == bool)
+		if (Objects.equals(oldValue, value))
 			return;
 
-		visible = bool;
-		hovered = false;
+		localProperties.put(property, value);
+		onPropertyChanged(property, oldValue, value);
 
-		// If parent is not null, notify the parent.
-		if (parent != null) {
-			parent.onChildChanged(this);
+		if (propertyBindings != null) {
+			for (PropertyBinding<?> binding : propertyBindings) {
+				if (binding.getProperty() == property && binding.getMode() == BindingMode.TwoWay)
+					binding.pushToSetting(value);
+			}
 		}
-
-		onVisibilityChanged();
 	}
 
 	/**
-	 * Gets whether a UI element is hit test visible.
-	 * @return True if the UI element is hit test visible, false otherwise.
+	 * Fired when a UIProperty value changes on this element.
+	 * @param property The property that changed.
+	 * @param oldValue The previous value.
+	 * @param newValue The new value.
 	 */
-	public boolean isHitTestVisible() {
-		return isHitTestVisible;
+	protected <T> void onPropertyChanged(UIProperty<T> property, T oldValue, T newValue) {
+		if (property.affectsLayout())
+			invalidateMeasure();
+
+		UIProperty.PropertyChangedCallback<T> callback = property.getChangedCallback();
+		if (callback != null)
+			callback.changed(this, oldValue, newValue);
 	}
 
-	/**
-	 * Set whether a UI element should be visible or not.
-	 * @param state Whether the UI element should be hit test visible.
-	 */
-	public void setIsHitTestVisible(boolean state) {
-		isHitTestVisible = state;
+	public void clearProperty(UIProperty<?> property) {
+		if (localProperties != null)
+			localProperties.remove(property);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> void bindProperty(UIProperty<T> property, Setting<?> setting) {
+		bindProperty(property, setting, BindingMode.OneWay);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> void bindProperty(UIProperty<T> property, Setting<?> setting, BindingMode mode) {
+		Setting<T> typed = (Setting<T>) setting;
+		setProperty(property, typed.getValue());
+		Consumer<T> listener = v -> setProperty(property, v);
+		typed.addOnUpdate(listener);
+
+		if (propertyBindings == null)
+			propertyBindings = new ArrayList<>();
+		propertyBindings.add(new PropertyBinding<>(property, setting, listener, mode));
+	}
+
+	public <T> void unbindProperty(UIProperty<T> property) {
+		if (propertyBindings == null)
+			return;
+
+		propertyBindings.removeIf(binding -> {
+			if (binding.getProperty() == property) {
+				binding.unbind();
+				return true;
+			}
+			return false;
+		});
+
+		if (propertyBindings.isEmpty())
+			propertyBindings = null;
 	}
 
 	/**
@@ -428,6 +300,11 @@ public abstract class UIElement {
 	 */
 	public UIElement getParent() {
 		return parent;
+	}
+
+
+	public void setParent(UIElement parent) {
+		this.parent = parent;
 	}
 
 	/**
@@ -441,30 +318,26 @@ public abstract class UIElement {
 				parent.invalidateMeasure();
 			} else {
 				// Root element
-				Float w = getWidth();
-				Float h = getHeight();
+				Float width = getProperty(UIElement.WidthProperty);
+				Float height = getProperty(UIElement.HeightProperty);
+				Float minWidth = getProperty(UIElement.MinWidthProperty);
+				Float minHeight = getProperty(UIElement.MinHeightProperty);
+				Float maxWidth = getProperty(UIElement.MaxWidthProperty);
+				Float maxHeight = getProperty(UIElement.MaxHeightProperty);
 
-				Size size = new Size(
-						w != null ? w : 0f,
-						h != null ? h : 0f);
+				float w = width != null ? width : 0f;
+				float h = height != null ? height : 0f;
 
-				if (minWidth != null && size.getWidth() < minWidth)
-					size.setWidth(minWidth);
+				if (minWidth != null && w < minWidth) w = minWidth;
+				if (minHeight != null && h < minHeight) h = minHeight;
+				if (maxWidth != null && w > maxWidth) w = maxWidth;
+				if (maxHeight != null && h > maxHeight) h = maxHeight;
 
-				if (minHeight != null && size.getHeight() < minHeight)
-					size.setHeight(minHeight);
-
-				if (maxWidth != null && size.getWidth() > maxWidth)
-					size.setWidth(maxWidth);
-
-				if (maxHeight != null && size.getHeight() > maxHeight)
-					size.setHeight(maxHeight);
-
+				Size size = new Size(w, h);
 				measureCore(size);
-				float rw = Math.max(size.getWidth(), preferredSize.getWidth());
-				float rh = Math.max(size.getHeight(), preferredSize.getHeight());
-				Rectangle rect = new Rectangle(0f, 0f, rw, rh);
-				arrange(rect);
+				float rw = Math.max(w, preferredSize.width());
+				float rh = Math.max(h, preferredSize.height());
+				arrange(new Rectangle(0f, 0f, rw, rh));
 			}
 		}
 	}
@@ -474,82 +347,66 @@ public abstract class UIElement {
 	 */
 	public void invalidateArrange() {
 		if (initialized) {
-			Float w = getWidth();
-			Float h = getHeight();
-			float rw = Math.max(w != null ? w : 0f, preferredSize.getWidth());
-			float rh = Math.max(h != null ? h : 0f, preferredSize.getHeight());
-			float x = actualSize.getX() != null ? actualSize.getX() : 0f;
-			float y = actualSize.getY() != null ? actualSize.getY() : 0f;
-			Rectangle rect = new Rectangle(x, y, rw, rh);
-			arrange(rect);
+			arrange(actualSize);
 		}
 	}
 
-	/**
-	 * Gets the default size of an element given available space.
-	 * @param availableSize Space available to the UI element.
-	 * @return Default size of the element.
-	 */
-	protected Size getStartingSize(Size availableSize) {
-		return new Size(0f, 0f);
-	}
-
-	/**
-	 * Measures the UI element accounting for all of the children.
-	 * @param availableSize The total amount of space that the UI element has to fit in.
-	 */
 	public final void measureCore(Size availableSize) {
-		if (!isVisible()) {
+		Boolean isVisible = getProperty(UIElement.IsVisibleProperty);
+		if (!isVisible || !initialized)
+			return;
+
+		// Skip if not dirty
+		if (!measureDirty && lastMeasureWidth != null && lastMeasureHeight != null
+				&& lastMeasureWidth.equals(availableSize.width())
+				&& lastMeasureHeight.equals(availableSize.height())) {
 			return;
 		}
 
-		// Do not measure if the UI element is not initialized.
-		if (!initialized) {
-			return;
+		// Reduce available size by padding.
+		Thickness margin = getProperty(UIElement.MarginProperty);
+		Thickness padding = getProperty(UIElement.PaddingProperty);
+		Float width = getProperty(UIElement.WidthProperty);
+		Float height = getProperty(UIElement.HeightProperty);
+		Float minWidth = getProperty(UIElement.MinWidthProperty);
+		Float minHeight = getProperty(UIElement.MinHeightProperty);
+		Float maxWidth = getProperty(UIElement.MaxWidthProperty);
+		Float maxHeight = getProperty(UIElement.MaxHeightProperty);
+		
+		Size contentAvailable = new Size(availableSize.width() - padding.horizontalSum(), availableSize.height() - padding.verticalSum());
+
+		Size measured = measure(contentAvailable);
+		float w = measured.width();
+		float h = measured.height();
+		
+		// Add padding to preferred size.
+		if (padding != null) {
+			w += padding.horizontalSum();
+			h += padding.verticalSum();
 		}
 
-		// Skip if not dirty and available size hasn't changed.
-		if (!measureDirty &&
-			lastMeasureWidth != null && lastMeasureHeight != null &&
-			lastMeasureWidth.equals(availableSize.getWidth()) &&
-			lastMeasureHeight.equals(availableSize.getHeight())) {
-			return;
+		// Apply explicit width/height.
+		if (width != null) 
+			w = width;
+		if (height != null) 
+			h = height;
+
+		// Apply min/max constraints
+		if (minWidth != null && w < minWidth) w = minWidth;
+		else if (maxWidth != null && w > maxWidth) w = maxWidth;
+
+		if (minHeight != null && h < minHeight) h = minHeight;
+		else if (maxHeight != null && h > maxHeight) h = maxHeight;
+
+		// Apply margins
+		if (margin != null) {
+			w += margin.horizontalSum();
+			h += margin.verticalSum();
 		}
 
-		preferredSize = measure(availableSize);
-
-		// Apply explicit width/height
-		if (width != null) {
-			float w = width;
-			if (margin != null) {
-				if (margin.left() != null) w += margin.left();
-				if (margin.right() != null) w += margin.right();
-			}
-			preferredSize.setWidth(w);
-		}
-
-		if (height != null) {
-			float h = height;
-			if (margin != null) {
-				if (margin.top() != null) h += margin.top();
-				if (margin.bottom() != null) h += margin.bottom();
-			}
-			preferredSize.setHeight(h);
-		}
-
-		// Apply min/max constraints.
-		if (minWidth != null && preferredSize.getWidth() < minWidth)
-			preferredSize.setWidth(minWidth);
-		else if (maxWidth != null && preferredSize.getWidth() > maxWidth)
-			preferredSize.setWidth(maxWidth);
-
-		if (minHeight != null && preferredSize.getHeight() < minHeight)
-			preferredSize.setHeight(minHeight);
-		else if (maxHeight != null && preferredSize.getHeight() > maxHeight)
-			preferredSize.setHeight(maxHeight);
-
-		lastMeasureWidth = availableSize.getWidth();
-		lastMeasureHeight = availableSize.getHeight();
+		preferredSize = new Size(w, h);
+		lastMeasureWidth = availableSize.width();
+		lastMeasureHeight = availableSize.height();
 		measureDirty = false;
 	}
 
@@ -559,80 +416,7 @@ public abstract class UIElement {
 	 * @return The computed preferred size.
 	 */
 	public Size measure(Size availableSize) {
-		Size finalSize = getStartingSize(availableSize);
-
-		// Reduce available space by padding for children.
-		Size childAvailableSize = availableSize;
-		if (padding != null) {
-			float padW = 0f;
-			float padH = 0f;
-			if (padding.left() != null) padW += padding.left();
-			if (padding.right() != null) padW += padding.right();
-			if (padding.top() != null) padH += padding.top();
-			if (padding.bottom() != null) padH += padding.bottom();
-			childAvailableSize = new Size(
-					availableSize.getWidth() - padW,
-					availableSize.getHeight() - padH);
-		}
-
-		for (UIElement element : children) {
-			if (!element.visible)
-				continue;
-
-			element.measureCore(childAvailableSize);
-			Size resultingSize = element.getPreferredSize();
-
-			if (resultingSize.getWidth() > finalSize.getWidth())
-				finalSize.setWidth(resultingSize.getWidth());
-
-			if (resultingSize.getHeight() > finalSize.getHeight())
-				finalSize.setHeight(resultingSize.getHeight());
-		}
-
-		// Add padding to the result.
-		if (padding != null) {
-			if (padding.left() != null)
-				finalSize.setWidth(finalSize.getWidth() + padding.left());
-			if (padding.right() != null)
-				finalSize.setWidth(finalSize.getWidth() + padding.right());
-			if (padding.top() != null)
-				finalSize.setHeight(finalSize.getHeight() + padding.top());
-			if (padding.bottom() != null)
-				finalSize.setHeight(finalSize.getHeight() + padding.bottom());
-		}
-
-		if (margin != null) {
-			Float marginLeft = margin.left();
-			Float marginTop = margin.top();
-			Float marginRight = margin.right();
-			Float marginBottom = margin.bottom();
-
-			if (marginLeft != null)
-				finalSize.setWidth(finalSize.getWidth() + marginLeft);
-
-			if (marginRight != null)
-				finalSize.setWidth(finalSize.getWidth() + marginRight);
-
-			if (marginTop != null)
-				finalSize.setHeight(finalSize.getHeight() + marginTop);
-
-			if (marginBottom != null)
-				finalSize.setHeight(finalSize.getHeight() + marginBottom);
-		}
-
-		if (minWidth != null && finalSize.getWidth() < minWidth) {
-			finalSize.setWidth(minWidth);
-		} else if (maxWidth != null && finalSize.getWidth() > maxWidth) {
-			finalSize.setWidth(maxWidth);
-		}
-
-		if (minHeight != null && finalSize.getHeight() < minHeight) {
-			finalSize.setHeight(minHeight);
-		} else if (maxHeight != null && finalSize.getHeight() > maxHeight) {
-			finalSize.setHeight(maxHeight);
-		}
-
-		return finalSize;
+		return new Size(0f, 0f);
 	}
 
 	/**
@@ -641,237 +425,125 @@ public abstract class UIElement {
 	 */
 	public void arrange(Rectangle finalSize) {
 		if (initialized) {
-			Rectangle newFinalSize;
+			float fx = finalSize.x();
+			float fy = finalSize.y();
+			float fw = finalSize.width();
+			float fh = finalSize.height();
+
+			HorizontalAlignment horizontalAlignment = getProperty(UIElement.HorizontalAlignmentProperty);
+			VerticalAlignment verticalAlignment = getProperty(UIElement.VerticalAlignmentProperty);
+			Thickness margin = getProperty(UIElement.MarginProperty);
+			Float width = getProperty(UIElement.WidthProperty);
+			Float height = getProperty(UIElement.HeightProperty);
+			
 			if (margin != null) {
-				newFinalSize = new Rectangle(finalSize);
-
-				Float marginLeft = margin.left();
-				Float marginTop = margin.top();
-				Float marginRight = margin.right();
-				Float marginBottom = margin.bottom();
-
-				// Left Margin
-				if (marginLeft != null) {
-					newFinalSize.setX(newFinalSize.getX() + marginLeft);
-					newFinalSize.setWidth(newFinalSize.getWidth() - marginLeft);
-				}
-				// Top Margin
-				if (marginTop != null) {
-					newFinalSize.setY(newFinalSize.getY() + marginTop);
-					newFinalSize.setHeight(newFinalSize.getHeight() - marginTop);
-				}
-				// Right Margin
-				if (marginRight != null) {
-					newFinalSize.setWidth(newFinalSize.getWidth() - marginRight);
-				}
-
-				// Bottom Margin
-				if (marginBottom != null) {
-					newFinalSize.setHeight(newFinalSize.getHeight() - marginBottom);
-				}
-			} else {
-				newFinalSize = finalSize;
+				fx += margin.left();
+				fy += margin.top();
+				fw -= margin.horizontalSum();
+				fh -= margin.verticalSum();
 			}
 
+			// Apply horizontal alignment.
+			float totalHorizontalMargin = margin != null ? margin.horizontalSum() : 0f;
+			float available = finalSize.width() - totalHorizontalMargin;
 
-			// Strictly enforce the specified width and heigth.
-			if (width != null)
-				newFinalSize.setWidth(width);
-
-			if (height != null)
-				newFinalSize.setHeight(height);
-
-
-			if (horizontalAlignment != HorizontalAlignment.Stretch || width != null) {
-				// Calculate the total horizontal margin.
-				float totalHorizontalMargin= 0f;
-				if (margin != null) {
-					if (margin.left() != null) totalHorizontalMargin += margin.left();
-					if (margin.right() != null) totalHorizontalMargin += margin.right();
-				}
-				
-				// Calculate the desired width.
-				float desiredWidth = width != null ? width
-						: preferredSize.getWidth() - totalHorizontalMargin;
-				desiredWidth = Math.min(desiredWidth, finalSize.getWidth() - totalHorizontalMargin);
-
-				float available = finalSize.getWidth() - totalHorizontalMargin;
-
-				switch (horizontalAlignment) {
-				case Left:
-				case Stretch:
-					newFinalSize.setWidth(desiredWidth);
-					break;
-				case Center:
-					float offsetX = (available - desiredWidth) / 2f;
-					newFinalSize.setX(newFinalSize.getX() + offsetX);
-					newFinalSize.setWidth(desiredWidth);
-					break;
-				case Right:
-					newFinalSize.setX(newFinalSize.getX() + available - desiredWidth);
-					newFinalSize.setWidth(desiredWidth);
-					break;
-				}
+			switch (horizontalAlignment) {
+			case Stretch:
+				if (width != null)
+					fw = width;
+				break;
+			case Left:
+				float desiredWidth = width != null ? width : preferredSize.width() - totalHorizontalMargin;
+				desiredWidth = Math.min(desiredWidth, available);
+				fw = desiredWidth;
+				break;
+			case Center:
+				desiredWidth = width != null ? width : preferredSize.width() - totalHorizontalMargin;
+				desiredWidth = Math.min(desiredWidth, available);
+				fx += (available - desiredWidth) / 2f;
+				fw = desiredWidth;
+				break;
+			case Right:
+				desiredWidth = width != null ? width : preferredSize.width() - totalHorizontalMargin;
+				desiredWidth = Math.min(desiredWidth, available);
+				fx += available - desiredWidth;
+				fw = desiredWidth;
+				break;
 			}
 
-			if (verticalAlignment != VerticalAlignment.Stretch || height != null) {
-				// Calculate total amount of vertical margin.
-				float totalVerticalMargin = 0f;
-				if (margin != null) {
-					if (margin.top() != null) totalVerticalMargin += margin.top();
-					if (margin.bottom() != null) totalVerticalMargin += margin.bottom();
-				}
-				
-				// Calculate the desired height.
-				float desiredHeight = height != null ? height
-						: preferredSize.getHeight() - totalVerticalMargin;
-				desiredHeight = Math.min(desiredHeight, finalSize.getHeight() - totalVerticalMargin);
+			// Apply vertical alignment.
+			float totalVerticalMargin = margin != null ? margin.verticalSum() : 0f;
+			float availableHeight = finalSize.height() - totalVerticalMargin;
 
-				float available = finalSize.getHeight() - totalVerticalMargin;
-
-				switch (verticalAlignment) {
-				case Top:
-				case Stretch:
-					newFinalSize.setHeight(desiredHeight);
-					break;
-				case Center:
-					float offsetY = (available - desiredHeight) / 2f;
-					newFinalSize.setY(newFinalSize.getY() + offsetY);
-					newFinalSize.setHeight(desiredHeight);
-					break;
-				case Bottom:
-					newFinalSize.setY(newFinalSize.getY() + available - desiredHeight);
-					newFinalSize.setHeight(desiredHeight);
-					break;
-				}
+			switch (verticalAlignment) {
+			case Stretch:
+				if (height != null)
+					fh = height;
+				break;
+			case Top:
+				float desiredHeight = height != null ? height : preferredSize.height() - totalVerticalMargin;
+				desiredHeight = Math.min(desiredHeight, availableHeight);
+				fh = desiredHeight;
+				break;
+			case Center:
+				desiredHeight = height != null ? height : preferredSize.height() - totalVerticalMargin;
+				desiredHeight = Math.min(desiredHeight, availableHeight);
+				fy += (availableHeight - desiredHeight) / 2f;
+				fh = desiredHeight;
+				break;
+			case Bottom:
+				desiredHeight = height != null ? height : preferredSize.height() - totalVerticalMargin;
+				desiredHeight = Math.min(desiredHeight, availableHeight);
+				fy += availableHeight - desiredHeight;
+				fh = desiredHeight;
+				break;
 			}
 
-			setActualSize(newFinalSize);
-
-			Rectangle contentArea = getContentArea();
-			for (UIElement element : children) {
-				element.arrange(contentArea);
-			}
+			setActualSize(new Rectangle(fx, fy, fw, fh));
 		}
 	}
 
+
 	/**
-	 * Gets a list of all child UI elements.
-	 * @return List of children.
+	 * Fired when the element gains focus.
 	 */
-	public List<UIElement> getChildren() {
-		return Collections.unmodifiableList(children);
+	protected void onGotFocus() {
 	}
 
 	/**
-	 * Adds a child to the UI element.
-	 * @param child Child to add.
+	 * Fired when the element loses focus.
 	 */
-	public void addChild(UIElement child) {
-		if (child == null)
-			return;
-
-		// Initialize the child if it has not been already.
-		if (initialized && !child.initialized)
-			child.initialize();
-
-		// Remove the child from the previous parent if one exists.
-		if(child.parent != null) {
-			child.parent.removeChild(child);
-		}
-		
-		child.parent = this;
-		children.add(child);
-		onChildAdded(child);
-		invalidateMeasure();
-	}
-
-	/**
-	 * Removes a child from the UI element.
-	 * @param child Child to remove.
-	 */
-	public void removeChild(UIElement child) {
-		if (child == null)
-			return;
-
-		child.parent = null;
-		children.remove(child);
-		onChildRemoved(child);
-		invalidateMeasure();
-	}
-
-	/**
-	 * Clears all children from this UI element.
-	 */
-	public void clearChildren() {
-		for (UIElement child : children)
-			child.parent = null;
-		children.clear();
-		invalidateMeasure();
-	}
-
-	/**
-	 * Fired when a child is added to the UI element.
-	 * @param child Child that was added.
-	 */
-	protected void onChildAdded(UIElement child) { }
-	
-	/**
-	 * Fired when a child is removed from the UI element.
-	 * @param child Child that was removed.
-	 */
-	protected void onChildRemoved(UIElement child) { }
-
-	/**
-	 * Fired when a child changes size.
-	 * @param child Child that was modified.
-	 */
-	protected void onChildChanged(UIElement child) {
-		invalidateMeasure();
-	}
-
-	/**
-	 * Fired when the visibility of the UI element changes.
-	 */
-	protected void onVisibilityChanged() {
-		invalidateMeasure();
-	}
-
-	/**
-	 * Dispose method to release resources.
-	 */
-	public void dispose() {
-		Iterator<UIElement> children = getChildren().iterator();
-		while (children.hasNext()) {
-			children.next().dispose();
-		}
-
-		clearChildren();
+	protected void onLostFocus() {
 	}
 
 	public void onMouseMove(MouseMoveEvent event) {
-		boolean wasHovered = hovered;
-		if (isHitTestVisible() && isVisible()) {
+		boolean wasHovered = getProperty(UIElement.IsHoveredProperty);
+		boolean isHitTestVisible = getProperty(UIElement.IsHitTestVisibleProperty);
+
+		if (isHitTestVisible) {
 			float mouseX = (float) event.getX();
 			float mouseY = (float) event.getY();
 
-			hovered = actualSize.intersects(mouseX, mouseY);
+			boolean state = actualSize.intersects(mouseX, mouseY);
 
-			// Propagate to children.
-			Iterator<UIElement> tabIterator = getChildren().iterator();
-			while (tabIterator.hasNext()) {
-				tabIterator.next().onMouseMove(event);
-			}
-
-			if (!event.isCancelled() && hovered) {
+			// TODO: Move this to a 'hovered' callback
+			if (!event.isCancelled() && state) {
 				event.cancel();
-				String tooltip = getTooltip();
+				String tooltip = getProperty(UIElement.ToolTipProperty);
 				GuiManager.setTooltip(tooltip);
-			} else if (wasHovered && !hovered) {
+				CursorStyle cursor = getProperty(CursorProperty);
+				if (cursor != null)
+					GuiManager.setCursor(cursor);
+			} else if (wasHovered && !state) {
 				GuiManager.setTooltip(null);
+				CursorStyle cursor = getProperty(CursorProperty);
+				if (cursor != null)
+					GuiManager.setCursor(CursorStyle.Default);
 			}
+
+			setProperty(UIElement.IsHoveredProperty, state);
 		} else {
-			hovered = false;
+			setProperty(UIElement.IsHoveredProperty, false);
 			if (wasHovered) {
 				GuiManager.setTooltip(null);
 			}
@@ -879,15 +551,10 @@ public abstract class UIElement {
 	}
 
 	public void onMouseClick(MouseClickEvent event) {
-		// Propagate to children.
-		Iterator<UIElement> tabIterator = getChildren().iterator();
-		while (tabIterator.hasNext()) {
-			tabIterator.next().onMouseClick(event);
-			if (event.isCancelled())
-				break;
-		}
-
-		if (!event.isCancelled() && onClicked != null && isHitTestVisible && isVisible()) {
+		boolean isVisible = getProperty(UIElement.IsVisibleProperty);
+		boolean isHitTestVisible = getProperty(UIElement.IsHitTestVisibleProperty);
+		
+		if (!event.isCancelled() && onClicked != null && isHitTestVisible && isVisible) {
 			if (actualSize.intersects((float) event.mouseX, (float) event.mouseY)) {
 				onClicked.accept(event);
 			}
@@ -895,23 +562,8 @@ public abstract class UIElement {
 	}
 
 	public void onMouseScroll(MouseScrollEvent event) {
-		// Propagate to children.
-		Iterator<UIElement> tabIterator = getChildren().iterator();
-		while (tabIterator.hasNext()) {
-			tabIterator.next().onMouseScroll(event);
-			if (event.isCancelled())
-				break;
-		}
 	}
 
-	public String getTooltip() {
-
-		return tooltip;
-	}
-
-	public void setTooltip(String tooltip) {
-		this.tooltip = tooltip;
-	}
 
 	public Consumer<MouseClickEvent> getOnClicked() {
 		return onClicked;

@@ -1,6 +1,6 @@
 plugins {
-    id "net.fabricmc.fabric-loom-remap" version "${loom_version}"
-    id 'maven-publish'
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'maven-publish'
 }
 
 version = project.mod_version
@@ -29,35 +29,25 @@ configurations {
 
 dependencies {
     // Minecraft and Mappings
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-
+	  minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	
     // Fabric API and Loader
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	  implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Rendering Mods
-    modCompileOnly("maven.modrinth:sodium:${project.sodium_version}") { transitive = false }
-    modCompileOnly("maven.modrinth:lithium:${project.lithium_version}") { transitive = false }
-    modCompileOnly("maven.modrinth:iris:${project.iris_version}") { transitive = false }
+    compileOnly("maven.modrinth:sodium:${project.sodium_version}") { transitive = false }
+    compileOnly("maven.modrinth:lithium:${project.lithium_version}") { transitive = false }
+    compileOnly("maven.modrinth:iris:${project.iris_version}") { transitive = false }
     
-    modImplementation("maven.modrinth:modmenu:${project.modmenu_version}")
-    modImplementation("maven.modrinth:sodium:${project.sodium_version}")
-
+    implementation("maven.modrinth:modmenu:${project.modmenu_version}")
+    implementation("maven.modrinth:sodium:${project.sodium_version}")
+	  include("maven.modrinth:modmenu:${project.modmenu_version}")
+	  include("maven.modrinth:sodium:${project.sodium_version}")
+	
     // Library Dependencies
-    libImpl("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }
-    libImpl("io.netty:netty-codec-socks:${project.netty_version}") { transitive = false }
-
-    // Add libImpl dependencies to implementation
-    configurations.libImpl.dependencies.each {
-        implementation(it)
-    }
-
-    // Add modImpl dependencies to modImplementation and include them
-    configurations.modImpl.dependencies.each {
-        modImplementation(it)
-        include(it)
-    }
+    implementation("io.netty:netty-handler-proxy:${project.netty_version}") { transitive = false }
+    implementation("io.netty:netty-codec-socks:${project.netty_version}") { transitive = false }
 
     // Test Dependencies
     testImplementation platform('org.junit:junit-bom:5.11.3')
@@ -90,7 +80,7 @@ processResources {
 
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 21
+    it.options.release = 25
 }
 
 java {
@@ -99,8 +89,8 @@ java {
     // If you remove this line, sources will not be generated.
     withSourcesJar()
 
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {

@@ -8,10 +8,7 @@
 
 package net.aoba.module.modules.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.function.Predicate;
-
-import org.joml.Matrix4f;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
@@ -19,10 +16,11 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.settings.types.ShaderSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
-import net.aoba.utils.render.Render3D;
+import net.aoba.rendering.Renderer3D;
+import net.aoba.rendering.shaders.Shader;
 import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -40,8 +38,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class Trajectory extends Module implements Render3DListener {
 
-	private final ColorSetting color = ColorSetting.builder().id("trajectory_color").displayName("Color")
-			.description("Color").defaultValue(new Color(0f, 1f, 1f)).build();
+	private final ShaderSetting color = ShaderSetting.builder().id("trajectory_color").displayName("Color")
+			.description("Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
 
 	private final FloatSetting blipSize = FloatSetting.builder().id("trajectory_blipsize").displayName("Blip Size")
 			.description("Blip Size").defaultValue(0.15f).minValue(0.05f).maxValue(1f).step(0.05f).build();
@@ -72,9 +70,7 @@ public class Trajectory extends Module implements Render3DListener {
 
 	@Override
 	public void onRender(Render3DEvent event) {
-		Color renderColor = color.getValue();
-		PoseStack matrixStack = event.GetMatrix();
-		Matrix4f matrix = matrixStack.last().pose();
+		Shader renderColor = color.getValue();
 
 		ItemStack itemStack = MC.player.getMainHandItem();
 		if (ModuleUtils.isThrowable(itemStack)) {
@@ -85,9 +81,9 @@ public class Trajectory extends Module implements Render3DListener {
 				initialVelocity *= BowItem.getPowerForTime(MC.player.getTicksUsingItem());
 
 			Camera camera = MC.gameRenderer.getMainCamera();
-			Vec3 offset = Render3D.getEntityPositionOffsetInterpolated(MC.cameraEntity,
-					event.getRenderTickCounter().getGameTimeDeltaPartialTick(true));
-			Vec3 eyePos = MC.cameraEntity.getEyePosition();
+			Vec3 offset = Renderer3D.getEntityPositionOffsetInterpolated(MC.getCameraEntity(),
+					event.getRenderer().getDeltaTracker().getGameTimeDeltaPartialTick(true));
+			Vec3 eyePos = MC.getCameraEntity().getEyePosition();
 
 			// Calculate look direction.
 			Vec3 right = Vec3.directionFromRotation(0, camera.yRot() + 90).scale(0.14f);
@@ -109,7 +105,7 @@ public class Trajectory extends Module implements Render3DListener {
 					// Arrow is collided with a block, draw one last vertice and set land position
 					// to the raycast result position.
 					landPosition = result.getLocation();
-					Render3D.drawLine3D(matrixStack, camera, prevPoint, landPosition, renderColor);
+					event.getRenderer().drawLine(prevPoint, landPosition, renderColor);
 					break;
 				} else {
 					// We did NOT find a collision with a block, check entities.
@@ -122,11 +118,11 @@ public class Trajectory extends Module implements Render3DListener {
 						// Arrow is collided with an entity, draw one last vertice and set land position
 						// to the raycast result position.
 						landPosition = entityResult.getLocation();
-						Render3D.drawLine3D(matrixStack, camera, prevPoint, landPosition, renderColor);
+						event.getRenderer().drawLine(prevPoint, landPosition, renderColor);
 						break;
 					} else {
 						// No collisions from raycast, draw next vertice.
-						Render3D.drawLine3D(matrixStack, camera, prevPoint, nextPoint, renderColor);
+						event.getRenderer().drawLine(prevPoint, nextPoint, renderColor);
 					}
 				}
 
@@ -140,7 +136,7 @@ public class Trajectory extends Module implements Render3DListener {
 				Vec3 pos1 = landPosition.add(-size, -size, -size);
 				Vec3 pos2 = landPosition.add(size, size, size);
 				AABB box = new AABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
-				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, renderColor, 1.0f);
+				event.getRenderer().drawBox(box, renderColor, 1.0f);
 			}
 		}
 	}

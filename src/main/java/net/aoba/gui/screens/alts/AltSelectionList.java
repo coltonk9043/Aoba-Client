@@ -18,12 +18,13 @@ import com.mojang.authlib.GameProfile;
 import net.aoba.managers.altmanager.Alt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.gui.components.PlayerFaceExtractor;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
@@ -51,7 +52,7 @@ public class AltSelectionList extends ObjectSelectionList<AltSelectionList.Entry
 		altList.forEach(this::addEntry);
 	}
 
-	public void setSelected(@Nullable net.aoba.gui.screens.alts.AltSelectionList.Entry entry) {
+	public void setSelected(@Nullable AltSelectionList.Entry entry) {
 		super.setSelected(entry);
 		if (entry != null) {
 			owner.setEdittable();
@@ -59,19 +60,19 @@ public class AltSelectionList extends ObjectSelectionList<AltSelectionList.Entry
 	}
 
 	@Override
-	public boolean keyPressed(net.minecraft.client.input.KeyEvent keyEvent) {
+	public boolean keyPressed(KeyEvent keyEvent) {
 		Entry entry = getSelected();
 		return entry != null && entry.keyPressed(keyEvent) || super.keyPressed(keyEvent);
 	}
 
 	@Environment(value = EnvType.CLIENT)
-	public static abstract class Entry extends ObjectSelectionList.Entry<net.aoba.gui.screens.alts.AltSelectionList.Entry> implements AutoCloseable {
+	public static abstract class Entry extends ObjectSelectionList.Entry<AltSelectionList.Entry> implements AutoCloseable {
 		@Override
 		public void close() {
 		}
 	}
 
-	public class NormalEntry extends net.aoba.gui.screens.alts.AltSelectionList.Entry {
+	public class NormalEntry extends AltSelectionList.Entry {
 		private final AltScreen owner;
 		private final Minecraft mc;
 		private final Alt alt;
@@ -105,33 +106,8 @@ public class AltSelectionList extends ObjectSelectionList<AltSelectionList.Entry
 			return alt;
 		}
 
-		@Override
-		public void renderContent(GuiGraphics drawContext, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-			int x = getX();
-			int y = getY();
-
-			String description;
-
-			// Generates the description of an alt.
-			if (alt.isCracked()) {
-				description = "Cracked Account";
-			} else {
-				description = "Microsoft Account";
-			}
-
-			// Draws the strings onto the screen.
-			Font textRenderer = mc.font;
-			drawContext.drawString(textRenderer, "Username: " + alt.getEmail(), (x + 32 + 3), (y + 2),
-					0xFFFFFFFF);
-			drawContext.drawString(textRenderer, description, (x + 32 + 3), (y + 12),
-					alt.isCracked() ? 0xFFFF0000 : 0xFF00FF00, true);
-
-			// Draws the respective player head.
-			drawHead(drawContext, x + 4, y + 4);
-		}
-
-		private void drawHead(GuiGraphics drawContext, int x, int y) {
-			PlayerFaceRenderer.draw(drawContext, entry.getSkin(), x, y, 24);
+		private void drawHead(GuiGraphicsExtractor drawContext, int x, int y) {
+			PlayerFaceExtractor.extractRenderState(drawContext, entry.getSkin(), x, y, 24);
 		}
 
 		@Override
@@ -147,6 +123,31 @@ public class AltSelectionList extends ObjectSelectionList<AltSelectionList.Entry
 		@Override
 		public Component getNarration() {
 			return Component.nullToEmpty(alt.getUsername());
+		}
+
+		@Override
+		public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+			int x = getX();
+			int y = getY();
+
+			String description;
+
+			// Generates the description of an alt.
+			if (alt.isCracked()) {
+				description = "Cracked Account";
+			} else {
+				description = "Microsoft Account";
+			}
+
+			// Draws the strings onto the screen.
+			Font textRenderer = mc.font;
+			graphics.text(textRenderer, "Username: " + alt.getEmail(), (x + 32 + 3), (y + 2),
+					0xFFFFFFFF);
+			graphics.text(textRenderer, description, (x + 32 + 3), (y + 12),
+					alt.isCracked() ? 0xFFFF0000 : 0xFF00FF00, true);
+
+			// Draws the respective player head.
+			drawHead(graphics, x + 4, y + 4);
 		}
 	}
 }

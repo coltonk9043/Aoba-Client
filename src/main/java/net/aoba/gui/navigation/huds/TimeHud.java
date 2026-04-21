@@ -9,20 +9,20 @@
 package net.aoba.gui.navigation.huds;
 
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Rectangle;
-import net.aoba.gui.ResizeMode;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.navigation.HudWindow;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.gui.types.Rectangle;
+import net.aoba.gui.types.ResizeMode;
+import net.aoba.rendering.Renderer2D;
 
 public class TimeHud extends HudWindow {
 	private String timeText = null;
 
 	public TimeHud(int x, int y) {
 		super("TimeHud", x, y, 80, 24);
-		minWidth = 80f;
-		minHeight = 20f;
-		maxHeight = 20f;
+		setProperty(UIElement.MinWidthProperty, 80f);
+		setProperty(UIElement.MinHeightProperty, 20f);
+		setProperty(UIElement.MaxHeightProperty, 20f);
 		resizeMode = ResizeMode.None;
 	}
 
@@ -51,15 +51,14 @@ public class TimeHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		if (timeText != null && isVisible()) {
+	public void draw(Renderer2D renderer, float partialTicks) {
+		boolean isVisible = getProperty(UIElement.IsVisibleProperty);
+		if (timeText != null && isVisible) {
 			Rectangle pos = position.getValue();
-			if (pos.isDrawable()) {
-				Render2D.drawString(drawContext, timeText, pos.getX(), pos.getY(),
-						GuiManager.foregroundColor.getValue().getColorAsInt());
-			}
+			renderer.drawString(timeText, pos.x(), pos.y(),
+					GuiManager.foregroundColor.getValue(), GuiManager.fontSetting.getValue().getRenderer());
 		}
 
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, partialTicks);
 	}
 }

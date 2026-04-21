@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+import com.mojang.blaze3d.systems.RenderSystem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -15,9 +17,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.aoba.Aoba;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.colors.Colors;
 import net.aoba.module.modules.render.Tooltips;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.rendering.shaders.Shader;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -61,8 +66,8 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 		return compoundTag != null;
 	}
 
-	@Inject(method = "render", at = @At("TAIL"))
-	private void onRender(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+	@Inject(method = "extractRenderState", at = @At("TAIL"))
+	private void onRender(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		Tooltips tooltips = Aoba.getInstance().moduleManager.tooltips;
 
 		if (tooltips.state.getValue() && hoveredSlot != null && !hoveredSlot.getItem().isEmpty()
@@ -75,7 +80,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 		}
 	}
 
-	public boolean renderShulkerToolTip(GuiGraphics context, int offsetX, int offsetY, int mouseX, int mouseY,
+	public boolean renderShulkerToolTip(GuiGraphicsExtractor context, int offsetX, int offsetY, int mouseX, int mouseY,
 			ItemStack stack) {
 		try {
 			ItemContainerContents compoundTag = stack.get(DataComponents.CONTAINER);
@@ -99,15 +104,16 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 			int tooltipWidth = 150;
 			int nameHeight = 12;
 
-			Render2D.drawStringWithScale(context, stack.getHoverName().getString(), offsetX + 10, offsetY - 10,
-					new Color(255, 255, 255).getRGB(), 1.0f);
+			Font aobaFont = GuiManager.fontSetting.getValue().getRenderer();
+			Aoba.getInstance().render2D.drawStringWithScale(stack.getHoverName().getString(), offsetX + 10, offsetY - 10,
+					Shader.solid(Colors.White), 1.0f, aobaFont);
 
-			draw(context, compoundTag.stream().toList(), offsetX, offsetY + nameHeight, mouseX, mouseY, colors);
+			extractRenderState(context, compoundTag.allItemsCopyStream().toList(), offsetX, offsetY + nameHeight, mouseX, mouseY, colors);
 
 			context.fill(offsetX, offsetY - nameHeight, offsetX + tooltipWidth, offsetY,
 					new Color(0, 0, 0, 128).getRGB());
-			Render2D.drawStringWithScale(context, stack.getHoverName().getString(), offsetX + 5, offsetY - 10,
-					new Color(255, 255, 255).getRGB(), 1.0f);
+			Aoba.getInstance().render2D.drawStringWithScale(stack.getHoverName().getString(), offsetX + 5, offsetY - 10,
+					Shader.solid(Colors.White), 1.0f, aobaFont);
 
 		} catch (Exception ignore) {
 			return false;
@@ -116,9 +122,15 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 	}
 
 	@Unique
-	private void draw(GuiGraphics context, List<ItemStack> itemStacks, int offsetX, int offsetY, int mouseX, int mouseY,
+	private void extractRenderState(GuiGraphicsExtractor context, List<ItemStack> itemStacks, int offsetX, int offsetY, int mouseX, int mouseY,
 			float[] colors) {
-		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+		try (var pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+				() -> "Aoba Depth Clear",
+				MC.getMainRenderTarget().getColorTextureView(),
+				OptionalInt.empty(),
+				MC.getMainRenderTarget().useDepth ? MC.getMainRenderTarget().getDepthTextureView() : null,
+				OptionalDouble.of(1.0))) {
+		}
 
 		offsetX += 8;
 		offsetY -= 82;
@@ -128,7 +140,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 		int row = 0;
 		int i = 0;
 		for (ItemStack itemStack : itemStacks) {
-			context.renderItem(itemStack, offsetX + 8 + i * 18, offsetY + 7 + row * 18);
+			context.item(itemStack, offsetX + 8 + i * 18, offsetY + 7 + row * 18);
 
 			if (mouseX > offsetX + 8 + i * 18 && mouseX < offsetX + 28 + i * 18 && mouseY > offsetY + 7 + row * 18
 					&& mouseY < offsetY + 27 + row * 18)
@@ -143,10 +155,10 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 		}
 	}
 
-	private void drawBackground(GuiGraphics context, int x, int y, float[] colors) {
+	private void drawBackground(GuiGraphicsExtractor context, int x, int y, float[] colors) {
 	}
 
-	private void drawMapPreview(GuiGraphics context, ItemStack stack, int x, int y) {
+	private void drawMapPreview(GuiGraphicsExtractor context, ItemStack stack, int x, int y) {
 		int y1 = y - 12;
 		int x1 = x + 8;
 
@@ -167,15 +179,14 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 
 				MapRenderer mapRenderer = minecraft.getMapRenderer();
 				mapRenderer.extractRenderState(mapId, mapState, mapRenderState);
-				context.submitMapRenderState(mapRenderState);
-
+				context.map(mapRenderState);
 				context.pose().popMatrix();
 			}
 		}
 	}
 
-	@Inject(method = "renderTooltip", at = @At("HEAD"), cancellable = true)
-	private void onDrawMouseoverTooltip(GuiGraphics context, int x, int y, CallbackInfo ci) {
+	@Inject(method = "extractTooltip", at = @At("HEAD"), cancellable = true)
+	private void onDrawMouseoverTooltip(GuiGraphicsExtractor context, int x, int y, CallbackInfo ci) {
 		Tooltips tooltips = Aoba.getInstance().moduleManager.tooltips;
 
 		if (hoveredSlot != null && !hoveredSlot.getItem().isEmpty()

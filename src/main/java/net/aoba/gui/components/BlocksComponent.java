@@ -8,59 +8,133 @@
 
 package net.aoba.gui.components;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.function.Consumer;
 
-import org.joml.Matrix3x2fStack;
-import net.aoba.Aoba;
-import net.aoba.event.events.MouseClickEvent;
-import net.aoba.event.events.MouseScrollEvent;
-import net.aoba.event.listeners.MouseScrollListener;
-import net.aoba.gui.GuiManager;
-import net.aoba.gui.Rectangle;
-import net.aoba.gui.Size;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
+import net.aoba.gui.types.Thickness;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.types.BlocksSetting;
-import net.aoba.utils.render.Render2D;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
-public class BlocksComponent extends Component implements MouseScrollListener {
-	private static final float BLOCK_WIDTH = 32f;
-	private static final float BLOCK_MARGIN = 4f;
-	private static final float COLLAPSED_HEIGHT = 30f;
-	private static final float EXPANDED_HEIGHT = 135f;
+public class BlocksComponent extends Component {
+	private static final float BLOCK_SIZE = 40f;
+	private static final float DEFAULT_HEIGHT = 128f;
+	
+	private static final Shader SELECTED_EFFECT = Shader.solid(new Color(0, 255, 0, 55));
 
 	private HashSet<Block> blocks;
+	
+	// TODO: Change this to a UIProperty
 	private BlocksSetting blocksSetting;
 	private Consumer<HashSet<Block>> onChanged;
-	private final String text;
-	private int visibleRows;
-	private int visibleColumns;
-	private int scroll = 0;
 
-	private boolean collapsed = true;
+	private final WrapPanelComponent wrapPanel;
+	private final HashMap<Block, RectangleComponent> cellByBlock = new HashMap<>();
 
-	public BlocksComponent(String text, HashSet<Block> blocks, Consumer<HashSet<Block>> onChanged) {
-		this.text = text;
+	public BlocksComponent(HashSet<Block> blocks, Consumer<HashSet<Block>> onChanged) {
 		this.blocks = blocks;
 		this.onChanged = onChanged;
+		ScrollComponent scroll = new ScrollComponent();
+		WrapPanelComponent wp = new WrapPanelComponent();
+		wp.setVirtualized(true);
+		wp.setProperty(WrapPanelComponent.ItemSpacingProperty, 4f);
+		wp.setProperty(WrapPanelComponent.RowSpacingProperty, 4f);
+		scroll.setContent(wp);
+		setContent(scroll);
+		this.wrapPanel = wp;
+		populate();
 	}
 
 	public BlocksComponent(BlocksSetting setting) {
-		text = setting.displayName;
 		this.blocksSetting = setting;
 		this.blocks = setting.getValue();
-		this.blocksSetting.addOnUpdate(this::onSettingValueChanged);
+		setProperty(UIElement.HeightProperty, DEFAULT_HEIGHT);
+
+		ScrollComponent scroll = new ScrollComponent();
+		WrapPanelComponent wp = new WrapPanelComponent();
+		wp.setVirtualized(true);
+		wp.setProperty(WrapPanelComponent.ItemSpacingProperty, 4f);
+		wp.setProperty(WrapPanelComponent.RowSpacingProperty, 4f);
+		scroll.setContent(wp);
+		setContent(scroll);
+		this.wrapPanel = wp;
+		populate();
+		this.blocksSetting.addOnUpdate(settingListener);
+	}
+
+	private final Consumer<HashSet<Block>> settingListener = this::onSettingValueChanged;
+
+	@Override
+	public void dispose() {
+		if (blocksSetting != null)
+			blocksSetting.removeOnUpdate(settingListener);
+		super.dispose();
+	}
+
+
+	private void populate() {
+		int count = BuiltInRegistries.BLOCK.size();
+		for (int i = 0; i < count; i++) {
+			Block block = BuiltInRegistries.BLOCK.byId(i);
+			if (block == null)
+				continue;
+			wrapPanel.addChild(createCell(block));
+		}
+	}
+
+	private RectangleComponent createCell(Block block) {
+		RectangleComponent cell = new RectangleComponent();
+		cell.setProperty(UIElement.WidthProperty, BLOCK_SIZE);
+		cell.setProperty(UIElement.HeightProperty, BLOCK_SIZE);
+		cell.setProperty(RectangleComponent.CornerRadiusProperty, 0f);
+		cell.setProperty(UIElement.PaddingProperty, new Thickness(6f));
+		if (blocks.contains(block))
+			cell.setProperty(UIElement.BackgroundProperty, SELECTED_EFFECT);
+
+		ItemPreviewComponent preview = new ItemPreviewComponent();
+		preview.setProperty(ItemPreviewComponent.ItemProperty, block.asItem());
+		cell.setContent(preview);
+
+		cell.setOnClicked(e -> {
+			if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
+				toggleBlock(block, cell);
+				e.cancel();
+			}
+		});
+
+		cellByBlock.put(block, cell);
+		return cell;
+	}
+
+	private void toggleBlock(Block block, RectangleComponent cell) {
+		if (blocks.contains(block)) {
+			blocks.remove(block);
+			cell.setProperty(UIElement.BackgroundProperty, null);
+		} else {
+			blocks.add(block);
+			cell.setProperty(UIElement.BackgroundProperty, SELECTED_EFFECT);
+		}
+
+		if (blocksSetting != null)
+			blocksSetting.setValue(blocks);
+		if (onChanged != null)
+			onChanged.accept(blocks);
 	}
 
 	private void onSettingValueChanged(HashSet<Block> b) {
-		if (b != this.blocks)
-			this.blocks = b;
+		if (b == this.blocks)
+			return;
+		this.blocks = b;
+		for (var entry : cellByBlock.entrySet()) {
+			Shader bg = blocks.contains(entry.getKey()) ? SELECTED_EFFECT : null;
+			entry.getValue().setProperty(UIElement.BackgroundProperty, bg);
+		}
 	}
 
 	public HashSet<Block> getBlocks() {
@@ -68,135 +142,14 @@ public class BlocksComponent extends Component implements MouseScrollListener {
 	}
 
 	public void setBlocks(HashSet<Block> blocks) {
+		if (this.blocks == blocks)
+			return;
 		this.blocks = blocks;
 		if (blocksSetting != null)
 			blocksSetting.setValue(blocks);
-	}
-
-	@Override
-	public Size measure(Size availableSize) {
-		Size size;
-		if (collapsed)
-			size = new Size(availableSize.getWidth(), COLLAPSED_HEIGHT);
-		else
-			size = new Size(availableSize.getWidth(), EXPANDED_HEIGHT);
-
-		visibleColumns = (int) Math.floor((size.getWidth()) / (BLOCK_WIDTH + BLOCK_MARGIN));
-		visibleRows = (int) Math.floor((size.getHeight() - 25) / (BLOCK_WIDTH + BLOCK_MARGIN));
-		return size;
-	}
-
-	/**
-	 * Draws the button to the screen.
-	 *
-	 * @param drawContext  The current draw context of the game.
-	 * @param partialTicks The partial ticks used for interpolation.
-	 */
-	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		Matrix3x2fStack matrixStack = drawContext.pose();
-
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-
-		Render2D.drawString(drawContext, text, actualX, actualY + 6, 0xFFFFFF);
-		Render2D.drawString(drawContext, collapsed ? ">>" : "<<", (actualX + actualWidth - 24), actualY + 6,
-				GuiManager.foregroundColor.getValue().getColorAsInt());
-
-		if (!collapsed) {
-			matrixStack.pushMatrix();
-			matrixStack.scale(2.0f, 2.0f);
-			for (int i = scroll; i < visibleRows + scroll; i++) {
-				for (int j = 0; j < visibleColumns; j++) {
-					int index = (i * visibleColumns) + j;
-					if (index > BuiltInRegistries.BLOCK.size())
-						continue;
-
-					Block block = BuiltInRegistries.BLOCK.byId(index);
-
-					if (blocks.contains(block)) {
-						Render2D.drawBox(drawContext, ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN))) + 1) / 2.0f,
-								((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25)) / 2.0f, BLOCK_WIDTH / 2.0f,
-								BLOCK_WIDTH / 2.0f, new Color(0, 255, 0, 55));
-					}
-					Render2D.drawItem(drawContext, new ItemStack(block.asItem()),
-							(int) ((actualX + (j * (BLOCK_WIDTH + BLOCK_MARGIN)) + 2) / 2.0f),
-							(int) ((actualY + ((i - scroll) * (BLOCK_WIDTH + BLOCK_MARGIN)) + 25) / 2.0f));
-				}
-			}
-
-			matrixStack.popMatrix();
-		}
-	}
-
-	@Override
-	public void onMouseScroll(MouseScrollEvent event) {
-		if (Aoba.getInstance().guiManager.isClickGuiOpen() && hovered) {
-			if (event.GetVertical() > 0 && scroll > 0) {
-				scroll--;
-			} else if (event.GetVertical() < 0 && (scroll + visibleRows) < (BuiltInRegistries.BLOCK.size() / visibleColumns)) {
-				scroll++;
-			}
-			event.cancel();
-		}
-	}
-
-	@Override
-	public void onVisibilityChanged() {
-		super.onVisibilityChanged();
-		if (isVisible())
-			Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
-		else
-			Aoba.getInstance().eventManager.RemoveListener(MouseScrollListener.class, this);
-	}
-
-	@Override
-	public void onMouseClick(MouseClickEvent event) {
-		super.onMouseClick(event);
-		if (event.button == MouseButton.LEFT && event.action == MouseAction.DOWN) {
-			if (hovered) {
-				float mouseX = (float) event.mouseX;
-				float mouseY = (float) event.mouseY;
-
-				float actualX = actualSize.getX();
-				float actualY = actualSize.getY();
-				float actualWidth = actualSize.getWidth();
-				float actualHeight = actualSize.getHeight();
-
-				Rectangle collapseHitbox = new Rectangle((actualX + 4), actualY, actualWidth, 24.0f);
-				if (collapseHitbox.intersects(mouseX, mouseY)) {
-					collapsed = !collapsed;
-					invalidateMeasure();
-					event.cancel();
-				} else {
-					Rectangle blockHitbox = new Rectangle(actualX + 4, actualY + 24, actualWidth, actualHeight - 24);
-
-					if (blockHitbox.intersects(mouseX, mouseY)) {
-						int col = (int) ((mouseX - actualX - 8) / (BLOCK_WIDTH + BLOCK_MARGIN));
-						int row = (int) ((mouseY - actualY - 24) / (BLOCK_WIDTH + BLOCK_MARGIN)) + scroll;
-
-						int index = (row * visibleColumns) + col;
-						if (index > BuiltInRegistries.BLOCK.size())
-							return;
-
-						Block block = BuiltInRegistries.BLOCK.byId(index);
-						if (block != null) {
-							if (blocks.contains(block))
-								blocks.remove(block);
-							else
-								blocks.add(block);
-
-							if (blocksSetting != null)
-								blocksSetting.setValue(blocks);
-							if (onChanged != null)
-								onChanged.accept(blocks);
-
-							event.cancel();
-						}
-					}
-				}
-			}
+		for (var entry : cellByBlock.entrySet()) {
+			Shader bg = blocks.contains(entry.getKey()) ? SELECTED_EFFECT : null;
+			entry.getValue().setProperty(UIElement.BackgroundProperty, bg);
 		}
 	}
 }

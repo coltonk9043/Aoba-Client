@@ -12,16 +12,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.UUID;
+import net.aoba.utils.types.ObservableHashSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import com.mojang.logging.LogUtils;
 
 public class FriendsList {
 	private final File friendsFile;
-	private final HashSet<Friend> friendsList = new HashSet<>();
+	private final ObservableHashSet<Friend> friendsList = new ObservableHashSet<Friend>();
 
 	public FriendsList() {
 		File configFolder = new File(Minecraft.getInstance().gameDirectory, "aoba");
@@ -38,6 +39,7 @@ public class FriendsList {
 			}
 			props.setProperty("friends", friendsBuilder.toString());
 			props.storeToXML(fos, null);
+			LogUtils.getLogger().info("Saved friends list to " + friendsFile);
 		} catch (IOException e) {
 			LogUtils.getLogger().error("Failed to save friends list", e);
 		}
@@ -69,14 +71,26 @@ public class FriendsList {
 		friendsList.add(new Friend(username, uuid));
 	}
 
-	public void removeFriend(Player entity) {
-		removeFriend(entity.getUUID());
+	public void removeFriend(Friend friend) {
+		friendsList.remove(friend);
 	}
-
+	
+	public void removeFriend(Player player) {
+		removeFriend(player.getUUID());
+	}
+	
 	public void removeFriend(UUID uuid) {
-		friendsList.removeIf(friend -> friend.getUUID().equals(uuid));
+		ArrayList<Friend> toRemove = new ArrayList<Friend>();
+		for(Friend friend : friendsList) {
+			if(uuid.equals(friend.getUUID())) {
+				toRemove.add(friend);
+			}
+		}
+		for(Friend friend : toRemove) {
+			friendsList.remove(friend);
+		}
 	}
-
+	
 	public boolean contains(Player entity) {
 		return contains(entity.getUUID());
 	}
@@ -85,7 +99,7 @@ public class FriendsList {
 		return friendsList.stream().anyMatch(friend -> friend.getUUID().equals(uuid));
 	}
 
-	public HashSet<Friend> getFriends() {
+	public ObservableHashSet<Friend> getFriends() {
 		return friendsList;
 	}
 }

@@ -109,7 +109,7 @@ public class AntiKnockback extends Module implements ReceivePacketListener {
 
 		if (packet instanceof ClientboundSetEntityMotionPacket velocityUpdatePacket) {
 			if (mc.player != null) {
-				if (velocityUpdatePacket.getId() == mc.player.getId()) {
+				if (velocityUpdatePacket.id() == mc.player.getId()) {
 					Vec3 movement = ((IClientboundSetEntityMotionPacket) packet).getMovement();
 					((IClientboundSetEntityMotionPacket) packet).setMovement(new Vec3(
 							movement.x * horizontal.getValue(),

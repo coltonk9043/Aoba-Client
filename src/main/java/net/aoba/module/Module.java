@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
-
 import org.lwjgl.glfw.GLFW;
-
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.interfaces.IMultiPlayerGameMode;
@@ -490,7 +488,7 @@ public abstract class Module {
 	public static void sendChatMessage(String message) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.gui != null) {
-			mc.gui.getChat().addMessage(Component.nullToEmpty(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "Aoba"
+			mc.gui.getChat().addClientSystemMessage(Component.nullToEmpty(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "Aoba"
 					+ ChatFormatting.DARK_PURPLE + "] " + ChatFormatting.RESET + message));
 		}
 	}

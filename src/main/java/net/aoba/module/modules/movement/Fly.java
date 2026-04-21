@@ -133,7 +133,8 @@ public class Fly extends Module implements TickListener {
 				MC.player.setDeltaMovement(0, 0, 0);
 
 				// Calculate vectors
-				double yawRad = Math.toRadians(MC.cameraEntity.getYRot());
+				
+				double yawRad = Math.toRadians(MC.getCameraEntity().getYRot());
 				Vec3 forward = new Vec3(-Math.sin(yawRad), 0, Math.cos(yawRad)).scale(speed);
 				Vec3 right = new Vec3(-Math.cos(yawRad), 0, -Math.sin(yawRad)).scale(speed);
 				Vec3 momentumVec = new Vec3(previousVelocity.x * (1.0 - momentumValue), 0, previousVelocity.z * (1.0 - momentumValue));

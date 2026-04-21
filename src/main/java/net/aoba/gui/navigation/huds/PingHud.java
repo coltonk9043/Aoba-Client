@@ -9,24 +9,22 @@
 package net.aoba.gui.navigation.huds;
 
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.Rectangle;
-import net.aoba.gui.ResizeMode;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.navigation.HudWindow;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.gui.types.Rectangle;
+import net.aoba.gui.types.ResizeMode;
+import net.aoba.rendering.Renderer2D;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.PlayerInfo;
 
 public class PingHud extends HudWindow {
-	private static final Minecraft MC = Minecraft.getInstance();
-	String pingText = null;
+	private String pingText = null;
 
 	public PingHud(int x, int y) {
 		super("PingHud", x, y, 50, 24);
-		minWidth = 50f;
-		minHeight = 20f;
-		maxHeight = 20f;
+		setProperty(UIElement.MinWidthProperty, 50f);
+		setProperty(UIElement.MinHeightProperty, 20f);
+		setProperty(UIElement.MaxHeightProperty, 20f);
 		resizeMode = ResizeMode.None;
 	}
 
@@ -46,15 +44,14 @@ public class PingHud extends HudWindow {
 	}
 
 	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		super.draw(drawContext, partialTicks);
+	public void draw(Renderer2D renderer, float partialTicks) {
+		super.draw(renderer, partialTicks);
 
-		if (pingText != null && isVisible()) {
+		boolean isVisible = getProperty(UIElement.IsVisibleProperty);
+		if (pingText != null && isVisible) {
 			Rectangle pos = position.getValue();
-			if (pos.isDrawable()) {
-				Render2D.drawString(drawContext, pingText, pos.getX(), pos.getY(),
-						GuiManager.foregroundColor.getValue().getColorAsInt());
-			}
+			renderer.drawString(pingText, pos.x(), pos.y(),
+					GuiManager.foregroundColor.getValue(), GuiManager.fontSetting.getValue().getRenderer());
 		}
 	}
 }

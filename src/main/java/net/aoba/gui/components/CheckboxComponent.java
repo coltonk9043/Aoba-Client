@@ -9,45 +9,65 @@
 package net.aoba.gui.components;
 
 import java.util.function.Consumer;
-
-import net.aoba.gui.GridDefinition;
-import net.aoba.gui.GridDefinition.RelativeUnit;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.VerticalAlignment;
+import net.aoba.gui.UIElement;
+import net.aoba.gui.UIProperty;
 import net.aoba.gui.colors.Color;
-import net.aoba.settings.types.BooleanSetting;
+import net.aoba.gui.types.GridDefinition;
+import net.aoba.gui.types.VerticalAlignment;
+import net.aoba.gui.types.GridDefinition.RelativeUnit;
+import net.aoba.rendering.shaders.Shader;
+import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 
 public class CheckboxComponent extends Component {
-	private static final Color COLOR_ON = new Color(0, 154, 0, 200);
-	private static final Color COLOR_OFF = new Color(154, 0, 0, 200);
+	private static final Shader COLOR_ON = Shader.gradient(new Color(2, 212, 2), new Color(0, 154, 0, 200), 90);
+	private static final Shader COLOR_OFF = Shader.gradient(new Color(189, 0, 0),new Color(154, 0, 0, 200), 90);		
 
-	private boolean checked;
-	private BooleanSetting setting;
 	private Consumer<Boolean> onChanged;
-	private Runnable onClick;
-	private final RectangleComponent checkBox;
+	private final StringComponent headerComponent;
+	private final RectangleComponent checkRectangle;
 
-	private CheckboxComponent(String text) {
+	public static final UIProperty<String> HeaderProperty  = new UIProperty<>("Header", "", false, true, CheckboxComponent::onHeaderChanged);
+	public static final UIProperty<Boolean> IsCheckedProperty = new UIProperty<>("IsChecked", false, false, false, CheckboxComponent::onIsCheckedChanged);
+	
+	private static void onIsCheckedChanged(UIElement sender, Boolean oldValue, Boolean newValue) {
+		if(sender instanceof CheckboxComponent checkbox) {
+			checkbox.checkRectangle.setProperty(BackgroundProperty, newValue ? COLOR_ON : COLOR_OFF);
+			
+			if(checkbox.onChanged != null)
+				checkbox.onChanged.accept(newValue);
+		}
+	}
+	
+	private static void onHeaderChanged(UIElement sender, String oldValue, String newValue) {
+		if(sender instanceof CheckboxComponent checkbox) {
+			checkbox.headerComponent.setProperty(StringComponent.TextProperty, newValue);
+		}
+	}
+	
+	public CheckboxComponent() {
 		GridComponent grid = new GridComponent();
-		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
 		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));
+		grid.addColumnDefinition(new GridDefinition(1f, RelativeUnit.Relative));
+		grid.setProperty(GridComponent.HorizontalSpacingProperty, 8f);
+		
+		checkRectangle = new RectangleComponent();
+		checkRectangle.setProperty(BackgroundProperty,COLOR_OFF);
+		checkRectangle.bindProperty(BorderProperty, GuiManager.componentBorderColor);
+		checkRectangle.setProperty(CornerRadiusProperty, 3f);
+		checkRectangle.setProperty(UIElement.CursorProperty, CursorStyle.Click);
+		checkRectangle.setProperty(UIElement.WidthProperty, 20f);
+		checkRectangle.setProperty(UIElement.HeightProperty, 20f);
+		checkRectangle.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		grid.addChild(checkRectangle);
+		
+		headerComponent = new StringComponent("");
+		headerComponent.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+		grid.addChild(headerComponent);
 
-		StringComponent label = new StringComponent(text);
-		label.setVerticalAlignment(VerticalAlignment.Center);
-		grid.addChild(label);
-
-		checkBox = new RectangleComponent(
-				checked ? COLOR_ON : COLOR_OFF,
-				GuiManager.borderColor.getValue(),
-				3f);
-		checkBox.setWidth(20f);
-		checkBox.setHeight(20f);
-		checkBox.setVerticalAlignment(VerticalAlignment.Center);
-		grid.addChild(checkBox);
-
-		addChild(grid);
+		setContent(grid);
 
 		setOnClicked(e -> {
 			if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
@@ -56,48 +76,13 @@ public class CheckboxComponent extends Component {
 			}
 		});
 	}
+
+	public void toggle() {
+		Boolean isChecked = getProperty(IsCheckedProperty);
+		setProperty(IsCheckedProperty, !Boolean.TRUE.equals(isChecked));
+	}
 	
-	public CheckboxComponent(String text, boolean checked, Consumer<Boolean> onChanged) {
-		this(text);
-		this.checked = checked;
+	public void setOnChanged(Consumer<Boolean> onChanged) {
 		this.onChanged = onChanged;
-		checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
-	}
-
-	public CheckboxComponent(BooleanSetting setting) {
-		this(setting.displayName);
-		this.checked = setting.getValue();
-		this.setting = setting;
-		this.setting.addOnUpdate(this::onSettingValueChanged);
-		checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
-	}
-
-	private void toggle() {
-		checked = !checked;
-		checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
-		if (setting != null)
-			setting.setValue(checked);
-		if (onChanged != null)
-			onChanged.accept(checked);
-		if (onClick != null)
-			onClick.run();
-	}
-
-	private void onSettingValueChanged(Boolean v) {
-		if (v != this.checked) {
-			this.checked = v;
-			checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
-		}
-	}
-
-	public void setChecked(boolean checked) {
-		this.checked = checked;
-		checkBox.setBackgroundColor(checked ? COLOR_ON : COLOR_OFF);
-		if (setting != null)
-			setting.setValue(checked);
-	}
-
-	public boolean isChecked() {
-		return checked;
 	}
 }

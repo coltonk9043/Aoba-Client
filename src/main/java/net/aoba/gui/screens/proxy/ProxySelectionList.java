@@ -8,14 +8,21 @@
 
 package net.aoba.gui.screens.proxy;
 
+import org.jetbrains.annotations.Nullable;
+
+import net.aoba.Aoba;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.colors.Colors;
 import net.aoba.managers.proxymanager.Socks5Proxy;
+import net.aoba.rendering.shaders.Shader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.util.Util;
 
@@ -27,7 +34,7 @@ public class ProxySelectionList extends ObjectSelectionList<ProxySelectionList.E
 		owner = ownerIn;
 	}
 
-	public void setSelected(@org.jetbrains.annotations.Nullable ProxySelectionList.Entry entry) {
+	public void setSelected(@Nullable ProxySelectionList.Entry entry) {
 		super.setSelected(entry);
 		if (entry != null) {
 			owner.setEdittable();
@@ -35,7 +42,7 @@ public class ProxySelectionList extends ObjectSelectionList<ProxySelectionList.E
 	}
 
 	@Override
-	public boolean keyPressed(net.minecraft.client.input.KeyEvent keyEvent) {
+	public boolean keyPressed(KeyEvent keyEvent) {
 		Entry entry = getSelected();
 		return entry != null && entry.keyPressed(keyEvent) || super.keyPressed(keyEvent);
 	}
@@ -50,7 +57,7 @@ public class ProxySelectionList extends ObjectSelectionList<ProxySelectionList.E
 	}
 
 	@Environment(value = EnvType.CLIENT)
-	public static abstract class Entry extends ObjectSelectionList.Entry<net.aoba.gui.screens.proxy.ProxySelectionList.Entry> implements AutoCloseable {
+	public static abstract class Entry extends ObjectSelectionList.Entry<ProxySelectionList.Entry> implements AutoCloseable {
 		@Override
 		public void close() {
 		}
@@ -75,21 +82,6 @@ public class ProxySelectionList extends ObjectSelectionList<ProxySelectionList.E
 		}
 
 		@Override
-		public void renderContent(GuiGraphics drawContext, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-			int x = getX();
-			int y = getY();
-			int lineHeight = 12;
-
-			int textColor = owner.isActiveProxy(proxy) ? 0xFF00FF00 : 0xFFFFFFFF;
-
-			Font font = Minecraft.getInstance().font;
-			drawContext.drawString(font, "IP: " + proxy.getIp(), x + 5, y + 4, textColor);
-			drawContext.drawString(font, "Port: " + proxy.getPort(), x + 5, y + 4 + lineHeight, textColor);
-			drawContext.drawString(font, "Username: " + (proxy.hasUsername() ? proxy.getUsername() : "N/A"), x + 5, y + 4 + lineHeight * 2, textColor);
-			drawContext.drawString(font, "Password: " + (proxy.hasPassword() ? "*".repeat(proxy.getPassword().length()) : "N/A"), x + 5, y + 4 + lineHeight * 3, textColor);
-		}
-
-		@Override
 		public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
 			owner.setSelected(this);
 			if (Util.getMillis() - lastClickTime < 250L) {
@@ -107,6 +99,25 @@ public class ProxySelectionList extends ObjectSelectionList<ProxySelectionList.E
 		@Override
 		public Component getNarration() {
 			return Component.nullToEmpty(proxy.getIp());
+		}
+
+		@Override
+		public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+			int x = getX();
+			int y = getY();
+			int lineHeight = 12;
+
+			Shader textColor = Shader.solid(
+					owner.isActiveProxy(proxy) ? Colors.Green :Colors.White);
+
+			Font font = GuiManager.fontSetting.getValue().getRenderer();
+			Aoba.getInstance().render2D.drawStringWithScale("IP: " + proxy.getIp(), x + 32 + 3, y, textColor, 1.0f, font);
+			Aoba.getInstance().render2D.drawStringWithScale( "Port: " + proxy.getPort(), x + 32 + 3, y + lineHeight,
+					textColor, 1.0f, font);
+			Aoba.getInstance().render2D.drawStringWithScale( "Username: " + proxy.getUsername(), x + 32 + 3,
+					y + lineHeight * 2, textColor, 1.0f, font);
+			Aoba.getInstance().render2D.drawStringWithScale( "*".repeat(proxy.getPassword().length()), x + 32 + 3,
+					y + lineHeight * 3, textColor, 1.0f, font);
 		}
 	}
 }

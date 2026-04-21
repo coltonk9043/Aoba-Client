@@ -8,51 +8,52 @@
 
 package net.aoba.gui.components;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import net.aoba.gui.UIElement;
-import net.aoba.utils.types.IObservableList;
+import net.aoba.utils.types.IObservableCollection;
 
 public class ItemsComponent<T> extends Component {
-	private List<T> itemsSource;
+	private Collection<T> itemsSource;
 	private Function<T, UIElement> itemGenerator;
 
-	private final Consumer<IObservableList<T>> observableListener = this::onItemsSourceChanged;
-
+	private final Consumer<IObservableCollection<T>> observableListener = this::onItemsSourceChanged;
+	
 	private final PanelComponent parentComponent;
 
-	public ItemsComponent(List<T> itemsSource) {
+	public ItemsComponent(Collection<T> itemsSource) {
+
 		this.itemsSource = itemsSource;
 		StackPanelComponent newParent = new StackPanelComponent();
-		newParent.setSpacing(4f);
+		newParent.setSpacing(8f);
 		parentComponent = newParent;
-		addChild(parentComponent);
+		setContent(parentComponent);
 		subscribeToItemsSource();
 	}
 
-	public ItemsComponent(List<T> itemsSource, Function<T, UIElement> itemGenerator) {
+	public ItemsComponent(Collection<T> itemsSource, Function<T, UIElement> itemGenerator) {
 		this.itemGenerator = itemGenerator;
 		this.itemsSource = itemsSource;
-		
-		// By default use a StackPanel
+
 		StackPanelComponent newParent = new StackPanelComponent();
-		newParent.setSpacing(4f);
+		newParent.setSpacing(8f);
 		parentComponent = newParent;
 
-		addChild(parentComponent);
+		setContent(parentComponent);
 		subscribeToItemsSource();
 	}
 	
-	public ItemsComponent(List<T> itemsSource, Supplier<PanelComponent> parentGenerator, Function<T, UIElement> itemGenerator) {
+	public ItemsComponent(Collection<T> itemsSource, Supplier<PanelComponent> parentGenerator, Function<T, UIElement> itemGenerator) {
 		this.itemGenerator = itemGenerator;
 		this.itemsSource = itemsSource;
 		
 		parentComponent = parentGenerator.get();
 
-		addChild(parentComponent);
+		setContent(parentComponent);
 		subscribeToItemsSource();
 	}
 
@@ -63,19 +64,19 @@ public class ItemsComponent<T> extends Component {
 
 	@SuppressWarnings("unchecked")
 	private void subscribeToItemsSource() {
-		if (itemsSource instanceof IObservableList) {
-			((IObservableList<T>) itemsSource).addListener(observableListener);
+		if (itemsSource instanceof IObservableCollection) {
+			((IObservableCollection<T>) itemsSource).addListener(observableListener);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private void unsubscribeFromItemsSource() {
-		if (itemsSource instanceof IObservableList) {
-			((IObservableList<T>) itemsSource).removeListener(observableListener);
+		if (itemsSource instanceof IObservableCollection) {
+			((IObservableCollection<T>) itemsSource).removeListener(observableListener);
 		}
 	}
 
-	private void onItemsSourceChanged(IObservableList<T> list) {
+	private void onItemsSourceChanged(IObservableCollection<T> list) {
 		generateItems();
 		invalidateMeasure();
 	}
@@ -88,7 +89,6 @@ public class ItemsComponent<T> extends Component {
 					parentComponent.addChild(s);
 				});
 			} else {
-				System.out.println("Generating " + itemsSource.size() + " items");
 				itemsSource.stream().map(s -> itemGenerator.apply(s)).forEach(s -> {
 					parentComponent.addChild(s);
 				});
@@ -97,7 +97,7 @@ public class ItemsComponent<T> extends Component {
 		parentComponent.invalidateMeasure();
 	}
 
-	public List<T> getItemsSource() {
+	public Collection<T> getItemsSource() {
 		return itemsSource;
 	}
 
@@ -107,5 +107,11 @@ public class ItemsComponent<T> extends Component {
 		subscribeToItemsSource();
 		generateItems();
 		invalidateMeasure();
+	}
+
+	@Override
+	public void dispose() {
+		unsubscribeFromItemsSource();
+		super.dispose();
 	}
 }

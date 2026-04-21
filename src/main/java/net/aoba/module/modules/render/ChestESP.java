@@ -14,10 +14,10 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.rendering.shaders.Shader;
+import net.aoba.settings.types.ShaderSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.ModuleUtils;
-import net.aoba.utils.render.Render3D;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
@@ -25,8 +25,8 @@ import net.minecraft.world.phys.AABB;
 
 public class ChestESP extends Module implements Render3DListener {
 
-	private final ColorSetting color = ColorSetting.builder().id("chestesp_color").displayName("Color")
-			.description("Color").defaultValue(new Color(0, 1f, 1f, 0.3f)).build();
+	private final ShaderSetting color = ShaderSetting.builder().id("chestesp_color").displayName("Color")
+			.description("Color").defaultValue(Shader.solid(new Color(0, 1f, 1f, 0.3f))).build();
 
 	private final FloatSetting lineThickness = FloatSetting.builder().id("chestesp_linethickness")
 			.displayName("Line Thickness").description("Adjust the thickness of the ESP box lines").defaultValue(2f)
@@ -61,7 +61,7 @@ public class ChestESP extends Module implements Render3DListener {
 			if (blockEntity instanceof ChestBlockEntity || blockEntity instanceof TrappedChestBlockEntity
 					|| blockEntity instanceof BarrelBlockEntity) {
 				AABB box = new AABB(blockEntity.getBlockPos());
-				Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), box, color.getValue(),
+				event.getRenderer().drawBox(box, color.getValue(),
 						lineThickness.getValue().floatValue());
 			}
 		});

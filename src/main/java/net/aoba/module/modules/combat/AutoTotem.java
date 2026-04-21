@@ -23,7 +23,6 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -72,15 +71,16 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 
 	@Override
 	public void onHealthChanged(PlayerHealthEvent readPacketEvent) {
-		Minecraft mc = Minecraft.getInstance();
-
 		// If current screen is a generic container, we want to prevent autototem from
 		// firing.
-		if (mc.screen instanceof ContainerScreen)
+		if (MC.screen instanceof ContainerScreen)
 			return;
 
+		if(MC.player == null)
+			return;
+		
 		// If the current hand stack is a totem, return;
-		Inventory inventory = mc.player.getInventory();
+		Inventory inventory = MC.player.getInventory();
 		ItemStack handItemStack = inventory.getSelectedItem();
 
 		if (handItemStack.getItem() == Items.TOTEM_OF_UNDYING)
@@ -109,8 +109,7 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 		}
 
 		if (slot != -1) {
-			mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, slot, 0, ClickType.PICKUP,
-					mc.player);
+			mc.gameMode.handleInventoryButtonClick(mc.player.containerMenu.containerId, slot);
 			mc.player.setItemInHand(InteractionHand.OFF_HAND, inventory.getItem(slot));
 		}
 	}
