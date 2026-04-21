@@ -9,13 +9,13 @@
 package net.aoba.gui.components.widgets;
 
 import static net.aoba.AobaClient.MC;
-
 import java.util.function.Consumer;
-
+import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
-import net.aoba.gui.colors.Color;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.aoba.rendering.Renderer2D;
+import net.aoba.rendering.shaders.Shader;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -42,7 +42,11 @@ public class AobaButtonWidget extends AbstractButton {
 	}
 
 	@Override
-	protected void renderContents(GuiGraphics context, int mouseX, int mouseY, float delta) {
+	protected void updateWidgetNarration(NarrationElementOutput builder) {
+	}
+
+	@Override
+	protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 		if (isHovered() && hoverStartTime == 0) {
 			hoverStartTime = System.nanoTime();
 		} else if (!isHovered()) {
@@ -55,29 +59,21 @@ public class AobaButtonWidget extends AbstractButton {
 		hoverProgress = Math.min(hoverProgress, 1.0f);
 		hoverProgress = (float) Math.sin(hoverProgress * Math.PI / 2);
 
-		Color boxColor = Color.interpolate(GuiManager.backgroundColor.getValue(), Color.convertHextoRGB("FFC0C0C0"),
-				hoverProgress);
-		Color outlineColor = Color.interpolate(GuiManager.borderColor.getValue(), Color.convertHextoRGB("C0C0C0"),
-				hoverProgress);
+		Shader bgEffect = isHovered() ? GuiManager.buttonHoverBackgroundColor.getValue() : GuiManager.buttonBackgroundColor.getValue();
+		Shader bdEffect = GuiManager.buttonBorderColor.getValue();
 
-		Render2D.setup();
-		try {
-			Render2D.drawOutlinedRoundedBox(context, getX(), getY(), width, height, GuiManager.roundingRadius.getValue(),
-					outlineColor, boxColor);
-		} finally {
-			Render2D.end();
-		}
+		Renderer2D renderer = Aoba.getInstance().render2D;
+		renderer.beginFrame(graphics, MC.getDeltaTracker());
+		renderer.drawOutlinedRoundedBox(getX(), getY(), width, height, GuiManager.roundingRadius.getValue(),
+				bdEffect, bgEffect);
 
-		int textWidth = MC.font.width(getMessage().getString());
-		int textHeight = MC.font.lineHeight;
+		Font font = GuiManager.fontSetting.getValue().getRenderer();
+		int textWidth = font.width(getMessage().getString());
+		int textHeight = font.lineHeight;
 		int textX = getX() + (width - textWidth) / 2;
 		int textY = getY() + (height - textHeight) / 2 - (int) (2 * hoverProgress) + 2;
 
-		context.drawString(MC.font, getMessage().getString(), textX, textY,
-				GuiManager.foregroundColor.getValue().getColorAsInt(), false);
-	}
-
-	@Override
-	protected void updateWidgetNarration(NarrationElementOutput builder) {
+		renderer.drawStringWithScale(getMessage().getString(), textX, textY,
+				GuiManager.foregroundColor.getValue(), 1f, font);
 	}
 }

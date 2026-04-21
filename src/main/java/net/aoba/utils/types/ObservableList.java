@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Consumer;
 
-public class ObservableList<T> implements List<T>, IObservableList<T> {
+public class ObservableList<T> implements List<T>, IObservableCollection<T> {
 	private final List<T> backing;
-	private final List<Consumer<IObservableList<T>>> listeners = new ArrayList<>();
+	private final List<Consumer<IObservableCollection<T>>> listeners = new ArrayList<>();
 
 	public ObservableList() {
 		this.backing = new ArrayList<>();
@@ -28,18 +28,18 @@ public class ObservableList<T> implements List<T>, IObservableList<T> {
 	}
 
 	@Override
-	public void addListener(Consumer<IObservableList<T>> listener) {
+	public void addListener(Consumer<IObservableCollection<T>> listener) {
 		listeners.add(listener);
 	}
 
 	@Override
-	public void removeListener(Consumer<IObservableList<T>> listener) {
+	public void removeListener(Consumer<IObservableCollection<T>> listener) {
 		listeners.remove(listener);
 	}
 
 	private void notifyListeners() {
 		if (listeners.isEmpty()) return;
-		for (Consumer<IObservableList<T>> listener : listeners) {
+		for (Consumer<IObservableCollection<T>> listener : listeners) {
 			listener.accept(this);
 		}
 	}

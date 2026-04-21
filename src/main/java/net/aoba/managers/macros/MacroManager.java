@@ -98,9 +98,7 @@ public class MacroManager implements KeyDownListener {
 		boolean looping = false;
 		Key keybind = InputConstants.UNKNOWN;
 
-		try {
-			DataInputStream in = new DataInputStream(new FileInputStream(filePath));
-
+		try (DataInputStream in = new DataInputStream(new FileInputStream(filePath))) {
 			// Read flags until we hit the terminator (0x00).
 			byte flag;
 			while ((flag = in.readByte()) != FLAG_TERMINATOR) {
@@ -150,34 +148,32 @@ public class MacroManager implements KeyDownListener {
 					throw new IOException("Failed to create macro file: " + macroFile.getAbsolutePath());
 				}
 
-				DataOutputStream out = new DataOutputStream(new FileOutputStream(macroFile));
+				try (DataOutputStream out = new DataOutputStream(new FileOutputStream(macroFile))) {
+					// Write flags.
+					if (macro.isLooping())
+						out.writeByte(FLAG_LOOPING);
+					if (macro.getKeybind() != InputConstants.UNKNOWN) {
+						out.writeByte(FLAG_KEYBIND);
+						out.writeInt(macro.getKeybind().getValue());
+					}
+					out.writeByte(FLAG_TERMINATOR);
 
-				// Write flags.
-				if (macro.isLooping())
-					out.writeByte(FLAG_LOOPING);
-				if (macro.getKeybind() != InputConstants.UNKNOWN) {
-					out.writeByte(FLAG_KEYBIND);
-					out.writeInt(macro.getKeybind().getValue());
-				}
-				out.writeByte(FLAG_TERMINATOR);
+					// Write events.
+					for (MacroEvent event : macro.getEvents()) {
+						byte id =  switch (event) {
+							case KeyClickMacroEvent e -> EVENT_KEY;
+							case MouseClickMacroEvent e -> EVENT_CLICK;
+							case MouseMoveMacroEvent e -> EVENT_MOVE;
+							case MouseScrollMacroEvent e -> EVENT_SCROLL;
+							default -> -1;
+						};
 
-				// Write events.
-				for (MacroEvent event : macro.getEvents()) {
-					byte id =  switch (event) {
-						case KeyClickMacroEvent e -> EVENT_KEY;
-						case MouseClickMacroEvent e -> EVENT_CLICK;
-						case MouseMoveMacroEvent e -> EVENT_MOVE;
-						case MouseScrollMacroEvent e -> EVENT_SCROLL;
-						default -> -1;
-					};
-				
-					if (id != -1) {
-						out.writeByte(id);
-						event.write(out);
+						if (id != -1) {
+							out.writeByte(id);
+							event.write(out);
+						}
 					}
 				}
-
-				out.close();
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

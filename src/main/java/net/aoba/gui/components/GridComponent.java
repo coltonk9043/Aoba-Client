@@ -11,11 +11,12 @@ package net.aoba.gui.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.aoba.gui.GridDefinition;
-import net.aoba.gui.GridDefinition.RelativeUnit;
-import net.aoba.gui.Rectangle;
-import net.aoba.gui.Size;
 import net.aoba.gui.UIElement;
+import net.aoba.gui.UIProperty;
+import net.aoba.gui.types.GridDefinition;
+import net.aoba.gui.types.Rectangle;
+import net.aoba.gui.types.Size;
+import net.aoba.gui.types.GridDefinition.RelativeUnit;
 
 public class GridComponent extends PanelComponent {
 	private ArrayList<GridDefinition> columnDefinitions = null;
@@ -24,33 +25,11 @@ public class GridComponent extends PanelComponent {
 	private Float[] columnWidths;
 	private Float[] rowHeights;
 
-	private float horizontalSpacing = 0f;
-	private float verticalSpacing = 0f;
-
+	public static final UIProperty<Float> HorizontalSpacingProperty = new UIProperty<>("HorizontalSpacing", 0f, false, true);
+	public static final UIProperty<Float> VerticalSpacingProperty = new UIProperty<>("VerticalSpacing", 0f, false, true);
+	
 	public GridComponent() {
     }
-
-	public float getHorizontalSpacing() {
-		return horizontalSpacing;
-	}
-
-	public void setHorizontalSpacing(float horizontalSpacing) {
-		if (this.horizontalSpacing != horizontalSpacing) {
-			this.horizontalSpacing = horizontalSpacing;
-			invalidateMeasure();
-		}
-	}
-
-	public float getVerticalSpacing() {
-		return verticalSpacing;
-	}
-
-	public void setVerticalSpacing(float verticalSpacing) {
-		if (this.verticalSpacing != verticalSpacing) {
-			this.verticalSpacing = verticalSpacing;
-			invalidateMeasure();
-		}
-	}
 
 	public void addColumnDefinition(GridDefinition def) {
 		if (columnDefinitions == null)
@@ -69,6 +48,9 @@ public class GridComponent extends PanelComponent {
 	public Size measure(Size availableSize) {
 		List<UIElement> children = getChildren();
 
+		float horizontalSpacing = getProperty(GridComponent.HorizontalSpacingProperty);
+		float verticalSpacing = getProperty(GridComponent.VerticalSpacingProperty);
+		
 		int numChildren = children.size();
 		int numColumnDefinitions = 0;
 		float sumWidth = 0;
@@ -80,11 +62,10 @@ public class GridComponent extends PanelComponent {
 				element.measureCore(availableSize);
 			}
 
-			// === Columns ===
 			if (columnDefinitions != null) {
 				numColumnDefinitions = columnDefinitions.size();
 				columnWidths = new Float[numColumnDefinitions];
-				float availableSpaceX = availableSize.getWidth();
+				float availableSpaceX = availableSize.width();
 				float totalRelativePartitions = 0;
 
 				// Subtract horizontal spacing between columns from available space.
@@ -98,10 +79,13 @@ public class GridComponent extends PanelComponent {
 						float maxChildWidth = 0;
 						int iteration = 0;
 						for (UIElement element : children) {
-							if (!element.isVisible()) continue;
+							boolean elementIsVisible = element.getProperty(UIElement.IsVisibleProperty);
+							if (!elementIsVisible) 
+								continue;
+							
 							int col = iteration % numColumnDefinitions;
 							if (col == i) {
-								maxChildWidth = Math.max(maxChildWidth, element.getPreferredSize().getWidth());
+								maxChildWidth = Math.max(maxChildWidth, element.getPreferredSize().width());
 							}
 							iteration++;
 						}
@@ -137,11 +121,10 @@ public class GridComponent extends PanelComponent {
 			} else {
 				numColumnDefinitions = 1;
 				columnWidths = new Float[1];
-				columnWidths[0] = availableSize.getWidth();
+				columnWidths[0] = availableSize.width();
 				sumWidth = columnWidths[0];
 			}
 
-			// === Rows ===
 			int numRows;
 			if (rowDefinitions != null) {
 				numRows = rowDefinitions.size();
@@ -153,7 +136,7 @@ public class GridComponent extends PanelComponent {
 			rowHeights = new Float[numRows];
 
 			if (rowDefinitions != null) {
-				float availableSpaceY = availableSize.getHeight();
+				float availableSpaceY = availableSize.height();
 				float totalRelativePartitions = 0;
 
 				// Subtract vertical spacing between rows from available space.
@@ -167,10 +150,13 @@ public class GridComponent extends PanelComponent {
 						float maxChildHeight = 0;
 						int iteration = 0;
 						for (UIElement element : children) {
-							if (!element.isVisible()) continue;
+							boolean elementIsVisible = element.getProperty(UIElement.IsVisibleProperty);
+							if (!elementIsVisible) 
+								continue;
+							
 							int row = iteration / numColumnDefinitions;
 							if (row == i) {
-								maxChildHeight = Math.max(maxChildHeight, element.getPreferredSize().getHeight());
+								maxChildHeight = Math.max(maxChildHeight, element.getPreferredSize().height());
 							}
 							iteration++;
 						}
@@ -209,10 +195,13 @@ public class GridComponent extends PanelComponent {
 					float maxChildHeight = 0;
 					int iteration = 0;
 					for (UIElement element : children) {
-						if (!element.isVisible()) continue;
+						boolean elementIsVisible = element.getProperty(UIElement.IsVisibleProperty);
+						if (!elementIsVisible) 
+							continue;
+						
 						int row = iteration / numColumnDefinitions;
 						if (row == i) {
-							maxChildHeight = Math.max(maxChildHeight, element.getPreferredSize().getHeight());
+							maxChildHeight = Math.max(maxChildHeight, element.getPreferredSize().height());
 						}
 						iteration++;
 					}
@@ -227,13 +216,16 @@ public class GridComponent extends PanelComponent {
 			// Re-measure children with their actual column/row sizes.
 			int iteration = 0;
 			for (UIElement element : children) {
-				if (!element.isVisible()) continue;
+				boolean elementIsVisible = element.getProperty(UIElement.IsVisibleProperty);
+				if (!elementIsVisible) 
+					continue;
+				
 				int row = iteration / columnWidths.length;
 				int column = iteration % columnWidths.length;
 
 				Float columnWidth = columnWidths[column];
 				Float rowHeight = rowHeights[row];
-				if (rowHeight == null) rowHeight = availableSize.getHeight();
+				if (rowHeight == null) rowHeight = availableSize.height();
 
 				element.measureCore(new Size(columnWidth, rowHeight));
 				iteration++;
@@ -245,14 +237,15 @@ public class GridComponent extends PanelComponent {
 
 	@Override
 	public void arrange(Rectangle finalSize) {
-		if (parent != null) {
-			setActualSize(finalSize);
-		}
+		setActualSize(finalSize);
 
+		float horizontalSpacing = getProperty(GridComponent.HorizontalSpacingProperty);
+		float verticalSpacing = getProperty(GridComponent.VerticalSpacingProperty);
+		
 		if (columnWidths != null) {
 			int iteration = 0;
 			float currentX = 0;
-			float currentY = finalSize.getY();
+			float currentY = finalSize.y();
 
 			List<UIElement> children = getChildren();
 			for (UIElement element : children) {
@@ -260,14 +253,14 @@ public class GridComponent extends PanelComponent {
 				int column = iteration % columnWidths.length;
 
 				if (column == 0) {
-					currentX = finalSize.getX();
+					currentX = finalSize.x();
 				}
 
 				Float columnWidth = columnWidths[column];
 				Float rowHeight = rowHeights[row];
 
 				if (rowHeight == null)
-					rowHeight = finalSize.getHeight();
+					rowHeight = finalSize.height();
 
 				Rectangle newSize = new Rectangle(currentX, currentY, columnWidth, rowHeight);
 				element.arrange(newSize);

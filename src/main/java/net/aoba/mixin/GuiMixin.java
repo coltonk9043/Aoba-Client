@@ -27,10 +27,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.aoba.Aoba;
 import net.aoba.event.events.Render2DEvent;
 import net.aoba.module.modules.render.NoRender;
-import net.aoba.utils.render.Render2D;
+import net.aoba.rendering.Renderer2D;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
@@ -39,27 +39,24 @@ public class GuiMixin {
 	private static final String POWDER_SNOW_PATH = "textures/misc/powder_snow_outline.png";
 	private static final String PUMPKIN_PATH = "textures/misc/pumpkinblur.png";
 	
-	@Inject(at = @At("TAIL"), method = "renderTabList(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/DeltaTracker;)V")
-	private void onRenderPlayerList(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
-		Render2D.setup();
-		try {
-			Render2DEvent renderEvent = new Render2DEvent(context, tickCounter);
-			Aoba.getInstance().eventManager.Fire(renderEvent);
-		} finally {
-			Render2D.end();
-		}
+
+	@Inject(at = @At("TAIL"), method = "extractTabList(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V")
+	private void onRenderPlayerList(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
+		Renderer2D renderer = Aoba.getInstance().render2D;
+		renderer.beginFrame(context, tickCounter);
+		Aoba.getInstance().eventManager.Fire(new Render2DEvent(renderer));
 	}
 
-	@Inject(method = "renderVignette", at = @At("HEAD"), cancellable = true)
-	private void onRenderVignetteOverlay(GuiGraphics context, Entity entity, CallbackInfo ci) {
+	@Inject(method = "extractVignette", at = @At("HEAD"), cancellable = true)
+	private void onRenderVignetteOverlay(GuiGraphicsExtractor context, Entity entity, CallbackInfo ci) {
 		NoRender norender = Aoba.getInstance().moduleManager.norender;
 
 		if (norender.state.getValue() && norender.getNoVignette())
 			ci.cancel();
 	}
 
-	@ModifyVariable(method = "renderTextureOverlay", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-	private float modifyOverlayOpacity(float opacity, GuiGraphics context, Identifier identifier) {
+	@ModifyVariable(method = "extractTextureOverlay", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+	private float modifyOverlayOpacity(float opacity, GuiGraphicsExtractor context, Identifier identifier) {
 		NoRender norender = Aoba.getInstance().moduleManager.norender;
 		if (norender == null || !norender.state.getValue())
 			return opacity;
@@ -77,16 +74,16 @@ public class GuiMixin {
 		return opacity;
 	}
 
-	@Inject(method = "renderPortalOverlay", at = @At("HEAD"), cancellable = true)
-	private void onRenderPortalOverlay(GuiGraphics context, float nauseaStrength, CallbackInfo ci) {
+	@Inject(method = "extractPortalOverlay", at = @At("HEAD"), cancellable = true)
+	private void onRenderPortalOverlay(GuiGraphicsExtractor context, float nauseaStrength, CallbackInfo ci) {
 		NoRender norender = Aoba.getInstance().moduleManager.norender;
 
 		if (norender.state.getValue() && norender.getNoPortalOverlay())
 			ci.cancel();
 	}
 
-	@Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-	private void onRenderCrosshair(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+	@Inject(method = "extractCrosshair", at = @At("HEAD"), cancellable = true)
+	private void onRenderCrosshair(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
 		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
 			ci.cancel();
 			return;

@@ -19,14 +19,14 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.ColorSetting;
-import net.aoba.utils.render.Render3D;
+import net.aoba.rendering.shaders.Shader;
+import net.aoba.settings.types.ShaderSetting;
 import net.minecraft.world.phys.Vec3;
 
 public class Breadcrumbs extends Module implements Render3DListener, TickListener {
 
-	private final ColorSetting color = ColorSetting.builder().id("breadcrumbs_color").displayName("Color")
-			.description("Color").defaultValue(new Color(0, 1f, 1f)).build();
+	private final ShaderSetting color = ShaderSetting.builder().id("breadcrumbs_color").displayName("Color")
+			.description("Color").defaultValue(Shader.solid(new Color(0, 1f, 1f))).build();
 
 	private final float distanceThreshold = 1.0f; // Minimum distance to record a new position
 	private float currentTick = 0;
@@ -64,7 +64,7 @@ public class Breadcrumbs extends Module implements Render3DListener, TickListene
 		Vec3 prevPosition = null;
 		for (Vec3 position : positions) {
 			if (prevPosition != null) {
-				Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), prevPosition, position, color.getValue());
+				event.getRenderer().drawLine(prevPosition, position, color.getValue());
 			}
 			prevPosition = position;
 		}

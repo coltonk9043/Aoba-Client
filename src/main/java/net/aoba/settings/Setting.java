@@ -9,31 +9,31 @@
 package net.aoba.settings;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.function.Consumer;
 
-import net.aoba.utils.render.TextUtils;
+import com.mojang.logging.LogUtils;
+
+import net.aoba.utils.TextUtils;
 
 public abstract class Setting<T> {
 	public enum TYPE {
-		BOOLEAN, FLOAT, STRING, INTEGER, STRINGLIST, INDEXEDSTRINGLIST, KEYBIND, COLOR, BLOCKS, ENUM, RECTANGLE, VEC3D, HOTBAR
+		BOOLEAN, FLOAT, STRING, INTEGER, STRINGLIST, INDEXEDSTRINGLIST, KEYBIND, COLOR, SHADER, BLOCKS, ENUM, RECTANGLE,
+		VEC3D, HOTBAR, FONT
 	}
 
+	public TYPE type;
 	public final String ID;
 	public final String displayName;
 	public final String description;
 	protected final T default_value;
-
 	protected T value;
 
-	public TYPE type;
-
-	// Consumers
 	private final HashSet<Consumer<T>> onUpdate = new HashSet<Consumer<T>>();
 
 	public Setting(String ID, String description, T default_value) {
-
 		this.ID = ID;
-		displayName = TextUtils.IDToName(ID);
+		displayName = TextUtils.idToName(ID);
 		this.description = description;
 		this.default_value = default_value;
 		value = default_value;
@@ -58,7 +58,7 @@ public abstract class Setting<T> {
 
 	public Setting(String ID, String description, T default_value, Consumer<T> onUpdate) {
 		this.ID = ID;
-		displayName = TextUtils.IDToName(ID);
+		displayName = TextUtils.idToName(ID);
 		this.description = description;
 		this.default_value = default_value;
 		this.onUpdate.add(onUpdate);
@@ -67,7 +67,7 @@ public abstract class Setting<T> {
 
 	/**
 	 * Getter for the current value.
-	 *
+	 * 
 	 * @return The value currently stored in the Setting.
 	 */
 	public T getValue() {
@@ -76,10 +76,13 @@ public abstract class Setting<T> {
 
 	/**
 	 * Setter for the current value.
-	 *
+	 * 
 	 * @param value The value to set.
 	 */
 	public void setValue(T value) {
+		if (Objects.equals(this.value, value))
+			return;
+
 		if (isValueValid(value)) {
 			this.value = value;
 		}
@@ -116,19 +119,24 @@ public abstract class Setting<T> {
 	 * Function that handles when the value is updated.
 	 */
 	public void update() {
-        for (Consumer<T> consumer : onUpdate)
-        {
-            if (consumer != null)
-                consumer.accept(value);
-        }
-    }
+		Consumer<T>[] snapshot = onUpdate.toArray(new Consumer[0]);
+		for (Consumer<T> consumer : snapshot) {
+			if (consumer != null) {
+				try {
+					consumer.accept(value);
+				} catch (Exception e) {
+					LogUtils.getLogger().error("Error in setting listener for " + ID, e);
+				}
+			}
+		}
+	}
 
 	public void addOnUpdate(Consumer<T> consumer) {
 		onUpdate.add(consumer);
 	}
 
 	public void removeOnUpdate(Consumer<T> consumer) {
-		onUpdate.add(consumer);
+		onUpdate.remove(consumer);
 	}
 
 	/**

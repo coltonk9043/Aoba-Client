@@ -11,19 +11,13 @@ package net.aoba.gui.navigation;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
 import net.aoba.event.events.MouseMoveEvent;
 import net.aoba.event.events.MouseScrollEvent;
-import net.aoba.event.listeners.MouseClickListener;
-import net.aoba.event.listeners.MouseMoveListener;
-import net.aoba.event.listeners.MouseScrollListener;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.gui.UIElement;
+import net.aoba.rendering.Renderer2D;
 
-// TODO: Turn Page into a UI element.
-public class Page implements MouseMoveListener, MouseClickListener, MouseScrollListener {
+public class Page {
 	protected String title;
 	protected List<Window> tabs = new ArrayList<Window>();
 
@@ -45,7 +39,7 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 
 	public void addWindow(Window hud) {
 		hud.parentPage = this;
-		hud.setVisible(isVisible);
+		hud.setProperty(UIElement.IsVisibleProperty,isVisible);
 		tabs.add(hud);
 		if (hud.isInitialized())
 			hud.invalidateMeasure();
@@ -61,19 +55,8 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 	public void setVisible(boolean state) {
 		isVisible = state;
 
-		if (isVisible) {
-			Aoba.getInstance().eventManager.AddListener(MouseMoveListener.class, this);
-			Aoba.getInstance().eventManager.AddListener(MouseClickListener.class, this);
-			Aoba.getInstance().eventManager.AddListener(MouseScrollListener.class, this);
-
-		} else {
-			Aoba.getInstance().eventManager.RemoveListener(MouseMoveListener.class, this);
-			Aoba.getInstance().eventManager.RemoveListener(MouseClickListener.class, this);
-			Aoba.getInstance().eventManager.RemoveListener(MouseScrollListener.class, this);
-		}
-
 		for (Window hud : tabs) {
-			hud.setVisible(state);
+			hud.setProperty(UIElement.IsVisibleProperty,state);
 		}
 	}
 
@@ -86,11 +69,11 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 		}
 	}
 
-	public void render(GuiGraphics drawContext, float partialTicks) {
+	public void render(Renderer2D renderer, float partialTicks) {
 		if (isVisible) {
 			Iterator<Window> tabIterator = tabs.iterator();
 			while (tabIterator.hasNext()) {
-				tabIterator.next().draw(drawContext, partialTicks);
+				tabIterator.next().draw(renderer, partialTicks);
 			}
 		}
 	}
@@ -104,24 +87,23 @@ public class Page implements MouseMoveListener, MouseClickListener, MouseScrollL
 		}
 	}
 
-	@Override
-	public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
-		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
-			tabs.reversed().stream().toList().forEach(s -> s.onMouseMove(mouseMoveEvent));
+	public void onMouseMove(MouseMoveEvent event) {
+		for (int i = tabs.size() - 1; i >= 0; i--) {
+			tabs.get(i).onMouseMove(event);
 		}
 	}
 
-	@Override
-	public void onMouseClick(MouseClickEvent mouseClickEvent) {
-		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
-			tabs.reversed().stream().toList().forEach(s -> s.onMouseClick(mouseClickEvent));
+	public void onMouseClick(MouseClickEvent event) {
+		for (int i = tabs.size() - 1; i >= 0; i--) {
+			tabs.get(i).onMouseClick(event);
+			if (event.isCancelled()) break;
 		}
 	}
 
-	@Override
 	public void onMouseScroll(MouseScrollEvent event) {
-		if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
-			tabs.reversed().stream().toList().forEach(s -> s.onMouseScroll(event));
+		for (int i = tabs.size() - 1; i >= 0; i--) {
+			tabs.get(i).onMouseScroll(event);
+			if (event.isCancelled()) break;
 		}
 	}
 }

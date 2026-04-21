@@ -22,9 +22,14 @@ import net.aoba.gui.components.SeparatorComponent;
 import net.aoba.gui.components.SliderComponent;
 import net.aoba.gui.components.StackPanelComponent;
 import net.aoba.gui.components.StringComponent;
+import net.aoba.gui.font.FontManager;
 import net.aoba.gui.navigation.Window;
+import net.aoba.gui.types.BindingMode;
+import net.aoba.gui.types.SizeToContent;
 import net.aoba.settings.types.FloatSetting;
 import net.minecraft.client.Minecraft;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.UIElement;
 
 public class AuthCrackerWindow extends Window {
 	private final ButtonComponent start;
@@ -40,18 +45,27 @@ public class AuthCrackerWindow extends Window {
 
 	public AuthCrackerWindow() {
 		super("Auth Cracker", 185, 150);
-
-		minWidth = 350f;
+		sizeToContent = SizeToContent.Both;
+		setProperty(UIElement.MinWidthProperty, 350f);
 		StackPanelComponent stackPanel = new StackPanelComponent();
-		stackPanel.setSpacing(4f);
-		stackPanel.addChild(new StringComponent("AuthCracker"));
+		stackPanel.setSpacing(8f);
+		
+		StringComponent header = new StringComponent("AuthCracker");
+		header.setProperty(UIElement.FontWeightProperty, FontManager.WEIGHT_BOLD);
+		header.bindProperty(UIElement.ForegroundProperty, GuiManager.foregroundHeaderColor);
+		stackPanel.addChild(header);
+		
 		stackPanel.addChild(new SeparatorComponent());
 
 		StringComponent label = new StringComponent(
 				"This panel can be used to break Auth passwords used in cracked servers.");
 		stackPanel.addChild(label);
 
-		SliderComponent slider = new SliderComponent(delay);
+		SliderComponent slider = new SliderComponent();
+		slider.setProperty(SliderComponent.HeaderProperty, delay.displayName);
+		slider.setProperty(SliderComponent.MinimumProperty, delay.min_value);
+		slider.setProperty(SliderComponent.MaximumProperty, delay.max_value);
+		slider.bindProperty(SliderComponent.ValueProperty, delay, BindingMode.TwoWay);
 		stackPanel.addChild(slider);
 
 		authCracker = new AuthCracker(delay);
@@ -60,7 +74,7 @@ public class AuthCrackerWindow extends Window {
 			@Override
 			public void run() {
 				authCracker.Start();
-				startButtonText.setText("Cancel");
+				startButtonText.setProperty(StringComponent.TextProperty, "Cancel");
 				start.setOnClick(endRunnable);
 			}
 		};
@@ -69,7 +83,7 @@ public class AuthCrackerWindow extends Window {
 			@Override
 			public void run() {
 				authCracker.Stop();
-				startButtonText.setText("Start");
+				startButtonText.setProperty(StringComponent.TextProperty, "Start");
 				start.setOnClick(startRunnable);
 			}
 		};
@@ -78,10 +92,10 @@ public class AuthCrackerWindow extends Window {
 
 		// Create Text inside button
 		startButtonText = new StringComponent("Start");
-		start.addChild(startButtonText);
+		start.setContent(startButtonText);
 		stackPanel.addChild(start);
 
-		addChild(stackPanel);
+		setContent(stackPanel);
 	}
 }
 

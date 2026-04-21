@@ -9,12 +9,14 @@
 package net.aoba.gui.components;
 
 import net.aoba.Aoba;
-import net.aoba.gui.GridDefinition;
-import net.aoba.gui.GridDefinition.RelativeUnit;
-import net.aoba.gui.VerticalAlignment;
+import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
 import net.aoba.gui.colors.Colors;
 import net.aoba.gui.navigation.HudWindow;
+import net.aoba.gui.types.GridDefinition;
+import net.aoba.gui.types.VerticalAlignment;
+import net.aoba.gui.types.GridDefinition.RelativeUnit;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 
@@ -29,15 +31,15 @@ public class HudComponent extends Component {
 		grid.addColumnDefinition(new GridDefinition(RelativeUnit.Auto));
 
 		StringComponent nameComponent = new StringComponent(text);
-		nameComponent.setVerticalAlignment(VerticalAlignment.Center);
+		nameComponent.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
 		grid.addChild(nameComponent);
 
 		statusComponent = new StringComponent(hud.activated.getValue() ? "-" : "+");
-		statusComponent.setColor(hud.activated.getValue() ? new Color(255, 0, 0) : new Color(0, 255, 0));
-		statusComponent.setVerticalAlignment(VerticalAlignment.Center);
+		statusComponent.setProperty(ForegroundProperty, Shader.solid(hud.activated.getValue() ? new Color(255, 0, 0) : new Color(0, 255, 0)));
+		statusComponent.setProperty(UIElement.VerticalAlignmentProperty, VerticalAlignment.Center);
 		grid.addChild(statusComponent);
 
-		addChild(grid);
+		setContent(grid);
 
 		setOnClicked(e -> {
 			if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
@@ -53,11 +55,11 @@ public class HudComponent extends Component {
 		super.update();
 
 		if (hud.activated.getValue()) {
-			statusComponent.setText("-");
-			statusComponent.setColor(Colors.Red);
+			statusComponent.setProperty(StringComponent.TextProperty, "-");
+			statusComponent.setProperty(ForegroundProperty, Shader.solid(Colors.Red));
 		} else {
-			statusComponent.setText("+");
-			statusComponent.setColor(Colors.Green);
+			statusComponent.setProperty(StringComponent.TextProperty, "+");
+			statusComponent.setProperty(ForegroundProperty, Shader.solid(Colors.Green));
 		}
 	}
 }

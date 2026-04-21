@@ -20,9 +20,9 @@ import net.aoba.gui.colors.Color;
 import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.rendering.shaders.Shader;
+import net.aoba.settings.types.ShaderSetting;
 import net.aoba.settings.types.FloatSetting;
-import net.aoba.utils.render.Render3D;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -37,8 +37,8 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 	private final FloatSetting radius = FloatSetting.builder().id("tilebreaker_radius").displayName("Radius")
 			.description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
 
-	private final ColorSetting color = ColorSetting.builder().id("tilebreaker_color").displayName("Color")
-			.description("Color").defaultValue(new Color(0f, 1f, 1f)).build();
+	private final ShaderSetting color = ShaderSetting.builder().id("tilebreaker_color").displayName("Color")
+			.description("Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
 
 	public TileBreaker() {
 		super("TileBreaker");
@@ -135,7 +135,7 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 							MC.player.getBlockZ() + z);
 					Block block = MC.level.getBlockState(blockpos).getBlock();
 					if (isTileBreakerBlock(block)) {
-						Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), new AABB(blockpos), color.getValue(),
+						event.getRenderer().drawBox(new AABB(blockpos), color.getValue(),
 								1.0f);
 					}
 				}

@@ -8,34 +8,29 @@
 
 package net.aoba.gui.components;
 
-import net.aoba.gui.GuiManager;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.gui.UIProperty;
+import net.aoba.rendering.Renderer2D;
+import net.aoba.rendering.shaders.Shader;
 import net.minecraft.resources.Identifier;
 
 public class ImageComponent extends Component {
-
-	public Identifier image;
-
+	public static final UIProperty<Identifier> ImageProperty = new UIProperty<>("Image", null, false, false);
+	
 	public ImageComponent() {
 	}
 
-	public ImageComponent(Identifier image) {
-		this();
-		this.image = image;
-	}
-
 	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
+	public void draw(Renderer2D renderer, float partialTicks) {
+		Identifier image = getProperty(ImageProperty);
 		if (image != null) {
-			float actualX = getActualSize().getX();
-			float actualY = getActualSize().getY();
-			float actualWidth = getActualSize().getWidth();
-			float actualHeight = getActualSize().getHeight();
+			float actualX = getActualSize().x();
+			float actualY = getActualSize().y();
+			float actualWidth = getActualSize().width();
+			float actualHeight = getActualSize().height();
 
-			Render2D.drawTexturedQuad(drawContext, image, actualX, actualY, actualWidth, actualHeight,
-					GuiManager.foregroundColor.getValue());
+			Shader fgEffect = getProperty(ForegroundProperty);
+			renderer.drawTexturedQuad(image, actualX, actualY, actualWidth, actualHeight, fgEffect);
 		}
-		super.draw(drawContext, partialTicks);
+		super.draw(renderer, partialTicks);
 	}
 }

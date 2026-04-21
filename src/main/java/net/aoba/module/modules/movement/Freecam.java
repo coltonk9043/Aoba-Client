@@ -94,7 +94,7 @@ public class Freecam extends Module implements TickListener, Render3DListener {
 		Camera camera = MC.gameRenderer.getMainCamera();
 		ICamera iCamera = (ICamera) camera;
 
-		float tickDelta = event.getRenderTickCounter().getGameTimeDeltaPartialTick(true);
+		float tickDelta = event.getRenderer().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
 		LocalPlayer player = MC.player;
 		fakePlayer.setXRot(player.getViewXRot(tickDelta));

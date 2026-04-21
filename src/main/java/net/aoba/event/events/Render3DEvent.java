@@ -8,42 +8,21 @@
 
 package net.aoba.event.events;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.ArrayList;
 
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.Render3DListener;
-import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.renderer.culling.Frustum;
+import net.aoba.rendering.Renderer3D;
 
 public class Render3DEvent extends AbstractEvent {
-	PoseStack matrices;
-	Frustum frustum;
-	DeltaTracker renderTickCounter;
-	Camera camera;
+	private final Renderer3D renderer;
 
-	public PoseStack GetMatrix() {
-		return matrices;
+	public Render3DEvent(Renderer3D renderer) {
+		this.renderer = renderer;
 	}
 
-	public DeltaTracker getRenderTickCounter() {
-		return renderTickCounter;
-	}
-
-	public Frustum getFrustum() {
-		return frustum;
-	}
-
-	public Camera getCamera() {
-		return camera;
-	}
-
-	public Render3DEvent(PoseStack matrix4f, Frustum frustum, Camera camera, DeltaTracker renderTickCounter) {
-		matrices = matrix4f;
-		this.renderTickCounter = renderTickCounter;
-		this.frustum = frustum;
-		this.camera = camera;
+	public Renderer3D getRenderer() {
+		return renderer;
 	}
 
 	@Override

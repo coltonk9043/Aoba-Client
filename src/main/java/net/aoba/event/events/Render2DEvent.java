@@ -9,27 +9,19 @@
 package net.aoba.event.events;
 
 import java.util.ArrayList;
-
 import net.aoba.event.listeners.AbstractListener;
 import net.aoba.event.listeners.Render2DListener;
-import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.rendering.Renderer2D;
 
 public class Render2DEvent extends AbstractEvent {
-	private final GuiGraphics matrices;
-	private final DeltaTracker renderTickCounter;
-
-	public GuiGraphics getDrawContext() {
-		return matrices;
+	private final Renderer2D renderer;
+	
+	public Renderer2D getRenderer() {
+		return renderer;
 	}
 
-	public DeltaTracker getRenderTickCounter() {
-		return renderTickCounter;
-	}
-
-	public Render2DEvent(GuiGraphics context, DeltaTracker renderTickCounter) {
-		matrices = context;
-		this.renderTickCounter = renderTickCounter;
+	public Render2DEvent(Renderer2D renderer) {
+		this.renderer = renderer;
 	}
 
 	@Override

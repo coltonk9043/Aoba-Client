@@ -19,54 +19,61 @@
 package net.aoba.mixin;
 
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector4f;
-import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.resource.GraphicsResourceAllocator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.aoba.event.events.Render3DEvent;
+import net.aoba.rendering.Renderer3D;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.chunk.ChunkSectionsToRender;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
 
-	@Inject(at = @At("TAIL"), method = "renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/Camera;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;Z)V")
-	public void onRenderLevel(GraphicsResourceAllocator allocator, DeltaTracker tickCounter, boolean renderBlockOutline,
-			Camera camera, Matrix4f viewMatrix, Matrix4f projectionMatrix, Matrix4f frustumMatrix,
-			GpuBufferSlice bufferSlice, Vector4f fogColor, boolean isFoggy, CallbackInfo ci) {
+	@Inject(method = "renderLevel(Lcom/mojang/blaze3d/resource/GraphicsResourceAllocator;Lnet/minecraft/client/DeltaTracker;ZLnet/minecraft/client/renderer/state/level/CameraRenderState;Lorg/joml/Matrix4fc;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Vector4f;ZLnet/minecraft/client/renderer/chunk/ChunkSectionsToRender;)V", at = @At("TAIL"))
+	private void onAfterRenderLevel(GraphicsResourceAllocator resourceAllocator, DeltaTracker deltaTracker,
+			boolean renderOutline, CameraRenderState cameraState, Matrix4fc modelViewMatrix, GpuBufferSlice terrainFog,
+			Vector4f fogColor, boolean shouldRenderSky, ChunkSectionsToRender chunkSectionsToRender, CallbackInfo ci) {
+		AobaClient aoba = Aoba.getInstance();
+		Minecraft mc = Minecraft.getInstance();
+		if (aoba == null || aoba.moduleManager == null || mc.level == null || mc.player == null)
+			return;
 
-		if (Aoba.getInstance().moduleManager != null) {
-			GL11.glEnable(GL11.GL_LINE_SMOOTH);
-			PoseStack matrixStack = new PoseStack();
-			matrixStack.mulPose(viewMatrix);
+		Camera camera = mc.gameRenderer.getMainCamera();
+		Matrix4f viewRot = new Matrix4f();
+		camera.getViewRotationMatrix(viewRot);
 
-			Frustum frustum = new Frustum(viewMatrix, projectionMatrix);
-			frustum.prepare(camera.position().x, camera.position().y, camera.position().z);
+		PoseStack matrixStack = new PoseStack();
+		matrixStack.mulPose(viewRot);
 
-			Render3DEvent renderEvent = new Render3DEvent(matrixStack, frustum, camera, tickCounter);
-			Aoba.getInstance().eventManager.Fire(renderEvent);
-			GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		Frustum cullFrustum = cameraState.cullFrustum;
+
+		Renderer3D renderer = aoba.render3D;
+		renderer.beginFrame(matrixStack, cullFrustum, camera, deltaTracker);
+		aoba.eventManager.Fire(new Render3DEvent(renderer));
+		renderer.render();
+
+		if (aoba.render2D != null) {
+			aoba.render2D.captureGameSnapshot();
 		}
 	}
 
-	@Inject(at = @At("HEAD"), method = "doesMobEffectBlockSky(Lnet/minecraft/client/Camera;)Z", cancellable = true)
-	private void onHasBlindnessOrDarknessEffect(Camera camera, CallbackInfoReturnable<Boolean> cir) {
-		if (Aoba.getInstance().moduleManager.norender.state.getValue()) {
-			cir.setReturnValue(false);
-		}
-	}
-
-	@Inject(at = @At("HEAD"), method = "extractBlockOutline(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/state/LevelRenderState;)V", cancellable = true)
-	private void onExtractBlockOutline(Camera camera, net.minecraft.client.renderer.state.LevelRenderState levelRenderState, CallbackInfo ci) {
+	@Inject(at = @At("HEAD"), method = "extractBlockOutline(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/state/level/LevelRenderState;)V", cancellable = true)
+	private void onExtractBlockOutline(Camera camera, LevelRenderState levelRenderState, CallbackInfo ci) {
 		if (Aoba.getInstance().moduleManager.freecam.state.getValue())
 			ci.cancel();
 	}

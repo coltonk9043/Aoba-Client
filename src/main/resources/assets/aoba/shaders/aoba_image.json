@@ -1,0 +1,8 @@
+{
+    "backend": "opengl",
+    "name": "Image",
+    "description": "Samples a texture/sprite and outputs it with an optional tint",
+    "params": [
+        { "name": "Tint", "type": "color", "default": [1.0, 1.0, 1.0, 1.0] }
+    ]
+}

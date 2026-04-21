@@ -9,23 +9,23 @@
 package net.aoba.gui.components;
 
 import net.aoba.gui.GuiManager;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.gui.UIElement;
+import net.aoba.rendering.Renderer2D;
 
 public class SeparatorComponent extends Component {
 
 	public SeparatorComponent() {
-		setHeight(1.0f);
+		setProperty(UIElement.HeightProperty, 1.0f);
+		bindProperty(BorderProperty, GuiManager.componentBorderColor);
 	}
 
 	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		float actualX = getActualSize().getX();
-		float actualY = getActualSize().getY();
-		float actualWidth = getActualSize().getWidth();
-		float actualHeight = getActualSize().getHeight();
+	public void draw(Renderer2D renderer, float partialTicks) {
+		float actualX = getActualSize().x();
+		float actualY = getActualSize().y();
+		float actualWidth = getActualSize().width();
+		float actualHeight = getActualSize().height();
 
-		Render2D.drawLine(drawContext, actualX, actualY, actualX + actualWidth, actualY + actualHeight,
-				GuiManager.borderColor.getValue());
+		renderer.drawLine(actualX, actualY, actualX + actualWidth, actualY + actualHeight, getProperty(BorderProperty));
 	}
 }

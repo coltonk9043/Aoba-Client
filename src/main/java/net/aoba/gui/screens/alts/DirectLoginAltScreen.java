@@ -10,7 +10,7 @@ package net.aoba.gui.screens.alts;
 
 import net.aoba.Aoba;
 import net.aoba.managers.altmanager.Alt;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
@@ -65,14 +65,14 @@ public class DirectLoginAltScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics drawContext, int mouseX, int mouseY, float partialTicks) {
-		super.render(drawContext, mouseX, mouseY, partialTicks);
-		drawContext.drawCenteredString(font, title.getString(), width / 2, 20, 0xFFFFFFFF);
-		drawContext.drawString(font, "Enter Username/Email", width / 2 - 100, height / 2 - 60,
+	public void extractRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+		super.extractRenderState(graphics, mouseX, mouseY, a);
+		graphics.centeredText(font, title.getString(), width / 2, 20, 0xFFFFFFFF);
+		graphics.text(font, "Enter Username/Email", width / 2 - 100, height / 2 - 60,
 				0xFFFFFFFF);
-		textFieldAltUsername.render(drawContext, mouseX, mouseY, partialTicks);
+		textFieldAltUsername.extractRenderState(graphics, mouseX, mouseY, a);
 		if (didLoginError) {
-			drawContext.drawString(font, "Incorrect Login (Try using Email rather than Username)",
+			graphics.text(font, "Incorrect Login (Try using Email rather than Username)",
 					width / 2 - 140, 116, 0xFFFF0000);
 		}
 

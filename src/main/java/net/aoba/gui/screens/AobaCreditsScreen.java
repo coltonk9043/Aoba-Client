@@ -10,21 +10,18 @@ package net.aoba.gui.screens;
 
 import java.util.Arrays;
 import java.util.List;
-
-import net.aoba.utils.render.Render2D;
-import net.aoba.utils.render.TextureBank;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.Aoba;
+import net.aoba.gui.GuiManager;
+import net.aoba.gui.colors.Colors;
+import net.aoba.rendering.shaders.Shader;
+import net.aoba.rendering.utils.TextureBank;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.CubeMap;
-import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.CommonColors;
 
 public class AobaCreditsScreen extends Screen {
-	protected static final CubeMap AOBA_PANORAMA_RENDERER = new CubeMap(TextureBank.mainmenu_panorama);
-	protected static final PanoramaRenderer AOBA_ROTATING_PANORAMA_RENDERER = new PanoramaRenderer(
-			AOBA_PANORAMA_RENDERER);
+	protected static final AobaPanorama AOBA_ROTATING_PANORAMA_RENDERER = new AobaPanorama();
 
 	private static final List<String> CONTRIBUTORS = Arrays.asList("coltonk9043", "cvs0", "Tewxx", "OsakiTsukiko", "Logging4J", "TangyKiwi", "Xatsec", "BatchDebug");
 
@@ -42,10 +39,10 @@ public class AobaCreditsScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-		super.render(context, mouseX, mouseY, delta);
+	public void extractRenderState(final GuiGraphicsExtractor graphics, final int mouseX, final int mouseY, final float a) {
+		super.extractRenderState(graphics, mouseX, mouseY, a);
 
-		animationProgress += delta / (ANIMATION_DURATION / 1000.0f);
+		animationProgress += a / (ANIMATION_DURATION / 1000.0f);
 		if (animationProgress >= 1.0f) {
 			animationProgress = 0.0f;
 			currentContributorIndex = (currentContributorIndex + 1) % CONTRIBUTORS.size();
@@ -60,7 +57,7 @@ public class AobaCreditsScreen extends Screen {
 		int logoHeight = 70;
 		int logoY = baseY + 20;
 
-		context.blit(RenderPipelines.GUI_TEXTURED, TextureBank.mainmenu_logo, (width - 185) / 2, logoY - 100,
+		graphics.blit(RenderPipelines.GUI_TEXTURED, TextureBank.mainmenu_logo, (width - 185) / 2, logoY - 100,
 				0, 0, 185, logoHeight, 185, 70, 185, 70);
 
 		for (int i = 0; i < CONTRIBUTORS.size(); i++) {
@@ -68,7 +65,7 @@ public class AobaCreditsScreen extends Screen {
 			int textX = (width - (textWidth * 2)) / 2;
 			int textY = baseY + i * (textHeight + 10);
 			float alpha = getFadeAlpha(textY);
-			drawContributorName(context, CONTRIBUTORS.get(i), textX, textY, alpha);
+			drawContributorName(graphics, CONTRIBUTORS.get(i), textX, textY, alpha);
 		}
 	}
 
@@ -85,12 +82,17 @@ public class AobaCreditsScreen extends Screen {
 		return Math.max(0.0f, Math.min(1.0f, alpha));
 	}
 
-	private void drawContributorName(GuiGraphics context, String contributor, int x, int y, float alpha) {
-		Render2D.drawString(context, contributor, (float) x, (float) y, CommonColors.WHITE);
+	private void drawContributorName(GuiGraphicsExtractor context, String contributor, int x, int y, float alpha) {
+		Aoba.getInstance().render2D.drawString(contributor, (float) x, (float) y,
+				Shader.solid(Colors.White),
+				GuiManager.fontSetting.getValue().getRenderer());
 	}
 
 	@Override
-	protected void renderPanorama(GuiGraphics context, float delta) {
-		AOBA_ROTATING_PANORAMA_RENDERER.render(context, width, height, true);
+	protected void extractPanorama(final GuiGraphicsExtractor graphics, final float a){
+		try {
+			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, this.panoramaShouldSpin());
+		} catch (IllegalStateException e) {
+		}
 	}
 }

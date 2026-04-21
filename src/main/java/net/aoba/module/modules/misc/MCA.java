@@ -82,7 +82,7 @@ public class MCA extends Module implements MouseClickListener {
 		String playerName = player.getName().getString();
 
 		if (Aoba.getInstance().friendsList.contains(player)) {
-			Aoba.getInstance().friendsList.removeFriend(player);
+			Aoba.getInstance().friendsList.removeFriend(player.getUUID());
 			sendChatMessage("Removed " + playerName + " from friends list.");
 		} else {
 			Aoba.getInstance().friendsList.addFriend(player);

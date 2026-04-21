@@ -128,12 +128,12 @@ public class AutoShear extends Module implements TickListener {
 
 						if (ent == foundEntity) {
 							MC.player.swing(InteractionHand.MAIN_HAND);
-							MC.gameMode.interact(MC.player, foundEntity, hand);
+							MC.gameMode.interact(MC.player, foundEntity,entityResult, hand);
                         }
 					}
 				} else {
 					MC.player.swing(InteractionHand.MAIN_HAND);
-					MC.gameMode.interact(MC.player, foundEntity, hand);
+					MC.gameMode.interact(MC.player, foundEntity, new EntityHitResult(foundEntity), hand);
                 }
 			}
 		} else

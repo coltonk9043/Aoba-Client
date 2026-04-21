@@ -20,24 +20,24 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
-import net.aoba.settings.types.ColorSetting;
+import net.aoba.rendering.shaders.Shader;
+import net.aoba.settings.types.ShaderSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.Interpolation;
-import net.aoba.utils.render.Render3D;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class Tracer extends Module implements Render3DListener, TickListener {
-	private final ColorSetting color_player = ColorSetting.builder().id("tracer_color_player")
-			.displayName("Player Color").description("Player Color").defaultValue(new Color(1f, 1f, 0f)).build();
-	private final ColorSetting color_passive = ColorSetting.builder().id("tracer_color_passive")
-			.displayName("Passive Color").description("Passive Color").defaultValue(new Color(0f, 1f, 1f)).build();
-	private final ColorSetting color_enemies = ColorSetting.builder().id("tracer_color_enemy")
-			.displayName("Enemy Color").description("Enemy Color").defaultValue(new Color(0f, 1f, 1f)).build();
-	private final ColorSetting color_misc = ColorSetting.builder().id("tracer_color_misc").displayName("Misc. Color")
-			.description("Misc. Color").defaultValue(new Color(0f, 1f, 1f)).build();
+	private final ShaderSetting color_player = ShaderSetting.builder().id("tracer_color_player")
+			.displayName("Player Color").description("Player Color").defaultValue(Shader.solid(new Color(1f, 1f, 0f))).build();
+	private final ShaderSetting color_passive = ShaderSetting.builder().id("tracer_color_passive")
+			.displayName("Passive Color").description("Passive Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
+	private final ShaderSetting color_enemies = ShaderSetting.builder().id("tracer_color_enemy")
+			.displayName("Enemy Color").description("Enemy Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
+	private final ShaderSetting color_misc = ShaderSetting.builder().id("tracer_color_misc").displayName("Misc. Color")
+			.description("Misc. Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
 	private final FloatSetting lines = FloatSetting.builder().id("tracer_lines").displayName("Max Lines")
 			.description("The maximum amount of lines that can be rendered at once.").defaultValue(100f).minValue(1f)
 			.maxValue(300f).step(1f).build();
@@ -120,46 +120,29 @@ public class Tracer extends Module implements Render3DListener, TickListener {
 					bb = new AABB(x - 0.4, y, z - 0.4, x + 0.4, y + entity.getBbHeight() + 0.18, z + 0.4);
 				}
 
-				float distance = renderEntity.distanceTo(entity);
-
-				float red;
-
-				if (distance >= 60.0f) {
-					red = 120.0f;
-				} else {
-					red = distance + distance;
-				}
-				Color color;
-
-				Color baseColor = color_player.getValue();
-
-				color = new Color(Math.min((int) red, 255), baseColor.getGreen(), baseColor.getBlue(),
-						baseColor.getAlpha());
+				Shader effect = color_player.getValue();
 
 				Vec3 rotation = new Vec3(0, 0, 75).xRot(-(float) Math.toRadians(renderEntity.getXRot()))
 						.yRot(-(float) Math.toRadians(renderEntity.getYRot())).add(renderEntity.getEyePosition());
 
-				Vec3 eyePos = renderEntity.getEyePosition();
-
 				if (mode.getValue() == TracerMode.Stem) {
-					Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), new Vec3(x, y, z),
-							new Vec3(x, renderEntity.getBbHeight() + y, z), color);
+					event.getRenderer().drawLine(new Vec3(x, y, z),
+							new Vec3(x, renderEntity.getBbHeight() + y, z), effect);
 				}
 
 				Vec3 start = new Vec3(rotation.x, rotation.y, rotation.z);
 
 				switch (target.getValue()) {
-				case Head -> Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start,
-						new Vec3(x, y + entity.getBbHeight() - 0.18f, z), color);
-				case Body -> Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start,
-						new Vec3(x, y + entity.getBbHeight() / 2.0f, z), color);
+				case Head -> event.getRenderer().drawLine(start,
+						new Vec3(x, y + entity.getBbHeight() - 0.18f, z), effect);
+				case Body -> event.getRenderer().drawLine(start,
+						new Vec3(x, y + entity.getBbHeight() / 2.0f, z), effect);
 				case Feet ->
-					Render3D.drawLine3D(event.GetMatrix(), event.getCamera(), start, new Vec3(x, y, z), color);
+					event.getRenderer().drawLine(start, new Vec3(x, y, z), effect);
 				}
 
 				if (mode.getValue() == TracerMode.Fill) {
-					Render3D.draw3DBox(event.GetMatrix(), event.getCamera(), bb,
-							new Color(color.getRed(), color.getGreen(), color.getBlue(), 78), 1.0f);
+					event.getRenderer().drawBox(bb, effect, 1.0f);
 				}
 
 				i++;

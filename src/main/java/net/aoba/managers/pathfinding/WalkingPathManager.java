@@ -122,7 +122,7 @@ public class WalkingPathManager extends AbstractPathManager {
             for (BlockPos currentBlock : adjacentBlocks) {
                 ChunkPos chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(currentBlock.getX()), SectionPos.blockToSectionCoord(currentBlock.getZ()));
 
-                if (!MC.level.getChunkSource().hasChunk(chunkPos.x, chunkPos.z))
+                if (!MC.level.getChunkSource().hasChunk(chunkPos.x(), chunkPos.z()))
                     continue;
 
                 PathNode newNode = new PathNode(currentBlock); 
@@ -147,7 +147,7 @@ public class WalkingPathManager extends AbstractPathManager {
             for (BlockPos currentBlock : diagonalBlocks) {
                 ChunkPos chunkPos = new ChunkPos(SectionPos.blockToSectionCoord(currentBlock.getX()), SectionPos.blockToSectionCoord(currentBlock.getZ()));
 
-                if (!MC.level.getChunkSource().hasChunk(chunkPos.x, chunkPos.z))
+                if (!MC.level.getChunkSource().hasChunk(chunkPos.x(), chunkPos.z()))
                     continue;
 
                 PathNode newNode = new PathNode(currentBlock); 

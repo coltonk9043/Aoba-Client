@@ -8,20 +8,19 @@
 
 package net.aoba.gui.navigation;
 
-import java.util.List;
-
 import net.aoba.Aoba;
-import net.aoba.gui.Rectangle;
 import net.aoba.gui.UIElement;
 import net.aoba.gui.colors.Color;
+import net.aoba.gui.types.Rectangle;
 import net.aoba.managers.SettingManager;
 import net.aoba.settings.types.BooleanSetting;
-import net.aoba.utils.render.Render2D;
-import net.minecraft.client.gui.GuiGraphics;
+import net.aoba.rendering.Renderer2D;
+import net.aoba.rendering.shaders.Shader;
 
 public class HudWindow extends Window {
-	private static final Color hoverColor = new Color(255, 0, 0);
-	private static final Color dragColor = new Color(255, 0, 0, 165);
+	private static final Shader hoverColor = Shader.solid(new Color(255, 0, 0));
+	private static final Shader dragColor = Shader.solid(new Color(255, 0, 0, 165));
+	
 	public BooleanSetting activated;
 
 	public CloseableWindow optionsWindow;
@@ -33,7 +32,7 @@ public class HudWindow extends Window {
 	public HudWindow(String ID, float x, float y, float width, float height) {
 		super(ID, x, y, width, height);
 		activated = BooleanSetting.builder().id(ID + "_activated").defaultValue(false)
-				.onUpdate(val -> Aoba.getInstance().guiManager.setHudActive(this, val)).build();
+				.onUpdate(this::onActivatedChanged).build();
 
 		SettingManager.registerSetting(activated);
 	}
@@ -42,42 +41,37 @@ public class HudWindow extends Window {
 		Aoba.getInstance().guiManager.setHudActive(this, state.booleanValue());
 	}
 
-	@Override
-	public boolean isVisible() {
-		return activated.getValue().booleanValue();
-	}
 
-	// Override to do nothing.. We want it to be visible based off of whether it is
-	// activated.
 	@Override
-	public void setVisible(boolean state) {
-		if (!state) {
+	protected void onVisibilityChanged(Boolean oldValue, Boolean newValue) {
+		if (!newValue) {
 			isMoving = false;
+			if (activated != null && activated.getValue()) {
+				setProperty(UIElement.IsVisibleProperty, true);
+			}
 		}
 	}
-
+	
 	@Override
-	public void draw(GuiGraphics drawContext, float partialTicks) {
-		if (isVisible()) {
-			List<UIElement> children = getChildren();
-			for (UIElement child : children) {
-				child.draw(drawContext, partialTicks);
+	public void draw(Renderer2D renderer, float partialTicks) {
+		if (getProperty(UIElement.IsVisibleProperty)) {
+			UIElement content = getContent();
+			if (content != null && content.getProperty(UIElement.IsVisibleProperty)) {
+				content.draw(renderer, partialTicks);
 			}
 
 			Rectangle pos = getActualSize();
 
-			float x = pos.getX().floatValue();
-			float y = pos.getY().floatValue();
-			float width = pos.getWidth().floatValue();
-			float height = pos.getHeight().floatValue();
+			float x = pos.x();
+			float y = pos.y();
+			float width = pos.width();
+			float height = pos.height();
 
 			if (isMoving) {
-				if (pos.isDrawable()) {
-					Render2D.drawBox(drawContext, x, y, width, height, dragColor);
-				}
+				renderer.drawBox(x, y, width, height, dragColor);
 			}
 			if (Aoba.getInstance().guiManager.isClickGuiOpen()) {
-				Render2D.drawBoxOutline(drawContext, x, y, width, height, hoverColor);
+				renderer.drawBoxOutline(x, y, width, height, hoverColor);
 			}
 		}
 	}
