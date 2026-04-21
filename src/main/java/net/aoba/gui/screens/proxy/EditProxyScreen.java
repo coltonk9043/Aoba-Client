@@ -86,10 +86,6 @@ public class EditProxyScreen extends Screen {
 		buttonSaveProxy.active = !textFieldProxyIp.getValue().isEmpty() && !textFieldProxyPort.getValue().isEmpty();
 	}
 
-	private void updateSaveButtonState() {
-		buttonSaveProxy.active = !textFieldProxyIp.getValue().isEmpty() && !textFieldProxyPort.getValue().isEmpty();
-	}
-
 	private void onButtonProxyEditPressed() {
 		String ip = textFieldProxyIp.getValue();
 		String portText = textFieldProxyPort.getValue();
