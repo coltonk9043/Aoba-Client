@@ -31,10 +31,14 @@ import net.aoba.module.modules.combat.BedAura;
 import net.aoba.module.modules.combat.BowAimbot;
 import net.aoba.module.modules.combat.Criticals;
 import net.aoba.module.modules.combat.CrystalAura;
+import net.aoba.module.modules.combat.ElytraTarget;
 import net.aoba.module.modules.combat.KillAura;
+import net.aoba.module.modules.combat.KnockbackDisplacer;
 import net.aoba.module.modules.combat.MaceAura;
 import net.aoba.module.modules.combat.Nametags;
+import net.aoba.module.modules.combat.NoMissDelay;
 import net.aoba.module.modules.combat.Reach;
+import net.aoba.module.modules.combat.ShieldBreaker;
 import net.aoba.module.modules.combat.TriggerBot;
 import net.aoba.module.modules.misc.*;
 import net.aoba.module.modules.movement.ClickTP;
@@ -114,6 +118,7 @@ public class ModuleManager implements KeyDownListener {
 	public CrystalAura crystalaura = new CrystalAura();
 	public ClickTP clickTP = new ClickTP();
 	public DiscordRPCModule discordRPC = new DiscordRPCModule();
+	public ElytraTarget elytraTarget = new ElytraTarget();
 	public EntityControl entityControl = new EntityControl();
 	public EntityESP entityesp = new EntityESP();
 	public EXPThrower expthrower = new EXPThrower();
@@ -132,6 +137,7 @@ public class ModuleManager implements KeyDownListener {
 	public HighJump higherjump = new HighJump();
 	public Jesus jesus = new Jesus();
 	public Jetpack jetpack = new Jetpack();
+	public KnockbackDisplacer knockbackDisplacer = new KnockbackDisplacer();
 	public KillAura killaura = new KillAura();
 	public MaceAura maceaura = new MaceAura();
 	public MCA mcf = new MCA();
@@ -139,6 +145,7 @@ public class ModuleManager implements KeyDownListener {
 	public Noclip noclip = new Noclip();
 	public NoFall nofall = new NoFall();
 	public NoJumpDelay nojumpdelay = new NoJumpDelay();
+	public NoMissDelay nomissdelay = new NoMissDelay();
 	public NoSlowdown noslowdown = new NoSlowdown();
 	public Nuker nuker = new Nuker();
 	public PlayerESP playeresp = new PlayerESP();
@@ -148,6 +155,7 @@ public class ModuleManager implements KeyDownListener {
 	public ReverseStep reverseStep = new ReverseStep();
 	public Safewalk safewalk = new Safewalk();
 	public Scaffold scaffold = new Scaffold();
+	public ShieldBreaker shieldBreaker = new ShieldBreaker();
 	public Sneak sneak = new Sneak();
 	public Speed speed = new Speed();
 	public Spider spider = new Spider();

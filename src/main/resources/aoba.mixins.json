@@ -13,6 +13,7 @@
     "interfaces.IModelPart",
     "interfaces.IModelPartCube",
     "interfaces.IServerboundMovePlayerPacket",
+    "interfaces.IServerboundUseItemPacket",
     "interfaces.IMouseHandler",
     "interfaces.ILocalPlayer",
     "interfaces.IClientboundBossEventPacket"
@@ -36,6 +37,7 @@
     "DeathScreenMixin",
     "DeltaTrackerTimerMixin",
     "EntityMixin",
+    "FireworkRocketEntityMixin",
     "EntityRendererMixin",
     "LiquidBlockMixin",
     "FluidRendererMixin",

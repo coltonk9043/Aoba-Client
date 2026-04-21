@@ -73,6 +73,11 @@ public class Scaffold extends Module implements TickListener {
 			.description("Spoofs the client's rotation so that the player appears rotated on the server")
 			.defaultValue(false).build();
 
+	private final BooleanSetting moveFix = BooleanSetting.builder().id("scaffold_move_fix")
+			.displayName("Move Fix")
+			.description("Corrects movement to match spoofed rotation by using the server yaw for velocity.")
+			.defaultValue(false).build();
+
 	private final BooleanSetting swingHand = BooleanSetting.builder().id("scaffold_swing_hand")
 			.displayName("Swing Hand").description("Swing hand when placing blocks.").defaultValue(true).build();
 
@@ -101,6 +106,7 @@ public class Scaffold extends Module implements TickListener {
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
+		addSetting(moveFix);
 		addSetting(swingHand);
 		addSetting(disableSprint);
 		addSetting(disableSneak);
@@ -146,7 +152,8 @@ public class Scaffold extends Module implements TickListener {
 				Vec3 placementPosVec = placementPos.getCenter();
 				Vec3dGoal rotation = Vec3dGoal.builder().goal(placementPosVec).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
-						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue()).build();
+						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
+						.moveFix(moveFix.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
 
 				if (!InteractionUtils.placeBlock(placementPos, InteractionHand.MAIN_HAND, true))

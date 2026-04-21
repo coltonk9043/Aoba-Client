@@ -23,6 +23,7 @@ public abstract class Goal<T> {
 	protected float yawRandomness = 0f;
 	protected float pitchRandomness = 0f;
 	protected boolean fakeRotation = false;
+	protected boolean moveFix = false;
 
 	/**
 	 * Getter for rotationGoal
@@ -78,6 +79,10 @@ public abstract class Goal<T> {
 
 	public boolean isFakeRotation() {
 		return fakeRotation;
+	}
+
+	public boolean isMoveFix() {
+		return moveFix;
 	}
 
 }

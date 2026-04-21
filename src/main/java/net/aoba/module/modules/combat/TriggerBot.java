@@ -17,6 +17,7 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -112,8 +113,7 @@ public class TriggerBot extends Module implements TickListener {
 					return;
 
 				if (System.currentTimeMillis() - lastAttackTime >= attackDelay.getValue()) {
-					MC.gameMode.attack(MC.player, entityResult.getEntity());
-					MC.player.swing(InteractionHand.MAIN_HAND);
+					InteractionUtils.attack(entityResult.getEntity());
 					lastAttackTime = System.currentTimeMillis();
 				}
 			}

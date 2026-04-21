@@ -1,5 +1,7 @@
 package net.aoba.utils.player;
 
+import net.aoba.Aoba;
+import net.aoba.event.events.StartAttackEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -7,6 +9,7 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.network.protocol.game.ServerboundSwingPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -52,6 +55,21 @@ public class InteractionUtils {
 			return false;
 	}
 
+	public static void attack(Entity entity) {
+		
+		// Fire onAttackStart event to simulate player attacking normally.
+		// Allows us to inject actions between hits such as criticals, or shield breaker.
+    	StartAttackEvent event = new StartAttackEvent(entity);
+    	Aoba.getInstance().eventManager.Fire(event);
+    	
+    	if(event.isCancelled()) {
+            return;
+    	}
+		
+		MC.gameMode.attack(MC.player, entity);
+		MC.player.swing(InteractionHand.MAIN_HAND);
+	}
+	
 	public static Direction getPlaceSide(BlockPos blockPos) {
 		Vec3 lookVec = blockPos.getCenter().subtract(MC.player.getEyePosition());
 		double bestRelevancy = -Double.MAX_VALUE;

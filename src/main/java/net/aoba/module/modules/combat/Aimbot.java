@@ -65,6 +65,11 @@ public class Aimbot extends Module implements TickListener {
 			.description("Spoofs the client's rotation so that the player appears rotated on the server")
 			.defaultValue(false).build();
 
+	private final BooleanSetting moveFix = BooleanSetting.builder().id("aimbot_move_fix")
+			.displayName("Move Fix")
+			.description("Corrects movement to match spoofed rotation by using the server yaw for velocity.")
+			.defaultValue(false).build();
+
 	private int currentTick = 0;
 
 	public Aimbot() {
@@ -82,6 +87,7 @@ public class Aimbot extends Module implements TickListener {
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
+		addSetting(moveFix);
 	}
 
 	@Override
@@ -158,7 +164,8 @@ public class Aimbot extends Module implements TickListener {
 			if (entityFound != null) {
 				EntityGoal rotation = EntityGoal.builder().goal(entityFound).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
-						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue()).build();
+						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
+						.moveFix(moveFix.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
 			} else {
 				Aoba.getInstance().rotationManager.setGoal(null);

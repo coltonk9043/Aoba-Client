@@ -10,6 +10,7 @@ package net.aoba.gui.screens;
 
 import static net.aoba.AobaClient.MC;
 import com.mojang.realmsclient.RealmsMainScreen;
+
 import net.aoba.AobaClient;
 import net.aoba.api.IAddon;
 import net.aoba.gui.components.widgets.AobaButtonWidget;
@@ -82,6 +83,23 @@ public class MainMenuScreen extends Screen {
 				startY + ((BUTTON_HEIGHT + SPACING) * 2), BUTTON_WIDTH, BUTTON_HEIGHT, Component.nullToEmpty("Quit"));
 		quitButton.setPressAction(b -> minecraft.destroy());
 		addRenderableWidget(quitButton);
+		
+		try {
+			Class<?> modsScreen = this.getClass().getClassLoader().loadClass("com.terraformersmc.modmenu.gui.ModsScreen");
+			
+			AobaButtonWidget modsButton = new AobaButtonWidget(startX,
+					startY + ((BUTTON_HEIGHT + SPACING) * 3), BUTTON_WIDTH, BUTTON_HEIGHT, Component.nullToEmpty("Mods"));
+			
+			modsButton.setPressAction(b -> {
+				try {
+					minecraft.setScreen((@Nullable Screen) modsScreen.getConstructor(Screen.class).newInstance(this));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			
+			addRenderableWidget(modsButton);
+		} catch (ClassNotFoundException e) {}
 
 		AobaImageButtonWidget creditsButton = new AobaImageButtonWidget(width - 20 - 10, height - 20 - 10, 20, 20,
 				TextureBank.aoba);

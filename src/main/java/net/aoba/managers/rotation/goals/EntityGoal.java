@@ -61,6 +61,11 @@ public class EntityGoal extends Goal<Entity> {
 			return this;
 		}
 
+		public BUILDER moveFix(boolean state) {
+			goal.moveFix = state;
+			return this;
+		}
+
 		public EntityGoal build() {
 			return goal;
 		}
