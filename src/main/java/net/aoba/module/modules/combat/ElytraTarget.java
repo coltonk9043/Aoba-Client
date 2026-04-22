@@ -24,6 +24,7 @@ public class ElytraTarget extends Module implements TickListener {
 	private int currentFireworkTick = 0;
 	private int currentAimTick = 0;
 	private int swapBackDelayTick = 0;
+	private int useDelayTick = -1;
 	private int previousSlot = -1;
 	
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("elytratarget_target_friends")
@@ -43,18 +44,18 @@ public class ElytraTarget extends Module implements TickListener {
 
 	private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
 			.id("elytratarget_rotation_mode").displayName("Rotation Mode")
-			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
+			.description("Controls how the player's view rotates.").defaultValue(RotationMode.SMOOTH).build();
 
 	private final FloatSetting maxRotation = FloatSetting.builder().id("elytratarget_max_rotation")
-			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(10.0f)
+			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(50.0f)
 			.minValue(1.0f).maxValue(360.0f).build();
 
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("elytratarget_yaw_randomness")
-			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
+			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.5f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
 	private final FloatSetting pitchRandomness = FloatSetting.builder().id("elytratarget_pitch_randomness")
-			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
+			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.3f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
 	private final BooleanSetting fakeRotation = BooleanSetting.builder().id("elytratarget_fake_rotation")
@@ -65,12 +66,17 @@ public class ElytraTarget extends Module implements TickListener {
 	private final BooleanSetting legit = BooleanSetting.builder().id("elytratarget_legit")
 			.displayName("Legit")
 			.description("Whether the player must be visible to fly to.")
-			.defaultValue(false).build();
+			.defaultValue(true).build();
+
+	private final FloatSetting useDelay = FloatSetting.builder().id("elytratarget_use_delay")
+			.displayName("Use Delay")
+			.description("Delay in ticks between swapping to fireworks and using them.")
+			.defaultValue(3.0f).minValue(1.0f).maxValue(10.0f).step(1.0f).build();
 
 	private final FloatSetting swapDelay = FloatSetting.builder().id("elytratarget_swap_delay")
 			.displayName("Swap Delay")
-			.description("Delay in ticks between swapping to firework and swapping back.")
-			.defaultValue(2.0f).minValue(1.0f).maxValue(10.0f).step(1.0f).build();
+			.description("Delay in ticks between using the firework and swapping back.")
+			.defaultValue(4.0f).minValue(3.0f).maxValue(10.0f).step(1.0f).build();
 
 	private final BooleanSetting moveFix = BooleanSetting.builder().id("elytratarget_move_fix")
 			.displayName("Move Fix")
@@ -92,6 +98,7 @@ public class ElytraTarget extends Module implements TickListener {
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
 		addSetting(legit);
+		addSetting(useDelay);
 		addSetting(swapDelay);
 		addSetting(moveFix);
 	}
@@ -102,6 +109,7 @@ public class ElytraTarget extends Module implements TickListener {
 		Aoba.getInstance().rotationManager.setGoal(null);
 		currentFireworkTick = 0;
 		swapBackDelayTick = 0;
+		useDelayTick = -1;
 		if (previousSlot != -1) {
 			swap(previousSlot, false);
 			previousSlot = -1;
@@ -125,73 +133,95 @@ public class ElytraTarget extends Module implements TickListener {
 
 	@Override
 	public void onTick(TickEvent.Post event) {
-		
-		if(MC.player.isFallFlying() && MC.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA)) {
-	
-			// Aim at the target.
-			float radiusSqr = radius.getValueSqr();
-			currentAimTick++;
-			if (currentAimTick >= frequency.getValue()) {
-				target = null;
+		boolean flying = MC.player.isFallFlying() && MC.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
 
-				// Find the closest player within range.
-				for (AbstractClientPlayer entity : MC.level.players()) {
-					if (entity == MC.player)
-						continue;
-
-					if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(entity))
-						continue;
-
-					double entityDistanceToPlayer = entity.distanceToSqr(MC.player);
-					if (entityDistanceToPlayer >= radiusSqr)
-						continue;
-
-					if (target == null || entityDistanceToPlayer < target.distanceToSqr(MC.player)) {
-						target = entity;
-					}
-				}
-
-				if (target != null) {
-					EntityGoal rotation = EntityGoal.builder().goal(target).mode(rotationMode.getValue())
-							.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
-							.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
-							.moveFix(moveFix.getValue()).build();
-					Aoba.getInstance().rotationManager.setGoal(rotation);
-				} else {
-					Aoba.getInstance().rotationManager.setGoal(null);
-				}
-
-				currentAimTick = 0;
-			}
-			
-			// If waiting to swap back, count down the delay before swapping back to the old slot.
-			if (previousSlot != -1) {
-				swapBackDelayTick++;
-				if (swapBackDelayTick >= swapDelay.getValue()) {
-					swap(previousSlot, false);
-					previousSlot = -1;
-					swapBackDelayTick = 0;
-				}
-				return;
-			}
-
-			if(target != null) {
-				// Check if legit is disabled OR if enabled, check if the target is within the player's line of sight.
-				if(!legit.getValue() || MC.player.hasLineOfSight(target)) {
-					if(currentFireworkTick >= interval.getValue()) {
-						FindItemResult findItemResult = findInHotbar(s -> s.getItem() instanceof FireworkRocketItem);
-						if (findItemResult.found()) {
-							previousSlot = MC.player.getInventory().getSelectedSlot();
-							swap(findItemResult.slot(), false);
-
-							MC.gameMode.useItem(MC.player, InteractionHand.MAIN_HAND);
-							swapBackDelayTick = 0;
-						}
-						currentFireworkTick = 0;
-					}
-				}
-			}
-			currentFireworkTick++;
+		// Swap back to the player's old hand when they are not flying anymore.
+		if (!flying && previousSlot != -1) {
+			swap(previousSlot, false);
+			previousSlot = -1;
+			useDelayTick = -1;
+			swapBackDelayTick = 0;
+			return;
 		}
+
+		// Return early if the player is not flying.
+		if (!flying) {
+			return;
+		}
+
+		// Aim at the target.
+		currentAimTick++;
+		if (currentAimTick >= frequency.getValue()) {
+			target = null;
+			float radiusSqr = radius.getValueSqr();
+
+			// Find the closest player within range.
+			for (AbstractClientPlayer entity : MC.level.players()) {
+				if (entity == MC.player)
+					continue;
+
+				if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(entity))
+					continue;
+
+				double entityDistanceToPlayer = entity.distanceToSqr(MC.player);
+				if (entityDistanceToPlayer >= radiusSqr)
+					continue;
+
+				if (target == null || entityDistanceToPlayer < target.distanceToSqr(MC.player)) {
+					target = entity;
+				}
+			}
+
+			if (target != null) {
+				EntityGoal rotation = EntityGoal.builder().goal(target).mode(rotationMode.getValue())
+						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
+						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
+						.moveFix(moveFix.getValue()).build();
+				Aoba.getInstance().rotationManager.setGoal(rotation);
+			} else {
+				Aoba.getInstance().rotationManager.setGoal(null);
+			}
+
+			currentAimTick = 0;
+		}
+
+		// We have previously swapped to the fireworks, so now we wait
+		// until the value of useDelay amount of ticks have passed.
+		if (previousSlot != -1 && useDelayTick >= 0) {
+			useDelayTick++;
+			if (useDelayTick >= useDelay.getValue()) {
+				MC.gameMode.useItem(MC.player, InteractionHand.MAIN_HAND);
+				useDelayTick = -1;
+				swapBackDelayTick = 0;
+			}
+			return;
+		}
+
+		// If waiting to swap back, count down the delay before swapping back to the old slot.
+		if (previousSlot != -1) {
+			swapBackDelayTick++;
+			if (swapBackDelayTick >= swapDelay.getValue()) {
+				swap(previousSlot, false);
+				previousSlot = -1;
+				swapBackDelayTick = 0;
+			}
+			return;
+		}
+
+		if (target != null) {
+			// Check if legit is disabled OR if enabled, check if the target is within the player's line of sight.
+			if (!legit.getValue() || MC.player.hasLineOfSight(target)) {
+				if (currentFireworkTick >= interval.getValue()) {
+					FindItemResult findItemResult = findInHotbar(s -> s.getItem() instanceof FireworkRocketItem);
+					if (findItemResult.found()) {
+						previousSlot = MC.player.getInventory().getSelectedSlot();
+						swap(findItemResult.slot(), false);
+						useDelayTick = 0;
+					}
+					currentFireworkTick = 0;
+				}
+			}
+		}
+		currentFireworkTick++;
 	}
 }
