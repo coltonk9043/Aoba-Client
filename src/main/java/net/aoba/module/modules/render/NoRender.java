@@ -99,7 +99,7 @@ public class NoRender extends Module {
 	}
 
 	public boolean getNoPortalOverlay() {
-		return noPumpkinOverlay.getValue();
+		return noPortalOverlay.getValue();
 	}
 
 	public boolean getNoPowderSnowOverlay() {
