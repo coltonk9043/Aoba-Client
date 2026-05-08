@@ -9,6 +9,9 @@
 package net.aoba.utils;
 
 import net.aoba.AobaClient;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.EnderEyeItem;
 import net.minecraft.world.item.EnderpearlItem;
 import net.minecraft.world.item.FishingRodItem;
@@ -17,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.LingeringPotionItem;
 import net.minecraft.world.item.SplashPotionItem;
+import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -25,44 +29,67 @@ import java.util.stream.Stream;
 
 public class ModuleUtils {
 
-    public static boolean isThrowable(ItemStack stack) {
-        Item item = stack.getItem();
-        return item == Items.BOW || item == Items.SNOWBALL || item == Items.EGG || item == Items.FIRE_CHARGE || item == Items.TRIDENT || item instanceof EnderpearlItem || item instanceof SplashPotionItem || item instanceof LingeringPotionItem || item instanceof FishingRodItem || item instanceof EnderEyeItem;
-    }
+	public static boolean isChargable(ItemStack stack) {
+		Item item = stack.getItem();
+		return item == Items.BOW || item == Items.CROSSBOW || item == Items.TRIDENT || item == Items.COPPER_SPEAR
+				|| item == Items.DIAMOND_SPEAR || item == Items.GOLDEN_SPEAR || item == Items.IRON_SPEAR
+				|| item == Items.NETHERITE_SPEAR || item == Items.WOODEN_SPEAR;
+	}
+	
+	public static int getChargeDelay(ItemStack stack) {
+		Item item = stack.getItem();
+		if (item instanceof BowItem) 
+			return 20;
+		else if (item instanceof CrossbowItem) 
+			return CrossbowItem.getChargeDuration(stack, Minecraft.getInstance().player);
+		else if (item instanceof TridentItem) 
+			return 10;
+		else
+			return 0;
+	}
+	
 
-    public static boolean isPlantable(ItemStack stack) {
-        Item item = stack.getItem();
-        return item == Items.WHEAT_SEEDS || item == Items.CARROT || item == Items.POTATO
-                || item == Items.BEETROOT_SEEDS || item == Items.MELON_SEEDS || item == Items.COCOA_BEANS
-                || item == Items.NETHER_WART;
-    }
+	public static boolean isThrowable(ItemStack stack) {
+		Item item = stack.getItem();
+		return item == Items.BOW || item == Items.CROSSBOW || item == Items.SNOWBALL || item == Items.EGG
+				|| item == Items.FIRE_CHARGE || item == Items.TRIDENT || item instanceof EnderpearlItem
+				|| item instanceof SplashPotionItem || item instanceof LingeringPotionItem
+				|| item instanceof FishingRodItem || item instanceof EnderEyeItem;
+	}
 
-    public static Stream<BlockEntity> getTileEntities() {
-        return getLoadedChunks().flatMap(chunk -> chunk.getBlockEntities().values().stream());
-    }
+	public static boolean isPlantable(ItemStack stack) {
+		Item item = stack.getItem();
+		return item == Items.WHEAT_SEEDS || item == Items.CARROT || item == Items.POTATO || item == Items.BEETROOT_SEEDS
+				|| item == Items.MELON_SEEDS || item == Items.COCOA_BEANS || item == Items.NETHER_WART;
+	}
 
-    public static Stream<LevelChunk> getLoadedChunks() {
-        int radius = Math.max(2, AobaClient.MC.options.getEffectiveRenderDistance()) + 3;
-        int diameter = radius * 2 + 1;
+	public static Stream<BlockEntity> getTileEntities() {
+		return getLoadedChunks().flatMap(chunk -> chunk.getBlockEntities().values().stream());
+	}
 
-        ChunkPos center = AobaClient.MC.player.chunkPosition();
-        ChunkPos min = new ChunkPos(center.x() - radius, center.z() - radius);
-        ChunkPos max = new ChunkPos(center.x() + radius, center.z() + radius);
+	public static Stream<LevelChunk> getLoadedChunks() {
+		int radius = Math.max(2, AobaClient.MC.options.getEffectiveRenderDistance()) + 3;
+		int diameter = radius * 2 + 1;
 
-        Stream<LevelChunk> stream = Stream.iterate(min, pos -> {
-            int x = pos.x();
-            int z = pos.z();
-            x++;
+		ChunkPos center = AobaClient.MC.player.chunkPosition();
+		ChunkPos min = new ChunkPos(center.x() - radius, center.z() - radius);
+		ChunkPos max = new ChunkPos(center.x() + radius, center.z() + radius);
 
-            if (x > max.x()) {
-                x = min.x();
-                z++;
-            }
+		Stream<LevelChunk> stream = Stream.iterate(min, pos -> {
+			int x = pos.x();
+			int z = pos.z();
+			x++;
 
-            return new ChunkPos(x, z);
+			if (x > max.x()) {
+				x = min.x();
+				z++;
+			}
 
-        }).limit((long) diameter * diameter).filter(c -> AobaClient.MC.level.hasChunk(c.x(), c.z())).map(c -> AobaClient.MC.level.getChunk(c.x(), c.z())).filter(Objects::nonNull);
+			return new ChunkPos(x, z);
 
-        return stream;
-    }
+		}).limit((long) diameter * diameter).filter(c -> AobaClient.MC.level.hasChunk(c.x(), c.z()))
+				.map(c -> AobaClient.MC.level.getChunk(c.x(), c.z())).filter(Objects::nonNull);
+
+		return stream;
+	}
 }
