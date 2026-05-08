@@ -36,12 +36,25 @@ public class DamageUtils {
 		return blockState.getCollisionShape(MC.level, blockPos).clip(context.start(), context.end(), blockPos);
 	};
 
+	public static final RaycastFactory ANCHOR_HIT_FACTORY = (context, blockPos) -> {
+		BlockState blockState = MC.level.getBlockState(blockPos);
+		if (blockState.getBlock().getExplosionResistance() < 3)
+			return null;
+
+		return blockState.getCollisionShape(MC.level, blockPos).clip(context.start(), context.end(), blockPos);
+	};
+
 	public static float crystalDamage(LivingEntity target, Vec3 crystal) {
-		return explosionDamage(target, crystal, 12f, false);
+		return explosionDamage(target, crystal, 12f, false, MC.level.damageSources().explosion(null));
+	}
+
+	public static float anchorDamage(LivingEntity target, Vec3 anchorPos) {
+		return explosionDamage(target, anchorPos, 10f, false,
+				MC.level.damageSources().badRespawnPointExplosion(anchorPos), ANCHOR_HIT_FACTORY);
 	}
 
 	private static float explosionDamage(LivingEntity target, Vec3 explosionPos, float power, boolean predictMovement,
-			RaycastFactory raycastFactory) {
+			DamageSource damageSource, RaycastFactory raycastFactory) {
 		if (target == null)
 			return 0f;
 		if (target instanceof Player player && EntityUtils.getGameMode(player) == GameType.CREATIVE
@@ -54,16 +67,16 @@ public class DamageUtils {
 		if (predictMovement)
 			box = box.move(target.getDeltaMovement());
 
-		return explosionDamage(target, position, box, explosionPos, power, raycastFactory);
+		return explosionDamage(target, position, box, explosionPos, power, damageSource, raycastFactory);
 	}
 
-	private static float explosionDamage(LivingEntity target, Vec3 explosionPos, float power,
-			boolean predictMovement) {
-		return explosionDamage(target, explosionPos, power, predictMovement, HIT_FACTORY);
+	private static float explosionDamage(LivingEntity target, Vec3 explosionPos, float power, boolean predictMovement,
+			DamageSource damageSource) {
+		return explosionDamage(target, explosionPos, power, predictMovement, damageSource, HIT_FACTORY);
 	}
 
 	public static float explosionDamage(LivingEntity target, Vec3 targetPos, AABB targetBox, Vec3 explosionPos,
-			float power, RaycastFactory raycastFactory) {
+			float power, DamageSource damageSource, RaycastFactory raycastFactory) {
 		double modDistance = PlayerUtils.distance(targetPos.x, targetPos.y, targetPos.z, explosionPos.x, explosionPos.y,
 				explosionPos.z);
 		if (modDistance > power)
@@ -71,9 +84,9 @@ public class DamageUtils {
 
 		double exposure = getExposure(explosionPos, targetBox, raycastFactory);
 		double impact = (1 - (modDistance / power)) * exposure;
-		float damage = (int) ((impact * impact + impact) / 2 * 7 * 12 + 1);
+		float damage = (int) ((impact * impact + impact) / 2 * 7 * power + 1);
 
-		return calculateReductions(damage, target, MC.level.damageSources().explosion(null));
+		return calculateReductions(damage, target, damageSource);
 	}
 
 	public static float calculateReductions(float damage, LivingEntity entity, DamageSource damageSource) {
