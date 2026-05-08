@@ -24,6 +24,7 @@ import net.aoba.module.Module;
 import net.aoba.module.modules.combat.Aimbot;
 import net.aoba.module.modules.combat.AntiInvis;
 import net.aoba.module.modules.combat.AntiKnockback;
+import net.aoba.module.modules.combat.AutoCooldown;
 import net.aoba.module.modules.combat.AutoAnchor;
 import net.aoba.module.modules.combat.AutoRespawn;
 import net.aoba.module.modules.combat.AutoSoup;
@@ -99,6 +100,7 @@ public class ModuleManager implements KeyDownListener {
 	public AntiCactus anticactus = new AntiCactus();
 	public AntiInvis antiinvis = new AntiInvis();
 	public AntiKnockback antiknockback = new AntiKnockback();
+	public AutoCooldown autocooldown = new AutoCooldown();
 	public AutoAnchor autoanchor = new AutoAnchor();
 	public AutoCrystal autocrystal = new AutoCrystal();
 	public AutoEat autoeat = new AutoEat();
