@@ -11,10 +11,12 @@ package net.aoba.gui.components;
 import net.aoba.gui.GuiManager;
 import net.aoba.gui.UIElement;
 import net.aoba.gui.UIProperty;
+import net.aoba.gui.colors.Colors;
 import net.aoba.gui.types.GridDefinition;
 import net.aoba.gui.types.Thickness;
 import net.aoba.gui.types.VerticalAlignment;
 import net.aoba.gui.types.GridDefinition.RelativeUnit;
+import net.aoba.rendering.shaders.Shader;
 import net.aoba.utils.input.CursorStyle;
 import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
@@ -52,6 +54,10 @@ public class ExpanderComponent extends Component {
 	}
 	
 	public ExpanderComponent(String headerText) {
+		
+		setProperty(UIElement.BorderProperty, Shader.solid(Colors.Transparent));
+		setProperty(UIElement.BorderThicknessProperty, 0f);
+		
 		RectangleComponent container = new RectangleComponent();
 		container.bindProperty(UIElement.BackgroundProperty, GuiManager.panelBackgroundColor);
 		container.setProperty(UIElement.CornerRadiusProperty, 6f);

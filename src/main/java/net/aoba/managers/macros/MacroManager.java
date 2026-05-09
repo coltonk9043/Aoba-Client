@@ -26,6 +26,7 @@ import com.mojang.logging.LogUtils;
 import net.aoba.Aoba;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.listeners.KeyDownListener;
+import net.aoba.gui.GuiManager;
 import net.aoba.managers.macros.actions.KeyClickMacroEvent;
 import net.aoba.managers.macros.actions.MacroEvent;
 import net.aoba.managers.macros.actions.MouseClickMacroEvent;
@@ -230,6 +231,8 @@ public class MacroManager implements KeyDownListener {
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
 		if (MC.screen != null)
+			return;
+		if (GuiManager.isKeyboardInputActive())
 			return;
 
 		int key = event.GetKey();

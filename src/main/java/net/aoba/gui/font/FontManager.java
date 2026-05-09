@@ -67,6 +67,8 @@ public class FontManager {
 
 	private static Minecraft MC;
 
+	public static final float DEFAULT_FONT_SIZE = 6f;
+
 	public ConcurrentHashMap<String, UIFont> fonts = new ConcurrentHashMap<>();
 
 	public FontManager() {
@@ -93,8 +95,7 @@ public class FontManager {
 					continue;
 				}
 				byte[] bytes = is.readAllBytes();
-				Font normalFont = loadFontFromBytes(bytes, id, 0f);
-				fonts.put(id, new UIFont(id, normalFont, bytes));
+				fonts.put(id, new UIFont(id, bytes));
 				LogUtils.getLogger().info("[Aoba] Loaded built-in font: {}", id);
 			} catch (Exception e) {
 				LogUtils.getLogger().error("[Aoba] Failed to load built-in font: {}", id, e);
@@ -107,16 +108,15 @@ public class FontManager {
 		if (!fontDirectory.exists() || !fontDirectory.isDirectory()) return;
 
 		LogUtils.getLogger().info("Found Font Directory: " + fontDirectory.getAbsolutePath());
-		File[] files = fontDirectory.listFiles((dir, name) -> name.endsWith(".ttf"));
-		if (files == null) 
+		File[] files = fontDirectory.listFiles((_, name) -> name.endsWith(".ttf"));
+		if (files == null)
 			return;
 
 		for (File file : files) {
 			String fontName = file.getName().replace(".ttf", "");
 			try {
 				byte[] bytes = Files.readAllBytes(file.toPath());
-				Font normalFont = loadFontFromBytes(bytes, fontName, 0f);
-				fonts.put(fontName, new UIFont(fontName, normalFont, bytes));
+				fonts.put(fontName, new UIFont(fontName, bytes));
 				LogUtils.getLogger().info("Loaded font: " + fontName);
 			} catch (Exception e) {
 				LogUtils.getLogger().error("Failed to load font: " + file.getName(), e);
@@ -138,6 +138,11 @@ public class FontManager {
 	}
 
 	public static Font loadFontFromBytes(byte[] fontBytes, String id, float emboldenPixels) throws IOException {
+		float atlasSize = Math.round(DEFAULT_FONT_SIZE * 1.5f);
+		return loadFontFromBytes(fontBytes, id, emboldenPixels, atlasSize);
+	}
+
+	public static Font loadFontFromBytes(byte[] fontBytes, String id, float emboldenPixels, float atlasSize) throws IOException {
 		ByteBuffer byteBuffer = MemoryUtil.memAlloc(fontBytes.length);
 		byteBuffer.put(fontBytes).flip();
 
@@ -156,14 +161,14 @@ public class FontManager {
 			FreeTypeUtil.assertError(FreeType.FT_Select_Charmap(face, FreeType.FT_ENCODING_UNICODE),
 					"Find unicode charmap");
 
-			GlyphProvider provider = new AobaGlyphProvider(byteBuffer, face, 9f, 2, -1, 0, "", emboldenPixels);
+			GlyphProvider provider = new AobaGlyphProvider(byteBuffer, face, atlasSize, emboldenPixels);
 
 			List<GlyphProvider.Conditional> list = new ArrayList<>();
 			list.add(new GlyphProvider.Conditional(provider, Filter.ALWAYS_PASS));
 
 			GlyphStitcher stitcher = new GlyphStitcher(MC.getTextureManager(),
 					Identifier.parse("aoba:fonts/" + id.toLowerCase()));
-			
+
 			try (FontSet storage = new FontSet(stitcher)) {
 				storage.reload(list, Set.of());
 

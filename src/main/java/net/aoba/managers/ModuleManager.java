@@ -19,6 +19,7 @@ import net.aoba.Aoba;
 import net.aoba.api.IAddon;
 import net.aoba.event.events.KeyDownEvent;
 import net.aoba.event.listeners.KeyDownListener;
+import net.aoba.gui.GuiManager;
 import net.aoba.module.AntiCheat;
 import net.aoba.module.Module;
 import net.aoba.module.modules.combat.Aimbot;
@@ -239,6 +240,8 @@ public class ModuleManager implements KeyDownListener {
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
+		if (GuiManager.isKeyboardInputActive())
+			return;
 		if (MC.screen == null) {
 			for (Module module : modules) {
 				if (module.isDetectable(antiCheat.getValue()))

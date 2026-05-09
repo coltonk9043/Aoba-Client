@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.gui.UIProperty.CoerseCallback;
@@ -50,8 +52,8 @@ public abstract class UIElement {
 
 	public static final UIProperty<Float> BorderThicknessProperty = new UIProperty<>("BorderThickness", 0f);
 	public static final UIProperty<Float> CornerRadiusProperty = new UIProperty<>("CornerRadius", 6f);
-	public static final UIProperty<Shader> BackgroundProperty = new UIProperty<>("Background", null, false);
-	public static final UIProperty<Shader> BorderProperty = new UIProperty<>("Border", null, false);
+	public static final UIProperty<Shader> BackgroundProperty = new UIProperty<>("Background", null, true);
+	public static final UIProperty<Shader> BorderProperty = new UIProperty<>("Border", null, true);
 	public static final UIProperty<Shader> ForegroundProperty = new UIProperty<>("Foreground", null, true);
 	public static final UIProperty<CursorStyle> CursorProperty = new UIProperty<>("Cursor", null, true, false);
 	public static final UIProperty<Boolean> IsHoveredProperty = new UIProperty<>("IsHovered", false);
@@ -73,7 +75,9 @@ public abstract class UIElement {
 	public static final UIProperty<Integer> FontWeightProperty = new UIProperty<>("FontWeight", FontManager.WEIGHT_NORMAL, true, true);
 	
 	private Consumer<MouseClickEvent> onClicked;
-
+	private Runnable onFocus;
+	private Runnable onLostFocus;
+	
 	public UIElement() {
 		preferredSize = new Size(0.0f, 0.0f);
 		actualSize = new Rectangle(0.0f, 0.0f, 0.0f, 0.0f);
@@ -268,6 +272,8 @@ public abstract class UIElement {
 
 	@SuppressWarnings("unchecked")
 	public <T> void bindProperty(UIProperty<T> property, Setting<?> setting, BindingMode mode) {
+		unbindProperty(property);
+
 		Setting<T> typed = (Setting<T>) setting;
 		setProperty(property, typed.getValue());
 		Consumer<T> listener = v -> setProperty(property, v);
@@ -508,12 +514,24 @@ public abstract class UIElement {
 	 * Fired when the element gains focus.
 	 */
 	protected void onGotFocus() {
+		if(this.onFocus != null)
+			onFocus.run();
+	}
+	
+	public void setOnFocus(Runnable action) {
+		this.onFocus = action;
 	}
 
 	/**
 	 * Fired when the element loses focus.
 	 */
 	protected void onLostFocus() {
+		if(this.onLostFocus != null)
+			onLostFocus.run();
+	}
+	
+	public void setOnLostFocus(Runnable action) {
+		this.onLostFocus = action;
 	}
 
 	public void onMouseMove(MouseMoveEvent event) {

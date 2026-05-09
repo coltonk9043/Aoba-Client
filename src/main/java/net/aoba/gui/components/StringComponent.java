@@ -17,7 +17,6 @@ import net.aoba.gui.types.TextAlign;
 import net.aoba.gui.types.TextWrapping;
 import net.aoba.rendering.Renderer2D;
 import net.aoba.rendering.shaders.Shader;
-import net.aoba.utils.TextUtils;
 import net.minecraft.client.gui.Font;
 
 public class StringComponent extends Component {
@@ -35,19 +34,19 @@ public class StringComponent extends Component {
 	}
 
 	private float getScale() {
-		return TextUtils.ptToFontSize(getProperty(StringComponent.FontSizeProperty));
+		return 1.0f;
 	}
 
 	private float getLineHeight() {
-		Font font = getProperty(UIElement.FontProperty).getRenderer(getProperty(UIElement.FontWeightProperty));
-		return font.lineHeight * getScale();
+		return Math.round(getProperty(StringComponent.FontSizeProperty) * 1.5f);
 	}
 
 	@Override
 	public Size measure(Size availableSize) {
 		recalculateLines(availableSize);
 
-		Font textRenderer = getProperty(UIElement.FontProperty).getRenderer(getProperty(UIElement.FontWeightProperty));
+		Font textRenderer = getProperty(UIElement.FontProperty)
+				.getRenderer(getProperty(StringComponent.FontSizeProperty), getProperty(UIElement.FontWeightProperty));
 		String originalText = getProperty(StringComponent.TextProperty);
 		float lineHeight = getLineHeight();
 		float scale = getScale();
@@ -69,7 +68,7 @@ public class StringComponent extends Component {
 		float height = lines.size() * lineHeight;
 		return new Size(width, height);
 	}
-	
+
 	public void draw(Renderer2D renderer, float partialTicks) {
 		Rectangle actualRect = getActualSize();
 		float actualX = actualRect.x();
@@ -79,9 +78,13 @@ public class StringComponent extends Component {
 		float fontSize = getProperty(StringComponent.FontSizeProperty);
 
 		float y = 0;
+		
+		// TODO: Hacky...
+		float drawOffset = (fontSize - 6f) * 7f / 6f;
 
 		Shader fgEffect = getProperty(ForegroundProperty);
-		Font font = getProperty(FontProperty).getRenderer(getProperty(FontWeightProperty));
+		Font font = getProperty(UIElement.FontProperty)
+				.getRenderer(getProperty(StringComponent.FontSizeProperty),getProperty(UIElement.FontWeightProperty));
 
 		TextAlign textAlignment = getProperty(StringComponent.TextAlignmentProperty);
 		for (String str : lines) {
@@ -92,7 +95,7 @@ public class StringComponent extends Component {
 				default -> actualX;
 			};
 
-			renderer.drawString(str, drawX, actualY + y, fgEffect, font, fontSize);
+			renderer.drawString(str, drawX, actualY + y + drawOffset, fgEffect, font, fontSize);
 
 			y += lineHeight;
 		}
@@ -103,7 +106,8 @@ public class StringComponent extends Component {
 
 		String originalText = getProperty(StringComponent.TextProperty);
 		if (originalText != null) {
-			Font textRenderer = getProperty(UIElement.FontProperty).getRenderer(getProperty(UIElement.FontWeightProperty));
+			Font textRenderer = getProperty(UIElement.FontProperty)
+					.getRenderer(getProperty(StringComponent.FontSizeProperty), getProperty(UIElement.FontWeightProperty));
 			float scale = getScale();
 
 			float width = availableSize.width();

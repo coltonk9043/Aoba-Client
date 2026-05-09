@@ -24,10 +24,14 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 	private boolean listeningForKey;
 
 	private static final Shader CARET_SHADER = Shader.solid(Colors.White);
+	private static final Shader PLACEHOLDER_SHADER = Shader.solid(Colors.Gray);
 	public static UIProperty<String> HeaderProperty = new UIProperty<String>("Header", "", false, true);
 	public static UIProperty<String> TextProperty = new UIProperty<String>("Text", "", false, true,
 			TextBoxComponent::onTextPropertyChanged);
-	public static UIProperty<String> PlaceholderText = new UIProperty<String>("PlaceholderText", "", false, true);
+	public static UIProperty<String> PlaceholderText = new UIProperty<String>("PlaceholderText", "", false, true,
+			TextBoxComponent::onPlaceholderPropertyChanged);
+	public static final UIProperty<Float> FontSizeProperty = new UIProperty<>("FontSize", 12f, true, true,
+			TextBoxComponent::onFontSizePropertyChanged);
 
 	private boolean isFocused = false;
 	private int caretTick = 0;
@@ -40,20 +44,31 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 
 	private static void onTextPropertyChanged(UIElement sender, String oldValue, String newValue) {
 		if (sender instanceof TextBoxComponent textBoxComponent) {
-			textBoxComponent.textComponent.setProperty(StringComponent.TextProperty, newValue);
+			textBoxComponent.refreshDisplayedText();
 			if (textBoxComponent.onTextChanged != null)
 				textBoxComponent.onTextChanged.accept(newValue);
 		}
 	}
 
+	private static void onPlaceholderPropertyChanged(UIElement sender, String oldValue, String newValue) {
+		if (sender instanceof TextBoxComponent textBoxComponent) {
+			textBoxComponent.refreshDisplayedText();
+		}
+	}
+
+	private static void onFontSizePropertyChanged(UIElement sender, Float oldValue, Float newValue) {
+		if (sender instanceof TextBoxComponent textBoxComponent) {
+			textBoxComponent.textComponent.setProperty(StringComponent.FontSizeProperty, newValue);
+		}
+	}
+
 	public TextBoxComponent() {
-		setProperty(UIElement.HeightProperty, 30.0f);
 		setProperty(UIElement.CursorProperty, CursorStyle.Type);
+		bindProperty(UIElement.BackgroundProperty, GuiManager.componentBackgroundColor);
+		bindProperty(UIElement.BorderProperty, GuiManager.componentBorderColor);
+		bindProperty(UIElement.CornerRadiusProperty, GuiManager.roundingRadius);
 		
 		box = new RectangleComponent();
-		box.bindProperty(UIElement.BackgroundProperty, GuiManager.componentBackgroundColor);
-		box.bindProperty(UIElement.BorderProperty, GuiManager.componentBorderColor);
-		box.bindProperty(UIElement.CornerRadiusProperty, GuiManager.roundingRadius);
 		box.setProperty(UIElement.PaddingProperty, new Thickness(4f));
 
 		textComponent = new StringComponent(getProperty(TextProperty));
@@ -63,6 +78,8 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 		box.setContent(textComponent);
 
 		setContent(box);
+
+		refreshDisplayedText();
 
 		setOnClicked(e -> {
 			if (e.button == MouseButton.LEFT && e.action == MouseAction.DOWN) {
@@ -142,7 +159,9 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 							GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS
 							|| GLFW.glfwGetKey(AobaClient.MC.getWindow().handle(),
 									GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS;
-					if (!shiftDown)
+					if (shiftDown)
+						keyCode = Character.toUpperCase(keyCode);
+					else
 						keyCode = Character.toLowerCase(keyCode);
 
 					setProperty(TextProperty, currentText + keyCode);
@@ -153,6 +172,19 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 		}
 	}
 
+	private void refreshDisplayedText() {
+		String text = getProperty(TextProperty);
+		boolean empty = text == null || text.isEmpty();
+		if (empty && !isFocused) {
+			String placeholder = getProperty(PlaceholderText);
+			textComponent.setProperty(StringComponent.TextProperty, placeholder == null ? "" : placeholder);
+			textComponent.setProperty(UIElement.ForegroundProperty, PLACEHOLDER_SHADER);
+		} else {
+			textComponent.setProperty(StringComponent.TextProperty, text == null ? "" : text);
+			textComponent.clearProperty(UIElement.ForegroundProperty);
+		}
+	}
+	
 	private boolean keyIsValid(int key) {
 		return key == 45 || (key >= 48 && key <= 57) || (key >= 65 && key <= 90) || (key >= 97 && key <= 122);
 	}
@@ -172,6 +204,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 			GuiManager.clearFocus(this);
 			Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
 		}
+		refreshDisplayedText();
 	}
 
 	@Override
@@ -180,6 +213,7 @@ public class TextBoxComponent extends Component implements KeyDownListener {
 			listeningForKey = false;
 			isFocused = false;
 			Aoba.getInstance().eventManager.RemoveListener(KeyDownListener.class, this);
+			refreshDisplayedText();
 		}
 	}
 

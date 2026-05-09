@@ -40,7 +40,6 @@ import net.aoba.gui.types.Rectangle;
 import net.aoba.rendering.msaa.IMSAAHandler;
 import net.aoba.rendering.msaa.OpenGLMSAAHandler;
 import net.aoba.rendering.shaders.Shader;
-import net.aoba.utils.TextUtils;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -333,7 +332,7 @@ public class Renderer2D extends AbstractRenderer {
 	public void drawString(String text, float x, float y, Shader shader, Font font, float fontSize) {
 		if (shader == null)
 			return;
-		drawStringInternal(text, x, y, shader, TextUtils.ptToFontSize(fontSize), font);
+		drawStringInternal(text, x, y, shader, 1.0f, font);
 	}
 
 	/**
@@ -466,7 +465,7 @@ public class Renderer2D extends AbstractRenderer {
 	}
 
 	public static float getStringWidth(String text, Font font, float fontSize) {
-		return font.width(text) * TextUtils.ptToFontSize(fontSize);
+		return font.width(text);
 	}
 
 	private void submitElement(Matrix3x2fc pose, float[] vertices, float[] uvs, int vertexCount,

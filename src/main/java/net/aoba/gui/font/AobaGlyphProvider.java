@@ -7,7 +7,6 @@ import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTexture;
-import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.gui.font.CodepointMap;
 import net.minecraft.client.gui.font.glyphs.BakedGlyph;
@@ -17,7 +16,6 @@ import org.jspecify.annotations.Nullable;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.freetype.*;
-
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Locale;
@@ -31,34 +29,25 @@ public class AobaGlyphProvider implements GlyphProvider {
 	private final long emboldenStrength;
 	private final CodepointMap<GlyphEntry> glyphs = new CodepointMap<>(GlyphEntry[]::new, GlyphEntry[][]::new);
 
-	public AobaGlyphProvider(ByteBuffer fontMemory, FT_Face face, float size, float oversample,
-			float shiftX, float shiftY, String skip, float emboldenPixels) {
+	private static final int OVERSAMPLE = 2;
+
+	public AobaGlyphProvider(ByteBuffer fontMemory, FT_Face face, float atlasSize, float emboldenPixels) {
 		this.fontMemory = fontMemory;
 		this.face = face;
-		this.oversample = oversample;
+		int pixelSize = Math.round(atlasSize * OVERSAMPLE);
+		this.oversample = OVERSAMPLE;
 		this.emboldenStrength = (long) (emboldenPixels * 64);
 
-		IntSet skipSet = new IntArraySet();
-		skip.codePoints().forEach(skipSet::add);
-
-		int pixelSize = Math.round(size * oversample);
 		FreeType.FT_Set_Pixel_Sizes(face, pixelSize, pixelSize);
 
-		float sx = shiftX * oversample;
-		float sy = -shiftY * oversample;
-
 		try (MemoryStack stack = MemoryStack.stackPush()) {
-			FT_Vector shift = FreeTypeUtil.setVector(FT_Vector.malloc(stack), sx, sy);
-			FreeType.FT_Set_Transform(face, null, shift);
 			IntBuffer glyphIndex = stack.mallocInt(1);
 			int charcode = (int) FreeType.FT_Get_First_Char(face, glyphIndex);
 
 			while (true) {
 				int idx = glyphIndex.get(0);
 				if (idx == 0) return;
-				if (!skipSet.contains(charcode)) {
-					glyphs.put(charcode, new GlyphEntry(idx));
-				}
+				glyphs.put(charcode, new GlyphEntry(idx));
 				charcode = (int) FreeType.FT_Get_Next_Char(face, charcode, glyphIndex);
 			}
 		}

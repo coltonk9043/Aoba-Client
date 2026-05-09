@@ -9,18 +9,17 @@
 package net.aoba.gui.font;
 
 import java.util.concurrent.ConcurrentHashMap;
-import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.Font;
 
 public class UIFont {
 	private final String name;
 	private final byte[] fontBytes;
-	private final ConcurrentHashMap<Integer, Font> weights = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<Long, Font> bakedFonts = new ConcurrentHashMap<>();
 
-	public UIFont(String name, Font normalWeight, byte[] fontBytes) {
+	public UIFont(String name, byte[] fontBytes) {
 		this.name = name;
 		this.fontBytes = fontBytes;
-		weights.put(FontManager.WEIGHT_NORMAL, normalWeight);
+		getRenderer(FontManager.DEFAULT_FONT_SIZE, FontManager.WEIGHT_NORMAL);
 	}
 
 	public String getName() {
@@ -28,33 +27,37 @@ public class UIFont {
 	}
 
 	public Font getRenderer() {
-		return getRenderer(FontManager.WEIGHT_NORMAL);
+		return getRenderer(FontManager.DEFAULT_FONT_SIZE, FontManager.WEIGHT_NORMAL);
 	}
 
-	public Font getRenderer(int weight) {
-		weight = snapWeight(weight);
+	public Font getRenderer( float fontSize, int weight) {
+		float atlasSize = Math.round(fontSize * 1.5f);
+		
+		int snappedWeight = Math.max(100, Math.min(900, Math.round(weight / 100f) * 100));
+		long key = makeKey(atlasSize, snappedWeight);
 
-		Font font = weights.get(weight);
-		if (font != null) 
-			return font;
+		Font existing = bakedFonts.get(key);
+		if (existing != null)
+			return existing;
 
-		if (fontBytes == null) 
-			return weights.get(FontManager.WEIGHT_NORMAL);
+		if (fontBytes == null)
+			return getRenderer(FontManager.DEFAULT_FONT_SIZE, FontManager.WEIGHT_NORMAL);
 
-		float embolden = FontManager.getEmboldenForWeight(weight);
-		try {
-			font = FontManager.loadFontFromBytes(fontBytes, name + "_w" + weight, embolden);
-			weights.put(weight, font);
-			LogUtils.getLogger().info("Created weight " + weight + " for font: " + name);
-			return font;
-		} catch (Exception e) {
-			LogUtils.getLogger().error("Failed to create weight " + weight + " for font: " + name, e);
-			return weights.get(FontManager.WEIGHT_NORMAL);
-		}
+		Font baked = bakedFonts.computeIfAbsent(key, _ -> {
+			float embolden = FontManager.getEmboldenForWeight(snappedWeight);
+			try {
+				String fontId = name + "_w" + snappedWeight + "_s" + Math.round(atlasSize);
+				Font font = FontManager.loadFontFromBytes(fontBytes, fontId, embolden, atlasSize);
+				return font;
+			} catch (Exception e) {
+				return null;
+			}
+		});
+
+		return baked != null ? baked : getRenderer(FontManager.DEFAULT_FONT_SIZE, FontManager.WEIGHT_NORMAL);
 	}
 
-	private static int snapWeight(int weight) {
-		weight = Math.round(weight / 100f) * 100;
-		return Math.max(100, Math.min(900, weight));
+	private static long makeKey(float atlasSize, int weight) {
+		return ((long) weight << 32) | (Float.floatToIntBits(atlasSize) & 0xFFFFFFFFL);
 	}
 }

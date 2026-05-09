@@ -62,6 +62,7 @@ import net.aoba.gui.navigation.windows.AntiCheatWindow;
 import net.aoba.gui.navigation.windows.AuthCrackerWindow;
 import net.aoba.gui.navigation.windows.FriendsWindow;
 import net.aoba.gui.navigation.windows.PathfindingWindow;
+import net.aoba.gui.navigation.windows.SearchWindow;
 import net.aoba.gui.navigation.windows.UIOptionsWindow;
 import net.aoba.gui.types.GridDefinition;
 import net.aoba.gui.types.Rectangle;
@@ -225,7 +226,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		toolsPane.addWindow(new AuthCrackerWindow());
 		toolsPane.addWindow(new PathfindingWindow());
 		toolsPane.addWindow(new MacroWindow());
-
+		
 		moduleSelector = new ModuleSelectorHud();
 		armorHud = new ArmorHud(0, 0);
 		radarHud = new RadarHud(0, 0);
@@ -292,6 +293,10 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 			xOffset += tab.getProperty(UIElement.MinWidthProperty) + 10;
 		}
 
+		SearchWindow searchWindow = new SearchWindow();
+		searchWindow.position.setX(xOffset);
+		searchWindow.position.setY(73f);
+		modulesPane.addWindow(searchWindow);
 		modulesPane.addWindow(new SettingsWindow());
 		modulesPane.addWindow(new AntiCheatWindow());
 		modulesPane.addWindow(new FriendsWindow());

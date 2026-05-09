@@ -54,6 +54,9 @@ public class KeyDownEvent extends AbstractEvent {
 	    for (AbstractListener listener : listenersCopy) {
 	        KeyDownListener keyDownListener = (KeyDownListener) listener;
 	        keyDownListener.onKeyDown(this);
+
+	        if (isCancelled)
+	            break;
 	    }
 	}
 

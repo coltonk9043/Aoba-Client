@@ -40,7 +40,7 @@ public class FriendsWindow extends Window  {
 	private final ComboBoxComponent playerComboBox;
 
 	public FriendsWindow() {
-		super("Friends", 1200, 150);
+		super("Friends", 360, 825);
 		setProperty(UIElement.MinWidthProperty, 300f);
 		setProperty(UIElement.MinHeightProperty, 300f);
 		StackPanelComponent stackPanel = new StackPanelComponent();
