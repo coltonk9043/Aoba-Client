@@ -53,7 +53,8 @@ We want to stress that we have **NEVER** used, and will **NEVER** use, platforms
 ### 📸 Screenshots  
 
 Check out how Aoba Client looks in action:  
-![image](https://github.com/coltonk9043/Aoba-MC-Hacked-Client/assets/56643581/546d79e0-01eb-4c63-a1f8-49d40bb48a45)
+<img width="2560" height="1411" alt="Screenshot_20260510_090107" src="https://github.com/user-attachments/assets/9f42c2cd-cfc6-444d-bde9-d30cb4a8418f" />
+
 
 ---
 
