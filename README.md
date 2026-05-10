@@ -23,9 +23,9 @@ We want to stress that we have **NEVER** used, and will **NEVER** use, platforms
 
 ---
 
-## Aoba Client (1.21.x)  
+## Aoba Client (26.1.X)  
 
-**Aoba Client** is a custom utility modification tailored for **Minecraft 1.21.x** using the Fabric framework. It combines an intuitive design with powerful features to enhance your Minecraft experience, offering tools for both utility and customization.  
+**Aoba Client** is a custom utility modification tailored for **Minecraft 26.1.X** using the Fabric framework. It combines an intuitive design with powerful features to enhance your Minecraft experience, offering tools for both utility and customization.  
 
 ---
 
