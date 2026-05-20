@@ -27,10 +27,10 @@ public class AutoTool extends Module implements BlockStateListener, TickListener
     private final BooleanSetting autoToggle = BooleanSetting.builder().id("autotool_autotoggle").displayName("Auto Toggle")
             .description("Automatically toggles off if any critical combat module has been enabled.").defaultValue(true)
             .build();
-    private final BooleanSetting swapBack = BooleanSetting.builder().id("autotool_swapback").displayName("Swap back")
+    private final BooleanSetting swapBack = BooleanSetting.builder().id("autotool_swapback").displayName("Swap Back")
             .description("Switches back to previous slot when done.").defaultValue(true)
             .build();
-    private final BooleanSetting miningOnly = BooleanSetting.builder().id("autotool_miningonly").displayName("Mining only")
+    private final BooleanSetting miningOnly = BooleanSetting.builder().id("autotool_miningonly").displayName("Mining Only")
             .description("Changes the tool only when starting to mine.").defaultValue(true)
             .build();
 
