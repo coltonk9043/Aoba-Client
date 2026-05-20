@@ -31,7 +31,7 @@ public class AutoTool extends Module implements BlockStateListener, TickListener
             .description("Switches back to previous slot when done.").defaultValue(true)
             .build();
     private final BooleanSetting miningOnly = BooleanSetting.builder().id("autotool_miningonly").displayName("Mining only")
-            .description("Changes the tool only when starting to mine").defaultValue(true)
+            .description("Changes the tool only when starting to mine.").defaultValue(true)
             .build();
 
     public AutoTool() {
