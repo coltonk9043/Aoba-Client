@@ -117,6 +117,10 @@ public class BlocksComponent extends Component {
 
 		ItemPreviewComponent preview = new ItemPreviewComponent();
 		preview.setProperty(ItemPreviewComponent.ItemProperty, block.asItem());
+
+		// Let the parent 'cell' handle all mouse interactions (hover and clicks)
+		preview.setProperty(UIElement.IsHitTestVisibleProperty, false);
+
 		cell.setContent(preview);
 
 		cell.setOnClicked(e -> {
