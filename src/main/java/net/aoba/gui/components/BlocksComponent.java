@@ -8,8 +8,10 @@
 
 package net.aoba.gui.components;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.function.Consumer;
 
 import net.aoba.gui.UIElement;
@@ -21,51 +23,63 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.Items;
 
 public class BlocksComponent extends Component {
 	private static final float BLOCK_SIZE = 40f;
 	private static final float DEFAULT_HEIGHT = 128f;
-	
+
 	private static final Shader SELECTED_EFFECT = Shader.solid(new Color(0, 255, 0, 55));
 
 	private HashSet<Block> blocks;
-	
+
 	// TODO: Change this to a UIProperty
 	private BlocksSetting blocksSetting;
 	private Consumer<HashSet<Block>> onChanged;
 
-	private final WrapPanelComponent wrapPanel;
+	private WrapPanelComponent wrapPanel;
+
+	// We cache the valid blocks and their cells so we don't have to rebuild them on every keystroke
+	private final List<Block> validBlocks = new ArrayList<>();
 	private final HashMap<Block, RectangleComponent> cellByBlock = new HashMap<>();
 
 	public BlocksComponent(HashSet<Block> blocks, Consumer<HashSet<Block>> onChanged) {
 		this.blocks = blocks;
 		this.onChanged = onChanged;
-		ScrollComponent scroll = new ScrollComponent();
-		WrapPanelComponent wp = new WrapPanelComponent();
-		wp.setVirtualized(true);
-		wp.setProperty(WrapPanelComponent.ItemSpacingProperty, 4f);
-		wp.setProperty(WrapPanelComponent.RowSpacingProperty, 4f);
-		scroll.setContent(wp);
-		setContent(scroll);
-		this.wrapPanel = wp;
-		populate();
+		initLayout();
 	}
 
 	public BlocksComponent(BlocksSetting setting) {
 		this.blocksSetting = setting;
 		this.blocks = setting.getValue();
-		setProperty(UIElement.HeightProperty, DEFAULT_HEIGHT);
+		initLayout();
+		this.blocksSetting.addOnUpdate(settingListener);
+	}
+
+	private void initLayout() {
+		StackPanelComponent mainLayout = new StackPanelComponent();
+		mainLayout.setSpacing(4f);
+
+		TextBoxComponent searchTextBox = new TextBoxComponent();
+		searchTextBox.setProperty(TextBoxComponent.PlaceholderText, "Search blocks...");
+		searchTextBox.setOnTextChanged(this::onSearchTextChanged);
+		mainLayout.addChild(searchTextBox);
 
 		ScrollComponent scroll = new ScrollComponent();
-		WrapPanelComponent wp = new WrapPanelComponent();
-		wp.setVirtualized(true);
-		wp.setProperty(WrapPanelComponent.ItemSpacingProperty, 4f);
-		wp.setProperty(WrapPanelComponent.RowSpacingProperty, 4f);
-		scroll.setContent(wp);
-		setContent(scroll);
-		this.wrapPanel = wp;
+		scroll.setProperty(UIElement.HeightProperty, DEFAULT_HEIGHT);
+
+		this.wrapPanel = new WrapPanelComponent();
+		this.wrapPanel.setVirtualized(true);
+		this.wrapPanel.setProperty(WrapPanelComponent.ItemSpacingProperty, 4f);
+		this.wrapPanel.setProperty(WrapPanelComponent.RowSpacingProperty, 4f);
+		scroll.setContent(this.wrapPanel);
+
+		mainLayout.addChild(scroll);
+		setContent(mainLayout);
+
 		populate();
-		this.blocksSetting.addOnUpdate(settingListener);
+		// Force the initial layout state
+		onSearchTextChanged("");
 	}
 
 	private final Consumer<HashSet<Block>> settingListener = this::onSettingValueChanged;
@@ -77,14 +91,16 @@ public class BlocksComponent extends Component {
 		super.dispose();
 	}
 
-
 	private void populate() {
 		int count = BuiltInRegistries.BLOCK.size();
 		for (int i = 0; i < count; i++) {
 			Block block = BuiltInRegistries.BLOCK.byId(i);
-			if (block == null)
+			if (block == null || block.asItem() == Items.AIR)
 				continue;
-			wrapPanel.addChild(createCell(block));
+
+			// Cache them in order instead of immediately adding them to the panel
+			validBlocks.add(block);
+			cellByBlock.put(block, createCell(block));
 		}
 	}
 
@@ -97,6 +113,8 @@ public class BlocksComponent extends Component {
 		if (blocks.contains(block))
 			cell.setProperty(UIElement.BackgroundProperty, SELECTED_EFFECT);
 
+		cell.setProperty(UIElement.ToolTipProperty, block.getName().getString());
+
 		ItemPreviewComponent preview = new ItemPreviewComponent();
 		preview.setProperty(ItemPreviewComponent.ItemProperty, block.asItem());
 		cell.setContent(preview);
@@ -108,8 +126,24 @@ public class BlocksComponent extends Component {
 			}
 		});
 
-		cellByBlock.put(block, cell);
 		return cell;
+	}
+
+	private void onSearchTextChanged(String text) {
+		String filter = (text == null) ? "" : text.toLowerCase().trim();
+
+		// Clear all elements to force a fresh layout recalculation.
+		wrapPanel.clearChildren();
+
+		for (Block block : validBlocks) {
+			String localizedName = block.getName().getString().toLowerCase();
+			String registryPath = BuiltInRegistries.BLOCK.getKey(block).getPath().toLowerCase();
+
+			if (filter.isEmpty() || localizedName.contains(filter) || registryPath.contains(filter)) {
+				// Only append cells that match, forcing the wrap panel to reflow them to the top
+				wrapPanel.addChild(cellByBlock.get(block));
+			}
+		}
 	}
 
 	private void toggleBlock(Block block, RectangleComponent cell) {
