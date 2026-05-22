@@ -150,29 +150,36 @@ public class Renderer3D extends AbstractRenderer {
 		tri(currentBuilder, matrix4f, x0, y0, z0, 0, 0, x0, y0, z1, 1, 0, x0, y1, z1, 1, 1);
 		tri(currentBuilder, matrix4f, x0, y0, z0, 0, 0, x0, y1, z1, 1, 1, x0, y1, z0, 0, 1);
 
-		float t = lineThickness * 0.005f;
-		edge(currentBuilder, matrix4f, camera, box.minX, box.minY, box.minZ, box.maxX, box.minY, box.minZ, t);
-		edge(currentBuilder, matrix4f, camera, box.maxX, box.minY, box.minZ, box.maxX, box.minY, box.maxZ, t);
-		edge(currentBuilder, matrix4f, camera, box.maxX, box.minY, box.maxZ, box.minX, box.minY, box.maxZ, t);
-		edge(currentBuilder, matrix4f, camera, box.minX, box.minY, box.maxZ, box.minX, box.minY, box.minZ, t);
-		edge(currentBuilder, matrix4f, camera, box.minX, box.minY, box.minZ, box.minX, box.maxY, box.minZ, t);
-		edge(currentBuilder, matrix4f, camera, box.maxX, box.minY, box.minZ, box.maxX, box.maxY, box.minZ, t);
-		edge(currentBuilder, matrix4f, camera, box.maxX, box.minY, box.maxZ, box.maxX, box.maxY, box.maxZ, t);
-		edge(currentBuilder, matrix4f, camera, box.minX, box.minY, box.maxZ, box.minX, box.maxY, box.maxZ, t);
-		edge(currentBuilder, matrix4f, camera, box.minX, box.maxY, box.minZ, box.maxX, box.maxY, box.minZ, t);
-		edge(currentBuilder, matrix4f, camera, box.maxX, box.maxY, box.minZ, box.maxX, box.maxY, box.maxZ, t);
-		edge(currentBuilder, matrix4f, camera, box.maxX, box.maxY, box.maxZ, box.minX, box.maxY, box.maxZ, t);
-		edge(currentBuilder, matrix4f, camera, box.minX, box.maxY, box.maxZ, box.minX, box.maxY, box.minZ, t);
+		edge(currentBuilder, matrix4f, camera, box.minX, box.minY, box.minZ, box.maxX, box.minY, box.minZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.maxX, box.minY, box.minZ, box.maxX, box.minY, box.maxZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.maxX, box.minY, box.maxZ, box.minX, box.minY, box.maxZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.minX, box.minY, box.maxZ, box.minX, box.minY, box.minZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.minX, box.minY, box.minZ, box.minX, box.maxY, box.minZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.maxX, box.minY, box.minZ, box.maxX, box.maxY, box.minZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.maxX, box.minY, box.maxZ, box.maxX, box.maxY, box.maxZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.minX, box.minY, box.maxZ, box.minX, box.maxY, box.maxZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.minX, box.maxY, box.minZ, box.maxX, box.maxY, box.minZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.maxX, box.maxY, box.minZ, box.maxX, box.maxY, box.maxZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.maxX, box.maxY, box.maxZ, box.minX, box.maxY, box.maxZ, lineThickness);
+		edge(currentBuilder, matrix4f, camera, box.minX, box.maxY, box.maxZ, box.minX, box.maxY, box.minZ, lineThickness);
 	}
 
 	public void drawLine(Vec3 pos1, Vec3 pos2, Shader shader) {
 		drawLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, shader);
 	}
+	
+	public void drawLine(Vec3 pos1, Vec3 pos2, Shader shader, float thickness) {
+		drawLine(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z, shader, thickness);
+	}
 
 	public void drawLine(double x1, double y1, double z1, double x2, double y2, double z2, Shader shader) {
+		drawLine(x1, y1, z1, x2, y2, z2, shader, 1f);
+	}
+	
+	public void drawLine(double x1, double y1, double z1, double x2, double y2, double z2, Shader shader, float thickness) {
 		ensureBatch(shader);
 		Matrix4f matrix4f = matrixStack.last().pose();
-		edge(currentBuilder, matrix4f, camera, x1, y1, z1, x2, y2, z2, 0.005f);
+		edge(currentBuilder, matrix4f, camera, x1, y1, z1, x2, y2, z2, thickness);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -403,38 +410,60 @@ public class Renderer3D extends AbstractRenderer {
 		vc.addVertex(m, x3, y3, z3).setUv(u3, v3);
 	}
 
+	/**
+	 * Draws a camera-facing edge in 3D space from one point to another.
+	 */
 	private static void edge(VertexConsumer vc, Matrix4f m, Camera camera, double x1, double y1, double z1, double x2,
 			double y2, double z2, float thickness) {
-		Vec3 cam = camera.position();
-		float cx1 = (float) (x1 - cam.x), cy1 = (float) (y1 - cam.y), cz1 = (float) (z1 - cam.z);
-		float cx2 = (float) (x2 - cam.x), cy2 = (float) (y2 - cam.y), cz2 = (float) (z2 - cam.z);
+		Vec3 cameraPos = camera.position();
 
-		float dx = cx2 - cx1, dy = cy2 - cy1, dz = cz2 - cz1;
-		float mx = (cx1 + cx2) * 0.5f, my = (cy1 + cy2) * 0.5f, mz = (cz1 + cz2) * 0.5f;
-		Vector3f off = new Vector3f(dy * mz - dz * my, dz * mx - dx * mz, dx * my - dy * mx);
+		Vec3 pos1 = new Vec3(x1, y1, z1);
+		Vec3 pos2 = new Vec3(x2, y2, z2);
+		Vec3 startPos = pos1.subtract(cameraPos);
+		Vec3 endPos = pos2.subtract(cameraPos);
+		Vec3 lineDirection = endPos.subtract(startPos);
 
-		// Do not draw if the length is below 0.000001f;
-		float len = off.length();
-		if (len < 1e-6f)
+		// Face the lines toward the camera.
+		double fovRad = Math.toRadians(MC.options.fov().get());
+		double pixelToWorld = Math.tan(fovRad * 0.5f) / MC.getWindow().getHeight();
+
+		// Start offset
+		double distStart = startPos.length();
+		Vec3 offsetStart = new Vec3(
+				lineDirection.y * startPos.z - lineDirection.z * startPos.y,
+				lineDirection.z * startPos.x - lineDirection.x * startPos.z,
+				lineDirection.x * startPos.y - lineDirection.y * startPos.x);
+		double offsetStartLen = offsetStart.length();
+		if (offsetStartLen < 0.000001)
 			return;
-		off.mul(thickness / len);
+		offsetStart = offsetStart.scale(thickness * distStart * pixelToWorld / offsetStartLen);
 
-		float ox = off.x, oy = off.y, oz = off.z;
-		vc.addVertex(m, cx1 - ox, cy1 - oy, cz1 - oz).setUv(0, 0);
-		vc.addVertex(m, cx1 + ox, cy1 + oy, cz1 + oz).setUv(0, 1);
-		vc.addVertex(m, cx2 + ox, cy2 + oy, cz2 + oz).setUv(1, 1);
-		vc.addVertex(m, cx1 - ox, cy1 - oy, cz1 - oz).setUv(0, 0);
-		vc.addVertex(m, cx2 + ox, cy2 + oy, cz2 + oz).setUv(1, 1);
-		vc.addVertex(m, cx2 - ox, cy2 - oy, cz2 - oz).setUv(1, 0);
+		// End offset
+		double distEnd = endPos.length();
+		Vec3 offsetEnd = new Vec3(
+				lineDirection.y * endPos.z - lineDirection.z * endPos.y,
+				lineDirection.z * endPos.x - lineDirection.x * endPos.z,
+				lineDirection.x * endPos.y - lineDirection.y * endPos.x);
+		double offsetEndLen = offsetEnd.length();
+		if (offsetEndLen < 0.000001)
+			return;
+		offsetEnd = offsetEnd.scale(thickness * distEnd * pixelToWorld / offsetEndLen);
+
+		vc.addVertex(m, (float)(startPos.x - offsetStart.x), (float)(startPos.y - offsetStart.y), (float)(startPos.z - offsetStart.z)).setUv(0, 0);
+		vc.addVertex(m, (float)(startPos.x + offsetStart.x), (float)(startPos.y + offsetStart.y), (float)(startPos.z + offsetStart.z)).setUv(0, 1);
+		vc.addVertex(m, (float)(endPos.x + offsetEnd.x), (float)(endPos.y + offsetEnd.y), (float)(endPos.z + offsetEnd.z)).setUv(1, 1);
+		vc.addVertex(m, (float)(startPos.x - offsetStart.x), (float)(startPos.y - offsetStart.y), (float)(startPos.z - offsetStart.z)).setUv(0, 0);
+		vc.addVertex(m, (float)(endPos.x + offsetEnd.x), (float)(endPos.y + offsetEnd.y), (float)(endPos.z + offsetEnd.z)).setUv(1, 1);
+		vc.addVertex(m, (float)(endPos.x - offsetEnd.x), (float)(endPos.y - offsetEnd.y), (float)(endPos.z - offsetEnd.z)).setUv(1, 0);
 	}
 
 	private static float getYaw(Direction direction) {
 		return switch (direction) {
-		case SOUTH -> 90.0f;
-		case WEST -> 0.0f;
-		case NORTH -> 270.0f;
-		case EAST -> 180.0f;
-		default -> 0.0f;
+			case SOUTH -> 90.0f;
+			case WEST -> 0.0f;
+			case NORTH -> 270.0f;
+			case EAST -> 180.0f;
+			default -> 0.0f;
 		};
 	}
 

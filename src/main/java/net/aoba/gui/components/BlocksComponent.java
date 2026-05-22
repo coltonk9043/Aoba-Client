@@ -151,18 +151,20 @@ public class BlocksComponent extends Component {
 	}
 
 	private void toggleBlock(Block block, RectangleComponent cell) {
-		if (blocks.contains(block)) {
-			blocks.remove(block);
+		HashSet<Block> newBlocks = new HashSet<>(blocks);
+		if (newBlocks.contains(block)) {
+			newBlocks.remove(block);
 			cell.setProperty(UIElement.BackgroundProperty, null);
 		} else {
-			blocks.add(block);
+			newBlocks.add(block);
 			cell.setProperty(UIElement.BackgroundProperty, SELECTED_EFFECT);
 		}
+		this.blocks = newBlocks;
 
 		if (blocksSetting != null)
-			blocksSetting.setValue(blocks);
+			blocksSetting.setValue(newBlocks);
 		if (onChanged != null)
-			onChanged.accept(blocks);
+			onChanged.accept(newBlocks);
 	}
 
 	private void onSettingValueChanged(HashSet<Block> b) {
