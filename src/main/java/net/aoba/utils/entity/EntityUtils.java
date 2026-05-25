@@ -23,6 +23,7 @@ import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ShulkerBullet;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityUtils {
 	protected static final AobaClient AOBA_CLIENT = Aoba.getInstance();
@@ -47,6 +48,55 @@ public class EntityUtils {
 	public static Stream<Animal> getValidAnimals() {
 		return StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true).filter(Animal.class::isInstance)
 				.map(e -> (Animal) e).filter(IS_VALID_ANIMAL);
+	}
+
+	public static boolean isInFOV(Entity entity, float fov) {
+		return isInFOV(entity.getEyePosition(), fov);
+	}
+
+	public static boolean isInFOV(Entity entity, BodyPart part, float fov) {
+		return isInFOV(getBodyPartPosition(entity, part, 1.0f), fov);
+	}
+
+	public static boolean isInFOV(Vec3 position, float fov) {
+		if (fov >= 360.0f)
+			return true;
+		Vec3 viewVector = MC.player.getViewVector(1.0f);
+		Vec3 vecToTarget = position.subtract(MC.player.getEyePosition()).normalize();
+		double cosAngle = viewVector.dot(vecToTarget);
+		return cosAngle >= Math.cos(Math.toRadians(fov / 2.0f));
+	}
+
+	public static Vec3 getBodyPartPosition(Entity entity, BodyPart part, float frameDelta) {
+		Vec3 entityPos = entity.getPosition(frameDelta);
+		double entityEyeHeight = entity.getEyeHeight();
+		double bbWidth = entity.getBbWidth();
+
+		double yaw;
+		if(entity instanceof LivingEntity living)
+			yaw = Math.toRadians(living.yBodyRot);
+		else
+			yaw = Math.toRadians(entity.getYRot());
+			
+		double rightX = -Math.cos(yaw);
+		double rightZ = -Math.sin(yaw);
+
+		switch (part) {
+			case HEAD:
+				return entityPos.add(0, entityEyeHeight * 0.95, 0);
+			case CHEST:
+				return entityPos.add(0, entityEyeHeight * 0.65, 0);
+			case LEFT_ARM:
+				return entityPos.add(-rightX * bbWidth * 0.4, entityEyeHeight * 0.6, -rightZ * bbWidth * 0.4);
+			case RIGHT_ARM:
+				return entityPos.add(rightX * bbWidth * 0.4, entityEyeHeight * 0.6, rightZ * bbWidth * 0.4);
+			case LEFT_LEG:
+				return entityPos.add(-rightX * bbWidth * 0.2, entityEyeHeight * 0.3, -rightZ * bbWidth * 0.2);
+			case RIGHT_LEG:
+				return entityPos.add(rightX * bbWidth * 0.2, entityEyeHeight * 0.3, rightZ * bbWidth * 0.2);
+			default:
+				return entityPos.add(0, entityEyeHeight * 0.65, 0);
+		}
 	}
 
 	public static GameType getGameMode(Player player) {

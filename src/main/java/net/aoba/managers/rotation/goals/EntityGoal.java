@@ -10,13 +10,19 @@ package net.aoba.managers.rotation.goals;
 
 import net.aoba.managers.rotation.Rotation;
 import net.aoba.managers.rotation.RotationMode;
+import net.aoba.utils.entity.BodyPart;
+import net.aoba.utils.entity.EntityUtils;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityGoal extends Goal<Entity> {
 
+	private BodyPart bodyPart = BodyPart.CHEST;
+
 	@Override
 	public Rotation getGoalRotation(float tickDelta) {
-		return Rotation.rotationFrom(rotationGoal, tickDelta);
+		Vec3 targetPos = EntityUtils.getBodyPartPosition(rotationGoal, bodyPart, tickDelta);
+		return Rotation.rotationFrom(targetPos);
 	}
 
 	// Builder
@@ -63,6 +69,11 @@ public class EntityGoal extends Goal<Entity> {
 
 		public BUILDER moveFix(boolean state) {
 			goal.moveFix = state;
+			return this;
+		}
+
+		public BUILDER bodyPart(BodyPart part) {
+			goal.bodyPart = part;
 			return this;
 		}
 

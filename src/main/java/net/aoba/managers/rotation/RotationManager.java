@@ -148,10 +148,10 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 
 			// Create new rotation and set player yaw and pitch to the rotation.
 			Rotation newRotation = new Rotation(startYaw + maxYawRotationDelta, startPitch + maxPitchRotation)
-					.roundToGCD().clamp();
+					.roundToGCD();
 			return newRotation;
 		case INSTANT:
-			return currentGoalRotation;
+			return currentGoalRotation.roundToGCD().clamp();
 		default:
 			return null;
 		}
