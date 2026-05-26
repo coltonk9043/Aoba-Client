@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.aoba.Aoba;
+import net.aoba.AobaClient;
 import net.minecraft.client.renderer.chunk.VisGraph;
 import net.minecraft.core.BlockPos;
 
@@ -31,7 +32,9 @@ import net.minecraft.core.BlockPos;
 public class VisGraphMixin {
 	@Inject(at = { @At("HEAD") }, method = { "setOpaque" }, cancellable = true)
 	private void onMarkClosed(BlockPos pos, CallbackInfo ci) {
-		if (Aoba.getInstance().moduleManager.xray.state.getValue()) {
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba.moduleManager.xray.state.getValue()
+				|| (aoba.moduleManager.freecam.state.getValue() && aoba.moduleManager.freecam.disableCulling.getValue())) {
 			ci.cancel();
 		}
 	}

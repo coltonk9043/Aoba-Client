@@ -45,6 +45,14 @@ public class CameraMixin {
 		}
 	}
 
+	@Inject(at = { @At("HEAD") }, method = "isDetached()Z", cancellable = true)
+	private void onIsDetached(CallbackInfoReturnable<Boolean> cir) {
+		AobaClient aoba = Aoba.getInstance();
+		if (aoba != null && aoba.moduleManager.freecam.state.getValue()) {
+			cir.setReturnValue(true);
+		}
+	}
+
 	@Inject(at = {
 			@At("HEAD") }, method = "getFluidInCamera()Lnet/minecraft/world/level/material/FogType;", cancellable = true)
 	private void onGetSubmersionType(CallbackInfoReturnable<FogType> cir) {

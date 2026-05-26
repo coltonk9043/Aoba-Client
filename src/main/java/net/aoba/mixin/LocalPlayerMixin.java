@@ -24,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.PlayerHealthEvent;
@@ -33,7 +32,6 @@ import net.aoba.gui.GuiManager;
 import net.aoba.mixin.interfaces.ICamera;
 import net.aoba.module.modules.combat.AntiKnockback;
 import net.aoba.module.modules.movement.Fly;
-import net.aoba.module.modules.movement.Freecam;
 import net.aoba.module.modules.movement.HighJump;
 import net.aoba.module.modules.movement.Noclip;
 import net.aoba.module.modules.movement.Step;
@@ -56,21 +54,6 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayerMixin {
 
 		if (state && hudManager.isClickGuiOpen()) {
 			hudManager.setClickGuiOpen(false);
-		}
-	}
-
-	@Inject(at = { @At("HEAD") }, method = "isControlledCamera()Z", cancellable = true)
-	private void onIsCamera(CallbackInfoReturnable<Boolean> cir) {
-		Freecam freecam = Aoba.getInstance().moduleManager.freecam;
-		if (freecam.state.getValue()) {
-			cir.setReturnValue(true);
-		}
-	}
-
-	@Override
-	public void onIsSpectator(CallbackInfoReturnable<Boolean> cir) {
-		if (Aoba.getInstance().moduleManager.freecam.state.getValue()) {
-			cir.setReturnValue(true);
 		}
 	}
 
@@ -106,12 +89,6 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayerMixin {
 		if (higherJump.state.getValue()) {
 			cir.setReturnValue(higherJump.getJumpHeightMultiplier());
 		}
-	}
-
-	@Override
-	public void onTickNewAi(CallbackInfo ci) {
-		if (Aoba.getInstance().moduleManager.freecam.state.getValue())
-			ci.cancel();
 	}
 
 	@Override
