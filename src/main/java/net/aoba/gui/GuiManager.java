@@ -50,6 +50,7 @@ import net.aoba.gui.navigation.huds.ArmorHud;
 import net.aoba.gui.navigation.huds.CoordsHud;
 import net.aoba.gui.navigation.huds.DayHud;
 import net.aoba.gui.navigation.huds.FPSHud;
+import net.aoba.gui.navigation.huds.InputHud;
 import net.aoba.gui.navigation.huds.ModuleArrayListHud;
 import net.aoba.gui.navigation.huds.ModuleSelectorHud;
 import net.aoba.gui.navigation.huds.NetherCoordsHud;
@@ -193,6 +194,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 	public FPSHud fpsHud;
 	public PingHud pingHud;
 	public SpeedHud speedHud;
+	public InputHud inputHud;
 
 	public GuiManager() {
 		clickGuiTabControl = new TabComponent();
@@ -239,9 +241,10 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 		fpsHud = new FPSHud(0, 0);
 		pingHud = new PingHud(0, 0);
 		speedHud = new SpeedHud(0, 0);
+		inputHud = new InputHud(0,0);
 
 		ArrayList<HudWindow> huds = Lists.newArrayList(moduleSelector, armorHud, radarHud, timeHud, dayHud,
-				moduleArrayListHud, watermarkHud, coordsHud, netherCoordsHud, fpsHud, pingHud, speedHud);
+				moduleArrayListHud, watermarkHud, coordsHud, netherCoordsHud, fpsHud, pingHud, speedHud, inputHud);
 		hudPane.addWindow(new UIOptionsWindow());
 		hudPane.addWindow(new ToggleHudsTab(huds));
 		Map<String, Category> categories = Category.getAllCategories();
