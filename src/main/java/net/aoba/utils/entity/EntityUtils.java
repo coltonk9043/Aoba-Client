@@ -8,47 +8,27 @@
 
 package net.aoba.utils.entity;
 
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.UUID;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ShulkerBullet;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityUtils {
 	protected static final AobaClient AOBA_CLIENT = Aoba.getInstance();
 	protected static final Minecraft MC = AobaClient.MC;
-
-	/**
-	 * Predicates
-	 */
-	public static final Predicate<Entity> IS_ATTACKABLE = e -> e != null && !e.isRemoved()
-			&& (e instanceof LivingEntity && ((LivingEntity) e).getHealth() > 0 || e instanceof EndCrystal
-					|| e instanceof ShulkerBullet)
-			&& e != MC.player && !(e instanceof FakePlayerEntity) && !AOBA_CLIENT.friendsList.contains(e.getUUID());
-	public static final Predicate<Animal> IS_VALID_ANIMAL = a -> a != null && !a.isRemoved() && a.getHealth() > 0;
-
-	public static final Predicate<Player> IS_PLAYER = p -> p != null && !p.isRemoved() && p.getHealth() > 0
-			&& !AOBA_CLIENT.friendsList.contains(p.getUUID()) && p != MC.player && !(p instanceof FakePlayerEntity);
-
-	public static Stream<Entity> getAttackableEntities() {
-		return StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true).filter(IS_ATTACKABLE);
-	}
-
-	public static Stream<Animal> getValidAnimals() {
-		return StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true).filter(Animal.class::isInstance)
-				.map(e -> (Animal) e).filter(IS_VALID_ANIMAL);
-	}
 
 	public static boolean isInFOV(Entity entity, float fov) {
 		return isInFOV(entity.getEyePosition(), fov);
@@ -106,5 +86,62 @@ public class EntityUtils {
 		if (playerListEntry == null)
 			return null;
 		return playerListEntry.getGameMode();
+	}
+	
+	/**
+	 * Gets whether the player is possibly a bot.
+	 * @param player Player to check.
+	 * @return True if the player could be a bot, false otherwise.
+	 */
+	public static boolean isNPC(Player player) {
+		if (player == null)
+			return false;
+		
+		ClientPacketListener connection = MC.getConnection();
+		if (connection == null)
+			return false;
+
+		// Check if the player is on the tab-list
+		PlayerInfo info = connection.getPlayerInfo(player.getUUID());
+		if (info == null)
+			return true;
+
+		// Assume that the server is in OFFLINE MODE if the 
+		// current player's UUID version is NOT 4. 
+		// Skip the remaining checks as every player will be flagged.
+		boolean serverIsOffline = MC.player != null && MC.player.getUUID().version() != 4;
+		if (serverIsOffline)
+			return false;
+
+		UUID uuid = player.getUUID();
+		GameProfile profile = info.getProfile();
+
+		// Mojang official UUIDs use V4, not V3 or V5.
+		if (uuid.version() != 4)
+			return true;
+	
+		// Ensure that the player has signed textures.
+		// In an online server- every player SHOULD have a valid signature
+		// on their textures.
+		Collection<Property> textures = profile.properties().get("textures");
+		if (textures.isEmpty())
+			return true;
+		
+		boolean hasSignedTexture = false;
+		for (Property prop : textures) {
+			String signature = prop.signature();
+			if (signature != null && !signature.isEmpty()) {
+				hasSignedTexture = true;
+				break;
+			}
+		}
+	
+		if (!hasSignedTexture)
+			return true;
+		return false;
+	}
+
+	public static boolean isFriend(Player player) {
+		return Aoba.getInstance().friendsList.contains(player);
 	}
 }

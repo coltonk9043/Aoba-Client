@@ -21,6 +21,9 @@ import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.entity.BodyPart;
+import net.aoba.utils.entity.EntityUtils;
+import net.aoba.utils.entity.TargetPriority;
 import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,15 +34,22 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class KillAura extends Module implements TickListener {
-	private enum Priority {
-		LOWESTHP, CLOSEST
-	}
-
-	private final Priority priority = Priority.CLOSEST; // why isnt this a setting???
+	private final EnumSetting<TargetPriority> targetPriority = EnumSetting.<TargetPriority>builder()
+			.id("killaura_target_priority").displayName("Target Priority")
+			.description("The priority used to pick which target to attack.").defaultValue(TargetPriority.CLOSEST)
+			.build();
 
 	private final FloatSetting radius = FloatSetting.builder().id("killaura_radius").displayName("Radius")
 			.description("Radius that KillAura will target entities.").defaultValue(5f).minValue(0.1f).maxValue(10f)
 			.step(0.1f).build();
+
+	private final FloatSetting fov = FloatSetting.builder().id("killaura_fov").displayName("FOV")
+			.description("Angular cone in front of the player that targets must fall within.").defaultValue(360.0f)
+			.minValue(1.0f).maxValue(360.0f).step(1.0f).build();
+
+	private final EnumSetting<BodyPart> bodyPart = EnumSetting.<BodyPart>builder().id("killaura_body_part")
+			.displayName("Body Part").description("The part of the target's body to aim at.")
+			.defaultValue(BodyPart.HEAD).build();
 
 	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("killaura_target_animals")
 			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
@@ -53,6 +63,20 @@ public class KillAura extends Module implements TickListener {
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("killaura_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
 
+	private final BooleanSetting ignoreDead = BooleanSetting.builder().id("killaura_ignore_dead")
+			.displayName("Ignore Dead").description("Skip entities that are dead or dying.").defaultValue(true).build();
+
+	private final BooleanSetting ignoreInvisible = BooleanSetting.builder().id("killaura_ignore_invisible")
+			.displayName("Ignore Invisible").description("Skip entities that are invisible.").defaultValue(true)
+			.build();
+
+	private final BooleanSetting ignoreSleeping = BooleanSetting.builder().id("killaura_ignore_sleeping")
+			.displayName("Ignore Sleeping").description("Skip players that are sleeping.").defaultValue(true).build();
+
+	private final BooleanSetting ignoreNPCs = BooleanSetting.builder().id("killaura_ignore_npcs")
+			.displayName("Ignore NPCs").description("Attempts to ignore NPCs based on the entity UUID.")
+			.defaultValue(true).build();
+
 	private final FloatSetting randomness = FloatSetting.builder().id("killaura_randomness").displayName("Randomness")
 			.description("The randomness of the delay between when KillAura will hit a target.").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(60.0f).step(1.0f).build();
@@ -60,7 +84,7 @@ public class KillAura extends Module implements TickListener {
 	private final BooleanSetting legit = BooleanSetting.builder().id("killaura_legit").displayName("Legit")
 			.description(
 					"Whether a raycast will be used to ensure that KillAura will not hit a player outside of the view")
-			.defaultValue(false).build();
+			.defaultValue(true).build();
 
 	private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
 			.id("killaura_rotation_mode").displayName("Rotation Mode")
@@ -83,8 +107,7 @@ public class KillAura extends Module implements TickListener {
 			.description("Spoofs the client's rotation so that the player appears rotated on the server")
 			.defaultValue(false).build();
 
-	private final BooleanSetting moveFix = BooleanSetting.builder().id("killaura_move_fix")
-			.displayName("Move Fix")
+	private final BooleanSetting moveFix = BooleanSetting.builder().id("killaura_move_fix").displayName("Move Fix")
 			.description("Corrects movement to match spoofed rotation by using the server yaw for velocity.")
 			.defaultValue(false).build();
 
@@ -96,11 +119,18 @@ public class KillAura extends Module implements TickListener {
 		setCategory(Category.of("Combat"));
 		setDescription("Attacks anything within your personal space.");
 
+		addSetting(targetPriority);
 		addSetting(radius);
+		addSetting(fov);
+		addSetting(bodyPart);
 		addSetting(targetAnimals);
 		addSetting(targetMonsters);
 		addSetting(targetPlayers);
 		addSetting(targetFriends);
+		addSetting(ignoreDead);
+		addSetting(ignoreInvisible);
+		addSetting(ignoreSleeping);
+		addSetting(ignoreNPCs);
 		addSetting(legit);
 		addSetting(randomness);
 		addSetting(rotationMode);
@@ -109,9 +139,6 @@ public class KillAura extends Module implements TickListener {
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
 		addSetting(moveFix);
-
-		setDetectable(AntiCheat.Matrix); // NPC
-
 	}
 
 	@Override
@@ -136,80 +163,84 @@ public class KillAura extends Module implements TickListener {
 		boolean state = randomnessValue == 0
 				|| (Math.round(Math.random() * Math.round(randomness.max_value))) % randomnessValue == 0;
 
-		ArrayList<Entity> hitList = new ArrayList<Entity>();
-		boolean found = false;
+		ArrayList<LivingEntity> hitList = new ArrayList<LivingEntity>();
+		entityToAttack = null;
 
 		// Add all potential entities to the 'hitlist'
+		float radiusSqr = radius.getValueSqr();
 		if (targetAnimals.getValue() || targetMonsters.getValue()) {
 			for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
-				if (MC.player.distanceToSqr(entity) > radius.getValueSqr())
+				if (!(entity instanceof LivingEntity living))
 					continue;
-				if ((entity instanceof Animal && targetAnimals.getValue())
-						|| (entity instanceof Enemy && targetMonsters.getValue())) {
-					hitList.add(entity);
-				}
+
+				if (MC.player.distanceToSqr(entity) > radiusSqr)
+					continue;
+
+				boolean matchesAnimal = targetAnimals.getValue() && living instanceof Animal;
+				boolean matchesMonster = targetMonsters.getValue() && living instanceof Enemy;
+				if (!matchesAnimal && !matchesMonster)
+					continue;
+
+				if (!shouldTarget(living))
+					continue;
+
+				hitList.add(living);
 			}
 		}
 
 		// Add all potential players to the 'hitlist'
 		if (targetPlayers.getValue()) {
 			for (Player player : Aoba.getInstance().entityManager.getPlayers()) {
-				if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
+				double distanceToPlayerSqr = MC.player.distanceToSqr(player);
+				if (player == MC.player || distanceToPlayerSqr > radiusSqr)
 					continue;
 
-				if (player == MC.player || MC.player.distanceToSqr(player) > (radius.getValueSqr())) {
+				if (!shouldTarget(player))
 					continue;
-				}
+
 				hitList.add(player);
 			}
 		}
 
 		// For each entity, get the entity that matches a criteria.
-		for (Entity entity : hitList) {
-			LivingEntity le = (LivingEntity) entity;
+		for (LivingEntity entity : hitList) {
 			if (entityToAttack == null) {
-				entityToAttack = le;
-				found = true;
-			} else {
-				if (priority == Priority.LOWESTHP) {
-					if (le.getHealth() <= entityToAttack.getHealth()) {
-						entityToAttack = le;
-						found = true;
-					}
-				} else if (priority == Priority.CLOSEST) {
-					if (MC.player.distanceToSqr(le) <= MC.player.distanceToSqr(entityToAttack)) {
-						entityToAttack = le;
-						found = true;
-					}
+				entityToAttack = entity;
+			} else if (targetPriority.getValue() == TargetPriority.LOWEST_HEALTH) {
+				if (entity.getHealth() <= entityToAttack.getHealth()) {
+					entityToAttack = entity;
 				}
+			} else if (targetPriority.getValue() == TargetPriority.MOST_HEALTH) {
+				if (entity.getHealth() >= entityToAttack.getHealth()) {
+					entityToAttack = entity;
+				}
+			} else if (MC.player.distanceToSqr(entity) <= MC.player.distanceToSqr(entityToAttack)) {
+				entityToAttack = entity;
 			}
 		}
 
 		// If the entity is found, we want to attach it.
-		if (found) {
+		if (entityToAttack != null) {
 			EntityGoal rotation = EntityGoal.builder().goal(entityToAttack).mode(rotationMode.getValue())
 					.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
 					.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
-					.moveFix(moveFix.getValue()).build();
+					.moveFix(moveFix.getValue()).bodyPart(bodyPart.getValue()).build();
 			Aoba.getInstance().rotationManager.setGoal(rotation);
 
-			if (MC.player.getAttackStrengthScale(0) == 1) {
+			if (MC.player.getAttackStrengthScale(0) == 1 && state) {
+				if (legit.getValue()) {
+					HitResult ray = MC.hitResult;
 
-				if (state) {
-					if (legit.getValue()) {
-						HitResult ray = MC.hitResult;
+					if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
+						EntityHitResult entityResult = (EntityHitResult) ray;
+						Entity ent = entityResult.getEntity();
 
-						if (ray != null && ray.getType() == HitResult.Type.ENTITY) {
-							EntityHitResult entityResult = (EntityHitResult) ray;
-							Entity ent = entityResult.getEntity();
-
-							if (ent == entityToAttack) {
-								InteractionUtils.attack(ent);
-							}
+						if (ent == entityToAttack) {
+							InteractionUtils.attack(ent);
 						}
-					} else {
-						InteractionUtils.attack(entityToAttack);
 					}
+				} else {
+					InteractionUtils.attack(entityToAttack);
 				}
 			}
 		} else {
@@ -220,5 +251,34 @@ public class KillAura extends Module implements TickListener {
 	@Override
 	public void onTick(Post event) {
 
+	}
+
+	/**
+	 * Whether the KillAura will target a specific entity based on the current
+	 * settings.
+	 * 
+	 * @param entity Entity to target.
+	 * @return True if the target can be targeted, false otherwise.
+	 */
+	private boolean shouldTarget(LivingEntity entity) {
+		if (!EntityUtils.isInFOV(entity, bodyPart.getValue(), fov.getValue()))
+			return false;
+
+		if (ignoreDead.getValue() && !entity.isAlive())
+			return false;
+
+		if (ignoreInvisible.getValue() && entity.isInvisible())
+			return false;
+
+		if (ignoreSleeping.getValue() && entity.isSleeping())
+			return false;
+
+		if (entity instanceof Player player) {
+			if (!targetFriends.getValue() && EntityUtils.isFriend(player))
+				return false;
+			if (ignoreNPCs.getValue() && EntityUtils.isNPC(player))
+				return false;
+		}
+		return true;
 	}
 }

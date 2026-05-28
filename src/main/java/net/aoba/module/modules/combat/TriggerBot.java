@@ -16,6 +16,7 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.entity.EntityUtils;
 import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -47,10 +48,24 @@ public class TriggerBot extends Module implements TickListener {
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("triggerbot_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
 
+	private final BooleanSetting ignoreDead = BooleanSetting.builder().id("triggerbot_ignore_dead")
+			.displayName("Ignore Dead").description("Skip entities that are dead or dying.").defaultValue(true).build();
+
+	private final BooleanSetting ignoreInvisible = BooleanSetting.builder().id("triggerbot_ignore_invisible")
+			.displayName("Ignore Invisible").description("Skip entities that are invisible.").defaultValue(true)
+			.build();
+
+	private final BooleanSetting ignoreSleeping = BooleanSetting.builder().id("triggerbot_ignore_sleeping")
+			.displayName("Ignore Sleeping").description("Skip players that are sleeping.").defaultValue(true).build();
+
+	private final BooleanSetting ignoreNPCs = BooleanSetting.builder().id("triggerbot_ignore_npcs")
+			.displayName("Ignore NPCs").description("Attempts to ignore NPCs based on the entity UUID.")
+			.defaultValue(true).build();
+
 	private final FloatSetting attackDelay = FloatSetting.builder().id("triggerbot_attack_delay")
 			.displayName("Attack Delay").description("Delay in milliseconds between attacks.").defaultValue(0f)
 			.minValue(0f).maxValue(500f).step(10f).build();
-	
+
 	private final FloatSetting randomness = FloatSetting.builder().id("triggerbot_randomness").displayName("Randomness")
 			.description("The randomness of the delay between when TriggerBot will hit a target.").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(60.0f).step(1f).build();
@@ -69,6 +84,10 @@ public class TriggerBot extends Module implements TickListener {
 		addSetting(targetMonsters);
 		addSetting(targetPlayers);
 		addSetting(targetFriends);
+		addSetting(ignoreDead);
+		addSetting(ignoreInvisible);
+		addSetting(ignoreSleeping);
+		addSetting(ignoreNPCs);
 		addSetting(randomness);
 
 		lastAttackTime = 0L;
@@ -98,10 +117,10 @@ public class TriggerBot extends Module implements TickListener {
 		int randomnessValue = randomness.getValue().intValue();
 		boolean state = randomnessValue == 0
 				|| (Math.round(Math.random() * Math.round(randomness.max_value))) % randomnessValue == 0;
-		
-		if (MC.player.getAttackStrengthScale(1.0f) < 1|| !state)
+
+		if (MC.player.getAttackStrengthScale(1.0f) < 1 || !state)
 			return;
-		
+
 		double reach = radius.getValue();
 		Vec3 eyePos = MC.player.getEyePosition();
 		Vec3 lookVector = MC.player.getViewVector(1.0F);
@@ -109,31 +128,43 @@ public class TriggerBot extends Module implements TickListener {
 
 		// TODO: We should likely move this to a helper
 		// Check for a block is in the way of the player.
-		BlockHitResult blockHit = MC.level.clip(new ClipContext(
-				eyePos, lookEndPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, MC.player));
+		BlockHitResult blockHit = MC.level.clip(
+				new ClipContext(eyePos, lookEndPos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, MC.player));
 		if (blockHit.getType() != HitResult.Type.MISS) {
 			lookEndPos = blockHit.getLocation();
 		}
-		
+
 		// Perform our own hit-cast using radius
 		double rayDistSqr = eyePos.distanceToSqr(lookEndPos);
-		AABB hitcastSearchBox = MC.player.getBoundingBox().expandTowards(lookVector.scale(reach)).inflate(1.0, 1.0, 1.0);
-		EntityHitResult entityResult = ProjectileUtil.getEntityHitResult(
-				MC.player, eyePos, lookEndPos, hitcastSearchBox,
-				e -> !e.isSpectator() && e.isPickable() && e != MC.player,
-				rayDistSqr);
+		AABB hitcastSearchBox = MC.player.getBoundingBox().expandTowards(lookVector.scale(reach)).inflate(1.0, 1.0,
+				1.0);
+		EntityHitResult entityResult = ProjectileUtil.getEntityHitResult(MC.player, eyePos, lookEndPos,
+				hitcastSearchBox, e -> !e.isSpectator() && e.isPickable() && e != MC.player, rayDistSqr);
 
 		if (entityResult != null) {
 			Entity ent = entityResult.getEntity();
-			if (!(ent instanceof LivingEntity) || !ent.isAlive())
+			if (!(ent instanceof LivingEntity living))
 				return;
 
 			// Filter out entities which are NOT allowed to be hit.
 			if (ent instanceof Animal && !targetAnimals.getValue())
 				return;
-			if (ent instanceof Player && !targetPlayers.getValue() || (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(ent.getUUID())))
-				return;
 			if (ent instanceof Enemy && !targetMonsters.getValue())
+				return;
+			if (ent instanceof Player player) {
+				if (!targetPlayers.getValue())
+					return;
+				if (!targetFriends.getValue() && EntityUtils.isFriend(player))
+					return;
+				if (ignoreNPCs.getValue() && EntityUtils.isNPC(player))
+					return;
+			}
+
+			if (ignoreDead.getValue() && !living.isAlive())
+				return;
+			if (ignoreInvisible.getValue() && living.isInvisible())
+				return;
+			if (ignoreSleeping.getValue() && living.isSleeping())
 				return;
 
 			// Get the distance from the edges of the hitbox.

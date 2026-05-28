@@ -8,10 +8,7 @@
 
 package net.aoba.module.modules.combat;
 
-import java.util.Comparator;
-import java.util.function.ToDoubleFunction;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.ArrayList;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
@@ -22,9 +19,15 @@ import net.aoba.managers.rotation.goals.RotationGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.utils.entity.BodyPart;
 import net.aoba.utils.entity.EntityUtils;
+import net.aoba.utils.entity.TargetPriority;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
@@ -33,11 +36,42 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class BowAimbot extends Module implements TickListener {
-	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("bowaimbot_target_mobs")
-			.displayName("Target Mobs").description("Target mobs.").defaultValue(false).build();
+	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("bowaimbot_target_animals")
+			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
+
+	private final BooleanSetting targetMonsters = BooleanSetting.builder().id("bowaimbot_target_monsters")
+			.displayName("Target Monsters").description("Target Monsters.").defaultValue(true).build();
 
 	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("bowaimbot_target_players")
 			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
+
+	private final BooleanSetting targetFriends = BooleanSetting.builder().id("bowaimbot_target_friends")
+			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
+
+	private final EnumSetting<TargetPriority> targetPriority = EnumSetting.<TargetPriority>builder()
+			.id("bowaimbot_target_priority").displayName("Target Priority")
+			.description("The priority used to pick which target to aim towards.")
+			.defaultValue(TargetPriority.CLOSEST).build();
+
+	private final EnumSetting<BodyPart> bodyPart = EnumSetting.<BodyPart>builder().id("bowaimbot_body_part")
+			.displayName("Body Part").description("The part of the target's body to aim at.")
+			.defaultValue(BodyPart.CHEST).build();
+
+	private final BooleanSetting ignoreDead = BooleanSetting.builder().id("bowaimbot_ignore_dead")
+			.displayName("Ignore Dead").description("Skip entities that are dead or dying.").defaultValue(true)
+			.build();
+
+	private final BooleanSetting ignoreInvisible = BooleanSetting.builder().id("bowaimbot_ignore_invisible")
+			.displayName("Ignore Invisible").description("Skip entities that are invisible.").defaultValue(true)
+			.build();
+
+	private final BooleanSetting ignoreSleeping = BooleanSetting.builder().id("bowaimbot_ignore_sleeping")
+			.displayName("Ignore Sleeping").description("Skip players that are sleeping.").defaultValue(true)
+			.build();
+
+	private final BooleanSetting ignoreNPCs = BooleanSetting.builder().id("bowaimbot_ignore_npcs")
+			.displayName("Ignore NPCs")
+			.description("Attempts to ignore NPCs based on the entity UUID.").defaultValue(true).build();
 
 	private final FloatSetting frequency = FloatSetting.builder().id("bowaimbot_frequency").displayName("Ticks")
 			.description("How frequent the aimbot updates (Lower = Laggier)").defaultValue(1.0f).minValue(1.0f)
@@ -60,8 +94,16 @@ public class BowAimbot extends Module implements TickListener {
 		setCategory(Category.of("Combat"));
 		setDescription("Calculates the location the crosshair must be to hit an arrow shot.");
 
+		addSetting(targetPriority);
+		addSetting(bodyPart);
 		addSetting(targetAnimals);
+		addSetting(targetMonsters);
 		addSetting(targetPlayers);
+		addSetting(targetFriends);
+		addSetting(ignoreDead);
+		addSetting(ignoreInvisible);
+		addSetting(ignoreSleeping);
+		addSetting(ignoreNPCs);
 		addSetting(frequency);
 		addSetting(predictMovement);
 	}
@@ -117,25 +159,53 @@ public class BowAimbot extends Module implements TickListener {
 			if (velocity > 1)
 				velocity = 1;
 
-			Entity temp = null;
-			if (targetAnimals.getValue() && targetPlayers.getValue()) {
-				if (filterEntities(Stream.of(temp)) == null)
-					temp = filterEntities(
-							StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true));
+			ArrayList<LivingEntity> hitList = new ArrayList<LivingEntity>();
+
+			// Add all potential animals/monsters to the 'hitlist'
+			if (targetAnimals.getValue() || targetMonsters.getValue()) {
+				for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
+					if (!(entity instanceof LivingEntity living))
+						continue;
+
+					boolean matchesAnimal = targetAnimals.getValue() && living instanceof Animal;
+					boolean matchesMonster = targetMonsters.getValue() && living instanceof Enemy;
+					if (!matchesAnimal && !matchesMonster)
+						continue;
+
+					if (!shouldTarget(living))
+						continue;
+
+					hitList.add(living);
+				}
 			}
 
-			if (!targetAnimals.getValue() && targetPlayers.getValue()) {
-				if (filterPlayers(Stream.of((Player) temp)) == null)
-					temp = filterPlayers(
-							StreamSupport.stream(Aoba.getInstance().entityManager.getPlayers().spliterator(), true));
+			// Add all potential players to the 'hitlist'
+			if (targetPlayers.getValue()) {
+				for (Player player : Aoba.getInstance().entityManager.getPlayers()) {
+					if (player == MC.player)
+						continue;
+
+					if (!shouldTarget(player))
+						continue;
+
+					hitList.add(player);
+				}
 			}
 
-			if (targetAnimals.getValue() && !targetPlayers.getValue()) {
-				if (filterEntities(Stream.of(temp)) == null)
-					temp = filterEntities(
-							StreamSupport.stream(Aoba.getInstance().entityManager.getEntities().spliterator(), true));
-				if (temp instanceof Player)
-					temp = null;
+			// Pick the best candidate based on priority.
+			LivingEntity temp = null;
+			for (LivingEntity entity : hitList) {
+				if (temp == null) {
+					temp = entity;
+				} else if (targetPriority.getValue() == TargetPriority.LOWEST_HEALTH) {
+					if (entity.getHealth() <= temp.getHealth())
+						temp = entity;
+				} else if (targetPriority.getValue() == TargetPriority.MOST_HEALTH) {
+					if (entity.getHealth() >= temp.getHealth())
+						temp = entity;
+				} else if (MC.player.distanceToSqr(entity) <= MC.player.distanceToSqr(temp)) {
+					temp = entity;
+				}
 			}
 
 			if (temp != null) {
@@ -145,14 +215,16 @@ public class BowAimbot extends Module implements TickListener {
 				float velocitySq = velocity * velocity;
 				float velocityPow4 = velocitySq * velocitySq;
 
+				Vec3 aimPos = EntityUtils.getBodyPartPosition(temp, bodyPart.getValue(), 1.0f);
+
 				d = temp.distanceToSqr(MC.player.getEyePosition()) * (predictMovement.getValue() / 100);
-				posY = temp.getY() + (temp.getY() - temp.yOld) * d + temp.getBbHeight() * 0.5 - MC.player.getY()
+				posY = aimPos.y + (temp.getY() - temp.yOld) * d - MC.player.getY()
 						- MC.player.getEyeHeight(MC.player.getPose());
 				float neededPitch = (float) -Math.toDegrees(
 						Math.atan((velocitySq - Math.sqrt(velocityPow4 - g * (g * hDistanceSq + 2 * posY * velocitySq)))
 								/ (g * hDistance)));
-				posZ = temp.getZ() + (temp.getZ() - temp.zOld) * d - MC.player.getZ();
-				posX = temp.getX() + (temp.getX() - temp.xOld) * d - MC.player.getX();
+				posZ = aimPos.z + (temp.getZ() - temp.zOld) * d - MC.player.getZ();
+				posX = aimPos.x + (temp.getX() - temp.xOld) * d - MC.player.getX();
 				float neededYaw = (float) Math.toDegrees(Math.atan2(posZ, posX)) - 90;
 
 				currentTick = 0;
@@ -165,36 +237,22 @@ public class BowAimbot extends Module implements TickListener {
 		}
 	}
 
-	private Entity filterEntities(Stream<Entity> s) {
-		Stream<Entity> stream = s.filter(EntityUtils.IS_ATTACKABLE);
-		return stream.min(Priority.ANGLE_DIST.comparator).orElse(null);
-	}
+	private boolean shouldTarget(LivingEntity entity) {
+		if (ignoreDead.getValue() && !entity.isAlive())
+			return false;
 
-	private Entity filterPlayers(Stream<Player> s) {
-		Stream<Player> stream = s.filter(EntityUtils.IS_ATTACKABLE);
-		return stream.min(Priority.ANGLE_DIST.comparator).orElse(null);
-	}
+		if (ignoreInvisible.getValue() && entity.isInvisible())
+			return false;
 
-	private enum Priority {
-		ANGLE_DIST("",
-				e -> Math.pow(getAngleToLookVec(e.getBoundingBox().getCenter()), 2) + MC.player.distanceToSqr(e));
+		if (ignoreSleeping.getValue() && entity.isSleeping())
+			return false;
 
-		private final String name;
-		private final Comparator<Entity> comparator;
-
-		Priority(String name, ToDoubleFunction<Entity> keyExtractor) {
-			this.name = name;
-			comparator = Comparator.comparingDouble(keyExtractor);
+		if (entity instanceof Player player) {
+			if (!targetFriends.getValue() && EntityUtils.isFriend(player))
+				return false;
+			if (ignoreNPCs.getValue() && EntityUtils.isNPC(player))
+				return false;
 		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-
-		public static double getAngleToLookVec(Vec3 vec) {
-			Rotation rotation = Rotation.getPlayerRotationDeltaFromPosition(vec);
-			return rotation.magnitude();
-		}
+		return true;
 	}
 }
