@@ -74,7 +74,6 @@ import net.aoba.module.modules.render.Fullbright;
 import net.aoba.module.modules.render.ItemESP;
 import net.aoba.module.modules.render.NoRender;
 import net.aoba.module.modules.render.POV;
-import net.aoba.module.modules.render.PlayerESP;
 import net.aoba.module.modules.render.BlockESP;
 import net.aoba.module.modules.render.Tooltips;
 import net.aoba.module.modules.render.Tracer;
