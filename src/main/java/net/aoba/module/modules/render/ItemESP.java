@@ -36,7 +36,7 @@ public class ItemESP extends Module implements Render3DListener {
 			.step(5f).build();
 
 	private final ShaderSetting rareItemColor = ShaderSetting.builder().id("itemesp_rare_color")
-			.displayName("Rare Item Color").description("Rare Item Color").defaultValue(Shader.solid(new Color(1f, 0.5f, 0f)))
+			.displayName("Rare Item Color").description("Rare Item Color").defaultValue(Shader.solid(new Color(1f, 0.5f, 0f, 1f)))
 			.build();
 
 	private final BooleanSetting colorRarity = BooleanSetting.builder().id("itemesp_color_rarity")

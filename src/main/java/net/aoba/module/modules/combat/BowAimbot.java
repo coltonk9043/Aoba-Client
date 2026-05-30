@@ -9,6 +9,7 @@
 package net.aoba.module.modules.combat;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
@@ -19,15 +20,15 @@ import net.aoba.managers.rotation.goals.RotationGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.EntitiesSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.entity.BodyPart;
 import net.aoba.utils.entity.EntityUtils;
 import net.aoba.utils.entity.TargetPriority;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
@@ -36,14 +37,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class BowAimbot extends Module implements TickListener {
-	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("bowaimbot_target_animals")
-			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
-
-	private final BooleanSetting targetMonsters = BooleanSetting.builder().id("bowaimbot_target_monsters")
-			.displayName("Target Monsters").description("Target Monsters.").defaultValue(true).build();
-
-	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("bowaimbot_target_players")
-			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
+	private final EntitiesSetting targetEntities = EntitiesSetting.builder().id("bowaimbot_target_entities")
+			.displayName("Target Entities")
+			.description("Entity types that BowAimbot will target.")
+			.defaultValue(Set.of(EntityType.PLAYER)).build();
 
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("bowaimbot_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
@@ -96,9 +93,7 @@ public class BowAimbot extends Module implements TickListener {
 
 		addSetting(targetPriority);
 		addSetting(bodyPart);
-		addSetting(targetAnimals);
-		addSetting(targetMonsters);
-		addSetting(targetPlayers);
+		addSetting(targetEntities);
 		addSetting(targetFriends);
 		addSetting(ignoreDead);
 		addSetting(ignoreInvisible);
@@ -161,34 +156,23 @@ public class BowAimbot extends Module implements TickListener {
 
 			ArrayList<LivingEntity> hitList = new ArrayList<LivingEntity>();
 
-			// Add all potential animals/monsters to the 'hitlist'
-			if (targetAnimals.getValue() || targetMonsters.getValue()) {
+			// Add all potential entities to the 'hitlist'
+			Set<EntityType<?>> allowed = targetEntities.getValue();
+			if (!allowed.isEmpty()) {
 				for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 					if (!(entity instanceof LivingEntity living))
 						continue;
 
-					boolean matchesAnimal = targetAnimals.getValue() && living instanceof Animal;
-					boolean matchesMonster = targetMonsters.getValue() && living instanceof Enemy;
-					if (!matchesAnimal && !matchesMonster)
+					if (entity == MC.player)
+						continue;
+
+					if (!allowed.contains(entity.getType()))
 						continue;
 
 					if (!shouldTarget(living))
 						continue;
 
 					hitList.add(living);
-				}
-			}
-
-			// Add all potential players to the 'hitlist'
-			if (targetPlayers.getValue()) {
-				for (Player player : Aoba.getInstance().entityManager.getPlayers()) {
-					if (player == MC.player)
-						continue;
-
-					if (!shouldTarget(player))
-						continue;
-
-					hitList.add(player);
 				}
 			}
 

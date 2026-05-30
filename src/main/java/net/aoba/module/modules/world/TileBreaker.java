@@ -38,7 +38,7 @@ public class TileBreaker extends Module implements TickListener, Render3DListene
 			.description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
 
 	private final ShaderSetting color = ShaderSetting.builder().id("tilebreaker_color").displayName("Color")
-			.description("Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
+			.description("Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f, 1f))).build();
 
 	public TileBreaker() {
 		super("TileBreaker");

@@ -51,7 +51,6 @@ public class CommandManager {
 	public final CmdNoFall nofall = new CmdNoFall();
 	public final CmdNoSlowdown noslowdown = new CmdNoSlowdown();
 	public final CmdNuker nuker = new CmdNuker();
-	public final CmdPlayerESP playeresp = new CmdPlayerESP();
 	public final CmdPOV pov = new CmdPOV();
 	public final CmdReach reach = new CmdReach();
 	public final CmdSpam spam = new CmdSpam();

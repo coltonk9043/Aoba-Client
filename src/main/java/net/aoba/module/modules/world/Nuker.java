@@ -43,7 +43,7 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 			.description("Creative").defaultValue(false).build();
 
 	private final ShaderSetting color = ShaderSetting.builder().id("nuker_color").displayName("Color")
-			.description("Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
+			.description("Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f, 1f))).build();
 
 	private final FloatSetting radius = FloatSetting.builder().id("nuker_radius").displayName("Radius")
 			.description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();

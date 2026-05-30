@@ -27,6 +27,7 @@ import net.aoba.settings.types.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 
@@ -199,6 +200,23 @@ public class SettingManager {
 
 					properties.setProperty(setting.ID, result.toString());
 				}
+				case ENTITIES -> {
+					@SuppressWarnings("unchecked")
+					Set<EntityType<?>> s = (Set<EntityType<?>>) setting.getValue();
+					StringBuilder result = new StringBuilder();
+
+					int iteration = 0;
+					for (EntityType<?> entityType : s) {
+						Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
+						result.append(id.getNamespace()).append(":").append(id.getPath());
+						if (iteration != s.size() - 1) {
+							result.append(",");
+						}
+						iteration++;
+					}
+
+					properties.setProperty(setting.ID, result.toString());
+				}
 				case ENUM -> {
 					properties.setProperty(setting.ID, ((Enum<?>) setting.getValue()).name());
 				}
@@ -345,6 +363,17 @@ public class SettingManager {
 						for (String str : ids) {
 							Identifier i = Identifier.parse(str);
 							result.add(BuiltInRegistries.BLOCK.getValue(i));
+						}
+						setting.setValue(result);
+					}
+					case ENTITIES -> {
+						String[] ids = value.split(",");
+						HashSet<EntityType<?>> result = new HashSet<EntityType<?>>();
+						for (String str : ids) {
+							if (str.isEmpty())
+								continue;
+							Identifier i = Identifier.parse(str);
+							result.add(BuiltInRegistries.ENTITY_TYPE.getValue(i));
 						}
 						setting.setValue(result);
 					}

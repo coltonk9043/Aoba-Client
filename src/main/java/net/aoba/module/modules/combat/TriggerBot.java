@@ -8,6 +8,8 @@
 
 package net.aoba.module.modules.combat;
 
+import java.util.Set;
+
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.events.TickEvent.Pre;
@@ -15,13 +17,13 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.EntitiesSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.entity.EntityUtils;
 import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
@@ -36,14 +38,10 @@ public class TriggerBot extends Module implements TickListener {
 			.description("Radius that TriggerBot will trigger.").defaultValue(3.00f).minValue(0.1f).maxValue(10f)
 			.step(0.01f).build();
 
-	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("triggerbot_target_animals")
-			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
-
-	private final BooleanSetting targetMonsters = BooleanSetting.builder().id("triggerbot_target_monsters")
-			.displayName("Target Monsters").description("Target Monsters.").defaultValue(true).build();
-
-	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("triggerbot_target_players")
-			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
+	private final EntitiesSetting targetEntities = EntitiesSetting.builder().id("triggerbot_target_entities")
+			.displayName("Target Entities")
+			.description("Entity types that TriggerBot will target.")
+			.defaultValue(Set.of(EntityType.PLAYER)).build();
 
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("triggerbot_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
@@ -80,9 +78,7 @@ public class TriggerBot extends Module implements TickListener {
 
 		addSetting(attackDelay);
 		addSetting(radius);
-		addSetting(targetAnimals);
-		addSetting(targetMonsters);
-		addSetting(targetPlayers);
+		addSetting(targetEntities);
 		addSetting(targetFriends);
 		addSetting(ignoreDead);
 		addSetting(ignoreInvisible);
@@ -147,13 +143,9 @@ public class TriggerBot extends Module implements TickListener {
 				return;
 
 			// Filter out entities which are NOT allowed to be hit.
-			if (ent instanceof Animal && !targetAnimals.getValue())
-				return;
-			if (ent instanceof Enemy && !targetMonsters.getValue())
+			if (!targetEntities.getValue().contains(ent.getType()))
 				return;
 			if (ent instanceof Player player) {
-				if (!targetPlayers.getValue())
-					return;
 				if (!targetFriends.getValue() && EntityUtils.isFriend(player))
 					return;
 				if (ignoreNPCs.getValue() && EntityUtils.isNPC(player))

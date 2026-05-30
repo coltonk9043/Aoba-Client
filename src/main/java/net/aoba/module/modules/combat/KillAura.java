@@ -9,6 +9,7 @@
 package net.aoba.module.modules.combat;
 
 import java.util.ArrayList;
+import java.util.Set;
 import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.events.TickEvent.Post;
@@ -19,6 +20,7 @@ import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.EntitiesSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.utils.entity.BodyPart;
@@ -26,9 +28,8 @@ import net.aoba.utils.entity.EntityUtils;
 import net.aoba.utils.entity.TargetPriority;
 import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -51,14 +52,10 @@ public class KillAura extends Module implements TickListener {
 			.displayName("Body Part").description("The part of the target's body to aim at.")
 			.defaultValue(BodyPart.HEAD).build();
 
-	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("killaura_target_animals")
-			.displayName("Target Animals").description("Target animals.").defaultValue(false).build();
-
-	private final BooleanSetting targetMonsters = BooleanSetting.builder().id("killaura_target_monsters")
-			.displayName("Target Monsters").description("Target Monsters.").defaultValue(true).build();
-
-	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("killaura_target_players")
-			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
+	private final EntitiesSetting targetEntities = EntitiesSetting.builder().id("killaura_target_entities")
+			.displayName("Target Entities")
+			.description("Entity types that KillAura will target.")
+			.defaultValue(Set.of(EntityType.PLAYER)).build();
 
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("killaura_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
@@ -123,9 +120,7 @@ public class KillAura extends Module implements TickListener {
 		addSetting(radius);
 		addSetting(fov);
 		addSetting(bodyPart);
-		addSetting(targetAnimals);
-		addSetting(targetMonsters);
-		addSetting(targetPlayers);
+		addSetting(targetEntities);
 		addSetting(targetFriends);
 		addSetting(ignoreDead);
 		addSetting(ignoreInvisible);
@@ -168,37 +163,24 @@ public class KillAura extends Module implements TickListener {
 
 		// Add all potential entities to the 'hitlist'
 		float radiusSqr = radius.getValueSqr();
-		if (targetAnimals.getValue() || targetMonsters.getValue()) {
+		Set<EntityType<?>> allowed = targetEntities.getValue();
+		if (!allowed.isEmpty()) {
 			for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
-				if (!(entity instanceof LivingEntity living))
-					continue;
+				if (entity instanceof LivingEntity living) {
+					if (entity == MC.player)
+						continue;
 
-				if (MC.player.distanceToSqr(entity) > radiusSqr)
-					continue;
+					if (!allowed.contains(entity.getType()))
+						continue;
 
-				boolean matchesAnimal = targetAnimals.getValue() && living instanceof Animal;
-				boolean matchesMonster = targetMonsters.getValue() && living instanceof Enemy;
-				if (!matchesAnimal && !matchesMonster)
-					continue;
+					if (MC.player.distanceToSqr(entity) > radiusSqr)
+						continue;
 
-				if (!shouldTarget(living))
-					continue;
+					if (!shouldTarget(living))
+						continue;
 
-				hitList.add(living);
-			}
-		}
-
-		// Add all potential players to the 'hitlist'
-		if (targetPlayers.getValue()) {
-			for (Player player : Aoba.getInstance().entityManager.getPlayers()) {
-				double distanceToPlayerSqr = MC.player.distanceToSqr(player);
-				if (player == MC.player || distanceToPlayerSqr > radiusSqr)
-					continue;
-
-				if (!shouldTarget(player))
-					continue;
-
-				hitList.add(player);
+					hitList.add(living);
+				}
 			}
 		}
 

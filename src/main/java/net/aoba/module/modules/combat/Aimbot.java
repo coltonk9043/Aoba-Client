@@ -9,6 +9,7 @@
 package net.aoba.module.modules.combat;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
@@ -22,17 +23,16 @@ import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.types.BooleanSetting;
+import net.aoba.settings.types.EntitiesSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
 import net.aoba.settings.types.ShaderSetting;
 import net.aoba.utils.entity.BodyPart;
 import net.aoba.utils.entity.EntityUtils;
 import net.aoba.utils.entity.TargetPriority;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
@@ -53,14 +53,10 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 			.displayName("Body Part").description("The part of the target's body to aim at.")
 			.defaultValue(BodyPart.HEAD).build();
 
-	private final BooleanSetting targetAnimals = BooleanSetting.builder().id("aimbot_target_animals")
-			.displayName("Target Animals").description("Target passive animals.").defaultValue(false).build();
-
-	private final BooleanSetting targetMonsters = BooleanSetting.builder().id("aimbot_target_monsters")
-			.displayName("Target Monsters").description("Target hostile mobs.").defaultValue(false).build();
-
-	private final BooleanSetting targetPlayers = BooleanSetting.builder().id("aimbot_target_players")
-			.displayName("Target Players").description("Target Players.").defaultValue(true).build();
+	private final EntitiesSetting targetEntities = EntitiesSetting.builder().id("aimbot_target_entities")
+			.displayName("Target Entities")
+			.description("Entity types that Aimbot will target.")
+			.defaultValue(Set.of(EntityType.PLAYER)).build();
 
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("aimbot_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
@@ -126,9 +122,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 
 		addSetting(targetPriority);
 		addSetting(bodyPart);
-		addSetting(targetAnimals);
-		addSetting(targetMonsters);
-		addSetting(targetPlayers);
+		addSetting(targetEntities);
 		addSetting(targetFriends);
 		addSetting(ignoreDead);
 		addSetting(ignoreInvisible);
@@ -175,41 +169,26 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 		float radiusSqr = radius.getValueSqr();
 		ArrayList<LivingEntity> hitList = new ArrayList<LivingEntity>();
 
-		// Add all potential players to the 'hitlist'
-		if (targetPlayers.getValue()) {
-			for (AbstractClientPlayer entity : MC.level.players()) {
-				if (entity == MC.player)
-					continue;
-
-				if (entity.distanceToSqr(MC.player) >= radiusSqr)
-					continue;
-
-				if (!shouldTarget(entity))
-					continue;
-
-				hitList.add(entity);
-			}
-		}
-
-		// Add all potential mobs to the 'hitlist'
-		if (targetAnimals.getValue() || targetMonsters.getValue()) {
+		// Add all potential entities to the 'hitlist'
+		Set<EntityType<?>> allowed = targetEntities.getValue();
+		if (!allowed.isEmpty()) {
 			for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
 				if (!(entity instanceof LivingEntity living))
 					continue;
 
-				if (entity instanceof Player)
+				if (entity == MC.player)
+					continue;
+
+				if (!allowed.contains(entity.getType()))
 					continue;
 
 				if (entity.distanceToSqr(MC.player) >= radiusSqr)
 					continue;
 
-				if ((entity instanceof Animal && targetAnimals.getValue())
-						|| (entity instanceof Enemy && targetMonsters.getValue())) {
-					if (!shouldTarget(living))
-						continue;
+				if (!shouldTarget(living))
+					continue;
 
-					hitList.add(living);
-				}
+				hitList.add(living);
 			}
 		}
 

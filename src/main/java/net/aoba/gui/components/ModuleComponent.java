@@ -194,6 +194,10 @@ public class ModuleComponent extends Component {
 					ExpanderComponent blocksExpander = new ExpanderComponent(setting.displayName);
 					blocksExpander.setContent(new BlocksComponent((BlocksSetting) setting));
 					c = blocksExpander;
+				} else if (setting instanceof EntitiesSetting) {
+					ExpanderComponent entitiesExpander = new ExpanderComponent(setting.displayName);
+					entitiesExpander.setContent(new EntitiesComponent((EntitiesSetting) setting));
+					c = entitiesExpander;
 				} else if (setting instanceof EnumSetting) {
 					StackPanelComponent comboStack = new StackPanelComponent();
 

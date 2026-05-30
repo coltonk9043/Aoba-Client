@@ -31,13 +31,13 @@ import net.minecraft.world.phys.Vec3;
 
 public class Tracer extends Module implements Render3DListener, TickListener {
 	private final ShaderSetting color_player = ShaderSetting.builder().id("tracer_color_player")
-			.displayName("Player Color").description("Player Color").defaultValue(Shader.solid(new Color(1f, 1f, 0f))).build();
+			.displayName("Player Color").description("Player Color").defaultValue(Shader.solid(new Color(1f, 1f, 0f, 1f))).build();
 	private final ShaderSetting color_passive = ShaderSetting.builder().id("tracer_color_passive")
-			.displayName("Passive Color").description("Passive Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
+			.displayName("Passive Color").description("Passive Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f, 1f))).build();
 	private final ShaderSetting color_enemies = ShaderSetting.builder().id("tracer_color_enemy")
-			.displayName("Enemy Color").description("Enemy Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
+			.displayName("Enemy Color").description("Enemy Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f, 1f))).build();
 	private final ShaderSetting color_misc = ShaderSetting.builder().id("tracer_color_misc").displayName("Misc. Color")
-			.description("Misc. Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f))).build();
+			.description("Misc. Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f, 1f))).build();
 	private final FloatSetting lines = FloatSetting.builder().id("tracer_lines").displayName("Max Lines")
 			.description("The maximum amount of lines that can be rendered at once.").defaultValue(100f).minValue(1f)
 			.maxValue(300f).step(1f).build();

@@ -152,7 +152,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 	public static ShaderSetting panelBackgroundColor = ShaderSetting.builder().id("ui_panel_background_color")
 			.displayName("UI Panel Background Color").description("Accent color of the background.")
-			.defaultValue(Shader.solid(new Color(10, 10, 10, 70))).build();
+			.defaultValue(Shader.solid(new Color(90, 90, 90, 60))).build();
 
 	public static ShaderSetting componentBackgroundColor = ShaderSetting.builder().id("ui_component_background_color")
 			.displayName("UI Component Background Color").description("Background colors of components (i.e TextBox).")

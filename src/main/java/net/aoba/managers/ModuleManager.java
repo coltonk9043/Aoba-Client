@@ -149,7 +149,6 @@ public class ModuleManager implements KeyDownListener {
 	public NoMissDelay nomissdelay = new NoMissDelay();
 	public NoSlowdown noslowdown = new NoSlowdown();
 	public Nuker nuker = new Nuker();
-	public PlayerESP playeresp = new PlayerESP();
 	public POV pov = new POV();
 	public RandomPlace randomplace = new RandomPlace();
 	public Reach reach = new Reach();
