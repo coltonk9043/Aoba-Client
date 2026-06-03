@@ -28,11 +28,14 @@
     "CameraMixin",
     "CommandSuggestionsMixin",
     "ClientBrandRetrieverMixin",
+    "ClientTelemetryManagerMixin",
+    "ClientIntentionPacketMixin",
     "ChatScreenMixin",
     "VisGraphMixin",
     "ConnectionMixin",
     "LocalPlayerMixin",
     "MultiPlayerGameModeMixin",
+    "MinecraftTelemetryMixin",
     "ClientPacketListenerMixin",
     "DefaultValueMixin",
     "DeathScreenMixin",
@@ -66,7 +69,10 @@
     "LevelRendererMixin",
     "AbstractContainerScreenMixin",
     "AbstractHorseMixin",
-    "ClientChunkCacheMixin"
+    "ClientChunkCacheMixin",
+    "YggdrasilTelemetryMixin",
+    "TranslationStorageMixin",
+    "ServerResourcePackMixin"
   ],
   "injectors": {
     "defaultRequire": 1
