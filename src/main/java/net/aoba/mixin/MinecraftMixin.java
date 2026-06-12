@@ -28,13 +28,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.StartAttackEvent;
 import net.aoba.event.events.TickEvent;
-import net.aoba.gui.components.ModuleComponent;
-import net.aoba.mixin.interfaces.ILocalPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.Options;
@@ -48,6 +45,8 @@ import net.minecraft.world.phys.HitResult;
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
 
+	private boolean aobaLoaded = false;
+	
 	@Shadow
 	private int rightClickDelay;
 	@Shadow
@@ -79,7 +78,11 @@ public abstract class MinecraftMixin {
 
 	@Inject(at = @At("HEAD"), method = "onResourceLoadFinished(Lnet/minecraft/client/Minecraft$GameLoadCookie;)V")
 	private void onfinishedloading(CallbackInfo info) {
+		if(aobaLoaded)
+			return;
+		
 		Aoba.getInstance().loadAssets();
+		aobaLoaded = true;
 	}
 
 	@Inject(at = @At("HEAD"), method = "tick()V")
