@@ -13,12 +13,17 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.minecraft.network.chat.Component;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.UUID;
 
-@Mixin(targets = "net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket")
-public class ServerResourcePackMixin {
+import net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket;
+
+@Mixin(ClientboundResourcePackPushPacket.class)
+public class ClientboundResourcePackPushPacketMixin {
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void onPacketInit(String id, String url, boolean required, Object prompt, CallbackInfo ci) {
+    private void onPacketInit(UUID id, String url, String hash, boolean required, Optional<Component> prompt, CallbackInfo ci) {
         if (ProtocolManager.BLOCK_LOCAL_SCAN && url != null) {
             String cleanUrl = url.toLowerCase(Locale.ROOT).trim();
             if (cleanUrl.contains("127.0.0.1") || cleanUrl.contains("localhost") || cleanUrl.contains("0.0.0.0") || cleanUrl.startsWith("file://")) {

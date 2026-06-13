@@ -72,7 +72,7 @@
     "ClientChunkCacheMixin",
     "YggdrasilTelemetryMixin",
     "TranslationStorageMixin",
-    "ServerResourcePackMixin"
+    "ClientboundResourcePackPushPacketMixin"
   ],
   "injectors": {
     "defaultRequire": 1
