@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.logging.LogUtils;
 
@@ -236,12 +237,16 @@ public class ModuleManager implements KeyDownListener {
 	public void onKeyDown(KeyDownEvent event) {
 		if (GuiManager.isKeyboardInputActive())
 			return;
+		if (event.GetKey() == GLFW.GLFW_KEY_UNKNOWN)
+			return;
 		if (MC.screen == null) {
 			for (Module module : modules) {
 				if (module.isDetectable(antiCheat.getValue()))
 					continue;
 
 				Key binding = module.getBind().getValue();
+				if (binding.getValue() == GLFW.GLFW_KEY_UNKNOWN)
+					continue;
 				if (binding.getValue() == event.GetKey()) {
 					module.toggle();
 				}

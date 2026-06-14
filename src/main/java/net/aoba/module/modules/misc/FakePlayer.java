@@ -90,6 +90,11 @@ public class FakePlayer extends Module {
 
 	@Override
 	public void onEnable() {
+		
+		if(MC.level == null) {
+			state.setValue(false);
+			return;
+		}
 		fakePlayer = new RemotePlayer(MC.level,
 				new GameProfile(UUID.fromString("66123666-6666-6666-6666-666666666600"), playerName.getValue()));
 		fakePlayer.copyPosition(MC.player);

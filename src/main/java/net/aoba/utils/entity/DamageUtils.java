@@ -33,10 +33,14 @@ public class DamageUtils {
 		if (blockState.getBlock().getExplosionResistance() < 600)
 			return null;
 
-		return blockState.getCollisionShape(MC.level, blockPos).clip(context.start(), context.end(), blockPos);
+		return blockState.getCollisionShape(MC.level, blockPos)
+			.clip(context.start(), context.end(), blockPos);
 	};
 
 	public static final RaycastFactory ANCHOR_HIT_FACTORY = (context, blockPos) -> {
+		if (blockPos.equals(BlockPos.containing(context.end())))
+			return null;
+
 		BlockState blockState = MC.level.getBlockState(blockPos);
 		if (blockState.getBlock().getExplosionResistance() < 3)
 			return null;
@@ -57,8 +61,8 @@ public class DamageUtils {
 			DamageSource damageSource, RaycastFactory raycastFactory) {
 		if (target == null)
 			return 0f;
-		if (target instanceof Player player && EntityUtils.getGameMode(player) == GameType.CREATIVE
-				&& !(player instanceof FakePlayerEntity))
+		
+		if (target instanceof Player player && EntityUtils.getGameMode(player) == GameType.CREATIVE && !(player instanceof FakePlayerEntity))
 			return 0f;
 
 		Vec3 position = predictMovement ? target.position().add(target.getDeltaMovement()) : target.position();
@@ -143,6 +147,9 @@ public class DamageUtils {
 			xStep = xStep * xDiff;
 			yStep = yStep * yDiff;
 			zStep = zStep * zDiff;
+
+			if (xStep <= 0 || yStep <= 0 || zStep <= 0)
+				return 0f;
 
 			double startX = box.minX + xOffset;
 			double startY = box.minY;

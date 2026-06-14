@@ -11,14 +11,18 @@ package net.aoba.module.modules.combat;
 import java.util.Set;
 
 import net.aoba.Aoba;
-import net.aoba.event.events.TickEvent.Post;
-import net.aoba.event.events.TickEvent.Pre;
+import net.aoba.event.events.SubtickEvent;
+import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.SubtickListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
+
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EntitiesSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.settings.types.RangeSetting;
+import net.aoba.utils.types.Range;
 import net.aoba.utils.entity.EntityUtils;
 import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.world.entity.Entity;
@@ -33,7 +37,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class TriggerBot extends Module implements TickListener {
+public class TriggerBot extends Module implements SubtickListener, TickListener {
 	private final FloatSetting radius = FloatSetting.builder().id("triggerbot_radius").displayName("Radius")
 			.description("Radius that TriggerBot will trigger.").defaultValue(3.00f).minValue(0.1f).maxValue(10f)
 			.step(0.01f).build();
@@ -60,15 +64,17 @@ public class TriggerBot extends Module implements TickListener {
 			.displayName("Ignore NPCs").description("Attempts to ignore NPCs based on the entity UUID.")
 			.defaultValue(true).build();
 
-	private final FloatSetting attackDelay = FloatSetting.builder().id("triggerbot_attack_delay")
-			.displayName("Attack Delay").description("Delay in milliseconds between attacks.").defaultValue(0f)
-			.minValue(0f).maxValue(500f).step(10f).build();
+	private final RangeSetting attackDelay = RangeSetting.builder().id("triggerbot_attack_delay")
+			.displayName("Attack Delay").description("Random delay in milliseconds between attacks (min, max).")
+			.defaultValue(new Range(50f, 150f)).minValue(0f).maxValue(1000f).step(10f).build();
 
-	private final FloatSetting randomness = FloatSetting.builder().id("triggerbot_randomness").displayName("Randomness")
-			.description("The randomness of the delay between when TriggerBot will hit a target.").defaultValue(0.0f)
-			.minValue(0.0f).maxValue(60.0f).step(1f).build();
+	private final BooleanSetting triggerOnClick = BooleanSetting.builder().id("triggerbot_trigger_on_click")
+			.displayName("Trigger On Click").description("Only attack while the attack key is held down.")
+			.defaultValue(false).build();
 
-	private long lastAttackTime;
+	private float timeSinceAttackMs;
+	private float nextAttackDelayMs;
+	private Entity pendingAttackTarget;
 
 	public TriggerBot() {
 		super("Triggerbot");
@@ -77,6 +83,7 @@ public class TriggerBot extends Module implements TickListener {
 		setDescription("Attacks anything you are looking at.");
 
 		addSetting(attackDelay);
+		addSetting(triggerOnClick);
 		addSetting(radius);
 		addSetting(targetEntities);
 		addSetting(targetFriends);
@@ -84,19 +91,21 @@ public class TriggerBot extends Module implements TickListener {
 		addSetting(ignoreInvisible);
 		addSetting(ignoreSleeping);
 		addSetting(ignoreNPCs);
-		addSetting(randomness);
-
-		lastAttackTime = 0L;
 	}
 
 	@Override
 	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(SubtickListener.class, this);
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		pendingAttackTarget = null;
 	}
 
 	@Override
 	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(SubtickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		timeSinceAttackMs = 0f;
+		nextAttackDelayMs = attackDelay.randomValue();
 	}
 
 	@Override
@@ -105,16 +114,14 @@ public class TriggerBot extends Module implements TickListener {
 	}
 
 	@Override
-	public void onTick(Pre event) {
-		if (System.currentTimeMillis() - lastAttackTime < attackDelay.getValue())
+	public void onSubtick(SubtickEvent event) {
+		timeSinceAttackMs += event.getDelta();
+
+		if (pendingAttackTarget != null)
 			return;
-
-		// Randomly skip a tick using the randomness value.
-		int randomnessValue = randomness.getValue().intValue();
-		boolean state = randomnessValue == 0
-				|| (Math.round(Math.random() * Math.round(randomness.max_value))) % randomnessValue == 0;
-
-		if (MC.player.getAttackStrengthScale(1.0f) < 1 || !state)
+		if (timeSinceAttackMs < nextAttackDelayMs)
+			return;
+		if (MC.player.getAttackStrengthScale(1.0f) < 1)
 			return;
 
 		double reach = radius.getValue();
@@ -170,13 +177,30 @@ public class TriggerBot extends Module implements TickListener {
 			if (distSqr > radius.getValueSqr())
 				return;
 
-			InteractionUtils.attack(ent);
-			lastAttackTime = System.currentTimeMillis();
+			pendingAttackTarget = ent;
 		}
 	}
 
 	@Override
-	public void onTick(Post event) {
+	public void onTick(TickEvent.Pre event) {
+		if (triggerOnClick.getValue() && !MC.options.keyAttack.isDown()) {
+			pendingAttackTarget = null;
+			return;
+		}
 
+		Entity target = pendingAttackTarget;
+		pendingAttackTarget = null;
+		if (target == null)
+			return;
+		if (target.isRemoved() || !target.isAlive())
+			return;
+
+		InteractionUtils.attack(target);
+		timeSinceAttackMs = 0f;
+		nextAttackDelayMs = attackDelay.randomValue();
+	}
+
+	@Override
+	public void onTick(TickEvent.Post event) {
 	}
 }
