@@ -175,6 +175,14 @@ public class ModuleComponent extends Component {
 					slider.bindProperty(SliderComponent.ValueProperty, setting, BindingMode.TwoWay);
 					slider.setProperty(SliderComponent.HeaderProperty, setting.displayName);
 					c = slider;
+				} else if (setting instanceof RangeSetting rangeSetting) {
+					RangeComponent range = new RangeComponent();
+					range.setProperty(RangeComponent.MinimumProperty, rangeSetting.min_value);
+					range.setProperty(RangeComponent.MaximumProperty, rangeSetting.max_value);
+					range.setProperty(RangeComponent.StepProperty, rangeSetting.step);
+					range.bindProperty(RangeComponent.ValueProperty, setting, BindingMode.TwoWay);
+					range.setProperty(RangeComponent.HeaderProperty, setting.displayName);
+					c = range;
 				} else if (setting instanceof BooleanSetting) {
 					CheckboxComponent boolCheckbox = new CheckboxComponent();
 					boolCheckbox.setProperty(CheckboxComponent.HeaderProperty, setting.displayName);

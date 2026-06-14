@@ -1,10 +1,13 @@
 package net.aoba.module.modules.combat;
 
 import net.aoba.Aoba;
+import net.aoba.event.events.SubtickEvent;
 import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.SubtickListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.managers.rotation.RotationMode;
 import net.aoba.managers.rotation.goals.EntityGoal;
+import net.minecraft.world.phys.Vec3;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
 import net.aoba.settings.types.BooleanSetting;
@@ -18,7 +21,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.Items;
 
-public class ElytraTarget extends Module implements TickListener {
+public class ElytraTarget extends Module implements SubtickListener, TickListener {
 
 	private LivingEntity target = null;
 	private int currentFireworkTick = 0;
@@ -63,8 +66,8 @@ public class ElytraTarget extends Module implements TickListener {
 			.description("Spoofs the client's rotation so that the player appears rotated on the server")
 			.defaultValue(false).build();
 	
-	private final BooleanSetting legit = BooleanSetting.builder().id("elytratarget_legit")
-			.displayName("Legit")
+	private final BooleanSetting useRaycast = BooleanSetting.builder().id("elytratarget_use_raycast")
+			.displayName("Use Raycast")
 			.description("Whether the player must be visible to fly to.")
 			.defaultValue(true).build();
 
@@ -97,7 +100,7 @@ public class ElytraTarget extends Module implements TickListener {
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
-		addSetting(legit);
+		addSetting(useRaycast);
 		addSetting(useDelay);
 		addSetting(swapDelay);
 		addSetting(moveFix);
@@ -105,6 +108,7 @@ public class ElytraTarget extends Module implements TickListener {
 
 	@Override
 	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(SubtickListener.class, this);
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 		Aoba.getInstance().rotationManager.setGoal(null);
 		currentFireworkTick = 0;
@@ -118,12 +122,59 @@ public class ElytraTarget extends Module implements TickListener {
 
 	@Override
 	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(SubtickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
+	}
+
+	@Override
+	public void onSubtick(SubtickEvent event) {
+		boolean flying = MC.player.isFallFlying() && MC.player.getItemBySlot(EquipmentSlot.CHEST).is(Items.ELYTRA);
+		if (!flying) {
+			Aoba.getInstance().rotationManager.setGoal(null);
+			return;
+		}
+
+		currentAimTick++;
+		if (currentAimTick >= frequency.getValue()) {
+			float partialTick = MC.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+			Vec3 playerPos = MC.player.getPosition(partialTick);
+
+			target = null;
+			float radiusSqr = radius.getValueSqr();
+
+			for (AbstractClientPlayer entity : MC.level.players()) {
+				if (entity == MC.player)
+					continue;
+
+				if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(entity))
+					continue;
+
+				double entityDistanceToPlayer = entity.getPosition(partialTick).distanceToSqr(playerPos);
+				if (entityDistanceToPlayer >= radiusSqr)
+					continue;
+
+				if (target == null || entityDistanceToPlayer < target.getPosition(partialTick).distanceToSqr(playerPos)) {
+					target = entity;
+				}
+			}
+
+			if (target != null) {
+				EntityGoal rotation = EntityGoal.builder().goal(target).mode(rotationMode.getValue())
+						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
+						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
+						.moveFix(moveFix.getValue()).build();
+				Aoba.getInstance().rotationManager.setGoal(rotation);
+			} else {
+				Aoba.getInstance().rotationManager.setGoal(null);
+			}
+
+			currentAimTick = 0;
+		}
 	}
 
 	@Override
@@ -147,42 +198,6 @@ public class ElytraTarget extends Module implements TickListener {
 		// Return early if the player is not flying.
 		if (!flying) {
 			return;
-		}
-
-		// Aim at the target.
-		currentAimTick++;
-		if (currentAimTick >= frequency.getValue()) {
-			target = null;
-			float radiusSqr = radius.getValueSqr();
-
-			// Find the closest player within range.
-			for (AbstractClientPlayer entity : MC.level.players()) {
-				if (entity == MC.player)
-					continue;
-
-				if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(entity))
-					continue;
-
-				double entityDistanceToPlayer = entity.distanceToSqr(MC.player);
-				if (entityDistanceToPlayer >= radiusSqr)
-					continue;
-
-				if (target == null || entityDistanceToPlayer < target.distanceToSqr(MC.player)) {
-					target = entity;
-				}
-			}
-
-			if (target != null) {
-				EntityGoal rotation = EntityGoal.builder().goal(target).mode(rotationMode.getValue())
-						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
-						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
-						.moveFix(moveFix.getValue()).build();
-				Aoba.getInstance().rotationManager.setGoal(rotation);
-			} else {
-				Aoba.getInstance().rotationManager.setGoal(null);
-			}
-
-			currentAimTick = 0;
 		}
 
 		// We have previously swapped to the fireworks, so now we wait
@@ -209,8 +224,8 @@ public class ElytraTarget extends Module implements TickListener {
 		}
 
 		if (target != null) {
-			// Check if legit is disabled OR if enabled, check if the target is within the player's line of sight.
-			if (!legit.getValue() || MC.player.hasLineOfSight(target)) {
+			// Check if useRaycast is disabled OR if enabled, check if the target is within the player's line of sight.
+			if (!useRaycast.getValue() || MC.player.hasLineOfSight(target)) {
 				if (currentFireworkTick >= interval.getValue()) {
 					FindItemResult findItemResult = findInHotbar(s -> s.getItem() instanceof FireworkRocketItem);
 					if (findItemResult.found()) {

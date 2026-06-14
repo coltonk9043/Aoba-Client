@@ -38,6 +38,10 @@ public class EntityUtils {
 		return isInFOV(getBodyPartPosition(entity, part, 1.0f), fov);
 	}
 
+	public static boolean isInFOV(Entity entity, BodyPart part, float fov, float frameDelta) {
+		return isInFOV(getBodyPartPosition(entity, part, frameDelta), fov);
+	}
+
 	public static boolean isInFOV(Vec3 position, float fov) {
 		if (fov >= 360.0f)
 			return true;
