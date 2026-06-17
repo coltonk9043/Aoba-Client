@@ -32,6 +32,14 @@ public record Rotation(double yaw, double pitch) {
 
 		return new Rotation(g1, Mth.clamp(g2, -90f, 90f));
 	}
+	
+	
+	public boolean equals(Rotation rotation) {
+		if (rotation == null)
+			return false;
+		return Math.abs(Mth.wrapDegrees(yaw() - rotation.yaw())) < 0.001
+				&& Math.abs(pitch() - rotation.pitch()) < 0.001;
+	}
 
 	public Rotation clamp() {
 		return new Rotation(Mth.wrapDegrees(yaw), Mth.wrapDegrees(pitch));
@@ -65,23 +73,14 @@ public record Rotation(double yaw, double pitch) {
 		return new Rotation(Mth.wrapDegrees(rotation1.yaw - rotation2.yaw),
 				Mth.wrapDegrees(rotation1.pitch - rotation2.pitch));
 	}
-
+	
 	public static Rotation rotationFrom(Entity target) {
-		Minecraft MC = Minecraft.getInstance();
-		Vec3 playerPos = MC.player.getEyePosition();
-		Vec3 targetPos = target.position().add(0, target.getEyeHeight() / 2.0f, 0);
-
-		double deltaX = targetPos.x - playerPos.x;
-		double deltaY = targetPos.y - playerPos.y;
-		double deltaZ = targetPos.z - playerPos.z;
-
-		return new Rotation(Mth.wrapDegrees(Math.toDegrees(Math.atan2(deltaZ, deltaX)) - 90f), Mth
-				.wrapDegrees((-Math.toDegrees(Math.atan2(deltaY, Math.sqrt(deltaX * deltaX + deltaZ * deltaZ))))));
+		return rotationFrom(target, 0);
 	}
 
 	public static Rotation rotationFrom(Entity target, float frameDelta) {
 		Minecraft MC = Minecraft.getInstance();
-		Vec3 playerPos = MC.player.getPosition(frameDelta).add(0, target.getEyeHeight(), 0);
+		Vec3 playerPos = MC.player.getPosition(frameDelta).add(0, MC.player.getEyeHeight(), 0);
 		Vec3 targetPos = target.getPosition(frameDelta).add(0, target.getEyeHeight() / 2.0f, 0);
 
 		double deltaX = targetPos.x - playerPos.x;
@@ -93,8 +92,12 @@ public record Rotation(double yaw, double pitch) {
 	}
 
 	public static Rotation rotationFrom(Vec3 vec) {
+		return rotationFrom(vec, 0f);
+	}
+	
+	public static Rotation rotationFrom(Vec3 vec, float frameDelta) {
 		Minecraft MC = Minecraft.getInstance();
-		Vec3 playerPos = MC.player.getEyePosition();
+		Vec3 playerPos = MC.player.getPosition(frameDelta).add(0, MC.player.getEyeHeight(), 0);
 		double deltaX = vec.x - playerPos.x;
 		double deltaY = vec.y - playerPos.y;
 		double deltaZ = vec.z - playerPos.z;

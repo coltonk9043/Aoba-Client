@@ -18,6 +18,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EasingFunction;
 import net.aoba.managers.rotation.goals.Vec3dGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -103,6 +104,11 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(10.0f)
 			.minValue(1.0f).maxValue(360.0f).build();
 
+	private final EnumSetting<EasingFunction> easingFunction = EnumSetting.<EasingFunction>builder()
+			.id("autocrystal_easing").displayName("Easing")
+			.description("Easing curve applied to the rotation speed as it approaches the target.")
+			.defaultValue(EasingFunction.SineEaseInOut).build();
+
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("autocrystal_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
@@ -160,6 +166,7 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 		addSetting(rotationMode);
 		addSetting(legit);
 		addSetting(maxRotation);
+		addSetting(easingFunction);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
@@ -211,7 +218,7 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 			Aoba.getInstance().rotationManager.setGoal(Vec3dGoal.builder().goal(rotationGoal)
 					.mode(rotationMode.getValue()).maxRotation(maxRotation.getValue())
 					.pitchRandomness(pitchRandomness.getValue()).yawRandomness(yawRandomness.getValue())
-					.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).build());
+					.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build());
 		} else {
 			Aoba.getInstance().rotationManager.setGoal(null);
 		}

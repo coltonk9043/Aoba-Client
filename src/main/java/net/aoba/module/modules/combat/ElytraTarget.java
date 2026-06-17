@@ -4,6 +4,7 @@ import net.aoba.Aoba;
 import net.aoba.event.events.TickEvent;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EasingFunction;
 import net.aoba.managers.rotation.goals.EntityGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -50,6 +51,11 @@ public class ElytraTarget extends Module implements TickListener {
 			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(50.0f)
 			.minValue(1.0f).maxValue(360.0f).build();
 
+	private final EnumSetting<EasingFunction> easingFunction = EnumSetting.<EasingFunction>builder()
+			.id("elytratarget_easing").displayName("Easing")
+			.description("Easing curve applied to the rotation speed as it approaches the target.")
+			.defaultValue(EasingFunction.SineEaseInOut).build();
+
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("elytratarget_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.5f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
@@ -94,6 +100,7 @@ public class ElytraTarget extends Module implements TickListener {
 		addSetting(radius);
 		addSetting(rotationMode);
 		addSetting(maxRotation);
+		addSetting(easingFunction);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
@@ -176,7 +183,7 @@ public class ElytraTarget extends Module implements TickListener {
 				EntityGoal rotation = EntityGoal.builder().goal(target).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
 						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
-						.moveFix(moveFix.getValue()).build();
+						.moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
 			} else {
 				Aoba.getInstance().rotationManager.setGoal(null);

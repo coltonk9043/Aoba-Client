@@ -19,6 +19,7 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.managers.rotation.Rotation;
 import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EasingFunction;
 import net.aoba.managers.rotation.goals.RotationGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -59,6 +60,11 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 			.displayName("Max Rotation").description("The max speed that KillAura will rotate").defaultValue(10.0f)
 			.minValue(1.0f).maxValue(360.0f).build();
 
+	private final EnumSetting<EasingFunction> easingFunction = EnumSetting.<EasingFunction>builder()
+			.id("bedaura_easing").displayName("Easing")
+			.description("Easing curve applied to the rotation speed as it approaches the target.")
+			.defaultValue(EasingFunction.SineEaseInOut).build();
+
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
@@ -78,6 +84,7 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 		addSetting(legit);
 		addSetting(rotationMode);
 		addSetting(maxRotation);
+		addSetting(easingFunction);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(color);
@@ -121,6 +128,7 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 			BlockState oldBlockState = event.getPreviousBlockState();
 			if (blockPos.equals(currentBlockToBreak) && (oldBlockState.isAir())) {
 				currentBlockToBreak = null;
+				Aoba.getInstance().rotationManager.setGoal(null);
 			}
 		}
 	}
@@ -153,16 +161,16 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 		if (currentBlockToBreak != null) {
 			// Check to ensure that the block is not further than we can reach.
 			int range = (int) (Math.floor(radius.getValue()) + 1);
-			int rangeSqr = range ^ 2;
+			int rangeSqr = range * range;
 
-			if (MC.player.blockPosition().getCenter().distanceTo(currentBlockToBreak.getCenter()) > rangeSqr) {
+			if (MC.player.blockPosition().getCenter().distanceToSqr(currentBlockToBreak.getCenter()) > rangeSqr) {
 				currentBlockToBreak = null;
 			} else {
 
 				RotationGoal rotation = RotationGoal.builder()
 						.goal(Rotation.rotationFrom(currentBlockToBreak.getCenter())).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
-						.yawRandomness(yawRandomness.getValue()).build();
+						.yawRandomness(yawRandomness.getValue()).easingFunction(easingFunction.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
 
 				if (legit.getValue()) {
@@ -182,6 +190,8 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 				}
 			}
 
+		} else {
+			Aoba.getInstance().rotationManager.setGoal(null);
 		}
 	}
 
