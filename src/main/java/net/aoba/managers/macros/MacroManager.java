@@ -230,7 +230,7 @@ public class MacroManager implements KeyDownListener {
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
-		if (MC.screen != null)
+		if (MC.gui.screen() != null)
 			return;
 		if (GuiManager.isKeyboardInputActive())
 			return;

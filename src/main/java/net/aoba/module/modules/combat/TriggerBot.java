@@ -27,6 +27,7 @@ import net.aoba.utils.entity.EntityUtils;
 import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -45,7 +46,7 @@ public class TriggerBot extends Module implements SubtickListener, TickListener 
 	private final EntitiesSetting targetEntities = EntitiesSetting.builder().id("triggerbot_target_entities")
 			.displayName("Target Entities")
 			.description("Entity types that TriggerBot will target.")
-			.defaultValue(Set.of(EntityType.PLAYER)).build();
+			.defaultValue(Set.of(EntityTypes.PLAYER)).build();
 
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("triggerbot_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();

@@ -67,6 +67,6 @@ public class EditAltScreen extends Screen {
     }
 
     public void onButtonCancelPressed() {
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 }

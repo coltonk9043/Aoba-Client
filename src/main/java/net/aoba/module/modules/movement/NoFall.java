@@ -25,6 +25,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.state.BlockState;
@@ -120,7 +121,7 @@ public class NoFall extends Module implements TickListener, SendPacketListener {
 				BlockPos targetPos = result.getBlockPos().above();
 
 				float rotationDegreesPerTick = 30f;
-				Rotation rotation = Rotation.getPlayerRotationDeltaFromPosition(targetPos.getCenter());
+				Rotation rotation = Rotation.getPlayerRotationDeltaFromPosition(Vec3.atCenterOf(targetPos));
 
 				float maxYawRotationDelta = Math.clamp((float) -rotation.yaw(), -rotationDegreesPerTick,
 						rotationDegreesPerTick);

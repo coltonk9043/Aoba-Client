@@ -42,7 +42,7 @@ public class ProxyScreen extends Screen {
 		layout.addToContents(proxyListSelector);
 
 		LinearLayout buttonRow = LinearLayout.horizontal().spacing(4);
-		buttonRow.addChild(Button.builder(Component.nullToEmpty("Add Proxy"), b -> minecraft.setScreen(new AddProxyScreen(this)))
+		buttonRow.addChild(Button.builder(Component.nullToEmpty("Add Proxy"), b -> minecraft.gui.setScreen(new AddProxyScreen(this)))
 				.width(100).build());
 
 		editButton = Button.builder(Component.nullToEmpty("Edit Proxy"), b -> editSelected())
@@ -55,7 +55,7 @@ public class ProxyScreen extends Screen {
 		deleteButton.active = false;
 		buttonRow.addChild(deleteButton);
 
-		buttonRow.addChild(Button.builder(Component.nullToEmpty("Cancel"), b -> minecraft.setScreen(parentScreen))
+		buttonRow.addChild(Button.builder(Component.nullToEmpty("Cancel"), b -> minecraft.gui.setScreen(parentScreen))
 				.width(100).build());
 
 		layout.addToFooter(buttonRow);
@@ -77,7 +77,7 @@ public class ProxyScreen extends Screen {
 	}
 
 	public void refreshProxyList() {
-		minecraft.setScreen(new ProxyScreen(parentScreen));
+		minecraft.gui.setScreen(new ProxyScreen(parentScreen));
 	}
 
 	public void setSelected(ProxySelectionList.Entry selected) {
@@ -90,7 +90,7 @@ public class ProxyScreen extends Screen {
 		if (proxy == null) {
 			return;
 		}
-		minecraft.setScreen(new EditProxyScreen(this, proxy));
+		minecraft.gui.setScreen(new EditProxyScreen(this, proxy));
 	}
 
 	public void deleteSelected() {
@@ -129,7 +129,7 @@ public class ProxyScreen extends Screen {
 	@Override
 	protected void extractPanorama(final GuiGraphicsExtractor graphics, final float a){
 		try {
-			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, this.panoramaShouldSpin());
+			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, true);
 		} catch (IllegalStateException e) {
 		}
 	}

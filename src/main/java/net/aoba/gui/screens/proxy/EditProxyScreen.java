@@ -98,13 +98,13 @@ public class EditProxyScreen extends Screen {
 			proxy.setUsername(username.isEmpty() ? null : username);
 			proxy.setPassword(password.isEmpty() ? null : password);
 			Aoba.getInstance().proxyManager.saveProxies();
-			minecraft.setScreen(parent);
+			minecraft.gui.setScreen(parent);
 		} catch (NumberFormatException e) {
 			AobaClient.LOGGER.error(e.getMessage());
 		}
 	}
 
 	private void onButtonCancelPressed() {
-		minecraft.setScreen(parent);
+		minecraft.gui.setScreen(parent);
 	}
 }

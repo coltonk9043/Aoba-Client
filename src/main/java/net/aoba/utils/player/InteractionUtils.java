@@ -120,7 +120,7 @@ public class InteractionUtils {
 	}
 
 	public static Direction getPlaceSide(BlockPos blockPos) {
-		Vec3 lookVec = blockPos.getCenter().subtract(MC.player.getEyePosition());
+		Vec3 lookVec = Vec3.atCenterOf(blockPos).subtract(MC.player.getEyePosition());
 		double bestRelevancy = -Double.MAX_VALUE;
 		Direction bestSide = null;
 
@@ -145,7 +145,7 @@ public class InteractionUtils {
 	public static boolean isBehindWall(BlockPos blockPos) {
 		Vec3 eyePos = MC.player.getEyePosition(1.0f);
 		for (Direction face : Direction.values()) {
-			Vec3 faceCenter = blockPos.getCenter().add(face.getStepX() * 0.5, face.getStepY() * 0.5,
+			Vec3 faceCenter = Vec3.atCenterOf(blockPos).add(face.getStepX() * 0.5, face.getStepY() * 0.5,
 					face.getStepZ() * 0.5);
 			BlockHitResult result = MC.level.clip(
 					new ClipContext(eyePos, faceCenter, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, MC.player));
@@ -186,7 +186,7 @@ public class InteractionUtils {
 			if (!MC.level.getBlockState(neighbor).isAir())
 				continue;
 
-			Vec3 faceCenter = pos.getCenter().add(dir.getStepX() * 0.5, dir.getStepY() * 0.5, dir.getStepZ() * 0.5);
+			Vec3 faceCenter = Vec3.atCenterOf(pos).add(dir.getStepX() * 0.5, dir.getStepY() * 0.5, dir.getStepZ() * 0.5);
 
 			ClipContext context = new ClipContext(eyePos, faceCenter, ClipContext.Block.COLLIDER,
 					ClipContext.Fluid.NONE, MC.player);
@@ -218,7 +218,7 @@ public class InteractionUtils {
 			for (int y = -searchExtent; y <= searchExtent; y++) {
 				for (int z = -searchExtent; z <= searchExtent; z++) {
 					BlockPos pos = playerPos.offset(x, y, z);
-					double distSq = pos.getCenter().distanceToSqr(playerCenter);
+					double distSq = Vec3.atCenterOf(pos).distanceToSqr(playerCenter);
 					if (distSq > radiusSquared)
 						continue;
 					if (!MC.level.getBlockState(pos).is(block))

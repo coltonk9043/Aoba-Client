@@ -90,37 +90,37 @@ public class RPCManager {
     private String getDetails() {
         String result = "";
 
-        if (MC.screen instanceof TitleScreen || MC.screen instanceof MainMenuScreen) {
+        if (MC.gui.screen() instanceof TitleScreen || MC.gui.screen() instanceof MainMenuScreen) {
             result = "In Main menu";
-        } else if (MC.screen instanceof JoinMultiplayerScreen || MC.screen instanceof ManageServerScreen) {
+        } else if (MC.gui.screen() instanceof JoinMultiplayerScreen || MC.gui.screen() instanceof ManageServerScreen) {
             result = "Picking a server";
         } else if (MC.getCurrentServer() != null) {
             result = "Playing on a server";
         } else if (MC.isLocalServer()) {
             result = "Playing singleplayer";
-        } else if (MC.screen instanceof OptionsScreen) {
+        } else if (MC.gui.screen() instanceof OptionsScreen) {
             result = "Editing options";
-        } else if (MC.screen instanceof SelectWorldScreen) {
+        } else if (MC.gui.screen() instanceof SelectWorldScreen) {
             result = "Selecting a world";
-        } else if (MC.screen instanceof AobaCreditsScreen) {
+        } else if (MC.gui.screen() instanceof AobaCreditsScreen) {
             result = "Watching Aoba credits";
-        } else if (MC.screen instanceof WinScreen) {
+        } else if (MC.gui.screen() instanceof WinScreen) {
             result = "Watching credits";
-        } else if (MC.screen instanceof CreateWorldScreen) {
+        } else if (MC.gui.screen() instanceof CreateWorldScreen) {
             result = "Creating a world";
-        } else if (MC.screen instanceof EditWorldScreen) {
+        } else if (MC.gui.screen() instanceof EditWorldScreen) {
             result = "Editing a world";
-        } else if (MC.screen instanceof ProxyScreen) {
+        } else if (MC.gui.screen() instanceof ProxyScreen) {
             result = "Choosing a proxy";
-        } else if (MC.screen instanceof AltScreen) {
+        } else if (MC.gui.screen() instanceof AltScreen) {
             result = "Choosing an alt";
-        } else if (MC.screen instanceof AddProxyScreen) {
+        } else if (MC.gui.screen() instanceof AddProxyScreen) {
             result = "Creating a proxy";
-        } else if (MC.screen instanceof EditProxyScreen) {
+        } else if (MC.gui.screen() instanceof EditProxyScreen) {
             result = "Editing a proxy";
-        } else if (MC.screen instanceof AddAltScreen) {
+        } else if (MC.gui.screen() instanceof AddAltScreen) {
             result = "Creating an alt";
-        } else if (MC.screen instanceof EditAltScreen) {
+        } else if (MC.gui.screen() instanceof EditAltScreen) {
             result = "Editing an alt";
         }
         return result;

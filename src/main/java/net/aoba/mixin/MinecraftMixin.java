@@ -79,7 +79,7 @@ public abstract class MinecraftMixin {
 	@Final
 	public Options options;
 
-	@Inject(at = @At("HEAD"), method = "onResourceLoadFinished(Lnet/minecraft/client/Minecraft$GameLoadCookie;)V")
+	@Inject(at = @At("HEAD"), method = "onResourceLoadFinished(Lnet/minecraft/client/GameLoadCookie;)V")
 	private void onfinishedloading(CallbackInfo info) {
 		if(aobaLoaded)
 			return;

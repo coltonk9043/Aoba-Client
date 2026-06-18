@@ -239,7 +239,8 @@ public class ModuleManager implements KeyDownListener {
 			return;
 		if (event.GetKey() == GLFW.GLFW_KEY_UNKNOWN)
 			return;
-		if (MC.screen == null) {
+
+		if (MC.gui.screen() == null) {
 			for (Module module : modules) {
 				if (module.isDetectable(antiCheat.getValue()))
 					continue;

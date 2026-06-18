@@ -324,7 +324,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 
 		// Do not detonate if the detonation will cause the player to die.
 		if (willDetonate && antiSuicide.getValue()) {
-			double selfDamage = DamageUtils.anchorDamage(MC.player, anchor.getCenter());
+			double selfDamage = DamageUtils.anchorDamage(MC.player, Vec3.atCenterOf(anchor));
 			if (selfDamage > maxSelfDamage.getValue()) {
 				Aoba.getInstance().rotationManager.setGoal(null);
 				return;
@@ -427,7 +427,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 
 			// Calculate the explosion damage and check if it deals the minimum allowable
 			// damage. Check whether the explosion will also kill the player.
-			Vec3 explosionPos = placement.targetPos().getCenter();
+			Vec3 explosionPos = Vec3.atCenterOf(placement.targetPos());
 			double damage = DamageUtils.anchorDamage(target, explosionPos);
 			if (damage < minDamageRequired)
 				continue;
@@ -478,7 +478,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 	 * @return True if it will do damage to any target, false otherwise.
 	 */
 	private boolean willDamageAnyTarget(BlockPos anchorPos, List<LivingEntity> targets) {
-		Vec3 explosionPos = anchorPos.getCenter();
+		Vec3 explosionPos = Vec3.atCenterOf(anchorPos);
 		double minDamageRequired = minDamage.getValue();
 		for (LivingEntity target : targets) {
 			if (DamageUtils.anchorDamage(target, explosionPos) >= minDamageRequired)
@@ -511,7 +511,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 
 					// Skip if the distance is too far.
 					BlockPos anchorPos = playerBlockPos.offset(x, y, z);
-					if (anchorPos.getCenter().distanceToSqr(playerPos) > radiusSqr)
+					if (Vec3.atCenterOf(anchorPos).distanceToSqr(playerPos) > radiusSqr)
 						continue;
 
 					// Skip if can't be replaced.
@@ -555,7 +555,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 						continue;
 
 					// Calculate the explosion damage of the position.
-					Vec3 explosionPos = anchorPos.getCenter();
+					Vec3 explosionPos = Vec3.atCenterOf(anchorPos);
 					double explosionDmg = DamageUtils.anchorDamage(target, explosionPos);
 					double distance = targetBlockPos.distSqr(anchorPos);
 
@@ -629,7 +629,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 	 */
 	private BlockPos findShieldPosition(BlockPos anchorPos) {
 		Vec3 from = MC.player.getBoundingBox().getCenter();
-		Vec3 to = anchorPos.getCenter();
+		Vec3 to = Vec3.atCenterOf(anchorPos);
 		AABB playerBox = MC.player.getBoundingBox();
 
 		MutableObject<BlockPos> best = new MutableObject<BlockPos>();
@@ -677,7 +677,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 	 */
 	private boolean isShielded(BlockPos anchorPos) {
 		Vec3 from = MC.player.getBoundingBox().getCenter();
-		Vec3 to = anchorPos.getCenter();
+		Vec3 to = Vec3.atCenterOf(anchorPos);
 		AABB playerAABB = MC.player.getBoundingBox();
 
 		MutableObject<Boolean> shielded = new MutableObject<Boolean>(Boolean.FALSE);

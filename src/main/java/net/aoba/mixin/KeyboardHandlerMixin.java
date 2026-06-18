@@ -55,9 +55,9 @@ public class KeyboardHandlerMixin {
                 }
             }
 
-            if (MC.screen == null && MC.getOverlay() == null && !aoba.guiManager.isClickGuiOpen()) {
+            if (MC.gui.screen() == null && MC.gui.overlay() == null && !aoba.guiManager.isClickGuiOpen()) {
                 if (key == GLFW.GLFW_KEY_PERIOD) {
-                    MC.setScreen(new ChatScreen("", false));
+                    MC.gui.setScreen(new ChatScreen("", false));
                 }
             }
         } else if (action == GLFW.GLFW_RELEASE) {

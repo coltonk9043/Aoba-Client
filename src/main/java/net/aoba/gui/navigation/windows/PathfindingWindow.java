@@ -334,7 +334,7 @@ public class PathfindingWindow extends Window implements TickListener, Render3DL
 		// Find the new chunk / position that we want to try to get to, hoping that we
 		// can find one.
 		BlockPos playerPos = MC.player.blockPosition();
-		Vec3 delta = target.subtract(playerPos.getCenter()).normalize();
+		Vec3 delta = target.subtract(Vec3.atCenterOf(playerPos)).normalize();
 		Vec3 offset = new Vec3(delta.x, delta.y, delta.z);
 		BlockPos newTarget = playerPos;
 		BlockPos temp = playerPos;
@@ -411,13 +411,13 @@ public class PathfindingWindow extends Window implements TickListener, Render3DL
 				PathNode first = nodes.get(i);
 				PathNode second = nodes.get(i + 1);
 
-				Vec3 pos1 = first.pos.getCenter().add(-0.15f, -0.15f, -0.15f);
-				Vec3 pos2 = first.pos.getCenter().add(0.15f, 0.15f, 0.15f);
+				Vec3 pos1 = Vec3.atCenterOf(first.pos).add(-0.15f, -0.15f, -0.15f);
+				Vec3 pos2 = Vec3.atCenterOf(first.pos).add(0.15f, 0.15f, 0.15f);
 				AABB box = new AABB(pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
 
 				event.getRenderer().drawBox(box, Shader.solid(Colors.Red), 1);
-				event.getRenderer().drawLine(first.pos.getCenter(),
-						second.pos.getCenter(), Shader.solid(Colors.Red));
+				event.getRenderer().drawLine(Vec3.atCenterOf(first.pos),
+						Vec3.atCenterOf(second.pos), Shader.solid(Colors.Red));
 			}
 		}
 	}
@@ -454,7 +454,7 @@ public class PathfindingWindow extends Window implements TickListener, Render3DL
 				}
 			}startButtonText.setProperty(StringComponent.TextProperty, "Calculate");
 
-			Vec3 nextCenterPos = next.pos.getBottomCenter();
+			Vec3 nextCenterPos = Vec3.atBottomCenterOf(next.pos);
 
 			switch (pathfinderMode.getValue()) {
 			case Fly:

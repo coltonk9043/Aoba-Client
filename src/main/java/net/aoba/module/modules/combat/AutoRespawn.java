@@ -77,7 +77,7 @@ public class AutoRespawn extends Module implements PlayerDeathListener, TickList
 
 	private void respawn() {
 		MC.player.respawn();
-		MC.setScreen(null);
+		MC.gui.setScreen(null);
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
 	}
 }

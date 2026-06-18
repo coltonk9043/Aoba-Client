@@ -98,7 +98,7 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayerMixin {
 			float g = (float) cursorDeltaX * 0.15f;
 
 			Minecraft mc = Minecraft.getInstance();
-			Camera camera = mc.gameRenderer.getMainCamera();
+			Camera camera = mc.gameRenderer.mainCamera();
 			ICamera icamera = (ICamera) camera;
 
 			float newYaw = camera.yRot() + g;

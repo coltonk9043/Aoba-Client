@@ -3,19 +3,17 @@ package net.aoba.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-
 import net.aoba.Aoba;
 import net.aoba.managers.rotation.goals.Goal;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.phys.Vec3;
 
 @Mixin(FireworkRocketEntity.class)
 public class FireworkRocketEntityMixin {
-
 	@Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getLookAngle()Lnet/minecraft/world/phys/Vec3;"))
-	private Vec3 onGetLookAngle(net.minecraft.world.entity.LivingEntity instance) {
+	private Vec3 onGetLookAngle(LivingEntity instance) {
 		Minecraft mc = Minecraft.getInstance();
 		if (instance == mc.player) {
 			Goal<?> goal = Aoba.getInstance().rotationManager.getGoal();

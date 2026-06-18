@@ -33,6 +33,7 @@ import net.aoba.utils.player.InteractionUtils;
 import net.aoba.utils.types.Range;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
@@ -60,7 +61,7 @@ public class KillAura extends Module implements SubtickListener, TickListener {
 	private final EntitiesSetting targetEntities = EntitiesSetting.builder().id("killaura_target_entities")
 			.displayName("Target Entities")
 			.description("Entity types that KillAura will target.")
-			.defaultValue(Set.of(EntityType.PLAYER)).build();
+			.defaultValue(Set.of(EntityTypes.PLAYER)).build();
 
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("killaura_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();

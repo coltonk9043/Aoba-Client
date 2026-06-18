@@ -28,6 +28,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.animal.Animal;
@@ -152,7 +153,7 @@ public class EntityESP extends Module implements Render3DListener {
 
 	private static Set<EntityType<?>> defaultEntitySet() {
 		HashSet<EntityType<?>> set = new HashSet<>();
-		set.add(EntityType.PLAYER);
+		set.add(EntityTypes.PLAYER);
 		for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
 			if (type.getCategory() != MobCategory.MISC)
 				set.add(type);

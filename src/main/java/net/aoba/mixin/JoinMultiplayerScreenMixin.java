@@ -44,11 +44,11 @@ public class JoinMultiplayerScreenMixin extends Screen {
 
     @Inject(at = {@At("TAIL")}, method = {"init()V"})
     private void onInit(CallbackInfo ci) {
-        altManagerButton = Button.builder(Component.nullToEmpty("Alt Manager"), b -> minecraft.setScreen(new AltScreen((JoinMultiplayerScreen) (Object) this)))
+        altManagerButton = Button.builder(Component.nullToEmpty("Alt Manager"), b -> minecraft.gui.setScreen(new AltScreen((JoinMultiplayerScreen) (Object) this)))
                 .bounds(width / 2 + 69, 5, 85, 20).build();
         addRenderableWidget(altManagerButton);
 
-        proxyManagerButton = Button.builder(Component.nullToEmpty("Proxy Manager"), b -> minecraft.setScreen(new ProxyScreen((JoinMultiplayerScreen) (Object) this)))
+        proxyManagerButton = Button.builder(Component.nullToEmpty("Proxy Manager"), b -> minecraft.gui.setScreen(new ProxyScreen((JoinMultiplayerScreen) (Object) this)))
                 .bounds(width / 2 - 154, 5, 85, 20).build();
         addRenderableWidget(proxyManagerButton);
     }

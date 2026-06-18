@@ -56,7 +56,7 @@ public class Freecam extends Module implements TickListener, Render3DListener, P
 
 		disableCulling.addOnUpdate(_ -> {
 			if (state.getValue() && MC.levelRenderer != null) {
-				MC.levelRenderer.allChanged();
+				MC.levelRenderer.invalidateCompiledGeometry(MC.level, MC.options, MC.gameRenderer.mainCamera(), MC.getBlockColors());
 			}
 		});
 	}
@@ -79,7 +79,7 @@ public class Freecam extends Module implements TickListener, Render3DListener, P
 		savedInput = null;
 
 		if (disableCulling.getValue() && MC.levelRenderer != null) {
-			MC.levelRenderer.allChanged();
+			MC.levelRenderer.invalidateCompiledGeometry(MC.level, MC.options, MC.gameRenderer.mainCamera(), MC.getBlockColors());
 		}
 
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
@@ -93,7 +93,7 @@ public class Freecam extends Module implements TickListener, Render3DListener, P
 		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(PlayerHealthListener.class, this);
 
-		Camera camera = MC.gameRenderer.getMainCamera();
+		Camera camera = MC.gameRenderer.mainCamera();
 		ICamera iCamera = (ICamera) camera;
 		LocalPlayer player = MC.player;
 		
@@ -114,7 +114,7 @@ public class Freecam extends Module implements TickListener, Render3DListener, P
 		iCamera.setCameraPos(pos);
 
 		if (disableCulling.getValue() && MC.levelRenderer != null) {
-			MC.levelRenderer.allChanged();
+			MC.levelRenderer.invalidateCompiledGeometry(MC.level, MC.options, MC.gameRenderer.mainCamera(), MC.getBlockColors());
 		}
 	}
 
@@ -137,7 +137,7 @@ public class Freecam extends Module implements TickListener, Render3DListener, P
 		if (MC.player == null)
 			return;
 
-		Camera camera = MC.gameRenderer.getMainCamera();
+		Camera camera = MC.gameRenderer.mainCamera();
 		ICamera iCamera = (ICamera) camera;
 
 		float tickDelta = event.getRenderer().getDeltaTracker().getGameTimeDeltaPartialTick(true);
@@ -164,7 +164,7 @@ public class Freecam extends Module implements TickListener, Render3DListener, P
 		if (MC.player == null)
 			return;
 
-		Camera camera = MC.gameRenderer.getMainCamera();
+		Camera camera = MC.gameRenderer.mainCamera();
 		Vec3 cameraPos = camera.position();
 		prevPos = cameraPos;
 

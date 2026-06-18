@@ -32,6 +32,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -160,12 +161,12 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 			int range = (int) (Math.floor(radius.getValue()) + 1);
 			int rangeSqr = range ^ 2;
 
-			if (MC.player.blockPosition().getCenter().distanceTo(currentBlockToBreak.getCenter()) > rangeSqr) {
+			if (Vec3.atCenterOf(MC.player.blockPosition()).distanceToSqr(Vec3.atCenterOf(currentBlockToBreak)) > rangeSqr) {
 				currentBlockToBreak = null;
 			} else {
 
 				RotationGoal rotation = RotationGoal.builder()
-						.goal(Rotation.rotationFrom(currentBlockToBreak.getCenter())).mode(rotationMode.getValue())
+						.goal(Rotation.rotationFrom(Vec3.atCenterOf(currentBlockToBreak))).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
 						.yawRandomness(yawRandomness.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
