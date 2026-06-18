@@ -69,7 +69,7 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 			.description("Easing curve applied to the rotation speed as it approaches the target.")
 			.defaultValue(EasingFunction.SineEaseInOut).build();
 
-	private final FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
+	private final FloatSetting yawRandomness = FloatSetting.builder().id("bedaura_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
