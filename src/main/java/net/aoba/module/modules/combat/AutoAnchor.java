@@ -21,7 +21,9 @@ import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.settings.types.RangeSetting;
 import net.aoba.settings.types.ShaderSetting;
+import net.aoba.utils.types.Range;
 import net.aoba.utils.BlockPlacement;
 import net.aoba.utils.FindItemResult;
 import net.aoba.utils.entity.DamageUtils;
@@ -29,7 +31,6 @@ import net.aoba.utils.entity.TargetPriority;
 import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -53,13 +54,13 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 			.description("The color of the placement position of respawn anchors.")
 			.defaultValue(Shader.solid(Colors.Red)).build();
 
-	private final FloatSetting chargeDelay = FloatSetting.builder().id("autoanchor_charge_delay")
-			.displayName("Charge Delay").description("Delay between anchor activation in milliseconds.")
-			.defaultValue(500f).minValue(0f).maxValue(2000f).step(50f).build();
+	private final RangeSetting chargeDelay = RangeSetting.builder().id("autoanchor_charge_delay")
+			.displayName("Charge Delay").description("Random delay in milliseconds between anchor activations (min, max).")
+			.defaultValue(new Range(400f, 600f)).minValue(0f).maxValue(2000f).step(50f).build();
 
-	private final FloatSetting placeDelay = FloatSetting.builder().id("autoanchor_place_delay")
-			.displayName("Place Delay").description("Delay between placing anchors in milliseconds.").defaultValue(500f)
-			.minValue(0f).maxValue(2000f).step(50f).build();
+	private final RangeSetting placeDelay = RangeSetting.builder().id("autoanchor_place_delay")
+			.displayName("Place Delay").description("Random delay in milliseconds between placing anchors (min, max).")
+			.defaultValue(new Range(400f, 600f)).minValue(0f).maxValue(2000f).step(50f).build();
 
 	private final BooleanSetting autoPlace = BooleanSetting.builder().id("autoanchor_autoplace")
 			.displayName("AutoPlace")
@@ -117,10 +118,18 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 			.id("autoanchor_rotation_mode").displayName("Rotation Mode")
 			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
 
-	private final BooleanSetting legit = BooleanSetting.builder().id("autoanchor_legit").displayName("Legit")
+	private final BooleanSetting useRaycast = BooleanSetting.builder().id("autoanchor_use_raycast").displayName("Use Raycast")
 			.description(
 					"Whether a raycast will be used to ensure that auto anchor is aiming at the target positions before placing/activating the anchor.")
 			.defaultValue(true).build();
+
+	private final BooleanSetting placeOnClick = BooleanSetting.builder().id("autoanchor_place_on_click")
+			.displayName("Place On Click").description("Only place anchors while right-click is held.")
+			.defaultValue(false).build();
+
+	private final BooleanSetting activateOnClick = BooleanSetting.builder().id("autoanchor_activate_on_click")
+			.displayName("Activate On Click").description("Only charge/detonate anchors while right-click is held.")
+			.defaultValue(false).build();
 
 	private final FloatSetting maxRotation = FloatSetting.builder().id("autoanchor_max_rotation")
 			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(10.0f)
@@ -153,6 +162,8 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 	private long lastChargeTime;
 	private long lastPlaceTime;
 	private long lastShieldTime;
+	private long nextChargeDelayMs;
+	private long nextPlaceDelayMs;
 	private final Map<BlockPos, Long> displayedBoxes = new HashMap<>();
 
 	public AutoAnchor() {
@@ -181,7 +192,9 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 		addSetting(targetFriends);
 
 		addSetting(rotationMode);
-		addSetting(legit);
+		addSetting(useRaycast);
+		addSetting(placeOnClick);
+		addSetting(activateOnClick);
 		addSetting(maxRotation);
 		addSetting(easingFunction);
 		addSetting(yawRandomness);
@@ -201,6 +214,8 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 	public void onEnable() {
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+		nextChargeDelayMs = (long) chargeDelay.randomValue();
+		nextPlaceDelayMs = (long) placeDelay.randomValue();
 	}
 
 	@Override
@@ -248,13 +263,14 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 		BlockPos anchor = InteractionUtils.findNearestBlockOf(Blocks.RESPAWN_ANCHOR, radius.getValue());
 		if (anchor == null) {
 			BlockPlacement chosenPlacement = pickPlacement(targets);
-			float placeDelayVal = placeDelay.getValue();
-			boolean canPlaceNow = autoPlace.getValue()
-					&& (placeDelayVal <= 0 || currentTime - lastPlaceTime >= placeDelayVal);
+			boolean placeClickOk = !placeOnClick.getValue() || MC.options.keyUse.isDown();
+			boolean canPlaceNow = autoPlace.getValue() && placeClickOk
+					&& (nextPlaceDelayMs <= 0 || currentTime - lastPlaceTime >= nextPlaceDelayMs);
 
 			if (canPlaceNow && chosenPlacement != null) {
 				if (placeAnchor(chosenPlacement)) {
 					lastPlaceTime = currentTime;
+					nextPlaceDelayMs = (long) placeDelay.randomValue();
 				}
 			} else if (rotationMode.getValue() != RotationMode.NONE && chosenPlacement != null) {
 				// Aim at the best location so that the player can place manually
@@ -303,7 +319,8 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 		// shielded.
 		int charge = MC.level.getBlockState(anchor).getValue(RespawnAnchorBlock.CHARGE);
 		boolean willDetonate = charge >= RespawnAnchorBlock.MAX_CHARGES;
-		if (willDetonate && safeAnchor.getValue() && !isShielded(anchor)) {
+		boolean placeClickOk = !placeOnClick.getValue() || MC.options.keyUse.isDown();
+		if (willDetonate && safeAnchor.getValue() && !isShielded(anchor) && placeClickOk) {
 			BlockPos shieldPos = findShieldPosition(anchor);
 			if (shieldPos != null) {
 				if (placeShield(shieldPos))
@@ -329,10 +346,12 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 
 		// Click the anchor (server interprets it as charge or detonation depending on
 		// charge state).
-		float chargeDelayVal = chargeDelay.getValue();
-		if (chargeDelayVal <= 0 || currentTime - lastChargeTime >= chargeDelayVal) {
-			if (chargeAnchor(anchor))
+		boolean activateClickOk = !activateOnClick.getValue() || MC.options.keyUse.isDown();
+		if (activateClickOk && (nextChargeDelayMs <= 0 || currentTime - lastChargeTime >= nextChargeDelayMs)) {
+			if (chargeAnchor(anchor)) {
 				lastChargeTime = currentTime;
+				nextChargeDelayMs = (long) chargeDelay.randomValue();
+			}
 		}
 	}
 
@@ -367,9 +386,9 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 						.pitchRandomness(pitchRandomness.getValue()).yawRandomness(yawRandomness.getValue())
 						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build());
 
-		// Check crosshair raycast if legit enabled.
+		// Check crosshair raycast if useRaycast enabled.
 		BlockHitResult hit;
-		if (legit.getValue()) {
+		if (useRaycast.getValue()) {
 			hit = InteractionUtils.raycastBlock(placementPos, placementFace);
 		} else
 			hit = new BlockHitResult(targetVec, placementFace, placementPos, false);
@@ -383,8 +402,6 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 			swap(result.slot(), false);
 
 		MC.gameMode.useItemOn(MC.player, InteractionHand.MAIN_HAND, hit);
-		MC.player.connection.send(
-				new ServerboundUseItemPacket(InteractionHand.MAIN_HAND, 0, MC.player.getYRot(), MC.player.getXRot()));
 		MC.player.swing(InteractionHand.MAIN_HAND);
 
 		displayedBoxes.put(targetPos, System.currentTimeMillis());
@@ -591,9 +608,9 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 			return false;
 		}
 
-		// Check for crosshair raycast if legit enabled.
+		// Check for crosshair raycast if useRaycast enabled.
 		BlockHitResult hit;
-		if (legit.getValue()) {
+		if (useRaycast.getValue()) {
 			hit = InteractionUtils.raycastBlock(anchorPos, clickFace);
 		} else
 			hit = new BlockHitResult(hitPos, clickFace, anchorPos, false);
@@ -607,8 +624,6 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 			swap(glowstone.slot(), false);
 
 		MC.gameMode.useItemOn(MC.player, InteractionHand.MAIN_HAND, hit);
-		MC.player.connection.send(
-				new ServerboundUseItemPacket(InteractionHand.MAIN_HAND, 0, MC.player.getYRot(), MC.player.getXRot()));
 		MC.player.swing(InteractionHand.MAIN_HAND);
 		return true;
 	}
@@ -729,7 +744,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 						.pitchRandomness(pitchRandomness.getValue()).yawRandomness(yawRandomness.getValue())
 						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build());
 
-		float placeDelayVal = placeDelay.getValue();
+		long placeDelayVal = nextPlaceDelayMs;
 		if (placeDelayVal > 0 && System.currentTimeMillis() - lastShieldTime < placeDelayVal)
 			return false;
 
@@ -740,9 +755,9 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 			return false;
 		}
 
-		// Check for crosshair raycast if legit enabled.
+		// Check for crosshair raycast if useRaycast enabled.
 		BlockHitResult hit;
-		if (legit.getValue()) {
+		if (useRaycast.getValue()) {
 			hit = InteractionUtils.raycastBlock(placementPos, placementFace);
 		} else
 			hit = new BlockHitResult(clickVec, placementFace, placementPos, false);
@@ -756,8 +771,6 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 			swap(glowstone.slot(), false);
 
 		MC.gameMode.useItemOn(MC.player, InteractionHand.MAIN_HAND, hit);
-		MC.player.connection.send(
-				new ServerboundUseItemPacket(InteractionHand.MAIN_HAND, 0, MC.player.getYRot(), MC.player.getXRot()));
 		MC.player.swing(InteractionHand.MAIN_HAND);
 		displayedBoxes.put(shieldPos, System.currentTimeMillis());
 		return true;

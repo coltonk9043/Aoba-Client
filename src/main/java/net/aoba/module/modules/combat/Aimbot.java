@@ -13,9 +13,9 @@ import java.util.Set;
 
 import net.aoba.Aoba;
 import net.aoba.event.events.Render3DEvent;
-import net.aoba.event.events.TickEvent;
+import net.aoba.event.events.SubtickEvent;
 import net.aoba.event.listeners.Render3DListener;
-import net.aoba.event.listeners.TickListener;
+import net.aoba.event.listeners.SubtickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.managers.rotation.RotationMode;
 import net.aoba.managers.rotation.goals.EasingFunction;
@@ -41,7 +41,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class Aimbot extends Module implements TickListener, Render3DListener {
+public class Aimbot extends Module implements SubtickListener, Render3DListener {
 
 	private LivingEntity currentTarget = null;
 
@@ -76,7 +76,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 			.displayName("Ignore NPCs").description("Attempts to ignore NPCs based on the entity UUID.")
 			.defaultValue(true).build();
 
-	private final BooleanSetting legit = BooleanSetting.builder().id("aimbot_legit").displayName("Legit")
+	private final BooleanSetting useRaycast = BooleanSetting.builder().id("aimbot_use_raycast").displayName("Use Raycast")
 			.description("Skips targets that are not in the line of sight of the player.").defaultValue(true).build();
 
 	private final FloatSetting radius = FloatSetting.builder().id("aimbot_radius").displayName("Radius")
@@ -134,7 +134,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 		addSetting(ignoreInvisible);
 		addSetting(ignoreSleeping);
 		addSetting(ignoreNPCs);
-		addSetting(legit);
+		addSetting(useRaycast);
 		addSetting(radius);
 		addSetting(fov);
 		addSetting(rotationMode);
@@ -149,7 +149,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 
 	@Override
 	public void onDisable() {
-		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.RemoveListener(SubtickListener.class, this);
 		Aoba.getInstance().eventManager.RemoveListener(Render3DListener.class, this);
 		Aoba.getInstance().rotationManager.setGoal(null);
 		currentTarget = null;
@@ -157,7 +157,7 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 
 	@Override
 	public void onEnable() {
-		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
+		Aoba.getInstance().eventManager.AddListener(SubtickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
 	}
 
@@ -167,16 +167,13 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 	}
 
 	@Override
-	public void onTick(TickEvent.Pre event) {
+	public void onSubtick(SubtickEvent event) {
+		float partialTick = MC.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+		Vec3 playerPos = MC.player.getPosition(partialTick);
 
-	}
-
-	@Override
-	public void onTick(TickEvent.Post event) {
 		float radiusSqr = radius.getValueSqr();
 		ArrayList<LivingEntity> hitList = new ArrayList<LivingEntity>();
 
-		// Add all potential entities to the 'hitlist'
 		Set<EntityType<?>> allowed = targetEntities.getValue();
 		if (!allowed.isEmpty()) {
 			for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
@@ -189,17 +186,16 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 				if (!allowed.contains(entity.getType()))
 					continue;
 
-				if (entity.distanceToSqr(MC.player) >= radiusSqr)
+				if (entity.getPosition(partialTick).distanceToSqr(playerPos) >= radiusSqr)
 					continue;
 
-				if (!shouldTarget(living))
+				if (!shouldTarget(living, partialTick))
 					continue;
 
 				hitList.add(living);
 			}
 		}
 
-		// For each entity, get the entity that matches a criteria.
 		LivingEntity entityFound = null;
 		for (LivingEntity entity : hitList) {
 			if (entityFound == null) {
@@ -212,12 +208,12 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 				if (entity.getHealth() >= entityFound.getHealth()) {
 					entityFound = entity;
 				}
-			} else if (MC.player.distanceToSqr(entity) <= MC.player.distanceToSqr(entityFound)) {
+			} else if (playerPos.distanceToSqr(entity.getPosition(partialTick)) <= playerPos
+					.distanceToSqr(entityFound.getPosition(partialTick))) {
 				entityFound = entity;
 			}
 		}
 
-		// Rotate towards the entity if one is found.
 		if (entityFound != null) {
 			EntityGoal rotation = EntityGoal.builder().goal(entityFound).mode(rotationMode.getValue())
 					.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
@@ -244,8 +240,8 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 		event.getRenderer().drawBox(targetBox, targetColor.getValue(), 1.0f);
 	}
 
-	private boolean shouldTarget(LivingEntity entity) {
-		if (!EntityUtils.isInFOV(entity, bodyPart.getValue(), fov.getValue()))
+	private boolean shouldTarget(LivingEntity entity, float partialTick) {
+		if (!EntityUtils.isInFOV(entity, bodyPart.getValue(), fov.getValue(), partialTick))
 			return false;
 
 		if (ignoreDead.getValue() && !entity.isAlive())
@@ -266,9 +262,9 @@ public class Aimbot extends Module implements TickListener, Render3DListener {
 		}
 
 		// Perform raycast to skip players not visible.
-		if (legit.getValue()) {
-			Vec3 eyePos = MC.player.getEyePosition();
-			Vec3 targetEyePos = entity.getEyePosition();
+		if (useRaycast.getValue()) {
+			Vec3 eyePos = MC.player.getEyePosition(partialTick);
+			Vec3 targetEyePos = entity.getEyePosition(partialTick);
 			BlockHitResult hit = MC.level.clip(new ClipContext(eyePos, targetEyePos, ClipContext.Block.COLLIDER,
 					ClipContext.Fluid.NONE, MC.player));
 			if (hit.getType() != HitResult.Type.MISS)
