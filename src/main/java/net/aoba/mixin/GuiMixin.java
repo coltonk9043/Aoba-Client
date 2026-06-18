@@ -29,18 +29,18 @@ import net.aoba.event.events.Render2DEvent;
 import net.aoba.module.modules.render.NoRender;
 import net.aoba.rendering.Renderer2D;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
-@Mixin(Gui.class)
+@Mixin(Hud.class)
 public class GuiMixin {
 	private static final String POWDER_SNOW_PATH = "textures/misc/powder_snow_outline.png";
 	private static final String PUMPKIN_PATH = "textures/misc/pumpkinblur.png";
 	
 
-	@Inject(at = @At("TAIL"), method = "extractTabList(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V")
+	@Inject(at = @At("TAIL"), method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/DeltaTracker;)V")
 	private void onRenderPlayerList(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
 		Renderer2D renderer = Aoba.getInstance().render2D;
 		renderer.beginFrame(context, tickCounter);

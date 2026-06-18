@@ -28,6 +28,7 @@ import net.aoba.utils.entity.EntityUtils;
 import net.aoba.utils.entity.TargetPriority;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
@@ -40,7 +41,7 @@ public class BowAimbot extends Module implements SubtickListener {
 	private final EntitiesSetting targetEntities = EntitiesSetting.builder().id("bowaimbot_target_entities")
 			.displayName("Target Entities")
 			.description("Entity types that BowAimbot will target.")
-			.defaultValue(Set.of(EntityType.PLAYER)).build();
+			.defaultValue(Set.of(EntityTypes.PLAYER)).build();
 
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("bowaimbot_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();

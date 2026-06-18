@@ -16,6 +16,7 @@ import net.aoba.rendering.shaders.Shader;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
@@ -55,7 +56,7 @@ public class EntityPreviewComponent extends Component {
 
 	private void updateStack(@Nullable EntityType<?> type) {
 		ItemStack stack = ItemStack.EMPTY;
-		if (type != null && type != EntityType.PLAYER) {
+		if (type != null && type != EntityTypes.PLAYER) {
 			Optional<Holder<Item>> egg = SpawnEggItem.byId(type);
 			if (egg.isPresent())
 				stack = new ItemStack(egg.get());
@@ -68,7 +69,7 @@ public class EntityPreviewComponent extends Component {
 		// Players obviously do NOT have a player egg.
 		// So we fall back to the Steve skin.
 		EntityType<?> type = getProperty(EntityProperty);
-		if (type == EntityType.PLAYER) {
+		if (type == EntityTypes.PLAYER) {
 			float ax = getActualSize().x();
 			float ay = getActualSize().y();
 			float aw = getActualSize().width();

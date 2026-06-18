@@ -26,15 +26,15 @@ public class ShaderUniformRingBuffer implements AutoCloseable {
 	 * Upload UBOs for a list of shaders.
 	 * Returns one GpuBufferSlice per shader.
 	 */
-	public List<GpuBufferSlice> upload(List<Shader> shaders) {
+	public List<GpuBufferSlice> upload(List<Shader> shaders, int renderScale) {
 		if (shaders.isEmpty())
 			return Collections.emptyList();
 
 		int numShaders = shaders.size();
-		int alignment = RenderSystem.getDevice().getUniformOffsetAlignment();
+		int alignment = RenderSystem.getDevice().getDeviceInfo().limits().minUniformOffsetAlignment();
 		float time = (System.nanoTime() - startTimeNanos) / 1_000_000_000f;
-		float resW = Minecraft.getInstance().getWindow().getWidth();
-		float resH = Minecraft.getInstance().getWindow().getHeight();
+		float resW = Minecraft.getInstance().getWindow().getWidth() * renderScale;
+		float resH = Minecraft.getInstance().getWindow().getHeight() * renderScale;
 
 		// Determine the total size of the buffer from all shaders.
 		int totalSize = 0;
@@ -52,7 +52,7 @@ public class ShaderUniformRingBuffer implements AutoCloseable {
 		// Create a UBO slice for each shader.
 		List<GpuBufferSlice> slices = new ArrayList<>(numShaders);
 		CommandEncoder encoder = RenderSystem.getDevice().createCommandEncoder();
-		try (GpuBuffer.MappedView mapped = encoder.mapBuffer(gpuBuf.slice(0, totalSize), false, true)) {
+		try (GpuBufferSlice.MappedView mapped = gpuBuf.map(0, totalSize, false, true)) {
 			ByteBuffer data = mapped.data();
 			int offset = 0;
 			for (Shader shader : shaders) {

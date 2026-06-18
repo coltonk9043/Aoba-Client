@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -126,9 +127,9 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 			float[] colors) {
 		try (var pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
 				() -> "Aoba Depth Clear",
-				MC.getMainRenderTarget().getColorTextureView(),
-				OptionalInt.empty(),
-				MC.getMainRenderTarget().useDepth ? MC.getMainRenderTarget().getDepthTextureView() : null,
+				MC.gameRenderer.mainRenderTarget().getColorTextureView(),
+				Optional.empty(),
+				MC.gameRenderer.mainRenderTarget().useDepth ? MC.gameRenderer.mainRenderTarget().getDepthTextureView() : null,
 				OptionalDouble.of(1.0))) {
 		}
 

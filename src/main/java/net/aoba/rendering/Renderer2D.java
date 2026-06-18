@@ -18,6 +18,8 @@ import java.util.Objects;
 import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fc;
 import org.lwjgl.system.MemoryUtil;
+import com.mojang.blaze3d.IndexType;
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
@@ -29,7 +31,7 @@ import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import com.mojang.blaze3d.textures.TextureFormat;
+import com.mojang.blaze3d.GpuFormat;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -37,8 +39,8 @@ import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.aoba.Aoba;
 import net.aoba.gui.types.Rectangle;
-import net.aoba.rendering.msaa.IMSAAHandler;
-import net.aoba.rendering.msaa.OpenGLMSAAHandler;
+import net.aoba.rendering.msaa.IAAHandler;
+import net.aoba.rendering.msaa.SSAAHandler;
 import net.aoba.rendering.shaders.Shader;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Font;
@@ -61,7 +63,7 @@ public class Renderer2D extends AbstractRenderer {
 	private @Nullable MappableRingBuffer vertexBuffer;
 	private @Nullable ProjectionMatrixBuffer projectionBuffer;
 	private static final int MSAA_SAMPLES = 4;
-	private final IMSAAHandler msaaHandler = new OpenGLMSAAHandler();
+	private final IAAHandler msaaHandler = new SSAAHandler();
 	private @Nullable GpuTexture gameSnapshotTexture;
 	private @Nullable GpuTextureView gameSnapshotTextureView;
 	private int gameSnapshotWidth, gameSnapshotHeight;
@@ -81,12 +83,12 @@ public class Renderer2D extends AbstractRenderer {
 	}
 
 	public void captureGameSnapshot() {
-		GpuTexture mainColor = MC.getMainRenderTarget().getColorTexture();
+		GpuTexture mainColor = MC.gameRenderer.mainRenderTarget().getColorTexture();
 		if (mainColor == null)
 			return;
 
-		int fbW = MC.getMainRenderTarget().width;
-		int fbH = MC.getMainRenderTarget().height;
+		int fbW = MC.gameRenderer.mainRenderTarget().width;
+		int fbH = MC.gameRenderer.mainRenderTarget().height;
 		ensureGameSnapshot(fbW, fbH);
 		RenderSystem.getDevice().createCommandEncoder().copyTextureToTexture(mainColor, gameSnapshotTexture, 0, 0, 0, 0,
 				0, fbW, fbH);
@@ -534,14 +536,14 @@ public class Renderer2D extends AbstractRenderer {
 		List<Batch> batches = new ArrayList<>();
 		RenderState currentState = elements.get(0).state;
 
-		BufferBuilder builder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.TRIANGLES,
+		BufferBuilder builder = new BufferBuilder(byteBufferBuilder, PrimitiveTopology.TRIANGLES,
 				DefaultVertexFormat.POSITION_TEX);
 
 		for (Element elem : elements) {
 			if (!elem.state.batchesWith(currentState)) {
 				finalizeBatch(builder, batches, currentState);
 				currentState = elem.state;
-				builder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.TRIANGLES,
+				builder = new BufferBuilder(byteBufferBuilder, PrimitiveTopology.TRIANGLES,
 						DefaultVertexFormat.POSITION_TEX);
 			}
 
@@ -571,7 +573,7 @@ public class Renderer2D extends AbstractRenderer {
 		List<Shader> shadersList = new ArrayList<>(batches.size());
 		for (Batch b : batches)
 			shadersList.add(b.state.shader);
-		List<GpuBufferSlice> shaderSlices = getShaderParamsBuffer().upload(shadersList);
+		List<GpuBufferSlice> shaderSlices = getShaderParamsBuffer().upload(shadersList, msaaHandler.renderScale());
 
 		CommandEncoder encoder = RenderSystem.getDevice().createCommandEncoder();
 		int offset = 0;
@@ -584,7 +586,7 @@ public class Renderer2D extends AbstractRenderer {
 			int size = vertData.remaining();
 
 			GpuBuffer gpuBuf = vertexBuffer.currentBuffer();
-			try (GpuBuffer.MappedView mapped = encoder.mapBuffer(gpuBuf.slice(offset, size), false, true)) {
+			try (GpuBufferSlice.MappedView mapped = gpuBuf.map(offset, size, false, true)) {
 				MemoryUtil.memCopy(vertData, mapped.data());
 			}
 
@@ -630,9 +632,9 @@ public class Renderer2D extends AbstractRenderer {
 			}
 		}
 
-		RenderSystem.AutoStorageIndexBuffer seqBuf = RenderSystem.getSequentialBuffer(VertexFormat.Mode.TRIANGLES);
+		RenderSystem.AutoStorageIndexBuffer seqBuf = RenderSystem.getSequentialBuffer(PrimitiveTopology.TRIANGLES);
 		GpuBuffer idxBuffer = seqBuf.getBuffer(maxIdx);
-		VertexFormat.IndexType idxType = seqBuf.type();
+		IndexType idxType = seqBuf.type();
 
 		msaaHandler.prepare(screenW, screenH, MSAA_SAMPLES);
 
@@ -642,7 +644,7 @@ public class Renderer2D extends AbstractRenderer {
 
 			for (DrawCmd draw : draws) {
 				pass.setPipeline(draw.shader.pipeline());
-				pass.setVertexBuffer(0, draw.vertexBuffer);
+				pass.setVertexBuffer(0, draw.vertexBuffer.slice());
 
 				if (draw.scissor != null) {
 					enableScissor(draw.scissor, pass, window);
@@ -661,11 +663,11 @@ public class Renderer2D extends AbstractRenderer {
 
 				pass.setUniform("AobaShaderParams", draw.shaderParamsSlice);
 				pass.setIndexBuffer(idxBuffer, idxType);
-				pass.drawIndexed(draw.baseVertex, 0, draw.indexCount, 1);
+				pass.drawIndexed(draw.indexCount, 1, 0, draw.baseVertex, 0);
 			}
 		}
 
-		IMSAAHandler.ResolvedTarget resolved = msaaHandler.resolve();
+		IAAHandler.ResolvedTarget resolved = msaaHandler.resolve();
 		Aoba.getInstance().compositor.compose(resolved.view(), resolved.sampler());
 	}
 
@@ -678,8 +680,9 @@ public class Renderer2D extends AbstractRenderer {
 	}
 
 	private void enableScissor(ScreenRectangle rect, RenderPass pass, Window window) {
-		int height = window.getHeight();
-		int scale = window.getGuiScale();
+		int ss = msaaHandler.renderScale();
+		int scale = window.getGuiScale() * ss;
+		int height = window.getHeight() * ss;
 		pass.enableScissor((int) (rect.left() * scale), (int) (height - rect.bottom() * scale),
 				Math.max(0, (int) (rect.width() * scale)), Math.max(0, (int) (rect.height() * scale)));
 	}
@@ -689,7 +692,7 @@ public class Renderer2D extends AbstractRenderer {
 			return;
 		destroyGameSnapshot();
 		gameSnapshotTexture = RenderSystem.getDevice().createTexture("aoba_game_snapshot",
-				GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST, TextureFormat.RGBA8, width, height, 1, 1);
+				GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST, GpuFormat.RGBA8_UNORM, width, height, 1, 1);
 		gameSnapshotTextureView = RenderSystem.getDevice().createTextureView(gameSnapshotTexture);
 		gameSnapshotWidth = width;
 		gameSnapshotHeight = height;

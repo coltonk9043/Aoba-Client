@@ -23,6 +23,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 
 public class FakePlayer extends Module {
+	private static final int FAKE_PLAYER_ENTITY_ID = -666666;
+
 	public static RemotePlayer fakePlayer;
 
 	private final StringSetting playerName = StringSetting.builder().id("fakeplayer_name").displayName("Player Name")
@@ -99,6 +101,7 @@ public class FakePlayer extends Module {
 				new GameProfile(UUID.fromString("66123666-6666-6666-6666-666666666600"), playerName.getValue()));
 		fakePlayer.copyPosition(MC.player);
 
+		fakePlayer.setId(FAKE_PLAYER_ENTITY_ID);
 		MC.level.addEntity(fakePlayer);
 
 		if (enableRegen.getValue()) {

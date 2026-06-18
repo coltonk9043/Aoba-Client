@@ -171,7 +171,7 @@ public class AobaGlyphProvider implements GlyphProvider {
 								ByteBuffer buf = bitmap.buffer(size);
 								if (buf != null) {
 									RenderSystem.getDevice().createCommandEncoder().writeToTexture(
-											texture, buf, NativeImage.Format.LUMINANCE,
+											texture, buf,
 											0, 0, x, y, width, height);
 								}
 							}

@@ -53,7 +53,7 @@ public class OptionsMixin {
 			"gamma()Lnet/minecraft/client/OptionInstance;" }, cancellable = true)
 	private void onGetGamma(CallbackInfoReturnable<OptionInstance<Double>> cir) {
 		Minecraft MC = Minecraft.getInstance();
-		if (MC.screen instanceof OptionsSubScreen)
+		if (MC.gui.screen() instanceof OptionsSubScreen)
 			return;
 
 		AobaClient aoba = Aoba.getInstance();

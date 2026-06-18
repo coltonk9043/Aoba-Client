@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.minecraft.UserApiService;
+import com.mojang.authlib.yggdrasil.FriendsService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.logging.LogUtils;
 import com.mojang.util.UndashedUuid;
@@ -32,6 +33,7 @@ import net.aoba.utils.http.HttpUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
+import net.minecraft.client.gui.screens.social.RemoteFriendListUpdateHandler;
 import net.minecraft.client.multiplayer.ProfileKeyPairManager;
 import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.multiplayer.chat.report.ReportingContext;
@@ -81,7 +83,9 @@ public class MicrosoftAuth {
 				YggdrasilAuthenticationService authService = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
 				UserApiService apiService = authService.createUserApiService(session.getAccessToken());
 				IMC.setUserApiService(apiService);
-				IMC.setSocialInteractionsManager(new PlayerSocialManager(MC, apiService));
+				FriendsService friendsService = authService.createFriendsService(session.getAccessToken());
+				IMC.setSocialInteractionsManager(new PlayerSocialManager(MC, apiService, friendsService,
+						new RemoteFriendListUpdateHandler(friendsService, MC)));
 				IMC.setProfileKeys(ProfileKeyPairManager.create(apiService, session, MC.gameDirectory.toPath()));
 				IMC.setAbuseReportContext(ReportingContext.create(ReportEnvironment.local(), apiService));
 				IMC.setGameProfileFuture(CompletableFuture.supplyAsync(

@@ -50,7 +50,7 @@ public class GuiMove extends Module implements TickListener {
 
 	@Override
 	public void onTick(Post event) {
-		if (MC.screen != null && !(MC.screen instanceof ChatScreen)) {
+		if (MC.gui.screen() != null && !(MC.gui.screen() instanceof ChatScreen)) {
 			for (KeyMapping k : new KeyMapping[] { MC.options.keyUp, MC.options.keyDown, MC.options.keyLeft,
 					MC.options.keyRight, MC.options.keyJump, MC.options.keySprint })
 				k.setDown(isKeyPressed(InputConstants.getKey(k.saveString()).getValue()));

@@ -41,6 +41,6 @@ public abstract class TitleScreenMixin extends Screen {
 	@Inject(method = "init", at = @At("RETURN"))
 	public void postInitHook(CallbackInfo ci) {
 		if (GuiManager.enableCustomTitle.getValue())
-			MC.setScreen(new MainMenuScreen());
+			MC.gui.setScreen(new MainMenuScreen());
 	}
 }
