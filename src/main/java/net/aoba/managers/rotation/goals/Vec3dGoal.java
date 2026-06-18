@@ -16,7 +16,7 @@ public class Vec3dGoal extends Goal<Vec3> {
 
 	@Override
 	public Rotation getGoalRotation(float tickDelta) {
-		return Rotation.rotationFrom(rotationGoal);
+		return Rotation.rotationFrom(rotationGoal, tickDelta);
 	}
 
 	// Builder
@@ -63,6 +63,11 @@ public class Vec3dGoal extends Goal<Vec3> {
 
 		public BUILDER moveFix(boolean state) {
 			goal.moveFix = state;
+			return this;
+		}
+		
+		public BUILDER easingFunction(EasingFunction func) {
+			goal.easingFunction = func;
 			return this;
 		}
 

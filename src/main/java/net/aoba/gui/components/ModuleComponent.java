@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import net.aoba.managers.rotation.goals.EasingFunction;
 import net.aoba.settings.types.*;
 import net.aoba.Aoba;
 import net.aoba.event.events.MouseClickEvent;
@@ -207,16 +208,24 @@ public class ModuleComponent extends Component {
 					entitiesExpander.setContent(new EntitiesComponent((EntitiesSetting) setting));
 					c = entitiesExpander;
 				} else if (setting instanceof EnumSetting) {
-					StackPanelComponent comboStack = new StackPanelComponent();
+					if (setting.getValue() instanceof EasingFunction) {
+						ExpanderComponent easingExpander = new ExpanderComponent(setting.displayName);
+						EasingComponent easingComponent = new EasingComponent();
+						easingComponent.bindProperty(EasingComponent.SelectedValueProperty, setting, BindingMode.TwoWay);
+						easingExpander.setContent(easingComponent);
+						c = easingExpander;
+					} else {
+						StackPanelComponent comboStack = new StackPanelComponent();
 
-					StringComponent enumHeader = new StringComponent();
-					enumHeader.setProperty(StringComponent.TextProperty, setting.displayName);
-					comboStack.addChild(enumHeader);
-					ComboBoxComponent comboBox = new ComboBoxComponent();
-					comboBox.setProperty(ComboBoxComponent.ItemsSourceProperty, Arrays.asList(setting.getValue().getClass().getEnumConstants()));
-					comboBox.bindProperty(ComboBoxComponent.SelectedItemProperty, setting, BindingMode.TwoWay);
-					comboStack.addChild(comboBox);
-					c = comboStack;
+						StringComponent enumHeader = new StringComponent();
+						enumHeader.setProperty(StringComponent.TextProperty, setting.displayName);
+						comboStack.addChild(enumHeader);
+						ComboBoxComponent comboBox = new ComboBoxComponent();
+						comboBox.setProperty(ComboBoxComponent.ItemsSourceProperty, Arrays.asList(setting.getValue().getClass().getEnumConstants()));
+						comboBox.bindProperty(ComboBoxComponent.SelectedItemProperty, setting, BindingMode.TwoWay);
+						comboStack.addChild(comboBox);
+						c = comboStack;
+					}
 				} else if (setting instanceof HotbarSetting) {
 					c = new HotbarComponent((HotbarSetting) setting);
 				} else if(setting instanceof KeybindSetting) {

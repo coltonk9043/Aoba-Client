@@ -63,6 +63,11 @@ public class RotationGoal extends Goal<Rotation> {
 			goal.moveFix = state;
 			return this;
 		}
+		
+		public BUILDER easingFunction(EasingFunction func) {
+			goal.easingFunction = func;
+			return this;
+		}
 
 		public RotationGoal build() {
 			return goal;

@@ -17,6 +17,7 @@ import net.aoba.event.events.TickEvent.Post;
 import net.aoba.event.listeners.SubtickListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EasingFunction;
 import net.aoba.managers.rotation.goals.EntityGoal;
 import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
@@ -101,6 +102,11 @@ public class KillAura extends Module implements SubtickListener, TickListener {
 			.displayName("Max Rotation").description("The max speed that KillAura will rotate").defaultValue(10.0f)
 			.minValue(1.0f).maxValue(360.0f).build();
 
+	private final EnumSetting<EasingFunction> easingFunction = EnumSetting.<EasingFunction>builder()
+			.id("killaura_easing").displayName("Easing")
+			.description("Easing curve applied to the rotation speed as it approaches the target.")
+			.defaultValue(EasingFunction.SineEaseInOut).build();
+
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
@@ -143,6 +149,7 @@ public class KillAura extends Module implements SubtickListener, TickListener {
 		addSetting(triggerOnClick);
 		addSetting(rotationMode);
 		addSetting(maxRotation);
+		addSetting(easingFunction);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
@@ -223,7 +230,7 @@ public class KillAura extends Module implements SubtickListener, TickListener {
 			EntityGoal rotation = EntityGoal.builder().goal(entityToAttack).mode(rotationMode.getValue())
 					.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
 					.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
-					.moveFix(moveFix.getValue()).bodyPart(bodyPart.getValue()).build();
+					.moveFix(moveFix.getValue()).bodyPart(bodyPart.getValue()).easingFunction(easingFunction.getValue()).build();
 			Aoba.getInstance().rotationManager.setGoal(rotation);
 		} else {
 			Aoba.getInstance().rotationManager.setGoal(null);
