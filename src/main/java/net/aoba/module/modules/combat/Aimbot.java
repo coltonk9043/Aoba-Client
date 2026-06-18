@@ -18,6 +18,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.SubtickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EasingFunction;
 import net.aoba.managers.rotation.goals.EntityGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -94,6 +95,11 @@ public class Aimbot extends Module implements SubtickListener, Render3DListener 
 			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(10.0f)
 			.minValue(1.0f).maxValue(360.0f).build();
 
+	private final EnumSetting<EasingFunction> easingFunction = EnumSetting.<EasingFunction>builder()
+			.id("aimbot_easing").displayName("Easing")
+			.description("Easing curve applied to the rotation speed as it approaches the target.")
+			.defaultValue(EasingFunction.SineEaseInOut).build();
+
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("aimbot_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
@@ -133,6 +139,7 @@ public class Aimbot extends Module implements SubtickListener, Render3DListener 
 		addSetting(fov);
 		addSetting(rotationMode);
 		addSetting(maxRotation);
+		addSetting(easingFunction);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
@@ -211,7 +218,8 @@ public class Aimbot extends Module implements SubtickListener, Render3DListener 
 			EntityGoal rotation = EntityGoal.builder().goal(entityFound).mode(rotationMode.getValue())
 					.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
 					.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())
-					.moveFix(moveFix.getValue()).bodyPart(bodyPart.getValue()).build();
+					.moveFix(moveFix.getValue()).bodyPart(bodyPart.getValue())
+					.easingFunction(easingFunction.getValue()).build();
 			Aoba.getInstance().rotationManager.setGoal(rotation);
 			currentTarget = entityFound;
 		} else {

@@ -13,6 +13,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Colors;
 import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EasingFunction;
 import net.aoba.managers.rotation.goals.Vec3dGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -134,6 +135,11 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(10.0f)
 			.minValue(1.0f).maxValue(360.0f).build();
 
+	private final EnumSetting<EasingFunction> easingFunction = EnumSetting.<EasingFunction>builder()
+			.id("autoanchor_easing").displayName("Easing")
+			.description("Easing curve applied to the rotation speed as it approaches the target.")
+			.defaultValue(EasingFunction.SineEaseInOut).build();
+
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("autoanchor_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
@@ -190,6 +196,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 		addSetting(placeOnClick);
 		addSetting(activateOnClick);
 		addSetting(maxRotation);
+		addSetting(easingFunction);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
@@ -274,7 +281,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 				Aoba.getInstance().rotationManager.setGoal(Vec3dGoal.builder().goal(clickVec)
 						.mode(rotationMode.getValue()).maxRotation(maxRotation.getValue())
 						.pitchRandomness(pitchRandomness.getValue()).yawRandomness(yawRandomness.getValue())
-						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).build());
+						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build());
 			} else {
 				Aoba.getInstance().rotationManager.setGoal(null);
 			}
@@ -291,7 +298,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 					Aoba.getInstance().rotationManager.setGoal(Vec3dGoal.builder().goal(hitPos)
 							.mode(rotationMode.getValue()).maxRotation(maxRotation.getValue())
 							.pitchRandomness(pitchRandomness.getValue()).yawRandomness(yawRandomness.getValue())
-							.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).build());
+							.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build());
 				} else {
 					Aoba.getInstance().rotationManager.setGoal(null);
 				}
@@ -377,7 +384,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 		Aoba.getInstance().rotationManager.setGoal(
 				Vec3dGoal.builder().goal(targetVec).mode(rotationMode.getValue()).maxRotation(maxRotation.getValue())
 						.pitchRandomness(pitchRandomness.getValue()).yawRandomness(yawRandomness.getValue())
-						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).build());
+						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build());
 
 		// Check crosshair raycast if useRaycast enabled.
 		BlockHitResult hit;
@@ -592,7 +599,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 		Aoba.getInstance().rotationManager.setGoal(
 				Vec3dGoal.builder().goal(hitPos).mode(rotationMode.getValue()).maxRotation(maxRotation.getValue())
 						.pitchRandomness(pitchRandomness.getValue()).yawRandomness(yawRandomness.getValue())
-						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).build());
+						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build());
 
 		// Verify glowstone is in the hotbar.
 		FindItemResult glowstone = find(Items.GLOWSTONE);
@@ -735,7 +742,7 @@ public class AutoAnchor extends Module implements TickListener, Render3DListener
 		Aoba.getInstance().rotationManager.setGoal(
 				Vec3dGoal.builder().goal(clickVec).mode(rotationMode.getValue()).maxRotation(maxRotation.getValue())
 						.pitchRandomness(pitchRandomness.getValue()).yawRandomness(yawRandomness.getValue())
-						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).build());
+						.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build());
 
 		long placeDelayVal = nextPlaceDelayMs;
 		if (placeDelayVal > 0 && System.currentTimeMillis() - lastShieldTime < placeDelayVal)
