@@ -117,19 +117,39 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 		float partialTick = event.getRenderer().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 		float frameDelta = event.getRenderer().getDeltaTracker().getRealtimeDeltaTicks();
 
-		Rotation playerRotation = currentGoal.isFakeRotation() ? new Rotation(serverYaw, serverPitch)
-				: new Rotation(MC.player.getYRot(), MC.player.getXRot());
-		
+		float startYaw = currentGoal.isFakeRotation() ? serverYaw : MC.player.getYRot();
+		float startPitch = currentGoal.isFakeRotation() ? serverPitch : MC.player.getXRot();
+
+		Rotation finalRotation = getRotationFromGoal(startYaw, startPitch, partialTick, frameDelta);
+
+		if (currentGoal.isFakeRotation()) {
+			serverYaw = (float) finalRotation.yaw();
+			serverPitch = (float) finalRotation.pitch();
+			lastAppliedRotation = new Rotation(serverYaw, serverPitch);
+		} else {
+			MC.player.setYRot((float) finalRotation.yaw());
+			MC.player.setXRot((float) finalRotation.pitch());
+			lastAppliedRotation = new Rotation(MC.player.getYRot(), MC.player.getXRot());
+		}
+	}
+
+	private Rotation getRotationFromGoal(float startYaw, float startPitch, float partialTick, float frameDelta) {
+		RotationMode mode = currentGoal.getRotationMode();
+
+		Rotation playerRotation = new Rotation(startYaw, startPitch);
 		Rotation goal = currentGoal.getGoalRotation(partialTick);
+		
+		// Add jitter
 		double yawJitter = Math.random() * 2.0 - 1.0;
 		double pitchJitter = Math.random() * 2.0 - 1.0;
 		goal = new Rotation(goal.yaw() + yawJitter * currentGoal.getYawRandomness(),
 				goal.pitch() + pitchJitter * currentGoal.getPitchRandomness());
 
-		Rotation finalRotation;
-		if (mode == RotationMode.INSTANT) {
-			finalRotation = goal.roundToGCD().clamp();
-		} else {
+		if (mode == RotationMode.NONE)
+			return null;
+		else if (mode == RotationMode.INSTANT)
+			return goal.roundToGCD().clamp();
+		else {
 			// Set the start goal if the rotation has changed from the last applied rotation.
 			if (!playerRotation.equals(lastAppliedRotation)) {
 				currentGoalStartingRotation = playerRotation;
@@ -150,8 +170,9 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 			double easingValue = EasingFunction.ease(currentGoal.getEasingFunction(), currentRotationGoalProgress);
 			double lerpDeltaYaw = Mth.wrapDegrees(goal.yaw() - currentGoalStartingRotation.yaw());
 			double lerpDeltaPitch = goal.pitch() - currentGoalStartingRotation.pitch();
-			Rotation target =  new Rotation(currentGoalStartingRotation.yaw() + lerpDeltaYaw * easingValue, currentGoalStartingRotation.pitch() + lerpDeltaPitch * easingValue);
-			
+			Rotation target = new Rotation(currentGoalStartingRotation.yaw() + lerpDeltaYaw * easingValue,
+					currentGoalStartingRotation.pitch() + lerpDeltaPitch * easingValue);
+
 			double maxStep = currentGoal.getMaxRotation() * frameDelta;
 			double deltaYaw = Mth.wrapDegrees(target.yaw() - playerRotation.yaw());
 			double deltaPitch = target.pitch() - playerRotation.pitch();
@@ -163,17 +184,7 @@ public class RotationManager implements TickListener, Render3DListener, SendPack
 				deltaPitch *= scale;
 			}
 
-			finalRotation = new Rotation(playerRotation.yaw() + deltaYaw, playerRotation.pitch() + deltaPitch).roundToGCD();
-		}
-
-		if (currentGoal.isFakeRotation()) {
-			serverYaw = (float) finalRotation.yaw();
-			serverPitch = (float) finalRotation.pitch();
-			lastAppliedRotation = new Rotation(serverYaw, serverPitch);
-		} else {
-			MC.player.setYRot((float) finalRotation.yaw());
-			MC.player.setXRot((float) finalRotation.pitch());
-			lastAppliedRotation = new Rotation(MC.player.getYRot(), MC.player.getXRot());
+			return new Rotation(playerRotation.yaw() + deltaYaw, playerRotation.pitch() + deltaPitch).roundToGCD();
 		}
 	}
 
