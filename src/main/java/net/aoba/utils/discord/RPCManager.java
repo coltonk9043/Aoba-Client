@@ -42,13 +42,13 @@ public class RPCManager {
             presence.largeImageText = "v" + AobaClient.AOBA_VERSION;
             rpc.Discord_UpdatePresence(presence);
 
-            thread = new Thread(() -> {
+            thread = Thread.ofVirtual().name("TH-RPC-Handler").start(() -> {
                 while (!Thread.currentThread().isInterrupted()) {
                     rpc.Discord_RunCallbacks();
 
                     presence.details = getDetails();
 
-                    presence.state = "v" + AobaClient.AOBA_VERSION + " | MC 1.21";
+                    presence.state = "v" + AobaClient.AOBA_VERSION + " | MC 26.2";
 
                     presence.smallImageText = "logged as - " + MC.getUser().getName();
                     presence.smallImageKey = "https://minotar.net/helm/" + MC.getUser().getName() + "/100.png";
@@ -65,8 +65,7 @@ public class RPCManager {
                     } catch (InterruptedException ignored) {
                     }
                 }
-            }, "TH-RPC-Handler");
-            thread.start();
+            });
         }
     }
 
