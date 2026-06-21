@@ -93,6 +93,7 @@ public class ModuleManager implements KeyDownListener {
 
 	// Modules
 	public Aimbot aimbot = new Aimbot();
+	public AirPlace airplace = new AirPlace();
 	public AntiCactus anticactus = new AntiCactus();
 	public AntiInvis antiinvis = new AntiInvis();
 	public AntiKnockback antiknockback = new AntiKnockback();
