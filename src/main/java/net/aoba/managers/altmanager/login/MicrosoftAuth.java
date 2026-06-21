@@ -14,6 +14,7 @@ import java.net.Proxy;
 import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import com.google.gson.Gson;
@@ -174,7 +175,7 @@ public class MicrosoftAuth {
 			throw new IllegalArgumentException("Entitlement token could not be fetched.");
 	}
 
-	public static ProfileToken getProfileToken(MCAuthToken mcAuthToken) throws IOException, InterruptedException {
+	public static ProfileToken getProfileToken(MCAuthToken mcAuthToken) {
 		Optional<String> response = HttpUtils.builder(PROFILE_URL).acceptJson().json().bearer(mcAuthToken.accessToken)
 				.get();
 		if (response.isPresent()) {
@@ -198,7 +199,7 @@ public class MicrosoftAuth {
 			RefreshTokenHandler handler = new RefreshTokenHandler();
 			handler.setConsumer(onDataReceived);
 			replyServer.createContext("/", handler);
-			replyServer.setExecutor(null);
+			replyServer.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
 			replyServer.start();
 			return true;
 		} catch (Exception e) {
@@ -255,7 +256,7 @@ public class MicrosoftAuth {
 			replyServer = null;
 		}
 
-		private AuthToken getAccessToken(String code) throws IOException, InterruptedException {
+		private AuthToken getAccessToken(String code) {
 			String payload = "client_id=" + CLIENT_ID + "&code=" + code
 					+ "&grant_type=authorization_code&redirect_uri=http://127.0.0.1:42069";
 			Optional<String> response = HttpUtils.builder(TOKEN_URL).acceptJson().form().post(payload);

@@ -10,7 +10,6 @@ package net.aoba.utils.http;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpClient.Version;
@@ -18,6 +17,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 
 public class HttpUtils {
 
@@ -28,12 +28,7 @@ public class HttpUtils {
 	 * @return URI resulting from URL.
 	 */
 	public static URI createURI(String url) {
-		try {
-			URI uri = new URI(url);
-			return uri;
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return URI.create(url);
 	}
 
 	public static BUILDER builder(String url) {
@@ -49,6 +44,7 @@ public class HttpUtils {
 		private static final HttpClient client = HttpClient.newBuilder()
 				.version(Version.HTTP_2)
 				.followRedirects(Redirect.NORMAL)
+				.executor(Executors.newVirtualThreadPerTaskExecutor())
 				.build();
 
 
