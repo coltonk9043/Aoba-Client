@@ -60,6 +60,9 @@ public class OptionsMixin {
 		if (aoba == null)
 			return;
 
+		if(aoba.moduleManager == null || aoba.moduleManager.fullbright == null || aoba.moduleManager.xray == null)
+			return;
+
 		if (aoba.moduleManager.fullbright.state.getValue() || aoba.moduleManager.xray.state.getValue()) {
 			cir.setReturnValue(fullbrightOption);
 		}
