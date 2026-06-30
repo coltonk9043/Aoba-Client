@@ -48,7 +48,7 @@ public class AddonScreen extends Screen {
 				.builder(Component.nullToEmpty("Open Addons Folder"), button -> Util.getPlatform().openPath(addonsPath))
 				.bounds(16, height - 40, 120, 20).build());
 
-		addRenderableWidget(Button.builder(Component.nullToEmpty("Done"), b -> minecraft.setScreen(parentScreen))
+		addRenderableWidget(Button.builder(Component.nullToEmpty("Done"), b -> minecraft.gui.setScreen(parentScreen))
 				.bounds(146, height - 40, 120, 20).build());
 
 		addonListSelector = new AddonSelectionList(this, minecraft, 250, height, 16, 48);
@@ -114,7 +114,7 @@ public class AddonScreen extends Screen {
 	@Override
 	protected void extractPanorama(final GuiGraphicsExtractor graphics, final float a){
 		try {
-			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, this.panoramaShouldSpin());
+			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, true);
 		} catch (IllegalStateException e) {
 		}
 	}

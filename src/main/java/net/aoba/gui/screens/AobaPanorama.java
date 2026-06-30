@@ -15,11 +15,11 @@ public class AobaPanorama {
 		Minecraft minecraft = Minecraft.getInstance();
 		if (shouldSpin) {
 			float delta = minecraft.getDeltaTracker().getRealtimeDeltaTicks();
-			float speed = (float) (delta * minecraft.gameRenderer.getGameRenderState().optionsRenderState.panoramaSpeed);
+			float speed = (float) (delta * minecraft.gameRenderer.gameRenderState().optionsRenderState.panoramaSpeed);
 			this.spin = Mth.wrapDegrees(this.spin + speed * 0.1f);
 		}
 
-		minecraft.gameRenderer.getGameRenderState().guiRenderState.panoramaRenderState = new PanoramaRenderState(-this.spin);
+		minecraft.gameRenderer.gameRenderState().guiRenderState.panoramaRenderState = new PanoramaRenderState(-this.spin);
 		graphics.blit(RenderPipelines.GUI_TEXTURED, PANORAMA_OVERLAY, 0, 0, 0.0f, 0.0f, width, height, 16, 128, 16, 128);
 	}
 }

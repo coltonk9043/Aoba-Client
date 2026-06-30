@@ -28,7 +28,7 @@ public class SearchWindow extends Window {
 	private Map<Module, ModuleComponent> moduleRows;
 
 	public SearchWindow() {
-		super("Search", MC.screen.width / 2 - 250, 990);
+		super("Search", MC.gui.screen().width / 2 - 250, 990);
 
 		this.resizeMode = ResizeMode.None;
 		this.sizeToContent = SizeToContent.Height;

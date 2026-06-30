@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.aoba.Aoba;
 import net.aoba.AobaClient;
 import net.aoba.event.events.StartAttackEvent;
+import net.aoba.event.events.SubtickEvent;
 import net.aoba.event.events.TickEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -65,6 +66,8 @@ public abstract class MinecraftMixin {
 
 	private User aobaSession;
 
+	private long aobaLastSubtickNanos;
+
 	@Shadow
 	public abstract boolean isWindowActive();
 
@@ -76,7 +79,7 @@ public abstract class MinecraftMixin {
 	@Final
 	public Options options;
 
-	@Inject(at = @At("HEAD"), method = "onResourceLoadFinished(Lnet/minecraft/client/Minecraft$GameLoadCookie;)V")
+	@Inject(at = @At("HEAD"), method = "onResourceLoadFinished(Lnet/minecraft/client/GameLoadCookie;)V")
 	private void onfinishedloading(CallbackInfo info) {
 		if(aobaLoaded)
 			return;
@@ -97,6 +100,20 @@ public abstract class MinecraftMixin {
 	public void onPostTick(CallbackInfo info) {
 		if (level != null && player != null) {
 			TickEvent.Post updateEvent = new TickEvent.Post();
+			Aoba.getInstance().eventManager.Fire(updateEvent);
+		}
+	}
+
+	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MouseHandler;handleAccumulatedMovement()V", shift = At.Shift.AFTER), method = "runTick(Z)V")
+	public void onSubtick(boolean advanceGameTime, CallbackInfo info) {
+		long now = System.nanoTime();
+		if (aobaLastSubtickNanos == 0L)
+			aobaLastSubtickNanos = now;
+		float delta = (now - aobaLastSubtickNanos) / 1_000_000.0f;
+		aobaLastSubtickNanos = now;
+
+		if (level != null && player != null) {
+			SubtickEvent updateEvent = new SubtickEvent(delta);
 			Aoba.getInstance().eventManager.Fire(updateEvent);
 		}
 	}

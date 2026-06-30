@@ -88,6 +88,13 @@ public class Fly extends Module implements TickListener {
 	@Override
 	public void onDisable() {
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+
+		LocalPlayer player = MC.player;
+		if (player != null && !player.isSpectator() && !player.getAbilities().instabuild) {
+			player.getAbilities().flying = false;
+			player.getAbilities().mayfly = false;
+			player.onUpdateAbilities();
+		}
 	}
 
 	@Override

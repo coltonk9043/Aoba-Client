@@ -404,7 +404,7 @@ public class GuiManager implements KeyDownListener, TickListener, Render2DListen
 
 	@Override
 	public void onKeyDown(KeyDownEvent event) {
-		if (clickGuiButton.getValue().getValue() == event.GetKey() && MC.screen == null && !isKeyboardInputActive) {
+		if (clickGuiButton.getValue().getValue() == event.GetKey() && MC.gui.screen() == null && !isKeyboardInputActive) {
 			setClickGuiOpen(!clickGuiOpen);
 			toggleMouse();
 		}

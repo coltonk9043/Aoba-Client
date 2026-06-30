@@ -1,11 +1,14 @@
 package net.aoba.rendering;
 
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.system.MemoryUtil;
 
+import com.mojang.blaze3d.IndexType;
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
@@ -66,11 +69,11 @@ public final class Compositor implements AutoCloseable {
 
 		GpuBufferSlice transforms = AbstractRenderer.uploadGuiTransform();
 
-		RenderSystem.AutoStorageIndexBuffer seqBuf = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
+		RenderSystem.AutoStorageIndexBuffer seqBuf = RenderSystem.getSequentialBuffer(PrimitiveTopology.QUADS);
 		GpuBuffer idxBuffer = seqBuf.getBuffer(6);
-		VertexFormat.IndexType idxType = seqBuf.type();
+		IndexType idxType = seqBuf.type();
 
-		BufferBuilder builder = new BufferBuilder(byteBuilder, VertexFormat.Mode.QUADS,
+		BufferBuilder builder = new BufferBuilder(byteBuilder, PrimitiveTopology.QUADS,
 				DefaultVertexFormat.POSITION_TEX_COLOR);
 		builder.addVertex(0, 0, 0).setUv(0, 1).setColor(-1);
 		builder.addVertex(sw, 0, 0).setUv(1, 1).setColor(-1);
@@ -94,23 +97,23 @@ public final class Compositor implements AutoCloseable {
 
 			GpuBuffer gpuBuf = vertexBuffer.currentBuffer();
 			CommandEncoder encoder = RenderSystem.getDevice().createCommandEncoder();
-			try (GpuBuffer.MappedView mapped = encoder.mapBuffer(gpuBuf.slice(0, requiredSize), false, true)) {
+			try (GpuBufferSlice.MappedView mapped = gpuBuf.map(0, requiredSize, false, true)) {
 				MemoryUtil.memCopy(mesh.vertexBuffer(), mapped.data());
 			}
 
 			try (RenderPass pass = encoder.createRenderPass(() -> "Aoba Composite",
-					mc.getMainRenderTarget().getColorTextureView(), OptionalInt.empty(),
-					mc.getMainRenderTarget().useDepth ? mc.getMainRenderTarget().getDepthTextureView() : null,
+					mc.gameRenderer.mainRenderTarget().getColorTextureView(), Optional.empty(),
+					mc.gameRenderer.mainRenderTarget().useDepth ? mc.gameRenderer.mainRenderTarget().getDepthTextureView() : null,
 					OptionalDouble.empty())) {
 
 				RenderSystem.bindDefaultUniforms(pass);
 				pass.setUniform("DynamicTransforms", transforms);
 				pass.setPipeline(PIPELINE);
-				pass.setVertexBuffer(0, gpuBuf);
+				pass.setVertexBuffer(0, gpuBuf.slice());
 				pass.bindTexture("Sampler0", textureView, sampler);
 				pass.disableScissor();
 				pass.setIndexBuffer(idxBuffer, idxType);
-				pass.drawIndexed(0, 0, 6, 1);
+				pass.drawIndexed(6, 1, 0, 0, 0);
 			}
 
 			vertexBuffer.rotate();

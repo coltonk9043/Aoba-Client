@@ -13,12 +13,16 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.system.MemoryUtil;
+import com.mojang.blaze3d.IndexType;
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.systems.CommandEncoder;
@@ -28,7 +32,7 @@ import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import com.mojang.blaze3d.textures.TextureFormat;
+import com.mojang.blaze3d.GpuFormat;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -106,7 +110,7 @@ public class Renderer3D extends AbstractRenderer {
 		if (!Objects.equals(currentShader, shader)) {
 			finalizeBatch();
 			currentShader = shader;
-			currentBuilder = new BufferBuilder(sharedByteBuffer, VertexFormat.Mode.TRIANGLES,
+			currentBuilder = new BufferBuilder(sharedByteBuffer, PrimitiveTopology.TRIANGLES,
 					DefaultVertexFormat.POSITION_TEX);
 		}
 	}
@@ -297,7 +301,7 @@ public class Renderer3D extends AbstractRenderer {
 				ByteBuffer vertData = pendingBatches.get(i).mesh.vertexBuffer();
 				int size = vertData.remaining();
 				offsets[i] = offset;
-				try (GpuBuffer.MappedView mapped = encoder.mapBuffer(vertexGpuBuffer.slice(offset, size), false, true)) {
+				try (GpuBufferSlice.MappedView mapped = vertexGpuBuffer.map(offset, size, false, true)) {
 					MemoryUtil.memCopy(vertData, mapped.data());
 				}
 				offset += size;
@@ -308,19 +312,19 @@ public class Renderer3D extends AbstractRenderer {
 			for (DrawBatch batch : pendingBatches) {
 				shadersList.add(batch.shader);
 			}
-			List<GpuBufferSlice> paramSlices = getShaderParamsBuffer().upload(shadersList);
-			RenderSystem.AutoStorageIndexBuffer seqBuf = RenderSystem.getSequentialBuffer(VertexFormat.Mode.TRIANGLES);
+			List<GpuBufferSlice> paramSlices = getShaderParamsBuffer().upload(shadersList, 1);
+			RenderSystem.AutoStorageIndexBuffer seqBuf = RenderSystem.getSequentialBuffer(PrimitiveTopology.TRIANGLES);
 			GpuBuffer idxBuffer = seqBuf.getBuffer(maxIdx);
-			VertexFormat.IndexType idxType = seqBuf.type();
+			IndexType idxType = seqBuf.type();
 			GpuBufferSlice transforms = uploadIdentityTransform();
 			
 			ensureOffscreenResources(screenW, screenH);
 			try (RenderPass pass = encoder.createRenderPass(() -> "Aoba 3D Shaders", offscreenColorView,
-					OptionalInt.of(0), offscreenDepthView, OptionalDouble.of(1.0))) {
+					Optional.of(new Vector4f(0.0F)), offscreenDepthView, OptionalDouble.of(1.0))) {
 
 				RenderSystem.bindDefaultUniforms(pass);
 				pass.setUniform("DynamicTransforms", transforms);
-				pass.setVertexBuffer(0, vertexGpuBuffer);
+				pass.setVertexBuffer(0, vertexGpuBuffer.slice());
 				pass.setIndexBuffer(idxBuffer, idxType);
 				pass.disableScissor();
 
@@ -331,7 +335,7 @@ public class Renderer3D extends AbstractRenderer {
 					pass.setPipeline(batch.shader.pipeline3D());
 					pass.setUniform("AobaShaderParams", paramSlices.get(i));
 					pass.bindTexture("Sampler0", getWhiteTextureView(), getWhiteSampler());
-					pass.drawIndexed(offsets[i] / vertexSize, 0, batch.mesh.drawState().indexCount(), 1);
+					pass.drawIndexed(batch.mesh.drawState().indexCount(), 1, 0, offsets[i] / vertexSize, 0);
 				}
 			}
 
@@ -361,11 +365,11 @@ public class Renderer3D extends AbstractRenderer {
 
 		destroyOffscreenResources();
 		offscreenColorTexture = RenderSystem.getDevice().createTexture("aoba_3d_color",
-				GpuTexture.USAGE_RENDER_ATTACHMENT | GpuTexture.USAGE_TEXTURE_BINDING, TextureFormat.RGBA8, width,
+				GpuTexture.USAGE_RENDER_ATTACHMENT | GpuTexture.USAGE_TEXTURE_BINDING, GpuFormat.RGBA8_UNORM, width,
 				height, 1, 1);
 		offscreenColorView = RenderSystem.getDevice().createTextureView(offscreenColorTexture);
 		offscreenDepthTexture = RenderSystem.getDevice().createTexture("aoba_3d_depth",
-				GpuTexture.USAGE_RENDER_ATTACHMENT | GpuTexture.USAGE_TEXTURE_BINDING, TextureFormat.DEPTH32, width,
+				GpuTexture.USAGE_RENDER_ATTACHMENT | GpuTexture.USAGE_TEXTURE_BINDING, GpuFormat.D32_FLOAT, width,
 				height, 1, 1);
 		offscreenDepthView = RenderSystem.getDevice().createTextureView(offscreenDepthTexture);
 		offscreenSampler = RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST);

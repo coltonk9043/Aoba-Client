@@ -30,7 +30,7 @@ void main() {
     float angle = radians(Angle);
 
     vec2 texSize = vec2(textureSize(Sampler0, 0));
-    vec2 screenUV = gl_FragCoord.xy / texSize;
+    vec2 screenUV = gl_FragCoord.xy / Resolution;
 
     vec3 color = vec3(0.0);
     float total = 0.0;

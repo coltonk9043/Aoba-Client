@@ -8,10 +8,10 @@
 
 package net.aoba.module.modules.combat;
 
-import java.util.ArrayList;
-
 import net.aoba.Aoba;
+import net.aoba.event.events.SubtickEvent;
 import net.aoba.event.events.TickEvent;
+import net.aoba.event.listeners.SubtickListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.module.AntiCheat;
 import net.aoba.module.Category;
@@ -27,7 +27,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
-public class MaceAura extends Module implements TickListener {
+public class MaceAura extends Module implements SubtickListener, TickListener {
 	private final FloatSetting radius = FloatSetting.builder().id("maceaura_radius").displayName("Radius")
 			.description("Radius that MaceAura will trigger").defaultValue(5f).minValue(0.1f).maxValue(10f).step(0.1f)
 			.build();
@@ -48,7 +48,12 @@ public class MaceAura extends Module implements TickListener {
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("maceaura_target_friends")
 			.displayName("Target Friends").description("Target Friends.").defaultValue(false).build();
 
-	private LivingEntity entityToAttack;
+	private final BooleanSetting triggerOnClick = BooleanSetting.builder().id("maceaura_trigger_on_click")
+			.displayName("Trigger On Click").description("Only attack while the attack key is held down.")
+			.defaultValue(false).build();
+
+	private LivingEntity selectedTarget;
+	private boolean jumped;
 
 	public MaceAura() {
 		super("MaceAura");
@@ -63,6 +68,7 @@ public class MaceAura extends Module implements TickListener {
 		addSetting(targetMonsters);
 		addSetting(targetPlayers);
 		addSetting(targetFriends);
+		addSetting(triggerOnClick);
 
 		setDetectable(
 				AntiCheat.NoCheatPlus,
@@ -79,17 +85,70 @@ public class MaceAura extends Module implements TickListener {
 
 	@Override
 	public void onDisable() {
+		Aoba.getInstance().eventManager.RemoveListener(SubtickListener.class, this);
 		Aoba.getInstance().eventManager.RemoveListener(TickListener.class, this);
+		selectedTarget = null;
+		jumped = false;
 	}
 
 	@Override
 	public void onEnable() {
+		Aoba.getInstance().eventManager.AddListener(SubtickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 	}
 
 	@Override
 	public void onToggle() {
 
+	}
+
+	@Override
+	public void onSubtick(SubtickEvent event) {
+		float partialTick = MC.getDeltaTracker().getGameTimeDeltaPartialTick(true);
+		Vec3 playerPos = MC.player.getPosition(partialTick);
+		float radiusSqr = radius.getValueSqr();
+
+		LivingEntity best = null;
+		double bestDistSqr = 0;
+
+		if (targetAnimals.getValue() || targetMonsters.getValue()) {
+			for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
+				if (entity == MC.player)
+					continue;
+				if (!((entity instanceof Animal && targetAnimals.getValue())
+						|| (entity instanceof Enemy && targetMonsters.getValue())))
+					continue;
+
+				double distSqr = playerPos.distanceToSqr(entity.getPosition(partialTick));
+				if (distSqr > radiusSqr)
+					continue;
+
+				if (best == null || distSqr < bestDistSqr) {
+					best = (LivingEntity) entity;
+					bestDistSqr = distSqr;
+				}
+			}
+		}
+
+		if (targetPlayers.getValue()) {
+			for (Player player : MC.level.players()) {
+				if (player == MC.player)
+					continue;
+				if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
+					continue;
+
+				double distSqr = playerPos.distanceToSqr(player.getPosition(partialTick));
+				if (distSqr > radiusSqr)
+					continue;
+
+				if (best == null || distSqr < bestDistSqr) {
+					best = player;
+					bestDistSqr = distSqr;
+				}
+			}
+		}
+
+		selectedTarget = best;
 	}
 
 	@Override
@@ -101,75 +160,38 @@ public class MaceAura extends Module implements TickListener {
 	public void onTick(TickEvent.Post event) {
 		// if (MC.player.getMainHandStack().getItem() == Items.MACE &&
 		// MC.player.getAttackCooldownProgress(0) == 1) {
-		if (MC.player.getAttackStrengthScale(0) == 1) {
-			if (entityToAttack == null) {
-				ArrayList<Entity> hitList = new ArrayList<Entity>();
+		if (MC.player.getAttackStrengthScale(0) != 1)
+			return;
 
-				// Add all potential entities to the 'hitlist'
-				if (targetAnimals.getValue() || targetMonsters.getValue()) {
-					for (Entity entity : Aoba.getInstance().entityManager.getEntities()) {
-						if (entity == MC.player)
-							continue;
-						if (MC.player.distanceToSqr(entity) > radius.getValueSqr())
-							continue;
+		if (!jumped) {
+			if (triggerOnClick.getValue() && !MC.options.keyAttack.isDown())
+				return;
 
-						if ((entity instanceof Animal && targetAnimals.getValue())
-								|| (entity instanceof Enemy && targetMonsters.getValue())) {
-							hitList.add(entity);
-						}
-					}
-				}
+			LivingEntity target = selectedTarget;
+			if (target == null || target.isRemoved() || !target.isAlive())
+				return;
 
-				// Add all potential players to the 'hitlist'
-				if (targetPlayers.getValue()) {
-					for (Player player : MC.level.players()) {
-						if (!targetFriends.getValue() && Aoba.getInstance().friendsList.contains(player))
-							continue;
-
-						if (player == MC.player || MC.player
-								.distanceToSqr(player) > (radius.getValue() * radius.getValue())) {
-							continue;
-						}
-						hitList.add(player);
-					}
-				}
-
-				// For each entity, get the entity that matches a criteria.
-				for (Entity entity : hitList) {
-					LivingEntity le = (LivingEntity) entity;
-					if (entityToAttack == null) {
-						entityToAttack = le;
-					} else {
-						if (MC.player.distanceToSqr(le) <= MC.player.distanceToSqr(entityToAttack)) {
-							entityToAttack = le;
-						}
-					}
-				}
-
-				if (entityToAttack != null) {
-					// If the entity is found, we want to attach it.
-					int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
-					for (int i = 0; i < packetsRequired; i++) {
-						MC.player.connection.send(new ServerboundMovePlayerPacket.StatusOnly(false, false));
-					}
-
-					Vec3 newPos = MC.player.position().add(0, height.getValue(), 0);
-					MC.player.connection.send(
-							new ServerboundMovePlayerPacket.Pos(newPos.x, newPos.y, newPos.z, false, false));
-				}
-			} else {
-				int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
-				for (int i = 0; i < packetsRequired; i++) {
-					MC.player.connection.send(new ServerboundMovePlayerPacket.StatusOnly(false, false));
-				}
-
-				Vec3 newPos = MC.player.position();
-				MC.player.connection.send(
-						new ServerboundMovePlayerPacket.Pos(newPos.x, newPos.y, newPos.z, false, false));
-
-				InteractionUtils.attack(entityToAttack);
-				entityToAttack = null;
+			int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
+			for (int i = 0; i < packetsRequired; i++) {
+				MC.player.connection.send(new ServerboundMovePlayerPacket.StatusOnly(false, false));
 			}
+
+			Vec3 newPos = MC.player.position().add(0, height.getValue(), 0);
+			MC.player.connection.send(new ServerboundMovePlayerPacket.Pos(newPos.x, newPos.y, newPos.z, false, false));
+			jumped = true;
+		} else {
+			int packetsRequired = Math.round((float) Math.ceil(Math.abs(height.getValue() / 10.0f)));
+			for (int i = 0; i < packetsRequired; i++) {
+				MC.player.connection.send(new ServerboundMovePlayerPacket.StatusOnly(false, false));
+			}
+
+			Vec3 newPos = MC.player.position();
+			MC.player.connection.send(new ServerboundMovePlayerPacket.Pos(newPos.x, newPos.y, newPos.z, false, false));
+
+			LivingEntity target = selectedTarget;
+			if (target != null && !target.isRemoved() && target.isAlive())
+				InteractionUtils.attack(target);
+			jumped = false;
 		}
 	}
 }

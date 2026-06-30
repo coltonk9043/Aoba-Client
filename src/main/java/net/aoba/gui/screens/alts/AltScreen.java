@@ -43,9 +43,9 @@ public class AltScreen extends Screen {
 		layout.addToContents(altListSelector);
 
 		LinearLayout topRow = LinearLayout.horizontal().spacing(4);
-		topRow.addChild(Button.builder(Component.nullToEmpty("Direct Login"), b -> minecraft.setScreen(new DirectLoginAltScreen(this)))
+		topRow.addChild(Button.builder(Component.nullToEmpty("Direct Login"), b -> minecraft.gui.setScreen(new DirectLoginAltScreen(this)))
 				.width(100).build());
-		topRow.addChild(Button.builder(Component.nullToEmpty("Add Alt"), b -> minecraft.setScreen(new AddAltScreen(this)))
+		topRow.addChild(Button.builder(Component.nullToEmpty("Add Alt"), b -> minecraft.gui.setScreen(new AddAltScreen(this)))
 				.width(100).build());
 
 		LinearLayout bottomRow = LinearLayout.horizontal().spacing(4);
@@ -59,7 +59,7 @@ public class AltScreen extends Screen {
 		editButton.active = false;
 		bottomRow.addChild(editButton);
 
-		bottomRow.addChild(Button.builder(Component.nullToEmpty("Cancel"), b -> minecraft.setScreen(parentScreen))
+		bottomRow.addChild(Button.builder(Component.nullToEmpty("Cancel"), b -> minecraft.gui.setScreen(parentScreen))
 				.width(100).build());
 
 		LinearLayout footer = layout.addToFooter(LinearLayout.vertical().spacing(4));
@@ -99,7 +99,7 @@ public class AltScreen extends Screen {
 	}
 
 	public void refreshAltList() {
-		minecraft.setScreen(new AltScreen(parentScreen));
+		minecraft.gui.setScreen(new AltScreen(parentScreen));
 	}
 
 	public void setSelected(AltSelectionList.Entry selected) {
@@ -131,7 +131,7 @@ public class AltScreen extends Screen {
 		if (alt == null) {
 			return;
 		}
-		minecraft.setScreen(new EditAltScreen(this, alt));
+		minecraft.gui.setScreen(new EditAltScreen(this, alt));
 	}
 
 	public void deleteSelected() {
@@ -146,7 +146,7 @@ public class AltScreen extends Screen {
 	@Override
 	protected void extractPanorama(final GuiGraphicsExtractor graphics, final float a){
 		try {
-			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, this.panoramaShouldSpin());
+			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, true);
 		} catch (IllegalStateException e) {
 		}
 	}

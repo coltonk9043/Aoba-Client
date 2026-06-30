@@ -149,7 +149,7 @@ public class Scaffold extends Module implements TickListener {
 				if (placementPos == null)
 					break;
 
-				Vec3 placementPosVec = placementPos.getCenter();
+				Vec3 placementPosVec = Vec3.atCenterOf(placementPos);
 				Vec3dGoal rotation = Vec3dGoal.builder().goal(placementPosVec).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
 						.yawRandomness(yawRandomness.getValue()).fakeRotation(fakeRotation.getValue())

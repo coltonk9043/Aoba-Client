@@ -47,12 +47,12 @@ public class XRay extends Module {
 
 	@Override
 	public void onDisable() {
-		MC.levelRenderer.allChanged();
+		MC.levelRenderer.invalidateCompiledGeometry(MC.level, MC.options, MC.gameRenderer.mainCamera(), MC.getBlockColors());
 	}
 
 	@Override
 	public void onEnable() {
-		MC.levelRenderer.allChanged();
+		MC.levelRenderer.invalidateCompiledGeometry(MC.level, MC.options, MC.gameRenderer.mainCamera(), MC.getBlockColors());
 
 	}
 
@@ -68,13 +68,13 @@ public class XRay extends Module {
 
 	public void ReloadRenderer(HashSet<Block> block) {
 		if (MC.levelRenderer != null && state.getValue()) {
-			MC.levelRenderer.allChanged();
+			MC.levelRenderer.invalidateCompiledGeometry(MC.level, MC.options, MC.gameRenderer.mainCamera(), MC.getBlockColors());
 		}
 	}
 
 	public void ReloadRenderer(Boolean fluids) {
 		if (MC.levelRenderer != null && state.getValue()) {
-			MC.levelRenderer.allChanged();
+			MC.levelRenderer.invalidateCompiledGeometry(MC.level, MC.options, MC.gameRenderer.mainCamera(), MC.getBlockColors());
 		}
 	}
 

@@ -7,8 +7,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.blaze3d.buffers.GpuBufferSlice;
-
 import net.aoba.Aoba;
 import net.aoba.gui.GuiManager;
 import net.minecraft.client.gui.render.GuiRenderer;
@@ -22,7 +20,7 @@ public class GuiRendererMixin {
 	private final CubeMap aoba$cubeMap = new CubeMap(Identifier.fromNamespaceAndPath("aoba", "textures/mainmenu/panorama"));
 
 	@Inject(method = "render", at = @At("TAIL"))
-	private void onRenderTail(GpuBufferSlice gpuBufferSlice, CallbackInfo ci) {
+	private void onRenderTail(CallbackInfo ci) {
 		if (Aoba.getInstance() != null && Aoba.getInstance().render2D != null) {
 			Aoba.getInstance().render2D.render();
 		}

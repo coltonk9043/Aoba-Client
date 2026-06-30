@@ -84,14 +84,14 @@ public class AddProxyScreen extends Screen {
 				newProxy = new Socks5Proxy(ip, port, username, password);
 			}
 			Aoba.getInstance().proxyManager.addProxy(newProxy);
-			minecraft.setScreen(parent);
+			minecraft.gui.setScreen(parent);
 		} catch (NumberFormatException e) {
 			AobaClient.LOGGER.error(e.getMessage());
 		}
 	}
 
 	public void onButtonCancelPressed() {
-		minecraft.setScreen(parent);
+		minecraft.gui.setScreen(parent);
 	}
 
     @Override

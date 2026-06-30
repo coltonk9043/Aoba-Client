@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.block.BaseTorchBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
@@ -151,7 +152,7 @@ public class TeleportPathManager extends AbstractPathManager {
 		PathNode current = parentMap.get(prev);
 		while (current != null && !current.equals(start)) {
 			if (isTeleportable(current.pos)
-					&& radiusSqr <= prev.pos.getCenter().distanceToSqr(current.pos.getCenter())) {
+					&& radiusSqr <= Vec3.atCenterOf(prev.pos).distanceToSqr(Vec3.atCenterOf(current.pos))) {
 				prev = current;
 				path.addFirst(current);
 			}

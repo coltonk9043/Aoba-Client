@@ -22,6 +22,7 @@ import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -73,7 +74,7 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 	public void onHealthChanged(PlayerHealthEvent readPacketEvent) {
 		// If current screen is a generic container, we want to prevent autototem from
 		// firing.
-		if (MC.screen instanceof ContainerScreen)
+		if (MC.gui.screen() instanceof ContainerScreen)
 			return;
 
 		if(MC.player == null)
@@ -119,7 +120,7 @@ public class AutoTotem extends Module implements PlayerHealthListener, ReceivePa
 		// Check to see if the packet is an entity spawn packet, and if the entity is an
 		// end crystal.
 		if (readPacketEvent.GetPacket() instanceof ClientboundAddEntityPacket spawnEntityPacket) {
-			if (spawnEntityPacket.getType() == EntityType.END_CRYSTAL) {
+			if (spawnEntityPacket.getType() == EntityTypes.END_CRYSTAL) {
 				// Check if the entity is within the range of the player, and switch immediately
 				// if so.
 				Minecraft mc = Minecraft.getInstance();

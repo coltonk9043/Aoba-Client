@@ -18,6 +18,7 @@ import net.aoba.event.listeners.Render3DListener;
 import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EasingFunction;
 import net.aoba.managers.rotation.goals.Vec3dGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -26,6 +27,8 @@ import net.aoba.settings.types.BooleanSetting;
 import net.aoba.settings.types.ShaderSetting;
 import net.aoba.settings.types.EnumSetting;
 import net.aoba.settings.types.FloatSetting;
+import net.aoba.settings.types.RangeSetting;
+import net.aoba.utils.types.Range;
 import net.aoba.utils.BlockPlacement;
 import net.aoba.utils.FindItemResult;
 import net.aoba.utils.entity.DamageUtils;
@@ -33,7 +36,6 @@ import net.aoba.utils.entity.TargetPriority;
 import net.aoba.utils.player.InteractionUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -60,16 +62,16 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 	private final BooleanSetting targetFriends = BooleanSetting.builder().id("autocrystal_target_friends")
 			.displayName("Target Friends").description("Target friends.").defaultValue(false).build();
 
-	private final FloatSetting attackDelay = FloatSetting.builder().id("autocrystal_attack_delay")
-			.displayName("Attack Delay").description("Delay between attacks in milliseconds.").defaultValue(500f)
-			.minValue(0f).maxValue(2000f).step(50f).build();
+	private final RangeSetting attackDelay = RangeSetting.builder().id("autocrystal_attack_delay")
+			.displayName("Attack Delay").description("Random delay in milliseconds between attacks (min, max).")
+			.defaultValue(new Range(400f, 600f)).minValue(0f).maxValue(2000f).step(50f).build();
 
 	private final BooleanSetting autoSwitch = BooleanSetting.builder().id("autocrystal_auto_switch")
 			.displayName("Auto Switch").description("Automatically switch to End Crystal.").defaultValue(true).build();
 
-	private final FloatSetting placeDelay = FloatSetting.builder().id("autocrystal_place_delay")
-			.displayName("Place Delay").description("Delay between placing crystals in milliseconds.")
-			.defaultValue(500f).minValue(0f).maxValue(2000f).step(50f).build();
+	private final RangeSetting placeDelay = RangeSetting.builder().id("autocrystal_place_delay")
+			.displayName("Place Delay").description("Random delay in milliseconds between placing crystals (min, max).")
+			.defaultValue(new Range(400f, 600f)).minValue(0f).maxValue(2000f).step(50f).build();
 
 	private final BooleanSetting multiPlace = BooleanSetting.builder().id("autocrystal_multi_place")
 			.displayName("MultiPlace").description("Allows placing multiple crystals simultaneously.")
@@ -94,14 +96,27 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 			.id("autocrystal_rotation_mode").displayName("Rotation Mode")
 			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
 
-	private final BooleanSetting legit = BooleanSetting.builder().id("autocrystal_legit").displayName("Legit")
+	private final BooleanSetting useRaycast = BooleanSetting.builder().id("autocrystal_use_raycast").displayName("Use Raycast")
 			.description(
 					"Whether a raycast will be used to ensure that the player is aiming at the crystal before attacking it.")
 			.defaultValue(true).build();
 
+	private final BooleanSetting attackOnClick = BooleanSetting.builder().id("autocrystal_attack_on_click")
+			.displayName("Attack On Click").description("Only attack crystals while left-click is held.")
+			.defaultValue(false).build();
+
+	private final BooleanSetting placeOnClick = BooleanSetting.builder().id("autocrystal_place_on_click")
+			.displayName("Place On Click").description("Only place crystals while right-click is held.")
+			.defaultValue(false).build();
+
 	private final FloatSetting maxRotation = FloatSetting.builder().id("autocrystal_max_rotation")
 			.displayName("Max Rotation").description("The max speed that Aimbot will rotate").defaultValue(10.0f)
 			.minValue(1.0f).maxValue(360.0f).build();
+
+	private final EnumSetting<EasingFunction> easingFunction = EnumSetting.<EasingFunction>builder()
+			.id("autocrystal_easing").displayName("Easing")
+			.description("Easing curve applied to the rotation speed as it approaches the target.")
+			.defaultValue(EasingFunction.SineEaseInOut).build();
 
 	private final FloatSetting yawRandomness = FloatSetting.builder().id("autocrystal_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
@@ -136,6 +151,8 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 
 	private long lastAttackTime;
 	private long lastPlaceTime;
+	private long nextAttackDelayMs;
+	private long nextPlaceDelayMs;
 	private final Map<BlockPos, Long> displayedBoxes = new HashMap<>();
 
 	public AutoCrystal() {
@@ -158,8 +175,11 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 		addSetting(enemyRange);
 		addSetting(targetPriority);
 		addSetting(rotationMode);
-		addSetting(legit);
+		addSetting(useRaycast);
+		addSetting(attackOnClick);
+		addSetting(placeOnClick);
 		addSetting(maxRotation);
+		addSetting(easingFunction);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(fakeRotation);
@@ -181,6 +201,8 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 	public void onEnable() {
 		Aoba.getInstance().eventManager.AddListener(TickListener.class, this);
 		Aoba.getInstance().eventManager.AddListener(Render3DListener.class, this);
+		nextAttackDelayMs = (long) attackDelay.randomValue();
+		nextPlaceDelayMs = (long) placeDelay.randomValue();
 	}
 
 	@Override
@@ -211,25 +233,29 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 			Aoba.getInstance().rotationManager.setGoal(Vec3dGoal.builder().goal(rotationGoal)
 					.mode(rotationMode.getValue()).maxRotation(maxRotation.getValue())
 					.pitchRandomness(pitchRandomness.getValue()).yawRandomness(yawRandomness.getValue())
-					.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).build());
+					.fakeRotation(fakeRotation.getValue()).moveFix(moveFix.getValue()).easingFunction(easingFunction.getValue()).build());
 		} else {
 			Aoba.getInstance().rotationManager.setGoal(null);
 		}
 
 		// Attack the crystal if one is in range and the cooldown has elapsed.
-		float attackDelayVal = attackDelay.getValue();
-		if (attackTarget != null && (attackDelayVal <= 0 || currentTime - lastAttackTime >= attackDelayVal)) {
+		boolean canAttack = !attackOnClick.getValue() || MC.options.keyAttack.isDown();
+		if (canAttack && attackTarget != null
+				&& (nextAttackDelayMs <= 0 || currentTime - lastAttackTime >= nextAttackDelayMs)) {
 			attackCrystal(attackTarget);
 			lastAttackTime = currentTime;
+			nextAttackDelayMs = (long) attackDelay.randomValue();
 			return;
 		}
 
 		// Otherwise, place a new crystal if there's a valid spot and the cooldown has
 		// elapsed.
-		float placeDelayVal = placeDelay.getValue();
-		if (placeTarget != null && (placeDelayVal <= 0 || currentTime - lastPlaceTime >= placeDelayVal)) {
+		boolean canPlace = !placeOnClick.getValue() || MC.options.keyUse.isDown();
+		if (canPlace && placeTarget != null
+				&& (nextPlaceDelayMs <= 0 || currentTime - lastPlaceTime >= nextPlaceDelayMs)) {
 			placeCrystal(placeTarget);
 			lastPlaceTime = currentTime;
+			nextPlaceDelayMs = (long) placeDelay.randomValue();
 			return;
 		}
 	}
@@ -294,7 +320,7 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 
 		// Check if raycast is over the placement position.
 		BlockHitResult hit;
-		if (legit.getValue()) {
+		if (useRaycast.getValue()) {
 			hit = InteractionUtils.raycastBlock(placePos, clickFace);
 		} else
 			hit = new BlockHitResult(hitPos, clickFace, placePos, false);
@@ -307,12 +333,11 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 			swap(result.slot(), false);
 
 		// Place the crystal
-		if (multiPlace.getValue() && !legit.getValue()) {
+		if (multiPlace.getValue() && !useRaycast.getValue()) {
 			performMultiPlace(placePos);
 		} else {
 			MC.gameMode.useItemOn(MC.player, InteractionHand.MAIN_HAND, hit);
-			MC.player.connection.send(new ServerboundUseItemPacket(InteractionHand.MAIN_HAND, 0, MC.player.getYRot(),
-					MC.player.getXRot()));
+			MC.player.swing(InteractionHand.MAIN_HAND);
 		}
 
 		displayedBoxes.put(placePos, System.currentTimeMillis());
@@ -335,8 +360,7 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 					clickFace.getStepZ() * 0.5);
 			BlockHitResult hitResult = new BlockHitResult(hitPos, clickFace, pos, false);
 			MC.gameMode.useItemOn(MC.player, InteractionHand.MAIN_HAND, hitResult);
-			MC.player.connection.send(new ServerboundUseItemPacket(InteractionHand.MAIN_HAND, 0, MC.player.getYRot(),
-					MC.player.getXRot()));
+			MC.player.swing(InteractionHand.MAIN_HAND);
 		}
 	}
 
@@ -492,7 +516,7 @@ public class AutoCrystal extends Module implements TickListener, Render3DListene
 	 */
 	private void attackCrystal(EndCrystal target) {
 		// Verify our look direction actually intersects the chosen crystal.
-		if (legit.getValue()) {
+		if (useRaycast.getValue()) {
 			double reach = MC.player.entityInteractionRange();
 			Vec3 eyePos = MC.player.getEyePosition();
 			Vec3 lookVec = MC.player.getViewVector(1.0F);

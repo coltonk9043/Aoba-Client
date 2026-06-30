@@ -8,6 +8,8 @@
 
 package net.aoba.managers.rotation.goals;
 
+import java.util.Objects;
+
 import net.aoba.managers.rotation.Rotation;
 import net.aoba.managers.rotation.RotationMode;
 import net.aoba.utils.entity.BodyPart;
@@ -22,7 +24,19 @@ public class EntityGoal extends Goal<Entity> {
 	@Override
 	public Rotation getGoalRotation(float tickDelta) {
 		Vec3 targetPos = EntityUtils.getBodyPartPosition(rotationGoal, bodyPart, tickDelta);
-		return Rotation.rotationFrom(targetPos);
+		return Rotation.rotationFrom(targetPos, tickDelta);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj))
+			return false;
+		return this.bodyPart == ((EntityGoal) obj).bodyPart;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(rotationGoal, bodyPart);
 	}
 
 	// Builder
@@ -74,6 +88,11 @@ public class EntityGoal extends Goal<Entity> {
 
 		public BUILDER bodyPart(BodyPart part) {
 			goal.bodyPart = part;
+			return this;
+		}
+		
+		public BUILDER easingFunction(EasingFunction func) {
+			goal.easingFunction = func;
 			return this;
 		}
 

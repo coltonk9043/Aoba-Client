@@ -56,32 +56,32 @@ public class MainMenuScreen extends Screen {
 
 		AobaButtonWidget singleplayerButton = new AobaButtonWidget(startX, startY, BUTTON_WIDTH, BUTTON_HEIGHT,
 				Component.nullToEmpty("Singleplayer"));
-		singleplayerButton.setPressAction(b -> minecraft.setScreen(new SelectWorldScreen(this)));
+		singleplayerButton.setPressAction(b -> minecraft.gui.setScreen(new SelectWorldScreen(this)));
 		addRenderableWidget(singleplayerButton);
 
 		AobaButtonWidget multiplayerButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING, startY, BUTTON_WIDTH,
 				BUTTON_HEIGHT, Component.nullToEmpty("Multiplayer"));
-		multiplayerButton.setPressAction(b -> minecraft.setScreen(new JoinMultiplayerScreen(this)));
+		multiplayerButton.setPressAction(b -> minecraft.gui.setScreen(new JoinMultiplayerScreen(this)));
 		addRenderableWidget(multiplayerButton);
 
 		AobaButtonWidget realmsButton = new AobaButtonWidget(startX, startY + BUTTON_HEIGHT + SPACING, BUTTON_WIDTH,
 				BUTTON_HEIGHT, Component.nullToEmpty("Realms"));
-		realmsButton.setPressAction(b -> minecraft.setScreen(new RealmsMainScreen(this)));
+		realmsButton.setPressAction(b -> minecraft.gui.setScreen(new RealmsMainScreen(this)));
 		addRenderableWidget(realmsButton);
 
 		AobaButtonWidget settingsButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING,
 				startY + BUTTON_HEIGHT + SPACING, BUTTON_WIDTH, BUTTON_HEIGHT, Component.nullToEmpty("Settings"));
-		settingsButton.setPressAction(b -> minecraft.setScreen(new OptionsScreen(this, MC.options, false)));
+		settingsButton.setPressAction(b -> minecraft.gui.setScreen(new OptionsScreen(this, MC.options, false)));
 		addRenderableWidget(settingsButton);
 
 		AobaButtonWidget addonsButton = new AobaButtonWidget(startX, startY + ((BUTTON_HEIGHT + SPACING) * 2),
 				BUTTON_WIDTH, BUTTON_HEIGHT, Component.nullToEmpty("Addons"));
-		addonsButton.setPressAction(b -> minecraft.setScreen(new AddonScreen(this)));
+		addonsButton.setPressAction(b -> minecraft.gui.setScreen(new AddonScreen(this)));
 		addRenderableWidget(addonsButton);
 
 		AobaButtonWidget quitButton = new AobaButtonWidget(startX + BUTTON_WIDTH + SPACING,
 				startY + ((BUTTON_HEIGHT + SPACING) * 2), BUTTON_WIDTH, BUTTON_HEIGHT, Component.nullToEmpty("Quit"));
-		quitButton.setPressAction(b -> minecraft.destroy());
+		quitButton.setPressAction(b -> minecraft.stop());
 		addRenderableWidget(quitButton);
 		
 		try {
@@ -92,7 +92,7 @@ public class MainMenuScreen extends Screen {
 			
 			modsButton.setPressAction(b -> {
 				try {
-					minecraft.setScreen((@Nullable Screen) modsScreen.getConstructor(Screen.class).newInstance(this));
+					minecraft.gui.setScreen((@Nullable Screen) modsScreen.getConstructor(Screen.class).newInstance(this));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -103,7 +103,7 @@ public class MainMenuScreen extends Screen {
 
 		AobaImageButtonWidget creditsButton = new AobaImageButtonWidget(width - 20 - 10, height - 20 - 10, 20, 20,
 				TextureBank.aoba);
-		creditsButton.setPressAction(b -> MC.setScreen(new AobaCreditsScreen()));
+		creditsButton.setPressAction(b -> MC.gui.setScreen(new AobaCreditsScreen()));
 		addRenderableWidget(creditsButton);
 
 		AobaImageButtonWidget discordButton = new AobaImageButtonWidget(width - 60, height - 30, 20, 20,
@@ -165,7 +165,7 @@ public class MainMenuScreen extends Screen {
 	@Override
 	protected void extractPanorama(final GuiGraphicsExtractor graphics, final float a){
 		try {
-			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, this.panoramaShouldSpin());
+			AOBA_ROTATING_PANORAMA_RENDERER.extractRenderState(graphics, this.width, this.height, true);
 		} catch (IllegalStateException e) {
 		}
 	}

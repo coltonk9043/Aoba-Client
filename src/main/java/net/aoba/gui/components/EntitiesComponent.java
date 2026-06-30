@@ -24,6 +24,7 @@ import net.aoba.utils.types.MouseAction;
 import net.aoba.utils.types.MouseButton;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.MobCategory;
 
 public class EntitiesComponent extends Component {
@@ -88,13 +89,13 @@ public class EntitiesComponent extends Component {
 	}
 
 	private void populate() {
-		validEntities.add(EntityType.PLAYER);
-		cellByEntity.put(EntityType.PLAYER, createCell(EntityType.PLAYER));
+		validEntities.add(EntityTypes.PLAYER);
+		cellByEntity.put(EntityTypes.PLAYER, createCell(EntityTypes.PLAYER));
 
 		int count = BuiltInRegistries.ENTITY_TYPE.size();
 		for (int i = 0; i < count; i++) {
 			EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.byId(i);
-			if (entityType == null || entityType == EntityType.PLAYER)
+			if (entityType == null || entityType == EntityTypes.PLAYER)
 				continue;
 
 			if (entityType.getCategory() == MobCategory.MISC)

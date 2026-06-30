@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Abstracts MSAA so that it can be supported by all available rendering backends.
  */
-public interface IMSAAHandler extends AutoCloseable {
+public interface IAAHandler extends AutoCloseable {
 
 	/** 
 	 * Single-sample view + sampler for compositing.
@@ -19,6 +19,13 @@ public interface IMSAAHandler extends AutoCloseable {
 	 * Ensure MSAA resources are allocated at the correct screen dimensions and sample count.
 	 **/
 	void prepare(int width, int height, int samples);
+
+	/**
+	 * Gets the render scale of the AntiAliasing handler.
+	 **/
+	default int renderScale() {
+		return 1;
+	}
 
 	/**
 	 * Create the render pass for the MSAA
