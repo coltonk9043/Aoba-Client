@@ -488,7 +488,7 @@ public abstract class Module {
 	public static void sendChatMessage(String message) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.gui != null) {
-			mc.gui.getChat().addClientSystemMessage(Component.nullToEmpty(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "Aoba"
+			mc.gui.hud.getChat().addClientSystemMessage(Component.nullToEmpty(ChatFormatting.DARK_PURPLE + "[" + ChatFormatting.LIGHT_PURPLE + "Aoba"
 					+ ChatFormatting.DARK_PURPLE + "] " + ChatFormatting.RESET + message));
 		}
 	}

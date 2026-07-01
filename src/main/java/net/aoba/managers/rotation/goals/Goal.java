@@ -8,6 +8,8 @@
 
 package net.aoba.managers.rotation.goals;
 
+import java.util.Objects;
+
 import net.aoba.managers.rotation.Rotation;
 import net.aoba.managers.rotation.RotationMode;
 
@@ -24,6 +26,7 @@ public abstract class Goal<T> {
 	protected float pitchRandomness = 0f;
 	protected boolean fakeRotation = false;
 	protected boolean moveFix = false;
+	protected EasingFunction easingFunction = EasingFunction.SineEaseInOut;
 
 	/**
 	 * Getter for rotationGoal
@@ -85,4 +88,27 @@ public abstract class Goal<T> {
 		return moveFix;
 	}
 
+	public EasingFunction getEasingFunction() {
+		return easingFunction;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		
+		if(obj instanceof Goal<?> goal) {
+			return Objects.equals(rotationGoal, goal.rotationGoal);
+		}
+		return false;
+		
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(rotationGoal);
+	}
 }

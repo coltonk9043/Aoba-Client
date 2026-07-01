@@ -60,7 +60,7 @@ public class CmdXRay extends Command {
 				}
 
 				module.getBlocks().add(tempBlock1);
-				mc.levelRenderer.allChanged();
+				mc.levelRenderer.invalidateCompiledGeometry(mc.level, mc.options, mc.gameRenderer.mainCamera(), mc.getBlockColors());
 				break;
 			case "remove":
 				String block2 = parameters[2].toLowerCase();
@@ -73,7 +73,7 @@ public class CmdXRay extends Command {
 				}
 
 				module.getBlocks().remove(tempBlock2);
-				mc.levelRenderer.allChanged();
+				mc.levelRenderer.invalidateCompiledGeometry(mc.level, mc.options, mc.gameRenderer.mainCamera(), mc.getBlockColors());
 				break;
 			case "list":
 				StringBuilder blockList = new StringBuilder();

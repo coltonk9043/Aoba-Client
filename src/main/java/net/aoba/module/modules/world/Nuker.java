@@ -32,6 +32,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -162,7 +163,7 @@ public class Nuker extends Module implements Render3DListener, TickListener, Blo
 				// Check to ensure that the block is not further than we can reach.
 				int range = (int) (Math.floor(radius.getValue()) + 1);
 				int rangeSqr = range ^ 2;
-				if (MC.player.blockPosition().getCenter().distanceTo(currentBlockToBreak.getCenter()) > rangeSqr) {
+				if (Vec3.atCenterOf(MC.player.blockPosition()).distanceTo(Vec3.atCenterOf(currentBlockToBreak)) > rangeSqr) {
 					currentBlockToBreak = null;
 				} else {
 					MC.player.connection.send(new ServerboundPlayerActionPacket(Action.START_DESTROY_BLOCK,

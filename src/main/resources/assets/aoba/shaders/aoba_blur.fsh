@@ -26,7 +26,7 @@ void main() {
     float quality = max(Quality, 1.0);
 
     vec2 texSize = vec2(textureSize(Sampler0, 0));
-    vec2 screenUV = gl_FragCoord.xy / texSize;
+    vec2 screenUV = gl_FragCoord.xy / Resolution;
 
     vec3 color = vec3(0.0);
     float total = 0.0;

@@ -69,7 +69,7 @@ public class ClickTP extends Module implements MouseClickListener {
 	public void onMouseClick(MouseClickEvent event) {
 
 		if (event.button == MouseButton.RIGHT && event.action == MouseAction.DOWN) {
-			Camera camera = MC.gameRenderer.getMainCamera();
+			Camera camera = MC.gameRenderer.mainCamera();
 
 			if (camera != null) {
 				Vec3 direction = Vec3.directionFromRotation(camera.xRot(), camera.yRot()).scale(210);

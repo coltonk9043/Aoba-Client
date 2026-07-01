@@ -15,12 +15,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.blaze3d.PrimitiveTopology;
+import com.mojang.blaze3d.pipeline.BindGroupLayout;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.logging.LogUtils;
 
 import net.aoba.rendering.RenderApi;
@@ -182,21 +183,31 @@ public class ShaderManager {
 	// TODO: Can we somehow make these one?
 	private static RenderPipeline buildShaderPipeline2D(String id) {
 		return RenderPipelines.register(RenderPipeline.builder().withVertexShader(aobaShader(""))
-				.withFragmentShader(aobaShader(id)).withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER)
-				.withUniform("Projection", UniformType.UNIFORM_BUFFER)
-				.withUniform("AobaShaderParams", UniformType.UNIFORM_BUFFER).withSampler("Sampler0").withCull(false)
+				.withFragmentShader(aobaShader(id))
+				.withBindGroupLayout(BindGroupLayout.builder()
+						.withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER)
+						.withUniform("Projection", UniformType.UNIFORM_BUFFER)
+						.withUniform("AobaShaderParams", UniformType.UNIFORM_BUFFER)
+						.withSampler("Sampler0").build())
+				.withCull(false)
 				.withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT_PREMULTIPLIED_ALPHA))
-				.withVertexFormat(DefaultVertexFormat.POSITION_TEX, Mode.TRIANGLES)
+				.withVertexBinding(0, DefaultVertexFormat.POSITION_TEX)
+				.withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
 				.withLocation(Identifier.fromNamespaceAndPath("aoba", "pipeline/aoba_" + id)).build());
 	}
 
 	private static RenderPipeline buildShaderPipeline3D(String id) {
 		return RenderPipelines.register(RenderPipeline.builder().withVertexShader(aobaShader(""))
-				.withFragmentShader(aobaShader(id)).withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER)
-				.withUniform("Projection", UniformType.UNIFORM_BUFFER)
-				.withUniform("AobaShaderParams", UniformType.UNIFORM_BUFFER).withSampler("Sampler0").withCull(false)
+				.withFragmentShader(aobaShader(id))
+				.withBindGroupLayout(BindGroupLayout.builder()
+						.withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER)
+						.withUniform("Projection", UniformType.UNIFORM_BUFFER)
+						.withUniform("AobaShaderParams", UniformType.UNIFORM_BUFFER)
+						.withSampler("Sampler0").build())
+				.withCull(false)
 				.withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT_PREMULTIPLIED_ALPHA))
-				.withVertexFormat(DefaultVertexFormat.POSITION_TEX, Mode.TRIANGLES)
+				.withVertexBinding(0, DefaultVertexFormat.POSITION_TEX)
+				.withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
 				.withLocation(Identifier.fromNamespaceAndPath("aoba", "pipeline/aoba_3d_" + id)).build());
 	}
 
@@ -210,15 +221,9 @@ public class ShaderManager {
 	}
 
 	/**
-	 * Returns all shaders compatible with the current rendering backend.
-	 * */
+	 * Returns all loaded shaders.
+	 */
 	public List<Shader> getAvailableShaders() {
-		RenderApi current = RenderApi.current();
-		List<Shader> compatible = new ArrayList<>();
-		for (Shader s : shaders.values()) {
-			if (s.backend() == current)
-				compatible.add(s);
-		}
-		return Collections.unmodifiableList(compatible);
+		return Collections.unmodifiableList(new ArrayList<>(shaders.values()));
 	}
 }

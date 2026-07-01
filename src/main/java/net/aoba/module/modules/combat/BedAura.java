@@ -19,6 +19,7 @@ import net.aoba.event.listeners.TickListener;
 import net.aoba.gui.colors.Color;
 import net.aoba.managers.rotation.Rotation;
 import net.aoba.managers.rotation.RotationMode;
+import net.aoba.managers.rotation.goals.EasingFunction;
 import net.aoba.managers.rotation.goals.RotationGoal;
 import net.aoba.module.Category;
 import net.aoba.module.Module;
@@ -32,6 +33,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket.Action;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -40,30 +42,39 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class BedAura extends Module implements Render3DListener, TickListener, BlockStateListener {
-	private final ShaderSetting color = ShaderSetting.builder().id("nuker_color").displayName("Color")
+	private final ShaderSetting color = ShaderSetting.builder().id("bedaura_color").displayName("Color")
 			.description("Color").defaultValue(Shader.solid(new Color(0f, 1f, 1f, 1f))).build();
 
-	private final FloatSetting radius = FloatSetting.builder().id("nuker_radius").displayName("Radius")
+	private final FloatSetting radius = FloatSetting.builder().id("bedaura_radius").displayName("Radius")
 			.description("Radius").defaultValue(5f).minValue(0f).maxValue(15f).step(1f).build();
 
-	private final BooleanSetting legit = BooleanSetting.builder().id("killaura_legit").displayName("Legit")
+	private final BooleanSetting useRaycast = BooleanSetting.builder().id("bedaura_use_raycast").displayName("Use Raycast")
 			.description(
-					"Whether a raycast will be used to ensure that KillAura will not hit a player outside of the view")
+					"Whether a raycast will be used to ensure that the player is aiming at the bed before breaking it.")
+			.defaultValue(false).build();
+
+	private final BooleanSetting triggerOnClick = BooleanSetting.builder().id("bedaura_trigger_on_click")
+			.displayName("Trigger On Click").description("Only break beds while the attack key is held down.")
 			.defaultValue(false).build();
 
 	private final EnumSetting<RotationMode> rotationMode = EnumSetting.<RotationMode>builder()
-			.id("killaura_rotation_mode").displayName("Rotation Mode")
+			.id("bedaura_rotation_mode").displayName("Rotation Mode")
 			.description("Controls how the player's view rotates.").defaultValue(RotationMode.NONE).build();
 
-	private final FloatSetting maxRotation = FloatSetting.builder().id("killaura_max_rotation")
-			.displayName("Max Rotation").description("The max speed that KillAura will rotate").defaultValue(10.0f)
+	private final FloatSetting maxRotation = FloatSetting.builder().id("bedaura_max_rotation")
+			.displayName("Max Rotation").description("The max speed that BedAura will rotate").defaultValue(10.0f)
 			.minValue(1.0f).maxValue(360.0f).build();
+  
+	private final EnumSetting<EasingFunction> easingFunction = EnumSetting.<EasingFunction>builder()
+			.id("bedaura_easing").displayName("Easing")
+			.description("Easing curve applied to the rotation speed as it approaches the target.")
+			.defaultValue(EasingFunction.SineEaseInOut).build();
 
-	private final FloatSetting yawRandomness = FloatSetting.builder().id("killaura_yaw_randomness")
+	private final FloatSetting yawRandomness = FloatSetting.builder().id("bedaura_yaw_randomness")
 			.displayName("Yaw Rotation Jitter").description("The randomness of the player's yaw").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
-	private final FloatSetting pitchRandomness = FloatSetting.builder().id("killaura_pitch_randomness")
+	private final FloatSetting pitchRandomness = FloatSetting.builder().id("bedaura_pitch_randomness")
 			.displayName("Pitch Rotation Jitter").description("The randomness of the player's pitch").defaultValue(0.0f)
 			.minValue(0.0f).maxValue(10.0f).step(0.1f).build();
 
@@ -75,9 +86,11 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 		setDescription("Destroys the nearest Bed to the player.");
 
 		addSetting(radius);
-		addSetting(legit);
+		addSetting(useRaycast);
+		addSetting(triggerOnClick);
 		addSetting(rotationMode);
 		addSetting(maxRotation);
+		addSetting(easingFunction);
 		addSetting(yawRandomness);
 		addSetting(pitchRandomness);
 		addSetting(color);
@@ -121,6 +134,7 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 			BlockState oldBlockState = event.getPreviousBlockState();
 			if (blockPos.equals(currentBlockToBreak) && (oldBlockState.isAir())) {
 				currentBlockToBreak = null;
+				Aoba.getInstance().rotationManager.setGoal(null);
 			}
 		}
 	}
@@ -153,19 +167,22 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 		if (currentBlockToBreak != null) {
 			// Check to ensure that the block is not further than we can reach.
 			int range = (int) (Math.floor(radius.getValue()) + 1);
-			int rangeSqr = range ^ 2;
+			int rangeSqr = range * range;
 
-			if (MC.player.blockPosition().getCenter().distanceTo(currentBlockToBreak.getCenter()) > rangeSqr) {
+			if (Vec3.atCenterOf(MC.player.blockPosition()).distanceToSqr(Vec3.atCenterOf(currentBlockToBreak)) > rangeSqr) {
 				currentBlockToBreak = null;
 			} else {
 
 				RotationGoal rotation = RotationGoal.builder()
-						.goal(Rotation.rotationFrom(currentBlockToBreak.getCenter())).mode(rotationMode.getValue())
+						.goal(Rotation.rotationFrom(Vec3.atCenterOf(currentBlockToBreak))).mode(rotationMode.getValue())
 						.maxRotation(maxRotation.getValue()).pitchRandomness(pitchRandomness.getValue())
-						.yawRandomness(yawRandomness.getValue()).build();
+						.yawRandomness(yawRandomness.getValue()).easingFunction(easingFunction.getValue()).build();
 				Aoba.getInstance().rotationManager.setGoal(rotation);
 
-				if (legit.getValue()) {
+				if (triggerOnClick.getValue() && !MC.options.keyAttack.isDown())
+					return;
+
+				if (useRaycast.getValue()) {
 					HitResult ray = MC.hitResult;
 
 					if (ray != null && ray.getType() == HitResult.Type.BLOCK) {
@@ -182,6 +199,8 @@ public class BedAura extends Module implements Render3DListener, TickListener, B
 				}
 			}
 
+		} else {
+			Aoba.getInstance().rotationManager.setGoal(null);
 		}
 	}
 

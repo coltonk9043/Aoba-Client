@@ -14,11 +14,13 @@ import java.net.Proxy;
 import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.minecraft.UserApiService;
+import com.mojang.authlib.yggdrasil.FriendsService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.logging.LogUtils;
 import com.mojang.util.UndashedUuid;
@@ -32,6 +34,7 @@ import net.aoba.utils.http.HttpUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
+import net.minecraft.client.gui.screens.social.RemoteFriendListUpdateHandler;
 import net.minecraft.client.multiplayer.ProfileKeyPairManager;
 import net.minecraft.client.multiplayer.chat.report.ReportEnvironment;
 import net.minecraft.client.multiplayer.chat.report.ReportingContext;
@@ -81,7 +84,9 @@ public class MicrosoftAuth {
 				YggdrasilAuthenticationService authService = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
 				UserApiService apiService = authService.createUserApiService(session.getAccessToken());
 				IMC.setUserApiService(apiService);
-				IMC.setSocialInteractionsManager(new PlayerSocialManager(MC, apiService));
+				FriendsService friendsService = authService.createFriendsService(session.getAccessToken());
+				IMC.setSocialInteractionsManager(new PlayerSocialManager(MC, apiService, friendsService,
+						new RemoteFriendListUpdateHandler(friendsService, MC)));
 				IMC.setProfileKeys(ProfileKeyPairManager.create(apiService, session, MC.gameDirectory.toPath()));
 				IMC.setAbuseReportContext(ReportingContext.create(ReportEnvironment.local(), apiService));
 				IMC.setGameProfileFuture(CompletableFuture.supplyAsync(
@@ -170,7 +175,7 @@ public class MicrosoftAuth {
 			throw new IllegalArgumentException("Entitlement token could not be fetched.");
 	}
 
-	public static ProfileToken getProfileToken(MCAuthToken mcAuthToken) throws IOException, InterruptedException {
+	public static ProfileToken getProfileToken(MCAuthToken mcAuthToken) {
 		Optional<String> response = HttpUtils.builder(PROFILE_URL).acceptJson().json().bearer(mcAuthToken.accessToken)
 				.get();
 		if (response.isPresent()) {
@@ -194,7 +199,7 @@ public class MicrosoftAuth {
 			RefreshTokenHandler handler = new RefreshTokenHandler();
 			handler.setConsumer(onDataReceived);
 			replyServer.createContext("/", handler);
-			replyServer.setExecutor(null);
+			replyServer.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
 			replyServer.start();
 			return true;
 		} catch (Exception e) {
@@ -251,7 +256,7 @@ public class MicrosoftAuth {
 			replyServer = null;
 		}
 
-		private AuthToken getAccessToken(String code) throws IOException, InterruptedException {
+		private AuthToken getAccessToken(String code) {
 			String payload = "client_id=" + CLIENT_ID + "&code=" + code
 					+ "&grant_type=authorization_code&redirect_uri=http://127.0.0.1:42069";
 			Optional<String> response = HttpUtils.builder(TOKEN_URL).acceptJson().form().post(payload);

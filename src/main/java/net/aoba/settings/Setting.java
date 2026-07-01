@@ -19,7 +19,7 @@ import net.aoba.utils.TextUtils;
 public abstract class Setting<T> {
 	public enum TYPE {
 		BOOLEAN, FLOAT, STRING, INTEGER, STRINGLIST, INDEXEDSTRINGLIST, KEYBIND, COLOR, SHADER, BLOCKS, ENTITIES, ENUM, RECTANGLE,
-		VEC3D, HOTBAR, FONT
+		VEC3D, HOTBAR, FONT, RANGE
 	}
 
 	public TYPE type;

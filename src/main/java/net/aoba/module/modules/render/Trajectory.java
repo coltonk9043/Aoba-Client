@@ -80,7 +80,7 @@ public class Trajectory extends Module implements Render3DListener {
 			if (itemStack.getItem() == Items.BOW && MC.player.isUsingItem())
 				initialVelocity *= BowItem.getPowerForTime(MC.player.getTicksUsingItem());
 
-			Camera camera = MC.gameRenderer.getMainCamera();
+			Camera camera = MC.gameRenderer.mainCamera();
 			Vec3 offset = Renderer3D.getEntityPositionOffsetInterpolated(MC.getCameraEntity(),
 					event.getRenderer().getDeltaTracker().getGameTimeDeltaPartialTick(true));
 			Vec3 eyePos = MC.getCameraEntity().getEyePosition();

@@ -46,20 +46,20 @@ public class DirectLoginAltScreen extends Screen {
 				.bounds(width / 2 - 100, height / 2 + 24, 200, 20).build();
 		addRenderableWidget(buttonLoginAlt);
 
-		addRenderableWidget(Button.builder(Component.nullToEmpty("Cancel"), b -> minecraft.setScreen(parent))
+		addRenderableWidget(Button.builder(Component.nullToEmpty("Cancel"), b -> minecraft.gui.setScreen(parent))
 				.bounds(width / 2 - 100, height / 2 + 46, 200, 20).build());
 	}
 
 	private void onButtonLoginPressed() {
 		if (isCracked.selected()) {
 			Aoba.getInstance().altManager.loginCracked(textFieldAltUsername.getValue());
-			minecraft.setScreen(parent);
+			minecraft.gui.setScreen(parent);
 			return;
 		} else {
 			buttonLoginAlt.active = false;
 			Alt alt = new Alt(textFieldAltUsername.getValue(), false);
 			Aoba.getInstance().altManager.loginWithAuth(alt, () -> {
-				minecraft.execute(() -> minecraft.setScreen(parent));
+				minecraft.execute(() -> minecraft.gui.setScreen(parent));
 			});
 		}
 	}

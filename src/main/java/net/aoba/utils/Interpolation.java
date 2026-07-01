@@ -92,15 +92,15 @@ public class Interpolation {
 	}
 
 	public static double getRenderPosX() {
-		return MC.gameRenderer.getMainCamera().position().x;
+		return MC.gameRenderer.mainCamera().position().x;
 	}
 
 	public static double getRenderPosY() {
-		return MC.gameRenderer.getMainCamera().position().y;
+		return MC.gameRenderer.mainCamera().position().y;
 	}
 
 	public static double getRenderPosZ() {
-		return MC.gameRenderer.getMainCamera().position().z;
+		return MC.gameRenderer.mainCamera().position().z;
 	}
 
 }

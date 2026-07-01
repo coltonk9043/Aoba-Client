@@ -18,82 +18,58 @@
 
 package net.aoba.mixin;
 
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.aoba.Aoba;
-import net.aoba.AobaClient;
 import net.aoba.module.modules.combat.Nametags;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.network.chat.Component;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin<T extends Entity> {
-	// TODO: Add an option to toggle custom nametag rendering in the future in case
-	// users would like a noncustom name tag.
-	/*
-	 * @Inject(at = @At(value = "HEAD"), method =
-	 * "renderLabelIfPresent(Lnet/minecraft/client/render/entity/state/EntityRenderState;Lnet/minecraft/text/Text;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
-	 * cancellable = true) protected void onRenderLabelIfPresent(T state, Text text,
-	 * MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
-	 * CallbackInfo ci) { // CustomRenderLabel(entity, text, matrices,
-	 * vertexConsumers, light); // ci.cancel(); }
-	 */
-
 	@Shadow
 	public Font getFont() {
 		return null;
 	}
 
-	/**
-	 * Custom Label Render that will allow us to Render what we'd like in the
-	 * future.
-	 *
-	 * @param entity          Entity being currently rendered.
-	 * @param text            The text to render.
-	 * @param matrices        The MatrixStack.
-	 * @param vertexConsumers Vertex Consumers
-	 * @param light           Light level.
-	 */
-	protected void CustomRenderLabel(T entity, Component text, PoseStack matrices, MultiBufferSource vertexConsumers,
-			int light) {
-		Minecraft mc = Minecraft.getInstance();
-		AobaClient aoba = Aoba.getInstance();
+	@Inject(method = "submitNameDisplay(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;I)V", at = @At("HEAD"))
+	private void aoba$customNameTagStart(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
+			CameraRenderState camera, int offset, CallbackInfo ci) {
+		if (aoba$shouldCustomizeNameTag(state)) {
+			float scale = (float) Aoba.getInstance().moduleManager.nametags.getNametagScale();
+			Vec3 attach = state.nameTagAttachment;
+			poseStack.pushPose();
+			poseStack.translate(attach.x * (1.0 - scale), attach.y * (1.0 - scale), attach.z * (1.0 - scale));
+			poseStack.scale(scale, scale, scale);
+		}
+	}
 
-		double d = mc.player != null ? mc.player.distanceToSqr(entity) : 0;
-		if (d > 4096.0) {
-			return;
+	@Inject(method = "submitNameDisplay(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;I)V", at = @At("RETURN"))
+	private void aoba$customNameTagEnd(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
+			CameraRenderState camera, int offset, CallbackInfo ci) {
+		if (aoba$shouldCustomizeNameTag(state)) {
+			poseStack.popPose();
 		}
-		boolean bl = !entity.isDiscrete();
-		// TODO: Get name line height
-		int i = "deadmau5".equals(text.getString()) ? -10 : 0;
-		matrices.pushPose();
-		matrices.translate(0.0f, 1.0f, 0.0f);
-		matrices.mulPose(mc.gameRenderer.getMainCamera().rotation());
-		matrices.scale(-0.025f, -0.025f, 0.025f);
-		if (aoba.moduleManager.nametags.state.getValue()) {
-			float scale;
+	}
 
-			Nametags nameTagsModule = aoba.moduleManager.nametags;
-			scale = (float) nameTagsModule.getNametagScale();
-			matrices.scale(scale, scale, scale);
-		}
-		Matrix4f matrix4f = matrices.last().pose();
-		float g = mc.options.getBackgroundOpacity(0.25f);
-		int j = (int) (g * 255.0f) << 24;
-		Font textRenderer = getFont();
-		float h = (float) -textRenderer.width(text) / 2;
-		textRenderer.drawInBatch(text, h, (float) i, 0x20FFFFFF, false, matrix4f, vertexConsumers,
-				bl ? Font.DisplayMode.SEE_THROUGH : Font.DisplayMode.NORMAL, j, light);
-		if (bl) {
-			textRenderer.drawInBatch(text, h, (float) i, -1, false, matrix4f, vertexConsumers,
-					Font.DisplayMode.NORMAL, 0, light);
-		}
-		matrices.popPose();
+	@Unique
+	private boolean aoba$shouldCustomizeNameTag(EntityRenderState state) {
+		Nametags nametags = Aoba.getInstance().moduleManager.nametags;
+		if (nametags == null || !nametags.state.getValue() || state.nameTagAttachment == null)
+			return false;
+		return !nametags.getPlayersOnly() || state instanceof AvatarRenderState;
 	}
 }

@@ -24,6 +24,7 @@ import net.aoba.gui.types.Rectangle;
 import net.aoba.rendering.shaders.Shader;
 import net.aoba.settings.Setting;
 import net.aoba.settings.types.*;
+import net.aoba.utils.types.Range;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -224,6 +225,10 @@ public class SettingManager {
 					Vec3 vec = (Vec3) setting.getValue();
 					properties.setProperty(setting.ID, vec.x + "," + vec.y + "," + vec.z);
 				}
+				case RANGE -> {
+					Range range = (Range) setting.getValue();
+					properties.setProperty(setting.ID, range.min() + "," + range.max());
+				}
 				case HOTBAR -> {
 					@SuppressWarnings("unchecked")
 					List<Boolean> s = (List<Boolean>) setting.getValue();
@@ -391,6 +396,14 @@ public class SettingManager {
 							float y = Float.parseFloat(components[1]);
 							float z = Float.parseFloat(components[2]);
 							setting.setValue(new Vec3(x, y, z));
+						}
+					}
+					case RANGE -> {
+						String[] components = value.split(",");
+						if (components.length == 2) {
+							float lo = Float.parseFloat(components[0]);
+							float hi = Float.parseFloat(components[1]);
+							setting.setValue(new Range(lo, hi));
 						}
 					}
 					case HOTBAR -> {

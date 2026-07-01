@@ -16,7 +16,7 @@ import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import com.mojang.blaze3d.textures.TextureFormat;
+import com.mojang.blaze3d.GpuFormat;
 
 import net.aoba.rendering.shaders.ShaderUniformRingBuffer;
 
@@ -53,13 +53,13 @@ public abstract class AbstractRenderer implements AutoCloseable {
 			return;
 
 		whiteTexture = RenderSystem.getDevice().createTexture("aoba_white_pixel",
-				GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST, TextureFormat.RGBA8, 1, 1, 1, 1);
+				GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST, GpuFormat.RGBA8_UNORM, 1, 1, 1, 1);
 
 		whiteTextureView = RenderSystem.getDevice().createTextureView(whiteTexture);
 
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			ByteBuffer pixel = stack.malloc(4).put((byte) -1).put((byte) -1).put((byte) -1).put((byte) -1).flip();
-			RenderSystem.getDevice().createCommandEncoder().writeToTexture(whiteTexture, pixel, NativeImage.Format.RGBA, 0, 0, 0,
+			RenderSystem.getDevice().createCommandEncoder().writeToTexture(whiteTexture, pixel, 0, 0, 0,
 					0, 1, 1);
 		}
 
